@@ -2,7 +2,7 @@ import 'dotenv/config';
 function required(key: string): string { const val = process.env[key]; if (!val) throw new Error(`Missing required env var: ${key}`); return val; }
 function optional(key: string, fallback: string): string { return process.env[key] ?? fallback; }
 export const config = {
-  anthropic: { apiKey: required('ANTHROPIC_API_KEY'), model: optional('ANTHROPIC_MODEL', 'claude-sonnet-4-20250514') },
+  
   etherscan: { apiKey: required('ETHERSCAN_API_KEY') },
   helius: { apiKey: optional('HELIUS_API_KEY', '') },
   bscscan: { apiKey: optional('BSCSCAN_API_KEY', '') },

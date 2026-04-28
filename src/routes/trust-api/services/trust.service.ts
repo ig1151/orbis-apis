@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../utils/logger';
 import { analyzeEmail } from '../utils/email.utils';
@@ -8,7 +8,7 @@ import { analyzeWallet } from '../utils/wallet.utils';
 import type { TrustRequest, TrustResponse, TrustLevel, Recommendation, Web2Risk, Web3Risk, ContentSafety } from '../types/index';
 import { config } from '../utils/config';
 
-const client = new Anthropic({ apiKey: config.anthropic.apiKey });
+
 
 const USE_CASE_THRESHOLDS: Record<string, { blockAt: number; verifyAt: number }> = {
   signup:             { blockAt: 65, verifyAt: 35 },

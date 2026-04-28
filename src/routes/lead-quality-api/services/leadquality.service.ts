@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { config } from '../utils/config';
 import { logger } from '../utils/logger';
@@ -7,7 +7,7 @@ import { analyzePhone } from '../utils/phone.utils';
 import { scrapeWebsite } from '../utils/scraper';
 import type { ScoreRequest, LeadScoreResponse, LeadQuality, CompanySize } from '../types/index';
 
-const client = new Anthropic({ apiKey: config.anthropic.apiKey });
+
 
 function getQuality(score: number): LeadQuality {
   if (score >= 80) return 'excellent';

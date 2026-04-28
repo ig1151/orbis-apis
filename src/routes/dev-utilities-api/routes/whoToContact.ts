@@ -11,25 +11,23 @@ const schema = Joi.object({
 });
 
 async function callClaude(prompt: string): Promise<string> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
+  
   const res = await axios.post(
-    'https://api.anthropic.com/v1/messages',
+    'https://openrouter.ai/api/v1/chat/completions',
     {
-      model: 'claude-sonnet-4-20250514',
+      model: 'anthropic/claude-sonnet-4-5',
       max_tokens: 500,
       messages: [{ role: 'user', content: prompt }],
     },
     {
       headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
       },
       timeout: 20000,
     }
   );
-  return res.data.content[0]?.text ?? '{}';
+  return res.data.data.choices[0].message.content ?? '{}';
 }
 
 router.post('/who-to-contact', async (req: Request, res: Response) => {
