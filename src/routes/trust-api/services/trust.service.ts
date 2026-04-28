@@ -81,13 +81,12 @@ Return ONLY valid JSON:
   "flagged_segments": ["<exact quote>"]
 }`;
 
-  const response = await client.messages.create({
-    model: config.anthropic.model,
-    max_tokens: 512,
-    messages: [{ role: 'user', content: prompt }],
-  });
-
-  const raw = response.content.find(b => b.type === 'text')?.text ?? '{}';
+  const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+    model: 'anthropic/claude-sonnet-4-5',
+    max_tokens: 1024,
+    messages: [{ role: 'user', content: prompt }]
+  }, { headers: { Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' } });
+  const raw = response.data.choices[0].message.content ?? '{}';
   const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
 
   return {
