@@ -228,6 +228,10 @@ app.use('/wallet-intelligence', walletRouter);
 import monitorsRouter from './routes/website-monitor-api/routes/monitors';
 app.use('/website-monitor', monitorsRouter);
 
+// ── Social Sentiment ─────────────────────────────────────────────────────────
+import socialSentimentRouter from './routes/social-sentiment/index';
+app.use('/social-sentiment', socialSentimentRouter);
+
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
