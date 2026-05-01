@@ -5,7 +5,7 @@ export const gasOptimizerInfoRouter = createApiInfoRouter({
   description: 'Real-time gas price data and optimization recommendations across EVM chains.',
   category: 'Crypto Infrastructure',
   endpoints: [
-    { method: 'GET', path: '/', description: 'Get current gas prices', params: { chain: 'ethereum | polygon | arbitrum | optimism | base | bsc | avalanche' } },
+    { method: 'GET', path: '/now', description: 'Get current gas prices', params: { chain: 'ethereum | polygon | arbitrum | optimism | base | bsc | avalanche' } },
     { method: 'GET', path: '/estimate', description: 'Estimate gas cost for a transaction', params: { chain: 'Chain name', txType: 'transfer | swap | nftMint' } },
     { method: 'GET', path: '/compare', description: 'Compare gas across chains' },
     { method: 'GET', path: '/timing', description: 'Best time to transact', params: { chain: 'Chain name' } },
@@ -17,10 +17,10 @@ export const fundingRateInfoRouter = createApiInfoRouter({
   description: 'Real-time and historical funding rates across crypto derivatives exchanges.',
   category: 'Crypto Derivatives',
   endpoints: [
-    { method: 'GET', path: '/', description: 'Get current funding rates', params: { symbol: 'BTC | ETH | SOL etc', exchanges: 'Comma-separated exchange filter' } },
-    { method: 'GET', path: '/compare', description: 'Compare funding rates across exchanges', params: { symbol: 'Token symbol' } },
-    { method: 'GET', path: '/extremes', description: 'Get highest and lowest funding rates' },
-    { method: 'GET', path: '/signal', description: 'AI funding rate signal', params: { symbol: 'Token symbol' } },
+    { method: 'GET', path: '/rates/now', description: 'Get current funding rates', params: { symbol: 'BTC | ETH | SOL etc', exchanges: 'Comma-separated exchange filter' } },
+    { method: 'GET', path: '/rates/compare', description: 'Compare funding rates across exchanges', params: { symbol: 'Token symbol' } },
+    { method: 'GET', path: '/rates/extremes', description: 'Get highest and lowest funding rates' },
+    { method: 'GET', path: '/rates/signal', description: 'AI funding rate signal', params: { symbol: 'Token symbol' } },
   ],
 });
 
@@ -50,7 +50,7 @@ export const tokenScreenerInfoRouter = createApiInfoRouter({
   description: 'Screen and filter tokens by market cap, volume, momentum and on-chain metrics.',
   category: 'Crypto Research',
   endpoints: [
-    { method: 'GET', path: '/', description: 'Screen tokens', params: { filter: 'trending | gainers | losers', chain: 'Chain filter', limit: 'Number of results' } },
+    { method: 'GET', path: '/screen', description: 'Screen tokens', params: { filter: 'trending | gainers | losers', chain: 'Chain filter', limit: 'Number of results' } },
     { method: 'GET', path: '/movers', description: 'Top movers by price change' },
     { method: 'GET', path: '/opportunities', description: 'AI-identified token opportunities' },
   ],
@@ -61,8 +61,8 @@ export const tokenUnlockInfoRouter = createApiInfoRouter({
   description: 'Track upcoming token unlock events, vesting schedules, and price impact analysis.',
   category: 'Crypto Research',
   endpoints: [
-    { method: 'GET', path: '/', description: 'Get upcoming token unlocks', params: { days: 'Lookahead days (default 30)' } },
-    { method: 'GET', path: '/:symbol', description: 'Unlock schedule for a specific token' },
+    { method: 'GET', path: '/upcoming', description: 'Get upcoming token unlocks', params: { days: 'Lookahead days (default 30)' } },
+    { method: 'GET', path: '/vesting/:symbol', description: 'Unlock schedule for a specific token' },
     { method: 'GET', path: '/impact', description: 'AI price impact analysis' },
     { method: 'GET', path: '/calendar', description: 'Calendar view of unlock events' },
   ],
@@ -97,7 +97,7 @@ export const defiRiskInfoRouter = createApiInfoRouter({
   description: 'Smart contract security, protocol risk, and DeFi portfolio risk analysis.',
   category: 'DeFi Security',
   endpoints: [
-    { method: 'GET', path: '/', description: 'Token safety check', params: { contract: 'Token contract address', chain: 'Chain name' } },
+    { method: 'GET', path: '/token-safety', description: 'Token safety check', params: { contract: 'Token contract address', chain: 'Chain name' } },
     { method: 'GET', path: '/protocol', description: 'Protocol risk assessment', params: { protocol: 'Protocol name' } },
     { method: 'GET', path: '/liquidity', description: 'Liquidity health check', params: { protocol: 'Protocol name' } },
     { method: 'GET', path: '/portfolio', description: 'Portfolio risk scan', params: { address: 'Wallet address' } },
@@ -135,7 +135,7 @@ export const defiPositionInfoRouter = createApiInfoRouter({
   description: 'Monitor DeFi positions, health factors, and liquidation risks across protocols.',
   category: 'DeFi Monitoring',
   endpoints: [
-    { method: 'GET', path: '/', description: 'Scan Aave positions', params: { address: 'Wallet address' } },
+    { method: 'GET', path: '/aave', description: 'Scan Aave positions', params: { address: 'Wallet address' } },
     { method: 'GET', path: '/scan', description: 'Full position scan', params: { address: 'Wallet address' } },
     { method: 'POST', path: '/alert', description: 'Set position health alert' },
   ],
@@ -146,7 +146,7 @@ export const walletPortfolioInfoRouter = createApiInfoRouter({
   description: 'Comprehensive wallet portfolio analysis, PnL tracking, and risk scoring.',
   category: 'Wallet Analytics',
   endpoints: [
-    { method: 'GET', path: '/', description: 'Get portfolio snapshot', params: { address: 'Wallet address' } },
+    { method: 'GET', path: '/snapshot', description: 'Get portfolio snapshot', params: { address: 'Wallet address' } },
     { method: 'GET', path: '/pnl', description: 'Portfolio PnL analysis', params: { address: 'Wallet address' } },
     { method: 'GET', path: '/score', description: 'Portfolio risk score', params: { address: 'Wallet address' } },
   ],
@@ -253,7 +253,7 @@ export const stablecoinYieldInfoRouter = createApiInfoRouter({
   description: 'Find the best stablecoin yield opportunities across DeFi protocols.',
   category: 'DeFi Analytics',
   endpoints: [
-    { method: 'GET', path: '/', description: 'Get best stablecoin yields', params: { token: 'USDC | USDT | DAI', chain: 'Chain filter', minTvl: 'Minimum TVL' } },
+    { method: 'GET', path: '/rates', description: 'Get best stablecoin yields', params: { token: 'USDC | USDT | DAI', chain: 'Chain filter', minTvl: 'Minimum TVL' } },
     { method: 'GET', path: '/compare', description: 'Compare yields across stablecoins' },
     { method: 'GET', path: '/best', description: 'Best yield for a stablecoin', params: { token: 'Stablecoin symbol' } },
   ],
@@ -264,7 +264,7 @@ export const metaStrategyInfoRouter = createApiInfoRouter({
   description: 'AI meta-strategy scanner combining signals from multiple data sources.',
   category: 'AI Trading',
   endpoints: [
-    { method: 'GET', path: '/', description: 'Scan meta strategies', params: { symbols: 'Comma-separated symbols e.g. BTC,ETH' } },
+    { method: 'GET', path: '/scan', description: 'Scan meta strategies', params: { symbols: 'Comma-separated symbols e.g. BTC,ETH' } },
   ],
 });
 
@@ -483,7 +483,7 @@ export const portfolioRebalanceInfoRouter = createApiInfoRouter({
   description: 'AI-powered portfolio rebalancing recommendations and execution planning.',
   category: 'AI Trading',
   endpoints: [
-    { method: 'POST', path: '/', description: 'Get rebalancing recommendations' },
+    { method: 'POST', path: '/rebalance', description: 'Get rebalancing recommendations' },
   ],
 });
 
@@ -492,7 +492,7 @@ export const strategyExecutionInfoRouter = createApiInfoRouter({
   description: 'Execute and backtest trading strategies with AI optimization.',
   category: 'AI Trading',
   endpoints: [
-    { method: 'GET', path: '/list', description: 'List available strategies' },
+    { method: 'GET', path: '/strategies', description: 'List available strategies' },
     { method: 'POST', path: '/execute', description: 'Execute a trading strategy' },
     { method: 'POST', path: '/backtest', description: 'Backtest a strategy' },
   ],
