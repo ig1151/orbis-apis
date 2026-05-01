@@ -184,8 +184,8 @@ app.use('/phone-validation', phoneValidateRouter);
 // ── Portfolio Rebalance ───────────────────────────────────────────────────────
 import rebalanceRouter from './routes/portfolio-rebalance-api/routes/rebalance';
 import strategiesRouter from './routes/portfolio-rebalance-api/routes/strategies';
-app.use('/portfolio-rebalance', rebalanceRouter);
-app.use('/portfolio-rebalance', strategiesRouter);
+app.use('/portfolio-rebalance/rebalance', rebalanceRouter);
+app.use('/portfolio-rebalance/strategies', strategiesRouter);
 
 // ── Search Extract ────────────────────────────────────────────────────────────
 import { searchRouter } from './routes/search-extract-api/routes/search.route';
@@ -196,10 +196,10 @@ import stablecoinRatesRouter from './routes/stablecoin-yield-api/routes/rates';
 import stablecoinBestYieldRouter from './routes/stablecoin-yield-api/routes/bestYield';
 import stablecoinCompareRouter from './routes/stablecoin-yield-api/routes/compare';
 import stablecoinProtocolRouter from './routes/stablecoin-yield-api/routes/protocol';
-app.use('/stablecoin-yield', stablecoinRatesRouter);
-app.use('/stablecoin-yield', stablecoinBestYieldRouter);
-app.use('/stablecoin-yield', stablecoinCompareRouter);
-app.use('/stablecoin-yield', stablecoinProtocolRouter);
+app.use('/stablecoin-yield/rates', stablecoinRatesRouter);
+app.use('/stablecoin-yield/best', stablecoinBestYieldRouter);
+app.use('/stablecoin-yield/compare', stablecoinCompareRouter);
+app.use('/stablecoin-yield/protocol', stablecoinProtocolRouter);
 
 // ── Strategy Execution ────────────────────────────────────────────────────────
 import strategyExecutionRouter from './routes/strategy-execution-api/routes/strategy';
@@ -300,10 +300,10 @@ app.use('/user-risk', userRiskInfoRouter);
 app.use('/wallet-intelligence', walletIntelligenceInfoRouter);
 
 
-app.use("/gas-optimizer", gasNowRouter);
-app.use("/gas-optimizer", gasEstimateRouter);
-app.use("/gas-optimizer", gasCompareRouter);
-app.use("/gas-optimizer", gasTimingRouter);
+app.use("/gas-optimizer/now", gasNowRouter);
+app.use("/gas-optimizer/estimate", gasEstimateRouter);
+app.use("/gas-optimizer/compare", gasCompareRouter);
+app.use("/gas-optimizer/timing", gasTimingRouter);
 
 
 // ── Strategy Signal ───────────────────────────────────────────────────────────
@@ -325,10 +325,10 @@ import fundingNowRouter from './routes/funding-rate-api/routes/now';
 import fundingCompareRouter from './routes/funding-rate-api/routes/compare';
 import fundingExtremesRouter from './routes/funding-rate-api/routes/extremes';
 import fundingSignalRouter from './routes/funding-rate-api/routes/signal';
-app.use('/funding-rate', fundingNowRouter);
-app.use('/funding-rate', fundingCompareRouter);
-app.use('/funding-rate', fundingExtremesRouter);
-app.use('/funding-rate', fundingSignalRouter);
+app.use('/funding-rate/rates/now', fundingNowRouter);
+app.use('/funding-rate/rates/compare', fundingCompareRouter);
+app.use('/funding-rate/rates/extremes', fundingExtremesRouter);
+app.use('/funding-rate/rates/signal', fundingSignalRouter);
 
 // ── Gas Optimizer ─────────────────────────────────────────────────────────────
 
@@ -336,53 +336,53 @@ app.use('/funding-rate', fundingSignalRouter);
 import tokenScreenRouter from './routes/token-screener-api/routes/screen';
 import tokenMoversRouter from './routes/token-screener-api/routes/movers';
 import tokenOpportunitiesRouter from './routes/token-screener-api/routes/opportunities';
-app.use('/token-screener', tokenScreenRouter);
-app.use('/token-screener', tokenMoversRouter);
-app.use('/token-screener', tokenOpportunitiesRouter);
+app.use('/token-screener/screen', tokenScreenRouter);
+app.use('/token-screener/movers', tokenMoversRouter);
+app.use('/token-screener/opportunities', tokenOpportunitiesRouter);
 
 // ── Meta Strategy ─────────────────────────────────────────────────────────────
 import metaStrategyScanRouter from './routes/meta-strategy-api/routes/scan';
-app.use('/meta-strategy', metaStrategyScanRouter);
+app.use('/meta-strategy/scan', metaStrategyScanRouter);
 
 // ── Token Unlock ──────────────────────────────────────────────────────────────
 import tokenUnlockUpcomingRouter from './routes/token-unlock-api/routes/upcoming';
 import tokenUnlockVestingRouter from './routes/token-unlock-api/routes/vesting';
 import tokenUnlockImpactRouter from './routes/token-unlock-api/routes/impact';
 import tokenUnlockCalendarRouter from './routes/token-unlock-api/routes/calendar';
-app.use('/token-unlock', tokenUnlockUpcomingRouter);
-app.use('/token-unlock', tokenUnlockVestingRouter);
-app.use('/token-unlock', tokenUnlockImpactRouter);
-app.use('/token-unlock', tokenUnlockCalendarRouter);
+app.use('/token-unlock/upcoming', tokenUnlockUpcomingRouter);
+app.use('/token-unlock/vesting', tokenUnlockVestingRouter);
+app.use('/token-unlock/impact', tokenUnlockImpactRouter);
+app.use('/token-unlock/calendar', tokenUnlockCalendarRouter);
 
 // ── Agent Identity ────────────────────────────────────────────────────────────
 import agentIdentityGenerateRouter from './routes/agent-identity-api/routes/generate';
 import agentIdentityVerifyRouter from './routes/agent-identity-api/routes/verify';
 import agentIdentityReputationRouter from './routes/agent-identity-api/routes/reputation';
 import agentIdentityLookupRouter from './routes/agent-identity-api/routes/lookup';
-app.use('/agent-identity', agentIdentityGenerateRouter);
-app.use('/agent-identity', agentIdentityVerifyRouter);
-app.use('/agent-identity', agentIdentityReputationRouter);
-app.use('/agent-identity', agentIdentityLookupRouter);
+app.use('/agent-identity/generate', agentIdentityGenerateRouter);
+app.use('/agent-identity/verify', agentIdentityVerifyRouter);
+app.use('/agent-identity/reputation', agentIdentityReputationRouter);
+app.use('/agent-identity/lookup', agentIdentityLookupRouter);
 
 // ── Crypto Narrative ──────────────────────────────────────────────────────────
 import cryptoNarrativeTrendingRouter from './routes/crypto-narrative-api/routes/trending';
 import cryptoNarrativeRouter from './routes/crypto-narrative-api/routes/narrative';
 import cryptoNarrativeCompareRouter from './routes/crypto-narrative-api/routes/compare';
 import cryptoNarrativeScanRouter from './routes/crypto-narrative-api/routes/scan';
-app.use('/crypto-narrative', cryptoNarrativeTrendingRouter);
-app.use('/crypto-narrative', cryptoNarrativeRouter);
-app.use('/crypto-narrative', cryptoNarrativeCompareRouter);
-app.use('/crypto-narrative', cryptoNarrativeScanRouter);
+app.use('/crypto-narrative/trending', cryptoNarrativeTrendingRouter);
+app.use('/crypto-narrative/narrative', cryptoNarrativeRouter);
+app.use('/crypto-narrative/compare', cryptoNarrativeCompareRouter);
+app.use('/crypto-narrative/scan', cryptoNarrativeScanRouter);
 
 // ── DeFi Risk ─────────────────────────────────────────────────────────────────
 import defiRiskTokenSafetyRouter from './routes/defi-risk-api/routes/tokenSafety';
 import defiRiskProtocolRouter from './routes/defi-risk-api/routes/protocolRisk';
 import defiRiskLiquidityRouter from './routes/defi-risk-api/routes/liquidityHealth';
 import defiRiskPortfolioRouter from './routes/defi-risk-api/routes/portfolioScan';
-app.use('/defi-risk', defiRiskTokenSafetyRouter);
-app.use('/defi-risk', defiRiskProtocolRouter);
-app.use('/defi-risk', defiRiskLiquidityRouter);
-app.use('/defi-risk', defiRiskPortfolioRouter);
+app.use('/defi-risk/token-safety', defiRiskTokenSafetyRouter);
+app.use('/defi-risk/protocol', defiRiskProtocolRouter);
+app.use('/defi-risk/liquidity', defiRiskLiquidityRouter);
+app.use('/defi-risk/portfolio', defiRiskPortfolioRouter);
 
 // ── Crypto Alerts ─────────────────────────────────────────────────────────────
 import cryptoAlertsCreateRouter from './routes/crypto-alerts-api/routes/createAlert';
@@ -390,11 +390,11 @@ import cryptoAlertsCheckRouter from './routes/crypto-alerts-api/routes/checkAler
 import cryptoAlertsFeedRouter from './routes/crypto-alerts-api/routes/feed';
 import cryptoAlertsWhaleRouter from './routes/crypto-alerts-api/routes/whaleActivity';
 import cryptoAlertsSummaryRouter from './routes/crypto-alerts-api/routes/summary';
-app.use('/crypto-alerts', cryptoAlertsCreateRouter);
-app.use('/crypto-alerts', cryptoAlertsCheckRouter);
-app.use('/crypto-alerts', cryptoAlertsFeedRouter);
-app.use('/crypto-alerts', cryptoAlertsWhaleRouter);
-app.use('/crypto-alerts', cryptoAlertsSummaryRouter);
+app.use('/crypto-alerts/create', cryptoAlertsCreateRouter);
+app.use('/crypto-alerts/check', cryptoAlertsCheckRouter);
+app.use('/crypto-alerts/feed', cryptoAlertsFeedRouter);
+app.use('/crypto-alerts/whale', cryptoAlertsWhaleRouter);
+app.use('/crypto-alerts/summary', cryptoAlertsSummaryRouter);
 
 // ── Agent Skills ──────────────────────────────────────────────────────────────
 import agentSkillsRegisterRouter from './routes/agent-skills-api/routes/register';
@@ -402,27 +402,27 @@ import agentSkillsDiscoverRouter from './routes/agent-skills-api/routes/discover
 import agentSkillsDetailRouter from './routes/agent-skills-api/routes/skillDetail';
 import agentSkillsMatchRouter from './routes/agent-skills-api/routes/match';
 import agentSkillsTrendingRouter from './routes/agent-skills-api/routes/trending';
-app.use('/agent-skills', agentSkillsRegisterRouter);
-app.use('/agent-skills', agentSkillsDiscoverRouter);
-app.use('/agent-skills', agentSkillsDetailRouter);
-app.use('/agent-skills', agentSkillsMatchRouter);
-app.use('/agent-skills', agentSkillsTrendingRouter);
+app.use('/agent-skills/register', agentSkillsRegisterRouter);
+app.use('/agent-skills/discover', agentSkillsDiscoverRouter);
+app.use('/agent-skills/detail', agentSkillsDetailRouter);
+app.use('/agent-skills/match', agentSkillsMatchRouter);
+app.use('/agent-skills/trending', agentSkillsTrendingRouter);
 
 // ── DeFi Position Monitor ─────────────────────────────────────────────────────
 import defiPositionAaveRouter from './routes/defi-position-monitor-api/routes/aave';
 import defiPositionScanRouter from './routes/defi-position-monitor-api/routes/scan';
 import defiPositionAlertRouter from './routes/defi-position-monitor-api/routes/alert';
-app.use('/defi-position-monitor', defiPositionAaveRouter);
-app.use('/defi-position-monitor', defiPositionScanRouter);
-app.use('/defi-position-monitor', defiPositionAlertRouter);
+app.use('/defi-position-monitor/aave', defiPositionAaveRouter);
+app.use('/defi-position-monitor/scan', defiPositionScanRouter);
+app.use('/defi-position-monitor/alert', defiPositionAlertRouter);
 
 // ── Wallet Portfolio ──────────────────────────────────────────────────────────
 import walletPortfolioSnapshotRouter from './routes/wallet-portfolio-api/routes/snapshot';
 import walletPortfolioPnlRouter from './routes/wallet-portfolio-api/routes/pnl';
 import walletPortfolioScoreRouter from './routes/wallet-portfolio-api/routes/score';
-app.use('/wallet-portfolio', walletPortfolioSnapshotRouter);
-app.use('/wallet-portfolio', walletPortfolioPnlRouter);
-app.use('/wallet-portfolio', walletPortfolioScoreRouter);
+app.use('/wallet-portfolio/snapshot', walletPortfolioSnapshotRouter);
+app.use('/wallet-portfolio/pnl', walletPortfolioPnlRouter);
+app.use('/wallet-portfolio/score', walletPortfolioScoreRouter);
 
 // ── Cross Chain Bridge ────────────────────────────────────────────────────────
 import { router as crossChainRouter } from './routes/cross-chain-bridge-api/routes';
