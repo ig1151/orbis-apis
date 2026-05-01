@@ -29,7 +29,7 @@ router.get('/', validate(ratesSchema), async (req: Request, res: Response): Prom
     else if (sortBy === 'tvl') yieldPools.sort((a, b) => b.tvlUsd - a.tvlUsd);
     else yieldPools.sort((a, b) => b.riskScore - a.riskScore);
 
-    const results = yieldPools.slice(0, parseInt(limit as string));
+    const results = yieldPools.slice(0, Number(limit) || 10);
     const avgApy = results.length
       ? Math.round((results.reduce((s, p) => s + p.apy, 0) / results.length) * 100) / 100
       : 0;
