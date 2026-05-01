@@ -11,7 +11,7 @@ const openApiSpec = {
       'Real-time stablecoin yield rates across DeFi protocols. Compare APYs, get AI-powered allocation recommendations, and analyze protocols. Powered by DeFiLlama + Claude AI. No API key required for data source.',
     contact: { url: 'https://orbisapi.com' },
   },
-  servers: [{ url: 'https://stablecoin-yield-api.onrender.com' }],
+  servers: [{ url: 'https://orbis-apis.onrender.com/stablecoin-yield' }],
   paths: {
     '/v1/health': {
       get: { summary: 'Health check', responses: { 200: { description: 'OK' } } },
@@ -86,7 +86,7 @@ router.get('/docs', (_req: Request, res: Response) => {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js"></script>
 <script>
   SwaggerUIBundle({
-    url: '/openapi.json',
+    url: '/stablecoin-yield/openapi.json',
     dom_id: '#swagger-ui',
     presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
     layout: 'BaseLayout'

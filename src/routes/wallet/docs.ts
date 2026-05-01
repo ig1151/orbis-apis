@@ -23,7 +23,7 @@ router.get('/', (_req: Request, res: Response) => {
 <body>
   <h1>🔐 Wallet Balance API</h1>
   <p>On-chain wallet balances, ERC20 token holdings, and transaction history via Etherscan.</p>
-  <p><strong>Base URL:</strong> <code>https://your-service.onrender.com</code></p>
+  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/wallet</code></p>
 
   <h2>Endpoints</h2>
 

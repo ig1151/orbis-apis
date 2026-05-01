@@ -11,7 +11,7 @@ const openApiSpec = {
       'Onchain wallet intelligence — whale signals, token flows, and accumulation/distribution analysis for AI agents and traders. Powered by Etherscan V2 + Claude AI.',
     contact: { url: 'https://orbisapi.com' },
   },
-  servers: [{ url: 'https://onchain-signal-api.onrender.com' }],
+  servers: [{ url: 'https://orbis-apis.onrender.com/onchain-signal' }],
   paths: {
     '/v1/health': {
       get: {
@@ -153,7 +153,7 @@ router.get('/docs', (_req: Request, res: Response) => {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js"></script>
 <script>
   SwaggerUIBundle({
-    url: '/openapi.json',
+    url: '/onchain-signal/openapi.json',
     dom_id: '#swagger-ui',
     presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
     layout: 'BaseLayout'

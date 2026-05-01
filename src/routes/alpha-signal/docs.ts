@@ -22,7 +22,7 @@ router.get('/', (_req: Request, res: Response) => {
 <body>
   <h1>⚡ Alpha Signal API</h1>
   <p>AI-powered multi-chain trade signals for ETH, BNB, and SOL. Combines price data, news sentiment, and on-chain activity into actionable buy/sell/hold signals.</p>
-  <p><strong>Base URL:</strong> <code>https://your-service.onrender.com</code></p>
+  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/alpha-signal</code></p>
   <p><strong>Supported:</strong> ETH · BNB · SOL</p>
 
   <h2>Endpoints</h2>
