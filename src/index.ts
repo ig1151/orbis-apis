@@ -315,10 +315,10 @@ import predictionTrendingRouter from './routes/prediction-market-api/routes/tren
 import predictionSearchRouter from './routes/prediction-market-api/routes/search';
 import predictionMarketRouter from './routes/prediction-market-api/routes/market';
 import predictionSignalRouter from './routes/prediction-market-api/routes/signal';
-app.use('/prediction-market', predictionTrendingRouter);
-app.use('/prediction-market', predictionSearchRouter);
-app.use('/prediction-market', predictionSignalRouter);
-app.use('/prediction-market', predictionMarketRouter);
+app.use('/prediction-market/trending', predictionTrendingRouter);
+app.use('/prediction-market/search', predictionSearchRouter);
+app.use('/prediction-market/signal', predictionSignalRouter);
+app.use('/prediction-market/detail', predictionMarketRouter);
 
 // ── Funding Rate ──────────────────────────────────────────────────────────────
 import fundingNowRouter from './routes/funding-rate-api/routes/now';
