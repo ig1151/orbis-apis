@@ -1,4 +1,4 @@
-import * as pdfParse from 'pdf-parse';
+const { PDFParse } = require("pdf-parse");
 import mammoth from 'mammoth';
 import { logger } from './logger';
 
@@ -6,7 +6,7 @@ export async function extractText(base64: string, mimeType: string): Promise<{ t
   const buffer = Buffer.from(base64, 'base64');
 
   if (mimeType === 'application/pdf') {
-    const data = await (pdfParse as any).default(buffer);
+    const parser = new PDFParse({ verbosity: 0, data: buffer }); const data = await parser.getText();
     const wordCount = data.text.split(/\s+/).filter(Boolean).length;
     return { text: data.text, pageCount: data.numpages, wordCount };
   }
