@@ -75,7 +75,7 @@ export function toYieldPool(pool: LlamaPool): YieldPool {
 
 export function filterStablecoinPools(
   pools: LlamaPool[],
-  token: string,
+  token: string = 'USDC',
   chain?: string,
   minTvl = 1_000_000
 ): LlamaPool[] {
