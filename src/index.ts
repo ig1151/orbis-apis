@@ -1,3 +1,4 @@
+import { gasOptimizerInfoRouter, fundingRateInfoRouter, strategySignalInfoRouter, predictionMarketInfoRouter, tokenScreenerInfoRouter, tokenUnlockInfoRouter, agentIdentityInfoRouter, cryptoNarrativeInfoRouter, defiRiskInfoRouter, cryptoAlertsInfoRouter, agentSkillsInfoRouter, defiPositionInfoRouter, walletPortfolioInfoRouter, crossChainInfoRouter, derivativesInfoRouter, marketCorrelationInfoRouter, yieldFarmingInfoRouter, tokenomicsInfoRouter, liquidationFeedInfoRouter, marketStressInfoRouter, walletInfoRouter, stablecoinYieldInfoRouter, metaStrategyInfoRouter, socialSentimentInfoRouter, alphaSignalInfoRouter, actionInfoRouter, agentMemoryInfoRouter, agentWorkflowInfoRouter, autopilotInfoRouter, browserTaskInfoRouter, companyResearchInfoRouter, cryptoNewsInfoRouter, derivativesIntelligenceInfoRouter, devUtilitiesInfoRouter, extractionInfoRouter, leadDiscoveryInfoRouter, marketIntelligenceInfoRouter, marketSignalInfoRouter, marketTriggerInfoRouter, marketWebhookInfoRouter, onchainSignalInfoRouter, portfolioRebalanceInfoRouter, strategyExecutionInfoRouter, unifiedDecisionInfoRouter, websiteMonitorInfoRouter, aiOutputSafetyInfoRouter, documentIntelligenceInfoRouter, identityIntelligenceInfoRouter, imageToContentInfoRouter, leadEnrichmentInfoRouter, leadQualityInfoRouter, ipIntelligenceInfoRouter, emailValidationInfoRouter, phoneValidationInfoRouter, searchExtractInfoRouter, tokenTrustInfoRouter, trustInfoRouter, userRiskInfoRouter, walletIntelligenceInfoRouter } from "./middleware/allApiInfo";
 import 'dotenv/config';
 import express from 'express';
 import helmet from 'helmet';
@@ -237,6 +238,68 @@ import gasNowRouter from "./routes/gas-optimizer-api/routes/gasNow";
 import gasEstimateRouter from "./routes/gas-optimizer-api/routes/gasEstimate";
 import gasCompareRouter from "./routes/gas-optimizer-api/routes/gasCompare";
 import gasTimingRouter from "./routes/gas-optimizer-api/routes/gasTiming";
+// ── API Info Routes ───────────────────────────────────────────────────────────
+app.use('/gas-optimizer', gasOptimizerInfoRouter);
+app.use('/funding-rate', fundingRateInfoRouter);
+app.use('/strategy-signal', strategySignalInfoRouter);
+app.use('/prediction-market', predictionMarketInfoRouter);
+app.use('/token-screener', tokenScreenerInfoRouter);
+app.use('/token-unlock', tokenUnlockInfoRouter);
+app.use('/agent-identity', agentIdentityInfoRouter);
+app.use('/crypto-narrative', cryptoNarrativeInfoRouter);
+app.use('/defi-risk', defiRiskInfoRouter);
+app.use('/crypto-alerts', cryptoAlertsInfoRouter);
+app.use('/agent-skills', agentSkillsInfoRouter);
+app.use('/defi-position-monitor', defiPositionInfoRouter);
+app.use('/wallet-portfolio', walletPortfolioInfoRouter);
+app.use('/cross-chain-bridge', crossChainInfoRouter);
+app.use('/derivatives', derivativesInfoRouter);
+app.use('/market-correlation', marketCorrelationInfoRouter);
+app.use('/yield-farming', yieldFarmingInfoRouter);
+app.use('/tokenomics', tokenomicsInfoRouter);
+app.use('/liquidation-feed', liquidationFeedInfoRouter);
+app.use('/market-stress', marketStressInfoRouter);
+app.use('/wallet', walletInfoRouter);
+app.use('/stablecoin-yield', stablecoinYieldInfoRouter);
+app.use('/meta-strategy', metaStrategyInfoRouter);
+app.use('/social-sentiment', socialSentimentInfoRouter);
+app.use('/alpha-signal', alphaSignalInfoRouter);
+app.use('/action', actionInfoRouter);
+app.use('/agent-memory', agentMemoryInfoRouter);
+app.use('/agent-workflow', agentWorkflowInfoRouter);
+app.use('/autopilot', autopilotInfoRouter);
+app.use('/browser-task', browserTaskInfoRouter);
+app.use('/company-research', companyResearchInfoRouter);
+app.use('/crypto-news-impact', cryptoNewsInfoRouter);
+app.use('/derivatives-intelligence', derivativesIntelligenceInfoRouter);
+app.use('/dev-utilities', devUtilitiesInfoRouter);
+app.use('/extraction', extractionInfoRouter);
+app.use('/lead-discovery', leadDiscoveryInfoRouter);
+app.use('/market-intelligence', marketIntelligenceInfoRouter);
+app.use('/market-signal', marketSignalInfoRouter);
+app.use('/market-trigger', marketTriggerInfoRouter);
+app.use('/market-webhook', marketWebhookInfoRouter);
+app.use('/onchain-signal', onchainSignalInfoRouter);
+app.use('/portfolio-rebalance', portfolioRebalanceInfoRouter);
+app.use('/strategy-execution', strategyExecutionInfoRouter);
+app.use('/unified-decision', unifiedDecisionInfoRouter);
+app.use('/website-monitor', websiteMonitorInfoRouter);
+app.use('/ai-output-safety', aiOutputSafetyInfoRouter);
+app.use('/document-intelligence', documentIntelligenceInfoRouter);
+app.use('/identity-intelligence', identityIntelligenceInfoRouter);
+app.use('/image-to-content', imageToContentInfoRouter);
+app.use('/lead-enrichment', leadEnrichmentInfoRouter);
+app.use('/lead-quality', leadQualityInfoRouter);
+app.use('/ip-intelligence', ipIntelligenceInfoRouter);
+app.use('/email-validation', emailValidationInfoRouter);
+app.use('/phone-validation', phoneValidationInfoRouter);
+app.use('/search-extract', searchExtractInfoRouter);
+app.use('/token-trust', tokenTrustInfoRouter);
+app.use('/trust', trustInfoRouter);
+app.use('/user-risk', userRiskInfoRouter);
+app.use('/wallet-intelligence', walletIntelligenceInfoRouter);
+
+
 app.use("/gas-optimizer", gasNowRouter);
 app.use("/gas-optimizer", gasEstimateRouter);
 app.use("/gas-optimizer", gasCompareRouter);
@@ -392,6 +455,7 @@ app.use('/liquidation-feed', liquidationFeedRouter);
 // ── Market Stress ─────────────────────────────────────────────────────────────
 import { router as marketStressRouter } from './routes/market-stress-api/routes';
 app.use('/market-stress', marketStressRouter);
+
 
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((_req, res) => {

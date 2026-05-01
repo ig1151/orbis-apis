@@ -1,0 +1,652 @@
+import { createApiInfoRouter } from './apiInfo';
+
+export const gasOptimizerInfoRouter = createApiInfoRouter({
+  name: 'Gas Optimizer API', slug: 'gas-optimizer', version: '1.0.0',
+  description: 'Real-time gas price data and optimization recommendations across EVM chains.',
+  category: 'Crypto Infrastructure',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Get current gas prices', params: { chain: 'ethereum | polygon | arbitrum | optimism | base | bsc | avalanche' } },
+    { method: 'GET', path: '/estimate', description: 'Estimate gas cost for a transaction', params: { chain: 'Chain name', txType: 'transfer | swap | nftMint' } },
+    { method: 'GET', path: '/compare', description: 'Compare gas across chains' },
+    { method: 'GET', path: '/timing', description: 'Best time to transact', params: { chain: 'Chain name' } },
+  ],
+});
+
+export const fundingRateInfoRouter = createApiInfoRouter({
+  name: 'Funding Rate API', slug: 'funding-rate', version: '1.0.0',
+  description: 'Real-time and historical funding rates across crypto derivatives exchanges.',
+  category: 'Crypto Derivatives',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Get current funding rates', params: { symbol: 'BTC | ETH | SOL etc', exchanges: 'Comma-separated exchange filter' } },
+    { method: 'GET', path: '/compare', description: 'Compare funding rates across exchanges', params: { symbol: 'Token symbol' } },
+    { method: 'GET', path: '/extremes', description: 'Get highest and lowest funding rates' },
+    { method: 'GET', path: '/signal', description: 'AI funding rate signal', params: { symbol: 'Token symbol' } },
+  ],
+});
+
+export const strategySignalInfoRouter = createApiInfoRouter({
+  name: 'Strategy Signal API', slug: 'strategy-signal', version: '1.0.0',
+  description: 'AI-powered trading strategy signals combining on-chain and market data.',
+  category: 'AI Trading',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Get strategy signal', params: { symbol: 'Token symbol e.g. BTC' } },
+  ],
+});
+
+export const predictionMarketInfoRouter = createApiInfoRouter({
+  name: 'Prediction Market API', slug: 'prediction-market', version: '1.0.0',
+  description: 'Access Polymarket prediction market data, signals, and AI analysis.',
+  category: 'Prediction Markets',
+  endpoints: [
+    { method: 'GET', path: '/trending', description: 'Get trending prediction markets' },
+    { method: 'GET', path: '/search', description: 'Search prediction markets', params: { q: 'Search query' } },
+    { method: 'GET', path: '/:id', description: 'Get specific market by slug' },
+    { method: 'GET', path: '/signal', description: 'AI signal for a market', params: { id: 'Market ID' } },
+  ],
+});
+
+export const tokenScreenerInfoRouter = createApiInfoRouter({
+  name: 'Token Screener API', slug: 'token-screener', version: '1.0.0',
+  description: 'Screen and filter tokens by market cap, volume, momentum and on-chain metrics.',
+  category: 'Crypto Research',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Screen tokens', params: { filter: 'trending | gainers | losers', chain: 'Chain filter', limit: 'Number of results' } },
+    { method: 'GET', path: '/movers', description: 'Top movers by price change' },
+    { method: 'GET', path: '/opportunities', description: 'AI-identified token opportunities' },
+  ],
+});
+
+export const tokenUnlockInfoRouter = createApiInfoRouter({
+  name: 'Token Unlock API', slug: 'token-unlock', version: '1.0.0',
+  description: 'Track upcoming token unlock events, vesting schedules, and price impact analysis.',
+  category: 'Crypto Research',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Get upcoming token unlocks', params: { days: 'Lookahead days (default 30)' } },
+    { method: 'GET', path: '/:symbol', description: 'Unlock schedule for a specific token' },
+    { method: 'GET', path: '/impact', description: 'AI price impact analysis' },
+    { method: 'GET', path: '/calendar', description: 'Calendar view of unlock events' },
+  ],
+});
+
+export const agentIdentityInfoRouter = createApiInfoRouter({
+  name: 'Agent Identity API', slug: 'agent-identity', version: '1.0.0',
+  description: 'Generate, verify and manage on-chain identities for AI agents.',
+  category: 'AI Agents',
+  endpoints: [
+    { method: 'POST', path: '/generate', description: 'Generate a new agent identity' },
+    { method: 'POST', path: '/verify', description: 'Verify an agent identity' },
+    { method: 'GET', path: '/reputation', description: 'Get agent reputation score', params: { agentId: 'Agent ID' } },
+    { method: 'GET', path: '/:agentId', description: 'Lookup agent by ID' },
+  ],
+});
+
+export const cryptoNarrativeInfoRouter = createApiInfoRouter({
+  name: 'Crypto Narrative API', slug: 'crypto-narrative', version: '1.0.0',
+  description: 'AI-powered crypto narrative detection, trending themes, and market story analysis.',
+  category: 'AI Research',
+  endpoints: [
+    { method: 'GET', path: '/trending', description: 'Get trending crypto narratives' },
+    { method: 'GET', path: '/:name', description: 'Deep dive into a specific narrative' },
+    { method: 'GET', path: '/compare', description: 'Compare narrative strength', params: { a: 'First narrative', b: 'Second narrative' } },
+    { method: 'GET', path: '/scan', description: 'Scan all active narratives' },
+  ],
+});
+
+export const defiRiskInfoRouter = createApiInfoRouter({
+  name: 'DeFi Risk API', slug: 'defi-risk', version: '1.0.0',
+  description: 'Smart contract security, protocol risk, and DeFi portfolio risk analysis.',
+  category: 'DeFi Security',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Token safety check', params: { contract: 'Token contract address', chain: 'Chain name' } },
+    { method: 'GET', path: '/protocol', description: 'Protocol risk assessment', params: { protocol: 'Protocol name' } },
+    { method: 'GET', path: '/liquidity', description: 'Liquidity health check', params: { protocol: 'Protocol name' } },
+    { method: 'GET', path: '/portfolio', description: 'Portfolio risk scan', params: { address: 'Wallet address' } },
+  ],
+});
+
+export const cryptoAlertsInfoRouter = createApiInfoRouter({
+  name: 'Crypto Alerts API', slug: 'crypto-alerts', version: '1.0.0',
+  description: 'Create and manage price alerts, whale activity notifications, and market triggers.',
+  category: 'Crypto Monitoring',
+  endpoints: [
+    { method: 'POST', path: '/create', description: 'Create a new alert' },
+    { method: 'GET', path: '/check', description: 'Check triggered alerts' },
+    { method: 'GET', path: '/feed', description: 'Get alert feed' },
+    { method: 'GET', path: '/whale', description: 'Whale activity alerts', params: { chain: 'Chain name', minUsd: 'Minimum USD threshold' } },
+    { method: 'GET', path: '/summary', description: 'Alert summary and statistics' },
+  ],
+});
+
+export const agentSkillsInfoRouter = createApiInfoRouter({
+  name: 'Agent Skills API', slug: 'agent-skills', version: '1.0.0',
+  description: 'Register, discover and match skills for AI agents in a decentralized marketplace.',
+  category: 'AI Agents',
+  endpoints: [
+    { method: 'POST', path: '/register', description: 'Register a new agent skill' },
+    { method: 'GET', path: '/discover', description: 'Discover available skills', params: { query: 'Search query', category: 'Skill category' } },
+    { method: 'GET', path: '/:skillId', description: 'Get skill details' },
+    { method: 'POST', path: '/match', description: 'Match skills to a task' },
+    { method: 'GET', path: '/trending', description: 'Get trending skills' },
+  ],
+});
+
+export const defiPositionInfoRouter = createApiInfoRouter({
+  name: 'DeFi Position Monitor API', slug: 'defi-position-monitor', version: '1.0.0',
+  description: 'Monitor DeFi positions, health factors, and liquidation risks across protocols.',
+  category: 'DeFi Monitoring',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Scan Aave positions', params: { address: 'Wallet address' } },
+    { method: 'GET', path: '/scan', description: 'Full position scan', params: { address: 'Wallet address' } },
+    { method: 'POST', path: '/alert', description: 'Set position health alert' },
+  ],
+});
+
+export const walletPortfolioInfoRouter = createApiInfoRouter({
+  name: 'Wallet Portfolio API', slug: 'wallet-portfolio', version: '1.0.0',
+  description: 'Comprehensive wallet portfolio analysis, PnL tracking, and risk scoring.',
+  category: 'Wallet Analytics',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Get portfolio snapshot', params: { address: 'Wallet address' } },
+    { method: 'GET', path: '/pnl', description: 'Portfolio PnL analysis', params: { address: 'Wallet address' } },
+    { method: 'GET', path: '/score', description: 'Portfolio risk score', params: { address: 'Wallet address' } },
+  ],
+});
+
+export const crossChainInfoRouter = createApiInfoRouter({
+  name: 'Cross-Chain Bridge API', slug: 'cross-chain-bridge', version: '1.0.0',
+  description: 'Find best bridge routes, compare fees, and execute cross-chain transfers.',
+  category: 'DeFi Infrastructure',
+  endpoints: [
+    { method: 'GET', path: '/bridge/chains', description: 'Get supported chains' },
+    { method: 'GET', path: '/bridge/tokens', description: 'Get bridgeable tokens', params: { chainId: 'Chain ID' } },
+    { method: 'GET', path: '/bridge/best', description: 'Find best bridge route', params: { fromChain: 'Source chain', toChain: 'Destination chain', token: 'Token symbol', amount: 'Amount' } },
+    { method: 'GET', path: '/bridge/routes', description: 'Get all available routes' },
+  ],
+});
+
+export const derivativesInfoRouter = createApiInfoRouter({
+  name: 'Derivatives API', slug: 'derivatives', version: '1.0.0',
+  description: 'Options market data including open interest, put/call ratios, and max pain levels.',
+  category: 'Crypto Derivatives',
+  endpoints: [
+    { method: 'GET', path: '/options/summary/:currency', description: 'Options market summary' },
+    { method: 'GET', path: '/options/open-interest/:currency', description: 'Open interest data' },
+    { method: 'GET', path: '/options/put-call-ratio/:currency', description: 'Put/call ratio' },
+    { method: 'GET', path: '/options/max-pain/:currency', description: 'Max pain price level' },
+  ],
+});
+
+export const marketCorrelationInfoRouter = createApiInfoRouter({
+  name: 'Market Correlation API', slug: 'market-correlation', version: '1.0.0',
+  description: 'Crypto asset correlation analysis, matrix generation, and diversification insights.',
+  category: 'Market Analytics',
+  endpoints: [
+    { method: 'GET', path: '/correlation/:asset', description: 'Get correlations for an asset', params: { period: '7d | 30d | 90d' } },
+    { method: 'GET', path: '/correlation/:asset/summary', description: 'Correlation summary' },
+    { method: 'GET', path: '/correlation/matrix', description: 'Full correlation matrix', params: { assets: 'Comma-separated assets' } },
+  ],
+});
+
+export const yieldFarmingInfoRouter = createApiInfoRouter({
+  name: 'Yield Farming API', slug: 'yield-farming', version: '1.0.0',
+  description: 'DeFi yield opportunities, pool analytics, and yield strategy recommendations.',
+  category: 'DeFi Analytics',
+  endpoints: [
+    { method: 'GET', path: '/yields/top', description: 'Top yield opportunities', params: { chain: 'Chain filter', minTvl: 'Minimum TVL in USD' } },
+    { method: 'GET', path: '/yields/stable', description: 'Stablecoin yield pools' },
+    { method: 'GET', path: '/yields/search', description: 'Search yield pools', params: { query: 'Search term' } },
+    { method: 'GET', path: '/yields/chains', description: 'Yields by chain' },
+    { method: 'GET', path: '/yields/strategy', description: 'AI yield strategy recommendation' },
+    { method: 'GET', path: '/yields/pool/:poolId', description: 'Specific pool details' },
+  ],
+});
+
+export const tokenomicsInfoRouter = createApiInfoRouter({
+  name: 'Tokenomics API', slug: 'tokenomics', version: '1.0.0',
+  description: 'Token supply, distribution, vesting, and tokenomics scoring for any crypto asset.',
+  category: 'Crypto Research',
+  endpoints: [
+    { method: 'GET', path: '/tokenomics/:token', description: 'Full tokenomics data' },
+    { method: 'GET', path: '/tokenomics/:token/score', description: 'Tokenomics health score' },
+    { method: 'GET', path: '/tokenomics/:token/supply', description: 'Supply schedule and inflation' },
+    { method: 'GET', path: '/tokenomics/compare', description: 'Compare tokenomics', params: { tokens: 'Comma-separated token symbols' } },
+  ],
+});
+
+export const liquidationFeedInfoRouter = createApiInfoRouter({
+  name: 'Liquidation Feed API', slug: 'liquidation-feed', version: '1.0.0',
+  description: 'Real-time liquidation events, at-risk positions, and liquidation volume analytics.',
+  category: 'DeFi Monitoring',
+  endpoints: [
+    { method: 'GET', path: '/v1/liquidations/recent', description: 'Recent liquidation events' },
+    { method: 'GET', path: '/v1/liquidations/at-risk', description: 'Positions at risk' },
+    { method: 'GET', path: '/v1/liquidations/stats', description: 'Liquidation statistics' },
+    { method: 'GET', path: '/v1/liquidations/volume', description: 'Liquidation volume over time' },
+  ],
+});
+
+export const marketStressInfoRouter = createApiInfoRouter({
+  name: 'Market Stress API', slug: 'market-stress', version: '1.0.0',
+  description: 'Crypto market stress indicators, fear/greed analysis, and systemic risk detection.',
+  category: 'Market Analytics',
+  endpoints: [
+    { method: 'GET', path: '/v1/stress', description: 'Overall market stress score' },
+    { method: 'GET', path: '/v1/stress/:asset', description: 'Stress score for specific asset' },
+    { method: 'GET', path: '/v1/stress/scan/top', description: 'Top stressed assets' },
+  ],
+});
+
+export const walletInfoRouter = createApiInfoRouter({
+  name: 'Wallet API', slug: 'wallet', version: '1.0.0',
+  description: 'Ethereum wallet balance, token holdings, and transaction history.',
+  category: 'Wallet Analytics',
+  endpoints: [
+    { method: 'GET', path: '/balance/:address', description: 'Get ETH and token balances' },
+    { method: 'GET', path: '/tokens/:address', description: 'Get ERC-20 token holdings' },
+    { method: 'GET', path: '/transactions/:address', description: 'Get transaction history' },
+    { method: 'GET', path: '/portfolio/:address', description: 'Get full wallet portfolio' },
+  ],
+});
+
+export const stablecoinYieldInfoRouter = createApiInfoRouter({
+  name: 'Stablecoin Yield API', slug: 'stablecoin-yield', version: '1.0.0',
+  description: 'Find the best stablecoin yield opportunities across DeFi protocols.',
+  category: 'DeFi Analytics',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Get best stablecoin yields', params: { token: 'USDC | USDT | DAI', chain: 'Chain filter', minTvl: 'Minimum TVL' } },
+    { method: 'GET', path: '/compare', description: 'Compare yields across stablecoins' },
+    { method: 'GET', path: '/best', description: 'Best yield for a stablecoin', params: { token: 'Stablecoin symbol' } },
+  ],
+});
+
+export const metaStrategyInfoRouter = createApiInfoRouter({
+  name: 'Meta Strategy API', slug: 'meta-strategy', version: '1.0.0',
+  description: 'AI meta-strategy scanner combining signals from multiple data sources.',
+  category: 'AI Trading',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Scan meta strategies', params: { symbols: 'Comma-separated symbols e.g. BTC,ETH' } },
+  ],
+});
+
+export const socialSentimentInfoRouter = createApiInfoRouter({
+  name: 'Social Sentiment API', slug: 'social-sentiment', version: '1.0.0',
+  description: 'Social media sentiment analysis for crypto assets across Twitter, Reddit and more.',
+  category: 'Market Analytics',
+  endpoints: [
+    { method: 'GET', path: '/crypto-sentiment', description: 'Get crypto sentiment scores', params: { symbol: 'Token symbol' } },
+    { method: 'GET', path: '/signals', description: 'Sentiment-based trading signals' },
+    { method: 'GET', path: '/trending', description: 'Trending crypto topics on social media' },
+  ],
+});
+
+export const alphaSignalInfoRouter = createApiInfoRouter({
+  name: 'Alpha Signal API', slug: 'alpha-signal', version: '1.0.0',
+  description: 'On-chain alpha signals and smart money movement detection.',
+  category: 'AI Trading',
+  endpoints: [
+    { method: 'GET', path: '/signal/:symbol', description: 'Get alpha signal for a token' },
+    { method: 'POST', path: '/signal/batch', description: 'Get signals for multiple tokens' },
+  ],
+});
+
+export const actionInfoRouter = createApiInfoRouter({
+  name: 'Action API', slug: 'action', version: '1.0.0',
+  description: 'Execute and track AI agent actions including outreach, research, and automation.',
+  category: 'AI Agents',
+  endpoints: [
+    { method: 'POST', path: '/action', description: 'Execute an agent action' },
+    { method: 'GET', path: '/actions', description: 'List available action types' },
+  ],
+});
+
+export const agentMemoryInfoRouter = createApiInfoRouter({
+  name: 'Agent Memory API', slug: 'agent-memory', version: '1.0.0',
+  description: 'Persistent memory storage and retrieval for AI agents.',
+  category: 'AI Agents',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Store agent memory' },
+    { method: 'GET', path: '/', description: 'Retrieve agent memories', params: { agentId: 'Agent ID', query: 'Semantic search query' } },
+  ],
+});
+
+export const agentWorkflowInfoRouter = createApiInfoRouter({
+  name: 'Agent Workflow API', slug: 'agent-workflow', version: '1.0.0',
+  description: 'Define and execute multi-step AI agent workflows.',
+  category: 'AI Agents',
+  endpoints: [
+    { method: 'POST', path: '/workflow/run', description: 'Execute a workflow' },
+    { method: 'GET', path: '/workflow/templates', description: 'List available workflow templates' },
+  ],
+});
+
+export const autopilotInfoRouter = createApiInfoRouter({
+  name: 'Autopilot API', slug: 'autopilot', version: '1.0.0',
+  description: 'Autonomous AI agent sessions that execute tasks without human intervention.',
+  category: 'AI Agents',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Start an autopilot session' },
+    { method: 'GET', path: '/:id', description: 'Get session status' },
+    { method: 'GET', path: '/:id/history', description: 'Get session history' },
+    { method: 'POST', path: '/:id/update', description: 'Update session parameters' },
+  ],
+});
+
+export const browserTaskInfoRouter = createApiInfoRouter({
+  name: 'Browser Task API', slug: 'browser-task', version: '1.0.0',
+  description: 'Execute browser automation tasks and web scraping via AI agents.',
+  category: 'AI Agents',
+  endpoints: [
+    { method: 'POST', path: '/browser-task', description: 'Run a browser task' },
+    { method: 'POST', path: '/run-workflow', description: 'Execute a browser workflow' },
+    { method: 'GET', path: '/tasks', description: 'List running tasks' },
+    { method: 'GET', path: '/workflows', description: 'List available workflows' },
+  ],
+});
+
+export const companyResearchInfoRouter = createApiInfoRouter({
+  name: 'Company Research API', slug: 'company-research', version: '1.0.0',
+  description: 'AI-powered company research, competitive analysis, and business intelligence.',
+  category: 'AI Research',
+  endpoints: [
+    { method: 'POST', path: '/research/company', description: 'Research a company' },
+  ],
+});
+
+export const cryptoNewsInfoRouter = createApiInfoRouter({
+  name: 'Crypto News Impact API', slug: 'crypto-news-impact', version: '1.0.0',
+  description: 'Analyze the market impact of crypto news articles using AI.',
+  category: 'AI Research',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Analyze news impact on an asset' },
+  ],
+});
+
+export const derivativesIntelligenceInfoRouter = createApiInfoRouter({
+  name: 'Derivatives Intelligence API', slug: 'derivatives-intelligence', version: '1.0.0',
+  description: 'AI-powered derivatives market intelligence and signal generation.',
+  category: 'AI Trading',
+  endpoints: [
+    { method: 'GET', path: '/intelligence/:asset', description: 'Get derivatives intelligence for asset' },
+    { method: 'GET', path: '/intelligence/:asset/signal', description: 'AI signal from derivatives data' },
+  ],
+});
+
+export const devUtilitiesInfoRouter = createApiInfoRouter({
+  name: 'Dev Utilities API', slug: 'dev-utilities', version: '1.0.0',
+  description: '25+ developer utility endpoints for validation, enrichment, text analysis and more.',
+  category: 'Developer Tools',
+  endpoints: [
+    { method: 'POST', path: '/summarize', description: 'Summarize text with AI' },
+    { method: 'POST', path: '/keywords', description: 'Extract keywords from text' },
+    { method: 'POST', path: '/tone-analyze', description: 'Analyze tone of text' },
+    { method: 'POST', path: '/email-extract', description: 'Extract emails from text' },
+    { method: 'POST', path: '/address-validate', description: 'Validate a street address' },
+    { method: 'POST', path: '/domain-intelligence', description: 'Domain intelligence lookup' },
+    { method: 'POST', path: '/prompt-optimize', description: 'Optimize an AI prompt' },
+    { method: 'POST', path: '/readability', description: 'Score text readability' },
+    { method: 'POST', path: '/text-clean', description: 'Clean and normalize text' },
+    { method: 'POST', path: '/cold-outreach', description: 'Generate cold outreach message' },
+    { method: 'POST', path: '/company-enrichment', description: 'Enrich company data' },
+    { method: 'POST', path: '/decision-explain', description: 'Explain a decision with AI' },
+    { method: 'POST', path: '/follow-up-sequence', description: 'Generate follow-up sequence' },
+    { method: 'POST', path: '/job-analyze', description: 'Analyze a job description' },
+    { method: 'POST', path: '/password-strength', description: 'Check password strength' },
+    { method: 'POST', path: '/pricing-intelligence', description: 'Pricing intelligence analysis' },
+    { method: 'POST', path: '/task-cost', description: 'Estimate task cost' },
+    { method: 'POST', path: '/who-to-contact', description: 'Find the right contact at a company' },
+    { method: 'POST', path: '/url-metadata', description: 'Extract metadata from URL' },
+    { method: 'POST', path: '/vat-validate', description: 'Validate a VAT number' },
+    { method: 'POST', path: '/iban-validate', description: 'Validate an IBAN number' },
+    { method: 'POST', path: '/card-validate', description: 'Validate a credit card number' },
+    { method: 'POST', path: '/bic-validate', description: 'Validate a BIC/SWIFT code' },
+    { method: 'POST', path: '/plan', description: 'Generate an execution plan' },
+  ],
+});
+
+export const extractionInfoRouter = createApiInfoRouter({
+  name: 'Extraction API', slug: 'extraction', version: '1.0.0',
+  description: 'AI document extraction for invoices, contracts, resumes, receipts and leads.',
+  category: 'AI Document Processing',
+  endpoints: [
+    { method: 'POST', path: '/extract/invoice', description: 'Extract data from an invoice' },
+    { method: 'POST', path: '/extract/contract', description: 'Extract data from a contract' },
+    { method: 'POST', path: '/extract/resume', description: 'Extract data from a resume' },
+    { method: 'POST', path: '/extract/receipt', description: 'Extract data from a receipt' },
+    { method: 'POST', path: '/extract/lead', description: 'Extract lead data from a document' },
+    { method: 'POST', path: '/extract/custom', description: 'Custom extraction with schema' },
+    { method: 'GET', path: '/schemas', description: 'List available extraction schemas' },
+  ],
+});
+
+export const leadDiscoveryInfoRouter = createApiInfoRouter({
+  name: 'Lead Discovery API', slug: 'lead-discovery', version: '1.0.0',
+  description: 'AI-powered B2B lead discovery and prospecting.',
+  category: 'Sales Intelligence',
+  endpoints: [
+    { method: 'POST', path: '/leads/find', description: 'Find leads matching criteria' },
+  ],
+});
+
+export const marketIntelligenceInfoRouter = createApiInfoRouter({
+  name: 'Market Intelligence API', slug: 'market-intelligence', version: '1.0.0',
+  description: 'Comprehensive market intelligence and analysis for crypto assets.',
+  category: 'Market Analytics',
+  endpoints: [
+    { method: 'GET', path: '/:ticker', description: 'Get market intelligence for a ticker' },
+  ],
+});
+
+export const marketSignalInfoRouter = createApiInfoRouter({
+  name: 'Market Signal API', slug: 'market-signal', version: '1.0.0',
+  description: 'AI market signals combining technical and fundamental analysis.',
+  category: 'AI Trading',
+  endpoints: [
+    { method: 'GET', path: '/:ticker', description: 'Get market signal for a ticker' },
+    { method: 'POST', path: '/batch', description: 'Get signals for multiple tickers' },
+  ],
+});
+
+export const marketTriggerInfoRouter = createApiInfoRouter({
+  name: 'Market Trigger API', slug: 'market-trigger', version: '1.0.0',
+  description: 'Set and monitor market condition triggers for automated responses.',
+  category: 'Crypto Monitoring',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Create a market trigger' },
+  ],
+});
+
+export const marketWebhookInfoRouter = createApiInfoRouter({
+  name: 'Market Webhook API', slug: 'market-webhook', version: '1.0.0',
+  description: 'Webhook management for real-time market event notifications.',
+  category: 'Crypto Monitoring',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Register a webhook' },
+    { method: 'GET', path: '/:id', description: 'Get webhook details' },
+    { method: 'GET', path: '/:id/logs', description: 'Get webhook delivery logs' },
+  ],
+});
+
+export const onchainSignalInfoRouter = createApiInfoRouter({
+  name: 'Onchain Signal API', slug: 'onchain-signal', version: '1.0.0',
+  description: 'On-chain data signals including whale movements, smart money flows, and network activity.',
+  category: 'AI Trading',
+  endpoints: [
+    { method: 'GET', path: '/signals', description: 'Get current on-chain signals' },
+    { method: 'GET', path: '/flows', description: 'Smart money flow data' },
+    { method: 'GET', path: '/recent', description: 'Recent on-chain events' },
+    { method: 'POST', path: '/analyze', description: 'Analyze an address on-chain activity' },
+  ],
+});
+
+export const portfolioRebalanceInfoRouter = createApiInfoRouter({
+  name: 'Portfolio Rebalance API', slug: 'portfolio-rebalance', version: '1.0.0',
+  description: 'AI-powered portfolio rebalancing recommendations and execution planning.',
+  category: 'AI Trading',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Get rebalancing recommendations' },
+  ],
+});
+
+export const strategyExecutionInfoRouter = createApiInfoRouter({
+  name: 'Strategy Execution API', slug: 'strategy-execution', version: '1.0.0',
+  description: 'Execute and backtest trading strategies with AI optimization.',
+  category: 'AI Trading',
+  endpoints: [
+    { method: 'GET', path: '/list', description: 'List available strategies' },
+    { method: 'POST', path: '/execute', description: 'Execute a trading strategy' },
+    { method: 'POST', path: '/backtest', description: 'Backtest a strategy' },
+  ],
+});
+
+export const unifiedDecisionInfoRouter = createApiInfoRouter({
+  name: 'Unified Decision API', slug: 'unified-decision', version: '1.0.0',
+  description: 'AI-powered unified portfolio decision engine combining multiple signals.',
+  category: 'AI Trading',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Get unified portfolio decision' },
+  ],
+});
+
+export const websiteMonitorInfoRouter = createApiInfoRouter({
+  name: 'Website Monitor API', slug: 'website-monitor', version: '1.0.0',
+  description: 'Monitor websites for changes, uptime, and content updates.',
+  category: 'Developer Tools',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Add a website to monitor' },
+    { method: 'GET', path: '/:id', description: 'Get monitor status' },
+    { method: 'GET', path: '/:id/history', description: 'Get monitor history' },
+  ],
+});
+
+export const aiOutputSafetyInfoRouter = createApiInfoRouter({
+  name: 'AI Output Safety API', slug: 'ai-output-safety', version: '1.0.0',
+  description: 'Validate and filter AI-generated content for safety, bias, and policy compliance.',
+  category: 'AI Safety',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Check AI output safety' },
+    { method: 'POST', path: '/batch', description: 'Batch safety check' },
+  ],
+});
+
+export const documentIntelligenceInfoRouter = createApiInfoRouter({
+  name: 'Document Intelligence API', slug: 'document-intelligence', version: '1.0.0',
+  description: 'Extract structured data from PDFs, Word docs, and other documents using AI.',
+  category: 'AI Document Processing',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Extract data from a document (base64)' },
+    { method: 'POST', path: '/batch', description: 'Batch document extraction' },
+    { method: 'GET', path: '/jobs/:jobId', description: 'Get async extraction job status' },
+  ],
+});
+
+export const identityIntelligenceInfoRouter = createApiInfoRouter({
+  name: 'Identity Intelligence API', slug: 'identity-intelligence', version: '1.0.0',
+  description: 'Analyze and score identities for fraud risk, lead quality, and KYC.',
+  category: 'Intelligence',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Analyze an identity' },
+    { method: 'POST', path: '/batch', description: 'Batch identity analysis' },
+  ],
+});
+
+export const imageToContentInfoRouter = createApiInfoRouter({
+  name: 'Image to Content API', slug: 'image-to-content', version: '1.0.0',
+  description: 'Convert images to structured content using AI vision — captions, tags, metadata.',
+  category: 'AI Vision',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Analyze an image (base64)' },
+    { method: 'POST', path: '/batch', description: 'Batch image analysis' },
+  ],
+});
+
+export const leadEnrichmentInfoRouter = createApiInfoRouter({
+  name: 'Lead Enrichment API', slug: 'lead-enrichment', version: '1.0.0',
+  description: 'Enrich leads with company data, tech stack, buying signals, and AI outreach.',
+  category: 'Sales Intelligence',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Enrich a lead by domain, email, or company name' },
+    { method: 'POST', path: '/batch', description: 'Batch lead enrichment' },
+  ],
+});
+
+export const leadQualityInfoRouter = createApiInfoRouter({
+  name: 'Lead Quality API', slug: 'lead-quality', version: '1.0.0',
+  description: 'Score and qualify leads using AI and enrichment signals.',
+  category: 'Sales Intelligence',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Score a lead' },
+    { method: 'POST', path: '/batch', description: 'Batch lead scoring' },
+  ],
+});
+
+export const ipIntelligenceInfoRouter = createApiInfoRouter({
+  name: 'IP Intelligence API', slug: 'ip-intelligence', version: '1.0.0',
+  description: 'IP address lookup with geolocation, ISP, threat scoring, and VPN detection.',
+  category: 'Intelligence',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Lookup an IP address', params: { ip: 'IP address to analyze' } },
+  ],
+});
+
+export const emailValidationInfoRouter = createApiInfoRouter({
+  name: 'Email Validation API', slug: 'email-validation', version: '1.0.0',
+  description: 'Validate email addresses for deliverability, format, and domain reputation.',
+  category: 'Developer Tools',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Validate an email address', params: { email: 'Email address to validate' } },
+  ],
+});
+
+export const phoneValidationInfoRouter = createApiInfoRouter({
+  name: 'Phone Validation API', slug: 'phone-validation', version: '1.0.0',
+  description: 'Validate and format phone numbers with carrier and country detection.',
+  category: 'Developer Tools',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Validate a phone number', params: { phone: 'Phone number', country: 'ISO country code' } },
+  ],
+});
+
+export const searchExtractInfoRouter = createApiInfoRouter({
+  name: 'Search Extract API', slug: 'search-extract', version: '1.0.0',
+  description: 'AI-powered web search and content extraction for research and automation.',
+  category: 'AI Research',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Search and extract web content' },
+  ],
+});
+
+export const tokenTrustInfoRouter = createApiInfoRouter({
+  name: 'Token Trust API', slug: 'token-trust', version: '1.0.0',
+  description: 'Trust scoring for crypto tokens based on on-chain metrics and community signals.',
+  category: 'DeFi Security',
+  endpoints: [
+    { method: 'GET', path: '/', description: 'Get trust score for a token', params: { contract: 'Token contract address', chain: 'Chain name' } },
+  ],
+});
+
+export const trustInfoRouter = createApiInfoRouter({
+  name: 'Trust API', slug: 'trust', version: '1.0.0',
+  description: 'Universal trust scoring for wallets, contracts, and protocols.',
+  category: 'DeFi Security',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Get trust score for any entity' },
+  ],
+});
+
+export const userRiskInfoRouter = createApiInfoRouter({
+  name: 'User Risk API', slug: 'user-risk', version: '1.0.0',
+  description: 'Assess user risk profiles for DeFi platforms, exchanges, and Web3 apps.',
+  category: 'DeFi Security',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Assess user risk profile' },
+  ],
+});
+
+export const walletIntelligenceInfoRouter = createApiInfoRouter({
+  name: 'Wallet Intelligence API', slug: 'wallet-intelligence', version: '1.0.0',
+  description: 'Deep wallet intelligence including behavior analysis, scoring, and classification.',
+  category: 'Wallet Analytics',
+  endpoints: [
+    { method: 'POST', path: '/', description: 'Analyze wallet intelligence' },
+  ],
+});
