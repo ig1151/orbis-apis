@@ -268,14 +268,6 @@ app.use('/funding-rate', fundingExtremesRouter);
 app.use('/funding-rate', fundingSignalRouter);
 
 // ── Gas Optimizer ─────────────────────────────────────────────────────────────
-import gasNowRouter from './routes/gas-optimizer-api/routes/gasNow';
-import gasEstimateRouter from './routes/gas-optimizer-api/routes/gasEstimate';
-import gasCompareRouter from './routes/gas-optimizer-api/routes/gasCompare';
-import gasTimingRouter from './routes/gas-optimizer-api/routes/gasTiming';
-app.use('/gas-optimizer', gasNowRouter);
-app.use('/gas-optimizer', gasEstimateRouter);
-app.use('/gas-optimizer', gasCompareRouter);
-app.use('/gas-optimizer', gasTimingRouter);
 
 // ── Token Screener ────────────────────────────────────────────────────────────
 import tokenScreenRouter from './routes/token-screener-api/routes/screen';
