@@ -5,7 +5,7 @@ import { logger } from '../logger';
 const router = Router();
 
 // GET /v1/market/:id — lookup by slug or condition ID
-router.get('/:id', async (req: Request, res: Response): Promise<void> => {
+router.get('/detail/:id', async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
 
   try {

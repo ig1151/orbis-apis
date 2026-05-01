@@ -40,7 +40,7 @@ export const predictionMarketInfoRouter = createApiInfoRouter({
   endpoints: [
     { method: 'GET', path: '/trending', description: 'Get trending prediction markets' },
     { method: 'GET', path: '/search', description: 'Search prediction markets', params: { q: 'Search query' } },
-    { method: 'GET', path: '/:id', description: 'Get specific market by slug' },
+    { method: 'GET', path: '/detail/:id', description: 'Get specific market by slug' },
     { method: 'GET', path: '/signal', description: 'AI signal for a market', params: { id: 'Market ID' } },
   ],
 });
