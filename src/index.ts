@@ -122,6 +122,14 @@ import { extractRouter } from './routes/document-intelligence-api/routes/extract
 app.use('/document-intelligence', extractRouter);
 
 // ── Email Validation ──────────────────────────────────────────────────────────
+app.use('/email-validation', emailValidationInfoRouter);
+app.use('/phone-validation', phoneValidationInfoRouter);
+app.use('/search-extract', searchExtractInfoRouter);
+app.use('/token-trust', tokenTrustInfoRouter);
+app.use('/trust', trustInfoRouter);
+app.use('/user-risk', userRiskInfoRouter);
+app.use('/wallet-intelligence', walletIntelligenceInfoRouter);
+
 import { validateRouter } from './routes/email-validation-api/routes/validate.route';
 app.use('/email-validation', validateRouter);
 
@@ -291,13 +299,7 @@ app.use('/image-to-content', imageToContentInfoRouter);
 app.use('/lead-enrichment', leadEnrichmentInfoRouter);
 app.use('/lead-quality', leadQualityInfoRouter);
 app.use('/ip-intelligence', ipIntelligenceInfoRouter);
-app.use('/email-validation', emailValidationInfoRouter);
-app.use('/phone-validation', phoneValidationInfoRouter);
-app.use('/search-extract', searchExtractInfoRouter);
-app.use('/token-trust', tokenTrustInfoRouter);
-app.use('/trust', trustInfoRouter);
-app.use('/user-risk', userRiskInfoRouter);
-app.use('/wallet-intelligence', walletIntelligenceInfoRouter);
+
 
 
 app.use("/gas-optimizer/now", gasNowRouter);
