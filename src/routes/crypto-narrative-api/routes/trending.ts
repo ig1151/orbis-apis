@@ -17,9 +17,11 @@ const schema = Joi.object({
 // Known narrative slugs mapped to CoinGecko category IDs
 const NARRATIVE_MAP: Record<string, string> = {
   'ai-tokens': 'artificial-intelligence',
+  'ai-agents': 'ai-agents',
+  'ai-applications': 'ai-applications',
   'rwa': 'real-world-assets-rwa',
-  'depin': 'depin',
   'defi': 'decentralized-finance-defi',
+  'layer-1': 'layer-1',
   'layer-2': 'layer-2',
   'base-ecosystem': 'base-ecosystem',
   'solana-ecosystem': 'solana-ecosystem',
@@ -29,7 +31,9 @@ const NARRATIVE_MAP: Record<string, string> = {
   'liquid-staking': 'liquid-staking-tokens',
   'restaking': 'restaking',
   'btc-ecosystem': 'bitcoin-ecosystem',
-  'zkvm': 'zero-knowledge-zk',
+  'zk': 'zero-knowledge-zk',
+  'defai': 'defai',
+  'rwa-protocol': 'rwa-protocol',
 };
 
 router.get('/', validate(schema), async (req: Request, res: Response): Promise<void> => {
