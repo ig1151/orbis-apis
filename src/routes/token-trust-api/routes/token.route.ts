@@ -4,7 +4,7 @@ import { checkToken } from '../services/token.service';
 import type { CheckRequest, BatchRequest } from '../types/index';
 export const tokenRouter = Router();
 
-tokenRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+tokenRouter.post('/check', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = checkSchema.validate(req.body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map(d => d.message) } }); return; }
@@ -12,7 +12,7 @@ tokenRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
   } catch (err) { next(err); }
 });
 
-tokenRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+tokenRouter.get('/check', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = checkSchema.validate({ contract: req.query.contract, chain: req.query.chain }, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map(d => d.message) } }); return; }
@@ -20,7 +20,7 @@ tokenRouter.get('/', async (req: Request, res: Response, next: NextFunction) => 
   } catch (err) { next(err); }
 });
 
-tokenRouter.post('/batch', async (req: Request, res: Response, next: NextFunction) => {
+tokenRouter.post('/check/batch', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = batchSchema.validate(req.body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map(d => d.message) } }); return; }

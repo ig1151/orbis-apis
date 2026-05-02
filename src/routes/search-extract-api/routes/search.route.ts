@@ -4,7 +4,7 @@ import { searchAndExtract } from '../services/search.service';
 import type { SearchRequest, BatchRequest } from '../types/index';
 export const searchRouter = Router();
 
-searchRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+searchRouter.post('/search', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = searchSchema.validate(req.body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map(d => d.message) } }); return; }
@@ -12,7 +12,7 @@ searchRouter.post('/', async (req: Request, res: Response, next: NextFunction) =
   } catch (err) { next(err); }
 });
 
-searchRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+searchRouter.get('/search', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = searchSchema.validate({ query: req.query.query, intent: req.query.intent, max_results: req.query.max_results ? parseInt(req.query.max_results as string, 10) : undefined }, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map(d => d.message) } }); return; }
@@ -20,7 +20,7 @@ searchRouter.get('/', async (req: Request, res: Response, next: NextFunction) =>
   } catch (err) { next(err); }
 });
 
-searchRouter.post('/batch', async (req: Request, res: Response, next: NextFunction) => {
+searchRouter.post('/search/batch', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = batchSchema.validate(req.body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map(d => d.message) } }); return; }

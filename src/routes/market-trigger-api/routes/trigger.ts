@@ -37,7 +37,7 @@ const schema = Joi.object({
   }).min(1).required()
 });
 
-router.post('/', async (req: Request, res: Response): Promise<void> => {
+router.post('/create', async (req: Request, res: Response): Promise<void> => {
   const { error, value } = schema.validate(req.body);
   if (error) {
     res.status(400).json({ error: 'Invalid request', message: error.details[0].message });

@@ -4,7 +4,7 @@ import { analyzeWallet } from '../services/wallet.service';
 import type { AnalyzeRequest, BatchRequest } from '../types/index';
 export const walletRouter = Router();
 
-walletRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+walletRouter.get('/analyze', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = analyzeSchema.validate({ address: req.query.address, chain: req.query.chain }, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map(d => d.message) } }); return; }
@@ -12,7 +12,7 @@ walletRouter.get('/', async (req: Request, res: Response, next: NextFunction) =>
   } catch (err) { next(err); }
 });
 
-walletRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+walletRouter.post('/analyze', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = analyzeSchema.validate(req.body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map(d => d.message) } }); return; }
@@ -20,7 +20,7 @@ walletRouter.post('/', async (req: Request, res: Response, next: NextFunction) =
   } catch (err) { next(err); }
 });
 
-walletRouter.post('/batch', async (req: Request, res: Response, next: NextFunction) => {
+walletRouter.post('/analyze/batch', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = batchSchema.validate(req.body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map(d => d.message) } }); return; }

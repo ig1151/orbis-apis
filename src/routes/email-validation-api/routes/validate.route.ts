@@ -4,7 +4,7 @@ import { validateEmail } from '../services/validation.service';
 import type { ValidateRequest, BatchRequest } from '../types/index';
 export const validateRouter = Router();
 
-validateRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+validateRouter.post('/validate', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = validateSchema.validate(req.body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map((d) => d.message) } }); return; }
@@ -13,7 +13,7 @@ validateRouter.post('/', async (req: Request, res: Response, next: NextFunction)
   } catch (err) { next(err); }
 });
 
-validateRouter.post('/batch', async (req: Request, res: Response, next: NextFunction) => {
+validateRouter.post('/validate/batch', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = batchSchema.validate(req.body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map((d) => d.message) } }); return; }
@@ -27,7 +27,7 @@ validateRouter.post('/batch', async (req: Request, res: Response, next: NextFunc
   } catch (err) { next(err); }
 });
 
-validateRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+validateRouter.get('/validate', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const email = (req.query.email as string || '').trim();
     if (!email) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'email query parameter is required' } }); return; }

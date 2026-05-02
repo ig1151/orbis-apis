@@ -4,7 +4,7 @@ import { scoreLead } from '../services/leadquality.service';
 import type { ScoreRequest, BatchRequest } from '../types/index';
 export const scoreRouter = Router();
 
-scoreRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+scoreRouter.post('/score', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = scoreSchema.validate(req.body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map((d) => d.message) } }); return; }
@@ -13,7 +13,7 @@ scoreRouter.post('/', async (req: Request, res: Response, next: NextFunction) =>
   } catch (err) { next(err); }
 });
 
-scoreRouter.post('/batch', async (req: Request, res: Response, next: NextFunction) => {
+scoreRouter.post('/score/batch', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = batchSchema.validate(req.body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map((d) => d.message) } }); return; }
