@@ -42,6 +42,7 @@ app.use('/action', actionRouter);
 // ── Agent Memory ──────────────────────────────────────────────────────────────
 import memoryRouter from './routes/agent-memory-api/routes/memory';
 import sessionsRouter from './routes/agent-memory-api/routes/sessions';
+app.use('/agent-memory', agentMemoryInfoRouter);
 app.use('/agent-memory', memoryRouter);
 app.use('/agent-memory', sessionsRouter);
 
@@ -147,6 +148,7 @@ app.use('/image-to-content', imageAnalyzeRouter);
 
 // ── IP Intelligence ───────────────────────────────────────────────────────────
 import { lookupRouter } from './routes/ip-intelligence-api/routes/lookup.route';
+app.use('/ip-intelligence', ipIntelligenceInfoRouter);
 app.use('/ip-intelligence', lookupRouter);
 
 // ── Lead Discovery ────────────────────────────────────────────────────────────
@@ -175,6 +177,7 @@ app.use('/market-trigger', marketTriggerRouter);
 
 // ── Market Webhook ────────────────────────────────────────────────────────────
 import marketWebhookRouter from './routes/market-webhook-api/routes/webhooks';
+app.use('/market-webhook', marketWebhookInfoRouter);
 app.use('/market-webhook', marketWebhookRouter);
 
 // ── Onchain Signal ────────────────────────────────────────────────────────────
@@ -235,6 +238,7 @@ app.use('/wallet-intelligence', walletRouter);
 
 // ── Website Monitor ───────────────────────────────────────────────────────────
 import monitorsRouter from './routes/website-monitor-api/routes/monitors';
+app.use('/website-monitor', websiteMonitorInfoRouter);
 app.use('/website-monitor', monitorsRouter);
 
 // ── Social Sentiment ─────────────────────────────────────────────────────────
@@ -273,7 +277,6 @@ app.use('/meta-strategy', metaStrategyInfoRouter);
 app.use('/social-sentiment', socialSentimentInfoRouter);
 app.use('/alpha-signal', alphaSignalInfoRouter);
 app.use('/action', actionInfoRouter);
-app.use('/agent-memory', agentMemoryInfoRouter);
 app.use('/agent-workflow', agentWorkflowInfoRouter);
 app.use('/autopilot', autopilotInfoRouter);
 app.use('/browser-task', browserTaskInfoRouter);
@@ -286,19 +289,16 @@ app.use('/lead-discovery', leadDiscoveryInfoRouter);
 app.use('/market-intelligence', marketIntelligenceInfoRouter);
 app.use('/market-signal', marketSignalInfoRouter);
 app.use('/market-trigger', marketTriggerInfoRouter);
-app.use('/market-webhook', marketWebhookInfoRouter);
 app.use('/onchain-signal', onchainSignalInfoRouter);
 app.use('/portfolio-rebalance', portfolioRebalanceInfoRouter);
 app.use('/strategy-execution', strategyExecutionInfoRouter);
 app.use('/unified-decision', unifiedDecisionInfoRouter);
-app.use('/website-monitor', websiteMonitorInfoRouter);
 app.use('/ai-output-safety', aiOutputSafetyInfoRouter);
 app.use('/document-intelligence', documentIntelligenceInfoRouter);
 app.use('/identity-intelligence', identityIntelligenceInfoRouter);
 app.use('/image-to-content', imageToContentInfoRouter);
 app.use('/lead-enrichment', leadEnrichmentInfoRouter);
 app.use('/lead-quality', leadQualityInfoRouter);
-app.use('/ip-intelligence', ipIntelligenceInfoRouter);
 
 
 
