@@ -120,15 +120,16 @@ export const cryptoAlertsInfoRouter = createApiInfoRouter({
 });
 
 export const agentSkillsInfoRouter = createApiInfoRouter({
-  name: 'Agent Skills API', slug: 'agent-skills', version: '1.0.0',
-  description: 'Register, discover and match skills for AI agents in a decentralized marketplace.',
+  name: 'Agent Skills API', slug: 'agent-skills', version: '2.0.0',
+  description: 'Skill matching and capability routing for autonomous agents. Register, discover, match, and compose sequences of skills needed to complete complex agent tasks.',
   category: 'AI Agents',
   endpoints: [
-    { method: 'POST', path: '/register', description: 'Register a new agent skill' },
-    { method: 'GET', path: '/discover', description: 'Discover available skills', params: { query: 'Search query', category: 'Skill category' } },
-    { method: 'GET', path: '/:skillId', description: 'Get skill details' },
-    { method: 'POST', path: '/match', description: 'Match skills to a task' },
-    { method: 'GET', path: '/trending', description: 'Get trending skills' },
+    { method: 'POST', path: '/compose', description: 'Given a task, return an ordered sequence of skills needed to complete it with dependencies, duration estimates, and execution order.' },
+    { method: 'POST', path: '/match', description: 'Match the best skills from the registry to a specific agent request.' },
+    { method: 'POST', path: '/register', description: 'Register a new agent skill in the marketplace.' },
+    { method: 'GET', path: '/discover', description: 'Discover available skills by query, category, or tags.', params: { query: 'Search query', category: 'Skill category' } },
+    { method: 'GET', path: '/:skillId', description: 'Get full details for a specific skill.' },
+    { method: 'GET', path: '/trending', description: 'Get trending skills ranked by recent invocation count.' },
   ],
 });
 

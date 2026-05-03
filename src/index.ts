@@ -404,10 +404,12 @@ import agentSkillsDiscoverRouter from './routes/agent-skills-api/routes/discover
 import agentSkillsDetailRouter from './routes/agent-skills-api/routes/skillDetail';
 import agentSkillsMatchRouter from './routes/agent-skills-api/routes/match';
 import agentSkillsTrendingRouter from './routes/agent-skills-api/routes/trending';
+import agentSkillsComposeRouter from './routes/agent-skills-api/routes/compose';
 app.use('/agent-skills/register', agentSkillsRegisterRouter);
 app.use('/agent-skills/discover', agentSkillsDiscoverRouter);
 app.use('/agent-skills/detail', agentSkillsDetailRouter);
 app.use('/agent-skills/match', agentSkillsMatchRouter);
+app.use('/agent-skills/compose', agentSkillsComposeRouter);
 app.use('/agent-skills/trending', agentSkillsTrendingRouter);
 
 // ── DeFi Position Monitor ─────────────────────────────────────────────────────
