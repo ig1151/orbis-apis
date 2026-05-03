@@ -350,14 +350,17 @@ export const autopilotInfoRouter = createApiInfoRouter({
 });
 
 export const browserTaskInfoRouter = createApiInfoRouter({
-  name: 'Browser Task API', slug: 'browser-task', version: '1.0.0',
-  description: 'Execute browser automation tasks and web scraping via AI agents.',
+  name: 'Browser Task API', slug: 'browser-task', version: '2.0.0',
+  description: 'Execute browser automation tasks, web scraping, structured extraction, and page capture for autonomous AI agents. Run tasks, workflows, extract structured data, and capture page content from any URL.',
   category: 'AI Agents',
   endpoints: [
-    { method: 'POST', path: '/browser-task', description: 'Run a browser task' },
-    { method: 'POST', path: '/run-workflow', description: 'Execute a browser workflow' },
-    { method: 'GET', path: '/tasks', description: 'List running tasks' },
-    { method: 'GET', path: '/workflows', description: 'List available workflows' },
+    { method: 'POST', path: '/run', description: 'Run a browser task by goal and task type. Supports search_and_extract, visit_and_summarize, extract_table.' },
+    { method: 'POST', path: '/workflow/run', description: 'Execute a named browser workflow with structured input.' },
+    { method: 'POST', path: '/extract', description: 'Fetch a URL and extract structured data using AI, with optional table extraction.' },
+    { method: 'POST', path: '/screenshot', description: 'Capture and summarize a web page by URL. Returns title, description, text preview, and optional AI summary.' },
+    { method: 'GET', path: '/tasks', description: 'List recent tasks with status, type, and latency.' },
+    { method: 'GET', path: '/:task_id', description: 'Retrieve full result and trace for a specific task.' },
+    { method: 'GET', path: '/workflows', description: 'List available named workflows with input schemas.' },
   ],
 });
 

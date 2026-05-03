@@ -63,6 +63,7 @@ app.use('/autopilot', autopilotRouter);
 
 // ── Browser Task ──────────────────────────────────────────────────────────────
 import taskRouter from './routes/browser-task-api/routes/task';
+app.use('/browser-task', browserTaskInfoRouter);
 app.use('/browser-task', taskRouter);
 
 // ── Company Research ──────────────────────────────────────────────────────────
@@ -285,7 +286,6 @@ app.use("/action", actionTaskTypesRouter);
 app.use('/agent-workflow', agentWorkflowInfoRouter);
 app.use('/agent-workflow', workflowRouter);
 app.use('/autopilot', autopilotInfoRouter);
-app.use('/browser-task', browserTaskInfoRouter);
 app.use('/company-research', companyResearchInfoRouter);
 app.use('/crypto-news-impact', cryptoNewsInfoRouter);
 app.use('/derivatives-intelligence', derivativesIntelligenceInfoRouter);
