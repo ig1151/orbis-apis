@@ -175,13 +175,13 @@ Return scores as decimals between 0.0 and 1.0 (NOT percentages, NOT 0-100). Exam
         return { ...ai, price_usd: price.price_usd };
       })
     );
-    const ranked = scores
-      .filter((r): r is PromiseFulfilledResult<any> => r.status === 'fulfilled')
-      .map(r => r.value)
-      .filter(s => s.opportunity_score >= value.min_score)
+    const allResults = scores.map((r, i) => r.status === 'fulfilled' ? r.value : { symbol: symbols[i], error: (r as PromiseRejectedResult).reason?.message || 'failed', opportunity_score: -1 });
+    console.log('[rank-opportunities] raw results:', JSON.stringify(allResults.map(r => ({ symbol: r.symbol, score: r.opportunity_score, error: r.error }))));
+    const ranked = allResults
+      .filter(s => !s.error && s.opportunity_score >= value.min_score)
       .sort((a, b) => b.opportunity_score - a.opportunity_score)
       .slice(0, value.top_n);
-    return res.json({ top: ranked, count: ranked.length, universe: value.universe, scanned: symbols.length, timestamp: new Date().toISOString() });
+    return res.json({ top: ranked, count: ranked.length, universe: value.universe, scanned: symbols.length, timestamp: new Date().toISOString(), debug_all: allResults.map(r => ({ symbol: r.symbol, score: r.opportunity_score, error: r.error || null })) });
   } catch (err: any) {
     return res.status(500).json({ error: 'ranking_failed', message: err.message });
   }
