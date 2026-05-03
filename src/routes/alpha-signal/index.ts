@@ -64,6 +64,22 @@ async function callAI(prompt: string): Promise<any> {
   return JSON.parse(raw.replace(/```json|```/g, '').trim());
 }
 
+// ── helpers ───────────────────────────────────────────────────────────────
+
+function meta(startMs: number, cost: number) {
+  return { latency_ms: Date.now() - startMs, estimated_cost: cost };
+}
+
+function executionHint(action: string, confidence: number, price: number) {
+  const size = action === 'buy' ? Math.min(0.05 + confidence * 0.2, 0.25) : 0;
+  return {
+    position_size: parseFloat(size.toFixed(3)),
+    entry_type: confidence > 0.85 ? 'market' : 'limit',
+    risk_level: confidence > 0.8 ? 'medium' : confidence > 0.6 ? 'low' : 'minimal',
+    suggested_entry: price,
+  };
+}
+
 // POST /scan-signals
 router.post('/scan-signals', async (req: Request, res: Response) => {
   const schema = Joi.object({
@@ -76,6 +92,7 @@ router.post('/scan-signals', async (req: Request, res: Response) => {
   if (error) return res.status(400).json({ error: error.details[0].message });
   const { symbols, timeframe, min_confidence, signal_types } = value;
   try {
+    const start = Date.now();
     const results = await Promise.allSettled(
       symbols.map(async (symbol: string) => {
         const price = await fetchPrice(symbol);
@@ -92,7 +109,8 @@ Return: {"symbol":"${symbol}","signal_type":"breakout|momentum|reversal|accumula
     const signals = results
       .map((r, i) => r.status === 'fulfilled' ? r.value : { symbol: symbols[i], error: 'fetch_failed' })
       .filter((s: any) => !s.error && s.confidence >= min_confidence);
-    return res.json({ signals, count: signals.length, timeframe, scanned: symbols.length, timestamp: new Date().toISOString(), next_poll_ms: pollMs[timeframe] ?? 300000 });
+    const enriched = signals.map((s: any) => s.error ? s : { ...s, execution: executionHint(s.action, s.confidence, s.price_usd) });
+    return res.json({ signals: enriched, count: enriched.length, timeframe, scanned: symbols.length, timestamp: new Date().toISOString(), next_poll_ms: pollMs[timeframe] ?? 300000, metadata: meta(start, 0.002) });
   } catch (err: any) {
     return res.status(500).json({ error: 'scan_failed', message: err.message });
   }
@@ -106,6 +124,7 @@ router.post('/score-asset', async (req: Request, res: Response) => {
   });
   const { error, value } = schema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
+  const start = Date.now();
   try {
     const price = await fetchPrice(value.symbol);
     const news = value.include_news ? await fetchNews(value.symbol) : null;
@@ -114,7 +133,7 @@ PRICE: $${price.price_usd} | 1h: ${price.change_1h?.toFixed(2) ?? 'N/A'}% | 24h:
 Volume: $${(price.volume_24h / 1e9).toFixed(2)}B | ATH Change: ${price.ath_change?.toFixed(2)}%${news ? ` | News: ${news.answer}` : ''}
 Return ALL scores as decimals between 0.0 and 1.0 (NOT percentages, NOT 0-100). Example: 0.72 not 72. Return: {"symbol":"${value.symbol}","composite_score":0.0,"trend_score":0.0,"momentum_score":0.0,"volume_score":0.0,"sentiment_score":0.0,"trend":"bullish|bearish|neutral","volatility":0.0,"regime":"trending|ranging|breakout|breakdown|accumulation|distribution","bias":"long|short|neutral","strength":"strong|moderate|weak","risk_rating":"low|medium|high|extreme"}`;
     const ai = await callAI(prompt);
-    return res.json({ ...ai, price_usd: price.price_usd, timestamp: new Date().toISOString() });
+    return res.json({ ...ai, price_usd: price.price_usd, execution: executionHint(ai.bias === 'long' ? 'buy' : ai.bias === 'short' ? 'sell' : 'hold', ai.composite_score, price.price_usd), timestamp: new Date().toISOString(), metadata: meta(start, 0.001) });
   } catch (err: any) {
     return res.status(500).json({ error: 'score_failed', message: err.message });
   }
@@ -128,6 +147,7 @@ router.post('/detect-event', async (req: Request, res: Response) => {
   });
   const { error, value } = schema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
+  const start = Date.now();
   try {
     const price = await fetchPrice(value.symbol);
     const news = value.include_news ? await fetchNews(value.symbol) : null;
@@ -136,7 +156,7 @@ PRICE: $${price.price_usd} | 1h: ${price.change_1h?.toFixed(2) ?? 'N/A'}% | 24h:
 Volume: $${(price.volume_24h / 1e9).toFixed(2)}B | High: $${price.high_24h} | Low: $${price.low_24h}${news ? ` | News: ${news.answer} | Headlines: ${news.headlines}` : ''}
 Return: {"symbol":"${value.symbol}","event_detected":true,"event_type":"volume_spike|price_breakout|flash_crash|accumulation|whale_move|sentiment_shift|liquidation_cascade|none","impact_score":0.0,"direction":"bullish|bearish|neutral","urgency":"low|medium|high|critical","confidence":0.0,"price_level":0,"description":"one sentence","chain_to":["score-asset","scan-signals","rank-opportunities"]}`;
     const ai = await callAI(prompt);
-    return res.json({ ...ai, price_usd: price.price_usd, timestamp: new Date().toISOString() });
+    return res.json({ ...ai, price_usd: price.price_usd, timestamp: new Date().toISOString(), metadata: meta(start, 0.0015) });
   } catch (err: any) {
     return res.status(500).json({ error: 'event_detection_failed', message: err.message });
   }
@@ -192,7 +212,7 @@ All scores must be decimals 0.0-1.0 (e.g. 0.72, not 72).
       .filter(s => s.opportunity_score >= value.min_score)
       .sort((a, b) => b.opportunity_score - a.opportunity_score)
       .slice(0, value.top_n);
-    return res.json({ top: ranked, count: ranked.length, universe: value.universe, scanned: symbols.length, timestamp: new Date().toISOString() });
+    return res.json({ top: ranked, count: ranked.length, universe: value.universe, scanned: symbols.length, timestamp: new Date().toISOString(), metadata: { estimated_cost: 0.003 } });
   } catch (err: any) {
     return res.status(500).json({ error: 'ranking_failed', message: err.message });
   }
@@ -237,8 +257,52 @@ router.post('/filter-signals', async (req: Request, res: Response) => {
       min_urgency: value.min_urgency,
       trend: value.trend || null
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    metadata: { estimated_cost: 0.0012 }
   });
+});
+
+
+// POST /explain
+router.post('/explain', async (req: Request, res: Response) => {
+  const schema = Joi.object({
+    symbol: Joi.string().uppercase().valid(...SUPPORTED).required(),
+    signal: Joi.object().required()
+  });
+  const { error, value } = schema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+
+  const start = Date.now();
+  try {
+    const price = await fetchPrice(value.symbol);
+    const prompt = `You are a trading signal explainer. Given this signal and price data, return a deep explanation. Return ONLY valid JSON, no markdown.
+
+SYMBOL: ${value.symbol}
+SIGNAL: ${JSON.stringify(value.signal)}
+PRICE: $${price.price_usd} | 24h: ${price.change_24h?.toFixed(2)}% | 7d: ${price.change_7d?.toFixed(2)}% | Vol: $${(price.volume_24h / 1e9).toFixed(2)}B
+
+Return ALL scores as decimals 0.0-1.0:
+{
+  "symbol": "${value.symbol}",
+  "drivers": ["driver1", "driver2", "driver3"],
+  "confidence_breakdown": {
+    "price_action": 0.0,
+    "volume_analysis": 0.0,
+    "trend_alignment": 0.0,
+    "market_context": 0.0
+  },
+  "risk_factors": ["risk1", "risk2"],
+  "invalidation_level": 0.0,
+  "supporting_timeframes": ["1h", "4h"],
+  "contra_indicators": ["indicator1"],
+  "recommendation": "one sentence action"
+}`;
+
+    const ai = await callAI(prompt);
+    return res.json({ ...ai, price_usd: price.price_usd, timestamp: new Date().toISOString(), metadata: meta(start, 0.002) });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'explain_failed', message: err.message });
+  }
 });
 
 // Alias routes — short names for agent loop ergonomics
