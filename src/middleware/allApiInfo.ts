@@ -680,3 +680,12 @@ export const txSimulatorInfoRouter = createApiInfoRouter({
     { method: 'GET', path: '/simulate', description: 'Simulate a transaction', params: { from: 'Sender address', to: 'Recipient address', value: 'ETH amount (default 0)', gasLimit: 'Gas limit (default 21000)' } },
   ],
 });
+
+export const contractAnalyzerInfoRouter = createApiInfoRouter({
+  name: 'Contract Analyzer API', slug: 'contract-analyzer', version: '1.0.0',
+  description: 'AI-powered smart contract risk analysis. Returns risk score, flags, contract type, and recommendations using Claude.',
+  category: 'Crypto Intelligence',
+  endpoints: [
+    { method: 'GET', path: '/analyze', description: 'Analyze a smart contract for risks', params: { address: 'Ethereum contract address (0x...)' } },
+  ],
+});
