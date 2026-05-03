@@ -325,4 +325,37 @@ Return ALL scores as decimals 0.0-1.0:
   }
 });
 
+
+// POST /should-act — ultra-lightweight alias for /should-execute (no AI, pure logic)
+router.post('/should-act', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { action, context, constraints } = req.body;
+  if (!action) return res.status(400).json({ error: 'action is required' });
+
+  const confidence = context?.confidence ?? 0.5;
+  const minConfidence = constraints?.min_confidence ?? 0.6;
+  const riskScore = context?.risk_score ?? (1 - confidence);
+  const maxRisk = constraints?.max_risk ?? 0.7;
+  const execute = confidence >= minConfidence && riskScore <= maxRisk;
+
+  return res.json({
+    execute,
+    confidence: parseFloat(confidence.toFixed(3)),
+    risk_score: parseFloat(riskScore.toFixed(3)),
+    reason: execute
+      ? 'Confidence and risk thresholds met'
+      : confidence < minConfidence
+        ? `Confidence ${confidence} below minimum ${minConfidence}`
+        : `Risk score ${riskScore} exceeds maximum ${maxRisk}`,
+    blocking_factors: [
+      ...( confidence < minConfidence ? [`confidence_too_low: ${confidence} < ${minConfidence}`] : []),
+      ...( riskScore > maxRisk ? [`risk_too_high: ${riskScore} > ${maxRisk}`] : [])
+    ],
+    suggested_delay_ms: execute ? 0 : 5000,
+    safe_to_retry: !execute && confidence >= minConfidence * 0.8,
+    timestamp: new Date().toISOString(),
+    metadata: meta(start, 0.001)
+  });
+});
+
 export default router;
