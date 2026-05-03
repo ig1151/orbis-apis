@@ -404,11 +404,32 @@ export const browserTaskInfoRouter = createApiInfoRouter({
 });
 
 export const companyResearchInfoRouter = createApiInfoRouter({
-  name: 'Company Research API', slug: 'company-research', version: '1.0.0',
-  description: 'AI-powered company research, competitive analysis, and business intelligence.',
-  category: 'AI Research',
+  name: 'Agent Company Intelligence & Due Diligence API', slug: 'company-research', version: '2.0.0',
+  description: 'Full-stack company intelligence engine for autonomous agents. Profile, score, risk-detect, find competitors, compare, monitor signals, summarize filings, and rank targets — designed for continuous due diligence loops with 5-8 calls per cycle.',
+  category: 'ai-ml',
+  loop_type: 'profile_score_risk_compete_monitor_rank',
+  monetization_grade: 'A',
+  primary_use_case: 'Agent due diligence and company intelligence loops',
+  pricing: {
+    '/profile-company': 0.003,
+    '/score-company': 0.0025,
+    '/detect-risks': 0.0035,
+    '/find-competitors': 0.003,
+    '/compare-companies': 0.004,
+    '/monitor-signals': 0.002,
+    '/summarize-filings': 0.0045,
+    '/rank-targets': 0.005
+  },
   endpoints: [
-    { method: 'POST', path: '/research/company', description: 'Research a company' },
+    { method: 'POST', path: '/profile-company', description: 'Full company profile: summary, industry, key people, products, tech stack, competitors, strengths, weaknesses.' },
+    { method: 'POST', path: '/score-company', description: 'Score a company on growth, stability, innovation, market position, financial health. Returns grade and investment signal.' },
+    { method: 'POST', path: '/detect-risks', description: 'Detect financial, legal, reputational, operational, market, and regulatory risks. Returns risk level and severity scores.' },
+    { method: 'POST', path: '/find-competitors', description: 'Find top competitors with similarity scores, threat levels, and market overlap analysis.' },
+    { method: 'POST', path: '/compare-companies', description: 'Compare 2-5 companies across criteria. Returns winner, per-company scores, and recommendations.' },
+    { method: 'POST', path: '/monitor-signals', description: 'Detect recent signals: hiring, funding, partnerships, product launches, leadership changes. Returns alert level and next_check_ms.' },
+    { method: 'POST', path: '/summarize-filings', description: 'Summarize 10-K, 10-Q, 8-K, S-1, or earnings filings with key metrics, highlights, and agent summary.' },
+    { method: 'POST', path: '/rank-targets', description: 'Rank 2-10 companies by investment, acquisition, partnership, competitive threat, or hiring objective.' },
+    { method: 'POST', path: '/research/company', description: 'Legacy: full company research report' },
   ],
 });
 

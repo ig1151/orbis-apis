@@ -132,6 +132,7 @@ app.use('/browser-task', taskRouter);
 
 // ── Company Research ──────────────────────────────────────────────────────────
 import researchRouter from './routes/company-research-api/routes/research';
+app.use('/company-research', companyResearchInfoRouter);
 app.use('/company-research', researchRouter);
 
 // ── Crypto News Impact ────────────────────────────────────────────────────────
@@ -348,7 +349,6 @@ app.use("/action", actionRouter);
 app.use("/action", actionTaskTypesRouter);
 app.use('/agent-workflow', agentWorkflowInfoRouter);
 app.use('/agent-workflow', workflowRouter);
-app.use('/company-research', companyResearchInfoRouter);
 app.use('/crypto-news-impact', cryptoNewsInfoRouter);
 app.use('/derivatives-intelligence', derivativesIntelligenceInfoRouter);
 app.use('/dev-utilities', devUtilitiesInfoRouter);
