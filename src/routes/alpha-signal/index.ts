@@ -108,7 +108,7 @@ Return: {"symbol":"${symbol}","signal_type":"breakout|momentum|reversal|accumula
     const pollMs: Record<string, number> = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000, '1d': 86400000 };
     const signals = results
       .map((r, i) => r.status === 'fulfilled' ? r.value : { symbol: symbols[i], error: 'fetch_failed' })
-      .filter((s: any) => !s.error && s.confidence >= min_confidence);
+      .filter((s: any) => !s.error && (s.confidence ?? 0) >= min_confidence);
     const enriched = signals.map((s: any) => s.error ? s : { ...s, execution: executionHint(s.action, s.confidence, s.price_usd) });
     return res.json({ signals: enriched, count: enriched.length, timeframe, scanned: symbols.length, timestamp: new Date().toISOString(), next_poll_ms: pollMs[timeframe] ?? 300000, metadata: meta(start, 0.002) });
   } catch (err: any) {
