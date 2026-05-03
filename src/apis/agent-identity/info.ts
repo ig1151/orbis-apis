@@ -4,6 +4,7 @@ export const agentIdentityInfo = createApiInfoRouter({
   name: "Agent Identity API",
   slug: "agent-identity",
   version: "2.0.0",
+  category: "AI Agents",
   description:
     "Identity, verification, reputation, and attestation layer for autonomous AI agents. " +
     "Create, verify, and look up persistent on-chain identities for AI agents, including " +
