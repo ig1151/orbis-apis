@@ -727,3 +727,12 @@ export const textExtractorInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/entities', description: 'Extract named entities from text', params: { text: 'Input text' } },
   ],
 });
+
+export const decisionScorerInfoRouter = createApiInfoRouter({
+  name: 'Decision Scorer API', slug: 'decision-scorer', version: '1.0.0',
+  description: 'AI-powered decision and risk scoring. Returns a 0-100 score, pros, cons, risks, and recommendation for any decision.',
+  category: 'AI Agents',
+  endpoints: [
+    { method: 'POST', path: '/score', description: 'Score a decision and return risk assessment', params: { decision: 'The decision to evaluate', context: 'Optional context', goal: 'Optional goal' } },
+  ],
+});
