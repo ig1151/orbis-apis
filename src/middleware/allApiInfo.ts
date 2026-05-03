@@ -650,3 +650,15 @@ export const walletIntelligenceInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/', description: 'Analyze wallet intelligence' },
   ],
 });
+
+export const tokenPriceFeedInfoRouter = createApiInfoRouter({
+  name: 'Token Price Feed API', slug: 'token-price-feed', version: '1.0.0',
+  description: 'Real-time crypto token prices, multi-token lookups, chain leaderboards, and trending tokens via CoinGecko.',
+  category: 'Crypto Data',
+  endpoints: [
+    { method: 'GET', path: '/price/:coinId', description: 'Get price and market data for a single token', params: { coinId: 'CoinGecko ID e.g. bitcoin, ethereum, solana' } },
+    { method: 'GET', path: '/multi', description: 'Get prices for multiple tokens', params: { ids: 'Comma-separated CoinGecko IDs (max 25)' } },
+    { method: 'GET', path: '/chain/:chain', description: 'Top tokens by market cap on a chain', params: { chain: 'ethereum | solana | base | polygon | arbitrum | avalanche | bsc', limit: 'Number of results (max 50)' } },
+    { method: 'GET', path: '/trending', description: 'Currently trending tokens on CoinGecko' },
+  ],
+});
