@@ -617,6 +617,7 @@ app.get("/contract-analyzer/info", (_req, res) => {
       { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/monitor-contract", description: "Monitor for activity spikes, ownership changes, upgrades. Returns alert level." },
       { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/summarize-findings", description: "Agent-ready audit summary with verdict: approve|investigate|reject." },
       { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/rank-contracts", description: "Rank 2-10 contracts by safety, trust, activity, or defi_use." },
+      { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/execution-gate", description: "Cross-API safety gate: returns execute bool, risk score, blocking flags, chain_context, and recommended_next_api for Autopilot." },
     ]
   });
 });

@@ -191,6 +191,62 @@ ${summary}
   }
 });
 
+
+// POST /execution-gate — cross-API safety gate between Alpha Signal and execution
+router.post('/execution-gate', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { error, value } = Joi.object({
+    address: ADDRESS_SCHEMA,
+    intended_action: Joi.string().valid('buy', 'sell', 'stake', 'bridge', 'interact').required(),
+    source: Joi.string().default('alpha_signal'),
+    confidence: Joi.number().min(0).max(1).default(0.5),
+    asset: Joi.string().optional(),
+    signal_id: Joi.string().optional()
+  }).validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+
+  try {
+    const c = await fetchContractData(value.address);
+    const ai = await callAI(`You are a smart contract execution gate. Given this contract and intended action, decide whether an agent should proceed. Return ONLY valid JSON, no markdown.
+Contract: ${c.contractName} | Address: ${c.address} | Verified: ${c.isVerified} | Proxy: ${c.isProxy} | Recent TXs: ${c.recentTxs}
+Intended Action: ${value.intended_action} | Source: ${value.source} | Signal Confidence: ${value.confidence}
+Source Code: ${c.sourceCode}
+
+Return ALL scores as decimals 0.0-1.0:
+{
+  "execute": true,
+  "contract_risk_score": 0.0,
+  "risk_level": "low|medium|high|critical",
+  "blocking_flags": [],
+  "warnings": [],
+  "recommended_action": "proceed|delay|investigate|block",
+  "confidence": 0.0,
+  "reasoning": "one sentence"
+}`);
+
+    return res.json({
+      ...ai,
+      address: value.address,
+      contract_name: c.contractName,
+      verified: c.isVerified,
+      intended_action: value.intended_action,
+      recommended_next_api: ai.execute ? 'autopilot' : null,
+      recommended_next_endpoint: ai.execute ? '/should-execute' : null,
+      chain_context: {
+        source_api: value.source,
+        signal_id: value.signal_id || null,
+        intended_action: value.intended_action,
+        asset: value.asset || c.contractName,
+        signal_confidence: value.confidence
+      },
+      timestamp: new Date().toISOString(),
+      metadata: meta(start, 0.0045)
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'execution_gate_failed', message: err.message });
+  }
+});
+
 // Legacy GET /analyze
 router.get('/analyze', async (req: Request, res: Response) => {
   const { error, value } = Joi.object({ address: ADDRESS_SCHEMA }).validate(req.query);

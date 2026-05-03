@@ -790,6 +790,7 @@ export const contractAnalyzerInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/monitor-contract', description: 'Monitor for activity spikes, ownership changes, upgrades, pause events. Returns alert level and next_check_ms.' },
     { method: 'POST', path: '/summarize-findings', description: 'Agent-ready audit summary: executive summary, key findings, recommended actions, agent verdict.' },
     { method: 'POST', path: '/rank-contracts', description: 'Rank 2-10 contracts by safety, trust, activity, or defi_use objective.' },
+    { method: 'POST', path: '/execution-gate', description: 'Cross-API safety gate: given contract + intended action, returns execute bool, risk score, blocking flags, and recommended_next_api/endpoint for chaining to Autopilot.' },
     { method: 'GET', path: '/analyze', description: 'Legacy: full contract analysis by address' },
   ],
 });
