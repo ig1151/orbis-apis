@@ -283,14 +283,15 @@ export const socialSentimentInfoRouter = createApiInfoRouter({
 });
 
 export const alphaSignalInfoRouter = createApiInfoRouter({
-  name: 'Alpha Signal API', slug: 'alpha-signal', version: '2.0.0',
-  description: 'Real-time trading signal engine for autonomous agents. Structured machine-readable outputs for continuous polling loops, decision engines, and execution pipelines. Scan multiple assets, score individual positions, detect market events, and rank opportunities — designed for 3-5 calls per agent cycle.',
+  name: 'Agent Trading Signal & Opportunity Detection API', slug: 'alpha-signal', version: '2.0.0',
+  description: 'Real-time alpha signal engine for autonomous agents. Structured machine-readable outputs built for continuous polling loops, decision engines, and execution pipelines. Designed for 3-5 calls per agent cycle: scan → filter → score → rank → act.',
   category: 'AI Trading',
   endpoints: [
-    { method: 'POST', path: '/scan-signals', description: 'Core polling loop — scan up to 10 assets for live signals. Returns action, confidence, entry zone, stop loss, take profit per asset. Call every 1-5 minutes.' },
-    { method: 'POST', path: '/score-asset', description: 'Composite score for a single asset: trend, momentum, volume, sentiment scores plus regime and bias classification.' },
-    { method: 'POST', path: '/detect-event', description: 'Detect significant market events: volume spikes, breakouts, flash crashes, whale moves. Returns impact score, direction, and chain_to hints.' },
-    { method: 'POST', path: '/rank-opportunities', description: 'Rank assets by opportunity score across crypto, defi, l1, l2, or meme universes. Returns top N with risk/reward ratios.' },
+    { method: 'POST', path: '/scan-signals', description: 'Core polling loop — scan up to 10 assets for live signals. Returns action, confidence, entry zone, stop loss, take profit per asset. Call every 1-5 minutes. Alias: /scan' },
+    { method: 'POST', path: '/filter-signals', description: 'Filter a signal array by confidence, type, action, urgency, and trend. Call after scan to refine before scoring. High call volume driver.' },
+    { method: 'POST', path: '/score-asset', description: 'Composite score for a single asset: trend, momentum, volume, sentiment scores plus regime and bias classification. Alias: /score' },
+    { method: 'POST', path: '/detect-event', description: 'Detect significant market events: volume spikes, breakouts, flash crashes, whale moves. Returns impact score, direction, and chain_to hints. Alias: /trigger-event' },
+    { method: 'POST', path: '/rank-opportunities', description: 'Rank assets by opportunity score across crypto, defi, l1, l2, or meme universes. Returns top N with risk/reward ratios. Alias: /rank' },
     { method: 'GET', path: '/signal/:symbol', description: 'Legacy: single asset signal for ETH, BNB, SOL' },
     { method: 'GET', path: '/signal/batch', description: 'Legacy: batch signals for ETH, BNB, SOL' },
   ],
