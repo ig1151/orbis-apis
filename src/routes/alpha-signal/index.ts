@@ -148,7 +148,7 @@ router.post('/rank-opportunities', async (req: Request, res: Response) => {
     universe: Joi.array().items(Joi.string().valid('crypto', 'defi', 'l1', 'l2', 'meme', 'custom')).default(['crypto']),
     custom_symbols: Joi.array().items(Joi.string().uppercase().valid(...SUPPORTED)).max(10).default([]),
     top_n: Joi.number().integer().min(1).max(10).default(5),
-    min_score: Joi.number().min(0).max(1).default(0.5)
+    min_score: Joi.number().min(0).max(1).default(0.3)
   });
   const { error, value } = schema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
