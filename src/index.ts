@@ -133,6 +133,41 @@ app.use('/browser-task', taskRouter);
 // ── Company Research ──────────────────────────────────────────────────────────
 import researchRouter from './routes/company-research-api/routes/research';
 app.use('/company-research', companyResearchInfoRouter);
+app.get('/company-research/info', (_req, res) => {
+  res.json({
+    name: 'Agent Company Intelligence & Due Diligence API',
+    version: '2.0.0',
+    description: 'Full-stack company intelligence engine for autonomous agents. Profile, score, risk-detect, find competitors, compare, monitor signals, summarize filings, and rank targets — designed for continuous due diligence loops with 5-8 calls per cycle.',
+    category: 'ai-ml',
+    loop_type: 'profile_score_risk_compete_monitor_rank',
+    monetization_grade: 'A',
+    primary_use_case: 'Agent due diligence and company intelligence loops',
+    baseUrl: 'https://orbis-apis.onrender.com/company-research',
+    website: 'https://orbis-apis.onrender.com',
+    docs: 'https://orbis-apis.onrender.com/company-research/docs',
+    openapi: 'https://orbis-apis.onrender.com/company-research/openapi.json',
+    pricing: {
+      '/profile-company': 0.003,
+      '/score-company': 0.0025,
+      '/detect-risks': 0.0035,
+      '/find-competitors': 0.003,
+      '/compare-companies': 0.004,
+      '/monitor-signals': 0.002,
+      '/summarize-filings': 0.0045,
+      '/rank-targets': 0.005
+    },
+    endpoints: [
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/company-research/profile-company', description: 'Full company profile: summary, industry, key people, products, tech stack, competitors.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/company-research/score-company', description: 'Score on growth, stability, innovation, market position. Returns grade and investment signal.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/company-research/detect-risks', description: 'Detect financial, legal, reputational, operational risks with severity scores.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/company-research/find-competitors', description: 'Find competitors with similarity scores, threat levels, market overlap.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/company-research/compare-companies', description: 'Compare 2-5 companies across criteria. Returns winner and per-company scores.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/company-research/monitor-signals', description: 'Detect hiring, funding, partnership, product, leadership signals. Returns alert level.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/company-research/summarize-filings', description: 'Summarize 10-K, 10-Q, 8-K, S-1, earnings with key metrics and agent summary.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/company-research/rank-targets', description: 'Rank companies by investment, acquisition, partnership, or competitive threat objective.' },
+    ]
+  });
+});
 app.use('/company-research', researchRouter);
 
 // ── Crypto News Impact ────────────────────────────────────────────────────────
