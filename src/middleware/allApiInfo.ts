@@ -303,12 +303,19 @@ export const actionInfoRouter = createApiInfoRouter({
 });
 
 export const agentMemoryInfoRouter = createApiInfoRouter({
-  name: 'Agent Memory API', slug: 'agent-memory', version: '1.0.0',
-  description: 'Persistent memory storage and retrieval for AI agents.',
+  name: 'Agent Memory & Context Engine', slug: 'agent-memory', version: '2.0.0',
+  description: 'Structured memory storage, retrieval, compression and extraction for autonomous AI agents. Store tagged memories with importance scores, search by query, compress long histories, and extract facts or entities — optimized for repeated calls in agent loops.',
   category: 'AI Agents',
   endpoints: [
-    { method: 'POST', path: '/', description: 'Store agent memory' },
-    { method: 'GET', path: '/', description: 'Retrieve agent memories', params: { agentId: 'Agent ID', query: 'Semantic search query' } },
+    { method: 'POST', path: '/store', description: 'Store a memory entry with tags and importance score', params: { agent_id: 'Unique agent identifier', content: 'Memory content', tags: 'Array of tags', importance: 'Float 0-1' } },
+    { method: 'POST', path: '/retrieve', description: 'Retrieve relevant memories by query and filters', params: { agent_id: 'Agent identifier', query: 'Search query', limit: 'Max results' } },
+    { method: 'POST', path: '/search', description: 'Search memories across a session by keyword', params: { session_id: 'Session identifier', query: 'Search query', limit: 'Max results' } },
+    { method: 'POST', path: '/compress', description: 'Compress long memory history into a structured summary' },
+    { method: 'POST', path: '/extract', description: 'Extract facts, entities or summary from memory content', params: { content: 'Text to extract from', type: 'facts | entities | summary' } },
+    { method: 'GET', path: '/sessions', description: 'List all active memory sessions' },
+    { method: 'POST', path: '/:session_id', description: 'Add a memory to a session' },
+    { method: 'GET', path: '/:session_id', description: 'Get all memories for a session' },
+    { method: 'DELETE', path: '/:session_id', description: 'Clear all memories for a session' },
   ],
 });
 
