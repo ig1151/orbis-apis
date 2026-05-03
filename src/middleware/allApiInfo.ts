@@ -717,3 +717,13 @@ export const webResearcherInfoRouter = createApiInfoRouter({
     { method: 'GET', path: '/research', description: 'Research any query and return structured findings', params: { query: 'Research query', depth: 'basic | deep (default: basic)' } },
   ],
 });
+
+export const textExtractorInfoRouter = createApiInfoRouter({
+  name: 'Text Extractor API', slug: 'text-extractor', version: '1.0.0',
+  description: 'Extract structured data and named entities from any text using Claude AI. Supports custom schema extraction and automatic entity detection.',
+  category: 'AI Agents',
+  endpoints: [
+    { method: 'POST', path: '/extract', description: 'Extract structured data from text using a custom schema', params: { text: 'Input text', schema: 'What to extract e.g. name, email, phone' } },
+    { method: 'POST', path: '/entities', description: 'Extract named entities from text', params: { text: 'Input text' } },
+  ],
+});
