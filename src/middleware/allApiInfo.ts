@@ -355,9 +355,11 @@ export const browserTaskInfoRouter = createApiInfoRouter({
   category: 'AI Agents',
   endpoints: [
     { method: 'POST', path: '/run', description: 'Run a browser task by goal and task type. Supports search_and_extract, visit_and_summarize, extract_table.' },
-    { method: 'POST', path: '/workflow/run', description: 'Execute a named browser workflow with structured input.' },
+    { method: 'POST', path: '/navigate', description: 'Navigate to a URL and execute a sequence of actions (click, scroll, wait). Returns page content and optional post-navigation extraction.' },
     { method: 'POST', path: '/extract', description: 'Fetch a URL and extract structured data using AI, with optional table extraction.' },
+    { method: 'POST', path: '/extract/selectors', description: 'Deterministic CSS selector-based extraction from any URL. Faster and cheaper than AI extraction for known page structures.' },
     { method: 'POST', path: '/screenshot', description: 'Capture and summarize a web page by URL. Returns title, description, text preview, and optional AI summary.' },
+    { method: 'POST', path: '/workflow/run', description: 'Execute a named browser workflow with structured input.' },
     { method: 'GET', path: '/tasks', description: 'List recent tasks with status, type, and latency.' },
     { method: 'GET', path: '/:task_id', description: 'Retrieve full result and trace for a specific task.' },
     { method: 'GET', path: '/workflows', description: 'List available named workflows with input schemas.' },

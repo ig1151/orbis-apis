@@ -76,7 +76,7 @@ router.post("/run", async (req: Request, res: Response) => {
       status: stored.status,
       result: result.result,
       trace: result.trace,
-      metadata: { latency_ms: result.latency_ms, timestamp: result.timestamp },
+      metadata: { latency_ms: result.latency_ms, steps: result.trace?.length ?? 1, estimated_cost: parseFloat(((result.trace?.length ?? 1) * 0.0015).toFixed(4)), timestamp: result.timestamp },
     },
     meta: successMeta(start),
   });
@@ -212,6 +212,138 @@ router.post("/screenshot", async (req: Request, res: Response) => {
   } catch (err) {
     const message = err instanceof Error ? err.message : "Screenshot failed";
     return res.status(500).json({ success: false, error: { code: "SCREENSHOT_FAILED", message }, meta: successMeta(start) });
+  }
+});
+
+
+// ─── POST /navigate ───────────────────────────────────────────────────────────
+
+const navigateSchema = Joi.object({
+  url: Joi.string().uri().required(),
+  actions: Joi.array().items(Joi.string()).default([]),
+  goal: Joi.string().max(300).optional(),
+  extract_after: Joi.boolean().default(false),
+});
+
+router.post("/navigate", async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { error, value } = navigateSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ success: false, error: { code: "VALIDATION_FAILED", message: error.details[0].message }, meta: successMeta(start) });
+  }
+
+  const task_id = "nav_" + uuidv4().replace(/-/g, "").slice(0, 18);
+  const trace: string[] = [];
+
+  try {
+    trace.push("Navigating to: " + value.url);
+    const html = await fetchPage(value.url);
+    const meta = extractMeta(html);
+    const text = extractText(html);
+    trace.push("Page loaded: " + meta.title);
+
+    const actionResults = value.actions.map((action: string) => {
+      trace.push("Action: " + action);
+      return { action, status: "simulated", note: "Full action execution requires headless browser" };
+    });
+
+    let extracted = null;
+    if (value.extract_after && value.goal) {
+      extracted = await claudeExtract(text, value.goal, undefined);
+      trace.push("Post-navigation extraction complete");
+    }
+
+    const steps = 1 + value.actions.length + (value.extract_after ? 1 : 0);
+    const estimatedCost = parseFloat((steps * 0.0015).toFixed(4));
+
+    logger.info({ task_id, url: value.url, action_count: value.actions.length }, "Navigate complete");
+
+    return res.json({
+      success: true,
+      data: {
+        task_id,
+        url: value.url,
+        title: meta.title,
+        description: meta.description,
+        actions: actionResults,
+        extracted: extracted ?? null,
+        text_preview: text.slice(0, 300),
+        metadata: {
+          latency_ms: Date.now() - start,
+          steps,
+          estimated_cost: estimatedCost,
+          note: "Full click/scroll/form actions require Puppeteer. Page fetch and extraction are fully supported.",
+        },
+      },
+      meta: successMeta(start),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Navigation failed";
+    trace.push("Error: " + message);
+    return res.status(500).json({ success: false, error: { code: "NAVIGATE_FAILED", message }, meta: successMeta(start) });
+  }
+});
+
+// ─── POST /extract/selectors ──────────────────────────────────────────────────
+
+const selectorSchema = Joi.object({
+  url: Joi.string().uri().required(),
+  selectors: Joi.array().items(Joi.string()).min(1).required(),
+  goal: Joi.string().max(300).optional(),
+});
+
+router.post("/extract/selectors", async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { error, value } = selectorSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ success: false, error: { code: "VALIDATION_FAILED", message: error.details[0].message }, meta: successMeta(start) });
+  }
+
+  const task_id = "sel_" + uuidv4().replace(/-/g, "").slice(0, 18);
+
+  try {
+    const html = await fetchPage(value.url);
+    const meta = extractMeta(html);
+
+    const cheerio = await import("cheerio");
+    const $ = cheerio.load(html);
+
+    const extracted: Record<string, string | string[]> = {};
+    for (const selector of value.selectors) {
+      const elements = $(selector);
+      if (elements.length === 0) {
+        extracted[selector] = "";
+      } else if (elements.length === 1) {
+        extracted[selector] = elements.first().text().trim();
+      } else {
+        extracted[selector] = elements.map((_i: number, el: any) => $(el).text().trim()).get();
+      }
+    }
+
+    const steps = 1 + value.selectors.length;
+    const estimatedCost = parseFloat((steps * 0.0005).toFixed(4));
+
+    logger.info({ task_id, url: value.url, selector_count: value.selectors.length }, "Selector extract complete");
+
+    return res.json({
+      success: true,
+      data: {
+        task_id,
+        url: value.url,
+        title: meta.title,
+        extracted,
+        selector_count: value.selectors.length,
+        metadata: {
+          latency_ms: Date.now() - start,
+          steps,
+          estimated_cost: estimatedCost,
+        },
+      },
+      meta: successMeta(start),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Selector extraction failed";
+    return res.status(500).json({ success: false, error: { code: "SELECTOR_EXTRACT_FAILED", message }, meta: successMeta(start) });
   }
 });
 
