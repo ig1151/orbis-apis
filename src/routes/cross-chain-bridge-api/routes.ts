@@ -164,3 +164,152 @@ router.get('/bridge/routes', async (req: Request, res: Response) => {
     res.status(502).json({ error: err.message });
   }
 });
+
+
+// ── v2 Agent Endpoints ─────────────────────────────────────────────────────
+
+const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY || '';
+
+function meta(startMs: number, cost: number) {
+  return { latency_ms: Date.now() - startMs, estimated_cost: cost };
+}
+
+async function callAI(prompt: string): Promise<any> {
+  const res = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+    model: 'anthropic/claude-sonnet-4-5',
+    max_tokens: 600,
+    messages: [{ role: 'user', content: prompt }],
+  }, {
+    headers: { Authorization: `Bearer ${OPENROUTER_KEY}`, 'Content-Type': 'application/json' },
+    timeout: 15000,
+  });
+  const raw = res.data.choices?.[0]?.message?.content || '{}';
+  return JSON.parse(raw.replace(/```json|```/g, '').trim());
+}
+
+// POST /compare-routes
+router.post('/compare-routes', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { error, value } = Joi.object({
+    fromChain: Joi.string().required(), toChain: Joi.string().required(),
+    fromToken: Joi.string().required(), toToken: Joi.string().required(),
+    amount: Joi.string().required(),
+    priority: Joi.string().valid('cheapest', 'fastest', 'safest').default('cheapest')
+  }).validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  try {
+    const { quote, fromToken, toToken } = await getQuote(value);
+    const route = formatQuote(quote, fromToken, toToken);
+    const ai = await callAI(`Score this bridge route. Return ONLY valid JSON, no markdown.
+Route: ${JSON.stringify(route)} | Priority: ${value.priority} | Amount: ${value.amount}
+All scores must be decimals 0.0-1.0:
+{"recommended":true,"score":0.0,"priority_match":true,"risk_level":"low|medium|high","value_score":0.0,"speed_score":0.0,"safety_score":0.0,"recommendation":"use|consider|avoid","reason":"one sentence"}`);
+    return res.json({ ...route, ...ai, fromChain: value.fromChain, toChain: value.toChain, amount: value.amount, timestamp: new Date().toISOString(), metadata: meta(start, 0.003) });
+  } catch (err: any) { return res.status(502).json({ error: err.message }); }
+});
+
+// POST /score-route
+router.post('/score-route', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { error, value } = Joi.object({
+    fromChain: Joi.string().required(), toChain: Joi.string().required(),
+    fromToken: Joi.string().required(), toToken: Joi.string().required(),
+    amount: Joi.string().required()
+  }).validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  try {
+    const { quote, fromToken, toToken } = await getQuote(value);
+    const route = formatQuote(quote, fromToken, toToken);
+    const ai = await callAI(`Score this bridge route across dimensions. Return ONLY valid JSON, no markdown.
+Route: ${JSON.stringify(route)} | Amount: ${value.amount} | From: ${value.fromChain} | To: ${value.toChain}
+All scores must be decimals 0.0-1.0:
+{"overall_score":0.0,"fee_score":0.0,"speed_score":0.0,"safety_score":0.0,"liquidity_score":0.0,"grade":"A|B|C|D|F","safe_to_use":true,"confidence":0.0,"summary":"one sentence"}`);
+    return res.json({ ...route, ...ai, fromChain: value.fromChain, toChain: value.toChain, amount: value.amount, timestamp: new Date().toISOString(), metadata: meta(start, 0.0025) });
+  } catch (err: any) { return res.status(502).json({ error: err.message }); }
+});
+
+// POST /estimate-slippage
+router.post('/estimate-slippage', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { error, value } = Joi.object({
+    fromChain: Joi.string().required(), toChain: Joi.string().required(),
+    fromToken: Joi.string().required(), toToken: Joi.string().required(),
+    amount: Joi.string().required()
+  }).validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  try {
+    const { quote, fromToken, toToken } = await getQuote(value);
+    const route = formatQuote(quote, fromToken, toToken);
+    const inputUSD = parseFloat(route.fromAmountUSD || '0');
+    const outputUSD = parseFloat(route.toAmountUSD || '0');
+    const slippagePct = inputUSD > 0 ? ((inputUSD - outputUSD) / inputUSD) * 100 : 0;
+    return res.json({
+      fromChain: value.fromChain, toChain: value.toChain,
+      fromToken: value.fromToken, toToken: value.toToken, amount: value.amount,
+      estimated_slippage_pct: parseFloat(slippagePct.toFixed(4)),
+      input_usd: inputUSD, output_usd: outputUSD,
+      total_cost_usd: route.totalFeesUSD, bridge: route.bridge,
+      slippage_level: slippagePct < 0.1 ? 'minimal' : slippagePct < 0.5 ? 'low' : slippagePct < 2 ? 'medium' : 'high',
+      safe_to_proceed: slippagePct < 2,
+      timestamp: new Date().toISOString(), metadata: meta(start, 0.002)
+    });
+  } catch (err: any) { return res.status(502).json({ error: err.message }); }
+});
+
+// POST /monitor-bridge
+router.post('/monitor-bridge', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { error, value } = Joi.object({
+    fromChain: Joi.string().required(), toChain: Joi.string().required(),
+    fromToken: Joi.string().required(), toToken: Joi.string().required(),
+    amount: Joi.string().required()
+  }).validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  try {
+    const { quote, fromToken, toToken } = await getQuote(value);
+    const route = formatQuote(quote, fromToken, toToken);
+    const ai = await callAI(`Assess current bridge conditions. Return ONLY valid JSON, no markdown.
+Route: ${JSON.stringify(route)} | From: ${value.fromChain} | To: ${value.toChain}
+{"status":"optimal|degraded|congested|unavailable","alert_level":"none|watch|alert|critical","conditions":[{"type":"fees|speed|liquidity|congestion","description":"one sentence","severity":"low|medium|high"}],"recommended_action":"proceed|wait|use_alternative","next_check_ms":300000,"confidence":0.0}`);
+    return res.json({ ...ai, bridge: route.bridge, fromChain: value.fromChain, toChain: value.toChain, current_fees_usd: route.totalFeesUSD, estimated_time_seconds: route.estimatedTimeSeconds, timestamp: new Date().toISOString(), metadata: meta(start, 0.002) });
+  } catch (err: any) { return res.status(502).json({ error: err.message }); }
+});
+
+// POST /execution-gate
+router.post('/execution-gate', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { error, value } = Joi.object({
+    fromChain: Joi.string().required(), toChain: Joi.string().required(),
+    fromToken: Joi.string().required(), toToken: Joi.string().required(),
+    amount: Joi.string().required(),
+    max_fees_usd: Joi.number().optional(),
+    max_slippage_pct: Joi.number().optional(),
+    source: Joi.string().default('agent'),
+    signal_confidence: Joi.number().min(0).max(1).default(0.5)
+  }).validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  try {
+    const { quote, fromToken, toToken } = await getQuote(value);
+    const route = formatQuote(quote, fromToken, toToken);
+    const inputUSD = parseFloat(route.fromAmountUSD || '0');
+    const outputUSD = parseFloat(route.toAmountUSD || '0');
+    const slippagePct = inputUSD > 0 ? ((inputUSD - outputUSD) / inputUSD) * 100 : 0;
+    const blocking_flags: string[] = [];
+    if (value.max_fees_usd && route.totalFeesUSD > value.max_fees_usd) blocking_flags.push(`fees_too_high: $${route.totalFeesUSD} > $${value.max_fees_usd}`);
+    if (value.max_slippage_pct && slippagePct > value.max_slippage_pct) blocking_flags.push(`slippage_too_high: ${slippagePct.toFixed(3)}% > ${value.max_slippage_pct}%`);
+    const execute = blocking_flags.length === 0;
+    return res.json({
+      execute, bridge: route.bridge,
+      estimated_output: route.estimatedOutput,
+      total_fees_usd: route.totalFeesUSD,
+      estimated_slippage_pct: parseFloat(slippagePct.toFixed(4)),
+      estimated_time_seconds: route.estimatedTimeSeconds,
+      blocking_flags,
+      recommended_action: execute ? 'proceed' : 'block',
+      recommended_next_api: execute ? 'autopilot' : null,
+      recommended_next_endpoint: execute ? '/should-execute' : null,
+      chain_context: { source_api: value.source, signal_confidence: value.signal_confidence, fromChain: value.fromChain, toChain: value.toChain, amount: value.amount },
+      timestamp: new Date().toISOString(), metadata: meta(start, 0.0045)
+    });
+  } catch (err: any) { return res.status(502).json({ error: err.message }); }
+});
