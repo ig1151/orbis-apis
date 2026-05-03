@@ -1,3 +1,4 @@
+import { nftMetadataInfoRouter } from '../routes/nft-metadata/info';
 import { createApiInfoRouter } from './apiInfo';
 
 export const gasOptimizerInfoRouter = createApiInfoRouter({
