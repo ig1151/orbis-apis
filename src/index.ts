@@ -35,6 +35,7 @@ app.use('/wallet', walletBalanceRouter);
 
 // ── Alpha Signal ──────────────────────────────────────────────────────────────
 import alphaSignalRouter from './routes/alpha-signal/index';
+app.use('/alpha-signal', alphaSignalInfoRouter);
 app.use('/alpha-signal', alphaSignalRouter);
 
 // ── Action API ────────────────────────────────────────────────────────────────
@@ -280,7 +281,6 @@ app.use('/wallet', walletInfoRouter);
 app.use('/stablecoin-yield', stablecoinYieldInfoRouter);
 app.use('/meta-strategy', metaStrategyInfoRouter);
 app.use('/social-sentiment', socialSentimentInfoRouter);
-app.use('/alpha-signal', alphaSignalInfoRouter);
 app.use('/action', actionInfoRouter);
 app.use("/action", actionRouter);
 app.use("/action", actionTaskTypesRouter);

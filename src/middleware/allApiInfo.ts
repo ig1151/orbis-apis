@@ -283,12 +283,16 @@ export const socialSentimentInfoRouter = createApiInfoRouter({
 });
 
 export const alphaSignalInfoRouter = createApiInfoRouter({
-  name: 'Alpha Signal API', slug: 'alpha-signal', version: '1.0.0',
-  description: 'On-chain alpha signals and smart money movement detection.',
+  name: 'Alpha Signal API', slug: 'alpha-signal', version: '2.0.0',
+  description: 'Real-time trading signal engine for autonomous agents. Structured machine-readable outputs for continuous polling loops, decision engines, and execution pipelines. Scan multiple assets, score individual positions, detect market events, and rank opportunities — designed for 3-5 calls per agent cycle.',
   category: 'AI Trading',
   endpoints: [
-    { method: 'GET', path: '/signal/:symbol', description: 'Get alpha signal for a token' },
-    { method: 'POST', path: '/signal/batch', description: 'Get signals for multiple tokens' },
+    { method: 'POST', path: '/scan-signals', description: 'Core polling loop — scan up to 10 assets for live signals. Returns action, confidence, entry zone, stop loss, take profit per asset. Call every 1-5 minutes.' },
+    { method: 'POST', path: '/score-asset', description: 'Composite score for a single asset: trend, momentum, volume, sentiment scores plus regime and bias classification.' },
+    { method: 'POST', path: '/detect-event', description: 'Detect significant market events: volume spikes, breakouts, flash crashes, whale moves. Returns impact score, direction, and chain_to hints.' },
+    { method: 'POST', path: '/rank-opportunities', description: 'Rank assets by opportunity score across crypto, defi, l1, l2, or meme universes. Returns top N with risk/reward ratios.' },
+    { method: 'GET', path: '/signal/:symbol', description: 'Legacy: single asset signal for ETH, BNB, SOL' },
+    { method: 'GET', path: '/signal/batch', description: 'Legacy: batch signals for ETH, BNB, SOL' },
   ],
 });
 
