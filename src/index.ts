@@ -52,7 +52,6 @@ app.use('/agent-memory', sessionsRouter);
 
 // ── Agent Workflow ────────────────────────────────────────────────────────────
 import workflowRouter from './routes/agent-workflow-api/routes/workflow';
-app.use('/agent-workflow', workflowRouter);
 
 // ── AI Output Safety ──────────────────────────────────────────────────────────
 import { safetyRouter } from './routes/ai-output-safety-api/routes/safety.route';
@@ -284,6 +283,7 @@ app.use('/action', actionInfoRouter);
 app.use("/action", actionRouter);
 app.use("/action", actionTaskTypesRouter);
 app.use('/agent-workflow', agentWorkflowInfoRouter);
+app.use('/agent-workflow', workflowRouter);
 app.use('/autopilot', autopilotInfoRouter);
 app.use('/browser-task', browserTaskInfoRouter);
 app.use('/company-research', companyResearchInfoRouter);
