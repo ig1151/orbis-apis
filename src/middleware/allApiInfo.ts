@@ -284,8 +284,19 @@ export const socialSentimentInfoRouter = createApiInfoRouter({
 
 export const alphaSignalInfoRouter = createApiInfoRouter({
   name: 'Agent Trading Signal & Opportunity Detection API', slug: 'alpha-signal', version: '2.0.0',
-  description: 'Real-time alpha signal engine for autonomous agents. Structured machine-readable outputs built for continuous polling loops, decision engines, and execution pipelines. Designed for 3-5 calls per agent cycle: scan → filter → score → rank → act.',
-  category: 'AI Trading',
+  description: 'Real-time alpha signal engine for autonomous agents. Structured machine-readable outputs built for continuous polling loops, decision engines, and execution pipelines. Designed for 6+ calls per agent cycle: scan → filter → score → explain → detect → rank → act.',
+  category: 'Agent Trading Infrastructure',
+  loop_type: 'scan_filter_score_rank_execute',
+  monetization_grade: 'A',
+  primary_use_case: 'High-frequency autonomous trading signal loops',
+  pricing: {
+    'scan-signals': 0.002,
+    'filter-signals': 0.0008,
+    'score-asset': 0.0015,
+    'explain': 0.0025,
+    'detect-event': 0.002,
+    'rank-opportunities': 0.0035
+  },
   endpoints: [
     { method: 'POST', path: '/scan-signals', description: 'Core polling loop — scan up to 10 assets for live signals. Returns action, confidence, entry zone, stop loss, take profit per asset. Call every 1-5 minutes. Alias: /scan' },
     { method: 'POST', path: '/filter-signals', description: 'Filter a signal array by confidence, type, action, urgency, and trend. Call after scan to refine before scoring. High call volume driver.' },

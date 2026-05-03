@@ -14,6 +14,10 @@ export interface ApiInfoConfig {
   description: string;
   category: string;
   endpoints: EndpointDef[];
+  loop_type?: string;
+  monetization_grade?: string;
+  primary_use_case?: string;
+  pricing?: Record<string, number>;
 }
 
 const BASE_URL = 'https://orbis-apis.onrender.com';
