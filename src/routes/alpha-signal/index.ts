@@ -168,20 +168,31 @@ router.post('/rank-opportunities', async (req: Request, res: Response) => {
     const scores = await Promise.allSettled(
       symbols.map(async (symbol: string) => {
         const price = await fetchPrice(symbol);
-        const prompt = `Score ${symbol} for trading opportunity. Return ONLY valid JSON, no markdown.
-PRICE: $${price.price_usd} | 1h: ${price.change_1h?.toFixed(2) ?? 'N/A'}% | 24h: ${price.change_24h?.toFixed(2)}% | 7d: ${price.change_7d?.toFixed(2)}% | Vol: $${(price.volume_24h / 1e9).toFixed(2)}B
-Return scores as decimals between 0.0 and 1.0 (NOT percentages, NOT 0-100). Example: 0.72 not 72. Return: {"symbol":"${symbol}","opportunity_score":0.0,"trend":"bullish|bearish|neutral","action":"buy|sell|hold","confidence":0.0,"risk_reward":0.0,"timeframe":"short|medium|long","catalyst":"one word"}`;
+        const prompt = `You are a trading opportunity scorer. Score ${symbol} based on its SPECIFIC data below. Each asset will have different scores — do NOT return the same values for different assets. Return ONLY valid JSON, no markdown.
+SYMBOL: ${symbol}
+PRICE: $${price.price_usd}
+1h change: ${price.change_1h?.toFixed(3) ?? 'N/A'}%
+24h change: ${price.change_24h?.toFixed(3)}%
+7d change: ${price.change_7d?.toFixed(3)}%
+24h volume: $${(price.volume_24h / 1e9).toFixed(3)}B
+24h high: $${price.high_24h} | 24h low: $${price.low_24h}
+ATH change: ${price.ath_change?.toFixed(2)}%
+Market cap: $${(price.market_cap / 1e9).toFixed(2)}B
+
+Score this specific asset using its actual data above. Scores MUST reflect the real price action.
+All scores must be decimals 0.0-1.0 (e.g. 0.72, not 72).
+{"symbol":"${symbol}","opportunity_score":0.0,"trend":"bullish|bearish|neutral","action":"buy|sell|hold","confidence":0.0,"risk_reward":0.0,"timeframe":"short|medium|long","catalyst":"one word"}`;
         const ai = await callAI(prompt);
         return { ...ai, price_usd: price.price_usd };
       })
     );
-    const allResults = scores.map((r, i) => r.status === 'fulfilled' ? r.value : { symbol: symbols[i], error: (r as PromiseRejectedResult).reason?.message || 'failed', opportunity_score: -1 });
-    console.log('[rank-opportunities] raw results:', JSON.stringify(allResults.map(r => ({ symbol: r.symbol, score: r.opportunity_score, error: r.error }))));
-    const ranked = allResults
-      .filter(s => !s.error && s.opportunity_score >= value.min_score)
+    const ranked = scores
+      .filter((r): r is PromiseFulfilledResult<any> => r.status === 'fulfilled')
+      .map(r => r.value)
+      .filter(s => s.opportunity_score >= value.min_score)
       .sort((a, b) => b.opportunity_score - a.opportunity_score)
       .slice(0, value.top_n);
-    return res.json({ top: ranked, count: ranked.length, universe: value.universe, scanned: symbols.length, timestamp: new Date().toISOString(), debug_all: allResults.map(r => ({ symbol: r.symbol, score: r.opportunity_score, error: r.error || null })) });
+    return res.json({ top: ranked, count: ranked.length, universe: value.universe, scanned: symbols.length, timestamp: new Date().toISOString() });
   } catch (err: any) {
     return res.status(500).json({ error: 'ranking_failed', message: err.message });
   }
