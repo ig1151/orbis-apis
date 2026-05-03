@@ -765,11 +765,32 @@ export const txSimulatorInfoRouter = createApiInfoRouter({
 });
 
 export const contractAnalyzerInfoRouter = createApiInfoRouter({
-  name: 'Contract Analyzer API', slug: 'contract-analyzer', version: '1.0.0',
-  description: 'AI-powered smart contract risk analysis. Returns risk score, flags, contract type, and recommendations using Claude.',
-  category: 'Crypto Intelligence',
+  name: 'Agent Smart Contract Risk & Due Diligence API', slug: 'contract-analyzer', version: '2.0.0',
+  description: 'Full-stack smart contract intelligence engine for autonomous agents. Scan, score risk, detect vulnerabilities, classify, compare, monitor, summarize findings, and rank contracts — designed for DeFi agents, wallet agents, token launch agents, and security bots.',
+  category: 'blockchain-web3',
+  loop_type: 'scan_score_detect_classify_monitor_rank',
+  monetization_grade: 'A',
+  primary_use_case: 'Agent smart contract due diligence and security loops',
+  pricing: {
+    '/scan-contract': 0.004,
+    '/score-risk': 0.0025,
+    '/detect-vulnerabilities': 0.006,
+    '/classify-contract': 0.002,
+    '/compare-contracts': 0.0045,
+    '/monitor-contract': 0.002,
+    '/summarize-findings': 0.003,
+    '/rank-contracts': 0.005
+  },
   endpoints: [
-    { method: 'GET', path: '/analyze', description: 'Analyze a smart contract for risks', params: { address: 'Ethereum contract address (0x...)' } },
+    { method: 'POST', path: '/scan-contract', description: 'Full contract scan: risk level, flags, contract type, recommendations.' },
+    { method: 'POST', path: '/score-risk', description: 'Risk score across reentrancy, access control, overflow, centralization, upgrade risk. Returns grade.' },
+    { method: 'POST', path: '/detect-vulnerabilities', description: 'Detect exploitable vulnerabilities with severity, type, and location. Returns exploit risk rating.' },
+    { method: 'POST', path: '/classify-contract', description: 'Classify contract type, standards, upgradeability, admin controls, mint/burn capabilities.' },
+    { method: 'POST', path: '/compare-contracts', description: 'Compare 2-5 contracts by risk and trust score. Returns safest, riskiest, and per-contract recommendations.' },
+    { method: 'POST', path: '/monitor-contract', description: 'Monitor for activity spikes, ownership changes, upgrades, pause events. Returns alert level and next_check_ms.' },
+    { method: 'POST', path: '/summarize-findings', description: 'Agent-ready audit summary: executive summary, key findings, recommended actions, agent verdict.' },
+    { method: 'POST', path: '/rank-contracts', description: 'Rank 2-10 contracts by safety, trust, activity, or defi_use objective.' },
+    { method: 'GET', path: '/analyze', description: 'Legacy: full contract analysis by address' },
   ],
 });
 

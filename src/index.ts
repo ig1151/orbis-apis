@@ -585,6 +585,41 @@ app.use("/onchain-news", onchainNewsRouter);
 // ── Contract Analyzer ─────────────────────────────────────────────────────────
 import contractAnalyzerRouter from "./routes/contract-analyzer/routes/analyze";
 app.use("/contract-analyzer", contractAnalyzerInfoRouter);
+app.get("/contract-analyzer/info", (_req, res) => {
+  res.json({
+    name: "Agent Smart Contract Risk & Due Diligence API",
+    version: "2.0.0",
+    description: "Full-stack smart contract intelligence engine for autonomous agents. Scan, score risk, detect vulnerabilities, classify, compare, monitor, summarize findings, and rank contracts.",
+    category: "blockchain-web3",
+    loop_type: "scan_score_detect_classify_monitor_rank",
+    monetization_grade: "A",
+    primary_use_case: "Agent smart contract due diligence and security loops",
+    baseUrl: "https://orbis-apis.onrender.com/contract-analyzer",
+    website: "https://orbis-apis.onrender.com",
+    docs: "https://orbis-apis.onrender.com/contract-analyzer/docs",
+    openapi: "https://orbis-apis.onrender.com/contract-analyzer/openapi.json",
+    pricing: {
+      "/scan-contract": 0.004,
+      "/score-risk": 0.0025,
+      "/detect-vulnerabilities": 0.006,
+      "/classify-contract": 0.002,
+      "/compare-contracts": 0.0045,
+      "/monitor-contract": 0.002,
+      "/summarize-findings": 0.003,
+      "/rank-contracts": 0.005
+    },
+    endpoints: [
+      { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/scan-contract", description: "Full contract scan: risk level, flags, contract type, recommendations." },
+      { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/score-risk", description: "Risk score across reentrancy, access control, overflow, centralization, upgrade risk." },
+      { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/detect-vulnerabilities", description: "Detect exploitable vulnerabilities with severity and location." },
+      { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/classify-contract", description: "Classify contract type, standards, upgradeability, admin controls." },
+      { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/compare-contracts", description: "Compare 2-5 contracts by risk and trust score." },
+      { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/monitor-contract", description: "Monitor for activity spikes, ownership changes, upgrades. Returns alert level." },
+      { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/summarize-findings", description: "Agent-ready audit summary with verdict: approve|investigate|reject." },
+      { method: "POST", url: "https://orbis-apis.onrender.com/contract-analyzer/rank-contracts", description: "Rank 2-10 contracts by safety, trust, activity, or defi_use." },
+    ]
+  });
+});
 app.use("/contract-analyzer", contractAnalyzerRouter);
 
 // ── TX Simulator ─────────────────────────────────────────────────────────────
