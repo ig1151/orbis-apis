@@ -27,7 +27,7 @@ export function createApiInfoRouter(config: ApiInfoConfig): Router {
 
   router.get('/', (req: Request, res: Response, next: any) => {
     // If query params present, pass to actual route handlers
-    if (Object.keys(req.query).length > 0) { return next('router'); }
+    if (Object.keys(req.query).length > 0 && !req.query.v && !req.query.cacheBust) { return next('router'); }
     res.json({
       name: config.name,
       version: config.version,
