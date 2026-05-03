@@ -120,8 +120,8 @@ export const cryptoAlertsInfoRouter = createApiInfoRouter({
 });
 
 export const agentSkillsInfoRouter = createApiInfoRouter({
-  name: 'Agent Skills API', slug: 'agent-skills', version: '2.0.0',
-  description: 'Skill matching and capability routing for autonomous agents. Register, discover, match, and compose sequences of skills needed to complete complex agent tasks.',
+  name: 'Agent Skills Routing API', slug: 'agent-skills', version: '2.0.0',
+  description: 'Discover, match, compose, and route agent skills for autonomous workflows. Register skills, match them to requests, and compose ordered skill sequences for any agent task.',
   category: 'AI Agents',
   endpoints: [
     { method: 'POST', path: '/compose', description: 'Given a task, return an ordered sequence of skills needed to complete it with dependencies, duration estimates, and execution order.' },
