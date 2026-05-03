@@ -55,6 +55,7 @@ import workflowRouter from './routes/agent-workflow-api/routes/workflow';
 
 // ── AI Output Safety ──────────────────────────────────────────────────────────
 import { safetyRouter } from './routes/ai-output-safety-api/routes/safety.route';
+app.use('/ai-output-safety', aiOutputSafetyInfoRouter);
 app.use('/ai-output-safety', safetyRouter);
 
 // ── Autopilot ─────────────────────────────────────────────────────────────────
@@ -299,7 +300,6 @@ app.use('/onchain-signal', onchainSignalInfoRouter);
 app.use('/portfolio-rebalance', portfolioRebalanceInfoRouter);
 app.use('/strategy-execution', strategyExecutionInfoRouter);
 app.use('/unified-decision', unifiedDecisionInfoRouter);
-app.use('/ai-output-safety', aiOutputSafetyInfoRouter);
 app.use('/document-intelligence', documentIntelligenceInfoRouter);
 app.use('/identity-intelligence', identityIntelligenceInfoRouter);
 app.use('/image-to-content', imageToContentInfoRouter);

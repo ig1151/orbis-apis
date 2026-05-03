@@ -544,12 +544,14 @@ export const websiteMonitorInfoRouter = createApiInfoRouter({
 });
 
 export const aiOutputSafetyInfoRouter = createApiInfoRouter({
-  name: 'AI Output Safety API', slug: 'ai-output-safety', version: '1.0.0',
-  description: 'Validate and filter AI-generated content for safety, bias, and policy compliance.',
+  name: 'Agent Output Safety & Validation API', slug: 'ai-output-safety', version: '2.0.0',
+  description: 'Validate, filter, and transform AI-generated outputs for safety, compliance, and correctness before external use. Returns structured risk levels, category flags, confidence scores, and suggested actions for agent decision-making.',
   category: 'AI Safety',
   endpoints: [
-    { method: 'POST', path: '/', description: 'Check AI output safety' },
-    { method: 'POST', path: '/batch', description: 'Batch safety check' },
+    { method: 'POST', path: '/check', description: 'Evaluate a single AI output for safety risks. Returns flags, categories, risk level, score, and suggested action.' },
+    { method: 'POST', path: '/batch', description: 'Validate multiple AI outputs efficiently in a single request.' },
+    { method: 'POST', path: '/redact', description: 'Remove or mask unsafe content from AI output. Returns cleaned output with redacted segments.' },
+    { method: 'POST', path: '/score', description: 'Return a numeric safety score (0-1) with threshold comparison for agent decision-making.' },
   ],
 });
 
