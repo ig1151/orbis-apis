@@ -321,12 +321,17 @@ export const agentMemoryInfoRouter = createApiInfoRouter({
 });
 
 export const agentWorkflowInfoRouter = createApiInfoRouter({
-  name: 'Agent Workflow API', slug: 'agent-workflow', version: '1.0.0',
-  description: 'Define and execute multi-step AI agent workflows.',
+  name: 'Agent Workflow Orchestration API', slug: 'agent-workflow', version: '2.0.0',
+  description: 'Plan, execute, monitor, retry, and optimize multi-step workflows for autonomous AI agents. Supports structured step tracking, retry logic, workflow optimization, and pre-built templates for common agent tasks.',
   category: 'AI Agents',
   endpoints: [
-    { method: 'POST', path: '/workflow/run', description: 'Execute a workflow' },
-    { method: 'GET', path: '/workflow/templates', description: 'List available workflow templates' },
+    { method: 'POST', path: '/create', description: 'Define a new workflow with name, goal, and step definitions' },
+    { method: 'POST', path: '/run', description: 'Execute a workflow by goal or workflow_id. Returns structured step results and metadata.' },
+    { method: 'GET', path: '/:workflow_id', description: 'Retrieve full workflow record including steps, result, and metadata' },
+    { method: 'GET', path: '/:workflow_id/status', description: 'Get current status and metadata for a workflow' },
+    { method: 'POST', path: '/:workflow_id/retry', description: 'Retry a failed workflow. Only available for workflows with status: failed.' },
+    { method: 'POST', path: '/:workflow_id/optimize', description: 'Analyze a completed workflow and return optimization suggestions and estimated improvements' },
+    { method: 'GET', path: '/templates', description: 'List all available workflow templates with input/output schemas and step definitions' },
   ],
 });
 
