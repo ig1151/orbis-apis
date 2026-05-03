@@ -277,6 +277,8 @@ app.use('/meta-strategy', metaStrategyInfoRouter);
 app.use('/social-sentiment', socialSentimentInfoRouter);
 app.use('/alpha-signal', alphaSignalInfoRouter);
 app.use('/action', actionInfoRouter);
+app.use("/action", actionRouter);
+app.use("/action", actionTaskTypesRouter);
 app.use('/agent-workflow', agentWorkflowInfoRouter);
 app.use('/autopilot', autopilotInfoRouter);
 app.use('/browser-task', browserTaskInfoRouter);
