@@ -363,14 +363,8 @@ app.use('/token-unlock/impact', tokenUnlockImpactRouter);
 app.use('/token-unlock/calendar', tokenUnlockCalendarRouter);
 
 // ── Agent Identity ────────────────────────────────────────────────────────────
-import agentIdentityGenerateRouter from './routes/agent-identity-api/routes/generate';
-import agentIdentityVerifyRouter from './routes/agent-identity-api/routes/verify';
-import agentIdentityReputationRouter from './routes/agent-identity-api/routes/reputation';
-import agentIdentityLookupRouter from './routes/agent-identity-api/routes/lookup';
-app.use('/agent-identity/generate', agentIdentityGenerateRouter);
-app.use('/agent-identity/verify', agentIdentityVerifyRouter);
-app.use('/agent-identity/reputation', agentIdentityReputationRouter);
-app.use('/agent-identity/lookup', agentIdentityLookupRouter);
+import agentIdentityRouter from './apis/agent-identity/routes';
+app.use('/agent-identity', agentIdentityRouter);
 
 // ── Crypto Narrative ──────────────────────────────────────────────────────────
 import cryptoNarrativeTrendingRouter from './routes/crypto-narrative-api/routes/trending';
