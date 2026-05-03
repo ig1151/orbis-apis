@@ -506,6 +506,11 @@ app.use("/token-price-feed", tokenPriceFeedInfoRouter);
 app.use("/token-price-feed", tokenPriceFeedRouter);
 
 // ── 404 ───────────────────────────────────────────────────────────────────────
+app.use("/nft-metadata", nftMetadataInfoRouter);
+app.use("/nft-metadata", nftTokenRouter);
+app.use("/nft-metadata", nftCollectionRouter);
+app.use("/nft-metadata", nftWalletRouter);
+app.use("/nft-metadata", nftTransfersRouter);
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
