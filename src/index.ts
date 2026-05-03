@@ -93,6 +93,35 @@ app.use('/ai-output-safety', safetyRouter);
 // ── Autopilot ─────────────────────────────────────────────────────────────────
 import autopilotRouter from './routes/autopilot-api/routes/autopilot';
 app.use('/autopilot', autopilotInfoRouter);
+app.get('/autopilot/info', (_req, res) => {
+  res.json({
+    name: 'Agent Execution Orchestration Engine',
+    version: '2.0.0',
+    description: 'Central agent brain API — the glue layer between all Orbis APIs. Determines next actions, makes decisions between options, gates execution with risk checks, decomposes goals into plans, and recovers from failures. Designed to be called every loop iteration.',
+    category: 'AI Agents',
+    loop_type: 'detect_decide_gate_execute_recover',
+    monetization_grade: 'A',
+    primary_use_case: 'Agent decision orchestration across all APIs',
+    baseUrl: 'https://orbis-apis.onrender.com/autopilot',
+    website: 'https://orbis-apis.onrender.com',
+    docs: 'https://orbis-apis.onrender.com/autopilot/docs',
+    openapi: 'https://orbis-apis.onrender.com/autopilot/openapi.json',
+    pricing: {
+      '/next-action': 0.002,
+      '/decide': 0.002,
+      '/should-execute': 0.0015,
+      '/plan': 0.003,
+      '/retry-strategy': 0.0015
+    },
+    endpoints: [
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/autopilot/next-action', description: 'Core loop driver — returns best next action with confidence, urgency, chain_to hints.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/autopilot/decide', description: 'Decide between multiple options. Returns selected, confidence, risk score, rejected.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/autopilot/should-execute', description: 'Risk gate — execute bool, risk score, blocking factors, retry hints.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/autopilot/plan', description: 'Decompose goal into ordered steps with API routing and timing estimates.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/autopilot/retry-strategy', description: 'Failure recovery — strategy, delay, max attempts, alternative action.' },
+    ]
+  });
+});
 app.use('/autopilot', autopilotRouter);
 
 // ── Browser Task ──────────────────────────────────────────────────────────────
