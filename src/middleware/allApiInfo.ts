@@ -708,3 +708,12 @@ export const ensResolverInfoRouter = createApiInfoRouter({
     { method: 'GET', path: '/lookup', description: 'Reverse lookup address to ENS name', params: { address: 'Ethereum address (0x...)' } },
   ],
 });
+
+export const webResearcherInfoRouter = createApiInfoRouter({
+  name: 'Web Researcher API', slug: 'web-researcher', version: '1.0.0',
+  description: 'Give an AI agent a query and get back structured research with key findings, summary, conclusion, and sources. Powered by Tavily and Claude.',
+  category: 'AI Agents',
+  endpoints: [
+    { method: 'GET', path: '/research', description: 'Research any query and return structured findings', params: { query: 'Research query', depth: 'basic | deep (default: basic)' } },
+  ],
+});
