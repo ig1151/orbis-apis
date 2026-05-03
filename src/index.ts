@@ -45,10 +45,10 @@ import sessionsRouter from './routes/agent-memory-api/routes/sessions';
 import memoryCompressRouter from './routes/agent-memory-api/routes/compress';
 import memoryExtractRouter from './routes/agent-memory-api/routes/extract';
 app.use('/agent-memory', agentMemoryInfoRouter);
-app.use('/agent-memory', memoryRouter);
-app.use('/agent-memory', sessionsRouter);
 app.use('/agent-memory', memoryCompressRouter);
 app.use('/agent-memory', memoryExtractRouter);
+app.use('/agent-memory', memoryRouter);
+app.use('/agent-memory', sessionsRouter);
 
 // ── Agent Workflow ────────────────────────────────────────────────────────────
 import workflowRouter from './routes/agent-workflow-api/routes/workflow';
