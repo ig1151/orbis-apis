@@ -36,7 +36,37 @@ app.use('/wallet', walletBalanceRouter);
 // ── Alpha Signal ──────────────────────────────────────────────────────────────
 import alphaSignalRouter from './routes/alpha-signal/index';
 app.use('/alpha-signal', alphaSignalInfoRouter);
-app.get('/alpha-signal/info', (req, res) => { req.url = '/'; alphaSignalInfoRouter(req, res, () => {}); });
+app.get('/alpha-signal/info', (_req, res) => {
+  res.json({
+    name: 'Agent Trading Signal & Opportunity Detection API',
+    version: '2.0.0',
+    description: 'Real-time alpha signal engine for autonomous agents. Structured machine-readable outputs built for continuous polling loops, decision engines, and execution pipelines. Designed for 6+ calls per agent cycle: scan → filter → score → explain → detect → rank → act.',
+    category: 'Agent Trading Infrastructure',
+    loop_type: 'scan_filter_score_rank_execute',
+    monetization_grade: 'A',
+    primary_use_case: 'High-frequency autonomous trading signal loops',
+    baseUrl: 'https://orbis-apis.onrender.com/alpha-signal',
+    website: 'https://orbis-apis.onrender.com',
+    docs: 'https://orbis-apis.onrender.com/alpha-signal/docs',
+    openapi: 'https://orbis-apis.onrender.com/alpha-signal/openapi.json',
+    pricing: {
+      'scan-signals': 0.002,
+      'filter-signals': 0.0008,
+      'score-asset': 0.0015,
+      'explain': 0.0025,
+      'detect-event': 0.002,
+      'rank-opportunities': 0.0035
+    },
+    endpoints: [
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/alpha-signal/scan-signals', description: 'Core polling loop — scan up to 10 assets for live signals. Call every 1-5 minutes. Alias: /scan' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/alpha-signal/filter-signals', description: 'Filter signal array by confidence, type, action, urgency, trend.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/alpha-signal/score-asset', description: 'Composite score: trend, momentum, volume, sentiment, regime, bias. Alias: /score' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/alpha-signal/explain', description: 'Deep signal explanation: drivers, confidence breakdown, risk factors, recommendation.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/alpha-signal/detect-event', description: 'Detect market events: volume spikes, breakouts, whale moves. Alias: /trigger-event' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/alpha-signal/rank-opportunities', description: 'Rank assets by opportunity score across universes. Alias: /rank' },
+    ]
+  });
+});
 app.use('/alpha-signal', alphaSignalRouter);
 
 // ── Action API ────────────────────────────────────────────────────────────────
