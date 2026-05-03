@@ -165,7 +165,7 @@ router.post("/extract", async (req: Request, res: Response) => {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Extraction failed";
-    return res.status(500).json({ success: false, error: { code: "EXTRACT_FAILED", message }, meta: successMeta(start) });
+    return res.status(500).json({ success: false, error: { code: "EXTRACT_FAILED", type: "extraction_error", message, retryable: true }, meta: successMeta(start) });
   }
 });
 
@@ -211,7 +211,7 @@ router.post("/screenshot", async (req: Request, res: Response) => {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Screenshot failed";
-    return res.status(500).json({ success: false, error: { code: "SCREENSHOT_FAILED", message }, meta: successMeta(start) });
+    return res.status(500).json({ success: false, error: { code: "SCREENSHOT_FAILED", type: "navigation_error", message, retryable: true }, meta: successMeta(start) });
   }
 });
 
@@ -280,7 +280,7 @@ router.post("/navigate", async (req: Request, res: Response) => {
   } catch (err) {
     const message = err instanceof Error ? err.message : "Navigation failed";
     trace.push("Error: " + message);
-    return res.status(500).json({ success: false, error: { code: "NAVIGATE_FAILED", message }, meta: successMeta(start) });
+    return res.status(500).json({ success: false, error: { code: "NAVIGATE_FAILED", type: "navigation_error", message, retryable: true }, meta: successMeta(start) });
   }
 });
 
@@ -343,7 +343,164 @@ router.post("/extract/selectors", async (req: Request, res: Response) => {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Selector extraction failed";
-    return res.status(500).json({ success: false, error: { code: "SELECTOR_EXTRACT_FAILED", message }, meta: successMeta(start) });
+    return res.status(500).json({ success: false, error: { code: "SELECTOR_EXTRACT_FAILED", type: "selector_not_found", message, retryable: true }, meta: successMeta(start) });
+  }
+});
+
+
+// ─── Session Store ────────────────────────────────────────────────────────────
+
+interface BrowserSession {
+  session_id: string;
+  url: string;
+  cookies: Record<string, string>;
+  history: { action: string; timestamp: string }[];
+  createdAt: string;
+  lastActiveAt: string;
+}
+
+const sessionStore = new Map<string, BrowserSession>();
+
+// ─── POST /session/start ──────────────────────────────────────────────────────
+
+const sessionStartSchema = Joi.object({
+  url: Joi.string().uri().required(),
+  cookies: Joi.object().default({}),
+  goal: Joi.string().max(300).optional(),
+});
+
+router.post("/session/start", async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { error, value } = sessionStartSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ success: false, error: { code: "VALIDATION_FAILED", message: error.details[0].message }, meta: successMeta(start) });
+  }
+
+  const session_id = "sess_" + uuidv4().replace(/-/g, "").slice(0, 16);
+  const now = new Date().toISOString();
+
+  try {
+    const html = await fetchPage(value.url);
+    const meta = extractMeta(html);
+
+    const session: BrowserSession = {
+      session_id, url: value.url,
+      cookies: value.cookies,
+      history: [{ action: "session_start", timestamp: now }],
+      createdAt: now, lastActiveAt: now,
+    };
+    sessionStore.set(session_id, session);
+
+    logger.info({ session_id, url: value.url }, "Session started");
+
+    return res.status(201).json({
+      success: true,
+      data: {
+        session_id,
+        url: value.url,
+        title: meta.title,
+        status: "active",
+        metadata: {
+          latency_ms: Date.now() - start,
+          steps: 1,
+          estimated_cost: 0.001,
+          createdAt: now,
+        },
+      },
+      meta: successMeta(start),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Session start failed";
+    return res.status(500).json({
+      success: false,
+      error: { code: "SESSION_START_FAILED", type: "navigation_error", message, retryable: true },
+      meta: successMeta(start),
+    });
+  }
+});
+
+// ─── POST /session/:session_id/run ────────────────────────────────────────────
+
+const sessionRunSchema = Joi.object({
+  actions: Joi.array().items(Joi.string()).min(1).required(),
+  goal: Joi.string().max(300).optional(),
+  extract_after: Joi.boolean().default(false),
+  wait_for: Joi.string().optional(),
+});
+
+router.post("/session/:session_id/run", async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { session_id } = req.params;
+  const { error, value } = sessionRunSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ success: false, error: { code: "VALIDATION_FAILED", message: error.details[0].message }, meta: successMeta(start) });
+  }
+
+  const session = sessionStore.get(session_id);
+  if (!session) {
+    return res.status(404).json({
+      success: false,
+      error: { code: "SESSION_NOT_FOUND", type: "session_error", message: "Session not found: " + session_id, retryable: false },
+      meta: successMeta(start),
+    });
+  }
+
+  try {
+    const html = await fetchPage(session.url);
+    const text = extractText(html);
+    const meta = extractMeta(html);
+    const now = new Date().toISOString();
+
+    const actionResults = value.actions.map((action: string) => {
+      session.history.push({ action, timestamp: now });
+      const isWaitFor = action.startsWith("wait_for");
+      return {
+        action,
+        status: "simulated",
+        type: isWaitFor ? "wait_for_selector" : "interaction",
+        note: isWaitFor ? "Selector wait simulated — headless browser required for real DOM waiting" : "Action simulated — headless browser required for real interaction",
+      };
+    });
+
+    let extracted = null;
+    if (value.extract_after && value.goal) {
+      extracted = await claudeExtract(text, value.goal, undefined);
+      session.history.push({ action: "extract", timestamp: now });
+    }
+
+    session.lastActiveAt = now;
+    sessionStore.set(session_id, session);
+
+    const steps = value.actions.length + (value.extract_after ? 1 : 0);
+    const estimatedCost = parseFloat((steps * 0.0012).toFixed(4));
+
+    logger.info({ session_id, action_count: value.actions.length }, "Session run complete");
+
+    return res.json({
+      success: true,
+      data: {
+        session_id,
+        url: session.url,
+        title: meta.title,
+        actions: actionResults,
+        extracted: extracted ?? null,
+        history_length: session.history.length,
+        metadata: {
+          latency_ms: Date.now() - start,
+          steps,
+          estimated_cost: estimatedCost,
+          lastActiveAt: session.lastActiveAt,
+        },
+      },
+      meta: successMeta(start),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Session run failed";
+    return res.status(500).json({
+      success: false,
+      error: { code: "SESSION_RUN_FAILED", type: "execution_error", message, retryable: true },
+      meta: successMeta(start),
+    });
   }
 });
 

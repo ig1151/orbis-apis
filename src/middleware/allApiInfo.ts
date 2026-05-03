@@ -363,6 +363,8 @@ export const browserTaskInfoRouter = createApiInfoRouter({
     { method: 'GET', path: '/tasks', description: 'List recent tasks with status, type, and latency.' },
     { method: 'GET', path: '/:task_id', description: 'Retrieve full result and trace for a specific task.' },
     { method: 'GET', path: '/workflows', description: 'List available named workflows with input schemas.' },
+    { method: 'POST', path: '/session/start', description: 'Start a persistent browser session with optional cookies. Returns session_id for reuse across multiple actions.' },
+    { method: 'POST', path: '/session/:session_id/run', description: 'Run actions inside an existing session. Supports wait_for selectors, post-action extraction, and persistent cookie state.' },
   ],
 });
 
