@@ -369,6 +369,35 @@ app.use('/agent-skills', agentSkillsInfoRouter);
 app.use('/defi-position-monitor', defiPositionInfoRouter);
 app.use('/wallet-portfolio', walletPortfolioInfoRouter);
 app.use('/cross-chain-bridge', crossChainInfoRouter);
+app.get('/cross-chain-bridge/info', (_req, res) => {
+  res.json({
+    name: 'Agent Cross-Chain Execution & Bridge Intelligence API',
+    version: '2.0.0',
+    description: 'Real-time cross-chain bridge intelligence for autonomous agents. Compare routes, score bridges, estimate slippage, monitor conditions, and gate execution — powered by live LI.FI data across 30+ chains.',
+    category: 'blockchain-web3',
+    loop_type: 'compare_score_estimate_monitor_gate_execute',
+    monetization_grade: 'A',
+    primary_use_case: 'Agent cross-chain bridge selection and execution gating',
+    baseUrl: 'https://orbis-apis.onrender.com/cross-chain-bridge',
+    website: 'https://orbis-apis.onrender.com',
+    docs: 'https://orbis-apis.onrender.com/cross-chain-bridge/docs',
+    openapi: 'https://orbis-apis.onrender.com/cross-chain-bridge/openapi.json',
+    pricing: {
+      '/compare-routes': 0.003,
+      '/score-route': 0.0025,
+      '/estimate-slippage': 0.002,
+      '/monitor-bridge': 0.002,
+      '/execution-gate': 0.0045
+    },
+    endpoints: [
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/cross-chain-bridge/compare-routes', description: 'Compare routes with AI scoring: value, speed, safety scores and recommendation.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/cross-chain-bridge/score-route', description: 'Score a route across fee, speed, safety, liquidity. Returns grade and safe_to_use.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/cross-chain-bridge/estimate-slippage', description: 'Estimate slippage and total cost. Returns slippage_level and safe_to_proceed.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/cross-chain-bridge/monitor-bridge', description: 'Monitor bridge conditions. Returns alert_level and next_check_ms.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/cross-chain-bridge/execution-gate', description: 'Execution gate: checks fees and slippage, returns execute bool and chains to Autopilot.' },
+    ]
+  });
+});
 app.use('/derivatives', derivativesInfoRouter);
 app.use('/market-correlation', marketCorrelationInfoRouter);
 app.use('/yield-farming', yieldFarmingInfoRouter);

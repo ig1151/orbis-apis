@@ -156,14 +156,29 @@ export const walletPortfolioInfoRouter = createApiInfoRouter({
 });
 
 export const crossChainInfoRouter = createApiInfoRouter({
-  name: 'Cross-Chain Bridge API', slug: 'cross-chain-bridge', version: '1.0.0',
-  description: 'Find best bridge routes, compare fees, and execute cross-chain transfers.',
-  category: 'DeFi Infrastructure',
+  name: 'Agent Cross-Chain Execution & Bridge Intelligence API', slug: 'cross-chain-bridge', version: '2.0.0',
+  description: 'Real-time cross-chain bridge intelligence for autonomous agents. Compare routes, score bridges, estimate slippage, monitor conditions, and gate execution — powered by live LI.FI data across 30+ chains. Designed for DeFi agents, portfolio rebalancers, and execution pipelines.',
+  category: 'blockchain-web3',
+  loop_type: 'compare_score_estimate_monitor_gate_execute',
+  monetization_grade: 'A',
+  primary_use_case: 'Agent cross-chain bridge selection and execution gating',
+  pricing: {
+    '/compare-routes': 0.003,
+    '/score-route': 0.0025,
+    '/estimate-slippage': 0.002,
+    '/monitor-bridge': 0.002,
+    '/execution-gate': 0.0045
+  },
   endpoints: [
-    { method: 'GET', path: '/bridge/chains', description: 'Get supported chains' },
-    { method: 'GET', path: '/bridge/tokens', description: 'Get bridgeable tokens', params: { chainId: 'Chain ID' } },
-    { method: 'GET', path: '/bridge/best', description: 'Find best bridge route', params: { fromChain: 'Source chain', toChain: 'Destination chain', token: 'Token symbol', amount: 'Amount' } },
-    { method: 'GET', path: '/bridge/routes', description: 'Get all available routes' },
+    { method: 'POST', path: '/compare-routes', description: 'Compare bridge routes with AI scoring: value, speed, safety scores and recommendation.' },
+    { method: 'POST', path: '/score-route', description: 'Score a bridge route across fee, speed, safety, liquidity. Returns grade and safe_to_use.' },
+    { method: 'POST', path: '/estimate-slippage', description: 'Estimate slippage and total cost for a cross-chain transfer. Returns slippage_level and safe_to_proceed.' },
+    { method: 'POST', path: '/monitor-bridge', description: 'Monitor bridge conditions: congestion, fees, liquidity. Returns alert_level and next_check_ms.' },
+    { method: 'POST', path: '/execution-gate', description: 'Cross-API execution gate: checks fees and slippage against constraints, returns execute bool and chains to Autopilot.' },
+    { method: 'GET', path: '/bridge/chains', description: 'Get all supported chains' },
+    { method: 'GET', path: '/bridge/tokens', description: 'Get bridgeable tokens for a chain' },
+    { method: 'GET', path: '/bridge/best', description: 'Legacy: best bridge route' },
+    { method: 'GET', path: '/bridge/routes', description: 'Legacy: all bridge routes' },
   ],
 });
 
