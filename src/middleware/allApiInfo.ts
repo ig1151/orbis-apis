@@ -355,14 +355,31 @@ export const agentWorkflowInfoRouter = createApiInfoRouter({
 });
 
 export const autopilotInfoRouter = createApiInfoRouter({
-  name: 'Autopilot API', slug: 'autopilot', version: '1.0.0',
-  description: 'Autonomous AI agent sessions that execute tasks without human intervention.',
+  name: 'Agent Execution Orchestration Engine', slug: 'autopilot', version: '2.0.0',
+  description: 'Central agent brain API — the glue layer between all Orbis APIs. Determines next actions, makes decisions between options, gates execution with risk checks, decomposes goals into plans, and recovers from failures. Designed to be called every loop iteration: signal detected → autopilot decides → action executes.',
   category: 'AI Agents',
+  loop_type: 'detect_decide_gate_execute_recover',
+  monetization_grade: 'A',
+  primary_use_case: 'Agent decision orchestration across all APIs',
+  pricing: {
+    '/next-action': 0.002,
+    '/decide': 0.002,
+    '/should-execute': 0.0015,
+    '/plan': 0.003,
+    '/retry-strategy': 0.0015
+  },
   endpoints: [
-    { method: 'POST', path: '/', description: 'Start an autopilot session' },
-    { method: 'GET', path: '/:id', description: 'Get session status' },
-    { method: 'GET', path: '/:id/history', description: 'Get session history' },
+    { method: 'POST', path: '/next-action', description: 'Core loop driver — given context and state, returns the single best next action with confidence, urgency, and chain_to hints. Call every iteration.' },
+    { method: 'POST', path: '/decide', description: 'High-frequency decision between multiple options. Returns selected option, confidence, risk score, and rejected alternatives.' },
+    { method: 'POST', path: '/should-execute', description: 'Risk gate — determines whether an action should execute. Returns execute bool, risk score, blocking factors, and retry hints.' },
+    { method: 'POST', path: '/plan', description: 'Decompose a goal into ordered executable steps with API routing, estimated timing, and complexity rating.' },
+    { method: 'POST', path: '/retry-strategy', description: 'Failure recovery — determines retry strategy, delay, max attempts, and whether to escalate or use alternative action.' },
+    { method: 'POST', path: '/', description: 'Create an autopilot session for portfolio management' },
+    { method: 'GET', path: '/:id', description: 'Get session status and config' },
+    { method: 'GET', path: '/:id/history', description: 'Get session decision history' },
+    { method: 'POST', path: '/:id', description: 'Pause or resume a session (send status: active|paused)' },
     { method: 'POST', path: '/:id/update', description: 'Update session parameters' },
+    { method: 'DELETE', path: '/:id', description: 'Stop and delete a session' },
   ],
 });
 

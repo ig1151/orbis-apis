@@ -140,4 +140,189 @@ router.delete('/:id', (req: Request, res: Response) => {
   res.json({ id: req.params.id, status: 'stopped', message: 'Session deleted' });
 });
 
+
+// ── Agent Decision Engine Endpoints (v2) ──────────────────────────────────
+import axios from 'axios';
+
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '';
+
+async function callAI(prompt: string): Promise<any> {
+  const { data } = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+    model: 'anthropic/claude-sonnet-4-5',
+    messages: [{ role: 'user', content: prompt }],
+    max_tokens: 600,
+    temperature: 0.2
+  }, {
+    headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' },
+    timeout: 15000
+  });
+  const raw = data.choices[0].message.content.trim();
+  return JSON.parse(raw.replace(/```json|```/g, '').trim());
+}
+
+function meta(startMs: number, cost: number) {
+  return { latency_ms: Date.now() - startMs, estimated_cost: cost };
+}
+
+// POST /next-action — CORE LOOP DRIVER
+router.post('/next-action', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { context, state, available_actions } = req.body;
+  if (!context) return res.status(400).json({ error: 'context is required' });
+
+  try {
+    const ai = await callAI(`You are an autonomous agent decision engine. Given the context and state below, determine the single best next action. Return ONLY valid JSON, no markdown.
+
+CONTEXT: ${JSON.stringify(context)}
+STATE: ${JSON.stringify(state || {})}
+AVAILABLE ACTIONS: ${JSON.stringify(available_actions || ['scan_signals','score_asset','detect_event','rank_opportunities','execute_trade','wait','rebalance'])}
+
+Return ALL confidence scores as decimals 0.0-1.0:
+{
+  "action": "action_name",
+  "confidence": 0.0,
+  "reason": "one sentence",
+  "urgency": "low|medium|high|critical",
+  "next_check_ms": 60000,
+  "fallback_action": "action_name",
+  "chain_to": ["api_or_endpoint_to_call_next"]
+}`);
+    return res.json({ ...ai, timestamp: new Date().toISOString(), metadata: meta(start, 0.002) });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'next_action_failed', message: err.message });
+  }
+});
+
+// POST /decide — high-frequency decision between options
+router.post('/decide', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { options, context, goal } = req.body;
+  if (!options || !Array.isArray(options) || options.length < 2) {
+    return res.status(400).json({ error: 'options array with at least 2 items is required' });
+  }
+
+  try {
+    const ai = await callAI(`You are an autonomous agent decision engine. Select the best option from the list below. Return ONLY valid JSON, no markdown.
+
+GOAL: ${goal || 'maximize outcome'}
+CONTEXT: ${JSON.stringify(context || {})}
+OPTIONS: ${JSON.stringify(options)}
+
+Return ALL scores as decimals 0.0-1.0:
+{
+  "selected": "selected_option_value",
+  "confidence": 0.0,
+  "reason": "one sentence",
+  "risk_score": 0.0,
+  "expected_value": 0.0,
+  "rejected": [{"option": "name", "reason": "why rejected"}],
+  "reversible": true
+}`);
+    return res.json({ ...ai, timestamp: new Date().toISOString(), metadata: meta(start, 0.002) });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'decide_failed', message: err.message });
+  }
+});
+
+// POST /should-execute — gating check before any action
+router.post('/should-execute', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { action, context, constraints } = req.body;
+  if (!action) return res.status(400).json({ error: 'action is required' });
+
+  try {
+    const ai = await callAI(`You are an autonomous agent risk gate. Decide whether to execute this action. Return ONLY valid JSON, no markdown.
+
+ACTION: ${JSON.stringify(action)}
+CONTEXT: ${JSON.stringify(context || {})}
+CONSTRAINTS: ${JSON.stringify(constraints || {})}
+
+Return ALL scores as decimals 0.0-1.0:
+{
+  "execute": true,
+  "confidence": 0.0,
+  "risk_score": 0.0,
+  "reason": "one sentence",
+  "blocking_factors": [],
+  "suggested_delay_ms": 0,
+  "safe_to_retry": true
+}`);
+    return res.json({ ...ai, timestamp: new Date().toISOString(), metadata: meta(start, 0.0015) });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'should_execute_failed', message: err.message });
+  }
+});
+
+// POST /plan — decompose a goal into executable steps
+router.post('/plan', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { goal, constraints, available_apis, context } = req.body;
+  if (!goal) return res.status(400).json({ error: 'goal is required' });
+
+  try {
+    const ai = await callAI(`You are an autonomous agent planner. Decompose the goal into a sequence of executable steps. Return ONLY valid JSON, no markdown.
+
+GOAL: ${goal}
+CONSTRAINTS: ${JSON.stringify(constraints || {})}
+AVAILABLE APIS: ${JSON.stringify(available_apis || ['alpha-signal','action','agent-memory','agent-workflow','browser-task'])}
+CONTEXT: ${JSON.stringify(context || {})}
+
+Return ALL scores as decimals 0.0-1.0:
+{
+  "plan_id": "unique_id",
+  "goal": "${goal}",
+  "steps": [
+    {
+      "step": 1,
+      "action": "action_name",
+      "api": "api_slug",
+      "endpoint": "/endpoint",
+      "input_from_previous": true,
+      "estimated_ms": 0,
+      "required": true
+    }
+  ],
+  "estimated_total_ms": 0,
+  "confidence": 0.0,
+  "complexity": "low|medium|high",
+  "reversible": true
+}`);
+    return res.json({ ...ai, timestamp: new Date().toISOString(), metadata: meta(start, 0.003) });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'plan_failed', message: err.message });
+  }
+});
+
+// POST /retry-strategy — determine retry approach after failure
+router.post('/retry-strategy', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { failure, context, attempt_number, original_action } = req.body;
+  if (!failure) return res.status(400).json({ error: 'failure is required' });
+
+  try {
+    const ai = await callAI(`You are an autonomous agent failure recovery engine. Determine the best retry strategy. Return ONLY valid JSON, no markdown.
+
+FAILURE: ${JSON.stringify(failure)}
+ORIGINAL ACTION: ${JSON.stringify(original_action || {})}
+ATTEMPT NUMBER: ${attempt_number || 1}
+CONTEXT: ${JSON.stringify(context || {})}
+
+Return ALL scores as decimals 0.0-1.0:
+{
+  "should_retry": true,
+  "strategy": "immediate|backoff|alternative|abort",
+  "delay_ms": 0,
+  "max_attempts": 3,
+  "alternative_action": null,
+  "confidence": 0.0,
+  "reason": "one sentence",
+  "backoff_multiplier": 1.5,
+  "escalate": false
+}`);
+    return res.json({ ...ai, timestamp: new Date().toISOString(), metadata: meta(start, 0.0015) });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'retry_strategy_failed', message: err.message });
+  }
+});
+
 export default router;

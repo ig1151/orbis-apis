@@ -92,6 +92,7 @@ app.use('/ai-output-safety', safetyRouter);
 
 // ── Autopilot ─────────────────────────────────────────────────────────────────
 import autopilotRouter from './routes/autopilot-api/routes/autopilot';
+app.use('/autopilot', autopilotInfoRouter);
 app.use('/autopilot', autopilotRouter);
 
 // ── Browser Task ──────────────────────────────────────────────────────────────
@@ -317,7 +318,6 @@ app.use("/action", actionRouter);
 app.use("/action", actionTaskTypesRouter);
 app.use('/agent-workflow', agentWorkflowInfoRouter);
 app.use('/agent-workflow', workflowRouter);
-app.use('/autopilot', autopilotInfoRouter);
 app.use('/company-research', companyResearchInfoRouter);
 app.use('/crypto-news-impact', cryptoNewsInfoRouter);
 app.use('/derivatives-intelligence', derivativesIntelligenceInfoRouter);
