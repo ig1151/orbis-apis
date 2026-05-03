@@ -198,6 +198,55 @@ All scores must be decimals 0.0-1.0 (e.g. 0.72, not 72).
   }
 });
 
+
+// POST /filter-signals
+router.post('/filter-signals', async (req: Request, res: Response) => {
+  const schema = Joi.object({
+    signals: Joi.array().items(Joi.object()).min(1).max(20).required(),
+    min_confidence: Joi.number().min(0).max(1).default(0.7),
+    types: Joi.array().items(Joi.string().valid('breakout', 'momentum', 'reversal', 'accumulation', 'distribution', 'squeeze')).default([]),
+    actions: Joi.array().items(Joi.string().valid('buy', 'sell', 'hold')).default([]),
+    min_urgency: Joi.string().valid('low', 'medium', 'high', 'critical').default('low'),
+    trend: Joi.string().valid('bullish', 'bearish', 'neutral').optional()
+  });
+  const { error, value } = schema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+
+  const urgencyRank: Record<string, number> = { low: 0, medium: 1, high: 2, critical: 3 };
+  const minUrgencyRank = urgencyRank[value.min_urgency];
+
+  let filtered = value.signals.filter((s: any) => {
+    if (s.confidence < value.min_confidence) return false;
+    if (value.types.length && !value.types.includes(s.signal_type)) return false;
+    if (value.actions.length && !value.actions.includes(s.action)) return false;
+    if (urgencyRank[s.urgency] < minUrgencyRank) return false;
+    if (value.trend && s.trend !== value.trend) return false;
+    return true;
+  });
+
+  filtered = filtered.sort((a: any, b: any) => b.confidence - a.confidence);
+
+  return res.json({
+    filtered,
+    count: filtered.length,
+    total_input: value.signals.length,
+    filters_applied: {
+      min_confidence: value.min_confidence,
+      types: value.types,
+      actions: value.actions,
+      min_urgency: value.min_urgency,
+      trend: value.trend || null
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Alias routes — short names for agent loop ergonomics
+router.post('/scan', (req: Request, res: Response) => { req.url = '/scan-signals'; router(req, res, () => {}); });
+router.post('/score', (req: Request, res: Response) => { req.url = '/score-asset'; router(req, res, () => {}); });
+router.post('/rank', (req: Request, res: Response) => { req.url = '/rank-opportunities'; router(req, res, () => {}); });
+router.post('/trigger-event', (req: Request, res: Response) => { req.url = '/detect-event'; router(req, res, () => {}); });
+
 // Legacy GET /signal/batch
 router.get('/signal/batch', async (_req: Request, res: Response) => {
   try {
