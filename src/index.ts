@@ -36,6 +36,7 @@ app.use('/wallet', walletBalanceRouter);
 // ── Alpha Signal ──────────────────────────────────────────────────────────────
 import alphaSignalRouter from './routes/alpha-signal/index';
 app.use('/alpha-signal', alphaSignalInfoRouter);
+app.get('/alpha-signal/info', (req, res) => { req.url = '/'; alphaSignalInfoRouter(req, res, () => {}); });
 app.use('/alpha-signal', alphaSignalRouter);
 
 // ── Action API ────────────────────────────────────────────────────────────────
