@@ -292,6 +292,7 @@ export const alphaSignalInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/score-asset', description: 'Composite score for a single asset: trend, momentum, volume, sentiment scores plus regime and bias classification. Alias: /score' },
     { method: 'POST', path: '/detect-event', description: 'Detect significant market events: volume spikes, breakouts, flash crashes, whale moves. Returns impact score, direction, and chain_to hints. Alias: /trigger-event' },
     { method: 'POST', path: '/rank-opportunities', description: 'Rank assets by opportunity score across crypto, defi, l1, l2, or meme universes. Returns top N with risk/reward ratios. Alias: /rank' },
+    { method: 'POST', path: '/explain', description: 'Deep explanation of a signal: drivers, confidence breakdown by price/volume/trend/context, risk factors, contra indicators, and concrete action recommendation.' },
     { method: 'GET', path: '/signal/:symbol', description: 'Legacy: single asset signal for ETH, BNB, SOL' },
     { method: 'GET', path: '/signal/batch', description: 'Legacy: batch signals for ETH, BNB, SOL' },
   ],
