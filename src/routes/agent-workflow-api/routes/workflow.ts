@@ -318,6 +318,75 @@ router.post("/:workflow_id/optimize", (req: Request, res: Response) => {
   });
 });
 
+
+// ─── POST /decompose ──────────────────────────────────────────────────────────
+
+router.post("/decompose", async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { goal, context = {}, max_steps = 6 } = req.body;
+
+  if (!goal || typeof goal !== "string") {
+    return res.status(400).json({ success: false, error: { code: "MISSING_GOAL", message: "goal (string) is required" }, meta: successMeta(start) });
+  }
+
+  try {
+    const { callClaudeJSON } = await import("../executors/anthropic");
+    const plan = await callClaudeJSON(`You are an agent workflow planner. Decompose this goal into ${max_steps} or fewer concrete executable steps.
+Goal: "${goal}"
+Context: ${JSON.stringify(context)}
+
+Return a JSON object with this exact shape:
+{
+  "steps": [
+    { "name": "step_name", "description": "what this step does", "type": "search|extract|analyze|synthesize|validate|enrich", "depends_on": [], "estimated_duration_ms": 2000, "retryable": true }
+  ],
+  "estimated_total_duration_ms": 10000,
+  "complexity": "low|medium|high",
+  "recommended_template": "template name or null"
+}`) as {
+      steps: { name: string; description: string; type: string; depends_on: string[]; estimated_duration_ms: number; retryable: boolean }[];
+      estimated_total_duration_ms: number;
+      complexity: string;
+      recommended_template: string | null;
+    } | null;
+
+    if (!plan || !plan.steps) {
+      throw new Error("Failed to decompose goal into steps");
+    }
+
+    const workflow_id = "wf_" + uuidv4().replace(/-/g, "").slice(0, 20);
+
+    logger.info({ workflow_id, goal, step_count: plan.steps.length }, "Workflow decomposed");
+
+    return res.status(201).json({
+      success: true,
+      data: {
+        workflow_id,
+        goal,
+        steps: plan.steps.map((s, i) => ({
+          step_id: "step_" + (i + 1).toString().padStart(3, "0"),
+          name: s.name,
+          description: s.description,
+          type: s.type,
+          depends_on: s.depends_on,
+          estimated_duration_ms: s.estimated_duration_ms,
+          retryable: s.retryable,
+        })),
+        estimated_total_duration_ms: plan.estimated_total_duration_ms,
+        complexity: plan.complexity,
+        recommended_template: plan.recommended_template,
+        next_action: "run",
+        run_url: "/agent-workflow/run",
+      },
+      confidence: { score: 0.92, signals: ["goal_parsed", "steps_planned", "dependencies_mapped"] },
+      meta: successMeta(start),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Decomposition failed";
+    return res.status(500).json({ success: false, error: { code: "DECOMPOSE_FAILED", message }, meta: successMeta(start) });
+  }
+});
+
 // ─── GET /templates ───────────────────────────────────────────────────────────
 
 router.get("/templates", (_req: Request, res: Response) => {

@@ -331,6 +331,7 @@ export const agentWorkflowInfoRouter = createApiInfoRouter({
     { method: 'GET', path: '/:workflow_id/status', description: 'Get current status and metadata for a workflow' },
     { method: 'POST', path: '/:workflow_id/retry', description: 'Retry a failed workflow. Only available for workflows with status: failed.' },
     { method: 'POST', path: '/:workflow_id/optimize', description: 'Analyze a completed workflow and return optimization suggestions and estimated improvements' },
+    { method: 'POST', path: '/decompose', description: 'Decompose a goal into executable steps with type, dependencies, duration estimates, and complexity rating. Returns a ready-to-run workflow plan.' },
     { method: 'GET', path: '/templates', description: 'List all available workflow templates with input/output schemas and step definitions' },
   ],
 });
