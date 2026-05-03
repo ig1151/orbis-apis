@@ -662,3 +662,12 @@ export const tokenPriceFeedInfoRouter = createApiInfoRouter({
     { method: 'GET', path: '/trending', description: 'Currently trending tokens on CoinGecko' },
   ],
 });
+
+export const walletReputationInfoRouter = createApiInfoRouter({
+  name: 'Wallet Reputation API', slug: 'wallet-reputation', version: '1.0.0',
+  description: 'Score any Ethereum wallet based on age, transaction history, balance, and fail rate. Returns a 0-100 reputation score with flags.',
+  category: 'Crypto Intelligence',
+  endpoints: [
+    { method: 'GET', path: '/score', description: 'Score a wallet address', params: { address: 'Ethereum wallet address (0x...)' } },
+  ],
+});
