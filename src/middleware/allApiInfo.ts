@@ -671,3 +671,12 @@ export const walletReputationInfoRouter = createApiInfoRouter({
     { method: 'GET', path: '/score', description: 'Score a wallet address', params: { address: 'Ethereum wallet address (0x...)' } },
   ],
 });
+
+export const txSimulatorInfoRouter = createApiInfoRouter({
+  name: 'TX Simulator API', slug: 'tx-simulator', version: '1.0.0',
+  description: 'Simulate an Ethereum transaction before sending. Returns success prediction, gas cost, balance check, and nonce.',
+  category: 'Crypto Infrastructure',
+  endpoints: [
+    { method: 'GET', path: '/simulate', description: 'Simulate a transaction', params: { from: 'Sender address', to: 'Recipient address', value: 'ETH amount (default 0)', gasLimit: 'Gas limit (default 21000)' } },
+  ],
+});
