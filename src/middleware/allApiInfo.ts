@@ -698,3 +698,13 @@ export const onchainNewsInfoRouter = createApiInfoRouter({
     { method: 'GET', path: '/news', description: 'Get news and sentiment for a token', params: { token: 'Token name or symbol e.g. bitcoin, ETH, solana' } },
   ],
 });
+
+export const ensResolverInfoRouter = createApiInfoRouter({
+  name: 'ENS Resolver API', slug: 'ens-resolver', version: '1.0.0',
+  description: 'Resolve ENS names to Ethereum addresses and reverse lookup addresses to ENS names. Returns avatar, display name, and social records.',
+  category: 'Crypto Infrastructure',
+  endpoints: [
+    { method: 'GET', path: '/resolve', description: 'Resolve ENS name to address and profile', params: { ens: 'ENS name e.g. vitalik.eth' } },
+    { method: 'GET', path: '/lookup', description: 'Reverse lookup address to ENS name', params: { address: 'Ethereum address (0x...)' } },
+  ],
+});
