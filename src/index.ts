@@ -119,6 +119,7 @@ app.get('/autopilot/info', (_req, res) => {
       { method: 'POST', url: 'https://orbis-apis.onrender.com/autopilot/should-execute', description: 'Risk gate — execute bool, risk score, blocking factors, retry hints.' },
       { method: 'POST', url: 'https://orbis-apis.onrender.com/autopilot/plan', description: 'Decompose goal into ordered steps with API routing and timing estimates.' },
       { method: 'POST', url: 'https://orbis-apis.onrender.com/autopilot/retry-strategy', description: 'Failure recovery — strategy, delay, max attempts, alternative action.' },
+      { method: 'POST', url: 'https://orbis-apis.onrender.com/autopilot/should-act', description: 'Ultra-lightweight gating check — pure logic, 0ms AI latency, $0.001. Call every step.' },
     ]
   });
 });

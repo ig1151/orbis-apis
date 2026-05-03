@@ -374,6 +374,7 @@ export const autopilotInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/should-execute', description: 'Risk gate — determines whether an action should execute. Returns execute bool, risk score, blocking factors, and retry hints.' },
     { method: 'POST', path: '/plan', description: 'Decompose a goal into ordered executable steps with API routing, estimated timing, and complexity rating.' },
     { method: 'POST', path: '/retry-strategy', description: 'Failure recovery — determines retry strategy, delay, max attempts, and whether to escalate or use alternative action.' },
+    { method: 'POST', path: '/should-act', description: 'Ultra-lightweight gating check — pure logic, no AI call, sub-millisecond response. Call every step to gate execution. $0.001.' },
     { method: 'POST', path: '/', description: 'Create an autopilot session for portfolio management' },
     { method: 'GET', path: '/:id', description: 'Get session status and config' },
     { method: 'GET', path: '/:id/history', description: 'Get session decision history' },
