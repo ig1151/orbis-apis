@@ -291,12 +291,14 @@ export const alphaSignalInfoRouter = createApiInfoRouter({
 });
 
 export const actionInfoRouter = createApiInfoRouter({
-  name: 'Action API', slug: 'action', version: '1.0.0',
-  description: 'Execute and track AI agent actions including outreach, research, and automation.',
+  name: 'Agent Action Execution API', slug: 'action', version: '2.0.0',
+  description: 'Execute structured AI agent actions with machine-readable results, status tracking, retry metadata, and audit history for autonomous workflows.',
   category: 'AI Agents',
   endpoints: [
-    { method: 'POST', path: '/action', description: 'Execute an agent action' },
-    { method: 'GET', path: '/actions', description: 'List available action types' },
+    { method: 'POST', path: '/execute', description: 'Execute a structured agent action', params: { action_type: 'research | outreach | web_fetch | data_extract | api_call | workflow_step', dry_run: 'true | false' } },
+    { method: 'GET', path: '/types', description: 'List supported action types with example payloads' },
+    { method: 'GET', path: '/history', description: 'Get recent action execution history' },
+    { method: 'GET', path: '/:action_id', description: 'Get result and metadata for a specific action by ID' },
   ],
 });
 
