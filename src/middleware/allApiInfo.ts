@@ -689,3 +689,12 @@ export const contractAnalyzerInfoRouter = createApiInfoRouter({
     { method: 'GET', path: '/analyze', description: 'Analyze a smart contract for risks', params: { address: 'Ethereum contract address (0x...)' } },
   ],
 });
+
+export const onchainNewsInfoRouter = createApiInfoRouter({
+  name: 'Onchain News API', slug: 'onchain-news', version: '1.0.0',
+  description: 'Real-time crypto news and AI sentiment analysis for any token. Returns articles, sentiment score, key themes, and market impact.',
+  category: 'Crypto Intelligence',
+  endpoints: [
+    { method: 'GET', path: '/news', description: 'Get news and sentiment for a token', params: { token: 'Token name or symbol e.g. bitcoin, ETH, solana' } },
+  ],
+});
