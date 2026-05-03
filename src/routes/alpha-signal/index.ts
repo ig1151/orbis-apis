@@ -112,7 +112,7 @@ router.post('/score-asset', async (req: Request, res: Response) => {
     const prompt = `You are a quantitative asset scoring engine. Score ${value.symbol} and return ONLY valid JSON, no markdown.
 PRICE: $${price.price_usd} | 1h: ${price.change_1h?.toFixed(2) ?? 'N/A'}% | 24h: ${price.change_24h?.toFixed(2)}% | 7d: ${price.change_7d?.toFixed(2)}%
 Volume: $${(price.volume_24h / 1e9).toFixed(2)}B | ATH Change: ${price.ath_change?.toFixed(2)}%${news ? ` | News: ${news.answer}` : ''}
-Return: {"symbol":"${value.symbol}","composite_score":0.0,"trend_score":0.0,"momentum_score":0.0,"volume_score":0.0,"sentiment_score":0.0,"trend":"bullish|bearish|neutral","volatility":0.0,"regime":"trending|ranging|breakout|breakdown|accumulation|distribution","bias":"long|short|neutral","strength":"strong|moderate|weak","risk_rating":"low|medium|high|extreme"}`;
+Return ALL scores as decimals between 0.0 and 1.0 (NOT percentages, NOT 0-100). Example: 0.72 not 72. Return: {"symbol":"${value.symbol}","composite_score":0.0,"trend_score":0.0,"momentum_score":0.0,"volume_score":0.0,"sentiment_score":0.0,"trend":"bullish|bearish|neutral","volatility":0.0,"regime":"trending|ranging|breakout|breakdown|accumulation|distribution","bias":"long|short|neutral","strength":"strong|moderate|weak","risk_rating":"low|medium|high|extreme"}`;
     const ai = await callAI(prompt);
     return res.json({ ...ai, price_usd: price.price_usd, timestamp: new Date().toISOString() });
   } catch (err: any) {
@@ -170,7 +170,7 @@ router.post('/rank-opportunities', async (req: Request, res: Response) => {
         const price = await fetchPrice(symbol);
         const prompt = `Score ${symbol} for trading opportunity. Return ONLY valid JSON, no markdown.
 PRICE: $${price.price_usd} | 1h: ${price.change_1h?.toFixed(2) ?? 'N/A'}% | 24h: ${price.change_24h?.toFixed(2)}% | 7d: ${price.change_7d?.toFixed(2)}% | Vol: $${(price.volume_24h / 1e9).toFixed(2)}B
-Return: {"symbol":"${symbol}","opportunity_score":0.0,"trend":"bullish|bearish|neutral","action":"buy|sell|hold","confidence":0.0,"risk_reward":0.0,"timeframe":"short|medium|long","catalyst":"one word"}`;
+Return scores as decimals between 0.0 and 1.0 (NOT percentages, NOT 0-100). Example: 0.72 not 72. Return: {"symbol":"${symbol}","opportunity_score":0.0,"trend":"bullish|bearish|neutral","action":"buy|sell|hold","confidence":0.0,"risk_reward":0.0,"timeframe":"short|medium|long","catalyst":"one word"}`;
         const ai = await callAI(prompt);
         return { ...ai, price_usd: price.price_usd };
       })
