@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { fetchPriceOrNull, deriveUrgency } from './helpers';
+import { dispatchFiredEvent } from '../services/dispatcher';
 
 const router = Router();
 
@@ -30,6 +31,21 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     const confidence = fired ? 0.88 : 0.2;
     const impact = fired ? 0.75 : 0.1;
     const urgency = deriveUrgency(confidence, impact);
+
+    if (fired) {
+      dispatchFiredEvent({
+        trigger_id:          t.trigger_id ?? 'unknown',
+        symbol:              t.symbol?.toUpperCase() ?? '',
+        condition_type:      t.condition_type ?? 'unknown',
+        current_value:       currentValue,
+        threshold:           t.threshold,
+        urgency,
+        confidence,
+        market_impact_score: impact,
+        recommended_action:  'score_and_route',
+        fired_at:            new Date().toISOString(),
+      }).catch(() => {});
+    }
 
     return {
       trigger_id:          t.trigger_id ?? null,
