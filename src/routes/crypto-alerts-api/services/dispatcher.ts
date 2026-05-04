@@ -103,10 +103,11 @@ function ensureSubscribed(): void {
   sub.on('message', (_channel: string, message: string) => {
     try {
       const event: FiredEvent = JSON.parse(message);
+      console.log('[dispatcher] received from Redis:', event.symbol, 'clients:', sseClients.size);
       pushToSSEClients(event);
       pushToWebhooks(event).catch(() => {});
-    } catch {
-      // ignore malformed
+    } catch (err: any) {
+      console.error('[dispatcher] parse error:', err.message);
     }
   });
 }
