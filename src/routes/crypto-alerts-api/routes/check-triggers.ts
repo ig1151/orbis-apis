@@ -44,7 +44,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
         market_impact_score: impact,
         recommended_action:  'score_and_route',
         fired_at:            new Date().toISOString(),
-      }).catch(() => {});
+      }).catch((err: any) => { console.error('[check-triggers] dispatch error:', err.message); });
     }
 
     return {
