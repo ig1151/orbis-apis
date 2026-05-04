@@ -107,15 +107,31 @@ export const defiRiskInfoRouter = createApiInfoRouter({
 });
 
 export const cryptoAlertsInfoRouter = createApiInfoRouter({
-  name: 'Crypto Alerts API', slug: 'crypto-alerts', version: '1.0.0',
-  description: 'Create and manage price alerts, whale activity notifications, and market triggers.',
-  category: 'Crypto Monitoring',
+  name: 'Agent Crypto Trigger & Market Alert API',
+  slug: 'crypto-alerts',
+  version: 'v2',
+  description: 'Agent-native market trigger system that creates structured triggers, evaluates conditions against live prices, scores urgency and market impact, routes fired alerts to the correct execution path, and gates autonomous agent actions.',
+  category: 'blockchain-web3',
+  loop_type: 'create_check_score_route_gate_execute',
+  monetization_grade: 'A',
+  primary_use_case: 'Autonomous agent trigger evaluation, alert routing, and execution gating',
+  pricing: {
+    '/create-trigger':  0.0025,
+    '/check-triggers':  0.0015,
+    '/score-trigger':   0.0025,
+    '/route-alert':     0.003,
+    '/execution-gate':  0.004,
+    '/monitor-alerts':  0.002,
+    '/summarize-alert': 0.0015,
+  },
   endpoints: [
-    { method: 'POST', path: '/create', description: 'Create a new alert' },
-    { method: 'GET', path: '/check', description: 'Check triggered alerts' },
-    { method: 'GET', path: '/feed', description: 'Get alert feed' },
-    { method: 'GET', path: '/whale', description: 'Whale activity alerts', params: { chain: 'Chain name', minUsd: 'Minimum USD threshold' } },
-    { method: 'GET', path: '/summary', description: 'Alert summary and statistics' },
+    { method: 'POST', path: '/create-trigger',  description: 'Create structured trigger conditions for price, volume, volatility, whale activity, or narrative movement.' },
+    { method: 'POST', path: '/check-triggers',  description: 'Evaluate active triggers against live market data and return fired/not_fired results.' },
+    { method: 'POST', path: '/score-trigger',   description: 'Score urgency, confidence, market impact, and execution relevance of a fired trigger.' },
+    { method: 'POST', path: '/route-alert',     description: 'Route fired alert to correct next API or action path based on urgency and condition type.' },
+    { method: 'POST', path: '/execution-gate',  description: 'Gate execution — returns execute true/false before autonomous agent acts. Chains to autopilot.' },
+    { method: 'POST', path: '/monitor-alerts',  description: 'Continuously monitor a set of symbols and return active alerts and snapshots.' },
+    { method: 'POST', path: '/summarize-alert', description: 'Produce compact agent-readable alert context for LLM memory or execution logs.' },
   ],
 });
 

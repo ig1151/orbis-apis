@@ -512,16 +512,56 @@ app.use('/defi-risk/liquidity', defiRiskLiquidityRouter);
 app.use('/defi-risk/portfolio', defiRiskPortfolioRouter);
 
 // ── Crypto Alerts ─────────────────────────────────────────────────────────────
-import cryptoAlertsCreateRouter from './routes/crypto-alerts-api/routes/createAlert';
-import cryptoAlertsCheckRouter from './routes/crypto-alerts-api/routes/checkAlerts';
-import cryptoAlertsFeedRouter from './routes/crypto-alerts-api/routes/feed';
-import cryptoAlertsWhaleRouter from './routes/crypto-alerts-api/routes/whaleActivity';
-import cryptoAlertsSummaryRouter from './routes/crypto-alerts-api/routes/summary';
-app.use('/crypto-alerts/create', cryptoAlertsCreateRouter);
-app.use('/crypto-alerts/check', cryptoAlertsCheckRouter);
-app.use('/crypto-alerts/feed', cryptoAlertsFeedRouter);
-app.use('/crypto-alerts/whale', cryptoAlertsWhaleRouter);
-app.use('/crypto-alerts/summary', cryptoAlertsSummaryRouter);
+import cryptoAlertsRouter from './routes/crypto-alerts-api/index';
+app.get('/crypto-alerts/info', (_req, res) => {
+  res.json({
+    name: 'Agent Crypto Trigger & Market Alert API',
+    slug: 'crypto-alerts',
+    version: 'v2',
+    status: 'agent',
+    loop_type: 'create_check_score_route_gate_execute',
+    monetization_grade: 'A',
+    category: 'blockchain-web3',
+    description: 'Agent-native market trigger system that creates structured triggers, evaluates conditions against live prices, scores urgency and market impact, routes fired alerts to the correct execution path, and gates autonomous agent actions.',
+    baseUrl: 'https://orbis-apis.onrender.com/crypto-alerts',
+    websiteUrl: 'https://orbis-apis.onrender.com',
+    pricing: {
+      agent_pay_per_call: {
+        '/create-trigger':  0.0025,
+        '/check-triggers':  0.0015,
+        '/score-trigger':   0.0025,
+        '/route-alert':     0.003,
+        '/execution-gate':  0.004,
+        '/monitor-alerts':  0.002,
+        '/summarize-alert': 0.0015,
+      },
+      high_volume_agent: {
+        '/create-trigger':  0.001,
+        '/check-triggers':  0.0006,
+        '/score-trigger':   0.001,
+        '/route-alert':     0.0012,
+        '/execution-gate':  0.0018,
+        '/monitor-alerts':  0.0008,
+        '/summarize-alert': 0.0006,
+      },
+    },
+    endpoints: [
+      { method: 'POST', path: '/create-trigger' },
+      { method: 'POST', path: '/check-triggers' },
+      { method: 'POST', path: '/score-trigger' },
+      { method: 'POST', path: '/route-alert' },
+      { method: 'POST', path: '/execution-gate' },
+      { method: 'POST', path: '/monitor-alerts' },
+      { method: 'POST', path: '/summarize-alert' },
+    ],
+    execution_chain: [
+      'crypto-alerts/execution-gate',
+      'autopilot/should-execute',
+      'action-api/execute',
+    ],
+  });
+});
+app.use('/crypto-alerts', cryptoAlertsRouter);
 
 // ── Agent Skills ──────────────────────────────────────────────────────────────
 import agentSkillsRegisterRouter from './routes/agent-skills-api/routes/register';
