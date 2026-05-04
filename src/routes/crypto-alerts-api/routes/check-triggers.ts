@@ -15,7 +15,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
 
   const results = await Promise.all(triggers.map(async (t: any) => {
     const price = await fetchPriceOrNull(t.symbol);
-    const currentValue = price?.price ?? null;
+    // Allow caller to pass current_value directly (bypasses CoinGecko)
+    const currentValue = t.current_value ?? price?.price ?? null;
     let fired = false;
 
     if (currentValue !== null && t.threshold !== undefined) {
