@@ -99,11 +99,7 @@ function ensureSubscribed(): void {
   const sub = getSubscriber();
   if (!sub) return;
   subscribed = true;
-  sub.subscribe(CHANNEL).then(() => {
-    console.log('[dispatcher] subscribed to channel:', CHANNEL);
-  }).catch((err: any) => {
-    console.error('[dispatcher] subscribe failed:', err.message);
-  });
+
   sub.on('message', (_channel: string, message: string) => {
     try {
       const event: FiredEvent = JSON.parse(message);
@@ -114,6 +110,23 @@ function ensureSubscribed(): void {
       console.error('[dispatcher] parse error:', err.message);
     }
   });
+
+  // Wait for connection before subscribing
+  if (sub.status === 'ready') {
+    sub.subscribe(CHANNEL).then(() => {
+      console.log('[dispatcher] subscribed to channel:', CHANNEL);
+    }).catch((err: any) => {
+      console.error('[dispatcher] subscribe failed:', err.message);
+    });
+  } else {
+    sub.once('ready', () => {
+      sub.subscribe(CHANNEL).then(() => {
+        console.log('[dispatcher] subscribed to channel:', CHANNEL);
+      }).catch((err: any) => {
+        console.error('[dispatcher] subscribe failed:', err.message);
+      });
+    });
+  }
 }
 
 // ── Subscribe eagerly on module load ─────────────────────────────────────
