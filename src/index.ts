@@ -1,6 +1,6 @@
 import { actionRouter, actionTaskTypesRouter } from './routes/action';
 import { nftMetadataInfoRouter, nftTokenRouter, nftCollectionRouter, nftWalletRouter, nftTransfersRouter } from './routes/nft-metadata';
-import { gasOptimizerInfoRouter, fundingRateInfoRouter, strategySignalInfoRouter, predictionMarketInfoRouter, tokenScreenerInfoRouter, tokenUnlockInfoRouter, agentIdentityInfoRouter, cryptoNarrativeInfoRouter, defiRiskInfoRouter, cryptoAlertsInfoRouter, agentSkillsInfoRouter, defiPositionInfoRouter, walletPortfolioInfoRouter, crossChainInfoRouter, derivativesInfoRouter, marketCorrelationInfoRouter, yieldFarmingInfoRouter, tokenomicsInfoRouter, liquidationFeedInfoRouter, marketStressInfoRouter, walletInfoRouter, stablecoinYieldInfoRouter, metaStrategyInfoRouter, socialSentimentInfoRouter, alphaSignalInfoRouter, actionInfoRouter, agentMemoryInfoRouter, agentWorkflowInfoRouter, autopilotInfoRouter, browserTaskInfoRouter, companyResearchInfoRouter, cryptoNewsInfoRouter, derivativesIntelligenceInfoRouter, devUtilitiesInfoRouter, extractionInfoRouter, leadDiscoveryInfoRouter, marketIntelligenceInfoRouter, marketSignalInfoRouter, marketTriggerInfoRouter, marketWebhookInfoRouter, onchainSignalInfoRouter, portfolioRebalanceInfoRouter, strategyExecutionInfoRouter, unifiedDecisionInfoRouter, websiteMonitorInfoRouter, aiOutputSafetyInfoRouter, documentIntelligenceInfoRouter, identityIntelligenceInfoRouter, imageToContentInfoRouter, leadEnrichmentInfoRouter, leadQualityInfoRouter, ipIntelligenceInfoRouter, emailValidationInfoRouter, phoneValidationInfoRouter, searchExtractInfoRouter, tokenTrustInfoRouter, trustInfoRouter, userRiskInfoRouter, walletIntelligenceInfoRouter, tokenPriceFeedInfoRouter, walletReputationInfoRouter, txSimulatorInfoRouter, contractAnalyzerInfoRouter, onchainNewsInfoRouter, ensResolverInfoRouter, webResearcherInfoRouter, textExtractorInfoRouter, decisionScorerInfoRouter } from "./middleware/allApiInfo";
+import { gasOptimizerInfoRouter, fundingRateInfoRouter, strategySignalInfoRouter, predictionMarketInfoRouter, tokenScreenerInfoRouter, tokenUnlockInfoRouter, agentIdentityInfoRouter, cryptoNarrativeInfoRouter, defiRiskInfoRouter, cryptoAlertsInfoRouter, agentSkillsInfoRouter, defiPositionInfoRouter, walletPortfolioInfoRouter, crossChainInfoRouter, derivativesInfoRouter, marketCorrelationInfoRouter, yieldFarmingInfoRouter, tokenomicsInfoRouter, liquidationFeedInfoRouter, marketStressInfoRouter, walletInfoRouter, stablecoinYieldInfoRouter, metaStrategyInfoRouter, socialSentimentInfoRouter, alphaSignalInfoRouter, actionInfoRouter, agentMemoryInfoRouter, agentWorkflowInfoRouter, autopilotInfoRouter, browserTaskInfoRouter, companyResearchInfoRouter, cryptoNewsInfoRouter, derivativesIntelligenceInfoRouter, devUtilitiesInfoRouter, extractionInfoRouter, leadDiscoveryInfoRouter, marketIntelligenceInfoRouter, marketSignalInfoRouter, marketTriggerInfoRouter, marketWebhookInfoRouter, onchainSignalInfoRouter, portfolioRebalanceInfoRouter, strategyExecutionInfoRouter, unifiedDecisionInfoRouter, websiteMonitorInfoRouter, aiOutputSafetyInfoRouter, documentIntelligenceInfoRouter, identityIntelligenceInfoRouter, imageToContentInfoRouter, leadEnrichmentInfoRouter, leadQualityInfoRouter, ipIntelligenceInfoRouter, emailValidationInfoRouter, phoneValidationInfoRouter, searchExtractInfoRouter, tokenTrustInfoRouter, trustInfoRouter, userRiskInfoRouter, walletIntelligenceInfoRouter, tokenPriceFeedInfoRouter, walletReputationInfoRouter, txSimulatorInfoRouter, contractAnalyzerInfoRouter, onchainNewsInfoRouter, ensResolverInfoRouter, webResearcherInfoRouter, textExtractorInfoRouter, decisionScorerInfoRouter , productDataInfoRouter } from "./middleware/allApiInfo";
 import 'dotenv/config';
 import express from 'express';
 import helmet from 'helmet';
@@ -761,6 +761,64 @@ app.use("/nft-metadata", nftTokenRouter);
 app.use("/nft-metadata", nftCollectionRouter);
 app.use("/nft-metadata", nftWalletRouter);
 app.use("/nft-metadata", nftTransfersRouter);
+import productDataRouter from './routes/productdata-api/index';
+app.use('/product-data', productDataInfoRouter);
+app.get('/product-data/info', (_req, res) => {
+  res.json({
+    name: 'Agent Product Data Extraction & Commerce Intelligence API',
+    slug: 'product-data',
+    version: 'v2',
+    status: 'agent',
+    loop_type: 'extract_normalize_compare_score_monitor_detect_summarize_act',
+    monetization_grade: 'A',
+    category: 'ai-ml',
+    description: 'Extract, normalize, compare, score, monitor, and gate commerce data for autonomous agents.',
+    baseUrl: 'https://orbis-apis.onrender.com/product-data',
+    websiteUrl: 'https://orbis-apis.onrender.com',
+    pricing: {
+      agent_pay_per_call: {
+        '/extract-product':       0.003,
+        '/extract-batch':         0.008,
+        '/normalize-product':     0.0015,
+        '/compare-products':      0.0035,
+        '/score-listing-quality': 0.0025,
+        '/detect-price-change':   0.002,
+        '/monitor-product':       0.0015,
+        '/summarize-product':     0.002,
+        '/execution-gate':        0.003,
+      },
+      high_volume_agent: {
+        '/extract-product':       0.0012,
+        '/extract-batch':         0.0035,
+        '/normalize-product':     0.0006,
+        '/compare-products':      0.0015,
+        '/score-listing-quality': 0.001,
+        '/detect-price-change':   0.0008,
+        '/monitor-product':       0.0006,
+        '/summarize-product':     0.0008,
+        '/execution-gate':        0.0012,
+      },
+    },
+    endpoints: [
+      { method: 'POST', path: '/extract-product' },
+      { method: 'POST', path: '/extract-batch' },
+      { method: 'POST', path: '/normalize-product' },
+      { method: 'POST', path: '/compare-products' },
+      { method: 'POST', path: '/score-listing-quality' },
+      { method: 'POST', path: '/detect-price-change' },
+      { method: 'POST', path: '/monitor-product' },
+      { method: 'POST', path: '/summarize-product' },
+      { method: 'POST', path: '/execution-gate' },
+    ],
+    execution_chain: [
+      'product-data/execution-gate',
+      'autopilot/should-execute',
+      'action-api/execute',
+    ],
+  });
+});
+app.use('/product-data', productDataRouter);
+
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });

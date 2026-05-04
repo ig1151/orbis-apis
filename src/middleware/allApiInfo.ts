@@ -892,3 +892,36 @@ export const decisionScorerInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/score', description: 'Score a decision and return risk assessment', params: { decision: 'The decision to evaluate', context: 'Optional context', goal: 'Optional goal' } },
   ],
 });
+
+export const productDataInfoRouter = createApiInfoRouter({
+  name: 'Agent Product Data Extraction & Commerce Intelligence API',
+  slug: 'product-data',
+  version: 'v2',
+  description: 'Agent-native commerce intelligence API. Extract structured product data from any URL, normalize listings, compare products, score quality, detect price changes, monitor availability, and gate execution for autonomous shopping and pricing agents.',
+  category: 'ai-ml',
+  loop_type: 'extract_normalize_compare_score_monitor_detect_summarize_act',
+  monetization_grade: 'A',
+  primary_use_case: 'Autonomous shopping agents, price monitoring, commerce intelligence pipelines',
+  pricing: {
+    '/extract-product':       0.003,
+    '/extract-batch':         0.008,
+    '/normalize-product':     0.0015,
+    '/compare-products':      0.0035,
+    '/score-listing-quality': 0.0025,
+    '/detect-price-change':   0.002,
+    '/monitor-product':       0.0015,
+    '/summarize-product':     0.002,
+    '/execution-gate':        0.003,
+  },
+  endpoints: [
+    { method: 'POST', path: '/extract-product',       description: 'Extract structured product data from any URL. Supports Shopify, LD-JSON, and generic HTML.' },
+    { method: 'POST', path: '/extract-batch',         description: 'Extract up to 10 products in parallel. Returns quality scores per listing.' },
+    { method: 'POST', path: '/normalize-product',     description: 'Normalize raw product data into a consistent agent-readable schema.' },
+    { method: 'POST', path: '/compare-products',      description: 'Compare 2+ products by price, availability, and listing quality. Returns cheapest and best.' },
+    { method: 'POST', path: '/score-listing-quality', description: 'Score listing completeness. Returns grade A-D and list of missing fields.' },
+    { method: 'POST', path: '/detect-price-change',   description: 'Detect price and availability changes vs cached baseline. Returns delta and direction.' },
+    { method: 'POST', path: '/monitor-product',       description: 'Monitor a product URL and return alerts when price or availability crosses thresholds.' },
+    { method: 'POST', path: '/summarize-product',     description: 'Compact agent-readable product summary for LLM context or execution logs.' },
+    { method: 'POST', path: '/execution-gate',        description: 'Gate execution — returns execute true/false before agent acts. Chains to autopilot.' },
+  ],
+});
