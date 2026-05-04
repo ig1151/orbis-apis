@@ -59,10 +59,12 @@ function pushToSSEClients(event: FiredEvent): void {
     const wantsSymbol = client.symbols.includes(event.symbol.toUpperCase());
     if (wantsAll || wantsSymbol) {
       try {
-        client.res.write('event: trigger_fired\n');
+        const ok = client.res.write('event: trigger_fired\n');
         client.res.write('data: ' + payload + '\n\n');
         if (typeof client.res.flush === 'function') client.res.flush();
-      } catch {
+        console.log('[dispatcher] pushed to SSE client:', id, 'write ok:', ok);
+      } catch (err: any) {
+        console.error('[dispatcher] SSE write failed:', id, err.message);
         sseClients.delete(id);
       }
     }
