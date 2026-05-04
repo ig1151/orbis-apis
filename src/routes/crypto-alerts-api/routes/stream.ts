@@ -4,7 +4,7 @@ import { registerSSEClient, removeSSEClient, getSSEClientCount } from '../servic
 
 const router = Router();
 
-// GET /stream?symbols=BTC,ETH  (omit symbols to receive all)
+// GET /stream?symbols=BTC,ETH
 router.get('/', (req: Request, res: Response): void => {
   const symbolsParam = req.query.symbols as string | undefined;
   const symbols = symbolsParam
@@ -19,16 +19,14 @@ router.get('/', (req: Request, res: Response): void => {
   res.setHeader('X-Accel-Buffering', 'no');
   res.flushHeaders();
 
-  // Send connected confirmation
   res.write('event: connected\n');
   res.write('data: ' + JSON.stringify({
-    client_id: clientId,
-    symbols_subscribed: symbols.length > 0 ? symbols : ['ALL'],
-    active_subscribers: getSSEClientCount() + 1,
-    message: 'Subscribed. You will receive trigger_fired events in real time.',
+    client_id:           clientId,
+    symbols_subscribed:  symbols.length > 0 ? symbols : ['ALL'],
+    active_subscribers:  getSSEClientCount() + 1,
+    message:             'Connected. Waiting for trigger_fired events.',
   }) + '\n\n');
 
-  // Heartbeat every 30s to keep connection alive
   const heartbeat = setInterval(() => {
     try {
       res.write('event: heartbeat\n');
