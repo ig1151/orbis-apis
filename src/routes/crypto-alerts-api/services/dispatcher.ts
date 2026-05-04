@@ -61,6 +61,7 @@ function pushToSSEClients(event: FiredEvent): void {
       try {
         client.res.write('event: trigger_fired\n');
         client.res.write('data: ' + payload + '\n\n');
+        if (typeof client.res.flush === 'function') client.res.flush();
       } catch {
         sseClients.delete(id);
       }

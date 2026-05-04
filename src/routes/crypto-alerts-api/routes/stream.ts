@@ -4,7 +4,6 @@ import { registerSSEClient, removeSSEClient, getSSEClientCount } from '../servic
 
 const router = Router();
 
-// GET /stream?symbols=BTC,ETH
 router.get('/', (req: Request, res: Response): void => {
   const symbolsParam = req.query.symbols as string | undefined;
   const symbols = symbolsParam
@@ -13,28 +12,36 @@ router.get('/', (req: Request, res: Response): void => {
 
   const clientId = uuidv4();
 
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
+  res.socket?.setNoDelay(true);
+  res.setHeader('Content-Type',      'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control',     'no-cache, no-transform');
+  res.setHeader('Connection',        'keep-alive');
   res.setHeader('X-Accel-Buffering', 'no');
+  res.setHeader('Transfer-Encoding', 'chunked');
+  res.status(200);
   res.flushHeaders();
 
-  res.write('event: connected\n');
-  res.write('data: ' + JSON.stringify({
-    client_id:           clientId,
-    symbols_subscribed:  symbols.length > 0 ? symbols : ['ALL'],
-    active_subscribers:  getSSEClientCount() + 1,
-    message:             'Connected. Waiting for trigger_fired events.',
-  }) + '\n\n');
+  function send(event: string, data: object): void {
+    const chunk = 'event: ' + event + '\ndata: ' + JSON.stringify(data) + '\n\n';
+    res.write(chunk);
+    // Force flush if available
+    if (typeof (res as any).flush === 'function') (res as any).flush();
+  }
+
+  send('connected', {
+    client_id:          clientId,
+    symbols_subscribed: symbols.length > 0 ? symbols : ['ALL'],
+    active_subscribers: getSSEClientCount() + 1,
+    message:            'Connected. Waiting for trigger_fired events.',
+  });
 
   const heartbeat = setInterval(() => {
     try {
-      res.write('event: heartbeat\n');
-      res.write('data: ' + JSON.stringify({ ts: new Date().toISOString() }) + '\n\n');
+      send('heartbeat', { ts: new Date().toISOString() });
     } catch {
       clearInterval(heartbeat);
     }
-  }, 30000);
+  }, 15000);
 
   registerSSEClient(clientId, res, symbols);
 
