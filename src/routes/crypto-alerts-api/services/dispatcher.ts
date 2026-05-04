@@ -99,7 +99,11 @@ function ensureSubscribed(): void {
   const sub = getSubscriber();
   if (!sub) return;
   subscribed = true;
-  sub.subscribe(CHANNEL).catch(() => {});
+  sub.subscribe(CHANNEL).then(() => {
+    console.log('[dispatcher] subscribed to channel:', CHANNEL);
+  }).catch((err: any) => {
+    console.error('[dispatcher] subscribe failed:', err.message);
+  });
   sub.on('message', (_channel: string, message: string) => {
     try {
       const event: FiredEvent = JSON.parse(message);
