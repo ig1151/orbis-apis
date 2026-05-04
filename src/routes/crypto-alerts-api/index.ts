@@ -7,7 +7,6 @@ import executionGateRouter from './routes/execution-gate';
 import monitorAlertsRouter from './routes/monitor-alerts';
 import summarizeAlertRouter from './routes/summarize-alert';
 import streamRouter from './routes/stream';
-import streamTestRouter from './routes/stream-test';
 import registerWebhookRouter from './routes/register-webhook';
 
 const router = Router();
@@ -20,7 +19,6 @@ router.use('/execution-gate',    executionGateRouter);
 router.use('/monitor-alerts',    monitorAlertsRouter);
 router.use('/summarize-alert',   summarizeAlertRouter);
 router.use('/stream',            streamRouter);
-router.use('/stream-test',       streamTestRouter);
 router.use('/register-webhook',  registerWebhookRouter);
 
 export default router;
