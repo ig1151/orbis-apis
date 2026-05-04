@@ -538,12 +538,60 @@ app.use('/agent-skills/compose', agentSkillsComposeRouter);
 app.use('/agent-skills/trending', agentSkillsTrendingRouter);
 
 // ── DeFi Position Monitor ─────────────────────────────────────────────────────
-import defiPositionAaveRouter from './routes/defi-position-monitor-api/routes/aave';
-import defiPositionScanRouter from './routes/defi-position-monitor-api/routes/scan';
-import defiPositionAlertRouter from './routes/defi-position-monitor-api/routes/alert';
-app.use('/defi-position-monitor/aave', defiPositionAaveRouter);
-app.use('/defi-position-monitor/scan', defiPositionScanRouter);
-app.use('/defi-position-monitor/alert', defiPositionAlertRouter);
+import defiPositionMonitorRouter from './routes/defi-position-monitor-api/index';
+app.get('/defi-position-monitor/info', (_req, res) => {
+  res.json({
+    name: 'Agent DeFi Position Risk & Liquidation Defense API',
+    slug: 'defi-position-monitor',
+    version: 'v2',
+    status: 'agent',
+    loop_type: 'liquidation_defense_loop',
+    monetization_grade: 'A',
+    category: 'blockchain-web3',
+    description: 'Detect DeFi position risk, score health factors, identify liquidation proximity, recommend defensive actions, generate rebalance plans, and gate execution before autonomous agents act.',
+    baseUrl: 'https://orbis-apis.onrender.com/defi-position-monitor',
+    websiteUrl: 'https://orbis-apis.onrender.com',
+    pricing: {
+      agent_pay_per_call: {
+        '/scan-position':           0.0035,
+        '/score-health':            0.0025,
+        '/detect-liquidation-risk': 0.0045,
+        '/recommend-action':        0.004,
+        '/rebalance-plan':          0.005,
+        '/execution-gate':          0.0045,
+        '/monitor-position':        0.002,
+        '/summarize-position':      0.0025,
+      },
+      high_volume_agent: {
+        '/scan-position':           0.0015,
+        '/score-health':            0.001,
+        '/detect-liquidation-risk': 0.002,
+        '/recommend-action':        0.0018,
+        '/rebalance-plan':          0.0022,
+        '/execution-gate':          0.002,
+        '/monitor-position':        0.0008,
+        '/summarize-position':      0.001,
+      },
+    },
+    endpoints: [
+      { method: 'POST', path: '/scan-position' },
+      { method: 'POST', path: '/score-health' },
+      { method: 'POST', path: '/detect-liquidation-risk' },
+      { method: 'POST', path: '/recommend-action' },
+      { method: 'POST', path: '/rebalance-plan' },
+      { method: 'POST', path: '/execution-gate' },
+      { method: 'POST', path: '/monitor-position' },
+      { method: 'POST', path: '/summarize-position' },
+    ],
+    execution_chain: [
+      'defi-position-monitor/execution-gate',
+      'autopilot/should-execute',
+      'cross-chain-bridge/execution-gate',
+      'action-api/execute',
+    ],
+  });
+});
+app.use('/defi-position-monitor', defiPositionMonitorRouter);
 
 // ── Wallet Portfolio ──────────────────────────────────────────────────────────
 import walletPortfolioSnapshotRouter from './routes/wallet-portfolio-api/routes/snapshot';

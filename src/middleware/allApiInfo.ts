@@ -134,13 +134,33 @@ export const agentSkillsInfoRouter = createApiInfoRouter({
 });
 
 export const defiPositionInfoRouter = createApiInfoRouter({
-  name: 'DeFi Position Monitor API', slug: 'defi-position-monitor', version: '1.0.0',
-  description: 'Monitor DeFi positions, health factors, and liquidation risks across protocols.',
-  category: 'DeFi Monitoring',
+  name: 'Agent DeFi Position Risk & Liquidation Defense API',
+  slug: 'defi-position-monitor',
+  version: 'v2',
+  description: 'Detect DeFi position risk, score health factors, identify liquidation proximity, recommend defensive actions, generate rebalance plans, and gate execution before autonomous agents act. Protects capital in real time across Aave V3 and major chains.',
+  category: 'blockchain-web3',
+  loop_type: 'liquidation_defense_loop',
+  monetization_grade: 'A',
+  primary_use_case: 'Agent liquidation defense, vault risk monitoring, rebalance execution gating',
+  pricing: {
+    '/scan-position':           0.0035,
+    '/score-health':            0.0025,
+    '/detect-liquidation-risk': 0.0045,
+    '/recommend-action':        0.004,
+    '/rebalance-plan':          0.005,
+    '/execution-gate':          0.0045,
+    '/monitor-position':        0.002,
+    '/summarize-position':      0.0025,
+  },
   endpoints: [
-    { method: 'GET', path: '/aave', description: 'Scan Aave positions', params: { address: 'Wallet address' } },
-    { method: 'GET', path: '/scan', description: 'Full position scan', params: { address: 'Wallet address' } },
-    { method: 'POST', path: '/alert', description: 'Set position health alert' },
+    { method: 'POST', path: '/scan-position',           description: 'Detect open positions, collateral, debt, LTV, APY, exposure across chains.' },
+    { method: 'POST', path: '/score-health',            description: 'Return health_score, risk_level, liquidation_buffer, confidence.' },
+    { method: 'POST', path: '/detect-liquidation-risk', description: 'Detect liquidation proximity, trigger thresholds, time_to_risk, volatility sensitivity.' },
+    { method: 'POST', path: '/recommend-action',        description: 'Recommend repay, add collateral, close, hedge, rebalance, or wait.' },
+    { method: 'POST', path: '/rebalance-plan',          description: 'Generate structured rebalance steps for multi-position portfolios.' },
+    { method: 'POST', path: '/execution-gate',          description: 'Gate execution — returns execute true/false before agent acts. Chains to autopilot.' },
+    { method: 'POST', path: '/monitor-position',        description: 'Monitor risk continuously and return alerts/triggers.' },
+    { method: 'POST', path: '/summarize-position',      description: 'Compact agent-readable risk summary for LLM context.' },
   ],
 });
 

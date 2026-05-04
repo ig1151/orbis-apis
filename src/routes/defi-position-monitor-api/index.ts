@@ -1,45 +1,22 @@
-import 'dotenv/config';
-import express from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import compression from 'compression';
-import rateLimit from 'express-rate-limit';
-import { logger } from './logger';
-import healthRouter from './routes/health';
-import aaveRouter from './routes/aave';
-import scanRouter from './routes/scan';
-import alertRouter from './routes/alert';
-import docsRouter from './routes/docs';
+import { Router } from 'express';
+import scanPositionRouter from './routes/scan-position';
+import scoreHealthRouter from './routes/score-health';
+import detectLiquidationRiskRouter from './routes/detect-liquidation-risk';
+import recommendActionRouter from './routes/recommend-action';
+import rebalancePlanRouter from './routes/rebalance-plan';
+import executionGateRouter from './routes/execution-gate';
+import monitorPositionRouter from './routes/monitor-position';
+import summarizePositionRouter from './routes/summarize-position';
 
-const app = express();
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const router = Router();
 
-app.use(helmet());
-app.use(cors());
-app.use(compression());
-app.use(express.json());
+router.use('/scan-position',           scanPositionRouter);
+router.use('/score-health',            scoreHealthRouter);
+router.use('/detect-liquidation-risk', detectLiquidationRiskRouter);
+router.use('/recommend-action',        recommendActionRouter);
+router.use('/rebalance-plan',          rebalancePlanRouter);
+router.use('/execution-gate',          executionGateRouter);
+router.use('/monitor-position',        monitorPositionRouter);
+router.use('/summarize-position',      summarizePositionRouter);
 
-const limiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 30,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Too many requests, please try again later.' },
-});
-app.use(limiter);
-
-app.use('/v1/health', healthRouter);
-app.use('/v1/position/aave', aaveRouter);
-app.use('/v1/position/scan', scanRouter);
-app.use('/v1/position/alert', alertRouter);
-app.use('/', docsRouter);
-
-app.use((_req, res) => {
-  res.status(404).json({ error: 'Not found' });
-});
-
-app.listen(PORT, () => {
-  logger.info({ port: PORT }, 'defi-position-monitor-api started');
-});
-
-export default app;
+export default router;
