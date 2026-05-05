@@ -269,10 +269,14 @@ app.use('/lead-quality', scoreRouter);
 
 // ── Market Intelligence ───────────────────────────────────────────────────────
 import marketIntelligenceRouter from './routes/market-intelligence-api/routes/intelligence';
+import marketIntelligenceOpenapiRouter from './routes/market-intelligence-api/routes/openapi';
+app.use('/market-intelligence/openapi.json', marketIntelligenceOpenapiRouter);
 app.use('/market-intelligence', marketIntelligenceRouter);
 
 // ── Market Signal ─────────────────────────────────────────────────────────────
 import marketSignalRouter from './routes/market-signal-api/routes/signal';
+import marketSignalOpenapiRouter from './routes/market-signal-api/routes/openapi';
+app.use('/market-signal/openapi.json', marketSignalOpenapiRouter);
 app.use('/market-signal', marketSignalRouter);
 
 // ── Market Trigger ────────────────────────────────────────────────────────────
