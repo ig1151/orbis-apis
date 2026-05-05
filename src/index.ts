@@ -903,6 +903,31 @@ app.get('/web-scraper/info', (_req, res) => {
 app.use('/web-scraper', webScraperInfoRouter);
 app.use('/web-scraper', webScraperRouter);
 
+app.get("/info", (_req, res) => {
+  res.json({
+    service: "orbis-apis",
+    version: "v2",
+    description: "Agent-native API suite for DeFi, crypto, AI, web intelligence, and autonomous agent workflows",
+    baseUrl: "https://orbis-apis.onrender.com",
+    discovery: "Each API has its own /info endpoint and /openapi.json for x402 agent discovery",
+    apis: [
+      { slug: "image-gen",            path: "/image-gen",            info: "/image-gen/info",            openapi: "/image-gen/openapi.json" },
+      { slug: "web-scraper",          path: "/web-scraper",          info: "/web-scraper/info",          openapi: "/web-scraper/openapi.json" },
+      { slug: "crypto-alerts",        path: "/crypto-alerts",        info: "/crypto-alerts/info" },
+      { slug: "defi-position-monitor",path: "/defi-position-monitor",info: "/defi-position-monitor/info" },
+      { slug: "product-data",         path: "/product-data",         info: "/product-data/info" },
+      { slug: "alpha-signal",         path: "/alpha-signal",         info: "/alpha-signal/info" },
+      { slug: "autopilot",            path: "/autopilot",            info: "/autopilot/info" },
+      { slug: "contract-analyzer",    path: "/contract-analyzer",    info: "/contract-analyzer/info" },
+      { slug: "web-researcher",       path: "/web-researcher",       info: "/web-researcher/info" },
+      { slug: "decision-scorer",      path: "/decision-scorer",      info: "/decision-scorer/info" },
+      { slug: "wallet-reputation",    path: "/wallet-reputation",    info: "/wallet-reputation/info" },
+      { slug: "token-price-feed",     path: "/token-price-feed",     info: "/token-price-feed/info" }
+    ],
+    execution_ready: true
+  });
+});
+
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
