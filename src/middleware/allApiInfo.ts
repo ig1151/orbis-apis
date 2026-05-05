@@ -925,3 +925,28 @@ export const productDataInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/execution-gate',        description: 'Gate execution — returns execute true/false before agent acts. Chains to autopilot.' },
   ],
 });
+
+export const imageGenInfoRouter = createApiInfoRouter({
+  slug: 'image-gen',
+  name: 'Image Generation & Intelligence',
+  version: 'v2',
+  description: 'DALL-E 3 image generation with prompt engineering, batch support, GPT-4o vision scoring, and agentic execution gates. Rewrites and scores prompts before spending, gates unsafe or over-budget requests.',
+  category: 'ai-ml',
+  loop_type: 'describe_enhance_generate_score_gate',
+  monetization_grade: 'A',
+  primary_use_case: 'Autonomous image generation agents, content pipelines, creative AI workflows',
+  pricing: {
+    '/generate':        0.04,
+    '/generate-batch':  0.04,
+    '/describe-prompt': 0.001,
+    '/score-image':     0.002,
+    '/execution-gate':  0.041,
+  },
+  endpoints: [
+    { method: 'POST', path: '/generate',        description: 'Generate a single image via DALL-E 3. Optionally auto-enhances the prompt with GPT-4o-mini before generation.' },
+    { method: 'POST', path: '/generate-batch',  description: 'Generate up to 5 images in parallel from an array of prompts. Returns per-image success/failure.' },
+    { method: 'POST', path: '/describe-prompt', description: 'Turn a concept or idea into one optimized DALL-E 3 prompt plus 3 distinct variants.' },
+    { method: 'POST', path: '/score-image',     description: 'GPT-4o vision scoring of a generated image against custom criteria. Returns scores, strengths, weaknesses, and recommendation.' },
+    { method: 'POST', path: '/execution-gate',  description: 'Agentic gate: safety check → budget check → prompt enhancement → generate. Blocks unsafe or over-budget requests before spending.' },
+  ],
+});
