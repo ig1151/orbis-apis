@@ -950,3 +950,34 @@ export const imageGenInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/execution-gate',  description: 'Agentic gate: safety check → budget check → prompt enhancement → generate. Blocks unsafe or over-budget requests before spending.' },
   ],
 });
+
+export const webScraperInfoRouter = createApiInfoRouter({
+  slug: 'web-scraper',
+  name: 'Web Scraper & Intelligence',
+  version: 'v2',
+  description: 'Agent-native web scraping, structured extraction, change detection, source monitoring, and execution gating. Powered by Tavily. Every endpoint returns execution_ready, next_endpoint, and estimated_cost for seamless agent loops.',
+  category: 'data-analytics',
+  loop_type: 'scrape_extract_summarize_detect_monitor_gate',
+  monetization_grade: 'A',
+  primary_use_case: 'Autonomous web agents, content pipelines, change monitoring, competitive intelligence',
+  pricing: {
+    '/scrape':             0.005,
+    '/scrape-batch':       0.005,
+    '/search':             0.005,
+    '/extract-structured': 0.006,
+    '/summarize':          0.002,
+    '/detect-change':      0.007,
+    '/monitor-source':     0.001,
+    '/execution-gate':     0.003,
+  },
+  endpoints: [
+    { method: 'POST', path: '/scrape',             description: 'Scrape a single URL and return clean content via Tavily.' },
+    { method: 'POST', path: '/scrape-batch',       description: 'Scrape up to 5 URLs in parallel.' },
+    { method: 'POST', path: '/search',             description: 'Search the web and return structured content.' },
+    { method: 'POST', path: '/extract-structured', description: 'Extract schema-based structured data from a URL or raw content using GPT-4o-mini.' },
+    { method: 'POST', path: '/summarize',          description: 'Summarize web page content with key points and sentiment.' },
+    { method: 'POST', path: '/detect-change',      description: 'Detect content changes vs Redis-cached baseline. Returns diff and change type.' },
+    { method: 'POST', path: '/monitor-source',     description: 'Register a URL for change monitoring with optional webhook.' },
+    { method: 'POST', path: '/execution-gate',     description: 'Gate agent execution based on web content analysis. Returns proceed, confidence, and recommended action.' },
+  ],
+});

@@ -1,6 +1,6 @@
 import { actionRouter, actionTaskTypesRouter } from './routes/action';
 import { nftMetadataInfoRouter, nftTokenRouter, nftCollectionRouter, nftWalletRouter, nftTransfersRouter } from './routes/nft-metadata';
-import { gasOptimizerInfoRouter, fundingRateInfoRouter, strategySignalInfoRouter, predictionMarketInfoRouter, tokenScreenerInfoRouter, tokenUnlockInfoRouter, agentIdentityInfoRouter, cryptoNarrativeInfoRouter, defiRiskInfoRouter, cryptoAlertsInfoRouter, agentSkillsInfoRouter, defiPositionInfoRouter, walletPortfolioInfoRouter, crossChainInfoRouter, derivativesInfoRouter, marketCorrelationInfoRouter, yieldFarmingInfoRouter, tokenomicsInfoRouter, liquidationFeedInfoRouter, marketStressInfoRouter, walletInfoRouter, stablecoinYieldInfoRouter, metaStrategyInfoRouter, socialSentimentInfoRouter, alphaSignalInfoRouter, actionInfoRouter, agentMemoryInfoRouter, agentWorkflowInfoRouter, autopilotInfoRouter, browserTaskInfoRouter, companyResearchInfoRouter, cryptoNewsInfoRouter, derivativesIntelligenceInfoRouter, devUtilitiesInfoRouter, extractionInfoRouter, leadDiscoveryInfoRouter, marketIntelligenceInfoRouter, marketSignalInfoRouter, marketTriggerInfoRouter, marketWebhookInfoRouter, onchainSignalInfoRouter, portfolioRebalanceInfoRouter, strategyExecutionInfoRouter, unifiedDecisionInfoRouter, websiteMonitorInfoRouter, aiOutputSafetyInfoRouter, documentIntelligenceInfoRouter, identityIntelligenceInfoRouter, imageToContentInfoRouter, leadEnrichmentInfoRouter, leadQualityInfoRouter, ipIntelligenceInfoRouter, emailValidationInfoRouter, phoneValidationInfoRouter, searchExtractInfoRouter, tokenTrustInfoRouter, trustInfoRouter, userRiskInfoRouter, walletIntelligenceInfoRouter, tokenPriceFeedInfoRouter, walletReputationInfoRouter, txSimulatorInfoRouter, contractAnalyzerInfoRouter, onchainNewsInfoRouter, ensResolverInfoRouter, webResearcherInfoRouter, textExtractorInfoRouter, decisionScorerInfoRouter , productDataInfoRouter, imageGenInfoRouter } from "./middleware/allApiInfo";
+import { gasOptimizerInfoRouter, fundingRateInfoRouter, strategySignalInfoRouter, predictionMarketInfoRouter, tokenScreenerInfoRouter, tokenUnlockInfoRouter, agentIdentityInfoRouter, cryptoNarrativeInfoRouter, defiRiskInfoRouter, cryptoAlertsInfoRouter, agentSkillsInfoRouter, defiPositionInfoRouter, walletPortfolioInfoRouter, crossChainInfoRouter, derivativesInfoRouter, marketCorrelationInfoRouter, yieldFarmingInfoRouter, tokenomicsInfoRouter, liquidationFeedInfoRouter, marketStressInfoRouter, walletInfoRouter, stablecoinYieldInfoRouter, metaStrategyInfoRouter, socialSentimentInfoRouter, alphaSignalInfoRouter, actionInfoRouter, agentMemoryInfoRouter, agentWorkflowInfoRouter, autopilotInfoRouter, browserTaskInfoRouter, companyResearchInfoRouter, cryptoNewsInfoRouter, derivativesIntelligenceInfoRouter, devUtilitiesInfoRouter, extractionInfoRouter, leadDiscoveryInfoRouter, marketIntelligenceInfoRouter, marketSignalInfoRouter, marketTriggerInfoRouter, marketWebhookInfoRouter, onchainSignalInfoRouter, portfolioRebalanceInfoRouter, strategyExecutionInfoRouter, unifiedDecisionInfoRouter, websiteMonitorInfoRouter, aiOutputSafetyInfoRouter, documentIntelligenceInfoRouter, identityIntelligenceInfoRouter, imageToContentInfoRouter, leadEnrichmentInfoRouter, leadQualityInfoRouter, ipIntelligenceInfoRouter, emailValidationInfoRouter, phoneValidationInfoRouter, searchExtractInfoRouter, tokenTrustInfoRouter, trustInfoRouter, userRiskInfoRouter, walletIntelligenceInfoRouter, tokenPriceFeedInfoRouter, walletReputationInfoRouter, txSimulatorInfoRouter, contractAnalyzerInfoRouter, onchainNewsInfoRouter, ensResolverInfoRouter, webResearcherInfoRouter, textExtractorInfoRouter, decisionScorerInfoRouter , productDataInfoRouter, imageGenInfoRouter, webScraperInfoRouter } from "./middleware/allApiInfo";
 import 'dotenv/config';
 import express from 'express';
 import helmet from 'helmet';
@@ -855,8 +855,53 @@ app.get('/image-gen/info', (_req, res) => {
   });
 });
 import imageGenRouter from './routes/image-gen/router';
+import webScraperRouter from './routes/web-scraper/router';
 app.use('/image-gen', imageGenInfoRouter);
 app.use('/image-gen', imageGenRouter);
+app.get('/web-scraper/info', (_req, res) => {
+  res.json({
+    name: 'Web Scraper & Intelligence API',
+    slug: 'web-scraper',
+    version: 'v2',
+    status: 'agent',
+    loop_type: 'scrape_extract_summarize_detect_monitor_gate',
+    monetization_grade: 'A',
+    category: 'data-analytics',
+    description: 'Agent-native web scraping, structured extraction, change detection, source monitoring, and execution gating via Tavily.',
+    baseUrl: 'https://orbis-apis.onrender.com/web-scraper',
+    websiteUrl: 'https://orbis-apis.onrender.com',
+    pricing: {
+      agent_pay_per_call: {
+        '/scrape': 0.005,
+        '/scrape-batch': 0.005,
+        '/search': 0.005,
+        '/extract-structured': 0.006,
+        '/summarize': 0.002,
+        '/detect-change': 0.007,
+        '/monitor-source': 0.001,
+        '/execution-gate': 0.003,
+      },
+    },
+    endpoints: [
+      { method: 'POST', path: '/scrape' },
+      { method: 'POST', path: '/scrape-batch' },
+      { method: 'POST', path: '/search' },
+      { method: 'POST', path: '/extract-structured' },
+      { method: 'POST', path: '/summarize' },
+      { method: 'POST', path: '/detect-change' },
+      { method: 'POST', path: '/monitor-source' },
+      { method: 'POST', path: '/execution-gate' },
+    ],
+    execution_chain: [
+      'web-scraper/scrape',
+      'web-scraper/detect-change',
+      'web-scraper/execution-gate',
+      'autopilot/should-execute',
+    ],
+  });
+});
+app.use('/web-scraper', webScraperInfoRouter);
+app.use('/web-scraper', webScraperRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
