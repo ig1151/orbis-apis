@@ -315,3 +315,48 @@ router.post("/execution-gate", requireApiKey, async (req: Request, res: Response
 });
 
 export default router;
+
+router.get("/openapi.json", (_req, res) => {
+  res.json({
+    openapi: "3.0.0",
+    info: { title: "Image Generation & Intelligence", version: "2.0.0", description: "DALL-E 3 image generation with prompt engineering, batch support, GPT-4o vision scoring, and agentic execution gates." },
+    servers: [{ url: "https://orbis-apis.onrender.com/image-gen" }],
+    paths: {
+      "/generate": {
+        post: {
+          summary: "Generate a single image via DALL-E 3",
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["prompt"], properties: { prompt: { type: "string" }, size: { type: "string", enum: ["1024x1024","1024x1792","1792x1024"], default: "1024x1024" }, quality: { type: "string", enum: ["standard","hd"], default: "standard" }, enhance_prompt: { type: "boolean", default: false } } } } } },
+          responses: { "200": { description: "Image generated", content: { "application/json": { schema: { type: "object", properties: { execution_ready: { type: "boolean" }, image_url: { type: "string" }, revised_prompt: { type: "string" }, estimated_cost: { type: "number" } } } } } } }
+        }
+      },
+      "/generate-batch": {
+        post: {
+          summary: "Generate up to 5 images in parallel",
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["prompts"], properties: { prompts: { type: "array", items: { type: "string" }, maxItems: 5 }, size: { type: "string", default: "1024x1024" }, quality: { type: "string", default: "standard" } } } } } },
+          responses: { "200": { description: "Batch results", content: { "application/json": { schema: { type: "object", properties: { execution_ready: { type: "boolean" }, images: { type: "array" }, summary: { type: "object" } } } } } } }
+        }
+      },
+      "/describe-prompt": {
+        post: {
+          summary: "Turn a concept into an optimized DALL-E 3 prompt plus 3 variants",
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", properties: { concept: { type: "string" }, subject: { type: "string" }, style: { type: "string" }, mood: { type: "string" }, additional_details: { type: "string" } } } } } },
+          responses: { "200": { description: "Optimized prompt and variants", content: { "application/json": { schema: { type: "object", properties: { execution_ready: { type: "boolean" }, optimized_prompt: { type: "string" }, variants: { type: "array", items: { type: "string" } } } } } } } }
+        }
+      },
+      "/score-image": {
+        post: {
+          summary: "GPT-4o vision scoring of a generated image against custom criteria",
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["image_url"], properties: { image_url: { type: "string" }, prompt: { type: "string" }, scoring_criteria: { type: "array", items: { type: "string" } } } } } } },
+          responses: { "200": { description: "Scores and recommendation", content: { "application/json": { schema: { type: "object", properties: { execution_ready: { type: "boolean" }, overall_score: { type: "number" }, recommendation: { type: "string" }, scores: { type: "object" } } } } } } }
+        }
+      },
+      "/execution-gate": {
+        post: {
+          summary: "Safety check, budget check, prompt enhancement, and generation in one call",
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["prompt"], properties: { prompt: { type: "string" }, target_use_case: { type: "string" }, budget_usd: { type: "number" }, quality_threshold: { type: "number", default: 7 }, auto_enhance: { type: "boolean", default: true }, size: { type: "string", default: "1024x1024" }, quality: { type: "string", default: "standard" } } } } } },
+          responses: { "200": { description: "Gate result and generated image", content: { "application/json": { schema: { type: "object", properties: { execution_ready: { type: "boolean" }, proceed: { type: "boolean" }, image_url: { type: "string" }, gate_result: { type: "object" } } } } } } }
+        }
+      }
+    }
+  });
+});
