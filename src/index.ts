@@ -819,6 +819,41 @@ app.get('/product-data/info', (_req, res) => {
 });
 app.use('/product-data', productDataRouter);
 
+app.get('/image-gen/info', (_req, res) => {
+  res.json({
+    name: 'Image Generation & Intelligence API',
+    slug: 'image-gen',
+    version: 'v2',
+    status: 'agent',
+    loop_type: 'describe_enhance_generate_score_gate',
+    monetization_grade: 'A',
+    category: 'ai-ml',
+    description: 'DALL-E 3 image generation with prompt engineering, batch support, GPT-4o vision scoring, and agentic execution gates.',
+    baseUrl: 'https://orbis-apis.onrender.com/image-gen',
+    websiteUrl: 'https://orbis-apis.onrender.com',
+    pricing: {
+      agent_pay_per_call: {
+        '/generate':        0.04,
+        '/generate-batch':  0.04,
+        '/describe-prompt': 0.001,
+        '/score-image':     0.002,
+        '/execution-gate':  0.041,
+      },
+    },
+    endpoints: [
+      { method: 'POST', path: '/generate' },
+      { method: 'POST', path: '/generate-batch' },
+      { method: 'POST', path: '/describe-prompt' },
+      { method: 'POST', path: '/score-image' },
+      { method: 'POST', path: '/execution-gate' },
+    ],
+    execution_chain: [
+      'image-gen/execution-gate',
+      'image-gen/score-image',
+      'autopilot/should-execute',
+    ],
+  });
+});
 import imageGenRouter from './routes/image-gen/router';
 app.use('/image-gen', imageGenInfoRouter);
 app.use('/image-gen', imageGenRouter);
