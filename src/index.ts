@@ -229,6 +229,48 @@ app.use('/document-intelligence', extractRouter);
 // ── Email Validation ──────────────────────────────────────────────────────────
 app.use('/email-validation', emailValidationInfoRouter);
 app.use('/phone-validation', phoneValidationInfoRouter);
+app.get('/phone-validation/info', (_req, res) => {
+  res.json({
+    name: 'Agent Phone Intelligence & Contact Verification API',
+    slug: 'phone-validation',
+    version: 'v2',
+    status: 'agent',
+    loop_type: 'validate_normalize_score_risk_carrier_gate_act',
+    monetization_grade: 'A',
+    category: 'ai-ml',
+    description: 'Validate, normalize, score, and risk-check phone numbers. Detect carrier risk, VoIP, disposable, and fake numbers. Gate autonomous contact workflows with execution-ready decisions.',
+    baseUrl: 'https://orbis-apis.onrender.com/phone-validation',
+    websiteUrl: 'https://orbis-apis.onrender.com',
+    openapi: 'https://orbis-apis.onrender.com/phone-validation/openapi.json',
+    pricing: {
+      '/validate': 0.001,
+      '/validate/batch': 0.002,
+      '/score-phone': 0.003,
+      '/risk-check': 0.004,
+      '/normalize-contact': 0.002,
+      '/detect-carrier-risk': 0.003,
+      '/batch-score': 0.005,
+      '/execution-gate': 0.004,
+    },
+    endpoints: [
+      { method: 'POST', path: '/validate', description: 'Validate a phone number. Returns valid, E.164, country, line type, risk.' },
+      { method: 'POST', path: '/validate/batch', description: 'Batch validate up to 100 phone numbers.' },
+      { method: 'POST', path: '/score-phone', description: 'Score phone for contact quality, reachability, and recommended channel.' },
+      { method: 'POST', path: '/risk-check', description: 'Fraud and risk detection. Returns fraud score, signals, allow/block decision.' },
+      { method: 'POST', path: '/normalize-contact', description: 'Normalize phone to E.164, international, national formats. CRM-ready output.' },
+      { method: 'POST', path: '/detect-carrier-risk', description: 'Detect carrier risk, SMS/call deliverability, spam likelihood.' },
+      { method: 'POST', path: '/batch-score', description: 'Batch score up to 50 phones for risk, validity, and CRM readiness.' },
+      { method: 'POST', path: '/execution-gate', description: 'Gate autonomous contact workflows. Returns execute bool, blocking flags, next API.' },
+    ],
+    execution_chain: [
+      'phone-validation/validate',
+      'phone-validation/risk-check',
+      'phone-validation/execution-gate',
+      'autopilot/should-execute',
+      'action-api/execute',
+    ],
+  });
+});
 app.use('/search-extract', searchExtractInfoRouter);
 app.use('/token-trust', tokenTrustInfoRouter);
 app.use('/trust', trustInfoRouter);
@@ -306,7 +348,9 @@ app.use('/onchain-signal', onchainWhaleRouter);
 
 // ── Phone Validation ──────────────────────────────────────────────────────────
 import { validateRouter as phoneValidateRouter } from './routes/phone-validation-api/routes/validate.route';
+import { intelligenceRouter as phoneIntelligenceRouter } from './routes/phone-validation-api/routes/intelligence.route';
 app.use('/phone-validation', phoneValidateRouter);
+app.use('/phone-validation', phoneIntelligenceRouter);
 
 // ── Portfolio Rebalance ───────────────────────────────────────────────────────
 import rebalanceRouter from './routes/portfolio-rebalance-api/routes/rebalance';
