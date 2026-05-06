@@ -830,7 +830,7 @@ app.get('/resume/info', (_req, res) => {
     version: 'v2',
     status: 'agent',
     loop_type: 'analyze_score_match_gap_optimize_rewrite_gate_apply',
-    monetization_grade: 'A',
+    monetization_grade: 'A+',
     category: 'ai-ml',
     description: 'AI-powered resume analysis, ATS scoring, job matching, gap detection, bullet rewriting, cover letter generation, and execution-gated application readiness — built for autonomous agent workflows.',
     baseUrl: 'https://orbis-apis.onrender.com/resume',
