@@ -28,7 +28,7 @@ async function callClaude(prompt: string): Promise<unknown> {
       timeout: 20000,
     }
   );
-  const text = res.data.data.choices[0].message.content ?? '{}';
+  const text = res.data.choices[0].message.content ?? '{}';
   try {
     return JSON.parse(text.replace(/```json|```/g, '').trim());
   } catch {

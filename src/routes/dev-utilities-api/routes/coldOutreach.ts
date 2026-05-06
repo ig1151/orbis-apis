@@ -32,7 +32,7 @@ async function callClaude(prompt: string): Promise<string> {
       timeout: 20000,
     }
   );
-  return res.data.data.choices[0].message.content ?? '{}';
+  return res.data.choices[0].message.content ?? '{}';
 }
 
 router.post('/cold-outreach', async (req: Request, res: Response) => {

@@ -19,7 +19,7 @@ async function callClaude(prompt: string): Promise<string> {
     { model: 'anthropic/claude-sonnet-4-5', max_tokens: 600, messages: [{ role: 'user', content: prompt }] },
     { headers: { 'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 20000 }
   );
-  return res.data.data.choices[0].message.content ?? '';
+  return res.data.choices[0].message.content ?? '';
 }
 
 router.post('/summarize', async (req: Request, res: Response) => {

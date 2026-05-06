@@ -33,7 +33,7 @@ async function callClaude(prompt: string): Promise<unknown> {
     { model: 'anthropic/claude-sonnet-4-5', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] },
     { headers: { 'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 20000 }
   );
-  const text = res.data.data.choices[0].message.content ?? '{}';
+  const text = res.data.choices[0].message.content ?? '{}';
   try { return JSON.parse(text.replace(/```json|```/g, '').trim()); } catch { return null; }
 }
 
