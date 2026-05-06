@@ -95,6 +95,23 @@ export function createApiInfoRouter(config: ApiInfoConfig): Router {
               name, in: 'query', description: desc, schema: { type: 'string' },
             }))
           : [],
+        ...((['POST', 'PUT', 'PATCH'].includes(ep.method) && ep.params) ? {
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: Object.fromEntries(
+                    Object.entries(ep.params).map(([name, desc]) => [
+                      name, { type: 'string', description: desc }
+                    ])
+                  ),
+                }
+              }
+            }
+          }
+        } : {}),
         responses: {
           '200': { description: 'Success' },
           '400': { description: 'Bad Request' },
