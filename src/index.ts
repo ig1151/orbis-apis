@@ -241,8 +241,10 @@ app.use('/email-validation', validateRouter);
 // ── Extraction ────────────────────────────────────────────────────────────────
 import extractionRouter from './routes/extraction-api/routes/extract';
 import intelligenceRouter from './routes/extraction-api/routes/intelligence';
+import extractionOpenapiRouter from './routes/extraction-api/routes/openapi';
 app.use('/extraction', extractionRouter);
 app.use('/extraction', intelligenceRouter);
+app.use('/extraction/openapi.json', extractionOpenapiRouter);
 
 // ── Identity Intelligence ─────────────────────────────────────────────────────
 import { analyzeRouter } from './routes/identity-intelligence-api/routes/analyze.route';
