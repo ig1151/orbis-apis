@@ -424,7 +424,6 @@ app.use('/agent-workflow', workflowRouter);
 app.use('/crypto-news-impact', cryptoNewsInfoRouter);
 app.use('/derivatives-intelligence', derivativesIntelligenceInfoRouter);
 app.use('/dev-utilities', devUtilitiesInfoRouter);
-app.use('/extraction', extractionInfoRouter);
 app.get('/extraction/info', (_req, res) => {
   res.json({
     name: 'Agent Intelligence Extraction & Monitoring API',
