@@ -431,10 +431,10 @@ app.get('/extraction/info', (_req, res) => {
     slug: 'extraction',
     version: 'v2',
     status: 'agent',
-    loop_type: 'extract_signal_detect_monitor_surface_act',
-    monetization_grade: 'A',
+    loop_type: 'extract_signal_detect_monitor_surface_gate_act',
+    monetization_grade: 'A+',
     category: 'ai-ml',
-    description: 'Extract structured intelligence from any URL or text. Pull entities, actionable signals, and opportunities. Detect page changes and register continuous monitoring — built for autonomous agent workflows.',
+    description: 'Extract structured intelligence from any URL or text. Pull entities, actionable signals, and opportunities. Detect page changes, register continuous monitoring, and gate autonomous agent execution.',
     baseUrl: 'https://orbis-apis.onrender.com/extraction',
     websiteUrl: 'https://orbis-apis.onrender.com',
     openapi: 'https://orbis-apis.onrender.com/extraction/openapi.json',
@@ -451,16 +451,26 @@ app.get('/extraction/info', (_req, res) => {
       '/monitor-page': 0.003,
       '/extract-opportunities': 0.006,
       '/monitor-topic': 0.007,
+      '/execution-gate': 0.005,
     },
     endpoints: [
       { method: 'POST', path: '/extract-entities', description: 'Pull people, companies, prices, events and locations from any URL or text.' },
-      { method: 'POST', path: '/extract-signals', description: 'Extract actionable intelligence signals from content.' },
+      { method: 'POST', path: '/extract-signals', description: 'Extract actionable intelligence signals (hiring, funding, partnership, launch) from content.' },
       { method: 'POST', path: '/detect-change', description: 'Compare current page vs cached baseline. Returns what changed and alert level.' },
       { method: 'POST', path: '/monitor-page', description: 'Register a URL for monitoring. Captures baseline and defines watch targets.' },
       { method: 'POST', path: '/extract-opportunities', description: 'Surface ranked opportunities from any content.' },
       { method: 'POST', path: '/monitor-topic', description: 'Watch a topic across multiple URLs. Returns signals, sentiment, trend and narrative.' },
+      { method: 'POST', path: '/execution-gate', description: 'Gate autonomous agent execution. Returns execute bool, confidence, risk level, blocking flags and next API.' },
+    ],
+    execution_chain: [
+      'extraction/extract-signals',
+      'extraction/detect-change',
+      'extraction/execution-gate',
+      'autopilot/should-execute',
+      'action-api/execute',
     ],
   });
+});
 });
 app.use('/lead-discovery', leadDiscoveryInfoRouter);
 app.use('/market-intelligence', marketIntelligenceInfoRouter);
