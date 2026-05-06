@@ -201,4 +201,63 @@ Respond in this exact JSON format (no markdown, just JSON):
   }
 });
 
+
+router.post('/analyze', async (req: Request, res: Response): Promise<void> => {
+  const { error, value } = analyzeSchema.validate(req.body);
+  if (error) { res.status(400).json({ error: error.details[0].message }); return; }
+  const { address, chain } = value;
+  try {
+    const ethBalance = await getEthBalance(address, chain);
+    const ethPrice = await getEthPrice();
+    const txList = await getTxList(address, chain, 50);
+    const balanceNum = parseFloat(ethBalance);
+    const ethBalanceUsd = ethPrice ? Math.round(balanceNum * ethPrice) : null;
+    const thirtyDaysAgo = Math.floor(Date.now() / 1000) - 30 * 24 * 3600;
+    const recentTxs = txList.filter((tx: any) => parseInt(tx.timeStamp) > thirtyDaysAgo);
+    const sends = txList.filter((tx: any) => tx.from.toLowerCase() === address.toLowerCase()).length;
+    const receives = txList.filter((tx: any) => tx.to?.toLowerCase() === address.toLowerCase()).length;
+    let exchangeInflows = 0, exchangeOutflows = 0;
+    for (const tx of txList.slice(0, 30)) {
+      if (labelAddress(tx.from)) exchangeInflows++;
+      if (labelAddress(tx.to || '')) exchangeOutflows++;
+    }
+    let signalScore = 0;
+    if (receives > sends) signalScore += 20;
+    if (sends > receives) signalScore -= 20;
+    if (exchangeInflows > exchangeOutflows) signalScore += 30;
+    if (exchangeOutflows > exchangeInflows) signalScore -= 30;
+    if (balanceNum > 10) signalScore += 10;
+    if (recentTxs.length > 10) signalScore += 10;
+    signalScore = Math.max(-100, Math.min(100, signalScore));
+    let signal: WalletAnalysis['signal'] = 'NEUTRAL';
+    if (signalScore >= 30) signal = 'ACCUMULATING';
+    else if (signalScore <= -30) signal = 'DISTRIBUTING';
+    else if (txList.length === 0) signal = 'INACTIVE';
+    res.json({ success: true, data: { address, chain, ethBalance, ethBalanceUsd, txCount: txList.length, recentTxCount: recentTxs.length, signal, signalScore, lastActivityAt: txList[0] ? new Date(parseInt(txList[0].timeStamp) * 1000).toISOString() : null } });
+  } catch (err: any) { res.status(500).json({ error: 'Failed to analyze wallet', details: err.message }); }
+});
+
+router.post('/signals', async (req: Request, res: Response): Promise<void> => {
+  const { error, value } = signalsSchema.validate(req.body);
+  if (error) { res.status(400).json({ error: error.details[0].message }); return; }
+  const { address, chain } = value;
+  try {
+    const ethBalance = await getEthBalance(address, chain);
+    const ethPrice = await getEthPrice();
+    const txList = await getTxList(address, chain, 100);
+    const balanceNum = parseFloat(ethBalance);
+    const ethBalanceUsd = ethPrice ? Math.round(balanceNum * ethPrice) : null;
+    const recentTxs = txList.filter((tx: any) => parseInt(tx.timeStamp) > Math.floor(Date.now() / 1000) - 30 * 24 * 3600);
+    const sends = txList.filter((tx: any) => tx.from.toLowerCase() === address.toLowerCase()).length;
+    const receives = txList.filter((tx: any) => tx.to?.toLowerCase() === address.toLowerCase()).length;
+    const aiPrompt = `Analyze this Ethereum wallet and return JSON: { "signalScore": <-100 to 100>, "signal": "<STRONG_BUY|BUY|NEUTRAL|SELL|STRONG_SELL>", "confidence": "<HIGH|MEDIUM|LOW>", "narrative": "<2-3 sentences>", "keyFactors": ["<f1>","<f2>","<f3>"], "recommendation": "<one sentence>" }
+Wallet: ${address} on ${chain}, Balance: ${ethBalance} ETH (~$${ethBalanceUsd || 'unknown'}), Txs: ${txList.length}, Recent(30d): ${recentTxs.length}, Sends: ${sends}, Receives: ${receives}`;
+    const aiResponse = await callAI(aiPrompt);
+    let parsed: any;
+    try { parsed = JSON.parse(aiResponse.replace(/\`\`\`json|\`\`\`/g, '').trim()); }
+    catch { parsed = { signalScore: 0, signal: 'NEUTRAL', confidence: 'LOW', narrative: aiResponse, keyFactors: [], recommendation: '' }; }
+    res.json({ success: true, data: { address, chain, ...parsed, analyzedAt: new Date().toISOString() } });
+  } catch (err: any) { res.status(500).json({ error: 'Failed to generate wallet signals', details: err.message }); }
+});
+
 export default router;
