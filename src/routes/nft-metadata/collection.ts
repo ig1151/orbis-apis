@@ -34,3 +34,15 @@ nftCollectionRouter.get('/collection/:contractAddress', async (req: Request, res
     return res.status(err.response?.status || 500).json({ error: 'Failed to fetch collection data', details: err.response?.data?.errors?.[0] || err.message });
   }
 });
+
+nftCollectionRouter.post('/collection', async (req: Request, res: Response) => {
+  const { contractAddress, chain = 'ethereum' } = req.body;
+  if (!contractAddress) return res.status(400).json({ error: 'contractAddress is required' });
+  try {
+    const headers = { 'X-API-KEY': process.env.OPENSEA_API_KEY, accept: 'application/json' };
+    const { data: contractData } = await axios.get(`https://api.opensea.io/api/v2/chain/${chain}/contract/${contractAddress}`, { headers });
+    const slug = contractData.collection;
+    const { data: colData } = await axios.get(`https://api.opensea.io/api/v2/collections/${slug}`, { headers });
+    return res.json({ success: true, data: { name: colData.name, slug, contractAddress, chain } });
+  } catch (err: any) { return res.status(err.response?.status || 500).json({ error: 'Failed to fetch collection', details: err.message }); }
+});

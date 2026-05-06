@@ -31,3 +31,12 @@ nftWalletRouter.get('/wallet/:walletAddress', async (req: Request, res: Response
     return res.status(err.response?.status || 500).json({ error: 'Failed to fetch wallet NFTs', details: err.response?.data?.errors?.[0] || err.message });
   }
 });
+
+nftWalletRouter.post('/wallet', async (req: Request, res: Response) => {
+  const { walletAddress, chain = 'ethereum', limit = 20 } = req.body;
+  if (!walletAddress) return res.status(400).json({ error: 'walletAddress is required' });
+  try {
+    const { data } = await axios.get(`https://api.opensea.io/api/v2/chain/${chain}/account/${walletAddress}/nfts`, { headers: { 'X-API-KEY': process.env.OPENSEA_API_KEY, accept: 'application/json' }, params: { limit: Math.min(limit, 200) } });
+    return res.json({ success: true, data: { walletAddress, chain, count: data.nfts?.length || 0, nfts: data.nfts || [] } });
+  } catch (err: any) { return res.status(err.response?.status || 500).json({ error: 'Failed to fetch wallet NFTs', details: err.message }); }
+});

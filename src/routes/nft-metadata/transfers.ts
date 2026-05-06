@@ -29,3 +29,12 @@ nftTransfersRouter.get('/transfers/:contractAddress/:tokenId', async (req: Reque
     return res.status(err.response?.status || 500).json({ error: 'Failed to fetch transfer history', details: err.response?.data?.errors?.[0] || err.message });
   }
 });
+
+nftTransfersRouter.post('/transfers', async (req: Request, res: Response) => {
+  const { contractAddress, tokenId, chain = 'ethereum', limit = 20 } = req.body;
+  if (!contractAddress || !tokenId) return res.status(400).json({ error: 'contractAddress and tokenId are required' });
+  try {
+    const { data } = await axios.get(`https://api.opensea.io/api/v2/events/chain/${chain}/contract/${contractAddress}/nfts/${tokenId}`, { headers: { 'X-API-KEY': process.env.OPENSEA_API_KEY, accept: 'application/json' }, params: { event_type: 'transfer', limit: Math.min(limit, 50) } });
+    return res.json({ success: true, data: { contractAddress, tokenId, chain, count: data.asset_events?.length || 0, transfers: data.asset_events || [] } });
+  } catch (err: any) { return res.status(err.response?.status || 500).json({ error: 'Failed to fetch transfers', details: err.message }); }
+});
