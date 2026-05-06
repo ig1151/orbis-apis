@@ -43,7 +43,7 @@ const tests = [
   { slug: "market-signal-api-c2fb7d",                                        path: "/batch",            body: { assets: ["BTC", "ETH"] } },
   { slug: "market-trigger-api-eacfff",                                       path: "/create",           body: { asset: "BTC", conditions: { min_confidence: 0.7 }, context: { market_signal: { signal: "buy" } } } },
   { slug: "market-webhook-api-0ddeec",                                       path: "/",                 body: { url: "https://example.com/webhook", event_type: "market_signal", conditions: { asset: "BTC", min_confidence: 0.7 } } },
-  { slug: "on-chain-signal-api-ea2a21",                                      path: "/analyze",          body: { address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" } },
+  { slug: "on-chain-signal-api-ea2a21",                                      path: "/analyze",          body: { address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", chain: "ethereum" } },
   { slug: "portfolio-rebalance-api-020cbc",                                  path: "/rebalance",        body: { portfolio: [{ asset: "BTC", value: 50000 }, { asset: "ETH", value: 50000 }], strategy: "equal_weight", risk_tolerance: "medium" } },
   { slug: "agent-product-data-extraction-commerce-intelligence-api-dd156a", path: "/extract-product",  body: { url: "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html" } },
   { slug: "search-extract-api-41bcd1",                                       path: "/search",           body: { query: "latest AI news", intent: "research" } },

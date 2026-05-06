@@ -1219,3 +1219,12 @@ export const webScraperInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/execution-gate',     description: 'Gate agent execution based on web content analysis. Returns proceed, confidence, and recommended action.' },
   ],
 });
+
+export const textGenInfoRouter = createApiInfoRouter({
+  name: 'Text Generation API', slug: 'text-gen', version: '1.0.0',
+  description: 'Multi-provider text generation with automatic Anthropic and OpenAI fallback. One API, maximum uptime.',
+  category: 'AI Tools',
+  endpoints: [
+    { method: 'POST', path: '/generate', description: 'Generate text with AI', params: { prompt: 'Input prompt', provider: 'openai | anthropic | auto', system_prompt: 'Optional system prompt', max_tokens: 'Max tokens (default 1000)', temperature: 'Temperature 0-2 (default 0.7)' } },
+  ],
+});
