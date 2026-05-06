@@ -5,7 +5,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'Lead Enrichment API', version: '1.0.0', description: 'Enrich leads with company data, firmographics, tech stack and buying signals — powered by Claude AI.' },
-    servers: [{ url: 'https://orbis-apis.onrender.com/lead-enrichment', description: 'Production' }],
+    servers: [{ url: 'https://lead-enrichment-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'Service is healthy' } } } },
       '/v1/enrich': {

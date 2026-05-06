@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Goal-driven agent workflow API — describe what you want, get a structured result.',
     },
-    servers: [{ url: 'https://orbis-apis.onrender.com/agent-workflow' }],
+    servers: [{ url: 'https://agent-workflow-api.onrender.com' }],
     paths: {
       '/v1/workflow/run': {
         post: {

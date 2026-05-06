@@ -27,7 +27,10 @@ const docsHtml = `<!DOCTYPE html>
 <body>
   <h1>Identity Intelligence API</h1>
   <p>Know which users to trust and which leads to prioritize — email, phone, IP and company intelligence in one call.</p>
-  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/identity-intelligence"https://orbis-apis.onrender.com/identity-intelligence", {
+  <p><strong>Base URL:</strong> <code>https://identity-intelligence-api.onrender.com</code></p>
+
+  <h2>Quick start</h2>
+  <pre>const res = await fetch("https://identity-intelligence-api.onrender.com/v1/analyze", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -64,13 +67,15 @@ else if (recommendation === "verify") requireOTP();</pre>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/analyze</span></div>
     <div class="desc">Analyze a single identity — pass any combination of email, phone, IP, domain</div>
-    <pre>curl -X POST https://orbis-apis.onrender.com/identity-intelligence"Content-Type: application/json" \\
+    <pre>curl -X POST https://identity-intelligence-api.onrender.com/v1/analyze \\
+  -H "Content-Type: application/json" \\
   -d '{"email": "john@stripe.com", "ip": "8.8.8.8", "use_case": "signup"}'</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/analyze/batch</span></div>
     <div class="desc">Analyze up to 20 identities in one request</div>
-    <pre>curl -X POST https://orbis-apis.onrender.com/identity-intelligence"Content-Type: application/json" \\
+    <pre>curl -X POST https://identity-intelligence-api.onrender.com/v1/analyze/batch \\
+  -H "Content-Type: application/json" \\
   -d '{"leads": [{"email": "a@company.com", "use_case": "signup"}, {"email": "b@gmail.com"}]}'</pre>
   </div>
 
@@ -105,7 +110,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'Identity Intelligence API', version: '1.0.0', description: 'Email, phone, IP and company intelligence combined into unified risk and lead scores.' },
-    servers: [{ url: 'https://orbis-apis.onrender.com/identity-intelligence', description: 'Production' }],
+    servers: [{ url: 'https://identity-intelligence-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'OK' } } } },
       '/v1/analyze': {

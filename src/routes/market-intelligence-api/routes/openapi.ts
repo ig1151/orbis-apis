@@ -5,7 +5,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({
     openapi: '3.0.0',
     info: { title: 'Market Intelligence API', version: '1.0.0', description: 'Market decision + trust scoring mashup for smarter trading decisions' },
-    servers: [{ url: 'https://orbis-apis.onrender.com/market-intelligence' }],
+    servers: [{ url: 'https://market-intelligence-api.onrender.com' }],
     paths: {
       '/v1/analyze/{ticker}': {
         get: {

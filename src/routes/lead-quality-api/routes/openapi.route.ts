@@ -28,7 +28,10 @@ const docsHtml = `<!DOCTYPE html>
 <body>
   <h1>Lead Quality API</h1>
   <p>Score any lead's quality and conversion likelihood — B2B detection, company enrichment, contact validation and AI-powered scoring.</p>
-  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/lead-quality"https://orbis-apis.onrender.com/lead-quality", {
+  <p><strong>Base URL:</strong> <code>https://lead-quality-api.onrender.com</code></p>
+
+  <h2>Quick start</h2>
+  <pre>const res = await fetch("https://lead-quality-api.onrender.com/v1/score", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -46,13 +49,15 @@ else deprioritize();</pre>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/score</span></div>
     <div class="desc">Score a single lead</div>
-    <pre>curl -X POST https://orbis-apis.onrender.com/lead-quality"Content-Type: application/json" \\
+    <pre>curl -X POST https://lead-quality-api.onrender.com/v1/score \\
+  -H "Content-Type: application/json" \\
   -d '{"email": "john@stripe.com", "domain": "stripe.com"}'</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/score/batch</span></div>
     <div class="desc">Score up to 20 leads in one request</div>
-    <pre>curl -X POST https://orbis-apis.onrender.com/lead-quality"Content-Type: application/json" \\
+    <pre>curl -X POST https://lead-quality-api.onrender.com/v1/score/batch \\
+  -H "Content-Type: application/json" \\
   -d '{"leads": [{"email": "john@stripe.com"}, {"email": "test@gmail.com"}]}'</pre>
   </div>
 
@@ -108,7 +113,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'Lead Quality API', version: '1.0.0', description: 'Score lead quality — B2B detection, company enrichment and conversion likelihood.' },
-    servers: [{ url: 'https://orbis-apis.onrender.com/lead-quality', description: 'Production' }],
+    servers: [{ url: 'https://lead-quality-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'Service is healthy' } } } },
       '/v1/score': {

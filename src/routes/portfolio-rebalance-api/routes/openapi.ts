@@ -5,7 +5,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({
     openapi: '3.0.0',
     info: { title: 'Portfolio Rebalance API', version: '1.0.0', description: 'Agent-ready portfolio rebalancing API for crypto portfolios' },
-    servers: [{ url: 'https://orbis-apis.onrender.com/portfolio-rebalance' }],
+    servers: [{ url: 'https://portfolio-rebalance-api.onrender.com' }],
     paths: {
       '/v1/rebalance': {
         post: {

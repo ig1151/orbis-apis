@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Continuous portfolio monitoring and strategy execution — set it and let it run.',
     },
-    servers: [{ url: 'https://orbis-apis.onrender.com/autopilot' }],
+    servers: [{ url: 'https://autopilot-api.onrender.com' }],
     paths: {
       '/v1/autopilot': {
         post: {

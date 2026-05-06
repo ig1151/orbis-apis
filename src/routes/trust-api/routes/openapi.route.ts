@@ -28,7 +28,10 @@ const docsHtml = `<!DOCTYPE html>
 <body>
   <h1>Trust API</h1>
   <p>The only API that combines Web2 identity risk and Web3 wallet intelligence into a single unified trust score.</p>
-  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/trust"https://orbis-apis.onrender.com/trust", {
+  <p><strong>Base URL:</strong> <code>https://trust-api.onrender.com</code></p>
+
+  <h2>Quick start</h2>
+  <pre>const res = await fetch("https://trust-api.onrender.com/v1/assess", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -46,13 +49,14 @@ else allowAccess();</pre>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/assess</span></div>
     <div class="desc">Assess trust — pass any combination of email, phone, IP and wallet address</div>
-    <pre>curl -X POST https://orbis-apis.onrender.com/trust"Content-Type: application/json" \\
+    <pre>curl -X POST https://trust-api.onrender.com/v1/assess \\
+  -H "Content-Type: application/json" \\
   -d '{"email": "user@gmail.com", "ip": "8.8.8.8", "wallet_address": "0x..."}'</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge get">GET</span><span class="path">/v1/assess</span></div>
     <div class="desc">Assess trust via query parameters</div>
-    <pre>curl "https://orbis-apis.onrender.com/trust"</pre>
+    <pre>curl "https://trust-api.onrender.com/v1/assess?email=user@gmail.com&wallet_address=0x..."</pre>
   </div>
 
   <h2>Trust levels</h2>
@@ -93,7 +97,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'Trust API', version: '1.0.0', description: 'Web2 identity risk + Web3 wallet intelligence in one unified trust score.' },
-    servers: [{ url: 'https://orbis-apis.onrender.com/trust', description: 'Production' }],
+    servers: [{ url: 'https://trust-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'OK' } } } },
       '/v1/assess': {

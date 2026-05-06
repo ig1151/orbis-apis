@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'AI-powered lead discovery API — find companies and contacts matching any query, industry or hiring signal.',
     },
-    servers: [{ url: 'https://orbis-apis.onrender.com/lead-discovery' }],
+    servers: [{ url: 'https://lead-discovery-api.onrender.com' }],
     paths: {
       '/v1/leads/find': {
         post: {

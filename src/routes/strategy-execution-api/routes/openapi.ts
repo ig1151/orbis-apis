@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'AI strategy engine that orchestrates news, signals and portfolio data into actionable trade decisions.',
     },
-    servers: [{ url: 'https://orbis-apis.onrender.com/strategy-execution' }],
+    servers: [{ url: 'https://strategy-execution-api.onrender.com' }],
     paths: {
       '/v1/strategy/execute': {
         post: {

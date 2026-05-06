@@ -5,7 +5,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({
     openapi: '3.0.0',
     info: { title: 'Unified Decision API', version: '1.0.0', description: 'One API call combining market signals, news impact and portfolio analysis into a single actionable decision' },
-    servers: [{ url: 'https://orbis-apis.onrender.com/unified-decision' }],
+    servers: [{ url: 'https://unified-decision-api.onrender.com' }],
     paths: {
       '/v1/decide': {
         post: {

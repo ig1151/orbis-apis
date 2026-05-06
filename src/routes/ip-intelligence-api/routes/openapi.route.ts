@@ -25,27 +25,31 @@ const docsHtml = `<!DOCTYPE html>
 <body>
   <h1>IP Intelligence API</h1>
   <p>The simple fraud detection API for startups. Know instantly if an IP is a VPN, proxy, Tor node or datacenter — with a risk score out of 100 to power your trust and safety decisions.</p>
-  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/ip-intelligence"endpoint">
+  <p><strong>Base URL:</strong> <code>https://ip-intelligence-api.onrender.com</code></p>
+  <h2>Endpoints</h2>
+  <div class="endpoint">
     <div><span class="badge get">GET</span><span class="path">/v1/lookup</span></div>
     <div class="desc">Look up a single IP address</div>
-    <pre>curl "https://orbis-apis.onrender.com/ip-intelligence"</pre>
+    <pre>curl "https://ip-intelligence-api.onrender.com/v1/lookup?ip=8.8.8.8"</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/lookup</span></div>
     <div class="desc">Look up a single IP via request body</div>
-    <pre>curl -X POST https://orbis-apis.onrender.com/ip-intelligence"Content-Type: application/json" \\
+    <pre>curl -X POST https://ip-intelligence-api.onrender.com/v1/lookup \\
+  -H "Content-Type: application/json" \\
   -d '{"ip": "8.8.8.8"}'</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/lookup/batch</span></div>
     <div class="desc">Look up up to 50 IPs in one request</div>
-    <pre>curl -X POST https://orbis-apis.onrender.com/ip-intelligence"Content-Type: application/json" \\
+    <pre>curl -X POST https://ip-intelligence-api.onrender.com/v1/lookup/batch \\
+  -H "Content-Type: application/json" \\
   -d '{"ips": [{"ip": "8.8.8.8"}, {"ip": "1.1.1.1"}]}'</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge get">GET</span><span class="path">/v1/health</span></div>
     <div class="desc">Service health check</div>
-    <pre>curl "https://orbis-apis.onrender.com/ip-intelligence"</pre>
+    <pre>curl "https://ip-intelligence-api.onrender.com/v1/health"</pre>
   </div>
   <h2>Example Response</h2>
   <pre>{
@@ -100,7 +104,7 @@ const docsHtml = `<!DOCTYPE html>
     <tr><td style="padding:8px;border:1px solid #ddd;">80–100</td><td style="padding:8px;border:1px solid #ddd;">Critical</td><td style="padding:8px;border:1px solid #ddd;">Tor exit node or known malicious IP — block recommended</td></tr>
   </table>
   <h2>Quick start example</h2>
-  <pre>const res = await fetch("https://orbis-apis.onrender.com/ip-intelligence" + userIP);
+  <pre>const res = await fetch("https://ip-intelligence-api.onrender.com/v1/lookup?ip=" + userIP);
 const { risk } = await res.json();
 
 if (risk.score > 60) blockUser();
@@ -118,7 +122,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'IP Intelligence API', version: '1.0.0', description: 'Location, network and risk intelligence for any IP address.' },
-    servers: [{ url: 'https://orbis-apis.onrender.com/ip-intelligence', description: 'Production' }],
+    servers: [{ url: 'https://ip-intelligence-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'Service is healthy' } } } },
       '/v1/lookup': {

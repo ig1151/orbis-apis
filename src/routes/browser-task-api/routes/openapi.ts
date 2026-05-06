@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Agent-ready browser task API — search, extract and summarize the web with structured output.',
     },
-    servers: [{ url: 'https://orbis-apis.onrender.com/browser-task' }],
+    servers: [{ url: 'https://browser-task-api.onrender.com' }],
     paths: {
       '/v1/browser-task': {
         post: {

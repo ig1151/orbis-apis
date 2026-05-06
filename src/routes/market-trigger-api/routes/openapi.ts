@@ -5,7 +5,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({
     openapi: '3.0.0',
     info: { title: 'Market Trigger API', version: '1.0.0', description: 'Agent-ready market trigger API for automated trading decisions' },
-    servers: [{ url: 'https://orbis-apis.onrender.com/market-trigger' }],
+    servers: [{ url: 'https://market-trigger-api.onrender.com' }],
     paths: {
       '/v1/trigger': {
         post: {

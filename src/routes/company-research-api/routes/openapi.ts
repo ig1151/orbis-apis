@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'AI-powered company research — summary, key people, recent news, tech stack and competitive intelligence in one call.',
     },
-    servers: [{ url: 'https://orbis-apis.onrender.com/company-research' }],
+    servers: [{ url: 'https://company-research-api.onrender.com' }],
     paths: {
       '/v1/research/company': {
         post: {

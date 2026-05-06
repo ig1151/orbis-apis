@@ -28,7 +28,10 @@ const docsHtml = `<!DOCTYPE html>
 <body>
   <h1>User Risk API</h1>
   <p>Score any user's signup risk by combining email, phone and IP intelligence into a single unified risk score.</p>
-  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/user-risk"https://orbis-apis.onrender.com/user-risk", {
+  <p><strong>Base URL:</strong> <code>https://user-risk-api.onrender.com</code></p>
+
+  <h2>Quick start</h2>
+  <pre>const res = await fetch("https://user-risk-api.onrender.com/v1/assess", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -46,13 +49,14 @@ else allowSignup();</pre>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/assess</span></div>
     <div class="desc">Assess user risk — pass any combination of email, phone, IP</div>
-    <pre>curl -X POST https://orbis-apis.onrender.com/user-risk"Content-Type: application/json" \\
+    <pre>curl -X POST https://user-risk-api.onrender.com/v1/assess \\
+  -H "Content-Type: application/json" \\
   -d '{"email": "user@gmail.com", "phone": "+14155552671", "ip": "8.8.8.8"}'</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge get">GET</span><span class="path">/v1/assess</span></div>
     <div class="desc">Assess user risk via query parameters</div>
-    <pre>curl "https://orbis-apis.onrender.com/user-risk"</pre>
+    <pre>curl "https://user-risk-api.onrender.com/v1/assess?email=user@gmail.com&ip=8.8.8.8"</pre>
   </div>
 
   <h2>Example Response</h2>
@@ -113,7 +117,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'User Risk API', version: '1.0.0', description: 'Score user signup risk by combining email, phone and IP intelligence.' },
-    servers: [{ url: 'https://orbis-apis.onrender.com/user-risk', description: 'Production' }],
+    servers: [{ url: 'https://user-risk-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'Service is healthy' } } } },
       '/v1/assess': {

@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Fast, simple utility APIs for developers — URL metadata, email extraction, and text normalization.',
     },
-    servers: [{ url: 'https://orbis-apis.onrender.com/dev-utilities' }],
+    servers: [{ url: 'https://dev-utilities-api.onrender.com' }],
     paths: {
       '/v1/url-metadata': {
         post: {

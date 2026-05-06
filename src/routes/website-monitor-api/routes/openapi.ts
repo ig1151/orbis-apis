@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Monitor any URL for changes — detects content diffs, summarizes what changed and delivers alerts via webhook.',
     },
-    servers: [{ url: 'https://orbis-apis.onrender.com/website-monitor' }],
+    servers: [{ url: 'https://website-monitor-api.onrender.com' }],
     paths: {
       '/v1/monitors': {
         post: { summary: 'Create a monitor', responses: { '201': { description: 'Monitor created' } } },
