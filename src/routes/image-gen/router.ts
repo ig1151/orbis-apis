@@ -58,6 +58,12 @@ function parseJson(raw: string): any {
 }
 
 async function requireApiKey(req: Request, res: Response, next: NextFunction) {
+  // x402 payments bypass API key requirement
+  if (req.headers["x-payment"] || req.headers["x-payment-response"] || req.headers["x-payment-signature"]) {
+    (req as any).apiKey = "x402";
+    (req as any).apiKeyData = { active: true, quota: null };
+    return next();
+  }
   const key = (req.headers["x-api-key"] as string) || req.headers.authorization?.replace("Bearer ", "");
   if (!key) return res.status(401).json({ error: "Missing API key", execution_ready: false });
   try {

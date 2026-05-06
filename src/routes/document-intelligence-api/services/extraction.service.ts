@@ -109,10 +109,24 @@ export async function extractDocument(req: ExtractRequest): Promise<ExtractRespo
   } else {
     const raw = req.document.includes(',') ? req.document.split(',')[1] : req.document;
     const mimeType = detectMimeType(req.document);
-    const parsed = await extractText(raw, mimeType);
-    textContent = parsed.text;
-    pageCount = parsed.pageCount;
-    wordCount = parsed.wordCount;
+    // If no data: prefix, try decoding as plain text first
+    if (!req.document.startsWith('data:')) {
+      try {
+        const decoded = Buffer.from(raw, 'base64').toString('utf-8');
+        textContent = decoded;
+        wordCount = decoded.split(/\s+/).filter(Boolean).length;
+      } catch {
+        const parsed = await extractText(raw, mimeType);
+        textContent = parsed.text;
+        pageCount = parsed.pageCount;
+        wordCount = parsed.wordCount;
+      }
+    } else {
+      const parsed = await extractText(raw, mimeType);
+      textContent = parsed.text;
+      pageCount = parsed.pageCount;
+      wordCount = parsed.wordCount;
+    }
   }
 
   const detectedType: DocumentType = docType === 'auto'
