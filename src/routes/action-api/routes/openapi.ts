@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Execution layer for AI agents — take action on leads, companies and outreach with one call.',
     },
-    servers: [{ url: 'https://action-api.onrender.com' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/action' }],
     paths: {
       '/v1/action': {
         post: {

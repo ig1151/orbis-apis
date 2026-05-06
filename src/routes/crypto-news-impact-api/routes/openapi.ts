@@ -5,7 +5,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({
     openapi: '3.0.0',
     info: { title: 'Crypto News Impact API', version: '1.0.0', description: 'Event-to-trade signal API for crypto news analysis' },
-    servers: [{ url: 'https://crypto-news-impact-api.onrender.com' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/crypto-news-impact' }],
     paths: {
       '/v1/news-impact': {
         post: {

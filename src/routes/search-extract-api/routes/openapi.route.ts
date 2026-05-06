@@ -28,10 +28,7 @@ const docsHtml = `<!DOCTYPE html>
 <body>
   <h1>Search + Extract API</h1>
   <p>Agent-ready web search — search the web and get clean, structured answers in one call.</p>
-  <p><strong>Base URL:</strong> <code>https://search-extract-api.onrender.com</code></p>
-
-  <h2>Quick start</h2>
-  <pre>const res = await fetch("https://search-extract-api.onrender.com/v1/search", {
+  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/search-extract"https://orbis-apis.onrender.com/search-extract", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -55,20 +52,18 @@ const { answer, sources, structured_data } = await res.json();</pre>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/search</span></div>
     <div class="desc">Search and extract structured data</div>
-    <pre>curl -X POST https://search-extract-api.onrender.com/v1/search \\
-  -H "Content-Type: application/json" \\
+    <pre>curl -X POST https://orbis-apis.onrender.com/search-extract"Content-Type: application/json" \\
   -d '{"query": "latest AI news", "intent": "news"}'</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge get">GET</span><span class="path">/v1/search</span></div>
     <div class="desc">Search via query parameter</div>
-    <pre>curl "https://search-extract-api.onrender.com/v1/search?query=OpenAI+news&intent=news"</pre>
+    <pre>curl "https://orbis-apis.onrender.com/search-extract"</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/search/batch</span></div>
     <div class="desc">Run up to 5 searches in one request</div>
-    <pre>curl -X POST https://search-extract-api.onrender.com/v1/search/batch \\
-  -H "Content-Type: application/json" \\
+    <pre>curl -X POST https://orbis-apis.onrender.com/search-extract"Content-Type: application/json" \\
   -d '{"searches": [{"query": "AI news"}, {"query": "crypto trends"}]}'</pre>
   </div>
 
@@ -99,7 +94,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'Search + Extract API', version: '1.0.0', description: 'Agent-ready web search — search the web and get clean, structured answers.' },
-    servers: [{ url: 'https://search-extract-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/search-extract', description: 'Production' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'OK' } } } },
       '/v1/search': {

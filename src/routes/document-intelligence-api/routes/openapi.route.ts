@@ -5,7 +5,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'Document Intelligence API', version: '1.0.0', description: 'Extract structured data from PDFs, invoices, contracts and resumes — powered by Claude AI.' },
-    servers: [{ url: 'https://document-intelligence-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/document-intelligence', description: 'Production' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'Service is healthy' } } } },
       '/v1/extract': {

@@ -5,7 +5,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({
     openapi: '3.0.0',
     info: { title: 'Market Signal API', version: '1.0.0' },
-    servers: [{ url: 'https://market-signal-api.onrender.com' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/market-signal' }],
     paths: {
       '/v1/signal/{ticker}': {
         get: {

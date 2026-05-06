@@ -28,10 +28,7 @@ const docsHtml = `<!DOCTYPE html>
 <body>
   <h1>Wallet Intelligence API</h1>
   <p>Analyze any Ethereum wallet for risk scoring, behavioral classification and fraud detection.</p>
-  <p><strong>Base URL:</strong> <code>https://wallet-intelligence-api.onrender.com</code></p>
-
-  <h2>Quick start</h2>
-  <pre>const res = await fetch("https://wallet-intelligence-api.onrender.com/v1/analyze?address=0x742d35Cc6634C0532925a3b844Bc454e4438f44e");
+  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/wallet-intelligence"https://orbis-apis.onrender.com/wallet-intelligence");
 const { risk_score, risk_level, wallet_type, recommendation } = await res.json();
 if (risk_score > 70) blockTransaction();
 else if (risk_score > 40) requireKYC();</pre>
@@ -40,20 +37,18 @@ else if (risk_score > 40) requireKYC();</pre>
   <div class="endpoint">
     <div><span class="badge get">GET</span><span class="path">/v1/analyze</span></div>
     <div class="desc">Analyze a wallet via query parameter</div>
-    <pre>curl "https://wallet-intelligence-api.onrender.com/v1/analyze?address=0x742d35Cc6634C0532925a3b844Bc454e4438f44e"</pre>
+    <pre>curl "https://orbis-apis.onrender.com/wallet-intelligence"</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/analyze</span></div>
     <div class="desc">Analyze a wallet via request body</div>
-    <pre>curl -X POST https://wallet-intelligence-api.onrender.com/v1/analyze \\
-  -H "Content-Type: application/json" \\
+    <pre>curl -X POST https://orbis-apis.onrender.com/wallet-intelligence"Content-Type: application/json" \\
   -d '{"address": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e", "chain": "ethereum"}'</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/analyze/batch</span></div>
     <div class="desc">Analyze up to 10 wallets in one request</div>
-    <pre>curl -X POST https://wallet-intelligence-api.onrender.com/v1/analyze/batch \\
-  -H "Content-Type: application/json" \\
+    <pre>curl -X POST https://orbis-apis.onrender.com/wallet-intelligence"Content-Type: application/json" \\
   -d '{"wallets": [{"address": "0x..."}, {"address": "0x..."}]}'</pre>
   </div>
 
@@ -93,7 +88,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'Wallet Intelligence API', version: '1.0.0', description: 'Analyze Ethereum wallets for risk scoring, behavioral classification and fraud detection.' },
-    servers: [{ url: 'https://wallet-intelligence-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/wallet-intelligence', description: 'Production' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'OK' } } } },
       '/v1/analyze': {

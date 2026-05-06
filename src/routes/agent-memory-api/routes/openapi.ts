@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Persistent memory and context storage for AI agents — store, retrieve and search memories by session.',
     },
-    servers: [{ url: 'https://agent-memory-api.onrender.com' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/agent-memory' }],
     paths: {
       '/v1/memory/{session_id}': {
         post: { summary: 'Add memory to session', responses: { '201': { description: 'Memory added' } } },

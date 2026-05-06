@@ -27,36 +27,30 @@ const swaggerHtml = `<!DOCTYPE html>
 <body>
   <h1>Email Validation API</h1>
   <p>Validate and verify email addresses — format, MX records, disposable detection and spam trap scoring.</p>
-  <p><strong>Base URL:</strong> <code>https://email-validation-api-0rru.onrender.com</code></p>
-
-  <h2>Endpoints</h2>
-
-  <div class="endpoint">
+  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/email-validation"endpoint">
     <div><span class="badge get">GET</span><span class="path">/v1/validate</span></div>
     <div class="desc">Validate a single email via query parameter</div>
-    <pre>curl "https://email-validation-api-0rru.onrender.com/v1/validate?email=user@gmail.com"</pre>
+    <pre>curl "https://orbis-apis.onrender.com/email-validation"</pre>
   </div>
 
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/validate</span></div>
     <div class="desc">Validate a single email via request body</div>
-    <pre>curl -X POST https://email-validation-api-0rru.onrender.com/v1/validate \\
-  -H "Content-Type: application/json" \\
+    <pre>curl -X POST https://orbis-apis.onrender.com/email-validation"Content-Type: application/json" \\
   -d '{"email": "user@gmail.com", "check_mx": true, "check_disposable": true}'</pre>
   </div>
 
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/validate/batch</span></div>
     <div class="desc">Validate up to 100 emails in one request</div>
-    <pre>curl -X POST https://email-validation-api-0rru.onrender.com/v1/validate/batch \\
-  -H "Content-Type: application/json" \\
+    <pre>curl -X POST https://orbis-apis.onrender.com/email-validation"Content-Type: application/json" \\
   -d '{"emails": [{"email": "user@gmail.com"}, {"email": "fake@mailinator.com"}]}'</pre>
   </div>
 
   <div class="endpoint">
     <div><span class="badge get">GET</span><span class="path">/v1/health</span></div>
     <div class="desc">Service health check</div>
-    <pre>curl "https://email-validation-api-0rru.onrender.com/v1/health"</pre>
+    <pre>curl "https://orbis-apis.onrender.com/email-validation"</pre>
   </div>
 
   <h2>Example Response</h2>
@@ -102,7 +96,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'Email Validation API', version: '1.0.0', description: 'Validate and verify email addresses — format, MX records, disposable detection and spam trap scoring.' },
-    servers: [{ url: 'https://email-validation-api-0rru.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/email-validation', description: 'Production' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'Service is healthy' } } } },
       '/v1/validate': {

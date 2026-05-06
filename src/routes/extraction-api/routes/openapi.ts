@@ -9,7 +9,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Task-specific AI extraction APIs — leads, invoices, resumes, contracts and custom schemas.',
     },
-    servers: [{ url: 'https://extraction-api.onrender.com' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/extraction' }],
     paths: {
       '/v1/extract/lead': { post: { summary: 'Extract lead data', responses: { '200': { description: 'Extracted lead' } } } },
       '/v1/extract/invoice': { post: { summary: 'Extract invoice data', responses: { '200': { description: 'Extracted invoice' } } } },

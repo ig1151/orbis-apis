@@ -27,10 +27,7 @@ const docsHtml = `<!DOCTYPE html>
 <body>
   <h1>AI Output Safety API</h1>
   <p>Check any AI-generated text for hallucinations, toxicity, PII, policy violations, bias, misinformation and prompt injection.</p>
-  <p><strong>Base URL:</strong> <code>https://ai-output-safety-api.onrender.com</code></p>
-
-  <h2>Quick start</h2>
-  <pre>const res = await fetch("https://ai-output-safety-api.onrender.com/v1/check", {
+  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/ai-output-safety"https://orbis-apis.onrender.com/ai-output-safety", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -46,15 +43,13 @@ else displayToUser(aiGeneratedText);</pre>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/check</span></div>
     <div class="desc">Check a single AI output for safety issues</div>
-    <pre>curl -X POST https://ai-output-safety-api.onrender.com/v1/check \\
-  -H "Content-Type: application/json" \\
+    <pre>curl -X POST https://orbis-apis.onrender.com/ai-output-safety"Content-Type: application/json" \\
   -d '{"text": "Your AI output here", "context": "chatbot response"}'</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/check/batch</span></div>
     <div class="desc">Check up to 20 AI outputs in one request</div>
-    <pre>curl -X POST https://ai-output-safety-api.onrender.com/v1/check/batch \\
-  -H "Content-Type: application/json" \\
+    <pre>curl -X POST https://orbis-apis.onrender.com/ai-output-safety"Content-Type: application/json" \\
   -d '{"checks": [{"text": "output 1"}, {"text": "output 2"}]}'</pre>
   </div>
 
@@ -102,7 +97,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'AI Output Safety API', version: '1.0.0', description: 'Check AI-generated text for hallucinations, toxicity, PII, policy violations, bias, misinformation and prompt injection.' },
-    servers: [{ url: 'https://ai-output-safety-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/ai-output-safety', description: 'Production' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'OK' } } } },
       '/v1/check': {

@@ -12,8 +12,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
       description: 'Convert any image into captions, tags, summaries, metadata, sentiment and OCR — powered by Claude AI.',
     },
     servers: [
-      { url: 'https://image-to-content-api.onrender.com', description: 'Production' },
-      { url: `http://localhost:${config.server.port}`, description: 'Local' },
+      { url: 'https://orbis-apis.onrender.com/image-to-content', description: 'Production' },
     ],
     paths: {
       '/v1/health': {

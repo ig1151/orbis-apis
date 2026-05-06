@@ -223,7 +223,36 @@ router.post("/generate-batch", requireApiKey, async (req: Request, res: Response
     return res.json({
       execution_ready: true, next_api: "image-gen", next_endpoint: "/image-gen/score-image",
       images, summary: { total: prompts.length, success: successes, failed: prompts.length - successes },
-      metadata: { latency_ms: ms(start), estimated_cost: costEstimate(successes, size, quality), model: "dall-e-3" },
+      metadata: { latency_ms: ms(start), estimated_cost: costEstimate(successes, size, quality), model: "dall-e-3",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                "prompt": {
+                                "type": "string",
+                                "description": "string (required)"
+                },
+                "size": {
+                                "type": "string",
+                                "description": "string \u2014 1024x1024|1024x1792|1792x1024 (default: 1024x1024)"
+                },
+                "quality": {
+                                "type": "string",
+                                "description": "string \u2014 standard|hd (default: standard)"
+                },
+                "enhance_prompt": {
+                                "type": "string",
+                                "description": "boolean (default: false)"
+                }
+},
+                required: ["prompt"]
+              }
+            }
+          }
+        }, },
     });
   } catch (err: any) {
     return res.status(500).json({ error: err.message, execution_ready: false, metadata: { latency_ms: ms(start) } });

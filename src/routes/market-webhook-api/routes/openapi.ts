@@ -5,7 +5,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({
     openapi: '3.0.0',
     info: { title: 'Market Webhook API', version: '1.0.0', description: 'Event-driven webhook API for crypto markets' },
-    servers: [{ url: 'https://market-webhook-api.onrender.com' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/market-webhook' }],
     paths: {
       '/v1/webhooks': {
         post: {

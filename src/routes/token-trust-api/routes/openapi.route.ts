@@ -28,10 +28,7 @@ const docsHtml = `<!DOCTYPE html>
 <body>
   <h1>Token Trust API</h1>
   <p>Check any token or smart contract for honeypots, scam patterns and security risks — Ethereum, BSC and Solana.</p>
-  <p><strong>Base URL:</strong> <code>https://token-trust-api.onrender.com</code></p>
-
-  <h2>Quick start</h2>
-  <pre>const res = await fetch("https://token-trust-api.onrender.com/v1/check?contract=0x...");
+  <p><strong>Base URL:</strong> <code>https://orbis-apis.onrender.com/token-trust"https://orbis-apis.onrender.com/token-trust");
 const { decision, trust_score, flags } = await res.json();
 if (decision === "avoid") warnUser("High risk token detected");
 else if (decision === "caution") warnUser("Some risk signals — research before investing");</pre>
@@ -40,20 +37,18 @@ else if (decision === "caution") warnUser("Some risk signals — research before
   <div class="endpoint">
     <div><span class="badge get">GET</span><span class="path">/v1/check</span></div>
     <div class="desc">Check a single token via query parameter</div>
-    <pre>curl "https://token-trust-api.onrender.com/v1/check?contract=0x..."</pre>
+    <pre>curl "https://orbis-apis.onrender.com/token-trust"</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/check</span></div>
     <div class="desc">Check a single token via request body</div>
-    <pre>curl -X POST https://token-trust-api.onrender.com/v1/check \\
-  -H "Content-Type: application/json" \\
+    <pre>curl -X POST https://orbis-apis.onrender.com/token-trust"Content-Type: application/json" \\
   -d '{"contract": "0x...", "chain": "ethereum"}'</pre>
   </div>
   <div class="endpoint">
     <div><span class="badge post">POST</span><span class="path">/v1/check/batch</span></div>
     <div class="desc">Check up to 10 tokens in one request</div>
-    <pre>curl -X POST https://token-trust-api.onrender.com/v1/check/batch \\
-  -H "Content-Type: application/json" \\
+    <pre>curl -X POST https://orbis-apis.onrender.com/token-trust"Content-Type: application/json" \\
   -d '{"tokens": [{"contract": "0x..."}, {"contract": "0x..."}]}'</pre>
   </div>
 
@@ -81,7 +76,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     openapi: '3.0.3',
     info: { title: 'Token Trust API', version: '1.0.0', description: 'Check any token or smart contract for honeypots, scam patterns and security risks.' },
-    servers: [{ url: 'https://token-trust-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/token-trust', description: 'Production' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'OK' } } } },
       '/v1/check': {
