@@ -819,6 +819,53 @@ import tokenPriceFeedRouter from "./routes/token-price-feed/routes/price";
 app.use("/token-price-feed", tokenPriceFeedInfoRouter);
 app.use("/token-price-feed", tokenPriceFeedRouter);
 
+
+// ── Resume API Info ───────────────────────────────────────────────────────────
+app.get('/resume/info', (_req, res) => {
+  res.json({
+    name: 'Agent Career Optimization & Resume Intelligence API',
+    slug: 'resume',
+    version: 'v2',
+    status: 'agent',
+    loop_type: 'analyze_score_match_gap_optimize_rewrite_gate_apply',
+    monetization_grade: 'A',
+    category: 'ai-ml',
+    description: 'AI-powered resume analysis, ATS scoring, job matching, gap detection, bullet rewriting, cover letter generation, and execution-gated application readiness — built for autonomous agent workflows.',
+    baseUrl: 'https://orbis-apis.onrender.com/resume',
+    websiteUrl: 'https://orbis-apis.onrender.com',
+    openapi: 'https://orbis-apis.onrender.com/resume/openapi.json',
+    pricing: {
+      '/analyze-resume': 0.004,
+      '/score-resume': 0.002,
+      '/match-job': 0.004,
+      '/optimize-for-ats': 0.006,
+      '/generate-bullets': 0.003,
+      '/rewrite-summary': 0.003,
+      '/gap-analysis': 0.005,
+      '/cover-letter': 0.006,
+      '/execution-gate': 0.005,
+    },
+    endpoints: [
+      { method: 'POST', path: '/analyze-resume', description: 'Full resume analysis: scores, strengths, weaknesses, section feedback, vague phrases.' },
+      { method: 'POST', path: '/score-resume', description: 'Score resume across ATS, readability, impact, completeness. Returns grade and verdict.' },
+      { method: 'POST', path: '/match-job', description: 'Match resume to job description. Returns match score, gaps, ATS probability.' },
+      { method: 'POST', path: '/optimize-for-ats', description: 'Rewrite resume for ATS optimization. Returns optimized text and changes made.' },
+      { method: 'POST', path: '/generate-bullets', description: 'Rewrite weak bullet points to be results-driven and impactful.' },
+      { method: 'POST', path: '/rewrite-summary', description: 'Rewrite or generate a powerful professional summary.' },
+      { method: 'POST', path: '/gap-analysis', description: 'Detect skill, experience, education gaps vs job description. Returns priority actions.' },
+      { method: 'POST', path: '/cover-letter', description: 'Generate a tailored cover letter from resume and job description.' },
+      { method: 'POST', path: '/execution-gate', description: 'Gate autonomous job application. Returns execute bool, blocking flags, and next API.' },
+    ],
+    execution_chain: [
+      'resume/analyze-resume',
+      'resume/match-job',
+      'resume/gap-analysis',
+      'resume/optimize-for-ats',
+      'resume/execution-gate',
+      'autopilot/should-execute',
+    ],
+  });
+});
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use("/nft-metadata", nftMetadataInfoRouter);
 app.use("/nft-metadata", nftTokenRouter);
@@ -1070,50 +1117,3 @@ app.listen(PORT, () => {
 
 export default app;
 
-
-// ── Resume API Info ───────────────────────────────────────────────────────────
-app.get('/resume/info', (_req, res) => {
-  res.json({
-    name: 'Agent Career Optimization & Resume Intelligence API',
-    slug: 'resume',
-    version: 'v2',
-    status: 'agent',
-    loop_type: 'analyze_score_match_gap_optimize_rewrite_gate_apply',
-    monetization_grade: 'A',
-    category: 'ai-ml',
-    description: 'AI-powered resume analysis, ATS scoring, job matching, gap detection, bullet rewriting, cover letter generation, and execution-gated application readiness — built for autonomous agent workflows.',
-    baseUrl: 'https://orbis-apis.onrender.com/resume',
-    websiteUrl: 'https://orbis-apis.onrender.com',
-    openapi: 'https://orbis-apis.onrender.com/resume/openapi.json',
-    pricing: {
-      '/analyze-resume': 0.004,
-      '/score-resume': 0.002,
-      '/match-job': 0.004,
-      '/optimize-for-ats': 0.006,
-      '/generate-bullets': 0.003,
-      '/rewrite-summary': 0.003,
-      '/gap-analysis': 0.005,
-      '/cover-letter': 0.006,
-      '/execution-gate': 0.005,
-    },
-    endpoints: [
-      { method: 'POST', path: '/analyze-resume', description: 'Full resume analysis: scores, strengths, weaknesses, section feedback, vague phrases.' },
-      { method: 'POST', path: '/score-resume', description: 'Score resume across ATS, readability, impact, completeness. Returns grade and verdict.' },
-      { method: 'POST', path: '/match-job', description: 'Match resume to job description. Returns match score, gaps, ATS probability.' },
-      { method: 'POST', path: '/optimize-for-ats', description: 'Rewrite resume for ATS optimization. Returns optimized text and changes made.' },
-      { method: 'POST', path: '/generate-bullets', description: 'Rewrite weak bullet points to be results-driven and impactful.' },
-      { method: 'POST', path: '/rewrite-summary', description: 'Rewrite or generate a powerful professional summary.' },
-      { method: 'POST', path: '/gap-analysis', description: 'Detect skill, experience, education gaps vs job description. Returns priority actions.' },
-      { method: 'POST', path: '/cover-letter', description: 'Generate a tailored cover letter from resume and job description.' },
-      { method: 'POST', path: '/execution-gate', description: 'Gate autonomous job application. Returns execute bool, blocking flags, and next API.' },
-    ],
-    execution_chain: [
-      'resume/analyze-resume',
-      'resume/match-job',
-      'resume/gap-analysis',
-      'resume/optimize-for-ats',
-      'resume/execution-gate',
-      'autopilot/should-execute',
-    ],
-  });
-});
