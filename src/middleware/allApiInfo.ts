@@ -7,9 +7,17 @@ export const gasOptimizerInfoRouter = createApiInfoRouter({
   category: 'Crypto Infrastructure',
   endpoints: [
     { method: 'GET', path: '/now', description: 'Get current gas prices', params: { chain: 'ethereum | polygon | arbitrum | optimism | base | bsc | avalanche' } },
+    { method: 'POST', path: '/now', description: 'Get current gas prices', params: { chain: 'ethereum | polygon | arbitrum | optimism | base | bsc | avalanche' } },
+    { method: 'POST', path: '/now', description: 'Get current gas prices', params: { chain: 'ethereum | polygon | arbitrum | optimism | base | bsc | avalanche' } },
     { method: 'GET', path: '/estimate', description: 'Estimate gas cost for a transaction', params: { chain: 'Chain name', txType: 'transfer | swap | nftMint' } },
+    { method: 'POST', path: '/estimate', description: 'Estimate gas cost for a transaction', params: { chain: 'Chain name', txType: 'transfer | swap | nftMint' } },
+    { method: 'POST', path: '/estimate', description: 'Estimate gas cost for a transaction', params: { chain: 'Chain name', txType: 'transfer | swap | nftMint' } },
     { method: 'GET', path: '/compare', description: 'Compare gas across chains' },
+    { method: 'POST', path: '/compare', description: 'Compare gas across chains' },
+    { method: 'POST', path: '/compare', description: 'Compare gas across chains' },
     { method: 'GET', path: '/timing', description: 'Best time to transact', params: { chain: 'Chain name' } },
+    { method: 'POST', path: '/timing', description: 'Best time to transact', params: { chain: 'Chain name' } },
+    { method: 'POST', path: '/timing', description: 'Best time to transact', params: { chain: 'Chain name' } },
   ],
 });
 
@@ -19,9 +27,17 @@ export const fundingRateInfoRouter = createApiInfoRouter({
   category: 'Crypto Derivatives',
   endpoints: [
     { method: 'GET', path: '/rates/now', description: 'Get current funding rates', params: { symbol: 'BTC | ETH | SOL etc', exchanges: 'Comma-separated exchange filter' } },
+    { method: 'POST', path: '/rates/now', description: 'Get current funding rates', params: { symbol: 'BTC | ETH | SOL etc', exchanges: 'Comma-separated exchange filter' } },
+    { method: 'POST', path: '/rates/now', description: 'Get current funding rates', params: { symbol: 'BTC | ETH | SOL etc', exchanges: 'Comma-separated exchange filter' } },
     { method: 'GET', path: '/rates/compare', description: 'Compare funding rates across exchanges', params: { symbol: 'Token symbol' } },
+    { method: 'POST', path: '/rates/compare', description: 'Compare funding rates across exchanges', params: { symbol: 'Token symbol' } },
+    { method: 'POST', path: '/rates/compare', description: 'Compare funding rates across exchanges', params: { symbol: 'Token symbol' } },
     { method: 'GET', path: '/rates/extremes', description: 'Get highest and lowest funding rates' },
+    { method: 'POST', path: '/rates/extremes', description: 'Get highest and lowest funding rates' },
+    { method: 'POST', path: '/rates/extremes', description: 'Get highest and lowest funding rates' },
     { method: 'GET', path: '/rates/signal', description: 'AI funding rate signal', params: { symbol: 'Token symbol' } },
+    { method: 'POST', path: '/rates/signal', description: 'AI funding rate signal', params: { symbol: 'Token symbol' } },
+    { method: 'POST', path: '/rates/signal', description: 'AI funding rate signal', params: { symbol: 'Token symbol' } },
   ],
 });
 
@@ -31,6 +47,8 @@ export const strategySignalInfoRouter = createApiInfoRouter({
   category: 'AI Trading',
   endpoints: [
     { method: 'GET', path: '/', description: 'Get strategy signal', params: { symbol: 'Token symbol e.g. BTC' } },
+    { method: 'POST', path: '/', description: 'Get strategy signal', params: { symbol: 'Token symbol e.g. BTC' } },
+    { method: 'POST', path: '/', description: 'Get strategy signal', params: { symbol: 'Token symbol e.g. BTC' } },
   ],
 });
 
@@ -40,9 +58,17 @@ export const predictionMarketInfoRouter = createApiInfoRouter({
   category: 'Prediction Markets',
   endpoints: [
     { method: 'GET', path: '/trending', description: 'Get trending prediction markets' },
+    { method: 'POST', path: '/trending', description: 'Get trending prediction markets' },
+    { method: 'POST', path: '/trending', description: 'Get trending prediction markets' },
     { method: 'GET', path: '/search', description: 'Search prediction markets', params: { q: 'Search query' } },
+    { method: 'POST', path: '/search', description: 'Search prediction markets', params: { q: 'Search query' } },
+    { method: 'POST', path: '/search', description: 'Search prediction markets', params: { q: 'Search query' } },
     { method: 'GET', path: '/detail/:id', description: 'Get specific market by slug' },
+    { method: 'POST', path: '/detail/:id', description: 'Get specific market by slug' },
+    { method: 'POST', path: '/detail/:id', description: 'Get specific market by slug' },
     { method: 'GET', path: '/signal', description: 'AI signal for a market', params: { id: 'Market ID' } },
+    { method: 'POST', path: '/signal', description: 'AI signal for a market', params: { id: 'Market ID' } },
+    { method: 'POST', path: '/signal', description: 'AI signal for a market', params: { id: 'Market ID' } },
   ],
 });
 
@@ -52,8 +78,14 @@ export const tokenScreenerInfoRouter = createApiInfoRouter({
   category: 'Crypto Research',
   endpoints: [
     { method: 'GET', path: '/screen', description: 'Screen tokens', params: { filter: 'trending | gainers | losers', chain: 'Chain filter', limit: 'Number of results' } },
+    { method: 'POST', path: '/screen', description: 'Screen tokens', params: { filter: 'trending | gainers | losers', chain: 'Chain filter', limit: 'Number of results' } },
+    { method: 'POST', path: '/screen', description: 'Screen tokens', params: { filter: 'trending | gainers | losers', chain: 'Chain filter', limit: 'Number of results' } },
     { method: 'GET', path: '/movers', description: 'Top movers by price change' },
+    { method: 'POST', path: '/movers', description: 'Top movers by price change' },
+    { method: 'POST', path: '/movers', description: 'Top movers by price change' },
     { method: 'GET', path: '/opportunities', description: 'AI-identified token opportunities' },
+    { method: 'POST', path: '/opportunities', description: 'AI-identified token opportunities' },
+    { method: 'POST', path: '/opportunities', description: 'AI-identified token opportunities' },
   ],
 });
 
@@ -63,9 +95,17 @@ export const tokenUnlockInfoRouter = createApiInfoRouter({
   category: 'Crypto Research',
   endpoints: [
     { method: 'GET', path: '/upcoming', description: 'Get upcoming token unlocks', params: { days: 'Lookahead days (default 30)' } },
+    { method: 'POST', path: '/upcoming', description: 'Get upcoming token unlocks', params: { days: 'Lookahead days (default 30)' } },
+    { method: 'POST', path: '/upcoming', description: 'Get upcoming token unlocks', params: { days: 'Lookahead days (default 30)' } },
     { method: 'GET', path: '/vesting/:symbol', description: 'Unlock schedule for a specific token' },
+    { method: 'POST', path: '/vesting/:symbol', description: 'Unlock schedule for a specific token' },
+    { method: 'POST', path: '/vesting/:symbol', description: 'Unlock schedule for a specific token' },
     { method: 'GET', path: '/impact', description: 'AI price impact analysis' },
+    { method: 'POST', path: '/impact', description: 'AI price impact analysis' },
+    { method: 'POST', path: '/impact', description: 'AI price impact analysis' },
     { method: 'GET', path: '/calendar', description: 'Calendar view of unlock events' },
+    { method: 'POST', path: '/calendar', description: 'Calendar view of unlock events' },
+    { method: 'POST', path: '/calendar', description: 'Calendar view of unlock events' },
   ],
 });
 
@@ -77,8 +117,12 @@ export const agentIdentityInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/generate', description: 'Create a new persistent on-chain identity for an AI agent. Returns DID, public key, wallet address, and initial trust metadata.' },
     { method: 'POST', path: '/verify', description: 'Verify an existing agent identity. Updates verification status, reputation score, and trust level.' },
     { method: 'GET', path: '/reputation', description: 'Get full reputation profile: score, trust level, attestation count, claim breakdown, and score history.', params: { agentId: 'Agent ID' } },
+    { method: 'POST', path: '/reputation', description: 'Get full reputation profile: score, trust level, attestation count, claim breakdown, and score history.', params: { agentId: 'Agent ID' } },
+    { method: 'POST', path: '/reputation', description: 'Get full reputation profile: score, trust level, attestation count, claim breakdown, and score history.', params: { agentId: 'Agent ID' } },
     { method: 'POST', path: '/attest', description: 'Issue a signed attestation for capability, ownership, reputation, permission, or compliance claims. Updates reputation score.' },
     { method: 'GET', path: '/:agentId', description: 'Look up full agent identity record including DID, keys, reputation, and recent attestations.' },
+    { method: 'POST', path: '/:agentId', description: 'Look up full agent identity record including DID, keys, reputation, and recent attestations.' },
+    { method: 'POST', path: '/:agentId', description: 'Look up full agent identity record including DID, keys, reputation, and recent attestations.' },
   ],
 });
 
@@ -88,9 +132,17 @@ export const cryptoNarrativeInfoRouter = createApiInfoRouter({
   category: 'AI Research',
   endpoints: [
     { method: 'GET', path: '/trending', description: 'Get trending crypto narratives' },
+    { method: 'POST', path: '/trending', description: 'Get trending crypto narratives' },
+    { method: 'POST', path: '/trending', description: 'Get trending crypto narratives' },
     { method: 'GET', path: '/:name', description: 'Deep dive into a specific narrative' },
+    { method: 'POST', path: '/:name', description: 'Deep dive into a specific narrative' },
+    { method: 'POST', path: '/:name', description: 'Deep dive into a specific narrative' },
     { method: 'GET', path: '/compare', description: 'Compare narrative strength', params: { a: 'First narrative', b: 'Second narrative' } },
+    { method: 'POST', path: '/compare', description: 'Compare narrative strength', params: { a: 'First narrative', b: 'Second narrative' } },
+    { method: 'POST', path: '/compare', description: 'Compare narrative strength', params: { a: 'First narrative', b: 'Second narrative' } },
     { method: 'GET', path: '/scan', description: 'Scan all active narratives' },
+    { method: 'POST', path: '/scan', description: 'Scan all active narratives' },
+    { method: 'POST', path: '/scan', description: 'Scan all active narratives' },
   ],
 });
 
@@ -100,9 +152,17 @@ export const defiRiskInfoRouter = createApiInfoRouter({
   category: 'DeFi Security',
   endpoints: [
     { method: 'GET', path: '/token-safety', description: 'Token safety check', params: { contract: 'Token contract address', chain: 'Chain name' } },
+    { method: 'POST', path: '/token-safety', description: 'Token safety check', params: { contract: 'Token contract address', chain: 'Chain name' } },
+    { method: 'POST', path: '/token-safety', description: 'Token safety check', params: { contract: 'Token contract address', chain: 'Chain name' } },
     { method: 'GET', path: '/protocol', description: 'Protocol risk assessment', params: { protocol: 'Protocol name' } },
+    { method: 'POST', path: '/protocol', description: 'Protocol risk assessment', params: { protocol: 'Protocol name' } },
+    { method: 'POST', path: '/protocol', description: 'Protocol risk assessment', params: { protocol: 'Protocol name' } },
     { method: 'GET', path: '/liquidity', description: 'Liquidity health check', params: { protocol: 'Protocol name' } },
+    { method: 'POST', path: '/liquidity', description: 'Liquidity health check', params: { protocol: 'Protocol name' } },
+    { method: 'POST', path: '/liquidity', description: 'Liquidity health check', params: { protocol: 'Protocol name' } },
     { method: 'GET', path: '/portfolio', description: 'Portfolio risk scan', params: { address: 'Wallet address' } },
+    { method: 'POST', path: '/portfolio', description: 'Portfolio risk scan', params: { address: 'Wallet address' } },
+    { method: 'POST', path: '/portfolio', description: 'Portfolio risk scan', params: { address: 'Wallet address' } },
   ],
 });
 
@@ -144,8 +204,14 @@ export const agentSkillsInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/match', description: 'Match the best skills from the registry to a specific agent request.' },
     { method: 'POST', path: '/register', description: 'Register a new agent skill in the marketplace.' },
     { method: 'GET', path: '/discover', description: 'Discover available skills by query, category, or tags.', params: { query: 'Search query', category: 'Skill category' } },
+    { method: 'POST', path: '/discover', description: 'Discover available skills by query, category, or tags.', params: { query: 'Search query', category: 'Skill category' } },
+    { method: 'POST', path: '/discover', description: 'Discover available skills by query, category, or tags.', params: { query: 'Search query', category: 'Skill category' } },
     { method: 'GET', path: '/:skillId', description: 'Get full details for a specific skill.' },
+    { method: 'POST', path: '/:skillId', description: 'Get full details for a specific skill.' },
+    { method: 'POST', path: '/:skillId', description: 'Get full details for a specific skill.' },
     { method: 'GET', path: '/trending', description: 'Get trending skills ranked by recent invocation count.' },
+    { method: 'POST', path: '/trending', description: 'Get trending skills ranked by recent invocation count.' },
+    { method: 'POST', path: '/trending', description: 'Get trending skills ranked by recent invocation count.' },
   ],
 });
 
@@ -186,8 +252,14 @@ export const walletPortfolioInfoRouter = createApiInfoRouter({
   category: 'Wallet Analytics',
   endpoints: [
     { method: 'GET', path: '/snapshot', description: 'Get portfolio snapshot', params: { address: 'Wallet address' } },
+    { method: 'POST', path: '/snapshot', description: 'Get portfolio snapshot', params: { address: 'Wallet address' } },
+    { method: 'POST', path: '/snapshot', description: 'Get portfolio snapshot', params: { address: 'Wallet address' } },
     { method: 'GET', path: '/pnl', description: 'Portfolio PnL analysis', params: { address: 'Wallet address' } },
+    { method: 'POST', path: '/pnl', description: 'Portfolio PnL analysis', params: { address: 'Wallet address' } },
+    { method: 'POST', path: '/pnl', description: 'Portfolio PnL analysis', params: { address: 'Wallet address' } },
     { method: 'GET', path: '/score', description: 'Portfolio risk score', params: { address: 'Wallet address' } },
+    { method: 'POST', path: '/score', description: 'Portfolio risk score', params: { address: 'Wallet address' } },
+    { method: 'POST', path: '/score', description: 'Portfolio risk score', params: { address: 'Wallet address' } },
   ],
 });
 
@@ -212,9 +284,17 @@ export const crossChainInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/monitor-bridge', description: 'Monitor bridge conditions: congestion, fees, liquidity. Returns alert_level and next_check_ms.' },
     { method: 'POST', path: '/execution-gate', description: 'Cross-API execution gate: checks fees and slippage against constraints, returns execute bool and chains to Autopilot.' },
     { method: 'GET', path: '/bridge/chains', description: 'Get all supported chains' },
+    { method: 'POST', path: '/bridge/chains', description: 'Get all supported chains' },
+    { method: 'POST', path: '/bridge/chains', description: 'Get all supported chains' },
     { method: 'GET', path: '/bridge/tokens', description: 'Get bridgeable tokens for a chain' },
+    { method: 'POST', path: '/bridge/tokens', description: 'Get bridgeable tokens for a chain' },
+    { method: 'POST', path: '/bridge/tokens', description: 'Get bridgeable tokens for a chain' },
     { method: 'GET', path: '/bridge/best', description: 'Legacy: best bridge route' },
+    { method: 'POST', path: '/bridge/best', description: 'Legacy: best bridge route' },
+    { method: 'POST', path: '/bridge/best', description: 'Legacy: best bridge route' },
     { method: 'GET', path: '/bridge/routes', description: 'Legacy: all bridge routes' },
+    { method: 'POST', path: '/bridge/routes', description: 'Legacy: all bridge routes' },
+    { method: 'POST', path: '/bridge/routes', description: 'Legacy: all bridge routes' },
   ],
 });
 
@@ -224,9 +304,17 @@ export const derivativesInfoRouter = createApiInfoRouter({
   category: 'Crypto Derivatives',
   endpoints: [
     { method: 'GET', path: '/options/summary/:currency', description: 'Options market summary' },
+    { method: 'POST', path: '/options/summary/:currency', description: 'Options market summary' },
+    { method: 'POST', path: '/options/summary/:currency', description: 'Options market summary' },
     { method: 'GET', path: '/options/open-interest/:currency', description: 'Open interest data' },
+    { method: 'POST', path: '/options/open-interest/:currency', description: 'Open interest data' },
+    { method: 'POST', path: '/options/open-interest/:currency', description: 'Open interest data' },
     { method: 'GET', path: '/options/put-call-ratio/:currency', description: 'Put/call ratio' },
+    { method: 'POST', path: '/options/put-call-ratio/:currency', description: 'Put/call ratio' },
+    { method: 'POST', path: '/options/put-call-ratio/:currency', description: 'Put/call ratio' },
     { method: 'GET', path: '/options/max-pain/:currency', description: 'Max pain price level' },
+    { method: 'POST', path: '/options/max-pain/:currency', description: 'Max pain price level' },
+    { method: 'POST', path: '/options/max-pain/:currency', description: 'Max pain price level' },
   ],
 });
 
@@ -236,8 +324,14 @@ export const marketCorrelationInfoRouter = createApiInfoRouter({
   category: 'Market Analytics',
   endpoints: [
     { method: 'GET', path: '/correlation/:asset', description: 'Get correlations for an asset', params: { period: '7d | 30d | 90d' } },
+    { method: 'POST', path: '/correlation/:asset', description: 'Get correlations for an asset', params: { period: '7d | 30d | 90d' } },
+    { method: 'POST', path: '/correlation/:asset', description: 'Get correlations for an asset', params: { period: '7d | 30d | 90d' } },
     { method: 'GET', path: '/correlation/:asset/summary', description: 'Correlation summary' },
+    { method: 'POST', path: '/correlation/:asset/summary', description: 'Correlation summary' },
+    { method: 'POST', path: '/correlation/:asset/summary', description: 'Correlation summary' },
     { method: 'GET', path: '/correlation/matrix', description: 'Full correlation matrix', params: { assets: 'Comma-separated assets' } },
+    { method: 'POST', path: '/correlation/matrix', description: 'Full correlation matrix', params: { assets: 'Comma-separated assets' } },
+    { method: 'POST', path: '/correlation/matrix', description: 'Full correlation matrix', params: { assets: 'Comma-separated assets' } },
   ],
 });
 
@@ -247,11 +341,23 @@ export const yieldFarmingInfoRouter = createApiInfoRouter({
   category: 'DeFi Analytics',
   endpoints: [
     { method: 'GET', path: '/yields/top', description: 'Top yield opportunities', params: { chain: 'Chain filter', minTvl: 'Minimum TVL in USD' } },
+    { method: 'POST', path: '/yields/top', description: 'Top yield opportunities', params: { chain: 'Chain filter', minTvl: 'Minimum TVL in USD' } },
+    { method: 'POST', path: '/yields/top', description: 'Top yield opportunities', params: { chain: 'Chain filter', minTvl: 'Minimum TVL in USD' } },
     { method: 'GET', path: '/yields/stable', description: 'Stablecoin yield pools' },
+    { method: 'POST', path: '/yields/stable', description: 'Stablecoin yield pools' },
+    { method: 'POST', path: '/yields/stable', description: 'Stablecoin yield pools' },
     { method: 'GET', path: '/yields/search', description: 'Search yield pools', params: { query: 'Search term' } },
+    { method: 'POST', path: '/yields/search', description: 'Search yield pools', params: { query: 'Search term' } },
+    { method: 'POST', path: '/yields/search', description: 'Search yield pools', params: { query: 'Search term' } },
     { method: 'GET', path: '/yields/chains', description: 'Yields by chain' },
+    { method: 'POST', path: '/yields/chains', description: 'Yields by chain' },
+    { method: 'POST', path: '/yields/chains', description: 'Yields by chain' },
     { method: 'GET', path: '/yields/strategy', description: 'AI yield strategy recommendation' },
+    { method: 'POST', path: '/yields/strategy', description: 'AI yield strategy recommendation' },
+    { method: 'POST', path: '/yields/strategy', description: 'AI yield strategy recommendation' },
     { method: 'GET', path: '/yields/pool/:poolId', description: 'Specific pool details' },
+    { method: 'POST', path: '/yields/pool/:poolId', description: 'Specific pool details' },
+    { method: 'POST', path: '/yields/pool/:poolId', description: 'Specific pool details' },
   ],
 });
 
@@ -261,9 +367,17 @@ export const tokenomicsInfoRouter = createApiInfoRouter({
   category: 'Crypto Research',
   endpoints: [
     { method: 'GET', path: '/tokenomics/:token', description: 'Full tokenomics data' },
+    { method: 'POST', path: '/tokenomics/:token', description: 'Full tokenomics data' },
+    { method: 'POST', path: '/tokenomics/:token', description: 'Full tokenomics data' },
     { method: 'GET', path: '/tokenomics/:token/score', description: 'Tokenomics health score' },
+    { method: 'POST', path: '/tokenomics/:token/score', description: 'Tokenomics health score' },
+    { method: 'POST', path: '/tokenomics/:token/score', description: 'Tokenomics health score' },
     { method: 'GET', path: '/tokenomics/:token/supply', description: 'Supply schedule and inflation' },
+    { method: 'POST', path: '/tokenomics/:token/supply', description: 'Supply schedule and inflation' },
+    { method: 'POST', path: '/tokenomics/:token/supply', description: 'Supply schedule and inflation' },
     { method: 'GET', path: '/tokenomics/compare', description: 'Compare tokenomics', params: { tokens: 'Comma-separated token symbols' } },
+    { method: 'POST', path: '/tokenomics/compare', description: 'Compare tokenomics', params: { tokens: 'Comma-separated token symbols' } },
+    { method: 'POST', path: '/tokenomics/compare', description: 'Compare tokenomics', params: { tokens: 'Comma-separated token symbols' } },
   ],
 });
 
@@ -273,9 +387,17 @@ export const liquidationFeedInfoRouter = createApiInfoRouter({
   category: 'DeFi Monitoring',
   endpoints: [
     { method: 'GET', path: '/v1/liquidations/recent', description: 'Recent liquidation events' },
+    { method: 'POST', path: '/v1/liquidations/recent', description: 'Recent liquidation events' },
+    { method: 'POST', path: '/v1/liquidations/recent', description: 'Recent liquidation events' },
     { method: 'GET', path: '/v1/liquidations/at-risk', description: 'Positions at risk' },
+    { method: 'POST', path: '/v1/liquidations/at-risk', description: 'Positions at risk' },
+    { method: 'POST', path: '/v1/liquidations/at-risk', description: 'Positions at risk' },
     { method: 'GET', path: '/v1/liquidations/stats', description: 'Liquidation statistics' },
+    { method: 'POST', path: '/v1/liquidations/stats', description: 'Liquidation statistics' },
+    { method: 'POST', path: '/v1/liquidations/stats', description: 'Liquidation statistics' },
     { method: 'GET', path: '/v1/liquidations/volume', description: 'Liquidation volume over time' },
+    { method: 'POST', path: '/v1/liquidations/volume', description: 'Liquidation volume over time' },
+    { method: 'POST', path: '/v1/liquidations/volume', description: 'Liquidation volume over time' },
   ],
 });
 
@@ -285,8 +407,14 @@ export const marketStressInfoRouter = createApiInfoRouter({
   category: 'Market Analytics',
   endpoints: [
     { method: 'GET', path: '/v1/stress', description: 'Overall market stress score' },
+    { method: 'POST', path: '/v1/stress', description: 'Overall market stress score' },
+    { method: 'POST', path: '/v1/stress', description: 'Overall market stress score' },
     { method: 'GET', path: '/v1/stress/:asset', description: 'Stress score for specific asset' },
+    { method: 'POST', path: '/v1/stress/:asset', description: 'Stress score for specific asset' },
+    { method: 'POST', path: '/v1/stress/:asset', description: 'Stress score for specific asset' },
     { method: 'GET', path: '/v1/stress/scan/top', description: 'Top stressed assets' },
+    { method: 'POST', path: '/v1/stress/scan/top', description: 'Top stressed assets' },
+    { method: 'POST', path: '/v1/stress/scan/top', description: 'Top stressed assets' },
   ],
 });
 
@@ -296,9 +424,17 @@ export const walletInfoRouter = createApiInfoRouter({
   category: 'Wallet Analytics',
   endpoints: [
     { method: 'GET', path: '/balance/:address', description: 'Get ETH and token balances' },
+    { method: 'POST', path: '/balance/:address', description: 'Get ETH and token balances' },
+    { method: 'POST', path: '/balance/:address', description: 'Get ETH and token balances' },
     { method: 'GET', path: '/tokens/:address', description: 'Get ERC-20 token holdings' },
+    { method: 'POST', path: '/tokens/:address', description: 'Get ERC-20 token holdings' },
+    { method: 'POST', path: '/tokens/:address', description: 'Get ERC-20 token holdings' },
     { method: 'GET', path: '/transactions/:address', description: 'Get transaction history' },
+    { method: 'POST', path: '/transactions/:address', description: 'Get transaction history' },
+    { method: 'POST', path: '/transactions/:address', description: 'Get transaction history' },
     { method: 'GET', path: '/portfolio/:address', description: 'Get full wallet portfolio' },
+    { method: 'POST', path: '/portfolio/:address', description: 'Get full wallet portfolio' },
+    { method: 'POST', path: '/portfolio/:address', description: 'Get full wallet portfolio' },
   ],
 });
 
@@ -308,8 +444,14 @@ export const stablecoinYieldInfoRouter = createApiInfoRouter({
   category: 'DeFi Analytics',
   endpoints: [
     { method: 'GET', path: '/rates', description: 'Get best stablecoin yields', params: { token: 'USDC | USDT | DAI', chain: 'Chain filter', minTvl: 'Minimum TVL' } },
+    { method: 'POST', path: '/rates', description: 'Get best stablecoin yields', params: { token: 'USDC | USDT | DAI', chain: 'Chain filter', minTvl: 'Minimum TVL' } },
+    { method: 'POST', path: '/rates', description: 'Get best stablecoin yields', params: { token: 'USDC | USDT | DAI', chain: 'Chain filter', minTvl: 'Minimum TVL' } },
     { method: 'GET', path: '/compare', description: 'Compare yields across stablecoins' },
+    { method: 'POST', path: '/compare', description: 'Compare yields across stablecoins' },
+    { method: 'POST', path: '/compare', description: 'Compare yields across stablecoins' },
     { method: 'GET', path: '/best', description: 'Best yield for a stablecoin', params: { token: 'Stablecoin symbol' } },
+    { method: 'POST', path: '/best', description: 'Best yield for a stablecoin', params: { token: 'Stablecoin symbol' } },
+    { method: 'POST', path: '/best', description: 'Best yield for a stablecoin', params: { token: 'Stablecoin symbol' } },
   ],
 });
 
@@ -319,6 +461,8 @@ export const metaStrategyInfoRouter = createApiInfoRouter({
   category: 'AI Trading',
   endpoints: [
     { method: 'GET', path: '/scan', description: 'Scan meta strategies', params: { symbols: 'Comma-separated symbols e.g. BTC,ETH' } },
+    { method: 'POST', path: '/scan', description: 'Scan meta strategies', params: { symbols: 'Comma-separated symbols e.g. BTC,ETH' } },
+    { method: 'POST', path: '/scan', description: 'Scan meta strategies', params: { symbols: 'Comma-separated symbols e.g. BTC,ETH' } },
   ],
 });
 
@@ -328,8 +472,14 @@ export const socialSentimentInfoRouter = createApiInfoRouter({
   category: 'Market Analytics',
   endpoints: [
     { method: 'GET', path: '/crypto-sentiment', description: 'Get crypto sentiment scores', params: { symbol: 'Token symbol' } },
+    { method: 'POST', path: '/crypto-sentiment', description: 'Get crypto sentiment scores', params: { symbol: 'Token symbol' } },
+    { method: 'POST', path: '/crypto-sentiment', description: 'Get crypto sentiment scores', params: { symbol: 'Token symbol' } },
     { method: 'GET', path: '/signals', description: 'Sentiment-based trading signals' },
+    { method: 'POST', path: '/signals', description: 'Sentiment-based trading signals' },
+    { method: 'POST', path: '/signals', description: 'Sentiment-based trading signals' },
     { method: 'GET', path: '/trending', description: 'Trending crypto topics on social media' },
+    { method: 'POST', path: '/trending', description: 'Trending crypto topics on social media' },
+    { method: 'POST', path: '/trending', description: 'Trending crypto topics on social media' },
   ],
 });
 
@@ -356,7 +506,11 @@ export const alphaSignalInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/rank-opportunities', description: 'Rank assets by opportunity score across crypto, defi, l1, l2, or meme universes. Returns top N with risk/reward ratios. Alias: /rank' },
     { method: 'POST', path: '/explain', description: 'Deep explanation of a signal: drivers, confidence breakdown by price/volume/trend/context, risk factors, contra indicators, and concrete action recommendation.' },
     { method: 'GET', path: '/signal/:symbol', description: 'Legacy: single asset signal for ETH, BNB, SOL' },
+    { method: 'POST', path: '/signal/:symbol', description: 'Legacy: single asset signal for ETH, BNB, SOL' },
+    { method: 'POST', path: '/signal/:symbol', description: 'Legacy: single asset signal for ETH, BNB, SOL' },
     { method: 'GET', path: '/signal/batch', description: 'Legacy: batch signals for ETH, BNB, SOL' },
+    { method: 'POST', path: '/signal/batch', description: 'Legacy: batch signals for ETH, BNB, SOL' },
+    { method: 'POST', path: '/signal/batch', description: 'Legacy: batch signals for ETH, BNB, SOL' },
   ],
 });
 
@@ -367,8 +521,14 @@ export const actionInfoRouter = createApiInfoRouter({
   endpoints: [
     { method: 'POST', path: '/execute', description: 'Execute a structured agent action', params: { action_type: 'research | outreach | web_fetch | data_extract | api_call | workflow_step', dry_run: 'true | false' } },
     { method: 'GET', path: '/types', description: 'List supported action types with example payloads' },
+    { method: 'POST', path: '/types', description: 'List supported action types with example payloads' },
+    { method: 'POST', path: '/types', description: 'List supported action types with example payloads' },
     { method: 'GET', path: '/history', description: 'Get recent action execution history' },
+    { method: 'POST', path: '/history', description: 'Get recent action execution history' },
+    { method: 'POST', path: '/history', description: 'Get recent action execution history' },
     { method: 'GET', path: '/:action_id', description: 'Get result and metadata for a specific action by ID' },
+    { method: 'POST', path: '/:action_id', description: 'Get result and metadata for a specific action by ID' },
+    { method: 'POST', path: '/:action_id', description: 'Get result and metadata for a specific action by ID' },
   ],
 });
 
@@ -383,8 +543,12 @@ export const agentMemoryInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/compress', description: 'Compress long memory history into a structured summary' },
     { method: 'POST', path: '/extract', description: 'Extract facts, entities or summary from memory content', params: { content: 'Text to extract from', type: 'facts | entities | summary' } },
     { method: 'GET', path: '/sessions', description: 'List all active memory sessions' },
+    { method: 'POST', path: '/sessions', description: 'List all active memory sessions' },
+    { method: 'POST', path: '/sessions', description: 'List all active memory sessions' },
     { method: 'POST', path: '/:session_id', description: 'Add a memory to a session' },
     { method: 'GET', path: '/:session_id', description: 'Get all memories for a session' },
+    { method: 'POST', path: '/:session_id', description: 'Get all memories for a session' },
+    { method: 'POST', path: '/:session_id', description: 'Get all memories for a session' },
     { method: 'DELETE', path: '/:session_id', description: 'Clear all memories for a session' },
   ],
 });
@@ -397,11 +561,17 @@ export const agentWorkflowInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/create', description: 'Define a new workflow with name, goal, and step definitions' },
     { method: 'POST', path: '/run', description: 'Execute a workflow by goal or workflow_id. Returns structured step results and metadata.' },
     { method: 'GET', path: '/:workflow_id', description: 'Retrieve full workflow record including steps, result, and metadata' },
+    { method: 'POST', path: '/:workflow_id', description: 'Retrieve full workflow record including steps, result, and metadata' },
+    { method: 'POST', path: '/:workflow_id', description: 'Retrieve full workflow record including steps, result, and metadata' },
     { method: 'GET', path: '/:workflow_id/status', description: 'Get current status and metadata for a workflow' },
+    { method: 'POST', path: '/:workflow_id/status', description: 'Get current status and metadata for a workflow' },
+    { method: 'POST', path: '/:workflow_id/status', description: 'Get current status and metadata for a workflow' },
     { method: 'POST', path: '/:workflow_id/retry', description: 'Retry a failed workflow. Only available for workflows with status: failed.' },
     { method: 'POST', path: '/:workflow_id/optimize', description: 'Analyze a completed workflow and return optimization suggestions and estimated improvements' },
     { method: 'POST', path: '/decompose', description: 'Decompose a goal into executable steps with type, dependencies, duration estimates, and complexity rating. Returns a ready-to-run workflow plan.' },
     { method: 'GET', path: '/templates', description: 'List all available workflow templates with input/output schemas and step definitions' },
+    { method: 'POST', path: '/templates', description: 'List all available workflow templates with input/output schemas and step definitions' },
+    { method: 'POST', path: '/templates', description: 'List all available workflow templates with input/output schemas and step definitions' },
   ],
 });
 
@@ -428,7 +598,11 @@ export const autopilotInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/should-act', description: 'Ultra-lightweight gating check — pure logic, no AI call, sub-millisecond response. Call every step to gate execution. $0.001.' },
     { method: 'POST', path: '/', description: 'Create an autopilot session for portfolio management' },
     { method: 'GET', path: '/:id', description: 'Get session status and config' },
+    { method: 'POST', path: '/:id', description: 'Get session status and config' },
+    { method: 'POST', path: '/:id', description: 'Get session status and config' },
     { method: 'GET', path: '/:id/history', description: 'Get session decision history' },
+    { method: 'POST', path: '/:id/history', description: 'Get session decision history' },
+    { method: 'POST', path: '/:id/history', description: 'Get session decision history' },
     { method: 'POST', path: '/:id', description: 'Pause or resume a session (send status: active|paused)' },
     { method: 'POST', path: '/:id/update', description: 'Update session parameters' },
     { method: 'DELETE', path: '/:id', description: 'Stop and delete a session' },
@@ -447,8 +621,14 @@ export const browserTaskInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/screenshot', description: 'Capture and summarize a web page by URL. Returns title, description, text preview, and optional AI summary.' },
     { method: 'POST', path: '/workflow/run', description: 'Execute a named browser workflow with structured input.' },
     { method: 'GET', path: '/tasks', description: 'List recent tasks with status, type, and latency.' },
+    { method: 'POST', path: '/tasks', description: 'List recent tasks with status, type, and latency.' },
+    { method: 'POST', path: '/tasks', description: 'List recent tasks with status, type, and latency.' },
     { method: 'GET', path: '/:task_id', description: 'Retrieve full result and trace for a specific task.' },
+    { method: 'POST', path: '/:task_id', description: 'Retrieve full result and trace for a specific task.' },
+    { method: 'POST', path: '/:task_id', description: 'Retrieve full result and trace for a specific task.' },
     { method: 'GET', path: '/workflows', description: 'List available named workflows with input schemas.' },
+    { method: 'POST', path: '/workflows', description: 'List available named workflows with input schemas.' },
+    { method: 'POST', path: '/workflows', description: 'List available named workflows with input schemas.' },
     { method: 'POST', path: '/session/start', description: 'Start a persistent browser session with optional cookies. Returns session_id for reuse across multiple actions.' },
     { method: 'POST', path: '/session/:session_id/run', description: 'Run actions inside an existing session. Supports wait_for selectors, post-action extraction, and persistent cookie state.' },
   ],
@@ -499,7 +679,11 @@ export const derivativesIntelligenceInfoRouter = createApiInfoRouter({
   category: 'AI Trading',
   endpoints: [
     { method: 'GET', path: '/intelligence/:asset', description: 'Get derivatives intelligence for asset' },
+    { method: 'POST', path: '/intelligence/:asset', description: 'Get derivatives intelligence for asset' },
+    { method: 'POST', path: '/intelligence/:asset', description: 'Get derivatives intelligence for asset' },
     { method: 'GET', path: '/intelligence/:asset/signal', description: 'AI signal from derivatives data' },
+    { method: 'POST', path: '/intelligence/:asset/signal', description: 'AI signal from derivatives data' },
+    { method: 'POST', path: '/intelligence/:asset/signal', description: 'AI signal from derivatives data' },
   ],
 });
 
@@ -547,6 +731,8 @@ export const extractionInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/extract/lead', description: 'Extract lead data from a document' },
     { method: 'POST', path: '/extract/custom', description: 'Custom extraction with schema' },
     { method: 'GET', path: '/schemas', description: 'List available extraction schemas' },
+    { method: 'POST', path: '/schemas', description: 'List available extraction schemas' },
+    { method: 'POST', path: '/schemas', description: 'List available extraction schemas' },
   ],
 });
 
@@ -565,6 +751,8 @@ export const marketIntelligenceInfoRouter = createApiInfoRouter({
   category: 'Market Analytics',
   endpoints: [
     { method: 'GET', path: '/:ticker', description: 'Get market intelligence for a ticker' },
+    { method: 'POST', path: '/:ticker', description: 'Get market intelligence for a ticker' },
+    { method: 'POST', path: '/:ticker', description: 'Get market intelligence for a ticker' },
   ],
 });
 
@@ -574,6 +762,8 @@ export const marketSignalInfoRouter = createApiInfoRouter({
   category: 'AI Trading',
   endpoints: [
     { method: 'GET', path: '/:ticker', description: 'Get market signal for a ticker' },
+    { method: 'POST', path: '/:ticker', description: 'Get market signal for a ticker' },
+    { method: 'POST', path: '/:ticker', description: 'Get market signal for a ticker' },
     { method: 'POST', path: '/batch', description: 'Get signals for multiple tickers' },
   ],
 });
@@ -594,7 +784,11 @@ export const marketWebhookInfoRouter = createApiInfoRouter({
   endpoints: [
     { method: 'POST', path: '/', description: 'Register a webhook' },
     { method: 'GET', path: '/:id', description: 'Get webhook details' },
+    { method: 'POST', path: '/:id', description: 'Get webhook details' },
+    { method: 'POST', path: '/:id', description: 'Get webhook details' },
     { method: 'GET', path: '/:id/logs', description: 'Get webhook delivery logs' },
+    { method: 'POST', path: '/:id/logs', description: 'Get webhook delivery logs' },
+    { method: 'POST', path: '/:id/logs', description: 'Get webhook delivery logs' },
   ],
 });
 
@@ -604,8 +798,14 @@ export const onchainSignalInfoRouter = createApiInfoRouter({
   category: 'AI Trading',
   endpoints: [
     { method: 'GET', path: '/signals', description: 'Get current on-chain signals' },
+    { method: 'POST', path: '/signals', description: 'Get current on-chain signals' },
+    { method: 'POST', path: '/signals', description: 'Get current on-chain signals' },
     { method: 'GET', path: '/flows', description: 'Smart money flow data' },
+    { method: 'POST', path: '/flows', description: 'Smart money flow data' },
+    { method: 'POST', path: '/flows', description: 'Smart money flow data' },
     { method: 'GET', path: '/recent', description: 'Recent on-chain events' },
+    { method: 'POST', path: '/recent', description: 'Recent on-chain events' },
+    { method: 'POST', path: '/recent', description: 'Recent on-chain events' },
     { method: 'POST', path: '/analyze', description: 'Analyze an address on-chain activity' },
   ],
 });
@@ -625,6 +825,8 @@ export const strategyExecutionInfoRouter = createApiInfoRouter({
   category: 'AI Trading',
   endpoints: [
     { method: 'GET', path: '/strategies', description: 'List available strategies' },
+    { method: 'POST', path: '/strategies', description: 'List available strategies' },
+    { method: 'POST', path: '/strategies', description: 'List available strategies' },
     { method: 'POST', path: '/execute', description: 'Execute a trading strategy' },
     { method: 'POST', path: '/backtest', description: 'Backtest a strategy' },
   ],
@@ -646,7 +848,11 @@ export const websiteMonitorInfoRouter = createApiInfoRouter({
   endpoints: [
     { method: 'POST', path: '/', description: 'Add a website to monitor' },
     { method: 'GET', path: '/:id', description: 'Get monitor status' },
+    { method: 'POST', path: '/:id', description: 'Get monitor status' },
+    { method: 'POST', path: '/:id', description: 'Get monitor status' },
     { method: 'GET', path: '/:id/history', description: 'Get monitor history' },
+    { method: 'POST', path: '/:id/history', description: 'Get monitor history' },
+    { method: 'POST', path: '/:id/history', description: 'Get monitor history' },
   ],
 });
 
@@ -670,6 +876,8 @@ export const documentIntelligenceInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/', description: 'Extract data from a document (base64)' },
     { method: 'POST', path: '/batch', description: 'Batch document extraction' },
     { method: 'GET', path: '/jobs/:jobId', description: 'Get async extraction job status' },
+    { method: 'POST', path: '/jobs/:jobId', description: 'Get async extraction job status' },
+    { method: 'POST', path: '/jobs/:jobId', description: 'Get async extraction job status' },
   ],
 });
 
@@ -719,6 +927,8 @@ export const ipIntelligenceInfoRouter = createApiInfoRouter({
   category: 'Intelligence',
   endpoints: [
     { method: 'GET', path: '/', description: 'Lookup an IP address', params: { ip: 'IP address to analyze' } },
+    { method: 'POST', path: '/', description: 'Lookup an IP address', params: { ip: 'IP address to analyze' } },
+    { method: 'POST', path: '/', description: 'Lookup an IP address', params: { ip: 'IP address to analyze' } },
   ],
 });
 
@@ -728,6 +938,8 @@ export const emailValidationInfoRouter = createApiInfoRouter({
   category: 'Developer Tools',
   endpoints: [
     { method: 'GET', path: '/', description: 'Validate an email address', params: { email: 'Email address to validate' } },
+    { method: 'POST', path: '/', description: 'Validate an email address', params: { email: 'Email address to validate' } },
+    { method: 'POST', path: '/', description: 'Validate an email address', params: { email: 'Email address to validate' } },
   ],
 });
 
@@ -737,6 +949,8 @@ export const phoneValidationInfoRouter = createApiInfoRouter({
   category: 'Developer Tools',
   endpoints: [
     { method: 'GET', path: '/', description: 'Validate a phone number', params: { phone: 'Phone number', country: 'ISO country code' } },
+    { method: 'POST', path: '/', description: 'Validate a phone number', params: { phone: 'Phone number', country: 'ISO country code' } },
+    { method: 'POST', path: '/', description: 'Validate a phone number', params: { phone: 'Phone number', country: 'ISO country code' } },
   ],
 });
 
@@ -755,6 +969,8 @@ export const tokenTrustInfoRouter = createApiInfoRouter({
   category: 'DeFi Security',
   endpoints: [
     { method: 'GET', path: '/', description: 'Get trust score for a token', params: { contract: 'Token contract address', chain: 'Chain name' } },
+    { method: 'POST', path: '/', description: 'Get trust score for a token', params: { contract: 'Token contract address', chain: 'Chain name' } },
+    { method: 'POST', path: '/', description: 'Get trust score for a token', params: { contract: 'Token contract address', chain: 'Chain name' } },
   ],
 });
 
@@ -791,9 +1007,17 @@ export const tokenPriceFeedInfoRouter = createApiInfoRouter({
   category: 'Crypto Data',
   endpoints: [
     { method: 'GET', path: '/price/:coinId', description: 'Get price and market data for a single token', params: { coinId: 'CoinGecko ID e.g. bitcoin, ethereum, solana' } },
+    { method: 'POST', path: '/price/:coinId', description: 'Get price and market data for a single token', params: { coinId: 'CoinGecko ID e.g. bitcoin, ethereum, solana' } },
+    { method: 'POST', path: '/price/:coinId', description: 'Get price and market data for a single token', params: { coinId: 'CoinGecko ID e.g. bitcoin, ethereum, solana' } },
     { method: 'GET', path: '/multi', description: 'Get prices for multiple tokens', params: { ids: 'Comma-separated CoinGecko IDs (max 25)' } },
+    { method: 'POST', path: '/multi', description: 'Get prices for multiple tokens', params: { ids: 'Comma-separated CoinGecko IDs (max 25)' } },
+    { method: 'POST', path: '/multi', description: 'Get prices for multiple tokens', params: { ids: 'Comma-separated CoinGecko IDs (max 25)' } },
     { method: 'GET', path: '/chain/:chain', description: 'Top tokens by market cap on a chain', params: { chain: 'ethereum | solana | base | polygon | arbitrum | avalanche | bsc', limit: 'Number of results (max 50)' } },
+    { method: 'POST', path: '/chain/:chain', description: 'Top tokens by market cap on a chain', params: { chain: 'ethereum | solana | base | polygon | arbitrum | avalanche | bsc', limit: 'Number of results (max 50)' } },
+    { method: 'POST', path: '/chain/:chain', description: 'Top tokens by market cap on a chain', params: { chain: 'ethereum | solana | base | polygon | arbitrum | avalanche | bsc', limit: 'Number of results (max 50)' } },
     { method: 'GET', path: '/trending', description: 'Currently trending tokens on CoinGecko' },
+    { method: 'POST', path: '/trending', description: 'Currently trending tokens on CoinGecko' },
+    { method: 'POST', path: '/trending', description: 'Currently trending tokens on CoinGecko' },
   ],
 });
 
@@ -803,6 +1027,8 @@ export const walletReputationInfoRouter = createApiInfoRouter({
   category: 'Crypto Intelligence',
   endpoints: [
     { method: 'GET', path: '/score', description: 'Score a wallet address', params: { address: 'Ethereum wallet address (0x...)' } },
+    { method: 'POST', path: '/score', description: 'Score a wallet address', params: { address: 'Ethereum wallet address (0x...)' } },
+    { method: 'POST', path: '/score', description: 'Score a wallet address', params: { address: 'Ethereum wallet address (0x...)' } },
   ],
 });
 
@@ -812,6 +1038,8 @@ export const txSimulatorInfoRouter = createApiInfoRouter({
   category: 'Crypto Infrastructure',
   endpoints: [
     { method: 'GET', path: '/simulate', description: 'Simulate a transaction', params: { from: 'Sender address', to: 'Recipient address', value: 'ETH amount (default 0)', gasLimit: 'Gas limit (default 21000)' } },
+    { method: 'POST', path: '/simulate', description: 'Simulate a transaction', params: { from: 'Sender address', to: 'Recipient address', value: 'ETH amount (default 0)', gasLimit: 'Gas limit (default 21000)' } },
+    { method: 'POST', path: '/simulate', description: 'Simulate a transaction', params: { from: 'Sender address', to: 'Recipient address', value: 'ETH amount (default 0)', gasLimit: 'Gas limit (default 21000)' } },
   ],
 });
 
@@ -843,6 +1071,8 @@ export const contractAnalyzerInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/rank-contracts', description: 'Rank 2-10 contracts by safety, trust, activity, or defi_use objective.' },
     { method: 'POST', path: '/execution-gate', description: 'Cross-API safety gate: given contract + intended action, returns execute bool, risk score, blocking flags, and recommended_next_api/endpoint for chaining to Autopilot.' },
     { method: 'GET', path: '/analyze', description: 'Legacy: full contract analysis by address' },
+    { method: 'POST', path: '/analyze', description: 'Legacy: full contract analysis by address' },
+    { method: 'POST', path: '/analyze', description: 'Legacy: full contract analysis by address' },
   ],
 });
 
@@ -852,6 +1082,8 @@ export const onchainNewsInfoRouter = createApiInfoRouter({
   category: 'Crypto Intelligence',
   endpoints: [
     { method: 'GET', path: '/news', description: 'Get news and sentiment for a token', params: { token: 'Token name or symbol e.g. bitcoin, ETH, solana' } },
+    { method: 'POST', path: '/news', description: 'Get news and sentiment for a token', params: { token: 'Token name or symbol e.g. bitcoin, ETH, solana' } },
+    { method: 'POST', path: '/news', description: 'Get news and sentiment for a token', params: { token: 'Token name or symbol e.g. bitcoin, ETH, solana' } },
   ],
 });
 
@@ -861,7 +1093,11 @@ export const ensResolverInfoRouter = createApiInfoRouter({
   category: 'Crypto Infrastructure',
   endpoints: [
     { method: 'GET', path: '/resolve', description: 'Resolve ENS name to address and profile', params: { ens: 'ENS name e.g. vitalik.eth' } },
+    { method: 'POST', path: '/resolve', description: 'Resolve ENS name to address and profile', params: { ens: 'ENS name e.g. vitalik.eth' } },
+    { method: 'POST', path: '/resolve', description: 'Resolve ENS name to address and profile', params: { ens: 'ENS name e.g. vitalik.eth' } },
     { method: 'GET', path: '/lookup', description: 'Reverse lookup address to ENS name', params: { address: 'Ethereum address (0x...)' } },
+    { method: 'POST', path: '/lookup', description: 'Reverse lookup address to ENS name', params: { address: 'Ethereum address (0x...)' } },
+    { method: 'POST', path: '/lookup', description: 'Reverse lookup address to ENS name', params: { address: 'Ethereum address (0x...)' } },
   ],
 });
 
@@ -871,6 +1107,8 @@ export const webResearcherInfoRouter = createApiInfoRouter({
   category: 'AI Agents',
   endpoints: [
     { method: 'GET', path: '/research', description: 'Research any query and return structured findings', params: { query: 'Research query', depth: 'basic | deep (default: basic)' } },
+    { method: 'POST', path: '/research', description: 'Research any query and return structured findings', params: { query: 'Research query', depth: 'basic | deep (default: basic)' } },
+    { method: 'POST', path: '/research', description: 'Research any query and return structured findings', params: { query: 'Research query', depth: 'basic | deep (default: basic)' } },
   ],
 });
 
