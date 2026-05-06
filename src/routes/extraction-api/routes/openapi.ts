@@ -4,21 +4,14 @@ const router = Router();
 router.get('/', (_req: Request, res: Response) => {
   res.json({
     openapi: '3.0.0',
-    info: {
-      title: 'Extraction API',
-      version: '1.0.0',
-      description: 'Task-specific AI extraction APIs — leads, invoices, resumes, contracts and custom schemas.',
-    },
-    servers: [{ url: 'https://extraction-api.onrender.com' }],
+    info: { title: 'Extraction API', version: '1.0.0', description: 'Task-specific AI extraction APIs — leads, invoices, resumes, contracts and custom schemas.' },
+    servers: [{ url: 'https://orbis-apis.onrender.com/extraction' }],
     paths: {
-      '/v1/extract/lead': { post: { summary: 'Extract lead data', responses: { '200': { description: 'Extracted lead' } } } },
-      '/v1/extract/invoice': { post: { summary: 'Extract invoice data', responses: { '200': { description: 'Extracted invoice' } } } },
-      '/v1/extract/resume': { post: { summary: 'Extract resume data', responses: { '200': { description: 'Extracted resume' } } } },
-      '/v1/extract/contract': { post: { summary: 'Extract contract data', responses: { '200': { description: 'Extracted contract' } } } },
-      '/v1/extract/receipt': { post: { summary: 'Extract receipt data', responses: { '200': { description: 'Extracted receipt' } } } },
-      '/v1/extract/custom': { post: { summary: 'Extract with custom schema', responses: { '200': { description: 'Extracted data' } } } },
-      '/v1/schemas': { get: { summary: 'List available schemas', responses: { '200': { description: 'Schema list' } } } },
-      '/v1/health': { get: { summary: 'Health check', responses: { '200': { description: 'OK' } } } },
+      '/extract/invoice': { post: { summary: 'Extract invoice data', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string', description: 'Invoice text to extract from (required, 10-50000 chars)' } } } } } }, responses: { '200': { description: 'Extracted invoice' } } } },
+      '/extract/lead': { post: { summary: 'Extract lead data', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string', description: 'Lead text to extract from (required)' } } } } } }, responses: { '200': { description: 'Extracted lead' } } } },
+      '/extract/resume': { post: { summary: 'Extract resume data', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string', description: 'Resume text to extract from (required)' } } } } } }, responses: { '200': { description: 'Extracted resume' } } } },
+      '/extract/contract': { post: { summary: 'Extract contract data', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string', description: 'Contract text to extract from (required)' } } } } } }, responses: { '200': { description: 'Extracted contract' } } } },
+      '/extract/custom': { post: { summary: 'Extract with custom schema', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text', 'schema'], properties: { text: { type: 'string', description: 'Text to extract from (required)' }, schema: { type: 'object', description: 'Custom schema object (required)' }, context: { type: 'string', description: 'Optional context hint' } } } } } }, responses: { '200': { description: 'Extracted data' } } } },
     },
   });
 });

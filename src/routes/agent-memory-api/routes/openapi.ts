@@ -4,29 +4,22 @@ const router = Router();
 router.get('/', (_req: Request, res: Response) => {
   res.json({
     openapi: '3.0.0',
-    info: {
-      title: 'Agent Memory API',
-      version: '1.0.0',
-      description: 'Persistent memory and context storage for AI agents — store, retrieve and search memories by session.',
-    },
-    servers: [{ url: 'https://agent-memory-api.onrender.com' }],
+    info: { title: 'Agent Memory API', version: '1.0.0', description: 'Persistent memory and context storage for AI agents — store, retrieve and search memories by session.' },
+    servers: [{ url: 'https://orbis-apis.onrender.com/agent-memory' }],
     paths: {
-      '/v1/memory/{session_id}': {
-        post: { summary: 'Add memory to session', responses: { '201': { description: 'Memory added' } } },
-        get: { summary: 'Retrieve session memories', responses: { '200': { description: 'Memory list' } } },
-        delete: { summary: 'Clear session', responses: { '200': { description: 'Session deleted' } } },
+      '/add': {
+        post: {
+          summary: 'Add memory to session',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['content'], properties: { content: { type: 'string', description: 'Memory content to store (required, 1-10000 chars)' }, role: { type: 'string', description: 'Role — user|assistant|system (default: user)' }, tags: { type: 'array', items: { type: 'string' }, description: 'Optional tags (max 10)' }, metadata: { type: 'object', description: 'Optional metadata object' } } } } } },
+          responses: { '201': { description: 'Memory added' } }
+        }
       },
-      '/v1/memory/{session_id}/batch': {
-        post: { summary: 'Add multiple memories', responses: { '201': { description: 'Memories added' } } },
-      },
-      '/v1/memory/search': {
-        post: { summary: 'Search memories by query', responses: { '200': { description: 'Search results' } } },
-      },
-      '/v1/sessions': {
-        get: { summary: 'List all sessions', responses: { '200': { description: 'Session list' } } },
-      },
-      '/v1/health': {
-        get: { summary: 'Health check', responses: { '200': { description: 'OK' } } },
+      '/search': {
+        post: {
+          summary: 'Search memories by query',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['session_id', 'query'], properties: { session_id: { type: 'string', description: 'Session ID to search (required)' }, query: { type: 'string', description: 'Search query (required, 1-500 chars)' } } } } } },
+          responses: { '200': { description: 'Search results' } }
+        }
       },
     },
   });
