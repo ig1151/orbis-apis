@@ -423,6 +423,43 @@ app.use('/crypto-news-impact', cryptoNewsInfoRouter);
 app.use('/derivatives-intelligence', derivativesIntelligenceInfoRouter);
 app.use('/dev-utilities', devUtilitiesInfoRouter);
 app.use('/extraction', extractionInfoRouter);
+app.get('/extraction/info', (_req, res) => {
+  res.json({
+    name: 'Agent Intelligence Extraction & Monitoring API',
+    slug: 'extraction',
+    version: 'v2',
+    status: 'agent',
+    loop_type: 'extract_signal_detect_monitor_surface_act',
+    monetization_grade: 'A',
+    category: 'ai-ml',
+    description: 'Extract structured intelligence from any URL or text. Pull entities, actionable signals, and opportunities. Detect page changes and register continuous monitoring — built for autonomous agent workflows.',
+    baseUrl: 'https://orbis-apis.onrender.com/extraction',
+    websiteUrl: 'https://orbis-apis.onrender.com',
+    openapi: 'https://orbis-apis.onrender.com/extraction/openapi.json',
+    pricing: {
+      '/v1/extract/lead': 0.001,
+      '/v1/extract/invoice': 0.001,
+      '/v1/extract/resume': 0.001,
+      '/v1/extract/contract': 0.001,
+      '/v1/extract/receipt': 0.001,
+      '/v1/extract/custom': 0.0015,
+      '/extract-entities': 0.004,
+      '/extract-signals': 0.005,
+      '/detect-change': 0.004,
+      '/monitor-page': 0.003,
+      '/extract-opportunities': 0.006,
+      '/monitor-topic': 0.007,
+    },
+    endpoints: [
+      { method: 'POST', path: '/extract-entities', description: 'Pull people, companies, prices, events and locations from any URL or text.' },
+      { method: 'POST', path: '/extract-signals', description: 'Extract actionable intelligence signals from content.' },
+      { method: 'POST', path: '/detect-change', description: 'Compare current page vs cached baseline. Returns what changed and alert level.' },
+      { method: 'POST', path: '/monitor-page', description: 'Register a URL for monitoring. Captures baseline and defines watch targets.' },
+      { method: 'POST', path: '/extract-opportunities', description: 'Surface ranked opportunities from any content.' },
+      { method: 'POST', path: '/monitor-topic', description: 'Watch a topic across multiple URLs. Returns signals, sentiment, trend and narrative.' },
+    ],
+  });
+});
 app.use('/lead-discovery', leadDiscoveryInfoRouter);
 app.use('/market-intelligence', marketIntelligenceInfoRouter);
 app.use('/market-signal', marketSignalInfoRouter);
