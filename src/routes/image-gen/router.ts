@@ -59,7 +59,7 @@ function parseJson(raw: string): any {
 
 async function requireApiKey(req: Request, res: Response, next: NextFunction) {
   // x402 payments bypass API key requirement
-  if (req.headers["x-payment"] || req.headers["x-payment-response"] || req.headers["x-payment-signature"]) {
+  if (req.headers["x-payment"] || req.headers["x-payment-response"] || req.headers["x-payment-signature"] || req.headers["x-orbis-proxy"]) {
     (req as any).apiKey = "x402";
     (req as any).apiKeyData = { active: true, quota: null };
     return next();
