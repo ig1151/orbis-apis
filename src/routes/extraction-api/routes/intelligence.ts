@@ -298,3 +298,214 @@ Return only the JSON object:`);
     res.status(500).json({ error: message });
   }
 });
+
+// ── Webhook store (in-memory, replace with DB for persistence) ────────────────
+interface WebhookEntry {
+  id: string;
+  url: string;
+  webhook_url: string;
+  watch_for?: string;
+  created_at: string;
+  status: 'active' | 'cancelled';
+  trigger_count: number;
+}
+const webhookStore = new Map<string, WebhookEntry>();
+
+// ── POST /register-webhook ────────────────────────────────────────────────────
+router.post('/register-webhook', async (req: Request, res: Response) => {
+  const { url, webhook_url, watch_for, secret } = req.body;
+  if (!url || !webhook_url) {
+    res.status(400).json({ error: 'Provide url and webhook_url' });
+    return;
+  }
+  const start = Date.now();
+  try {
+    const id = `wh_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const entry: WebhookEntry = {
+      id,
+      url,
+      webhook_url,
+      watch_for,
+      created_at: new Date().toISOString(),
+      status: 'active',
+      trigger_count: 0,
+    };
+    webhookStore.set(id, entry);
+
+    // Capture baseline
+    const content = await fetchPageContent(url);
+    pageCache.set(url, { content, snapshot: content.slice(0, 3000), ts: Date.now() });
+
+    logger.info({ endpoint: 'register-webhook', id, url }, 'Webhook registered');
+    res.json({
+      endpoint: 'register-webhook',
+      id,
+      url,
+      webhook_url,
+      watch_for: watch_for ?? null,
+      status: 'active',
+      baseline_captured: true,
+      message: 'Webhook registered. Call /detect-change to trigger evaluation and fire webhook on change.',
+      latency_ms: Date.now() - start,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed';
+    logger.error({ endpoint: 'register-webhook', err }, message);
+    res.status(500).json({ error: message });
+  }
+});
+
+// ── POST /monitor-status ──────────────────────────────────────────────────────
+router.post('/monitor-status', (req: Request, res: Response) => {
+  const { id, url } = req.body;
+  if (!id && !url) {
+    res.status(400).json({ error: 'Provide id or url' });
+    return;
+  }
+  let entry: WebhookEntry | undefined;
+  if (id) {
+    entry = webhookStore.get(id);
+  } else {
+    for (const e of webhookStore.values()) {
+      if (e.url === url) { entry = e; break; }
+    }
+  }
+  if (!entry) {
+    res.status(404).json({ error: 'Monitor not found', id, url });
+    return;
+  }
+  const cached = pageCache.get(entry.url);
+  res.json({
+    endpoint: 'monitor-status',
+    id: entry.id,
+    url: entry.url,
+    webhook_url: entry.webhook_url,
+    watch_for: entry.watch_for ?? null,
+    status: entry.status,
+    trigger_count: entry.trigger_count,
+    created_at: entry.created_at,
+    last_checked: cached ? new Date(cached.ts).toISOString() : null,
+    baseline_captured: !!cached,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// ── POST /monitor-cancel ──────────────────────────────────────────────────────
+router.post('/monitor-cancel', (req: Request, res: Response) => {
+  const { id, url } = req.body;
+  if (!id && !url) {
+    res.status(400).json({ error: 'Provide id or url' });
+    return;
+  }
+  let entry: WebhookEntry | undefined;
+  let foundId = id;
+  if (id) {
+    entry = webhookStore.get(id);
+  } else {
+    for (const [k, e] of webhookStore.entries()) {
+      if (e.url === url) { entry = e; foundId = k; break; }
+    }
+  }
+  if (!entry) {
+    res.status(404).json({ error: 'Monitor not found', id, url });
+    return;
+  }
+  entry.status = 'cancelled';
+  webhookStore.set(foundId, entry);
+  logger.info({ endpoint: 'monitor-cancel', id: foundId }, 'Monitor cancelled');
+  res.json({
+    endpoint: 'monitor-cancel',
+    id: foundId,
+    url: entry.url,
+    status: 'cancelled',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// ── GET /stream ───────────────────────────────────────────────────────────────
+router.get('/stream', async (req: Request, res: Response) => {
+  const { url, interval_ms } = req.query as { url?: string; interval_ms?: string };
+  if (!url) {
+    res.status(400).json({ error: 'Provide url as query param' });
+    return;
+  }
+
+  const intervalMs = Math.max(parseInt(interval_ms ?? '10000', 10), 5000);
+
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.flushHeaders();
+
+  const send = (event: string, data: unknown) => {
+    res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+  };
+
+  // Send connected event
+  send('connected', { url, interval_ms: intervalMs, timestamp: new Date().toISOString() });
+
+  // Capture initial baseline
+  let baseline: string | null = null;
+  try {
+    const content = await fetchPageContent(url);
+    baseline = content.slice(0, 3000);
+    pageCache.set(url, { content, snapshot: baseline, ts: Date.now() });
+    send('baseline', { url, captured: true, timestamp: new Date().toISOString() });
+  } catch (err) {
+    send('error', { message: 'Failed to fetch baseline', url });
+    res.end();
+    return;
+  }
+
+  // Poll for changes
+  const timer = setInterval(async () => {
+    try {
+      const current = await fetchPageContent(url);
+      const currentSnapshot = current.slice(0, 3000);
+
+      if (baseline && currentSnapshot !== baseline) {
+        const raw = await callClaude(`Compare these two page versions and return ONLY a JSON object:
+- changed: boolean
+- change_type: none | minor | significant | critical  
+- summary: string
+- alert_level: none | low | medium | high
+PREVIOUS: """${baseline.slice(0, 2000)}"""
+CURRENT: """${currentSnapshot.slice(0, 2000)}"""
+Return only the JSON object:`);
+        const data = parseJson(raw);
+        send('change', {
+          url,
+          ...data,
+          timestamp: new Date().toISOString(),
+        });
+
+        // Fire webhooks if registered
+        for (const entry of webhookStore.values()) {
+          if (entry.url === url && entry.status === 'active') {
+            entry.trigger_count++;
+            fetch(entry.webhook_url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ event: 'change', url, data, timestamp: new Date().toISOString() }),
+            }).catch(() => logger.error({ webhook: entry.webhook_url }, 'Webhook delivery failed'));
+          }
+        }
+
+        baseline = currentSnapshot;
+        pageCache.set(url, { content: current, snapshot: currentSnapshot, ts: Date.now() });
+      } else {
+        send('heartbeat', { url, timestamp: new Date().toISOString() });
+      }
+    } catch (err) {
+      send('error', { message: 'Poll failed', url, timestamp: new Date().toISOString() });
+    }
+  }, intervalMs);
+
+  // Clean up on disconnect
+  req.on('close', () => {
+    clearInterval(timer);
+    logger.info({ endpoint: 'stream', url }, 'SSE client disconnected');
+  });
+});
