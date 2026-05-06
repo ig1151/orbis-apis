@@ -49,4 +49,17 @@ router.get('/', async (_req: Request, res: Response) => {
   return res.json({ supported_symbols: SUPPORTED_SYMBOLS, count: SUPPORTED_SYMBOLS.length });
 });
 
+
+router.post('/:symbol', async (req: Request, res: Response) => {
+  const symbol = (req.body.symbol || req.params.symbol || '').toUpperCase();
+  const schema2 = Joi.object({ symbol: Joi.string().uppercase().valid(...SUPPORTED_SYMBOLS).required() });
+  const { error, value } = schema2.validate({ symbol });
+  if (error) return res.status(400).json({ error: `Unsupported symbol. Supported: ${SUPPORTED_SYMBOLS.join(', ')}` });
+  try {
+    const posts = await fetchCryptoPosts(value.symbol);
+    const sentiment = await analyzeSentiment(value.symbol, posts);
+    return res.json({ symbol: value.symbol, ...sentiment, timestamp: new Date().toISOString() });
+  } catch (err: any) { return res.status(500).json({ error: 'Failed to analyze crypto sentiment' }); }
+});
+
 export default router;

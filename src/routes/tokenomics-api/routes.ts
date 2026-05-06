@@ -105,3 +105,25 @@ router.get('/tokenomics/:token', async (req: Request, res: Response) => {
     res.status(502).json({ error: err.message });
   }
 });
+
+router.post('/tokenomics/compare', async (req, res) => {
+  const tokens = req.body.tokens;
+  if (!tokens) return res.status(400).json({ error: 'tokens is required' });
+  const tokenList = (Array.isArray(tokens) ? tokens : tokens.split(',')).map((t: string) => t.trim().toUpperCase()).slice(0, 5);
+  try {
+    const results = await Promise.allSettled(tokenList.map(async (token: string) => { const data = await resolveToken(token); const tokenomics = extractTokenomics(data); const score = ruleBasedScore(tokenomics); return { token, name: tokenomics.name, circulatingPct: tokenomics.circulatingPct, inflationRate: tokenomics.inflationRate, fdvToMcapRatio: tokenomics.fdvToMcapRatio, score: score.overall, label: score.label }; }));
+    const tokenResults = results.filter(r => r.status === 'fulfilled').map(r => (r as any).value);
+    res.json({ timestamp: new Date().toISOString(), count: tokenResults.length, comparison: tokenResults.sort((a: any, b: any) => b.score - a.score) });
+  } catch (err: any) { res.status(502).json({ error: err.message }); }
+});
+router.post('/tokenomics', async (req, res) => {
+  const token = (req.body.token || '').toUpperCase();
+  if (!token) return res.status(400).json({ error: 'token is required' });
+  try {
+    const data = await resolveToken(token);
+    const tokenomics = extractTokenomics(data);
+    const ruleScore = ruleBasedScore(tokenomics);
+    const score = await aiScore(token, tokenomics, ruleScore);
+    res.json({ token, name: tokenomics.name, timestamp: new Date().toISOString(), supply: { circulating: tokenomics.circulating, total: tokenomics.total, max: tokenomics.max, circulatingPct: tokenomics.circulatingPct, inflationRate: tokenomics.inflationRate }, market: { price: tokenomics.price, marketCap: tokenomics.marketCap, fullyDilutedValuation: tokenomics.fullyDilutedValuation, fdvToMcapRatio: tokenomics.fdvToMcapRatio }, score });
+  } catch (err: any) { res.status(502).json({ error: err.message }); }
+});

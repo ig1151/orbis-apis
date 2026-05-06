@@ -199,3 +199,36 @@ router.get('/yields/strategy', async (req: Request, res: Response) => {
     res.status(502).json({ error: 'Failed to build strategy', detail: err.message });
   }
 });
+
+router.post('/yields/top', async (req, res) => {
+  const schema2 = Joi.object({ limit: Joi.number().integer().min(1).max(50).default(10), minTvl: Joi.number().min(0).default(1_000_000), maxRisk: Joi.number().integer().min(1).max(5).default(5), chain: Joi.string().optional() });
+  const { error, value } = schema2.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  try {
+    const pools = await fetchAllPools();
+    const filtered = pools.filter(p => p.tvlUsd >= value.minTvl).filter(p => !value.chain || p.chain?.toLowerCase() === value.chain.toLowerCase()).map(p => ({ ...p, riskScore: scoreRisk(p) })).filter(p => p.riskScore <= value.maxRisk).sort((a, b) => (b.apy || 0) - (a.apy || 0)).slice(0, value.limit);
+    res.json({ timestamp: new Date().toISOString(), count: filtered.length, pools: filtered.map(formatPool) });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to fetch yields', detail: err.message }); }
+});
+router.post('/yields/search', async (req, res) => {
+  const schema2 = Joi.object({ token: Joi.string().optional(), chain: Joi.string().optional(), protocol: Joi.string().optional(), limit: Joi.number().integer().min(1).max(50).default(10) });
+  const { error, value } = schema2.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  if (!value.token && !value.chain && !value.protocol) return res.status(400).json({ error: 'At least one of token, chain, or protocol is required' });
+  try {
+    const pools = await fetchAllPools();
+    const filtered = pools.filter(p => { const sym = (p.symbol || '').toLowerCase(); const ch = (p.chain || '').toLowerCase(); const proj = (p.project || '').toLowerCase(); if (value.token && !sym.includes(value.token.toLowerCase())) return false; if (value.chain && ch !== value.chain.toLowerCase()) return false; if (value.protocol && !proj.includes(value.protocol.toLowerCase())) return false; return true; }).sort((a, b) => (b.apy || 0) - (a.apy || 0)).slice(0, value.limit);
+    res.json({ timestamp: new Date().toISOString(), query: value, count: filtered.length, pools: filtered.map(p => ({ ...formatPool(p), riskScore: scoreRisk(p) })) });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to search yields', detail: err.message }); }
+});
+router.post('/yields/strategy', async (req, res) => {
+  const schema2 = Joi.object({ risk: Joi.string().valid('conservative', 'moderate', 'aggressive').default('moderate'), capital: Joi.number().min(0).optional() });
+  const { error, value } = schema2.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
+  try {
+    const pools = await fetchAllPools();
+    const { buildStrategy } = await import('./strategy');
+    const result = await buildStrategy(pools, value.risk, value.capital || null);
+    res.json({ timestamp: new Date().toISOString(), risk_profile: value.risk, ...result });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to build strategy', detail: err.message }); }
+});

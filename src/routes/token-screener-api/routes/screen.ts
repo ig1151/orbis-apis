@@ -105,4 +105,29 @@ router.get('/', validate(schema), async (req: Request, res: Response): Promise<v
   }
 });
 
+
+router.post('/', validate(schema), async (req: Request, res: Response): Promise<void> => {
+  const filter = req.body.filter || 'trending';
+  const limit = parseInt(req.body.limit) || 10;
+  const minMarketCap = parseFloat(req.body.minMarketCap) || 0;
+  const maxMarketCap = req.body.maxMarketCap ? parseFloat(req.body.maxMarketCap) : undefined;
+  const minVolume = parseFloat(req.body.minVolume) || 0;
+  const chain = req.body.chain as string | undefined;
+  const category = chain ? CHAIN_CATEGORIES[chain.toLowerCase()] : req.body.category as string | undefined;
+  try {
+    let tokens = await getTopTokens(250, category);
+    tokens = tokens.filter(t => { if (t.marketCap < minMarketCap) return false; if (maxMarketCap && t.marketCap > maxMarketCap) return false; if (t.volume24h < minVolume) return false; return true; });
+    switch (filter) {
+      case 'gainers': tokens = tokens.sort((a, b) => b.change24h - a.change24h); break;
+      case 'losers': tokens = tokens.sort((a, b) => a.change24h - b.change24h); break;
+      case 'volume_spike': tokens = tokens.filter(t => t.volumeMarketCapRatio > 0.1).sort((a, b) => b.volumeMarketCapRatio - a.volumeMarketCapRatio); break;
+      case 'momentum': tokens = tokens.sort((a, b) => b.momentumScore - a.momentumScore); break;
+      case 'trending': tokens = tokens.filter(t => t.momentumScore > 55).sort((a, b) => b.momentumScore - a.momentumScore); break;
+      default: tokens = tokens.sort((a, b) => b.momentumScore - a.momentumScore);
+    }
+    const results = tokens.slice(0, limit);
+    res.json({ success: true, data: { filter, chain: chain || null, category: category || 'all', count: results.length, tokens: results, generatedAt: new Date().toISOString() } });
+  } catch (err: any) { res.status(500).json({ error: 'Failed to screen tokens', details: err.message }); }
+});
+
 export default router;

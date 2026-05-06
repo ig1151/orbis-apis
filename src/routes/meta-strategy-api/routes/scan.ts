@@ -157,4 +157,27 @@ Write 3 sentences: (1) overall market environment, (2) most compelling opportuni
   }
 });
 
+
+router.post('/', validate(schema), async (req: Request, res: Response): Promise<void> => {
+  const symbolsParam = req.body.symbols as string | undefined;
+  const requestedSymbols = symbolsParam
+    ? symbolsParam.split(',').map((s) => s.trim().toUpperCase()).filter((s) => VALID_SYMBOLS.includes(s)).slice(0, 5)
+    : DEFAULT_SYMBOLS;
+  if (requestedSymbols.length === 0) { res.status(400).json({ error: 'No valid symbols provided', validSymbols: VALID_SYMBOLS }); return; }
+  try {
+    const results = await Promise.allSettled(requestedSymbols.map((symbol) => getStrategySignal(symbol, PREDICTION_QUERIES[symbol] || symbol.toLowerCase() + ' crypto')));
+    const symbolResults: SymbolResult[] = [];
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+      if (result.status === 'rejected' || !result.value) continue;
+      const data = result.value;
+      symbolResults.push({ symbol: data.symbol, decision: data.decision, signalScore: data.signalScore, confidence: data.confidence, riskLevel: data.riskLevel, invalidatedIf: data.invalidatedIf, action: data.action, reasoning: data.reasoning, keyFactors: data.keyFactors || [], price: data.signals?.price?.price || null, changePercent24h: data.signals?.price?.changePercent24h || null, rank: 0 });
+    }
+    if (symbolResults.length === 0) { res.status(503).json({ error: 'All strategy API calls failed' }); return; }
+    symbolResults.sort((a, b) => Math.abs(b.signalScore) - Math.abs(a.signalScore));
+    symbolResults.forEach((r, i) => { r.rank = i + 1; });
+    res.json({ success: true, data: { scannedSymbols: requestedSymbols, ranked: symbolResults, analyzedAt: new Date().toISOString() } });
+  } catch (err: any) { res.status(500).json({ error: 'Failed to run meta strategy scan', details: err.message }); }
+});
+
 export default router;

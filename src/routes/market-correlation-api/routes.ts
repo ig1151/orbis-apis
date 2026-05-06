@@ -167,3 +167,27 @@ Be concise and actionable. No preamble.`;
     res.status(502).json({ error: 'Failed to compute summary', detail: err.message });
   }
 });
+
+router.post('/correlation/matrix', async (_req, res) => {
+  try {
+    const [btcPrices, ethPrices, solPrices, spyPrices, dxyPrices, gldPrices, usoPrices, tltPrices] = await Promise.all([fetchCryptoPrices('BTC', 30), fetchCryptoPrices('ETH', 30), fetchCryptoPrices('SOL', 30), fetchYahooPrices('SPY', 30), fetchYahooPrices('DX-Y.NYB', 30), fetchYahooPrices('GLD', 30), fetchYahooPrices('USO', 30), fetchYahooPrices('TLT', 30)]);
+    const assets = ['BTC', 'ETH', 'SOL', 'SPY', 'DXY', 'GLD', 'USO', 'TLT'];
+    const priceMap: Record<string, number[]> = { BTC: btcPrices, ETH: ethPrices, SOL: solPrices, SPY: spyPrices, DXY: dxyPrices, GLD: gldPrices, USO: usoPrices, TLT: tltPrices };
+    const matrix: Record<string, Record<string, number>> = {};
+    for (const a of assets) { matrix[a] = {}; for (const b of assets) { matrix[a][b] = a === b ? 1 : pearson(priceMap[a], priceMap[b]); } }
+    res.json({ timestamp: new Date().toISOString(), period: '30d', assets, matrix });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to compute matrix', detail: err.message }); }
+});
+router.post('/correlation', async (req, res) => {
+  const asset = (req.body.asset || '').toUpperCase();
+  const period = req.body.period || '30d';
+  const { error: assetErr } = assetSchema.validate(asset);
+  if (assetErr) return res.status(400).json({ error: 'Asset must be BTC, ETH, or SOL' });
+  const days = parseInt(period);
+  try {
+    const { scores, dataPoints } = await buildCorrelations(asset, days);
+    const correlations: Record<string, any> = {};
+    for (const [macro, score] of Object.entries(scores)) { correlations[macro] = { score, label: correlationLabel(score), interpretation: interpretCorrelation(asset, macro, score) }; }
+    res.json({ asset, period, timestamp: new Date().toISOString(), correlations, dominantMacroDriver: Object.entries(scores).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))[0][0], riskMode: detectRiskMode(scores.SPY, scores.DXY), confidence: calcConfidence(scores, dataPoints) });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to compute correlations', detail: err.message }); }
+});

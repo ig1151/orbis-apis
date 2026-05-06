@@ -84,4 +84,27 @@ router.get('/', validate(schema), async (req: Request, res: Response): Promise<v
   }
 });
 
+
+router.post('/', validate(schema), async (req: Request, res: Response): Promise<void> => {
+  const days = parseInt(req.body.days) || 30;
+  const minUsd = parseFloat(req.body.minUsd) || 0;
+  const category = req.body.category as string | undefined;
+  const limit = parseInt(req.body.limit) || 20;
+  try {
+    let upcoming = getAllUpcomingUnlocks(days);
+    if (category) upcoming = upcoming.filter((u) => u.category.toLowerCase() === category.toLowerCase());
+    const coingeckoIds = [...new Set(upcoming.map((u) => u.coingeckoId))];
+    const prices = await getMultipleCoins(coingeckoIds);
+    const events = upcoming.map((u) => {
+      const coinData = prices.get(u.coingeckoId);
+      const price = coinData?.current_price || null;
+      const estimatedUsdValue = price ? Math.round(u.nextUnlock.amount * 1e6 * price) : null;
+      const percentOfSupply = (u.nextUnlock.amount / u.totalSupply) * 100;
+      return { id: u.id, symbol: u.symbol, name: u.name, category: u.category, unlockDate: u.nextUnlock.date, tokensUnlocked: u.nextUnlock.amount * 1e6, percentOfSupply: Math.round(percentOfSupply * 100) / 100, recipient: u.nextUnlock.recipient, estimatedUsdValue };
+    });
+    const filtered = events.filter((e) => !minUsd || (e.estimatedUsdValue !== null && e.estimatedUsdValue >= minUsd)).slice(0, limit);
+    res.json({ success: true, data: { days, count: filtered.length, unlocks: filtered, generatedAt: new Date().toISOString() } });
+  } catch (err: any) { res.status(500).json({ error: 'Failed to fetch upcoming unlocks', details: err.message }); }
+});
+
 export default router;

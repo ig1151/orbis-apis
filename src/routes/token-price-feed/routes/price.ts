@@ -70,4 +70,44 @@ router.get('/trending', async (_req: Request, res: Response) => {
   }
 });
 
+
+router.post('/price', async (req: Request, res: Response) => {
+  const { coinId } = req.body;
+  if (!coinId || coinId.length > 100) { res.status(400).json({ error: 'Invalid coinId' }); return; }
+  try {
+    const price = await getTokenPrice(coinId.toLowerCase());
+    res.json({ success: true, data: price });
+  } catch (err: any) {
+    if (err.message?.includes('not found')) { res.status(404).json({ error: err.message }); }
+    else { res.status(502).json({ error: 'Failed to fetch price data', detail: err.message }); }
+  }
+});
+router.post('/multi', async (req: Request, res: Response) => {
+  const { ids } = req.body;
+  if (!ids) { res.status(400).json({ error: 'ids is required' }); return; }
+  const idList = Array.isArray(ids) ? ids : ids.split(',').map((s: string) => s.trim().toLowerCase()).filter(Boolean);
+  if (idList.length === 0 || idList.length > 25) { res.status(400).json({ error: 'Provide between 1 and 25 coin IDs' }); return; }
+  try {
+    const prices = await getMultipleTokenPrices(idList);
+    res.json({ success: true, count: Object.keys(prices).length, data: prices });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to fetch prices', detail: err.message }); }
+});
+router.post('/chain', async (req: Request, res: Response) => {
+  const { chain, limit } = req.body;
+  if (!chain) { res.status(400).json({ error: 'chain is required' }); return; }
+  try {
+    const tokens = await getTokensByChain(chain, Math.min(parseInt(limit) || 10, 50));
+    res.json({ success: true, chain, count: tokens.length, data: tokens });
+  } catch (err: any) {
+    if (err.message?.includes('Unsupported chain')) { res.status(400).json({ error: err.message }); }
+    else { res.status(502).json({ error: 'Failed to fetch chain tokens', detail: err.message }); }
+  }
+});
+router.post('/trending', async (_req: Request, res: Response) => {
+  try {
+    const trending = await getTrendingTokens();
+    res.json({ success: true, count: trending.length, data: trending });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to fetch trending tokens', detail: err.message }); }
+});
+
 export default router;

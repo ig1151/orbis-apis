@@ -24,4 +24,14 @@ router.get('/news', async (req: Request, res: Response) => {
   }
 });
 
+
+router.post('/news', async (req: Request, res: Response) => {
+  const { error, value } = schema.validate(req.body);
+  if (error) { res.status(400).json({ error: 'Validation failed', detail: error.details[0].message }); return; }
+  try {
+    const result = await getTokenNews(value.token);
+    res.json({ success: true, data: result });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to fetch news', detail: err.message }); }
+});
+
 export default router;

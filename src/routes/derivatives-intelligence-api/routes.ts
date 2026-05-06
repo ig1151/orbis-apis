@@ -73,3 +73,24 @@ router.get('/intelligence/:asset/signal', async (req: Request, res: Response) =>
     res.status(502).json({ error: 'Failed to build signal', detail: err.message });
   }
 });
+
+router.post('/intelligence', async (req, res) => {
+  const asset = (req.body.asset || '').toUpperCase();
+  const { error } = assetSchema.validate({ asset });
+  if (error) { res.status(400).json({ error: error.details[0].message }); return; }
+  try {
+    const { spotData, fundingData, liqData, optionsData } = await gatherData(asset);
+    const intelligence = buildIntelligence(asset, spotData, fundingData, liqData, optionsData);
+    res.json({ asset, timestamp: new Date().toISOString(), spot: spotData, funding: fundingData, liquidations: liqData, options: optionsData, intelligence });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to build intelligence report', detail: err.message }); }
+});
+router.post('/signal', async (req, res) => {
+  const asset = (req.body.asset || '').toUpperCase();
+  const { error } = assetSchema.validate({ asset });
+  if (error) { res.status(400).json({ error: error.details[0].message }); return; }
+  try {
+    const { spotData, fundingData, liqData, optionsData } = await gatherData(asset);
+    const intelligence = buildIntelligence(asset, spotData, fundingData, liqData, optionsData);
+    res.json({ asset, timestamp: new Date().toISOString(), ...intelligence });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to build signal', detail: err.message }); }
+});

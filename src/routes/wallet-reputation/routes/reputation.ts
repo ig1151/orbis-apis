@@ -24,4 +24,14 @@ router.get('/score', async (req: Request, res: Response) => {
   }
 });
 
+
+router.post('/score', async (req: Request, res: Response) => {
+  const { error, value } = schema.validate(req.body);
+  if (error) { res.status(400).json({ error: 'Invalid Ethereum address', detail: error.details[0].message }); return; }
+  try {
+    const result = await getWalletReputation(value.address);
+    res.json({ success: true, data: result });
+  } catch (err: any) { res.status(502).json({ error: 'Failed to fetch wallet data', detail: err.message }); }
+});
+
 export default router;

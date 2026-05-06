@@ -190,4 +190,32 @@ Synthesize these signals and respond ONLY in this JSON format (no markdown):
   }
 });
 
+
+router.post('/', validate(schema), async (req: Request, res: Response): Promise<void> => {
+  const symbol = (req.body.symbol as string).toUpperCase();
+  const predictionQuery = (req.body.predictionQuery as string) || symbol.toLowerCase();
+  try {
+    const [fundingSignal, predictionSignal, priceData] = await Promise.allSettled([
+      getFundingSignal(symbol),
+      getPredictionSignal(predictionQuery),
+      getPriceData(symbol),
+    ]);
+    const funding = fundingSignal.status === 'fulfilled' ? fundingSignal.value : null;
+    const prediction = predictionSignal.status === 'fulfilled' ? predictionSignal.value : null;
+    const price = priceData.status === 'fulfilled' ? priceData.value : null;
+    const combinedScore = combineSignals(funding?.signalScore ?? null, prediction?.actionBias ?? null, price?.priceSignal ?? null);
+    const decision = getDecision(combinedScore);
+    const signalsReceived = [funding, prediction, price].filter(Boolean).length;
+    const avgConfidence = [funding?.confidence, prediction?.confidence].filter((c): c is number => c !== undefined && c !== null);
+    const baseConfidence = avgConfidence.length > 0 ? avgConfidence.reduce((s, c) => s + c, 0) / avgConfidence.length : 0.5;
+    const confidence = Math.round(baseConfidence * (signalsReceived / 3) * 100) / 100;
+    const suggestedSize = getSuggestedSize(combinedScore, confidence);
+    logger.info({ symbol, decision, signalScore: combinedScore, confidence }, 'strategy/decision POST');
+    res.json({ success: true, data: { symbol, decision, confidence, signalScore: combinedScore, suggestedSize, analyzedAt: new Date().toISOString() } });
+  } catch (err: any) {
+    logger.error({ err: err.message, symbol }, 'strategy error POST');
+    res.status(500).json({ error: 'Failed to generate strategy decision', details: err.message });
+  }
+});
+
 export default router;

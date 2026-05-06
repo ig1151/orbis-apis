@@ -25,4 +25,14 @@ router.get('/research', async (req: Request, res: Response) => {
   }
 });
 
+
+router.post('/research', async (req: Request, res: Response) => {
+  const { error, value } = schema.validate(req.body);
+  if (error) { res.status(400).json({ error: 'Validation failed', detail: error.details[0].message }); return; }
+  try {
+    const result = await research(value.query, value.depth);
+    res.json({ success: true, data: result });
+  } catch (err: any) { res.status(502).json({ error: 'Research failed', detail: err.message }); }
+});
+
 export default router;

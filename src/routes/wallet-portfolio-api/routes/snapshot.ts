@@ -133,4 +133,30 @@ router.get('/', validate(schema), async (req: Request, res: Response): Promise<v
   }
 });
 
+
+router.post('/', validate(schema), async (req: Request, res: Response): Promise<void> => {
+  const { address, chain } = req.body as { address: string; chain: string };
+  try {
+    const ethBalance = await getEthBalance(address, chain || 'ethereum');
+    const ethPrice = await getEthPrice();
+    const tokenTxs = await getTokenBalances(address, chain || 'ethereum');
+    const txList = await getTxList(address, chain || 'ethereum', 10);
+    const ethBalanceNum = parseFloat(ethBalance);
+    const ethBalanceUsd = ethPrice ? Math.round(ethBalanceNum * ethPrice) : null;
+    const tokens: any[] = [];
+    for (const token of tokenTxs.slice(0, 8)) {
+      const rawBalance = await getTokenBalance(address, token.contractAddress, chain || 'ethereum');
+      const balance = (parseInt(rawBalance) / Math.pow(10, token.decimals)).toFixed(4);
+      const balanceNum = parseFloat(balance);
+      if (balanceNum <= 0) continue;
+      const priceUsd = await getTokenPriceByContract(token.contractAddress, chain || 'ethereum');
+      const usdValue = priceUsd ? Math.round(balanceNum * priceUsd) : null;
+      tokens.push({ symbol: token.symbol, name: token.name, contractAddress: token.contractAddress, balance, decimals: token.decimals, usdValue, priceUsd, chain: chain || 'ethereum', allocationPercent: 0 });
+    }
+    const totalTokensUsd = tokens.reduce((s, t) => s + (t.usdValue || 0), 0);
+    const totalPortfolioUsd = ethBalanceUsd !== null ? ethBalanceUsd + totalTokensUsd : null;
+    res.json({ success: true, data: { address, chain: chain || 'ethereum', ethBalance, ethBalanceUsd, totalTokensUsd: Math.round(totalTokensUsd), totalPortfolioUsd, tokens, snapshotAt: new Date().toISOString() } });
+  } catch (err: any) { res.status(500).json({ error: 'Failed to fetch wallet snapshot', details: err.message }); }
+});
+
 export default router;
