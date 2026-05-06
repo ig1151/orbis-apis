@@ -1232,7 +1232,7 @@ export const textGenInfoRouter = createApiInfoRouter({
 export const geocodingInfoRouter = createApiInfoRouter({
   name: 'Agent Location Intelligence & Geocoding API', slug: 'geocoding', version: '2.0.0',
   description: 'Full-stack location intelligence for autonomous agents. Geocode, reverse geocode, validate addresses, rank locations, calculate multi-stop routes, normalize addresses, and gate execution before acting on location data. Powered by OpenCage and Mapbox with automatic fallback.',
-  category: 'Location & Geo',
+  category: 'Developer Tools',
   endpoints: [
     { method: 'POST', path: '/geocode', description: 'Convert an address to lat/lng coordinates', params: { address: 'Address string' } },
     { method: 'POST', path: '/reverse', description: 'Convert lat/lng to a human-readable address', params: { lat: 'Latitude', lng: 'Longitude' } },
@@ -1244,5 +1244,6 @@ export const geocodingInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/route-distance', description: 'Calculate total and per-leg distance for a multi-stop route', params: { stops: 'Array of { name, lat, lng }' } },
     { method: 'POST', path: '/normalize-location', description: 'Normalize and parse an address into structured components', params: { address: 'Address string' } },
     { method: 'POST', path: '/execution-gate', description: 'Gate agent execution — validate address confidence before acting', params: { address: 'Address string', intended_action: 'What the agent plans to do', min_confidence: 'Min confidence 0-10 (default 7)', require_deliverable: 'boolean (default true)' } },
+    { method: 'POST', path: '/route-plan', description: 'Plan an optimized multi-stop route with nearest-neighbor optimization, distance matrix, and estimated drive time', params: { stops: 'Array of { name, address or lat/lng, priority }', optimize: 'boolean (default true)', return_to_start: 'boolean (default false)' } },
   ],
 });

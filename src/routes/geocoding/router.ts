@@ -295,4 +295,85 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
   } catch (err: any) { res.status(502).json({ error: 'Execution gate failed', details: err.message }); }
 });
 
+
+// POST /route-plan
+router.post('/route-plan', async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { error, value } = Joi.object({
+    stops: Joi.array().items(Joi.object({
+      name: Joi.string().required(),
+      address: Joi.string().optional(),
+      lat: Joi.number().optional(),
+      lng: Joi.number().optional(),
+      priority: Joi.number().integer().min(1).max(10).default(5),
+    })).min(2).max(10).required(),
+    optimize: Joi.boolean().default(true),
+    return_to_start: Joi.boolean().default(false),
+  }).validate(req.body);
+  if (error) { res.status(400).json({ error: error.details[0].message }); return; }
+
+  try {
+    // Geocode any stops that only have addresses
+    const resolved = await Promise.all(value.stops.map(async (stop: any) => {
+      if (stop.lat !== undefined && stop.lng !== undefined) return stop;
+      if (!stop.address) throw new Error(`Stop "${stop.name}" needs either lat/lng or address`);
+      const geo = await geocode(stop.address);
+      return { ...stop, lat: geo.lat, lng: geo.lng, formatted: geo.formatted };
+    }));
+
+    // Calculate distance matrix
+    let orderedStops = [...resolved];
+    if (value.optimize && resolved.length > 2) {
+      // Nearest neighbor heuristic from first stop
+      const remaining = resolved.slice(1);
+      const ordered = [resolved[0]];
+      while (remaining.length > 0) {
+        const last = ordered[ordered.length - 1];
+        let nearestIdx = 0;
+        let nearestDist = Infinity;
+        remaining.forEach((stop: any, i: number) => {
+          const d = haversine(last.lat, last.lng, stop.lat, stop.lng);
+          if (d < nearestDist) { nearestDist = d; nearestIdx = i; }
+        });
+        ordered.push(remaining.splice(nearestIdx, 1)[0]);
+      }
+      orderedStops = ordered;
+    }
+
+    if (value.return_to_start) orderedStops.push({ ...orderedStops[0], name: `${orderedStops[0].name} (return)` });
+
+    let totalKm = 0;
+    const legs: any[] = [];
+    for (let i = 0; i < orderedStops.length - 1; i++) {
+      const km = haversine(orderedStops[i].lat, orderedStops[i].lng, orderedStops[i+1].lat, orderedStops[i+1].lng);
+      totalKm += km;
+      legs.push({
+        step: i + 1,
+        from: orderedStops[i].name,
+        to: orderedStops[i+1].name,
+        distance_km: Math.round(km * 100) / 100,
+        distance_miles: Math.round(km * 0.621371 * 100) / 100,
+      });
+    }
+
+    res.json({
+      success: true,
+      execution_ready: true,
+      next_api: 'action',
+      next_endpoint: '/action/execute',
+      data: {
+        optimized: value.optimize,
+        total_stops: value.stops.length,
+        total_km: Math.round(totalKm * 100) / 100,
+        total_miles: Math.round(totalKm * 0.621371 * 100) / 100,
+        estimated_drive_hours: Math.round((totalKm / 80) * 10) / 10,
+        route: orderedStops.map((s: any, i: number) => ({ step: i + 1, name: s.name, lat: s.lat, lng: s.lng })),
+        legs,
+      },
+      metadata: { latency_ms: Date.now() - start, estimated_cost: 0.003 },
+    });
+  } catch (err: any) { res.status(502).json({ error: 'Route planning failed', details: err.message }); }
+});
+
+
 export default router;
