@@ -12,18 +12,11 @@ const schemeClient = new ExactEvmScheme(signer);
 const client = x402Client.fromConfig({ schemes: [{ network: "eip155:8453", client: schemeClient }] });
 const fetch402 = wrapFetchWithPayment(fetch, client);
 
-// Use a debug endpoint that echoes headers
-const response = await fetch402("https://orbisapi.com/proxy/image-generation-intelligence-2c054e/generate", {
+const response = await fetch402("https://orbisapi.com/proxy/text-generation-api-8c1608/generate", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ prompt: "a red apple" }),
+  body: JSON.stringify({ prompt: "Say hello in one sentence.", provider: "auto" }),
 });
 
-// Log response headers to see what Orbis sends back
-console.log("Response status:", response.status);
-console.log("Response headers:");
-for (const [k, v] of response.headers.entries()) {
-  console.log(`  ${k}: ${v}`);
-}
 const data = await response.json();
-console.log("Body:", JSON.stringify(data, null, 2));
+console.log(JSON.stringify(data, null, 2));

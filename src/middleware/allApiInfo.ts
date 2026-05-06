@@ -1228,3 +1228,16 @@ export const textGenInfoRouter = createApiInfoRouter({
     { method: 'POST', path: '/generate', description: 'Generate text with AI', params: { prompt: 'Input prompt', provider: 'openai | anthropic | auto', system_prompt: 'Optional system prompt', max_tokens: 'Max tokens (default 1000)', temperature: 'Temperature 0-2 (default 0.7)' } },
   ],
 });
+
+export const geocodingInfoRouter = createApiInfoRouter({
+  name: 'Geocoding API', slug: 'geocoding', version: '1.0.0',
+  description: 'Convert addresses to coordinates, reverse geocode, autocomplete, distance calculations and batch processing. Powered by OpenCage and Mapbox with automatic fallback.',
+  category: 'Location & Geo',
+  endpoints: [
+    { method: 'POST', path: '/geocode', description: 'Convert an address to lat/lng coordinates', params: { address: 'Address string' } },
+    { method: 'POST', path: '/reverse', description: 'Convert lat/lng to a human-readable address', params: { lat: 'Latitude', lng: 'Longitude' } },
+    { method: 'POST', path: '/autocomplete', description: 'Autocomplete a partial address query', params: { q: 'Partial address', limit: 'Max results (default 5)' } },
+    { method: 'POST', path: '/distance', description: 'Calculate distance between two coordinates in km and miles', params: { lat1: 'Lat 1', lng1: 'Lng 1', lat2: 'Lat 2', lng2: 'Lng 2' } },
+    { method: 'POST', path: '/batch', description: 'Geocode up to 10 addresses in one request', params: { addresses: 'Array of address strings' } },
+  ],
+});
