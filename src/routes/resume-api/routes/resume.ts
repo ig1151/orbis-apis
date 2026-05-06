@@ -435,7 +435,9 @@ router.post('/register-webhook', async (req: Request, res: Response) => {
 });
 
 // ── GET /stream ───────────────────────────────────────────────────────────────
-router.get('/stream', async (req: Request, res: Response) => {
+
+// ── GET /stream ───────────────────────────────────────────────────────────────
+router.get('/stream', (req: Request, res: Response) => {
   const { resume_text, target_roles, interval_ms } = req.query as { resume_text?: string; target_roles?: string; interval_ms?: string };
   if (!resume_text || !target_roles) {
     res.status(400).json({ error: 'Provide resume_text and target_roles as query params' });
@@ -448,30 +450,31 @@ router.get('/stream', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.flushHeaders();
 
-  const send = (event: string, data: unknown) => {
+  const write = (event: string, data: unknown) => {
     res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    (res as unknown as { flush?: () => void }).flush?.();
   };
 
-  send('connected', { target_roles: roles, interval_ms: intervalMs, timestamp: new Date().toISOString() });
+  // Fire connected immediately
+  write('connected', { target_roles: roles, interval_ms: intervalMs, timestamp: new Date().toISOString() });
 
   const timer = setInterval(async () => {
     try {
-      const raw = await callClaude(`You are a career monitoring engine. Generate a simulated job market pulse for this candidate and target roles. Return ONLY a valid JSON object with these keys:
+      const raw = await callClaude(`You are a career monitoring engine. Generate a job market pulse for this candidate. Return ONLY a valid JSON object with these keys:
 - new_matches: array of {job_title, company, match_score (0-100), alert_level (high|medium|low), action}
 - market_trend: rising | stable | declining
-- hot_skills: array of strings (skills in demand right now)
+- hot_skills: array of strings
 - recommended_action: string
 - alert_level: high | medium | low
 Target roles: ${roles.join(', ')}
-Resume summary: ${resume_text.slice(0, 1000)}
+Resume: ${resume_text.slice(0, 500)}
 Return only the JSON object:`);
       const data = parseJson(raw);
-      send('pulse', { target_roles: roles, ...data, timestamp: new Date().toISOString() });
+      write('pulse', { target_roles: roles, ...data, timestamp: new Date().toISOString() });
 
-      // Fire registered webhooks if high alert
       for (const entry of jobWebhookStore.values()) {
         if (entry.status === 'active' && entry.target_roles.some(r => roles.includes(r))) {
           if ((data as Record<string, unknown>).alert_level === 'high') {
@@ -485,7 +488,7 @@ Return only the JSON object:`);
         }
       }
     } catch (err) {
-      send('error', { message: 'Pulse failed', timestamp: new Date().toISOString() });
+      write('error', { message: 'Pulse failed', timestamp: new Date().toISOString() });
     }
   }, intervalMs);
 
