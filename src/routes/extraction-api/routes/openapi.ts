@@ -57,6 +57,14 @@ router.get('/', (_req, res) => {
           responses: { 200: { description: 'Ranked opportunities with urgency, effort, value and action' } },
         },
       },
+      '/execution-gate': {
+        post: {
+          summary: 'Determine whether extracted intelligence should trigger an autonomous action',
+          tags: ['Intelligence'],
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string' }, text: { type: 'string' }, context: { type: 'string' }, action_threshold: { type: 'string' } } } } } },
+          responses: { 200: { description: 'execution_ready bool, next_api, next_endpoint, blocking_flags, confidence' } },
+        },
+      },
       '/monitor-topic': {
         post: {
           summary: 'Watch a topic across multiple URLs — returns signals, sentiment, trend and narrative',

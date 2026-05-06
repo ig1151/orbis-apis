@@ -248,3 +248,53 @@ Return only the JSON object:`, 1500);
 });
 
 export default router;
+
+// ── POST /execution-gate ──────────────────────────────────────────────────────
+router.post('/execution-gate', async (req: Request, res: Response) => {
+  const { url, text, action_threshold, context } = req.body;
+  if (!url && !text) { res.status(400).json({ error: 'Provide url or text' }); return; }
+  const start = Date.now();
+  try {
+    const content = text ?? await fetchPageContent(url);
+    const raw = await callClaude(`You are an autonomous agent execution gate. Analyze the content and determine whether it contains sufficient intelligence to trigger an autonomous action.
+${context ? `Context/goal: ${context}` : ''}
+${action_threshold ? `Action threshold: ${action_threshold}` : ''}
+Return ONLY a valid JSON object with these keys:
+- execute: boolean (should the agent proceed with an action?)
+- confidence: number (0-1)
+- alert_level: high | medium | low | none
+- reason: string (why execute is true or false)
+- signals_found: number
+- top_signal: string (the most actionable finding)
+- risk_level: high | medium | low
+- blocking_flags: array of strings (reasons NOT to act, empty if execute is true)
+- next_api: string (recommended next API e.g. "autopilot")
+- next_endpoint: string (recommended next endpoint e.g. "/should-execute")
+- recommended_action: string (specific action for the agent to take)
+
+Content:
+"""
+${content}
+"""
+Return only the JSON object:`);
+    const data = parseJson(raw) as Record<string, unknown>;
+    const estimatedCost = 0.005;
+    res.json({
+      endpoint: 'execution-gate',
+      url: url ?? null,
+      execution_ready: data.execute === true,
+      next_api: data.next_api ?? 'autopilot',
+      next_endpoint: data.next_endpoint ?? '/should-execute',
+      data,
+      metadata: {
+        latency_ms: Date.now() - start,
+        estimated_cost: estimatedCost,
+        timestamp: new Date().toISOString(),
+      },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed';
+    logger.error({ endpoint: 'execution-gate', err }, message);
+    res.status(500).json({ error: message });
+  }
+});
