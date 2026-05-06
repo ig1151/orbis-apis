@@ -53,7 +53,29 @@ router.get('/', (_req, res) => {
     info: {
       title: 'Agent Intelligence Extraction & Monitoring API',
       version: '2.0.0',
-      description: 'Extract structured intelligence from any URL or text. Pull entities, signals, and opportunities. Detect page changes, register monitoring, and gate autonomous agent execution.',
+      description: 'Extract structured intelligence from any URL or text. Pull entities, signals, and opportunities. Detect page changes, register webhooks, stream real-time events, and gate autonomous agent execution.',
+      'x-agent-callable': true,
+      'x-execution-chain': [
+        'extraction/extract-signals',
+        'extraction/detect-change',
+        'extraction/execution-gate',
+        'autopilot/should-execute',
+        'action-api/execute',
+      ],
+      'x-monetization-grade': 'A+',
+      'x-pricing': {
+        '/extract-entities': 0.004,
+        '/extract-signals': 0.005,
+        '/detect-change': 0.004,
+        '/monitor-page': 0.003,
+        '/extract-opportunities': 0.006,
+        '/monitor-topic': 0.007,
+        '/execution-gate': 0.005,
+        '/register-webhook': 0.002,
+        '/monitor-status': 0.001,
+        '/monitor-cancel': 0.001,
+        '/stream': 0.003,
+      },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/extraction', description: 'Production' }],
     paths: {
@@ -67,7 +89,9 @@ router.get('/', (_req, res) => {
         post: {
           summary: 'Extract people, companies, prices, events and locations from any URL or text',
           tags: ['Intelligence'],
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string' }, text: { type: 'string' } } } } } },
+          'x-agent-callable': true,
+          'x-price': 0.004,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string', description: 'URL to fetch and extract from' }, text: { type: 'string', description: 'Raw text to extract from' } } } } } },
           responses: { 200: { description: 'Extracted entities', content: { 'application/json': { schema: {
             type: 'object',
             properties: {
@@ -91,7 +115,9 @@ router.get('/', (_req, res) => {
         post: {
           summary: 'Extract actionable intelligence signals from content',
           tags: ['Intelligence'],
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string' }, text: { type: 'string' }, context: { type: 'string' } } } } } },
+          'x-agent-callable': true,
+          'x-price': 0.005,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string' }, text: { type: 'string' }, context: { type: 'string', description: 'Optional goal context' } } } } } },
           responses: { 200: { description: 'Signals with type, strength, action and alert_level', content: { 'application/json': { schema: {
             type: 'object',
             properties: {
@@ -112,7 +138,9 @@ router.get('/', (_req, res) => {
         post: {
           summary: 'Compare current page state vs cached baseline',
           tags: ['Intelligence'],
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string' }, baseline: { type: 'string' } }, required: ['url'] } } } },
+          'x-agent-callable': true,
+          'x-price': 0.004,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string' }, baseline: { type: 'string', description: 'Optional previous snapshot' } }, required: ['url'] } } } },
           responses: { 200: { description: 'Change detection result', content: { 'application/json': { schema: {
             type: 'object',
             properties: {
@@ -133,18 +161,22 @@ router.get('/', (_req, res) => {
       },
       '/monitor-page': {
         post: {
-          summary: 'Register a URL for monitoring',
+          summary: 'Register a URL for monitoring — captures baseline and defines watch targets',
           tags: ['Intelligence'],
+          'x-agent-callable': true,
+          'x-price': 0.003,
           requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string' }, watch_for: { type: 'string' }, webhook_url: { type: 'string' } }, required: ['url'] } } } },
-          responses: { 200: { description: 'Monitor registered with watch_targets', content: { 'application/json': { schema: intelligenceResponse } } } },
+          responses: { 200: { description: 'Monitor registered with watch_targets and check_frequency_recommendation', content: { 'application/json': { schema: intelligenceResponse } } } },
         },
       },
       '/extract-opportunities': {
         post: {
           summary: 'Surface ranked opportunities from any content',
           tags: ['Intelligence'],
+          'x-agent-callable': true,
+          'x-price': 0.006,
           requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string' }, text: { type: 'string' }, context: { type: 'string' } } } } } },
-          responses: { 200: { description: 'Ranked opportunities', content: { 'application/json': { schema: {
+          responses: { 200: { description: 'Ranked opportunities with urgency, effort, value and action', content: { 'application/json': { schema: {
             type: 'object',
             properties: {
               endpoint: { type: 'string' },
@@ -162,18 +194,101 @@ router.get('/', (_req, res) => {
       },
       '/monitor-topic': {
         post: {
-          summary: 'Watch a topic across multiple URLs',
+          summary: 'Watch a topic across multiple URLs — returns signals, sentiment, trend and narrative',
           tags: ['Intelligence'],
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { topic: { type: 'string' }, urls: { type: 'array', items: { type: 'string' } }, context: { type: 'string' } }, required: ['topic'] } } } },
-          responses: { 200: { description: 'Topic intelligence with sentiment, trend, signals', content: { 'application/json': { schema: intelligenceResponse } } } },
+          'x-agent-callable': true,
+          'x-price': 0.007,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { topic: { type: 'string' }, urls: { type: 'array', items: { type: 'string' }, description: 'Up to 5 URLs' }, context: { type: 'string' } }, required: ['topic'] } } } },
+          responses: { 200: { description: 'Topic intelligence with sentiment, trend, signals and narrative_summary', content: { 'application/json': { schema: intelligenceResponse } } } },
         },
       },
       '/execution-gate': {
         post: {
-          summary: 'Determine whether extracted intelligence should trigger an autonomous action',
+          summary: 'Gate autonomous agent execution based on extracted intelligence',
           tags: ['Intelligence', 'Execution'],
+          'x-agent-callable': true,
+          'x-price': 0.005,
           requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string' }, text: { type: 'string' }, context: { type: 'string' }, action_threshold: { type: 'string' } } } } } },
-          responses: { 200: { description: 'Execution gate decision', content: { 'application/json': { schema: executionGateResponse } } } },
+          responses: { 200: { description: 'Execution gate decision with execute bool, confidence, risk level and next API', content: { 'application/json': { schema: executionGateResponse } } } },
+        },
+      },
+      '/register-webhook': {
+        post: {
+          summary: 'Register a webhook to receive alerts when a monitored URL changes',
+          tags: ['Webhooks'],
+          'x-agent-callable': true,
+          'x-price': 0.002,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string', description: 'URL to monitor' }, webhook_url: { type: 'string', description: 'Endpoint to POST change events to' }, watch_for: { type: 'string', description: 'What to watch for' }, secret: { type: 'string', description: 'Optional signing secret' } }, required: ['url', 'webhook_url'] } } } },
+          responses: { 200: { description: 'Webhook registered with id and baseline captured', content: { 'application/json': { schema: {
+            type: 'object',
+            properties: {
+              endpoint: { type: 'string' },
+              id: { type: 'string' },
+              url: { type: 'string' },
+              webhook_url: { type: 'string' },
+              status: { type: 'string', enum: ['active', 'cancelled'] },
+              baseline_captured: { type: 'boolean' },
+              message: { type: 'string' },
+              latency_ms: { type: 'number' },
+              timestamp: { type: 'string', format: 'date-time' },
+            },
+          } } } } },
+        },
+      },
+      '/monitor-status': {
+        post: {
+          summary: 'Check status of a registered monitor by id or url',
+          tags: ['Webhooks'],
+          'x-agent-callable': true,
+          'x-price': 0.001,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { id: { type: 'string', description: 'Monitor id from register-webhook' }, url: { type: 'string', description: 'URL of the monitor' } } } } } },
+          responses: { 200: { description: 'Monitor status with trigger_count and last_checked', content: { 'application/json': { schema: {
+            type: 'object',
+            properties: {
+              endpoint: { type: 'string' },
+              id: { type: 'string' },
+              url: { type: 'string' },
+              webhook_url: { type: 'string' },
+              status: { type: 'string', enum: ['active', 'cancelled'] },
+              trigger_count: { type: 'number' },
+              created_at: { type: 'string', format: 'date-time' },
+              last_checked: { type: 'string', format: 'date-time', nullable: true },
+              baseline_captured: { type: 'boolean' },
+              timestamp: { type: 'string', format: 'date-time' },
+            },
+          } } } } },
+        },
+      },
+      '/monitor-cancel': {
+        post: {
+          summary: 'Cancel an active monitor by id or url',
+          tags: ['Webhooks'],
+          'x-agent-callable': true,
+          'x-price': 0.001,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { id: { type: 'string' }, url: { type: 'string' } } } } } },
+          responses: { 200: { description: 'Monitor cancelled', content: { 'application/json': { schema: {
+            type: 'object',
+            properties: {
+              endpoint: { type: 'string' },
+              id: { type: 'string' },
+              url: { type: 'string' },
+              status: { type: 'string', enum: ['cancelled'] },
+              timestamp: { type: 'string', format: 'date-time' },
+            },
+          } } } } },
+        },
+      },
+      '/stream': {
+        get: {
+          summary: 'SSE stream — real-time change detection events for a URL',
+          tags: ['Streaming'],
+          'x-agent-callable': true,
+          'x-price': 0.003,
+          parameters: [
+            { name: 'url', in: 'query', required: true, schema: { type: 'string' }, description: 'URL to monitor' },
+            { name: 'interval_ms', in: 'query', required: false, schema: { type: 'number', default: 10000, minimum: 5000 }, description: 'Polling interval in ms (min 5000)' },
+          ],
+          responses: { 200: { description: 'SSE stream. Events: connected | baseline | heartbeat | change | error', content: { 'text/event-stream': { schema: { type: 'string' } } } } },
         },
       },
     },
