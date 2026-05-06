@@ -43,7 +43,7 @@ app.get('/alpha-signal/info', (_req, res) => {
     description: 'Real-time alpha signal engine for autonomous agents. Structured machine-readable outputs built for continuous polling loops, decision engines, and execution pipelines. Designed for 6+ calls per agent cycle: scan → filter → score → explain → detect → rank → act.',
     category: 'Agent Trading Infrastructure',
     loop_type: 'scan_filter_score_rank_execute',
-    monetization_grade: 'A',
+    monetization_grade: 'A+',
     primary_use_case: 'High-frequency autonomous trading signal loops',
     baseUrl: 'https://orbis-apis.onrender.com/alpha-signal',
     website: 'https://orbis-apis.onrender.com',
@@ -242,10 +242,12 @@ app.use('/email-validation', validateRouter);
 import extractionRouter from './routes/extraction-api/routes/extract';
 import intelligenceRouter from './routes/extraction-api/routes/intelligence';
 import resumeRouter from './routes/resume-api/routes/resume';
+import resumeOpenapiRouter from './routes/resume-api/routes/openapi';
 import extractionOpenapiRouter from './routes/extraction-api/routes/openapi';
 app.use('/extraction', extractionRouter);
 app.use('/extraction', intelligenceRouter);
 app.use('/resume', resumeRouter);
+app.use('/resume/openapi.json', resumeOpenapiRouter);
 app.use('/extraction/openapi.json', extractionOpenapiRouter);
 
 // ── Identity Intelligence ─────────────────────────────────────────────────────
@@ -844,6 +846,10 @@ app.get('/resume/info', (_req, res) => {
       '/gap-analysis': 0.005,
       '/cover-letter': 0.006,
       '/execution-gate': 0.005,
+      '/rank-jobs': 0.005,
+      '/application-plan': 0.005,
+      '/monitor-jobs': 0.004,
+      '/register-webhook': 0.002,
     },
     endpoints: [
       { method: 'POST', path: '/analyze-resume', description: 'Full resume analysis: scores, strengths, weaknesses, section feedback, vague phrases.' },
@@ -855,6 +861,10 @@ app.get('/resume/info', (_req, res) => {
       { method: 'POST', path: '/gap-analysis', description: 'Detect skill, experience, education gaps vs job description. Returns priority actions.' },
       { method: 'POST', path: '/cover-letter', description: 'Generate a tailored cover letter from resume and job description.' },
       { method: 'POST', path: '/execution-gate', description: 'Gate autonomous job application. Returns execute bool, blocking flags, and next API.' },
+      { method: 'POST', path: '/rank-jobs', description: 'Rank job postings against candidate resume. Returns ranked list with match scores and recommendations.' },
+      { method: 'POST', path: '/application-plan', description: 'Generate execution-ready application plan with prioritized steps and timeline.' },
+      { method: 'POST', path: '/monitor-jobs', description: 'Monitor target roles and surface matching opportunities with alert levels.' },
+      { method: 'POST', path: '/register-webhook', description: 'Register webhook for job-match and application-readiness events.' },
     ],
     execution_chain: [
       'resume/analyze-resume',
