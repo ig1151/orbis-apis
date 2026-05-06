@@ -471,7 +471,7 @@ app.get('/extraction/info', (_req, res) => {
     ],
   });
 });
-});
+
 app.use('/lead-discovery', leadDiscoveryInfoRouter);
 app.use('/market-intelligence', marketIntelligenceInfoRouter);
 app.use('/market-signal', marketSignalInfoRouter);
