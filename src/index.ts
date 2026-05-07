@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import youtubeIntelligenceRouter from './routes/youtube-intelligence-api/routes/intelligence';
+import youtubeIntelligenceOpenapiRouter from './routes/youtube-intelligence-api/routes/openapi';
 import marketIntelligenceV2Router from './routes/market-data-api-v2/routes/intelligence';
 import marketSignalV2OpenapiRouter from './routes/market-data-api-v2/routes/openapi';
 import phoneOpenapiRouter from './routes/phone-validation-api/routes/openapi.route';
@@ -1212,6 +1214,31 @@ app.get('/market-signal-v2/info', (_req, res) => {
       'action-api/execute',
     ],
   });
+app.use('/youtube-intelligence/openapi.json', youtubeIntelligenceOpenapiRouter);
+app.use('/youtube-intelligence', youtubeIntelligenceRouter);
+app.get('/youtube-intelligence/info', (_req, res) => res.json({
+  name: 'Agent YouTube Intelligence API',
+  slug: 'youtube-intelligence',
+  version: 'v1',
+  status: 'agent',
+  loop_type: 'fetch_summarize_extract_score_gate_act',
+  monetization_grade: 'A',
+  category: 'ai-ml',
+  description: 'YouTube video summarization, entity extraction, channel analysis, action item extraction, content scoring, and execution-gated workflows for autonomous agents.',
+  baseUrl: 'https://orbis-apis.onrender.com/youtube-intelligence',
+  websiteUrl: 'https://orbis-apis.onrender.com',
+  openapi: 'https://orbis-apis.onrender.com/youtube-intelligence/openapi.json',
+  pricing: { '/summarize': 0.004, '/extract-entities': 0.004, '/analyze-channel': 0.005, '/extract-action-items': 0.004, '/score-content': 0.003, '/execution-gate': 0.004 },
+  endpoints: [
+    { method: 'POST', path: '/summarize', description: 'Summarize a YouTube video. Returns topics, audience, content type, action items.' },
+    { method: 'POST', path: '/extract-entities', description: 'Extract people, companies, products, technologies from video.' },
+    { method: 'POST', path: '/analyze-channel', description: 'Analyze a YouTube channel — niche, authority, content strategy.' },
+    { method: 'POST', path: '/extract-action-items', description: 'Extract action items, takeaways, tools, and CRM notes.' },
+    { method: 'POST', path: '/score-content', description: 'Score video content quality, credibility, and research value.' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate autonomous content processing. Returns execute bool, blocking flags, next API.' },
+  ],
+  execution_chain: ['youtube-intelligence/summarize', 'youtube-intelligence/score-content', 'youtube-intelligence/execution-gate', 'autopilot/should-execute'],
+}));
 });
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
