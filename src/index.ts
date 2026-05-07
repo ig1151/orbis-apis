@@ -1214,6 +1214,7 @@ app.get('/market-signal-v2/info', (_req, res) => {
       'action-api/execute',
     ],
   });
+});
 app.use('/youtube-intelligence/openapi.json', youtubeIntelligenceOpenapiRouter);
 app.use('/youtube-intelligence', youtubeIntelligenceRouter);
 app.get('/youtube-intelligence/info', (_req, res) => res.json({
