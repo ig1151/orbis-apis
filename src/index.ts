@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import marketIntelligenceV2Router from './routes/market-data-api-v2/routes/intelligence';
+import marketSignalV2OpenapiRouter from './routes/market-data-api-v2/routes/openapi';
 import phoneOpenapiRouter from './routes/phone-validation-api/routes/openapi.route';
 import { actionRouter, actionTaskTypesRouter } from './routes/action';
 import { nftMetadataInfoRouter, nftTokenRouter, nftCollectionRouter, nftWalletRouter, nftTransfersRouter } from './routes/nft-metadata';
@@ -326,6 +327,7 @@ import marketIntelligenceRouter from './routes/market-intelligence-api/routes/in
 import marketIntelligenceOpenapiRouter from './routes/market-intelligence-api/routes/openapi';
 app.use('/market-intelligence/openapi.json', marketIntelligenceOpenapiRouter);
 app.use('/market-intelligence', marketIntelligenceRouter);
+app.use('/market-signal-v2/openapi.json', marketSignalV2OpenapiRouter);
 app.use('/market-signal-v2', marketIntelligenceV2Router);
 
 // ── Market Signal ─────────────────────────────────────────────────────────────
