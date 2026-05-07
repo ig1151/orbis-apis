@@ -1239,7 +1239,6 @@ app.get('/youtube-intelligence/info', (_req, res) => res.json({
   ],
   execution_chain: ['youtube-intelligence/summarize', 'youtube-intelligence/score-content', 'youtube-intelligence/execution-gate', 'autopilot/should-execute'],
 }));
-});
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
