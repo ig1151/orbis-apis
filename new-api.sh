@@ -1,10 +1,11 @@
 #!/bin/bash
-# Usage: ./new-api.sh <api-name> <description>
-# Example: ./new-api.sh youtube-intelligence "YouTube video summarization and analysis"
+# Usage: ./new-api.sh <api-name> "<description>"
+# Example: ./new-api.sh pdf-extraction "PDF to structured JSON extraction for autonomous agents"
 
 API_NAME=$1
 DESCRIPTION=${2:-"Agent-native $1 API"}
 SLUG=$(echo $API_NAME | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+CAMEL=$(echo $SLUG | sed 's/-\([a-z]\)/\U\1/g')
 DIR="src/routes/${SLUG}-api"
 
 if [ -z "$API_NAME" ]; then
@@ -13,11 +14,9 @@ if [ -z "$API_NAME" ]; then
 fi
 
 echo "🚀 Scaffolding $SLUG..."
-
-# Create directories
 mkdir -p $DIR/routes
 
-# ── logger.ts ────────────────────────────────────────────────────────────────
+# ── logger.ts ─────────────────────────────────────────────────────────────────
 cat > $DIR/logger.ts << EOF
 import pino from 'pino';
 export const logger = pino({ name: '${SLUG}-api' });
@@ -105,7 +104,6 @@ EOF
 cat > $DIR/routes/openapi.ts << EOF
 import { Router } from 'express';
 const router = Router();
-
 router.get('/', (_req, res) => {
   res.json({
     openapi: '3.0.0',
@@ -119,35 +117,59 @@ router.get('/', (_req, res) => {
     servers: [{ url: 'https://orbis-apis.onrender.com/${SLUG}', description: 'Production' }],
     paths: {
       '/analyze': { post: { summary: 'Analyze input and return structured intelligence', tags: ['Intelligence'], 'x-agent-callable': true, requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { input: { type: 'string' }, context: { type: 'string' } }, required: ['input'] } } } }, responses: { 200: { description: 'Structured analysis result' } } } },
-      '/execution-gate': { post: { summary: 'Gate autonomous agent actions', tags: ['Execution'], 'x-agent-callable': true, requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { input: { type: 'string' }, context: { type: 'string' } }, required: ['input'] } } } }, responses: { 200: { description: 'execution_ready, next_api, blocking_flags, confidence' } } } },
+      '/execution-gate': { post: { summary: 'Gate autonomous agent actions', tags: ['Execution'], 'x-agent-callable': true, requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { input: { type: 'string' }, context: { type: 'string' } }, required: ['input'] } } } }, responses: { 200: { description: 'execution_ready, next_api, blocking_flags, metadata' } } } },
     },
   });
 });
-
 export default router;
 EOF
 
-echo "✅ Files created in $DIR"
+# ── Wire into index.ts using Python (no sed multiline issues) ─────────────────
+python3 << PYEOF
+slug = '${SLUG}'
+camel = '${CAMEL}'
+api_name = '${API_NAME}'
+description = '${DESCRIPTION}'
+
+with open('src/index.ts', 'r') as f:
+    content = f.read()
+
+# Add imports at top
+imports = f"import {camel}Router from './{DIR}/routes/intelligence';\nimport {camel}OpenapiRouter from './{DIR}/routes/openapi';\n"
+content = imports + content
+
+# Add routes + info before 404 handler
+new_routes = f"""
+// ── {api_name} ──────────────────────────────────────────────────────────────
+app.use('/{slug}/openapi.json', {camel}OpenapiRouter);
+app.use('/{slug}', {camel}Router);
+app.get('/{slug}/info', (_req, res) => res.json({{
+  name: 'Agent {api_name} API',
+  slug: '{slug}',
+  version: 'v1',
+  status: 'agent',
+  monetization_grade: 'A',
+  category: 'ai-ml',
+  description: '{description}',
+  baseUrl: 'https://orbis-apis.onrender.com/{slug}',
+  websiteUrl: 'https://orbis-apis.onrender.com',
+  openapi: 'https://orbis-apis.onrender.com/{slug}/openapi.json',
+  endpoints: [
+    {{ method: 'POST', path: '/analyze', description: 'Analyze input and return structured intelligence.' }},
+    {{ method: 'POST', path: '/execution-gate', description: 'Gate autonomous agent actions. Returns execute bool, blocking flags, next API.' }},
+  ],
+}}));
+
+"""
+content = content.replace("app.use((_req, res) => {\n  res.status(404)", new_routes + "app.use((_req, res) => {\n  res.status(404)")
+
+with open('src/index.ts', 'w') as f:
+    f.write(content)
+
+print(f"✅ {slug} wired into index.ts")
+PYEOF
+
 echo ""
-echo "📋 Now add to src/index.ts:"
-echo ""
-echo "// Import"
-echo "import ${SLUG//-/}Router from './${DIR}/routes/intelligence';"
-echo "import ${SLUG//-/}OpenapiRouter from './${DIR}/routes/openapi';"
-echo ""
-echo "// Register"
-echo "app.use('/${SLUG}/openapi.json', ${SLUG//-/}OpenapiRouter);"
-echo "app.use('/${SLUG}', ${SLUG//-/}Router);"
-echo ""
-echo "// Info endpoint — add before 404 handler"
-echo "app.get('/${SLUG}/info', (_req, res) => res.json({"
-echo "  name: 'Agent ${API_NAME} API',"
-echo "  slug: '${SLUG}',"
-echo "  version: 'v1',"
-echo "  status: 'agent',"
-echo "  monetization_grade: 'A',"
-echo "  baseUrl: 'https://orbis-apis.onrender.com/${SLUG}',"
-echo "  openapi: 'https://orbis-apis.onrender.com/${SLUG}/openapi.json',"
-echo "}));"
-echo ""
-echo "🎯 Done! Customize routes/intelligence.ts for your specific use case."
+echo "✅ $SLUG scaffolded and wired!"
+echo "📝 Now customize: $DIR/routes/intelligence.ts"
+echo "🔨 Then run: npm run build && git add -A && git commit -m 'feat: add $SLUG API' && git push"

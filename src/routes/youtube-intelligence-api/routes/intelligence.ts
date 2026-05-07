@@ -259,3 +259,56 @@ Return only the JSON object:`) as Record<string, unknown>;
 });
 
 export default router;
+
+// ── POST /analyze-video (one-call workflow) ───────────────────────────────────
+router.post('/analyze-video', async (req: Request, res: Response) => {
+  const { url, context } = req.body;
+  if (!url) { res.status(400).json({ error: 'Provide url (YouTube URL or video ID)' }); return; }
+  const start = Date.now();
+  try {
+    const videoId = extractVideoId(url);
+    const videoData = await fetchTranscript(videoId);
+    const data = await callClaude(`You are a complete YouTube video intelligence engine. Perform a full analysis and return ONLY a valid JSON object with ALL of these keys:
+- title: string
+- channel: string
+- summary: string (3-5 sentences)
+- content_type: string (tutorial|review|news|interview|entertainment|educational|marketing|other)
+- target_audience: string
+- estimated_value: string (high|medium|low)
+- key_topics: array of strings
+- action_items: array of {action, priority (high|medium|low), category}
+- key_takeaways: array of strings
+- tools_mentioned: array of strings
+- entities: object with {people, companies, products, technologies, locations}
+- overall_score: number (0-100)
+- content_grade: string (A+|A|B+|B|C|D)
+- credibility_signals: array of strings
+- red_flags: array of strings
+- use_for_research: boolean
+- sentiment: string (positive|neutral|negative|mixed)
+- crm_note: string (1-2 sentence CRM-ready note)
+- tags: array of strings
+- safety: object with {copyright_risk (high|medium|low), content_safe boolean, age_restricted boolean, transcript_likely_available boolean}
+- execute: boolean (should agent process this content?)
+- blocking_flags: array of strings
+- recommended_action: string
+${context ? `Context/goal: ${context}` : ''}
+Video data: ${videoData}
+Return only the JSON object:`, 2000);
+    const d = data as Record<string, unknown>;
+    res.json({
+      endpoint: 'analyze-video',
+      video_id: videoId,
+      url,
+      execution_ready: d.execute === true,
+      next_api: 'autopilot',
+      next_endpoint: '/should-execute',
+      data,
+      metadata: { latency_ms: Date.now() - start, estimated_cost: 0.008, timestamp: new Date().toISOString() },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed';
+    logger.error({ endpoint: 'analyze-video', err }, message);
+    res.status(500).json({ error: message });
+  }
+});
