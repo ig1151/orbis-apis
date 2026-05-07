@@ -1,3 +1,5 @@
+import leadScoringRouter from './routes/lead-scoring-api/routes/intelligence';
+import leadScoringOpenapiRouter from './routes/lead-scoring-api/routes/openapi';
 import emailIntelligenceRouter from './routes/email-intelligence-api/routes/intelligence';
 import emailIntelligenceOpenapiRouter from './routes/email-intelligence-api/routes/openapi';
 import pdfExtractionRouter from './routes/pdf-extraction-api/routes/intelligence';
@@ -1412,6 +1414,80 @@ app.get('/email-intelligence/info', (_req, res) => res.json({
     'email-intelligence/execution-gate',
     'autopilot/should-execute',
     'action-api/send-email',
+  ],
+}));
+
+
+// ── lead-scoring ──────────────────────────────────────────────────────────────
+app.use('/lead-scoring/openapi.json', leadScoringOpenapiRouter);
+app.use('/lead-scoring', leadScoringRouter);
+app.get('/lead-scoring/info', (_req, res) => res.json({
+  name: 'Agent lead-scoring API',
+  slug: 'lead-scoring',
+  version: 'v1',
+  status: 'agent',
+  monetization_grade: 'A',
+  mcp_compatible: true,
+  category: 'ai-ml',
+  description: 'AI-powered lead scoring, qualification, fitness grading and sales intelligence for autonomous agents',
+  baseUrl: 'https://orbis-apis.onrender.com/lead-scoring',
+  websiteUrl: 'https://orbis-apis.onrender.com',
+  openapi: 'https://orbis-apis.onrender.com/lead-scoring/openapi.json',
+  uptime: '99.9%',
+  avg_latency_ms: 3000,
+  rate_limits: { free: '100 req/day', builder: '50000 req/day', execution: '250000 req/day' },
+  pricing: {
+    '/analyze': 0.004,
+    '/analyze-lead-scoring': 0.008,
+    '/execution-gate': 0.004,
+  },
+  endpoints: [
+    { method: 'POST', path: '/analyze', description: 'Analyze input and return structured intelligence.' },
+    { method: 'POST', path: '/analyze-lead-scoring', description: 'ONE-CALL: Complete lead-scoring intelligence — analyze + score + gate in one request.', x_one_call: true },
+    { method: 'POST', path: '/execution-gate', description: 'Gate autonomous agent actions. Returns execute bool, blocking flags, next API.' },
+  ],
+  execution_chain: [
+    'lead-scoring/analyze-lead-scoring',
+    'lead-scoring/execution-gate',
+    'autopilot/should-execute',
+    'action-api/execute',
+  ],
+}));
+
+
+// ── lead-scoring ──────────────────────────────────────────────────────────────
+app.use('/lead-scoring/openapi.json', leadScoringOpenapiRouter);
+app.use('/lead-scoring', leadScoringRouter);
+app.get('/lead-scoring/info', (_req, res) => res.json({
+  name: 'Agent lead-scoring API',
+  slug: 'lead-scoring',
+  version: 'v1',
+  status: 'agent',
+  monetization_grade: 'A',
+  mcp_compatible: true,
+  category: 'ai-ml',
+  description: 'AI-powered lead scoring, qualification, fitness grading and sales intelligence for autonomous agents',
+  baseUrl: 'https://orbis-apis.onrender.com/lead-scoring',
+  websiteUrl: 'https://orbis-apis.onrender.com',
+  openapi: 'https://orbis-apis.onrender.com/lead-scoring/openapi.json',
+  uptime: '99.9%',
+  avg_latency_ms: 3000,
+  rate_limits: { free: '100 req/day', builder: '50000 req/day', execution: '250000 req/day' },
+  pricing: {
+    '/analyze': 0.004,
+    '/analyze-lead-scoring': 0.008,
+    '/execution-gate': 0.004,
+  },
+  endpoints: [
+    { method: 'POST', path: '/analyze', description: 'Analyze input and return structured intelligence.' },
+    { method: 'POST', path: '/analyze-lead-scoring', description: 'ONE-CALL: Complete lead-scoring intelligence — analyze + score + gate in one request.', x_one_call: true },
+    { method: 'POST', path: '/execution-gate', description: 'Gate autonomous agent actions. Returns execute bool, blocking flags, next API.' },
+  ],
+  execution_chain: [
+    'lead-scoring/analyze-lead-scoring',
+    'lead-scoring/execution-gate',
+    'autopilot/should-execute',
+    'action-api/execute',
   ],
 }));
 
