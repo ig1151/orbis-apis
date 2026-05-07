@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import marketIntelligenceV2Router from './routes/market-data-api-v2/routes/intelligence';
 import phoneOpenapiRouter from './routes/phone-validation-api/routes/openapi.route';
 import { actionRouter, actionTaskTypesRouter } from './routes/action';
 import { nftMetadataInfoRouter, nftTokenRouter, nftCollectionRouter, nftWalletRouter, nftTransfersRouter } from './routes/nft-metadata';
@@ -325,6 +326,7 @@ import marketIntelligenceRouter from './routes/market-intelligence-api/routes/in
 import marketIntelligenceOpenapiRouter from './routes/market-intelligence-api/routes/openapi';
 app.use('/market-intelligence/openapi.json', marketIntelligenceOpenapiRouter);
 app.use('/market-intelligence', marketIntelligenceRouter);
+app.use('/market-signal-v2', marketIntelligenceV2Router);
 
 // ── Market Signal ─────────────────────────────────────────────────────────────
 import marketSignalRouter from './routes/market-signal-api/routes/signal';
@@ -1163,6 +1165,52 @@ app.get("/info", (_req, res) => {
   });
 });
 
+app.get('/market-signal-v2/info', (_req, res) => {
+  res.json({
+    name: 'Agent Market Signal & Portfolio Intelligence API',
+    slug: 'market-signal-v2',
+    version: 'v2',
+    status: 'agent',
+    loop_type: 'quote_score_detect_rank_risk_monitor_stream_gate_act',
+    monetization_grade: 'A+',
+    category: 'ai-ml',
+    description: 'Real-time stock market intelligence for autonomous agents. Score tickers, detect market events, rank watchlists, analyze portfolio risk, monitor positions, stream live prices, and gate autonomous trading actions.',
+    baseUrl: 'https://orbis-apis.onrender.com/market-signal-v2',
+    websiteUrl: 'https://orbis-apis.onrender.com',
+    openapi: 'https://orbis-apis.onrender.com/market-signal-v2/openapi.json',
+    pricing: {
+      '/score-ticker': 0.004,
+      '/detect-market-event': 0.004,
+      '/rank-watchlist': 0.005,
+      '/portfolio-risk': 0.006,
+      '/monitor-watchlist': 0.004,
+      '/execution-gate': 0.005,
+      '/register-webhook': 0.002,
+      '/stream': 0.003,
+      '/monitor-status': 0.001,
+      '/monitor-cancel': 0.001,
+    },
+    endpoints: [
+      { method: 'POST', path: '/score-ticker', description: 'Score a ticker for signal strength, momentum, volatility and recommended action.' },
+      { method: 'POST', path: '/detect-market-event', description: 'Detect market events: gap up/down, volume spike, breakout, breakdown, reversal.' },
+      { method: 'POST', path: '/rank-watchlist', description: 'Rank watchlist tickers by signal strength. Returns top pick and avoid.' },
+      { method: 'POST', path: '/portfolio-risk', description: 'Analyze portfolio risk, concentration, PnL, and recommended actions.' },
+      { method: 'POST', path: '/monitor-watchlist', description: 'Monitor watchlist for price alerts and surface movers.' },
+      { method: 'POST', path: '/execution-gate', description: 'Gate autonomous trading actions. Returns execute bool, blocking flags, next API.' },
+      { method: 'POST', path: '/register-webhook', description: 'Register webhook for price alerts when tickers move beyond threshold.' },
+      { method: 'GET',  path: '/stream', description: 'SSE stream — real-time price pulses and webhook firing on big moves.' },
+      { method: 'POST', path: '/monitor-status', description: 'Check status of a registered monitor.' },
+      { method: 'POST', path: '/monitor-cancel', description: 'Cancel an active monitor.' },
+    ],
+    execution_chain: [
+      'market-signal-v2/score-ticker',
+      'market-signal-v2/detect-market-event',
+      'market-signal-v2/execution-gate',
+      'autopilot/should-execute',
+      'action-api/execute',
+    ],
+  });
+});
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
