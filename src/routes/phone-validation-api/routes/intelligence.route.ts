@@ -65,25 +65,24 @@ intelligenceRouter.post('/risk-check', async (req: Request, res: Response) => {
   const start = Date.now();
   try {
     const result = await validatePhone({ phone, country_code } as ValidateRequest);
-    const aiData = await callClaude(`You are a phone fraud and risk detection engine. Analyze this phone number for fraud signals and return ONLY a valid JSON object with these keys:
-- fraud_score: number (0-100)
-- risk_level: critical | high | medium | low
-- fraud_signals: array of strings
-- is_burner: boolean
-- is_spoofed_likely: boolean
-- allow: boolean (should this number be allowed?)
-- block_reason: string or null
-- recommended_action: allow | flag | block | verify
-${context ? `Context: ${context}` : ''}
-Phone data: ${JSON.stringify({ valid: result.valid, line_type: result.line_type, country: result.country, risk: result.risk, formatted: result.formatted })}
-Return only the JSON object:`);
+    const r = result.risk;
+    const fraud_analysis = {
+      fraud_score: r.score,
+      risk_level: r.level,
+      fraud_signals: r.factors,
+      is_burner: r.is_disposable,
+      is_spoofed_likely: r.is_likely_fake,
+      allow: r.level !== 'critical' && r.score < 70,
+      block_reason: r.score >= 70 ? r.factors[0] : null,
+      recommended_action: r.score >= 80 ? 'block' : r.score >= 50 ? 'verify' : r.score >= 20 ? 'flag' : 'allow',
+    };
     res.json({
       endpoint: 'risk-check',
       phone: result.formatted.e164 || phone,
       valid: result.valid,
       line_type: result.line_type,
       risk: result.risk,
-      fraud_analysis: aiData,
+      fraud_analysis,
       latency_ms: Date.now() - start,
       timestamp: new Date().toISOString(),
     });
@@ -91,7 +90,6 @@ Return only the JSON object:`);
     res.status(500).json({ error: err instanceof Error ? err.message : 'Failed' });
   }
 });
-
 // ── POST /normalize-contact ───────────────────────────────────────────────────
 intelligenceRouter.post('/normalize-contact', async (req: Request, res: Response) => {
   const { phone, name, email, country_code } = req.body;
