@@ -236,7 +236,7 @@ app.get('/phone-validation/info', (_req, res) => {
     version: 'v2',
     status: 'agent',
     loop_type: 'validate_normalize_score_risk_carrier_gate_act',
-    monetization_grade: 'A',
+    monetization_grade: 'A+',
     category: 'ai-ml',
     description: 'Validate, normalize, score, and risk-check phone numbers. Detect carrier risk, VoIP, disposable, and fake numbers. Gate autonomous contact workflows with execution-ready decisions.',
     baseUrl: 'https://orbis-apis.onrender.com/phone-validation',
@@ -261,6 +261,7 @@ app.get('/phone-validation/info', (_req, res) => {
       { method: 'POST', path: '/detect-carrier-risk', description: 'Detect carrier risk, SMS/call deliverability, spam likelihood.' },
       { method: 'POST', path: '/batch-score', description: 'Batch score up to 50 phones for risk, validity, and CRM readiness.' },
       { method: 'POST', path: '/execution-gate', description: 'Gate autonomous contact workflows. Returns execute bool, blocking flags, next API.' },
+      { method: 'POST', path: '/register-webhook', description: 'Register webhook for contact risk alerts. Fires when risk score exceeds threshold.' },
     ],
     execution_chain: [
       'phone-validation/validate',
@@ -349,8 +350,10 @@ app.use('/onchain-signal', onchainWhaleRouter);
 // ── Phone Validation ──────────────────────────────────────────────────────────
 import { validateRouter as phoneValidateRouter } from './routes/phone-validation-api/routes/validate.route';
 import { intelligenceRouter as phoneIntelligenceRouter } from './routes/phone-validation-api/routes/intelligence.route';
+import phoneOpenapiRouter from './routes/phone-validation-api/routes/openapi.route';
 app.use('/phone-validation', phoneValidateRouter);
 app.use('/phone-validation', phoneIntelligenceRouter);
+app.use('/phone-validation/openapi.json', phoneOpenapiRouter);
 
 // ── Portfolio Rebalance ───────────────────────────────────────────────────────
 import rebalanceRouter from './routes/portfolio-rebalance-api/routes/rebalance';

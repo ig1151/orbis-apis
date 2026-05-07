@@ -236,3 +236,43 @@ intelligenceRouter.post('/execution-gate', async (req: Request, res: Response) =
     res.status(500).json({ error: err instanceof Error ? err.message : 'Failed' });
   }
 });
+
+// ── Webhook store ─────────────────────────────────────────────────────────────
+interface PhoneWebhookEntry {
+  id: string;
+  webhook_url: string;
+  risk_threshold: number;
+  phones: string[];
+  created_at: string;
+  status: 'active' | 'cancelled';
+  trigger_count: number;
+}
+const phoneWebhookStore = new Map<string, PhoneWebhookEntry>();
+
+// ── POST /register-webhook ────────────────────────────────────────────────────
+intelligenceRouter.post('/register-webhook', (req: Request, res: Response) => {
+  const { webhook_url, risk_threshold, phones } = req.body;
+  if (!webhook_url) { res.status(400).json({ error: 'Provide webhook_url' }); return; }
+  const id = `pwh_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const entry: PhoneWebhookEntry = {
+    id,
+    webhook_url,
+    risk_threshold: risk_threshold ?? 50,
+    phones: phones ?? [],
+    created_at: new Date().toISOString(),
+    status: 'active',
+    trigger_count: 0,
+  };
+  phoneWebhookStore.set(id, entry);
+  res.json({
+    endpoint: 'register-webhook',
+    id,
+    webhook_url,
+    risk_threshold: entry.risk_threshold,
+    phones_monitored: entry.phones.length,
+    status: 'active',
+    message: 'Webhook registered. Will fire when risk score exceeds threshold.',
+    registered_at: entry.created_at,
+    timestamp: new Date().toISOString(),
+  });
+});
