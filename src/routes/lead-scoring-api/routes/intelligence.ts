@@ -161,27 +161,51 @@ router.post('/score-batch', async (req: Request, res: Response) => {
 });
 
 router.post('/execution-gate', async (req: Request, res: Response) => {
-  const { lead_score, qualification_status, intent_score, icp_fit_score } = req.body;
+  const { lead_score, qualification_status, intent_score, icp_fit_score, has_email, confidence_score, do_not_contact } = req.body;
   const score = lead_score || 0;
   const intent = intent_score || 0;
   const icp = icp_fit_score || 0;
+  const confidence = confidence_score || 0;
   const status = qualification_status || 'unknown';
   const blocking_flags: string[] = [];
   if (score < 40) blocking_flags.push('lead_score_too_low');
   if (status === 'disqualified') blocking_flags.push('lead_disqualified');
   if (intent < 30) blocking_flags.push('insufficient_intent_signals');
+  if (icp < 40) blocking_flags.push('not_icp_fit');
+  if (has_email === false) blocking_flags.push('missing_email');
+  if (confidence > 0 && confidence < 40) blocking_flags.push('low_confidence');
+  if (do_not_contact === true) blocking_flags.push('do_not_contact');
+  if (score >= 40 && confidence > 0 && confidence < 50) blocking_flags.push('requires_human_review');
   const execution_ready = blocking_flags.length === 0 && score >= 40;
+  const next_apis = execution_ready ? {
+    primary: { api: 'cold-outreach', endpoint: '/cold-outreach/generate-sequence' },
+    optional: [
+      { api: 'email-intelligence', endpoint: '/email-intelligence/validate' },
+      { api: 'crm-update', endpoint: '/crm-update/upsert-lead' },
+      { api: 'calendar-scheduling', endpoint: '/calendar-scheduling/find-slot' }
+    ]
+  } : null;
   res.json({
     execution_ready,
     lead_score: score,
     qualification_status: status,
     blocking_flags,
-    next_api: execution_ready ? 'cold-outreach' : null,
-    next_endpoint: execution_ready ? '/cold-outreach/generate-sequence' : null,
+    blocking_flag_definitions: {
+      lead_score_too_low: 'Score below 40 threshold for outreach',
+      lead_disqualified: 'Lead marked as disqualified',
+      insufficient_intent_signals: 'Intent score below 30',
+      not_icp_fit: 'ICP fit score below 40',
+      missing_email: 'No email address available for outreach',
+      low_confidence: 'Confidence score below 40 — enrichment recommended',
+      do_not_contact: 'Lead is on do-not-contact list',
+      requires_human_review: 'Borderline score requires human decision'
+    },
+    next_apis,
     recommended_action: execution_ready ? (score >= 80 ? 'immediate_outreach' : 'nurture_then_outreach') : 'disqualify_or_recycle',
     metadata: {
       composite_score: Math.round((score + intent + icp) / 3),
       pipeline_stage: score >= 80 ? 'sales_ready' : score >= 60 ? 'marketing_qualified' : 'early_stage',
+      privacy: { data_stored: false, retention: 'none', crm_data_logged: false },
       evaluated_at: new Date().toISOString()
     }
   });
