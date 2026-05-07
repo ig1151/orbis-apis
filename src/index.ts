@@ -1285,6 +1285,7 @@ app.get('/pdf-extraction/info', (_req, res) => res.json({
     '/extract-custom': 0.005,
     '/classify-document': 0.002,
     '/execution-gate': 0.004,
+    '/analyze-document': 0.008,
   },
   endpoints: [
     { method: 'POST', path: '/extract-invoice', description: 'Extract invoice data: vendor, client, line items, totals, payment terms.' },
@@ -1294,6 +1295,7 @@ app.get('/pdf-extraction/info', (_req, res) => res.json({
     { method: 'POST', path: '/extract-custom', description: 'Extract any fields using a custom schema definition.' },
     { method: 'POST', path: '/classify-document', description: 'Classify document type and recommend the right extractor.' },
     { method: 'POST', path: '/execution-gate', description: 'Gate autonomous document processing. Returns execute bool, PII detection, data quality, next API.' },
+    { method: 'POST', path: '/analyze-document', description: 'ONE-CALL: Full document intelligence — classify + extract + gate in one request.', agent_use_case: 'Any agent needing complete document intelligence in one API call' },
   ],
   execution_chain: [
     'pdf-extraction/classify-document',
@@ -1337,6 +1339,7 @@ app.get('/pdf-extraction/info', (_req, res) => res.json({
     { method: 'POST', path: '/extract-custom', description: 'Extract any fields using a custom schema definition.' },
     { method: 'POST', path: '/classify-document', description: 'Classify document type and recommend the right extractor.' },
     { method: 'POST', path: '/execution-gate', description: 'Gate autonomous document processing. Returns execute bool, PII detection, data quality, next API.' },
+    { method: 'POST', path: '/analyze-document', description: 'ONE-CALL: Full document intelligence — classify + extract + gate in one request.', agent_use_case: 'Any agent needing complete document intelligence in one API call' },
   ],
   execution_chain: [
     'pdf-extraction/classify-document',

@@ -198,3 +198,49 @@ Return only the JSON object:`) as Record<string, unknown>;
 });
 
 export default router;
+
+// ── POST /analyze-document (one-call workflow) ────────────────────────────────
+router.post('/analyze-document', async (req: Request, res: Response) => {
+  const { text, context } = req.body;
+  if (!text) { res.status(400).json({ error: 'Provide text' }); return; }
+  const start = Date.now();
+  try {
+    const data = await callClaude(`You are a complete document intelligence engine. Perform a full analysis of this document and return ONLY a valid JSON object with ALL of these keys:
+- document_type: string (invoice|contract|receipt|resume|report|letter|form|proposal|agreement|other)
+- sub_type: string
+- confidence: number (0-1)
+- language: string
+- summary: string (2-3 sentences)
+- key_entities: array of strings
+- pii_detected: boolean
+- financial_data_detected: boolean
+- has_tables: boolean
+- is_scanned: boolean
+- extracted_data: object (all relevant fields based on document type)
+- risk_flags: array of strings
+- missing_fields: array of strings
+- data_quality: string (high|medium|low)
+- recommended_next_action: string
+- execute: boolean (should agent process this document?)
+- blocking_flags: array of strings
+- next_api: string
+- next_endpoint: string
+${context ? `Context/goal: ${context}` : ''}
+Document text:
+"""${text.slice(0, 8000)}"""
+Return only the JSON object:`, 2000) as Record<string, unknown>;
+
+    res.json({
+      endpoint: 'analyze-document',
+      execution_ready: data.execute === true,
+      next_api: data.next_api ?? 'autopilot',
+      next_endpoint: data.next_endpoint ?? '/should-execute',
+      data,
+      metadata: { latency_ms: Date.now() - start, estimated_cost: 0.008, timestamp: new Date().toISOString() },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed';
+    logger.error({ endpoint: 'analyze-document', err }, message);
+    res.status(500).json({ error: message });
+  }
+});
