@@ -1,7 +1,5 @@
-import pdfExtractionRouter from './src/routes/pdf-extraction-api/routes/intelligence';
-import pdfExtractionOpenapiRouter from './src/routes/pdf-extraction-api/routes/openapi';
-import pdfExtractionRouter from './src/routes/pdf-extraction-api/routes/intelligence';
-import pdfExtractionOpenapiRouter from './src/routes/pdf-extraction-api/routes/openapi';
+import pdfExtractionRouter from './routes/pdf-extraction-api/routes/intelligence';
+import pdfExtractionOpenapiRouter from './routes/pdf-extraction-api/routes/openapi';
 import 'dotenv/config';
 import youtubeIntelligenceRouter from './routes/youtube-intelligence-api/routes/intelligence';
 import youtubeIntelligenceOpenapiRouter from './routes/youtube-intelligence-api/routes/openapi';
@@ -1308,7 +1306,6 @@ app.get('/pdf-extraction/info', (_req, res) => res.json({
 
 
 // ── PDF Extraction ──────────────────────────────────────────────────────────────
-app.use('/pdf-extraction/openapi.json', pdfExtractionOpenapiRouter);
 app.use('/pdf-extraction', pdfExtractionRouter);
 app.get('/pdf-extraction/info', (_req, res) => res.json({
   name: 'Agent PDF Extraction API',
