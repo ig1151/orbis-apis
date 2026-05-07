@@ -122,7 +122,7 @@ router.post('/rank-watchlist', async (req: Request, res: Response) => {
     const symbols = tickers.slice(0, 20).join(',');
     const d = await twelveGet(`/quote?symbol=${symbols}`);
     const entries = tickers.length === 1 ? [[tickers[0], d]] : Object.entries(d);
-    const quotes = entries.filter(([, v]: [string, unknown]) => v && !(v as Record<string, unknown>).code).map(([, v]: [string, unknown]) => v);
+    const quotes = entries.filter((e: any) => e[1] && !e[1].code).map((e: any) => e[1]);
     const data = await callClaude(`You are a watchlist ranking engine. Rank these stocks by signal strength and return ONLY a valid JSON object with these keys:
 - ranked: array of {rank, ticker, name, price, changePct, signal_score (0-100), momentum, recommendation (buy|hold|sell|watch), reason}
 - top_pick: string (ticker of best opportunity)
@@ -187,7 +187,7 @@ router.post('/monitor-watchlist', async (req: Request, res: Response) => {
     const symbols = tickers.slice(0, 20).join(',');
     const d = await twelveGet(`/quote?symbol=${symbols}`);
     const entries = tickers.length === 1 ? [[tickers[0], d]] : Object.entries(d);
-    const quotes = entries.filter(([, v]: [string, unknown]) => v && !(v as Record<string, unknown>).code).map(([, v]: [string, unknown]) => v);
+    const quotes = entries.filter((e: any) => e[1] && !e[1].code).map((e: any) => e[1]);
     const threshold = alert_threshold ?? 2;
     const data = await callClaude(`You are a watchlist monitoring engine. Monitor these stocks and surface alerts. Return ONLY a valid JSON object with these keys:
 - alerts: array of {ticker, alert_type, severity (high|medium|low), message, action}
@@ -297,7 +297,7 @@ router.get('/stream', (req: Request, res: Response) => {
       const symbolStr = symbols.join(',');
       const d = await twelveGet(`/quote?symbol=${symbolStr}`);
       const entries = symbols.length === 1 ? [[symbols[0], d]] : Object.entries(d);
-      const quotes = entries.filter(([, v]: [string, unknown]) => v && !(v as Record<string, unknown>).code).map(([, v]: [string, unknown]) => {
+      const quotes = entries.filter((e: any) => e[1] && !e[1].code).map((e: any) => { const v = e[1] as Record<string, unknown>;
         const q = v as Record<string, unknown>;
         return { ticker: q.symbol, price: parseFloat(q.close as string), change: parseFloat(q.change as string), changePct: q.percent_change, isMarketOpen: q.is_market_open };
       });
@@ -306,7 +306,7 @@ router.get('/stream', (req: Request, res: Response) => {
       // Fire webhooks on big moves
       for (const entry of webhookStore.values()) {
         if (entry.status !== 'active') continue;
-        const triggered = quotes.filter(q => entry.tickers.includes(q.ticker) && Math.abs(parseFloat(q.changePct as string)) >= entry.alert_threshold);
+        const triggered = quotes.filter(q => entry.tickers.includes(q.ticker as string) && Math.abs(parseFloat(String(q.changePct ?? 0))) >= entry.alert_threshold);
         if (triggered.length > 0) {
           entry.trigger_count++;
           fetch(entry.webhook_url, {
