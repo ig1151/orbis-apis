@@ -45,8 +45,14 @@ async function callClaude(prompt: string, maxTokens = 1200): Promise<Record<stri
   });
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as { choices: { message: { content: string } }[] };
-  try { return JSON.parse(data.choices[0].message.content ?? '{}'); }
-  catch { return {}; }
+  try {
+    const raw = data.choices[0].message.content ?? '{}';
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    return JSON.parse(cleaned);
+  } catch (e) {
+    console.error('Claude parse error:', data.choices[0].message.content?.slice(0, 200));
+    return { raw: data.choices[0].message.content };
+  }
 }
 
 // ── Webhook store ─────────────────────────────────────────────────────────────
