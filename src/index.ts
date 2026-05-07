@@ -1,5 +1,5 @@
-import emailIntelligenceRouter from './src/routes/email-intelligence-api/routes/intelligence';
-import emailIntelligenceOpenapiRouter from './src/routes/email-intelligence-api/routes/openapi';
+import emailIntelligenceRouter from './routes/email-intelligence-api/routes/intelligence';
+import emailIntelligenceOpenapiRouter from './routes/email-intelligence-api/routes/openapi';
 import pdfExtractionRouter from './routes/pdf-extraction-api/routes/intelligence';
 import pdfExtractionOpenapiRouter from './routes/pdf-extraction-api/routes/openapi';
 import 'dotenv/config';
