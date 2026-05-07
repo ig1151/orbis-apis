@@ -230,7 +230,7 @@ dir_path = '${DIR}'
 with open('src/index.ts', 'r') as f:
     content = f.read()
 
-imports = f"import {camel}Router from './{dir_path}/routes/intelligence';\nimport {camel}OpenapiRouter from './{dir_path}/routes/openapi';\n"
+imports = f"import {camel}Router from './{dir_path.replace("src/", "")}/routes/intelligence';\nimport {camel}OpenapiRouter from './{dir_path.replace("src/", "")}/routes/openapi';\n"
 content = imports + content
 
 new_routes = f"""
