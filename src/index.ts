@@ -228,6 +228,7 @@ app.use('/document-intelligence', extractRouter);
 
 // ── Email Validation ──────────────────────────────────────────────────────────
 app.use('/email-validation', emailValidationInfoRouter);
+app.use('/phone-validation/openapi.json', phoneOpenapiRouter);
 app.use('/phone-validation', phoneValidationInfoRouter);
 app.get('/phone-validation/info', (_req, res) => {
   res.json({
@@ -353,7 +354,6 @@ import { intelligenceRouter as phoneIntelligenceRouter } from './routes/phone-va
 import phoneOpenapiRouter from './routes/phone-validation-api/routes/openapi.route';
 app.use('/phone-validation', phoneValidateRouter);
 app.use('/phone-validation', phoneIntelligenceRouter);
-app.use('/phone-validation/openapi.json', phoneOpenapiRouter);
 
 // ── Portfolio Rebalance ───────────────────────────────────────────────────────
 import rebalanceRouter from './routes/portfolio-rebalance-api/routes/rebalance';
