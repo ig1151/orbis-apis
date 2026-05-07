@@ -1,3 +1,7 @@
+import pdfExtractionRouter from './src/routes/pdf-extraction-api/routes/intelligence';
+import pdfExtractionOpenapiRouter from './src/routes/pdf-extraction-api/routes/openapi';
+import pdfExtractionRouter from './src/routes/pdf-extraction-api/routes/intelligence';
+import pdfExtractionOpenapiRouter from './src/routes/pdf-extraction-api/routes/openapi';
 import 'dotenv/config';
 import youtubeIntelligenceRouter from './routes/youtube-intelligence-api/routes/intelligence';
 import youtubeIntelligenceOpenapiRouter from './routes/youtube-intelligence-api/routes/openapi';
@@ -1258,6 +1262,94 @@ app.get('/youtube-intelligence/info', (_req, res) => res.json({
     'action-api/execute',
   ],
 }))
+
+// ── PDF Extraction ──────────────────────────────────────────────────────────────
+app.use('/pdf-extraction/openapi.json', pdfExtractionOpenapiRouter);
+app.use('/pdf-extraction', pdfExtractionRouter);
+app.get('/pdf-extraction/info', (_req, res) => res.json({
+  name: 'Agent PDF Extraction API',
+  slug: 'pdf-extraction',
+  version: 'v1',
+  status: 'agent',
+  loop_type: 'classify_extract_validate_gate_act',
+  monetization_grade: 'A+',
+  category: 'ai-ml',
+  mcp_compatible: true,
+  description: 'PDF to structured JSON extraction for invoices, contracts, receipts, resumes and custom documents. Built for autonomous document processing agents, accounting automation, legal intelligence, and CRM enrichment workflows.',
+  baseUrl: 'https://orbis-apis.onrender.com/pdf-extraction',
+  websiteUrl: 'https://orbis-apis.onrender.com',
+  openapi: 'https://orbis-apis.onrender.com/pdf-extraction/openapi.json',
+  pricing: {
+    '/extract-invoice': 0.005,
+    '/extract-contract': 0.006,
+    '/extract-receipt': 0.003,
+    '/extract-resume': 0.004,
+    '/extract-custom': 0.005,
+    '/classify-document': 0.002,
+    '/execution-gate': 0.004,
+  },
+  endpoints: [
+    { method: 'POST', path: '/extract-invoice', description: 'Extract invoice data: vendor, client, line items, totals, payment terms.' },
+    { method: 'POST', path: '/extract-contract', description: 'Extract contract key terms: parties, dates, obligations, risk flags.' },
+    { method: 'POST', path: '/extract-receipt', description: 'Extract receipt data: merchant, items, totals, payment method, category.' },
+    { method: 'POST', path: '/extract-resume', description: 'Extract resume: experience, skills, education, seniority level.' },
+    { method: 'POST', path: '/extract-custom', description: 'Extract any fields using a custom schema definition.' },
+    { method: 'POST', path: '/classify-document', description: 'Classify document type and recommend the right extractor.' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate autonomous document processing. Returns execute bool, PII detection, data quality, next API.' },
+  ],
+  execution_chain: [
+    'pdf-extraction/classify-document',
+    'pdf-extraction/extract-invoice',
+    'pdf-extraction/execution-gate',
+    'autopilot/should-execute',
+    'action-api/execute',
+  ],
+}));
+
+
+// ── PDF Extraction ──────────────────────────────────────────────────────────────
+app.use('/pdf-extraction/openapi.json', pdfExtractionOpenapiRouter);
+app.use('/pdf-extraction', pdfExtractionRouter);
+app.get('/pdf-extraction/info', (_req, res) => res.json({
+  name: 'Agent PDF Extraction API',
+  slug: 'pdf-extraction',
+  version: 'v1',
+  status: 'agent',
+  loop_type: 'classify_extract_validate_gate_act',
+  monetization_grade: 'A+',
+  category: 'ai-ml',
+  mcp_compatible: true,
+  description: 'PDF to structured JSON extraction for invoices, contracts, receipts, resumes and custom documents. Built for autonomous document processing agents, accounting automation, legal intelligence, and CRM enrichment workflows.',
+  baseUrl: 'https://orbis-apis.onrender.com/pdf-extraction',
+  websiteUrl: 'https://orbis-apis.onrender.com',
+  openapi: 'https://orbis-apis.onrender.com/pdf-extraction/openapi.json',
+  pricing: {
+    '/extract-invoice': 0.005,
+    '/extract-contract': 0.006,
+    '/extract-receipt': 0.003,
+    '/extract-resume': 0.004,
+    '/extract-custom': 0.005,
+    '/classify-document': 0.002,
+    '/execution-gate': 0.004,
+  },
+  endpoints: [
+    { method: 'POST', path: '/extract-invoice', description: 'Extract invoice data: vendor, client, line items, totals, payment terms.' },
+    { method: 'POST', path: '/extract-contract', description: 'Extract contract key terms: parties, dates, obligations, risk flags.' },
+    { method: 'POST', path: '/extract-receipt', description: 'Extract receipt data: merchant, items, totals, payment method, category.' },
+    { method: 'POST', path: '/extract-resume', description: 'Extract resume: experience, skills, education, seniority level.' },
+    { method: 'POST', path: '/extract-custom', description: 'Extract any fields using a custom schema definition.' },
+    { method: 'POST', path: '/classify-document', description: 'Classify document type and recommend the right extractor.' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate autonomous document processing. Returns execute bool, PII detection, data quality, next API.' },
+  ],
+  execution_chain: [
+    'pdf-extraction/classify-document',
+    'pdf-extraction/extract-invoice',
+    'pdf-extraction/execution-gate',
+    'autopilot/should-execute',
+    'action-api/execute',
+  ],
+}));
+
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
