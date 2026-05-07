@@ -40,7 +40,7 @@ async function callClaude(prompt: string, maxTokens = 1200): Promise<Record<stri
     body: JSON.stringify({
       model: MODEL, max_tokens: maxTokens,
       messages: [{ role: 'user', content: prompt }],
-      response_format: { type: 'json_object' },
+
     }),
   });
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
