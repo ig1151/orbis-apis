@@ -38,3 +38,6 @@ router.get('/', (_req, res) => {
 });
 
 export default router;
+
+export const openapiRouter = router;
+export const docsRouter = router;
