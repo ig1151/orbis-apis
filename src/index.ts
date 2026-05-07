@@ -350,8 +350,8 @@ app.use('/onchain-signal', onchainWhaleRouter);
 
 // ── Phone Validation ──────────────────────────────────────────────────────────
 import { validateRouter as phoneValidateRouter } from './routes/phone-validation-api/routes/validate.route';
-import { intelligenceRouter as phoneIntelligenceRouter } from './routes/phone-validation-api/routes/intelligence.route';
 import phoneOpenapiRouter from './routes/phone-validation-api/routes/openapi.route';
+import { intelligenceRouter as phoneIntelligenceRouter } from './routes/phone-validation-api/routes/intelligence.route';
 app.use('/phone-validation', phoneValidateRouter);
 app.use('/phone-validation', phoneIntelligenceRouter);
 
