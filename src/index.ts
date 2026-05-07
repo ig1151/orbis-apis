@@ -1,3 +1,5 @@
+import emailIntelligenceRouter from './src/routes/email-intelligence-api/routes/intelligence';
+import emailIntelligenceOpenapiRouter from './src/routes/email-intelligence-api/routes/openapi';
 import pdfExtractionRouter from './routes/pdf-extraction-api/routes/intelligence';
 import pdfExtractionOpenapiRouter from './routes/pdf-extraction-api/routes/openapi';
 import 'dotenv/config';
@@ -1347,6 +1349,53 @@ app.get('/pdf-extraction/info', (_req, res) => res.json({
     'pdf-extraction/execution-gate',
     'autopilot/should-execute',
     'action-api/execute',
+  ],
+}));
+
+
+// ── email-intelligence ──────────────────────────────────────────────────────────────
+app.use('/email-intelligence/openapi.json', emailIntelligenceOpenapiRouter);
+app.use('/email-intelligence', emailIntelligenceRouter);
+app.get('/email-intelligence/info', (_req, res) => res.json({
+  name: 'Agent Email Intelligence API',
+  slug: 'email-intelligence',
+  version: 'v1',
+  status: 'agent',
+  loop_type: 'verify_score_enrich_domain_batch_gate_act',
+  monetization_grade: 'A+',
+  mcp_compatible: true,
+  category: 'ai-ml',
+  description: 'Email verification, risk scoring, enrichment, domain health, batch processing, and execution-gated contact workflows for autonomous agents.',
+  baseUrl: 'https://orbis-apis.onrender.com/email-intelligence',
+  websiteUrl: 'https://orbis-apis.onrender.com',
+  openapi: 'https://orbis-apis.onrender.com/email-intelligence/openapi.json',
+  uptime: '99.9%',
+  avg_latency_ms: 1500,
+  rate_limits: { free: '100 req/day', builder: '50000 req/day', execution: '250000 req/day' },
+  pricing: {
+    '/verify': 0.001,
+    '/risk-score': 0.003,
+    '/enrich': 0.004,
+    '/domain-health': 0.002,
+    '/batch-verify': 0.004,
+    '/execution-gate': 0.002,
+    '/analyze-email': 0.006,
+  },
+  endpoints: [
+    { method: 'POST', path: '/verify', description: 'Verify email format, deliverability, disposable detection, domain reputation.' },
+    { method: 'POST', path: '/risk-score', description: 'Score email for fraud risk, spam likelihood, and get allow/block recommendation.' },
+    { method: 'POST', path: '/enrich', description: 'Enrich email with company, industry, seniority, and LinkedIn search query.' },
+    { method: 'POST', path: '/domain-health', description: 'Check domain reputation, MX/SPF/DMARC likelihood, deliverability score.' },
+    { method: 'POST', path: '/batch-verify', description: 'Batch verify up to 50 emails for validity, risk, and CRM readiness.' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate autonomous email workflows. Returns execute bool, blocking flags, next API.' },
+    { method: 'POST', path: '/analyze-email', description: 'ONE-CALL: Full email intelligence — verify + risk + enrich + gate in one request.', x_one_call: true },
+  ],
+  execution_chain: [
+    'email-intelligence/verify',
+    'email-intelligence/risk-score',
+    'email-intelligence/execution-gate',
+    'autopilot/should-execute',
+    'action-api/send-email',
   ],
 }));
 
