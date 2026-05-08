@@ -1,3 +1,5 @@
+import shopifyAnalyzerRouter from './routes/shopify-analyzer-api/routes/intelligence';
+import shopifyAnalyzerOpenapiRouter from './routes/shopify-analyzer-api/routes/openapi';
 import serpIntelligenceRouter from './routes/serp-intelligence-api/routes/intelligence';
 import serpIntelligenceOpenapiRouter from './routes/serp-intelligence-api/routes/openapi';
 import localBusinessRouter from './routes/local-business-api/routes/intelligence';
@@ -1428,6 +1430,37 @@ app.get('/email-intelligence/info', (_req, res) => res.json({
   ],
 }));
 
+
+// ── shopify-analyzer ─────────────────────────────────────────────────────────
+app.use('/shopify-analyzer/openapi.json', shopifyAnalyzerOpenapiRouter);
+app.use('/shopify-analyzer', shopifyAnalyzerRouter);
+app.get('/shopify-analyzer/info', (_req, res) => res.json({
+  name: 'Shopify Analyzer API',
+  slug: 'shopify-analyzer',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none', pii_note: 'Store data processed in-memory only, never persisted' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { analyze_store: '$0.006', product_intelligence: '$0.006', conversion_audit: '$0.007', competitor_stores: '$0.007', seo_audit: '$0.006', pricing_strategy: '$0.006', ad_intelligence: '$0.007', growth_signals: '$0.006', execution_gate: '$0.002', analyze_shopify_store: '$0.018' },
+    high_volume: { analyze_store: '$0.004', conversion_audit: '$0.005', analyze_shopify_store: '$0.011' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-store', description: 'Full store analysis with market position, brand strength, strengths, weaknesses and growth potential' },
+    { method: 'POST', path: '/product-intelligence', description: 'Product demand, pricing analysis, listing quality score and upsell opportunities' },
+    { method: 'POST', path: '/conversion-audit', description: 'CVR benchmark, conversion killers, checkout friction points and trust signal gaps' },
+    { method: 'POST', path: '/competitor-stores', description: 'Competitive landscape, top competitor profiles and exploitable market gaps' },
+    { method: 'POST', path: '/seo-audit', description: 'Shopify SEO score, technical issues, content gaps and collection optimization' },
+    { method: 'POST', path: '/pricing-strategy', description: 'Pricing model, bundle opportunities, discount strategy and psychological pricing tactics' },
+    { method: 'POST', path: '/ad-intelligence', description: 'Channel recommendations, audience segments, creative angles and budget allocation' },
+    { method: 'POST', path: '/growth-signals', description: 'Growth score, top levers, expansion opportunities, retention signals and scaling readiness' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness, blocking flags, next API chaining' },
+    { method: 'POST', path: '/analyze-shopify-store', description: 'ONE-CALL: full Shopify workflow — store health, issues, growth levers, ads, quick wins and 90-day plan', x_one_call: true },
+  ],
+  execution_chain: { previous: 'serp-intelligence', next: 'meeting-analyzer', optional_next: ['competitor-monitor', 'local-business'] },
+}));
 
 // ── serp-intelligence ────────────────────────────────────────────────────────
 app.use('/serp-intelligence/openapi.json', serpIntelligenceOpenapiRouter);
