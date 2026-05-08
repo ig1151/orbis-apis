@@ -1,3 +1,5 @@
+import coldOutreachApiRouter from './routes/cold-outreach-api/routes/intelligence';
+import coldOutreachApiOpenapiRouter from './routes/cold-outreach-api/routes/openapi';
 import leadScoringRouter from './routes/lead-scoring-api/routes/intelligence';
 import leadScoringOpenapiRouter from './routes/lead-scoring-api/routes/openapi';
 import emailIntelligenceRouter from './routes/email-intelligence-api/routes/intelligence';
