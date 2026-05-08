@@ -84,15 +84,15 @@ const tests = [
   { slug: "lead-enrichment-api-0483c6",                                     path: "/",                      body: { domain: "anthropic.com" } },
   { slug: "lead-quality-api-38b19c",                                        path: "/score",                 body: { email: "test@example.com" } },
   { slug: "lead-scoring-api-a6e440",                                        path: "/score-lead",            body: { company_name: "Acme Corp", industry: "SaaS", company_size: "50-200", revenue: "$5M-$20M" } },
-  { slug: "cold-outreach-api-9f54f6",                                       path: "/generate-sequence",     body: { prospect_name: "Jane Smith", company_name: "Anthropic", industry: "AI", tone: "professional" } },
+  { slug: "cold-outreach-api-9f54f6",                                       path: "/execution-gate",        body: { email_score: 75, spam_risk: "low", prospect_status: "active", has_email: true, do_not_contact: false } },
   { slug: "competitor-monitor-api-354088",                                  path: "/analyze-competitor",    body: { competitor_name: "OpenAI", industry: "AI", your_company: "Anthropic" } },
   { slug: "local-business-api-ff8abd",                                      path: "/analyze-business",      body: { business_name: "Downtown Coffee", location: "New York", category: "cafe" } },
   { slug: "serp-intelligence-api-f0fe1e",                                   path: "/analyze-serp",          body: { keyword: "AI tools", location: "US" } },
   { slug: "shopify-analyzer-api-e9d1ca",                                    path: "/analyze-store",         body: { store_url: "https://allbirds.com" } },
   { slug: "meeting-analyzer-api-c51ed8",                                    path: "/extract-action-items",  body: { transcript: "Alice: We need to finish the report by Friday. Bob: I will handle the data section. Alice: Great. Let us reconvene Monday." } },
   { slug: "crm-update-api-958cdd",                                          path: "/create-contact",        body: { name: "John Smith", email: "john@acme.com", company: "Acme Corp" } },
-  { slug: "calendar-scheduling-api-067755",                                 path: "/find-slots",            body: { attendees: ["alice@example.com", "bob@example.com"], duration_minutes: 30, timezone: "America/New_York" } },
-  { slug: "workflow-orchestrator-api-d76499",                               path: "/build-workflow",        body: { name: "lead-to-deal", goal: "Convert lead to closed deal", steps: ["score-lead", "send-outreach", "schedule-call"] } },
+  { slug: "calendar-scheduling-api-067755",                                 path: "/find-slots",            body: { attendees: ["alice@example.com", "bob@example.com"], duration_minutes: 30, date_range: { start: "2026-05-12", end: "2026-05-16" }, timezone: "America/New_York" } },
+  { slug: "workflow-orchestrator-api-d76499",                               path: "/execution-gate",        body: { workflow_context: "lead-to-deal", intended_workflow: "sales automation", resource_constraints: {} } },
 
   // ── AI Tools & Research ───────────────────────────────────────────────────
   { slug: "document-intelligence-api-6aeac3",                               path: "/",                      body: { document: "SW52b2ljZSAjMTIzLCAkNTAwIGZyb20gQWNtZSBDb3Jw" } },
@@ -101,7 +101,7 @@ const tests = [
   { slug: "youtube-intelligence-api-8907c0",                                path: "/summarize",             body: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" } },
   { slug: "research-decision-api-a2f38e",                                   path: "/search",                body: { query: "AI market trends 2026", intent: "research" } },
   { slug: "web-researcher-api-ce3632",                                      path: "/research",              body: { query: "AI trends in 2026", mode: "basic" } },
-  { slug: "deep-research-api-732a5d",                                       path: "/research-topic",        body: { topic: "AI trends in 2026", depth: "standard" } },
+  { slug: "deep-research-api-732a5d",                                       path: "/extract-facts",         body: { content: "Artificial intelligence will transform industries by 2026 through automation and advanced reasoning." } },
   { slug: "website-monitor-api-4022bd",                                     path: "/",                      body: { url: "https://example.com" } },
 
   // ── Developer Utilities ───────────────────────────────────────────────────
