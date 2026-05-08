@@ -1423,6 +1423,38 @@ app.get('/email-intelligence/info', (_req, res) => res.json({
 }));
 
 
+// ── cold-outreach ──────────────────────────────────────────────────────────────
+app.use('/cold-outreach/openapi.json', coldOutreachApiOpenapiRouter);
+app.use('/cold-outreach', coldOutreachApiRouter);
+app.get('/cold-outreach/info', (_req, res) => res.json({
+  name: 'Cold Outreach API',
+  slug: 'cold-outreach',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none', pii_note: 'Email content processed in-memory only, never persisted' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { generate_sequence: '$0.008', personalize_email: '$0.005', optimize_subject: '$0.004', analyze_reply: '$0.004', generate_followup: '$0.005', score_email: '$0.003', ab_test: '$0.005', objection_handler: '$0.005', timing_optimizer: '$0.003', execution_gate: '$0.002', analyze_outreach: '$0.015' },
+    high_volume: { generate_sequence: '$0.005', analyze_outreach: '$0.009' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/generate-sequence', description: 'Generate a full multi-step cold outreach sequence' },
+    { method: 'POST', path: '/personalize-email', description: 'Deep-personalize an email template for a prospect' },
+    { method: 'POST', path: '/optimize-subject', description: 'Generate 5 optimized subject line variants with open rate predictions' },
+    { method: 'POST', path: '/analyze-reply', description: 'Analyze prospect reply for sentiment, intent and next action' },
+    { method: 'POST', path: '/generate-followup', description: 'Generate a contextual follow-up email' },
+    { method: 'POST', path: '/score-email', description: 'Score a cold email 0-100 across 6 dimensions' },
+    { method: 'POST', path: '/ab-test', description: 'Analyze email variants for A/B testing with winner prediction' },
+    { method: 'POST', path: '/objection-handler', description: 'Generate objection handling responses with 3 script variants' },
+    { method: 'POST', path: '/timing-optimizer', description: 'Optimize email send timing by industry and timezone' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness, blocking flags, next API' },
+    { method: 'POST', path: '/analyze-outreach', description: 'ONE-CALL: full outreach workflow — strategy + sequence + timing + scoring', x_one_call: true },
+  ],
+  execution_chain: { previous: 'lead-scoring', next: 'competitor-monitor', optional_next: ['email-intelligence', 'calendar-scheduling'] },
+}));
+
 // ── lead-scoring ──────────────────────────────────────────────────────────────
 app.use('/lead-scoring/openapi.json', leadScoringOpenapiRouter);
 app.use('/lead-scoring', leadScoringRouter);
