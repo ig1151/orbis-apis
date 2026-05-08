@@ -27,6 +27,17 @@ async function callClaude(systemPrompt: string, userPrompt: string): Promise<any
   return JSON.parse(raw.replace(/```json|```/g, '').trim());
 }
 
+
+router.get('/', (_req, res) => {
+  res.json({
+    name: 'lead-scoring API',
+    info: '/lead-scoring/info',
+    openapi: '/lead-scoring/openapi.json',
+    health: 'ok'
+  });
+});
+
+
 router.post('/score-lead', async (req: Request, res: Response) => {
   const { company_name, industry, company_size, revenue, technology_stack, engagement_signals, budget_range, timeline, pain_points } = req.body;
   if (!company_name || !industry) return res.status(400).json({ error: 'company_name and industry are required' });

@@ -27,6 +27,17 @@ async function callClaude(systemPrompt: string, userPrompt: string): Promise<any
   return JSON.parse(raw.replace(/```json|```/g, '').trim());
 }
 
+
+router.get('/', (_req, res) => {
+  res.json({
+    name: 'cold-outreach API',
+    info: '/cold-outreach/info',
+    openapi: '/cold-outreach/openapi.json',
+    health: 'ok'
+  });
+});
+
+
 router.post('/generate-sequence', async (req: Request, res: Response) => {
   const { prospect_name, company_name, industry, pain_points, your_solution, sequence_length, tone } = req.body;
   if (!prospect_name || !company_name) return res.status(400).json({ error: 'prospect_name and company_name are required' });

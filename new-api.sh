@@ -29,6 +29,15 @@ import { logger } from '../logger';
 
 const router = Router();
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+
+router.get('/', (_req, res) => {
+  res.json({
+    name: '${NAME} API',
+    info: '/${SLUG}/info',
+    openapi: '/${SLUG}/openapi.json',
+    health: 'ok'
+  });
+});
 const MODEL = 'anthropic/claude-sonnet-4-5';
 
 async function callClaude(prompt: string, maxTokens = 1200): Promise<Record<string, unknown>> {
@@ -139,7 +148,8 @@ cat > $DIR/routes/openapi.ts << EOF
 import { Router } from 'express';
 const router = Router();
 
-const errorSchema = { type: 'object', properties: { error: { type: 'string' } } };
+const errorSchema = { type: 'object', properties: { error: { type: 'string' }, details: { type: 'string' } } };
+const successSchema = { type: 'object', properties: { success: { type: 'boolean' }, confidence_score: { type: 'number' }, analyzed_at: { type: 'string', format: 'date-time' } } };
 const commonErrors = {
   400: { description: 'Bad Request', content: { 'application/json': { schema: errorSchema } } },
   401: { description: 'Unauthorized', content: { 'application/json': { schema: errorSchema } } },

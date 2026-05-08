@@ -27,6 +27,17 @@ async function callClaude(systemPrompt: string, userPrompt: string): Promise<any
   return JSON.parse(raw.replace(/```json|```/g, '').trim());
 }
 
+
+router.get('/', (_req, res) => {
+  res.json({
+    name: 'competitor-monitor API',
+    info: '/competitor-monitor/info',
+    openapi: '/competitor-monitor/openapi.json',
+    health: 'ok'
+  });
+});
+
+
 router.post('/analyze-competitor', async (req: Request, res: Response) => {
   const { competitor_name, your_company, industry, focus_areas } = req.body;
   if (!competitor_name || !industry) return res.status(400).json({ error: 'competitor_name and industry are required' });
