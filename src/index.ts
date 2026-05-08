@@ -1,3 +1,5 @@
+import competitorMonitorRouter from './routes/competitor-monitor-api/routes/intelligence';
+import competitorMonitorOpenapiRouter from './routes/competitor-monitor-api/routes/openapi';
 import coldOutreachApiRouter from './routes/cold-outreach-api/routes/intelligence';
 import coldOutreachApiOpenapiRouter from './routes/cold-outreach-api/routes/openapi';
 import leadScoringRouter from './routes/lead-scoring-api/routes/intelligence';
@@ -1422,6 +1424,37 @@ app.get('/email-intelligence/info', (_req, res) => res.json({
   ],
 }));
 
+
+// ── competitor-monitor ────────────────────────────────────────────────────────
+app.use('/competitor-monitor/openapi.json', competitorMonitorOpenapiRouter);
+app.use('/competitor-monitor', competitorMonitorRouter);
+app.get('/competitor-monitor/info', (_req, res) => res.json({
+  name: 'Competitor Monitor API',
+  slug: 'competitor-monitor',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none', pii_note: 'Competitive data processed in-memory only, never persisted' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { analyze_competitor: '$0.006', compare_features: '$0.005', pricing_intelligence: '$0.005', detect_threats: '$0.006', positioning_map: '$0.007', battlecard: '$0.008', monitor_changes: '$0.005', win_loss_analysis: '$0.006', execution_gate: '$0.002', analyze_competitive_landscape: '$0.015' },
+    high_volume: { analyze_competitor: '$0.004', battlecard: '$0.005', analyze_competitive_landscape: '$0.009' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-competitor', description: 'Full competitor analysis with threat level, strengths, weaknesses and strategic direction' },
+    { method: 'POST', path: '/compare-features', description: 'Side-by-side feature comparison matrix with gap analysis' },
+    { method: 'POST', path: '/pricing-intelligence', description: 'Competitive pricing analysis and positioning recommendations' },
+    { method: 'POST', path: '/detect-threats', description: 'Detect and rank competitive threats with defensive priorities' },
+    { method: 'POST', path: '/positioning-map', description: 'Competitive positioning map with white space opportunities' },
+    { method: 'POST', path: '/battlecard', description: 'Sales battlecard with trap questions, talk tracks and win themes' },
+    { method: 'POST', path: '/monitor-changes', description: 'Detect competitor changes and interpret strategic shifts' },
+    { method: 'POST', path: '/win-loss-analysis', description: 'Analyze win-loss patterns with improvement opportunities' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness, blocking flags, next API chaining' },
+    { method: 'POST', path: '/analyze-competitive-landscape', description: 'ONE-CALL: full landscape — market overview, threat matrix, positioning, opportunity map, recommendations', x_one_call: true },
+  ],
+  execution_chain: { previous: 'cold-outreach', next: 'local-business', optional_next: ['market-signal-v2', 'serp-intelligence'] },
+}));
 
 // ── cold-outreach ──────────────────────────────────────────────────────────────
 app.use('/cold-outreach/openapi.json', coldOutreachApiOpenapiRouter);
