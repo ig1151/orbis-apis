@@ -1,0 +1,184 @@
+[
+  {
+    "name": "Meeting Analyzer API",
+    "shortDescription": "Agent-ready meeting intelligence, action extraction and operational analysis",
+    "description": "AI-powered meeting intelligence API for autonomous project-management, CRM and operations agents. Extract action items, summarize meetings, identify decisions, generate follow-up emails, analyze sentiment, detect operational risks, generate agendas and run one-call meeting analysis workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/meeting-analyzer",
+    "websiteUrl": "https://orbis-apis.onrender.com/meeting-analyzer/info",
+    "docsUrl": "https://orbis-apis.onrender.com/meeting-analyzer/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/meeting-analyzer/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": [
+      "meeting-intelligence",
+      "action-items",
+      "meeting-summary",
+      "decision-extraction",
+      "followup-email",
+      "risk-analysis",
+      "agenda-generation",
+      "operations-agents",
+      "execution-gate",
+      "mcp"
+    ],
+    "keywords": [
+      "extract meeting action items",
+      "meeting intelligence api",
+      "summarize meeting",
+      "extract meeting decisions",
+      "meeting follow up email",
+      "meeting risk analysis",
+      "meeting agenda generation",
+      "project management intelligence",
+      "meeting blocker detection",
+      "one call meeting workflow"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract-action-items",
+            "pricePerCallUsdc": 0.005,
+            "description": "Extract structured action items, dependencies, owners and overdue risks"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/summarize-meeting",
+            "pricePerCallUsdc": 0.005,
+            "description": "Generate structured meeting summaries and executive overviews"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-decisions",
+            "pricePerCallUsdc": 0.005,
+            "description": "Extract key decisions, ownership assignments and commitments"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/follow-up-email",
+            "pricePerCallUsdc": 0.006,
+            "description": "Generate follow-up emails with action items and blockers"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sentiment-analysis",
+            "pricePerCallUsdc": 0.006,
+            "description": "Analyze participant sentiment, alignment and communication tone"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/risk-flags",
+            "pricePerCallUsdc": 0.006,
+            "description": "Detect blockers, unresolved issues, escalation needs and operational risks"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/agenda-generator",
+            "pricePerCallUsdc": 0.005,
+            "description": "Generate structured agendas and meeting preparation workflows"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Return execution readiness, blocking flags and next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-meeting",
+            "pricePerCallUsdc": 0.018,
+            "description": "One-call workflow: meeting summary, action items, decisions, risks, sentiment and follow-up generation"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract-action-items",
+            "pricePerCallUsdc": 0.003,
+            "description": "High-volume action item extraction"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/summarize-meeting",
+            "pricePerCallUsdc": 0.003,
+            "description": "High-volume meeting summarization"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-meeting",
+            "pricePerCallUsdc": 0.011,
+            "description": "High-volume one-call meeting intelligence workflow"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract-action-items",
+        "description": "Extract action items, owners, due dates, dependencies and overdue risks"
+      },
+      {
+        "method": "POST",
+        "path": "/summarize-meeting",
+        "description": "Generate structured meeting summaries and executive overviews"
+      },
+      {
+        "method": "POST",
+        "path": "/extract-decisions",
+        "description": "Extract decisions, ownership assignments and commitments"
+      },
+      {
+        "method": "POST",
+        "path": "/follow-up-email",
+        "description": "Generate follow-up emails with action items and blockers"
+      },
+      {
+        "method": "POST",
+        "path": "/sentiment-analysis",
+        "description": "Analyze participant sentiment and communication alignment"
+      },
+      {
+        "method": "POST",
+        "path": "/risk-flags",
+        "description": "Detect blockers, escalation needs and operational risks"
+      },
+      {
+        "method": "POST",
+        "path": "/agenda-generator",
+        "description": "Generate agendas and meeting preparation workflows"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Return execution readiness, blocking flags and next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze-meeting",
+        "description": "One-call workflow for meeting intelligence, actions, risks and follow-up automation"
+      }
+    ]
+  }
+]
