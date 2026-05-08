@@ -1,3 +1,5 @@
+import localBusinessRouter from './routes/local-business-api/routes/intelligence';
+import localBusinessOpenapiRouter from './routes/local-business-api/routes/openapi';
 import competitorMonitorRouter from './routes/competitor-monitor-api/routes/intelligence';
 import competitorMonitorOpenapiRouter from './routes/competitor-monitor-api/routes/openapi';
 import coldOutreachApiRouter from './routes/cold-outreach-api/routes/intelligence';
@@ -1424,6 +1426,36 @@ app.get('/email-intelligence/info', (_req, res) => res.json({
   ],
 }));
 
+
+// ── local-business ────────────────────────────────────────────────────────────
+app.use('/local-business/openapi.json', localBusinessOpenapiRouter);
+app.use('/local-business', localBusinessRouter);
+app.get('/local-business/info', (_req, res) => res.json({
+  name: 'Local Business API',
+  slug: 'local-business',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none', pii_note: 'Business data processed in-memory only, never persisted' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { analyze_business: '$0.006', reputation_analysis: '$0.005', foot_traffic_signals: '$0.005', local_competitors: '$0.006', market_opportunity: '$0.007', customer_profile: '$0.006', location_score: '$0.005', execution_gate: '$0.002', analyze_local_business: '$0.015' },
+    high_volume: { analyze_business: '$0.004', market_opportunity: '$0.005', analyze_local_business: '$0.009' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-business', description: 'Full SWOT analysis with market position, demographics and foot traffic estimate' },
+    { method: 'POST', path: '/reputation-analysis', description: 'Reputation score, sentiment breakdown, trust signals and response templates' },
+    { method: 'POST', path: '/foot-traffic-signals', description: 'Traffic score, daily visitor estimates, peak times and catchment area profile' },
+    { method: 'POST', path: '/local-competitors', description: 'Local competitive density, competitor profiles and differentiation opportunities' },
+    { method: 'POST', path: '/market-opportunity', description: 'Opportunity score, market size, demand signals and ROI projections' },
+    { method: 'POST', path: '/customer-profile', description: 'Customer personas, LTV estimate, acquisition channels and retention drivers' },
+    { method: 'POST', path: '/location-score', description: 'Score location across 7 dimensions with grade and lease negotiation tips' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness, blocking flags, next API chaining' },
+    { method: 'POST', path: '/analyze-local-business', description: 'ONE-CALL: full local business workflow — score, reputation, foot traffic, competitors, persona, location grade', x_one_call: true },
+  ],
+  execution_chain: { previous: 'competitor-monitor', next: 'serp-intelligence', optional_next: ['market-signal-v2', 'cold-outreach'] },
+}));
 
 // ── competitor-monitor ────────────────────────────────────────────────────────
 app.use('/competitor-monitor/openapi.json', competitorMonitorOpenapiRouter);
