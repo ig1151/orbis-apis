@@ -21,6 +21,9 @@ import rateLimit from 'express-rate-limit';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' }, contentSecurityPolicy: false }));
 app.use(cors({ origin: '*', allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key', 'x-payment'] }));
