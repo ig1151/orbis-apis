@@ -1,3 +1,5 @@
+import meetingAnalyzerRouter from './routes/meeting-analyzer-api/routes/intelligence';
+import meetingAnalyzerOpenapiRouter from './routes/meeting-analyzer-api/routes/openapi';
 import shopifyAnalyzerRouter from './routes/shopify-analyzer-api/routes/intelligence';
 import shopifyAnalyzerOpenapiRouter from './routes/shopify-analyzer-api/routes/openapi';
 import serpIntelligenceRouter from './routes/serp-intelligence-api/routes/intelligence';
@@ -1430,6 +1432,36 @@ app.get('/email-intelligence/info', (_req, res) => res.json({
   ],
 }));
 
+
+// ── meeting-analyzer ─────────────────────────────────────────────────────────
+app.use('/meeting-analyzer/openapi.json', meetingAnalyzerOpenapiRouter);
+app.use('/meeting-analyzer', meetingAnalyzerRouter);
+app.get('/meeting-analyzer/info', (_req, res) => res.json({
+  name: 'Meeting Analyzer API',
+  slug: 'meeting-analyzer',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none', pii_note: 'Transcripts processed in-memory only, never persisted' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { extract_action_items: '$0.005', summarize_meeting: '$0.005', extract_decisions: '$0.005', follow_up_email: '$0.006', sentiment_analysis: '$0.006', risk_flags: '$0.006', agenda_generator: '$0.005', execution_gate: '$0.002', analyze_meeting: '$0.018' },
+    high_volume: { extract_action_items: '$0.003', summarize_meeting: '$0.003', analyze_meeting: '$0.011' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/extract-action-items', description: 'Extract action items from transcript with owner, due date, priority and overdue risk flags' },
+    { method: 'POST', path: '/summarize-meeting', description: 'Executive summary, key points, topics covered, decisions and open questions' },
+    { method: 'POST', path: '/extract-decisions', description: 'Extract all decisions, deferred items and contested points from transcript' },
+    { method: 'POST', path: '/follow-up-email', description: 'Generate ready-to-send follow-up email with subject, body, tone and send timing' },
+    { method: 'POST', path: '/sentiment-analysis', description: 'Sentiment, participant engagement levels, tension points and meeting health score' },
+    { method: 'POST', path: '/risk-flags', description: 'Identify risks, blockers, unresolved issues and escalation needs' },
+    { method: 'POST', path: '/agenda-generator', description: 'Generate structured meeting agenda with timing, owners, success criteria and pre-reads' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness, blocking flags, next API chaining' },
+    { method: 'POST', path: '/analyze-meeting', description: 'ONE-CALL: full meeting workflow — summary, actions, decisions, risks, sentiment and follow-up email', x_one_call: true },
+  ],
+  execution_chain: { previous: 'shopify-analyzer', next: 'cold-outreach', optional_next: ['lead-scoring', 'email-intelligence'] },
+}));
 
 // ── shopify-analyzer ─────────────────────────────────────────────────────────
 app.use('/shopify-analyzer/openapi.json', shopifyAnalyzerOpenapiRouter);
