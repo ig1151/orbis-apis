@@ -1,3 +1,5 @@
+import serpIntelligenceRouter from './routes/serp-intelligence-api/routes/intelligence';
+import serpIntelligenceOpenapiRouter from './routes/serp-intelligence-api/routes/openapi';
 import localBusinessRouter from './routes/local-business-api/routes/intelligence';
 import localBusinessOpenapiRouter from './routes/local-business-api/routes/openapi';
 import competitorMonitorRouter from './routes/competitor-monitor-api/routes/intelligence';
@@ -1426,6 +1428,37 @@ app.get('/email-intelligence/info', (_req, res) => res.json({
   ],
 }));
 
+
+// ── serp-intelligence ────────────────────────────────────────────────────────
+app.use('/serp-intelligence/openapi.json', serpIntelligenceOpenapiRouter);
+app.use('/serp-intelligence', serpIntelligenceRouter);
+app.get('/serp-intelligence/info', (_req, res) => res.json({
+  name: 'SERP Intelligence API',
+  slug: 'serp-intelligence',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none', pii_note: 'Search data processed in-memory only, never persisted' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { analyze_serp: '$0.005', keyword_intelligence: '$0.005', ranking_signals: '$0.006', competitor_gap: '$0.007', content_opportunities: '$0.006', featured_snippet: '$0.005', local_pack_signals: '$0.005', search_intent: '$0.004', execution_gate: '$0.002', analyze_search_visibility: '$0.015' },
+    high_volume: { analyze_serp: '$0.003', competitor_gap: '$0.005', analyze_search_visibility: '$0.009' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-serp', description: 'Full SERP analysis with difficulty, intent, content type distribution and ranking opportunity score' },
+    { method: 'POST', path: '/keyword-intelligence', description: 'Keyword difficulty, volume, CPC, intent classification and long-tail opportunities' },
+    { method: 'POST', path: '/ranking-signals', description: 'On-page, off-page and technical ranking signals with prioritized actions' },
+    { method: 'POST', path: '/competitor-gap', description: 'Keyword and content gap analysis vs competitors with quick wins' },
+    { method: 'POST', path: '/content-opportunities', description: 'Content cluster map, SERP feature targets and editorial calendar suggestions' },
+    { method: 'POST', path: '/featured-snippet', description: 'Featured snippet eligibility score, optimization requirements and sample content' },
+    { method: 'POST', path: '/local-pack-signals', description: 'Local pack ranking factors, GMB optimization tips and review strategy' },
+    { method: 'POST', path: '/search-intent', description: 'Deep intent classification with user journey stage, content alignment and conversion potential' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness, blocking flags, next API chaining' },
+    { method: 'POST', path: '/analyze-search-visibility', description: 'ONE-CALL: full visibility workflow — SERP, keyword intel, ranking signals, gaps, opportunities and execution plan', x_one_call: true },
+  ],
+  execution_chain: { previous: 'local-business', next: 'shopify-analyzer', optional_next: ['competitor-monitor', 'content-optimizer'] },
+}));
 
 // ── local-business ────────────────────────────────────────────────────────────
 app.use('/local-business/openapi.json', localBusinessOpenapiRouter);

@@ -1,0 +1,299 @@
+import { Router, Request, Response } from 'express';
+
+const router = Router();
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'SERP Intelligence API',
+      version: '1.0.0',
+      description: 'AI-powered SERP analysis, keyword intelligence, ranking signals and search visibility optimization for autonomous agents',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+    },
+    servers: [{ url: 'https://orbis-apis.onrender.com/serp-intelligence' }],
+    paths: {
+      '/analyze-serp': {
+        post: {
+          operationId: 'analyzeSerp',
+          summary: 'Full SERP analysis for a keyword with difficulty, intent and ranking signals',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['keyword'],
+                  properties: {
+                    keyword: { type: 'string', description: 'Target keyword to analyze' },
+                    domain: { type: 'string', description: 'Your domain for context (optional)' },
+                    location: { type: 'string', default: 'US' },
+                    search_engine: { type: 'string', default: 'google' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'SERP analysis with difficulty, intent distribution, ranking signals and opportunity score',
+              content: { 'application/json': { schema: { type: 'object' } } },
+            },
+            '400': { description: 'Missing keyword' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/keyword-intelligence': {
+        post: {
+          operationId: 'keywordIntelligence',
+          summary: 'Keyword difficulty, volume, CPC, intent and long-tail opportunities',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['keyword'],
+                  properties: {
+                    keyword: { type: 'string' },
+                    niche: { type: 'string' },
+                    competitors: { type: 'array', items: { type: 'string' }, maxItems: 3 },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Keyword intelligence including volume, difficulty, intent, CPC and related terms' },
+            '400': { description: 'Missing keyword' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/ranking-signals': {
+        post: {
+          operationId: 'rankingSignals',
+          summary: 'Analyze on-page, off-page and technical ranking signals for a keyword',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['keyword'],
+                  properties: {
+                    keyword: { type: 'string' },
+                    url: { type: 'string', description: 'URL to audit (optional)' },
+                    industry: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Ranking signals breakdown with on-page, off-page and technical factors' },
+            '400': { description: 'Missing keyword' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/competitor-gap': {
+        post: {
+          operationId: 'competitorGap',
+          summary: 'Identify keyword and content gaps vs competitors',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['domain', 'competitors'],
+                  properties: {
+                    domain: { type: 'string' },
+                    competitors: { type: 'array', items: { type: 'string' }, maxItems: 3 },
+                    niche: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Gap analysis with keyword gaps, content gaps and quick wins' },
+            '400': { description: 'Missing domain or competitors' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/content-opportunities': {
+        post: {
+          operationId: 'contentOpportunities',
+          summary: 'Identify content cluster opportunities and SERP feature targets',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['topic'],
+                  properties: {
+                    topic: { type: 'string' },
+                    domain: { type: 'string' },
+                    target_audience: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Content opportunities with cluster map, SERP features and calendar suggestions' },
+            '400': { description: 'Missing topic' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/featured-snippet': {
+        post: {
+          operationId: 'featuredSnippet',
+          summary: 'Featured snippet eligibility scoring and optimization requirements',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['keyword'],
+                  properties: {
+                    keyword: { type: 'string' },
+                    current_content: { type: 'string', description: 'Existing content to evaluate (optional)' },
+                    content_type: { type: 'string', default: 'article' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Featured snippet eligibility with optimization requirements and sample content' },
+            '400': { description: 'Missing keyword' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/local-pack-signals': {
+        post: {
+          operationId: 'localPackSignals',
+          summary: 'Local pack ranking factors, GMB optimization and review strategy',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['keyword', 'location'],
+                  properties: {
+                    keyword: { type: 'string' },
+                    location: { type: 'string' },
+                    business_name: { type: 'string' },
+                    category: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Local pack signals with GMB tips, citation requirements and review strategy' },
+            '400': { description: 'Missing keyword or location' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/search-intent': {
+        post: {
+          operationId: 'searchIntent',
+          summary: 'Deep search intent classification with user journey and conversion analysis',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['keyword'],
+                  properties: {
+                    keyword: { type: 'string' },
+                    industry: { type: 'string' },
+                    current_page_type: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Intent classification with user journey stage, content alignment and conversion potential' },
+            '400': { description: 'Missing keyword' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/execution-gate': {
+        post: {
+          operationId: 'executionGate',
+          summary: 'Execution readiness check with blocking flags and next API chaining',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['keyword'],
+                  properties: {
+                    keyword: { type: 'string' },
+                    domain: { type: 'string' },
+                    objective: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Execution readiness with blocking flags and next API recommendation' },
+            '400': { description: 'Missing keyword' },
+            '500': { description: 'Gate check failed' },
+          },
+        },
+      },
+      '/analyze-search-visibility': {
+        post: {
+          operationId: 'analyzeSearchVisibility',
+          summary: 'ONE-CALL: full search visibility workflow — SERP, keyword intel, ranking signals, content gaps, execution plan',
+          'x-one-call': true,
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['keyword'],
+                  properties: {
+                    keyword: { type: 'string' },
+                    domain: { type: 'string' },
+                    location: { type: 'string', default: 'US' },
+                    niche: { type: 'string' },
+                    competitors: { type: 'array', items: { type: 'string' }, maxItems: 3 },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Full visibility report: SERP overview, keyword intel, signals, opportunities, quick wins and execution plan' },
+            '400': { description: 'Missing keyword' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+    },
+  });
+});
+
+export default router;
