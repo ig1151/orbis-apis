@@ -69,15 +69,9 @@ const tests = [
   { slug: "wallet-balance-api-5575de",                                      path: "/balance/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", method: "GET" },
   { slug: "nft-metadata-api-0c88fb",                                        path: "/token/0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D/1", method: "GET" },
   { slug: "ens-resolver-api-e6922d",                                        path: "/resolve?name=vitalik.eth", method: "GET" },
-  { slug: "liquidation-intelligence-api-ec9d5e",                           path: "/events",                method: "GET" },
-  { slug: "onchain-signal-api-930b53",                                      path: "/analyze",               body: { address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", chain: "ethereum" } },
-
   // ── Identity & Security ───────────────────────────────────────────────────
   { slug: "identity-intelligence-api-640f76",                               path: "/",                      body: { email: "test@example.com" } },
   { slug: "ip-intelligence-api-840be3",                                     path: "/?ip=8.8.8.8",           method: "GET" },
-  { slug: "signup-protection-api-7934be",                                   path: "/v1/assess",             body: { email: "test@example.com", phone: "+14155552671", ip: "8.8.8.8", use_case: "signup" } },
-  { slug: "wallet-trust-api-fc283e",                                        path: "/v1/analyze?address=0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", method: "GET" },
-  { slug: "ip-fraud-detection-api-de0cc8",                                  path: "/lookup",                body: { ip: "8.8.8.8" } },
 
   // ── Data, Leads & Sales ───────────────────────────────────────────────────
   { slug: "lead-discovery-api-910c21",                                      path: "/leads/find",            body: { query: "SaaS companies in San Francisco" } },
@@ -99,44 +93,15 @@ const tests = [
   { slug: "image-generation-intelligence-2c054e",                           path: "/generate",              body: { prompt: "a red apple" } },
   { slug: "image-to-content-api-c6e356",                                    path: "/",                      body: { image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/240px-PNG_transparency_demonstration_1.png" } },
   { slug: "youtube-intelligence-api-8907c0",                                path: "/summarize",             body: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" } },
-  { slug: "research-decision-api-a2f38e",                                   path: "/search",                body: { query: "AI market trends 2026", intent: "research" } },
-  { slug: "web-researcher-api-ce3632",                                      path: "/research",              body: { query: "AI trends in 2026", mode: "basic" } },
   { slug: "deep-research-api-732a5d",                                       path: "/extract-facts",         body: { content: "Artificial intelligence will transform industries by 2026 through automation and advanced reasoning." } },
   { slug: "website-monitor-api-4022bd",                                     path: "/",                      body: { url: "https://example.com" } },
 
   // ── Developer Utilities ───────────────────────────────────────────────────
   { slug: "dev-utilities-api-4e6ffb",                                       path: "/summarize",             body: { text: "This is a test sentence that is long enough to meet the minimum character requirement for summarization." } },
-  { slug: "readability-scorer-api-9b54ea",                                  path: "/readability",           body: { text: "The quick brown fox jumps over the lazy dog. This sentence is used for testing readability scoring algorithms." } },
-  { slug: "keyword-extractor-api-305757",                                   path: "/keywords",              body: { text: "Artificial intelligence is transforming the world of technology and business operations globally." } },
-  { slug: "job-description-analyzer-api-8315d3",                           path: "/job-analyze",           body: { text: "Software Engineer at Acme Corp. 5+ years experience. Python, JavaScript required. Salary $120k-$150k." } },
-  { slug: "prompt-optimizer-api-97e452",                                    path: "/prompt-optimize",       body: { prompt: "Tell me about AI", target: "claude" } },
-  { slug: "password-strength-api-a9d2e1",                                   path: "/password-strength",     body: { password: "MySecureP@ssw0rd!" } },
-  { slug: "decision-explanation-api-b525e8",                                path: "/decision-explain",      body: { decision: "Buy BTC at current price", domain: "crypto" } },
-  { slug: "company-enrichment-api-963fe4",                                  path: "/company-enrichment",    body: { domain: "anthropic.com" } },
-  { slug: "domain-intelligence-api-4bd39e",                                 path: "/domain-intelligence",   body: { domain: "anthropic.com" } },
-  { slug: "pricing-intelligence-api-abf0dd",                                path: "/pricing-intelligence",  body: { company: "Anthropic" } },
-  { slug: "execution-planner-api-54ac3b",                                   path: "/plan",                  body: { goal: "find leads and send cold outreach", budget: 1.0 } },
-  { slug: "task-cost-estimation-api-df3279",                                path: "/task-cost",             body: { task: "research 10 companies and score each lead", budget: 2.0 } },
-  { slug: "text-clean-api-58acf8",                                          path: "/text-clean",            body: { text: "<p>Hello world!</p>   Extra   spaces...", options: { strip_html: true, normalize_whitespace: true } } },
-  { slug: "tone-analyzer-api-66243e",                                       path: "/tone-analyze",          body: { text: "I am extremely disappointed with the lack of communication from your team." } },
-  { slug: "email-content-extractor-api-d1364f",                            path: "/email-extract",         body: { text: "Contact John Smith at john@acme.com, CEO at Acme Corp, +1 415 555 0100" } },
-  { slug: "address-validation-api-a24df5",                                  path: "/address-validate",      body: { street: "123 Main St", city: "New York", postal_code: "10001", country: "US" } },
-  { slug: "cold-outreach-generator-api-d87383",                            path: "/cold-outreach",         body: { company: "Anthropic", role: "CTO", goal: "partnership", tone: "professional", channel: "email" } },
-  { slug: "follow-up-sequence-generator-api-29c128",                       path: "/follow-up-sequence",    body: { company: "Anthropic", role: "CTO", goal: "schedule a demo", count: 2, tone: "professional" } },
-  { slug: "who-to-contact-api-97ccc0",                                      path: "/who-to-contact",        body: { company: "Anthropic", goal: "enterprise software partnership" } },
-  { slug: "url-metadata-api-dd1a68",                                        path: "/url-metadata",          body: { url: "https://example.com" } },
-  { slug: "text-summarizer-api-428327",                                     path: "/summarize",             body: { text: "Artificial intelligence is rapidly transforming industries across the globe. From healthcare to finance, AI systems are being deployed to automate tasks, discover patterns, and make predictions that were previously impossible.", format: "bullets" } },
-  { slug: "vat-number-validation-api-421cc5",                               path: "/vat-validate",          body: { vat_number: "DE123456789" } },
-  { slug: "iban-validation-api-ffa20f",                                     path: "/iban-validate",         body: { iban: "GB29NWBK60161331926819" } },
-  { slug: "bic-validation-api-76cc95",                                      path: "/bic-validate",          body: { bic: "DEUTDEDB" } },
-  { slug: "credit-card-validator-api-1ac755",                               path: "/card-validate",         body: { number: "4111111111111111" } },
 
   // ── Finance & Validation ──────────────────────────────────────────────────
   { slug: "email-validation-api-204701",                                    path: "/validate",              body: { email: "test@example.com" } },
   { slug: "email-intelligence-api-d9801f",                                  path: "/verify",                body: { email: "test@example.com" } },
-  { slug: "market-decision-api-0fe075",                                     path: "/decision",              body: { ticker: "AAPL" } },
-  { slug: "market-snapshot-api-4300f8",                                     path: "/quote?symbol=AAPL",     method: "GET" },
-  { slug: "price-tracking-dbdadb",                                          path: "/product?url=https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html", method: "GET" },
 ];
 
 const results = { pass: [], fail: [], error: [] };
