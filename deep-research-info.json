@@ -1,0 +1,89 @@
+{
+  "name": "Deep Research API",
+  "slug": "deep-research",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none",
+    "pii_note": "Research data processed in-memory only, never persisted"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "research_topic": 0.008,
+      "extract_facts": 0.005,
+      "compare_sources": 0.007,
+      "credibility_analysis": 0.005,
+      "timeline_builder": 0.006,
+      "citation_builder": 0.004,
+      "execution_gate": 0.002,
+      "deep_research": 0.022
+    },
+    "high_volume": {
+      "research_topic": 0.005,
+      "compare_sources": 0.004,
+      "deep_research": 0.014
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/research-topic",
+      "description": "Cross-source research synthesis with key findings, subtopics, knowledge gaps and contradictions"
+    },
+    {
+      "method": "POST",
+      "path": "/extract-facts",
+      "description": "Extract verified facts with type classification, confidence scores, entity recognition and temporal markers"
+    },
+    {
+      "method": "POST",
+      "path": "/compare-sources",
+      "description": "Compare multiple sources for consensus, divergence, unique insights and quality ranking"
+    },
+    {
+      "method": "POST",
+      "path": "/credibility-analysis",
+      "description": "Score source credibility with bias detection, quality signals, red flags and recommended use"
+    },
+    {
+      "method": "POST",
+      "path": "/timeline-builder",
+      "description": "Build chronological timeline from research data with turning points, patterns and future projections"
+    },
+    {
+      "method": "POST",
+      "path": "/citation-builder",
+      "description": "Format citations in APA, MLA, Chicago and Harvard styles with bibliography and in-text examples"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Gate research execution with quality threshold checks, blocking flags and chain-to recommendations"
+    },
+    {
+      "method": "POST",
+      "path": "/deep-research",
+      "description": "ONE-CALL: full research workflow — findings, facts, timeline, contradictions, gaps and synthesized report",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "serp-intelligence",
+    "next": "competitor-monitor",
+    "optional_next": [
+      "meeting-analyzer",
+      "workflow-orchestrator"
+    ]
+  }
+}

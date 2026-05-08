@@ -1,0 +1,229 @@
+import { Router, Request, Response } from 'express';
+const router = Router();
+
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'Calendar Scheduling API',
+      version: '1.0.0',
+      description: 'AI-powered calendar scheduling and availability intelligence for autonomous agents — find slots, schedule meetings, resolve timezone conflicts, analyze availability patterns and prioritize meeting queues',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+    },
+    servers: [{ url: 'https://orbis-apis.onrender.com/calendar-scheduling' }],
+    paths: {
+      '/find-slots': {
+        post: {
+          operationId: 'findSlots',
+          summary: 'Find optimal meeting slots for attendees with availability scoring and timezone analysis',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['attendees', 'duration_minutes', 'date_range'], properties: { attendees: { type: 'array', items: { type: 'string' } }, duration_minutes: { type: 'number' }, date_range: { type: 'object', properties: { start: { type: 'string' }, end: { type: 'string' } } }, timezone: { type: 'string' }, preferences: { type: 'object' } } } } } },
+          responses: {
+            '200': {
+              description: 'Available meeting slots with scores',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                slots: { type: 'array', items: { type: 'object', properties: { start: { type: 'string' }, end: { type: 'string' }, timezone: { type: 'string' }, score: { type: 'number', minimum: 0, maximum: 100 }, conflicts: actions, attendee_availability: { type: 'string', enum: ['all', 'partial'] } } } },
+                best_slot: { type: 'object', properties: { start: { type: 'string' }, end: { type: 'string' }, timezone: { type: 'string' }, score: { type: 'number' }, reason: { type: 'string' } } },
+                availability_summary: { type: 'array', items: { type: 'object', properties: { attendee: { type: 'string' }, available_windows: actions, busy_signals: actions } } },
+                timezone_analysis: { type: 'object', properties: { primary_tz: { type: 'string' }, conflicts: actions, recommendation: { type: 'string' } } },
+                total_slots_found: { type: 'number' },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing required fields' }, '500': { description: 'Slot finding failed' },
+          },
+        },
+      },
+      '/schedule-meeting': {
+        post: {
+          operationId: 'scheduleMeeting',
+          summary: 'Schedule a meeting with calendar links, invite content and structured agenda',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['title', 'attendees', 'start_time', 'duration_minutes', 'timezone'], properties: { title: { type: 'string' }, attendees: { type: 'array', items: { type: 'string' } }, start_time: { type: 'string' }, duration_minutes: { type: 'number' }, timezone: { type: 'string' }, location: { type: 'string' }, agenda: { type: 'array', items: { type: 'string' } }, meeting_type: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Scheduled meeting confirmation',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                meeting_id: { type: 'string' },
+                title: { type: 'string' },
+                attendees: actions,
+                start_time: { type: 'string' },
+                end_time: { type: 'string' },
+                duration_minutes: { type: 'number' },
+                timezone: { type: 'string' },
+                location: { type: 'string' },
+                calendar_links: { type: 'object', properties: { google: { type: 'string' }, outlook: { type: 'string' }, ics: { type: 'string' } } },
+                invite_subject: { type: 'string' },
+                invite_body: { type: 'string' },
+                pre_meeting_checklist: actions,
+                agenda_structured: { type: 'array', items: { type: 'object', properties: { item: { type: 'string' }, owner: { type: 'string' }, duration_minutes: { type: 'number' } } } },
+                conflict_warnings: actions,
+                confirmation_status: { type: 'object', properties: { all_confirmed: { type: 'boolean' }, pending: actions } },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing required fields' }, '500': { description: 'Scheduling failed' },
+          },
+        },
+      },
+      '/reschedule': {
+        post: {
+          operationId: 'rescheduleMeeting',
+          summary: 'Reschedule a meeting with conflict resolution, impact analysis and notification templates',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['meeting_id', 'original_time', 'reason', 'attendees', 'duration_minutes', 'timezone'], properties: { meeting_id: { type: 'string' }, original_time: { type: 'string' }, reason: { type: 'string' }, attendees: { type: 'array', items: { type: 'string' } }, duration_minutes: { type: 'number' }, timezone: { type: 'string' }, preferred_dates: { type: 'array', items: { type: 'string' } } } } } } },
+          responses: {
+            '200': {
+              description: 'Reschedule result with alternatives',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                meeting_id: { type: 'string' },
+                reschedule_approved: { type: 'boolean' },
+                new_suggested_slot: { type: 'object', properties: { start: { type: 'string' }, end: { type: 'string' }, timezone: { type: 'string' }, score: { type: 'number' } } },
+                alternative_slots: { type: 'array', items: { type: 'object', properties: { start: { type: 'string' }, end: { type: 'string' }, score: { type: 'number' } } } },
+                reschedule_message: { type: 'string' },
+                impact_analysis: { type: 'object', properties: { urgency: { type: 'string', enum: ['high', 'medium', 'low'] }, stakeholder_impact: { type: 'string' }, cost_of_delay: { type: 'string' } } },
+                notification_templates: { type: 'object', properties: { email_subject: { type: 'string' }, email_body: { type: 'string' }, slack_message: { type: 'string' } } },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing required fields' }, '500': { description: 'Reschedule failed' },
+          },
+        },
+      },
+      '/timezone-optimizer': {
+        post: {
+          operationId: 'timezoneOptimizer',
+          summary: 'Optimize meeting time across multiple timezones with fairness scoring and rotation schedule',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['attendees', 'duration_minutes'], properties: { attendees: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, timezone: { type: 'string' } } } }, duration_minutes: { type: 'number' }, preferred_hours: { type: 'object', properties: { start: { type: 'number' }, end: { type: 'number' } } } } } } } },
+          responses: {
+            '200': {
+              description: 'Optimized timezone window',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                optimal_utc_window: { type: 'object', properties: { start: { type: 'string' }, end: { type: 'string' } } },
+                per_timezone_impact: { type: 'array', items: { type: 'object', properties: { timezone: { type: 'string' }, local_time: { type: 'string' }, working_hours: { type: 'boolean' }, score: { type: 'number', minimum: 0, maximum: 100 } } } },
+                fairness_score: { type: 'number', minimum: 0, maximum: 100 },
+                best_days_of_week: actions,
+                rotation_schedule: { type: 'array', items: { type: 'object', properties: { week: { type: 'number' }, time_utc: { type: 'string' }, burden_on: { type: 'string' } } } },
+                cultural_notes: { type: 'array', items: { type: 'object', properties: { timezone: { type: 'string' }, note: { type: 'string' } } } },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing required fields' }, '500': { description: 'Optimization failed' },
+          },
+        },
+      },
+      '/availability-intelligence': {
+        post: {
+          operationId: 'availabilityIntelligence',
+          summary: 'Analyze calendar patterns, predict focus windows, detect burnout risk and optimize availability',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['calendar_data'], properties: { calendar_data: { type: 'object' }, analysis_period_days: { type: 'number' }, patterns_to_detect: { type: 'array', items: { type: 'string' } } } } } } },
+          responses: {
+            '200': {
+              description: 'Availability intelligence report',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                availability_score: { type: 'number', minimum: 0, maximum: 100 },
+                peak_focus_windows: { type: 'array', items: { type: 'object', properties: { day: { type: 'string' }, start: { type: 'string' }, end: { type: 'string' }, quality: { type: 'string', enum: ['deep', 'light', 'admin'] } } } },
+                meeting_density: { type: 'object', properties: { current: { type: 'string', enum: ['high', 'medium', 'low'] }, optimal: { type: 'string' }, overloaded_days: actions } },
+                patterns: { type: 'array', items: { type: 'object', properties: { pattern: { type: 'string' }, frequency: { type: 'string' }, impact: { type: 'string', enum: ['positive', 'negative'] } } } },
+                recommendations: { type: 'array', items: { type: 'object', properties: { action: { type: 'string' }, expected_gain: { type: 'string' }, effort: { type: 'string', enum: ['low', 'medium', 'high'] } } } },
+                burnout_risk: { type: 'object', properties: { score: { type: 'number', minimum: 0, maximum: 1 }, signals: actions } },
+                optimal_meeting_days: actions,
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing calendar_data' }, '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/meeting-priority': {
+        post: {
+          operationId: 'meetingPriority',
+          summary: 'Score and prioritize meeting requests with ROI analysis, decline candidates and delegation opportunities',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['meetings'], properties: { meetings: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, title: { type: 'string' }, attendees: { type: 'array', items: { type: 'string' } }, type: { type: 'string' }, duration_minutes: { type: 'number' }, context: { type: 'string' } } } }, scoring_criteria: { type: 'object' } } } } } },
+          responses: {
+            '200': {
+              description: 'Prioritized meeting queue',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                prioritized_meetings: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, title: { type: 'string' }, priority_score: { type: 'number', minimum: 0, maximum: 100 }, tier: { type: 'string', enum: ['must_attend', 'high', 'medium', 'optional', 'decline'] }, reason: { type: 'string' } } } },
+                decline_candidates: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, reason: { type: 'string' }, alternative: { type: 'string' } } } },
+                time_roi_analysis: { type: 'object', properties: { total_hours: { type: 'number' }, high_value_hours: { type: 'number' }, recoverable_hours: { type: 'number' } } },
+                delegation_opportunities: { type: 'array', items: { type: 'object', properties: { meeting_id: { type: 'string' }, delegate_to: { type: 'string' }, reason: { type: 'string' } } } },
+                schedule_health: { type: 'object', properties: { score: { type: 'number' }, issues: actions, quick_wins: actions } },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing meetings' }, '500': { description: 'Prioritization failed' },
+          },
+        },
+      },
+      '/execution-gate': {
+        post: {
+          operationId: 'calendarExecutionGate',
+          summary: 'Gate calendar scheduling execution with risk scoring, blocking flags and chain-to recommendations',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['scheduling_context', 'intended_action'], properties: { scheduling_context: { type: 'object' }, intended_action: { type: 'string' }, attendees: { type: 'array', items: { type: 'string' } }, time_constraints: { type: 'object' } } } } } },
+          responses: {
+            '200': {
+              description: 'Execution gate decision',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                execute: { type: 'boolean' },
+                confidence: { type: 'number', minimum: 0, maximum: 1 },
+                blocking_flags: actions,
+                warnings: actions,
+                risk_score: { type: 'number', minimum: 0, maximum: 1 },
+                recommended_action: { type: 'string' },
+                chain_to: actions,
+                scheduling_viability: { type: 'string', enum: ['high', 'medium', 'low'] },
+                retry_after: { type: ['string', 'null'] },
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing required fields' }, '500': { description: 'Gate check failed' },
+          },
+        },
+      },
+      '/schedule-workflow': {
+        post: {
+          operationId: 'scheduleWorkflow',
+          summary: 'ONE-CALL: full scheduling workflow — find slot, build invite, analyze attendees, assess risk and summarize actions',
+          'x-one-call': true,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['goal', 'attendees'], properties: { goal: { type: 'string' }, attendees: { type: 'array', items: { type: 'string' } }, context: { type: 'string' }, duration_minutes: { type: 'number' }, timezone: { type: 'string' }, urgency: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Full scheduling workflow result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                workflow_id: { type: 'string' },
+                goal: { type: 'string' },
+                optimal_slot: { type: 'object', properties: { start: { type: 'string' }, end: { type: 'string' }, timezone: { type: 'string' }, score: { type: 'number' } } },
+                alternative_slots: { type: 'array', items: { type: 'object', properties: { start: { type: 'string' }, end: { type: 'string' }, score: { type: 'number' } } } },
+                meeting_details: { type: 'object', properties: { title: { type: 'string' }, agenda: actions, invite_body: { type: 'string' }, pre_meeting_checklist: actions } },
+                attendee_analysis: { type: 'array', items: { type: 'object', properties: { attendee: { type: 'string' }, availability: { type: 'string', enum: ['high', 'medium', 'low'] }, priority_rank: { type: 'number' } } } },
+                scheduling_risk: { type: 'object', properties: { score: { type: 'number', minimum: 0, maximum: 1 }, factors: actions } },
+                execution_summary: { type: 'object', properties: { actions_taken: actions, next_steps: actions, estimated_scheduling_time: { type: 'string' } } },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing required fields' }, '500': { description: 'Workflow failed' },
+          },
+        },
+      },
+    },
+  });
+});
+
+export default router;

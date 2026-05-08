@@ -1,0 +1,89 @@
+{
+  "name": "CRM Update API",
+  "slug": "crm-update",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none",
+    "pii_note": "CRM data processed in-memory only, never persisted"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "create_contact": 0.005,
+      "update_opportunity": 0.005,
+      "log_activity": 0.004,
+      "create_followup_task": 0.004,
+      "pipeline_transition": 0.005,
+      "sync_lead": 0.006,
+      "execution_gate": 0.003,
+      "crm_workflow": 0.018
+    },
+    "high_volume": {
+      "create_contact": 0.003,
+      "update_opportunity": 0.003,
+      "crm_workflow": 0.011
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/create-contact",
+      "description": "Create a CRM contact with lead scoring, enrichment, duplicate detection and next action"
+    },
+    {
+      "method": "POST",
+      "path": "/update-opportunity",
+      "description": "Update a CRM deal with stage analysis, win probability factors, risk flags and forecast category"
+    },
+    {
+      "method": "POST",
+      "path": "/log-activity",
+      "description": "Log a CRM activity with sentiment analysis, key signals, follow-up and deal impact"
+    },
+    {
+      "method": "POST",
+      "path": "/create-followup-task",
+      "description": "Create a CRM follow-up task with urgency scoring, message suggestion and escalation risk"
+    },
+    {
+      "method": "POST",
+      "path": "/pipeline-transition",
+      "description": "Execute a CRM pipeline stage transition with validation, risk assessment and exit criteria"
+    },
+    {
+      "method": "POST",
+      "path": "/sync-lead",
+      "description": "Sync and deduplicate a lead across CRM systems with field mapping and data quality scoring"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Gate CRM action execution with risk scoring, blocking flags and chain-to recommendations"
+    },
+    {
+      "method": "POST",
+      "path": "/crm-workflow",
+      "description": "ONE-CALL: full CRM workflow — contact creation, opportunity update, activity logging, task scheduling and pipeline health",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "lead-scoring",
+    "next": "meeting-analyzer",
+    "optional_next": [
+      "cold-outreach",
+      "email-intelligence"
+    ]
+  }
+}

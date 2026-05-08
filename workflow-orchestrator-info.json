@@ -1,0 +1,90 @@
+{
+  "name": "Workflow Orchestrator API",
+  "slug": "workflow-orchestrator",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none",
+    "pii_note": "Workflow data processed in-memory only, never persisted"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "build_workflow": 0.005,
+      "execute_workflow": 0.006,
+      "retry_failed_step": 0.004,
+      "parallel_execution": 0.005,
+      "cost_estimator": 0.003,
+      "workflow_health": 0.003,
+      "execution_gate": 0.002,
+      "run_workflow": 0.02
+    },
+    "high_volume": {
+      "build_workflow": 0.003,
+      "execute_workflow": 0.004,
+      "run_workflow": 0.012
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/build-workflow",
+      "description": "Build a multi-step agent workflow from goal description with step sequencing, cost estimate and parallel opportunities"
+    },
+    {
+      "method": "POST",
+      "path": "/execute-workflow",
+      "description": "Execute a workflow with step-by-step tracking, result capture and total cost accounting"
+    },
+    {
+      "method": "POST",
+      "path": "/retry-failed-step",
+      "description": "Determine retry strategy for a failed workflow step with root cause analysis and alternative step suggestions"
+    },
+    {
+      "method": "POST",
+      "path": "/parallel-execution",
+      "description": "Plan and execute parallel workflow branches with merge strategy and resource contention resolution"
+    },
+    {
+      "method": "POST",
+      "path": "/cost-estimator",
+      "description": "Estimate cost and time for a workflow before execution with optimization opportunities and ROI indicators"
+    },
+    {
+      "method": "POST",
+      "path": "/workflow-health",
+      "description": "Analyze health and status of a workflow with failure patterns, bottlenecks and trend scoring"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Gate workflow execution with resource checks, risk scoring, blocking flags and chain-to recommendations"
+    },
+    {
+      "method": "POST",
+      "path": "/run-workflow",
+      "description": "ONE-CALL: build and execute full multi-step workflow with step results, final output and cost tracking",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "crm-update",
+    "next": "calendar-scheduling",
+    "optional_next": [
+      "lead-scoring",
+      "email-intelligence",
+      "meeting-analyzer"
+    ]
+  }
+}

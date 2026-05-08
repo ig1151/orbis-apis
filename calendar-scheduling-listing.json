@@ -1,0 +1,159 @@
+[
+  {
+    "name": "Calendar Scheduling API",
+    "shortDescription": "Agent-ready calendar scheduling and availability intelligence",
+    "description": "AI-powered calendar scheduling API for autonomous agents. Find slots, schedule meetings, reschedule conflicts, optimize timezones, analyze availability, prioritize meetings, gate scheduling execution and run one-call scheduling workflows.",
+    "category": "automation",
+    "baseUrl": "https://orbis-apis.onrender.com/calendar-scheduling",
+    "websiteUrl": "https://orbis-apis.onrender.com/calendar-scheduling/info",
+    "docsUrl": "https://orbis-apis.onrender.com/calendar-scheduling/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/calendar-scheduling/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": [
+      "calendar",
+      "scheduling",
+      "availability",
+      "timezone-optimizer",
+      "meeting-priority",
+      "rescheduling",
+      "calendar-agents",
+      "execution-gate",
+      "mcp"
+    ],
+    "keywords": [
+      "find meeting slots",
+      "schedule meeting",
+      "reschedule meeting",
+      "timezone optimizer",
+      "availability intelligence",
+      "meeting priority",
+      "calendar scheduling api",
+      "one call scheduling workflow"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/find-slots",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schedule-meeting",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reschedule",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/timezone-optimizer",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/availability-intelligence",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/meeting-priority",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schedule-workflow",
+            "pricePerCallUsdc": 0.014
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/find-slots",
+            "pricePerCallUsdc": 0.0025
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schedule-meeting",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schedule-workflow",
+            "pricePerCallUsdc": 0.009
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/find-slots",
+        "description": "Find optimal meeting slots with availability scoring and timezone analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/schedule-meeting",
+        "description": "Schedule a meeting with invite content, agenda and calendar links"
+      },
+      {
+        "method": "POST",
+        "path": "/reschedule",
+        "description": "Reschedule a meeting with conflict resolution and notification templates"
+      },
+      {
+        "method": "POST",
+        "path": "/timezone-optimizer",
+        "description": "Optimize meeting time across multiple timezones with fairness scoring"
+      },
+      {
+        "method": "POST",
+        "path": "/availability-intelligence",
+        "description": "Analyze calendar patterns, focus windows, meeting density and burnout risk"
+      },
+      {
+        "method": "POST",
+        "path": "/meeting-priority",
+        "description": "Score and prioritize meeting requests with ROI analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Gate calendar scheduling execution with risk scoring and chain recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/schedule-workflow",
+        "description": "One-call scheduling workflow with slot finding, invite generation and risk assessment"
+      }
+    ]
+  }
+]

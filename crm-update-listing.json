@@ -1,0 +1,161 @@
+[
+  {
+    "name": "CRM Update API",
+    "shortDescription": "Agent-ready CRM contact, opportunity and pipeline action execution",
+    "description": "AI-powered CRM update API for autonomous sales agents. Create contacts, update opportunities, log activities, create follow-up tasks, transition pipeline stages, sync leads, gate CRM actions and run full one-call CRM workflows.",
+    "category": "automation",
+    "baseUrl": "https://orbis-apis.onrender.com/crm-update",
+    "websiteUrl": "https://orbis-apis.onrender.com/crm-update/info",
+    "docsUrl": "https://orbis-apis.onrender.com/crm-update/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/crm-update/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": [
+      "crm",
+      "crm-update",
+      "sales-automation",
+      "contact-creation",
+      "opportunity-update",
+      "pipeline-transition",
+      "lead-sync",
+      "followup-tasks",
+      "execution-gate",
+      "mcp"
+    ],
+    "keywords": [
+      "create crm contact",
+      "update opportunity",
+      "log crm activity",
+      "create followup task",
+      "pipeline transition",
+      "sync lead",
+      "crm workflow",
+      "crm action api",
+      "sales agent crm"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/create-contact",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/update-opportunity",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/log-activity",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/create-followup-task",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/pipeline-transition",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sync-lead",
+            "pricePerCallUsdc": 0.007
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/crm-workflow",
+            "pricePerCallUsdc": 0.016
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/create-contact",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/update-opportunity",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/crm-workflow",
+            "pricePerCallUsdc": 0.01
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/create-contact",
+        "description": "Create a CRM contact with lead scoring, enrichment, duplicate detection and next action"
+      },
+      {
+        "method": "POST",
+        "path": "/update-opportunity",
+        "description": "Update a CRM deal with stage analysis, risk flags and forecast category"
+      },
+      {
+        "method": "POST",
+        "path": "/log-activity",
+        "description": "Log a CRM activity with sentiment, key signals, follow-up and deal impact"
+      },
+      {
+        "method": "POST",
+        "path": "/create-followup-task",
+        "description": "Create a CRM follow-up task with urgency scoring and suggested message"
+      },
+      {
+        "method": "POST",
+        "path": "/pipeline-transition",
+        "description": "Execute pipeline stage transition with validation and risk assessment"
+      },
+      {
+        "method": "POST",
+        "path": "/sync-lead",
+        "description": "Sync and deduplicate a lead across CRM systems with field mapping"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Gate CRM action execution with risk scoring and chain recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/crm-workflow",
+        "description": "One-call CRM workflow with contact creation, opportunity update, activity logging and task scheduling"
+      }
+    ]
+  }
+]

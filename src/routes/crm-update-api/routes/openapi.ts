@@ -1,0 +1,255 @@
+import { Router, Request, Response } from 'express';
+const router = Router();
+
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'CRM Update API',
+      version: '1.0.0',
+      description: 'AI-powered CRM action execution for autonomous agents — create contacts, update opportunities, log activities, manage tasks, transition pipeline stages and sync leads with full execution gating',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+    },
+    servers: [{ url: 'https://orbis-apis.onrender.com/crm-update' }],
+    paths: {
+      '/create-contact': {
+        post: {
+          operationId: 'createContact',
+          summary: 'Create a CRM contact with lead scoring, enrichment, duplicate detection and next action',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['name', 'email'], properties: { name: { type: 'string' }, email: { type: 'string' }, phone: { type: 'string' }, company: { type: 'string' }, title: { type: 'string' }, source: { type: 'string' }, notes: { type: 'string' }, tags: { type: 'array', items: { type: 'string' } } } } } } },
+          responses: {
+            '200': {
+              description: 'Created contact record',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                contact_id: { type: 'string' },
+                name: { type: 'string' },
+                email: { type: 'string' },
+                phone: { type: 'string' },
+                company: { type: 'string' },
+                title: { type: 'string' },
+                source: { type: 'string' },
+                lead_score: { type: 'number', minimum: 0, maximum: 100 },
+                enrichment: { type: 'object', properties: { linkedin_likely: { type: 'string' }, company_size: { type: 'string' }, industry: { type: 'string' }, estimated_revenue: { type: 'string' } } },
+                recommended_sequence: { type: 'string' },
+                tags: actions,
+                next_action: { type: 'object', properties: { action: { type: 'string' }, due_in: { type: 'string' }, channel: { type: 'string' } } },
+                duplicate_risk: { type: 'object', properties: { score: { type: 'number', minimum: 0, maximum: 1 }, reason: { type: 'string' } } },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing name or email' }, '500': { description: 'Contact creation failed' },
+          },
+        },
+      },
+      '/update-opportunity': {
+        post: {
+          operationId: 'updateOpportunity',
+          summary: 'Update a CRM deal with stage analysis, win probability factors, risk flags and forecast category',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['opportunity_id', 'deal_name'], properties: { opportunity_id: { type: 'string' }, deal_name: { type: 'string' }, stage: { type: 'string' }, value: { type: 'number' }, currency: { type: 'string' }, probability: { type: 'number' }, close_date: { type: 'string' }, notes: { type: 'string' }, owner: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Updated opportunity record',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                opportunity_id: { type: 'string' },
+                deal_name: { type: 'string' },
+                stage: { type: 'string' },
+                value: { type: 'number' },
+                currency: { type: 'string' },
+                probability: { type: 'number' },
+                close_date: { type: 'string' },
+                owner: { type: 'string' },
+                stage_analysis: { type: 'object', properties: { days_in_stage: { type: 'number' }, expected_days: { type: 'number' }, velocity: { type: 'string', enum: ['fast', 'on_track', 'slow', 'stalled'] } } },
+                win_probability_factors: { type: 'array', items: { type: 'object', properties: { factor: { type: 'string' }, impact: { type: 'string', enum: ['positive', 'negative', 'neutral'] }, weight: { type: 'number' } } } },
+                risk_flags: { type: 'array', items: { type: 'object', properties: { flag: { type: 'string' }, severity: { type: 'string', enum: ['high', 'medium', 'low'] } } } },
+                recommended_actions: actions,
+                forecast_category: { type: 'string', enum: ['commit', 'best_case', 'pipeline', 'omit'] },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing opportunity_id or deal_name' }, '500': { description: 'Opportunity update failed' },
+          },
+        },
+      },
+      '/log-activity': {
+        post: {
+          operationId: 'logActivity',
+          summary: 'Log a CRM activity with sentiment analysis, key signals, follow-up and deal impact',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['contact_id', 'activity_type', 'subject'], properties: { contact_id: { type: 'string' }, activity_type: { type: 'string' }, subject: { type: 'string' }, body: { type: 'string' }, outcome: { type: 'string' }, next_step: { type: 'string' }, channel: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Logged activity record',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                activity_id: { type: 'string' },
+                contact_id: { type: 'string' },
+                activity_type: { type: 'string' },
+                subject: { type: 'string' },
+                body: { type: 'string' },
+                outcome: { type: 'string' },
+                channel: { type: 'string' },
+                sentiment: { type: 'string', enum: ['positive', 'neutral', 'negative', 'mixed'] },
+                key_signals: actions,
+                follow_up_required: { type: 'boolean' },
+                suggested_next_activity: { type: 'object', properties: { type: { type: 'string' }, subject: { type: 'string' }, due_in: { type: 'string' }, priority: { type: 'string', enum: ['high', 'medium', 'low'] } } },
+                deal_impact: { type: 'object', properties: { direction: { type: 'string', enum: ['positive', 'negative', 'neutral'] }, reason: { type: 'string' } } },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing contact_id, activity_type or subject' }, '500': { description: 'Activity logging failed' },
+          },
+        },
+      },
+      '/create-followup-task': {
+        post: {
+          operationId: 'createFollowupTask',
+          summary: 'Create a CRM follow-up task with urgency scoring, message suggestion and escalation risk',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['contact_id', 'task_type', 'description'], properties: { contact_id: { type: 'string' }, task_type: { type: 'string' }, description: { type: 'string' }, due_date: { type: 'string' }, priority: { type: 'string' }, assigned_to: { type: 'string' }, context: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Created follow-up task',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                task_id: { type: 'string' },
+                contact_id: { type: 'string' },
+                task_type: { type: 'string' },
+                description: { type: 'string' },
+                due_date: { type: 'string' },
+                priority: { type: 'string', enum: ['high', 'medium', 'low'] },
+                assigned_to: { type: 'string' },
+                urgency_score: { type: 'number', minimum: 0, maximum: 100 },
+                suggested_message: { type: 'string' },
+                best_channel: { type: 'string', enum: ['email', 'phone', 'linkedin', 'sms'] },
+                best_time: { type: 'string' },
+                completion_probability: { type: 'number', minimum: 0, maximum: 1 },
+                escalation_risk: { type: 'object', properties: { score: { type: 'number', minimum: 0, maximum: 1 }, reason: { type: 'string' } } },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing contact_id, task_type or description' }, '500': { description: 'Task creation failed' },
+          },
+        },
+      },
+      '/pipeline-transition': {
+        post: {
+          operationId: 'pipelineTransition',
+          summary: 'Execute a CRM pipeline stage transition with validation, risk assessment and exit criteria',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['opportunity_id', 'from_stage', 'to_stage'], properties: { opportunity_id: { type: 'string' }, from_stage: { type: 'string' }, to_stage: { type: 'string' }, reason: { type: 'string' }, notes: { type: 'string' }, blockers: { type: 'array', items: { type: 'string' } } } } } } },
+          responses: {
+            '200': {
+              description: 'Pipeline transition result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                opportunity_id: { type: 'string' },
+                from_stage: { type: 'string' },
+                to_stage: { type: 'string' },
+                transition_valid: { type: 'boolean' },
+                transition_risk: { type: 'string', enum: ['high', 'medium', 'low'] },
+                skipped_steps: actions,
+                required_fields_missing: actions,
+                entry_criteria_met: { type: 'boolean' },
+                exit_criteria: { type: 'array', items: { type: 'object', properties: { criterion: { type: 'string' }, met: { type: 'boolean' } } } },
+                recommended_actions: actions,
+                estimated_close_impact_days: { type: 'number' },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing opportunity_id, from_stage or to_stage' }, '500': { description: 'Pipeline transition failed' },
+          },
+        },
+      },
+      '/sync-lead': {
+        post: {
+          operationId: 'syncLead',
+          summary: 'Sync and deduplicate a lead across CRM systems with field mapping and data quality scoring',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['lead_data', 'source_system', 'target_system'], properties: { lead_data: { type: 'object' }, source_system: { type: 'string' }, target_system: { type: 'string' }, dedup_fields: { type: 'array', items: { type: 'string' } } } } } } },
+          responses: {
+            '200': {
+              description: 'Lead sync result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                sync_id: { type: 'string' },
+                source_system: { type: 'string' },
+                target_system: { type: 'string' },
+                duplicate_detected: { type: 'boolean' },
+                duplicate_confidence: { type: 'number', minimum: 0, maximum: 1 },
+                merge_recommendation: { type: 'string', enum: ['create_new', 'merge_existing', 'skip', 'manual_review'] },
+                field_mapping: { type: 'array', items: { type: 'object', properties: { source_field: { type: 'string' }, target_field: { type: 'string' }, value: { type: 'string' }, conflict: { type: 'boolean' } } } },
+                data_quality_score: { type: 'number', minimum: 0, maximum: 100 },
+                enrichment_suggestions: { type: 'array', items: { type: 'object', properties: { field: { type: 'string' }, suggested_value: { type: 'string' }, source: { type: 'string' } } } },
+                sync_warnings: actions,
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing lead_data, source_system or target_system' }, '500': { description: 'Lead sync failed' },
+          },
+        },
+      },
+      '/execution-gate': {
+        post: {
+          operationId: 'crmExecutionGate',
+          summary: 'Gate CRM action execution with risk scoring, blocking flags and chain-to recommendations',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['crm_context', 'intended_action'], properties: { crm_context: { type: 'object' }, intended_action: { type: 'string' }, contact_id: { type: 'string' }, opportunity_id: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Execution gate result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                execute: { type: 'boolean' },
+                confidence: { type: 'number', minimum: 0, maximum: 1 },
+                blocking_flags: actions,
+                warnings: actions,
+                risk_score: { type: 'number', minimum: 0, maximum: 1 },
+                recommended_action: { type: 'string' },
+                chain_to: actions,
+                estimated_impact: { type: 'string' },
+                retry_after: { type: ['string', 'null'] },
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing crm_context or intended_action' }, '500': { description: 'Gate check failed' },
+          },
+        },
+      },
+      '/crm-workflow': {
+        post: {
+          operationId: 'crmWorkflow',
+          summary: 'ONE-CALL: full CRM workflow — contact creation, opportunity update, activity logging, task scheduling and pipeline health',
+          'x-one-call': true,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['contact_name', 'contact_email'], properties: { contact_name: { type: 'string' }, contact_email: { type: 'string' }, company: { type: 'string' }, deal_name: { type: 'string' }, deal_value: { type: 'number' }, meeting_notes: { type: 'string' }, current_stage: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Full CRM workflow result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                workflow_id: { type: 'string' },
+                contact: { type: 'object', properties: { id: { type: 'string' }, lead_score: { type: 'number' }, recommended_sequence: { type: 'string' }, next_action: { type: 'object', properties: { action: { type: 'string' }, due_in: { type: 'string' }, channel: { type: 'string' } } } } },
+                opportunity: { type: 'object', properties: { stage: { type: 'string' }, probability: { type: 'number' }, forecast_category: { type: 'string', enum: ['commit', 'best_case', 'pipeline', 'omit'] }, risk_flags: actions } },
+                activities_logged: { type: 'number' },
+                followup_tasks: { type: 'array', items: { type: 'object', properties: { type: { type: 'string' }, due_in: { type: 'string' }, priority: { type: 'string', enum: ['high', 'medium', 'low'] }, suggested_message: { type: 'string' } } } },
+                pipeline_health: { type: 'object', properties: { status: { type: 'string', enum: ['on_track', 'at_risk', 'stalled'] }, velocity: { type: 'string' }, close_probability: { type: 'number' } } },
+                execution_summary: { type: 'object', properties: { actions_taken: { type: 'number' }, next_steps: actions, estimated_close_date: { type: 'string' } } },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing contact_name or contact_email' }, '500': { description: 'Workflow execution failed' },
+          },
+        },
+      },
+    },
+  });
+});
+
+export default router;

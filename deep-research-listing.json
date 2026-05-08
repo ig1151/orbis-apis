@@ -1,0 +1,160 @@
+[
+  {
+    "name": "Deep Research API",
+    "shortDescription": "Agent-ready deep research, fact extraction and source synthesis",
+    "description": "AI-powered deep research API for autonomous research agents. Research topics, extract facts, compare sources, score credibility, build timelines, generate citations, gate research quality and run full one-call deep research workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/deep-research",
+    "websiteUrl": "https://orbis-apis.onrender.com/deep-research/info",
+    "docsUrl": "https://orbis-apis.onrender.com/deep-research/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/deep-research/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": [
+      "deep-research",
+      "fact-extraction",
+      "source-comparison",
+      "credibility-analysis",
+      "timeline-builder",
+      "citation-builder",
+      "research-agents",
+      "execution-gate",
+      "mcp"
+    ],
+    "keywords": [
+      "deep research api",
+      "research topic",
+      "extract facts",
+      "compare sources",
+      "credibility analysis",
+      "build timeline",
+      "citation builder",
+      "research report",
+      "one call research workflow"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/research-topic",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-facts",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-sources",
+            "pricePerCallUsdc": 0.007
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/credibility-analysis",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/timeline-builder",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/citation-builder",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/deep-research",
+            "pricePerCallUsdc": 0.018
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/research-topic",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-facts",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/deep-research",
+            "pricePerCallUsdc": 0.011
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/research-topic",
+        "description": "Cross-source research synthesis with findings, gaps and contradictions"
+      },
+      {
+        "method": "POST",
+        "path": "/extract-facts",
+        "description": "Extract verified facts, quotes, entities and temporal markers"
+      },
+      {
+        "method": "POST",
+        "path": "/compare-sources",
+        "description": "Compare sources for consensus, divergence and source quality"
+      },
+      {
+        "method": "POST",
+        "path": "/credibility-analysis",
+        "description": "Score source credibility, bias indicators and recommended use"
+      },
+      {
+        "method": "POST",
+        "path": "/timeline-builder",
+        "description": "Build chronological, causal or predictive timelines"
+      },
+      {
+        "method": "POST",
+        "path": "/citation-builder",
+        "description": "Generate APA, MLA, Chicago and Harvard citations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Gate research execution based on quality, completeness and risk"
+      },
+      {
+        "method": "POST",
+        "path": "/deep-research",
+        "description": "One-call full research workflow with findings, facts, timeline, gaps and report"
+      }
+    ]
+  }
+]

@@ -1,5 +1,13 @@
 import meetingAnalyzerRouter from './routes/meeting-analyzer-api/routes/intelligence';
 import meetingAnalyzerOpenapiRouter from './routes/meeting-analyzer-api/routes/openapi';
+import crmUpdateRouter from './routes/crm-update-api/routes/intelligence';
+import crmUpdateOpenapiRouter from './routes/crm-update-api/routes/openapi';
+import calendarSchedulingRouter from './routes/calendar-scheduling-api/routes/intelligence';
+import calendarSchedulingOpenapiRouter from './routes/calendar-scheduling-api/routes/openapi';
+import deepResearchRouter from './routes/deep-research-api/routes/intelligence';
+import deepResearchOpenapiRouter from './routes/deep-research-api/routes/openapi';
+import workflowOrchestratorRouter from './routes/workflow-orchestrator-api/routes/intelligence';
+import workflowOrchestratorOpenapiRouter from './routes/workflow-orchestrator-api/routes/openapi';
 import shopifyAnalyzerRouter from './routes/shopify-analyzer-api/routes/intelligence';
 import shopifyAnalyzerOpenapiRouter from './routes/shopify-analyzer-api/routes/openapi';
 import serpIntelligenceRouter from './routes/serp-intelligence-api/routes/intelligence';
@@ -1463,6 +1471,35 @@ app.get('/meeting-analyzer/info', (_req, res) => res.json({
   execution_chain: { previous: 'shopify-analyzer', next: 'cold-outreach', optional_next: ['lead-scoring', 'email-intelligence'] },
 }));
 
+// ── deep-research ─────────────────────────────────────────────────────────────
+app.use('/deep-research/openapi.json', deepResearchOpenapiRouter);
+app.use('/deep-research', deepResearchRouter);
+app.get('/deep-research/info', (_req, res) => res.json({
+  name: 'Deep Research API',
+  slug: 'deep-research',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none', pii_note: 'Research content processed in-memory only, never persisted' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { research_topic: '$0.007', extract_facts: '$0.005', compare_sources: '$0.006', credibility_analysis: '$0.005', timeline_builder: '$0.006', citation_builder: '$0.005', execution_gate: '$0.002', deep_research: '$0.020' },
+    high_volume: { research_topic: '$0.005', compare_sources: '$0.004', deep_research: '$0.012' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/research-topic', description: 'Cross-source research synthesis with key findings, subtopics, knowledge gaps and contradictions' },
+    { method: 'POST', path: '/extract-facts', description: 'Extract verified facts with type, confidence, verbatim quotes and entity recognition' },
+    { method: 'POST', path: '/compare-sources', description: 'Compare multiple sources for consensus, divergence, unique insights and quality ranking' },
+    { method: 'POST', path: '/credibility-analysis', description: 'Score source credibility with bias detection, quality signals and recommended use' },
+    { method: 'POST', path: '/timeline-builder', description: 'Build chronological timeline with events, turning points, patterns and future projections' },
+    { method: 'POST', path: '/citation-builder', description: 'Format citations in APA, MLA, Chicago and Harvard styles with bibliography' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate research execution based on quality, completeness and risk score' },
+    { method: 'POST', path: '/deep-research', description: 'ONE-CALL: full research workflow — findings, facts, timeline, contradictions, gaps and report', x_one_call: true },
+  ],
+  execution_chain: { previous: 'meeting-analyzer', next: 'cold-outreach', optional_next: ['lead-scoring', 'email-intelligence'] },
+}));
+
 // ── shopify-analyzer ─────────────────────────────────────────────────────────
 app.use('/shopify-analyzer/openapi.json', shopifyAnalyzerOpenapiRouter);
 app.use('/shopify-analyzer', shopifyAnalyzerRouter);
@@ -1652,6 +1689,89 @@ app.get('/lead-scoring/info', (_req, res) => res.json({
   execution_chain: { previous: 'market-signal-v2', next: 'cold-outreach', optional_next: ['email-intelligence', 'crm-update', 'calendar-scheduling'] },
 }));
 
+// ── workflow-orchestrator ─────────────────────────────────────────────────────
+app.use('/workflow-orchestrator/openapi.json', workflowOrchestratorOpenapiRouter);
+app.use('/workflow-orchestrator', workflowOrchestratorRouter);
+app.get('/workflow-orchestrator/info', (_req, res) => res.json({
+  name: 'Workflow Orchestrator API',
+  slug: 'workflow-orchestrator',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none', pii_note: 'Workflow data processed in-memory only, never persisted' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { build_workflow: '$0.006', execute_workflow: '$0.008', retry_failed_step: '$0.004', parallel_execution: '$0.006', cost_estimator: '$0.004', workflow_health: '$0.005', execution_gate: '$0.002', run_workflow: '$0.020' },
+    high_volume: { build_workflow: '$0.004', execute_workflow: '$0.005', run_workflow: '$0.012' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/build-workflow', description: 'Build a multi-step agent workflow from a goal with steps, cost estimate, parallel opportunities and critical path' },
+    { method: 'POST', path: '/execute-workflow', description: 'Execute a multi-step workflow with per-step result tracking and overall output' },
+    { method: 'POST', path: '/retry-failed-step', description: 'Determine retry strategy for a failed workflow step with root cause analysis and prevention tips' },
+    { method: 'POST', path: '/parallel-execution', description: 'Plan and execute parallel workflow branches with merge strategy and speedup estimation' },
+    { method: 'POST', path: '/cost-estimator', description: 'Estimate cost and time for a workflow before execution with optimization opportunities' },
+    { method: 'POST', path: '/workflow-health', description: 'Analyze health, success rate, bottlenecks and alerts for a workflow' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate workflow execution based on readiness, resource constraints and risk score' },
+    { method: 'POST', path: '/run-workflow', description: 'ONE-CALL: build and execute a complete multi-step workflow from a goal', x_one_call: true },
+  ],
+  execution_chain: { previous: 'meeting-analyzer', next: 'autopilot', optional_next: ['agent-workflow', 'strategy-execution', 'unified-decision'] },
+}));
 
+// ── crm-update ────────────────────────────────────────────────────────────────
+app.use('/crm-update/openapi.json', crmUpdateOpenapiRouter);
+app.use('/crm-update', crmUpdateRouter);
+app.get('/crm-update/info', (_req, res) => res.json({
+  name: 'CRM Update API',
+  slug: 'crm-update',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none', pii_note: 'CRM data processed in-memory only, never persisted' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { create_contact: '$0.005', update_opportunity: '$0.005', log_activity: '$0.004', create_followup_task: '$0.004', pipeline_transition: '$0.005', sync_lead: '$0.006', execution_gate: '$0.003', crm_workflow: '$0.018' },
+    high_volume: { create_contact: '$0.003', update_opportunity: '$0.003', crm_workflow: '$0.011' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/create-contact', description: 'Create a CRM contact with lead scoring, enrichment, duplicate detection and next action' },
+    { method: 'POST', path: '/update-opportunity', description: 'Update a CRM deal with stage analysis, win probability factors, risk flags and forecast category' },
+    { method: 'POST', path: '/log-activity', description: 'Log a CRM activity with sentiment analysis, key signals, follow-up and deal impact' },
+    { method: 'POST', path: '/create-followup-task', description: 'Create a CRM follow-up task with urgency scoring, message suggestion and escalation risk' },
+    { method: 'POST', path: '/pipeline-transition', description: 'Execute a CRM pipeline stage transition with validation, risk assessment and exit criteria' },
+    { method: 'POST', path: '/sync-lead', description: 'Sync and deduplicate a lead across CRM systems with field mapping and data quality scoring' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate CRM action execution with risk scoring, blocking flags and chain-to recommendations' },
+    { method: 'POST', path: '/crm-workflow', description: 'ONE-CALL: full CRM workflow — contact creation, opportunity update, activity logging, task scheduling and pipeline health', x_one_call: true },
+  ],
+  execution_chain: { previous: 'lead-scoring', next: 'meeting-analyzer', optional_next: ['cold-outreach', 'email-intelligence'] },
+}));
 
-
+// ── calendar-scheduling ───────────────────────────────────────────────────────
+app.use('/calendar-scheduling/openapi.json', calendarSchedulingOpenapiRouter);
+app.use('/calendar-scheduling', calendarSchedulingRouter);
+app.get('/calendar-scheduling/info', (_req, res) => res.json({
+  name: 'Calendar Scheduling API',
+  slug: 'calendar-scheduling',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none', pii_note: 'Calendar data processed in-memory only, never persisted' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { find_slots: '$0.004', schedule_meeting: '$0.005', reschedule: '$0.005', timezone_optimizer: '$0.004', availability_intelligence: '$0.006', meeting_priority: '$0.006', execution_gate: '$0.002', schedule_workflow: '$0.018' },
+    high_volume: { find_slots: '$0.002', schedule_meeting: '$0.003', schedule_workflow: '$0.011' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/find-slots', description: 'Find optimal meeting slots for attendees with availability scoring and timezone analysis' },
+    { method: 'POST', path: '/schedule-meeting', description: 'Schedule a meeting with calendar links, structured agenda, pre-meeting checklist and conflict warnings' },
+    { method: 'POST', path: '/reschedule', description: 'Reschedule a meeting with conflict resolution, impact analysis and notification templates' },
+    { method: 'POST', path: '/timezone-optimizer', description: 'Optimize meeting times across multiple timezones with fairness scoring and rotation schedule' },
+    { method: 'POST', path: '/availability-intelligence', description: 'Analyze calendar patterns, focus windows, meeting density and burnout risk' },
+    { method: 'POST', path: '/meeting-priority', description: 'Score and prioritize meeting queue with tier classification, time ROI and delegation opportunities' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate scheduling execution with risk scoring, blocking flags and chain-to recommendations' },
+    { method: 'POST', path: '/schedule-workflow', description: 'ONE-CALL: full scheduling workflow — slot finding, meeting details, attendee analysis and execution plan', x_one_call: true },
+  ],
+  execution_chain: { previous: 'crm-update', next: 'meeting-analyzer', optional_next: ['cold-outreach', 'email-intelligence'] },
+}));

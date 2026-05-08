@@ -1,0 +1,160 @@
+[
+  {
+    "name": "Workflow Orchestrator API",
+    "shortDescription": "Agent-ready multi-step workflow orchestration across Orbis APIs",
+    "description": "AI-powered workflow orchestration API for autonomous agents. Build workflows, execute multi-step plans, retry failed steps, parallelize execution, estimate cost, monitor workflow health, gate execution and run complete one-call agent workflows.",
+    "category": "automation",
+    "baseUrl": "https://orbis-apis.onrender.com/workflow-orchestrator",
+    "websiteUrl": "https://orbis-apis.onrender.com/workflow-orchestrator/info",
+    "docsUrl": "https://orbis-apis.onrender.com/workflow-orchestrator/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/workflow-orchestrator/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": [
+      "workflow-orchestration",
+      "agent-orchestration",
+      "automation",
+      "multi-step-workflows",
+      "parallel-execution",
+      "cost-estimation",
+      "workflow-health",
+      "execution-gate",
+      "mcp"
+    ],
+    "keywords": [
+      "build workflow",
+      "execute workflow",
+      "agent workflow",
+      "workflow orchestrator",
+      "retry failed step",
+      "parallel execution",
+      "cost estimator",
+      "workflow health",
+      "run workflow"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/build-workflow",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execute-workflow",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/retry-failed-step",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/parallel-execution",
+            "pricePerCallUsdc": 0.007
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cost-estimator",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/workflow-health",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/run-workflow",
+            "pricePerCallUsdc": 0.02
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/build-workflow",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execute-workflow",
+            "pricePerCallUsdc": 0.007
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/run-workflow",
+            "pricePerCallUsdc": 0.013
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/build-workflow",
+        "description": "Build a multi-step workflow from a goal with cost and timing estimates"
+      },
+      {
+        "method": "POST",
+        "path": "/execute-workflow",
+        "description": "Execute a multi-step workflow with result tracking"
+      },
+      {
+        "method": "POST",
+        "path": "/retry-failed-step",
+        "description": "Analyze failed workflow steps and recommend retry strategy"
+      },
+      {
+        "method": "POST",
+        "path": "/parallel-execution",
+        "description": "Plan parallel workflow branches and merge strategy"
+      },
+      {
+        "method": "POST",
+        "path": "/cost-estimator",
+        "description": "Estimate workflow cost, runtime and optimization opportunities"
+      },
+      {
+        "method": "POST",
+        "path": "/workflow-health",
+        "description": "Analyze workflow health, success rate, bottlenecks and alerts"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Gate workflow execution based on readiness and resource risk"
+      },
+      {
+        "method": "POST",
+        "path": "/run-workflow",
+        "description": "One-call workflow that builds and executes a complete multi-step agent workflow"
+      }
+    ]
+  }
+]

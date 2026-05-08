@@ -1,0 +1,89 @@
+{
+  "name": "Calendar Scheduling API",
+  "slug": "calendar-scheduling",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none",
+    "pii_note": "Calendar data processed in-memory only, never persisted"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "find_slots": 0.004,
+      "schedule_meeting": 0.005,
+      "reschedule": 0.005,
+      "timezone_optimizer": 0.004,
+      "availability_intelligence": 0.006,
+      "meeting_priority": 0.006,
+      "execution_gate": 0.002,
+      "schedule_workflow": 0.018
+    },
+    "high_volume": {
+      "find_slots": 0.002,
+      "schedule_meeting": 0.003,
+      "schedule_workflow": 0.011
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/find-slots",
+      "description": "Find optimal meeting slots for attendees with availability scoring and timezone analysis"
+    },
+    {
+      "method": "POST",
+      "path": "/schedule-meeting",
+      "description": "Schedule a meeting with calendar links, structured agenda, pre-meeting checklist and conflict warnings"
+    },
+    {
+      "method": "POST",
+      "path": "/reschedule",
+      "description": "Reschedule a meeting with conflict resolution, impact analysis and notification templates"
+    },
+    {
+      "method": "POST",
+      "path": "/timezone-optimizer",
+      "description": "Optimize meeting times across multiple timezones with fairness scoring and rotation schedule"
+    },
+    {
+      "method": "POST",
+      "path": "/availability-intelligence",
+      "description": "Analyze calendar patterns, focus windows, meeting density and burnout risk"
+    },
+    {
+      "method": "POST",
+      "path": "/meeting-priority",
+      "description": "Score and prioritize meeting queue with tier classification, time ROI and delegation opportunities"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Gate scheduling execution with risk scoring, blocking flags and chain-to recommendations"
+    },
+    {
+      "method": "POST",
+      "path": "/schedule-workflow",
+      "description": "ONE-CALL: full scheduling workflow — slot finding, meeting details, attendee analysis and execution plan",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "crm-update",
+    "next": "meeting-analyzer",
+    "optional_next": [
+      "cold-outreach",
+      "email-intelligence"
+    ]
+  }
+}
