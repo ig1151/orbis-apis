@@ -306,3 +306,32 @@ Return concise JSON:
 });
 
 export default router;
+
+router.post('/execution-gate', async (req: Request, res: Response) => {
+  const { browser_action, action_context, risk_threshold, require_human_approval } = req.body;
+  if (!browser_action) return res.status(400).json({ error: 'browser_action is required' });
+  if (!action_context) return res.status(400).json({ error: 'action_context is required' });
+  try {
+    const raw = await callClaude(`Gate autonomous browser action execution. Assess risk, check if action is destructive, financial, or security-sensitive, and determine if human approval is needed.
+Browser action: "${browser_action}" Risk threshold: ${risk_threshold ?? 0.7} Require human approval: ${require_human_approval ?? false} Action context: ${JSON.stringify(action_context)}
+
+Return concise JSON:
+{
+  "execute": true,
+  "confidence": 0.9,
+  "risk_score": 0.2,
+  "risk_level": "low|medium|high",
+  "destructive_action": false,
+  "credential_interaction": false,
+  "financial_interaction": false,
+  "blocking_flags": ["string"],
+  "warnings": ["string"],
+  "human_approval_required": false,
+  "recommended_action": "proceed|require_approval|block",
+  "safe_to_execute": true,
+  "chain_to": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
