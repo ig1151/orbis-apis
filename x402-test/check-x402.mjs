@@ -99,6 +99,20 @@ const tests = [
   // ── Developer Utilities ───────────────────────────────────────────────────
   { slug: "dev-utilities-api-4e6ffb",                                       path: "/summarize",             body: { text: "This is a test sentence that is long enough to meet the minimum character requirement for summarization." } },
 
+  // ── Agent Intelligence (new) ─────────────────────────────────────────────
+  { slug: "social-intelligence-api-460543",            path: "/analyze-post",       body: { post_content: "Just launched our AI product — faster than anything on the market!", platform: "twitter" } },
+  { slug: "data-connector-api-064a62",                 path: "/transform",          body: { data: [{ first_name: "John", last_name: "Doe", arr: "12000" }], from_format: "crm_export", to_format: "salesforce_lead" } },
+  { slug: "voice-intelligence-api-690f0f",             path: "/analyze-transcript", body: { transcript: "Sales rep: Are you interested in our enterprise plan? Customer: Maybe, what does it include?", call_type: "sales" } },
+  { slug: "agent-evaluation-api-cf25b2",               path: "/benchmark",          body: { agent_response: "Our enterprise plan includes unlimited seats, SSO, and 24/7 support.", task: "Answer a question about enterprise pricing", expected_behavior: "Mention key features and pricing tiers clearly", domain: "sales" } },
+  { slug: "proposal-generation-api-4b5af0",            path: "/generate-proposal",  body: { client_name: "Acme Corp", problem_statement: "Manual lead qualification takes 3 hours per rep daily", solution_description: "AI-powered lead scoring integrated with Salesforce" } },
+  { slug: "outreach-execution-api-c668dc",             path: "/compose-message",    body: { recipient: { name: "Jane Smith", title: "VP Engineering", company: "TechCorp" }, message_type: "cold_email", purpose: "book a demo for our AI observability platform" } },
+  { slug: "real-time-monitor-api-97398b",              path: "/anomaly-detect",     body: { metrics: [{ name: "api_latency_ms", values: [120, 115, 130, 125, 890, 940, 128] }], sensitivity: "high" } },
+  { slug: "computer-use-api-a39b9e",                   path: "/analyze-screen",     body: { screen_description: "Chrome browser showing a Salesforce lead list with 200 records", objective: "export all leads to CSV", app_context: "Salesforce CRM" } },
+  { slug: "enterprise-retrieval-api-7f11e8",           path: "/search",             body: { query: "Q4 2024 revenue performance", sources: ["confluence", "notion", "slack"] } },
+  { slug: "multi-agent-coordination-api-f33d92",       path: "/create-team",        body: { team_name: "research-team", goal: "analyze competitor pricing", agents: [{ role: "researcher", capability: "web_search" }] } },
+  { slug: "agent-observability-telemetry-api-e9eaa3",  path: "/log-tool-call",      body: { agent_id: "agent-001", tool_name: "web_search", input: { query: "stripe pricing" }, output: { results: 5 }, latency_ms: 320 } },
+  { slug: "web-navigation-api-12f37e",                 path: "/navigate",           body: { url: "https://stripe.com/pricing", goal: "extract all pricing tiers and features" } },
+
   // ── Finance & Validation ──────────────────────────────────────────────────
   { slug: "email-validation-api-204701",                                    path: "/validate",              body: { email: "test@example.com" } },
   { slug: "email-intelligence-api-d9801f",                                  path: "/verify",                body: { email: "test@example.com" } },
