@@ -18,8 +18,10 @@ function parseJSON(raw: string) {
   return JSON.parse(raw.replace(/```json|```/g, '').trim());
 }
 
+
+
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ name: 'Browser Automation API', info: '/browser-automation/info', openapi: '/browser-automation/openapi.json', health: 'ok' });
+  res.json({ name: 'Browser Automation API', slug: 'browser-automation', version: '1.0.0', endpoints: ['/open','/click','/type','/extract','/upload','/download','/wait','/screenshot','/session','/run-workflow','/execution-gate','/replan-workflow','/evaluate-state','/resume-workflow'], docs: '/browser-automation/info', openapi: '/browser-automation/openapi.json', mcp_compatible: true });
 });
 
 router.post('/open', async (req: Request, res: Response) => {

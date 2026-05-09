@@ -18,8 +18,9 @@ function parseJSON(raw: string) {
   return JSON.parse(raw.replace(/```json|```/g, '').trim());
 }
 
+
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ name: 'Agent Payments API', info: '/agent-payments/info', openapi: '/agent-payments/openapi.json', health: 'ok' });
+  res.json({ name: 'Agent Payments API', slug: 'agent-payments', version: '1.0.0', endpoints: ['/create-wallet','/request-payment','/approve-spend','/execute-payment','/escrow','/subscription-management','/usage-billing','/spending-limits','/execution-gate','/simulate-payment','/verify-settlement','/run-payment'], docs: '/agent-payments/info', openapi: '/agent-payments/openapi.json', mcp_compatible: true });
 });
 
 router.post('/create-wallet', async (req: Request, res: Response) => {
