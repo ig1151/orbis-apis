@@ -288,6 +288,8 @@ Workflow steps (${workflow.length} total): ${JSON.stringify(workflow.slice(0, 20
 
 Return concise JSON:
 {
+  "trace_id": "string (uuid-style)",
+  "workflow_id": "string (uuid-style)",
   "session_id": "string",
   "goal": "string",
   "total_steps": number,
@@ -346,6 +348,8 @@ Session ID: "${session_id}" Goal: "${goal}" Failed step: ${JSON.stringify(failed
 
 Return concise JSON:
 {
+  "trace_id": "string (uuid-style)",
+  "workflow_id": "string (uuid-style)",
   "session_id": "string",
   "goal": "string",
   "failure_analysis": { "root_cause": "string", "failure_type": "selector_missing|timeout|navigation|auth|captcha|other", "recoverable": true },
@@ -376,6 +380,7 @@ Session ID: "${session_id}" Goal: "${goal}" Current state: ${JSON.stringify(curr
 
 Return concise JSON:
 {
+  "trace_id": "string (uuid-style)",
   "session_id": "string",
   "goal": "string",
   "goal_achieved": false,
