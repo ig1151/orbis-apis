@@ -268,4 +268,133 @@ Return concise JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+router.post('/click', async (req: Request, res: Response) => {
+  const { target, screen_context } = req.body;
+  if (!target) return res.status(400).json({ error: 'target is required' });
+  if (!screen_context) return res.status(400).json({ error: 'screen_context is required' });
+  try {
+    const raw = await callClaude(`Generate precise click action instructions for this UI target. Screen context: "${screen_context.slice(0, 1000)}" Target: "${target}"
+
+Return concise JSON:
+{
+  "action": "click",
+  "target": "string",
+  "click_type": "single|double|right",
+  "locator_primary": "string",
+  "locator_fallbacks": ["string"],
+  "coordinates_hint": "string or null",
+  "pre_click_steps": ["string"],
+  "post_click_verification": "string",
+  "expected_outcome": "string",
+  "risk_level": "safe|caution|destructive",
+  "undo_possible": true|false,
+  "confidence": 0-1,
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/type', async (req: Request, res: Response) => {
+  const { field_target, text, screen_context } = req.body;
+  if (!field_target) return res.status(400).json({ error: 'field_target is required' });
+  if (!text) return res.status(400).json({ error: 'text is required' });
+  try {
+    const raw = await callClaude(`Generate type/input action instructions for this field. Screen context: "${screen_context || 'not provided'}" Field target: "${field_target}" Text to type: "${text.slice(0, 500)}"
+
+Return concise JSON:
+{
+  "action": "type",
+  "field_target": "string",
+  "text": "string",
+  "locator": "string",
+  "clear_first": true|false,
+  "type_method": "direct|clipboard_paste|slow_type",
+  "pre_type_steps": ["string"],
+  "post_type_verification": "string",
+  "expected_field_state": "string",
+  "sensitive_data": true|false,
+  "confidence": 0-1,
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/keypress', async (req: Request, res: Response) => {
+  const { action_goal, screen_context } = req.body;
+  if (!action_goal) return res.status(400).json({ error: 'action_goal is required' });
+  try {
+    const raw = await callClaude(`Generate the optimal keyboard shortcut or keypress sequence to accomplish this goal. Screen context: "${screen_context || 'not provided'}" Action goal: "${action_goal}"
+
+Return concise JSON:
+{
+  "action": "keypress",
+  "key_sequence": ["string"],
+  "shortcut_notation": "string",
+  "os_variants": { "windows": "string", "mac": "string", "linux": "string" },
+  "modifier_keys": ["string"],
+  "hold_sequence": true|false,
+  "pre_keypress_steps": ["string"],
+  "post_keypress_verification": "string",
+  "expected_outcome": "string",
+  "alternative_method": "string",
+  "confidence": 0-1,
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/open-app', async (req: Request, res: Response) => {
+  const { app_name, target_state } = req.body;
+  if (!app_name) return res.status(400).json({ error: 'app_name is required' });
+  try {
+    const raw = await callClaude(`Generate instructions to open this application and navigate to the target state. Application: "${app_name}" Target state: "${target_state || 'home/default view'}"
+
+Return concise JSON:
+{
+  "app_name": "string",
+  "launch_instructions": [{ "step": number, "action": "string", "method": "shortcut|taskbar|start_menu|spotlight|terminal|dock", "value": "string" }],
+  "os_variants": { "windows": ["string"], "mac": ["string"], "linux": ["string"] },
+  "navigation_to_target": ["string"],
+  "estimated_load_time_seconds": number,
+  "verify_open": "string",
+  "expected_initial_screen": "string",
+  "common_issues": [{ "issue": "string", "fix": "string" }],
+  "confidence": 0-1,
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/run-desktop-task', async (req: Request, res: Response) => {
+  const { task, app, starting_state } = req.body;
+  if (!task) return res.status(400).json({ error: 'task is required' });
+  if (!app) return res.status(400).json({ error: 'app is required' });
+  try {
+    const raw = await callClaude(`Generate a complete, executable desktop task plan. Application: "${app}" Starting state: "${starting_state || 'app closed'}" Task: "${task}"
+
+Return concise JSON:
+{
+  "task_id": "string (uuid-style)",
+  "task": "string",
+  "app": "string",
+  "total_actions": number,
+  "estimated_duration_seconds": number,
+  "actions": [{ "step": number, "action_type": "open_app|click|type|keypress|scroll|wait|screenshot|verify", "target": "string", "value": "string or null", "locator": "string or null", "wait_after_ms": number, "verify": "string", "on_failure": "retry|skip|abort" }],
+  "success_criteria": ["string"],
+  "risk_assessment": "low|medium|high",
+  "reversible": true|false,
+  "rollback_steps": ["string"],
+  "pre_execution_checks": ["string"],
+  "confidence_per_section": { "actions": 0-1, "risk": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 export default router;

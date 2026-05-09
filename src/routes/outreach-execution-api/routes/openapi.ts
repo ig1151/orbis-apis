@@ -550,6 +550,83 @@ router.get('/', (_req: Request, res: Response) => {
           },
         },
       },
+      '/send-sequence': {
+        post: {
+          operationId: 'sendSequence',
+          summary: 'Execute a multi-step outreach sequence with scheduling, compliance validation, and pause logic',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['sequence', 'recipient'], properties: { sequence: { type: 'array', items: { type: 'object' } }, recipient: { type: 'object' }, start_step: { type: 'number' }, send_window: { type: 'object' } } } } } },
+          responses: { '200': { description: 'Sequence execution plan', content: { 'application/json': { schema: { type: 'object', properties: {
+            sequence_id: { type: 'string' }, recipient_email: { type: 'string' }, total_steps: { type: 'number' },
+            steps_to_execute: { type: 'array', items: { type: 'object', properties: { step: { type: 'number' }, channel: { type: 'string' }, scheduled_at: { type: 'string' }, subject: { type: 'string', nullable: true }, message_preview: { type: 'string' }, send_status: { type: 'string', enum: ['scheduled','skipped','blocked'] }, skip_reason: { type: 'string', nullable: true } } } },
+            compliance_cleared: { type: 'boolean' }, compliance_flags: actions, estimated_completion_date: { type: 'string' },
+            pause_triggers: actions, unsubscribe_link_injected: { type: 'boolean' }, tracking_enabled: { type: 'boolean' },
+            sequence_health: { type: 'string', enum: ['healthy','warnings','blocked'] },
+            confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy,
+          } } } } }, '400': { description: 'Missing sequence or recipient' }, '500': { description: 'Sequence execution failed' } },
+        },
+      },
+      '/pause-on-reply': {
+        post: {
+          operationId: 'pauseOnReply',
+          summary: 'Detect if an inbound reply should pause or stop an active outreach sequence',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['reply_text'], properties: { reply_text: { type: 'string' }, sequence_id: { type: 'string' }, sequence_context: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Pause decision result', content: { 'application/json': { schema: { type: 'object', properties: {
+            pause_sequence: { type: 'boolean' }, stop_sequence: { type: 'boolean' }, reason: { type: 'string' },
+            reply_type: { type: 'string', enum: ['interested','not_interested','auto_reply','ooo','bounce','unsubscribe','complaint','neutral'] },
+            human_reply_detected: { type: 'boolean' }, urgency: { type: 'string', enum: ['high','medium','low'] },
+            recommended_action: { type: 'string', enum: ['pause_and_notify','stop_and_archive','continue','escalate','transfer_to_human'] },
+            notification_message: { type: 'string' }, resume_after_days: { type: 'number', nullable: true }, confidence: { type: 'number', minimum: 0, maximum: 1 }, privacy,
+          } } } } }, '400': { description: 'Missing reply_text' }, '500': { description: 'Pause check failed' } },
+        },
+      },
+      '/unsubscribe-check': {
+        post: {
+          operationId: 'unsubscribeCheck',
+          summary: 'Verify a contact is not on unsubscribe or do-not-contact lists before sending',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['email'], properties: { email: { type: 'string' }, context: { type: 'object' } } } } } },
+          responses: { '200': { description: 'Unsubscribe check result', content: { 'application/json': { schema: { type: 'object', properties: {
+            email: { type: 'string' }, can_contact: { type: 'boolean' }, block_reason: { type: 'string', nullable: true },
+            checks_performed: { type: 'array', items: { type: 'object', properties: { check: { type: 'string' }, result: { type: 'string', enum: ['pass','fail','unknown'] }, details: { type: 'string' } } } },
+            dnc_signals: actions, gdpr_applicable: { type: 'boolean' }, casl_applicable: { type: 'boolean' },
+            recommended_action: { type: 'string', enum: ['send','do_not_send','verify_first'] },
+            verification_steps: actions, risk_level: { type: 'string', enum: ['high','medium','low','none'] }, confidence: { type: 'number', minimum: 0, maximum: 1 }, privacy,
+          } } } } }, '400': { description: 'Missing email' }, '500': { description: 'Unsubscribe check failed' } },
+        },
+      },
+      '/compliance-guard': {
+        post: {
+          operationId: 'complianceGuard',
+          summary: 'Audit outreach message for CAN-SPAM, GDPR, and CASL compliance before sending',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['message'], properties: { message: { type: 'string' }, sender_info: { type: 'object' }, recipient_region: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Compliance audit result', content: { 'application/json': { schema: { type: 'object', properties: {
+            compliant: { type: 'boolean' }, overall_risk: { type: 'string', enum: ['high','medium','low','compliant'] },
+            regulations_checked: actions,
+            violations: { type: 'array', items: { type: 'object', properties: { regulation: { type: 'string' }, violation: { type: 'string' }, severity: { type: 'string', enum: ['blocking','warning'] }, fix: { type: 'string' } } } },
+            warnings: actions,
+            required_elements: { type: 'object', properties: { unsubscribe_link: { type: 'boolean' }, physical_address: { type: 'boolean' }, sender_identification: { type: 'boolean' }, subject_not_deceptive: { type: 'boolean' } } },
+            spam_score: { type: 'number', minimum: 0, maximum: 100 }, spam_triggers: actions, cleared_to_send: { type: 'boolean' }, recommended_modifications: actions,
+            confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy,
+          } } } } }, '400': { description: 'Missing message' }, '500': { description: 'Compliance check failed' } },
+        },
+      },
+      '/delivery-status': {
+        post: {
+          operationId: 'deliveryStatus',
+          summary: 'Analyze outreach delivery metrics and identify deliverability issues with remediation steps',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['delivery_metrics'], properties: { campaign_id: { type: 'string' }, delivery_metrics: { type: 'object' }, domain: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Delivery status analysis', content: { 'application/json': { schema: { type: 'object', properties: {
+            campaign_id: { type: 'string' }, deliverability_score: { type: 'number', minimum: 0, maximum: 100 },
+            delivery_health: { type: 'string', enum: ['excellent','good','degraded','critical'] },
+            metrics_analysis: { type: 'object', properties: { delivery_rate: { type: 'string' }, open_rate: { type: 'string' }, bounce_rate: { type: 'string' }, spam_rate: { type: 'string' }, unsubscribe_rate: { type: 'string' } } },
+            issues_detected: { type: 'array', items: { type: 'object', properties: { issue: { type: 'string' }, severity: { type: 'string', enum: ['critical','high','medium','low'] }, likely_cause: { type: 'string' }, fix: { type: 'string' } } } },
+            domain_reputation: { type: 'string', enum: ['good','fair','poor','unknown'] },
+            inbox_placement_estimate: { type: 'string', enum: ['high','medium','low'] }, warming_needed: { type: 'boolean' },
+            recommended_send_volume: { type: 'string' },
+            action_items: { type: 'array', items: { type: 'object', properties: { action: { type: 'string' }, priority: { type: 'string', enum: ['immediate','soon','monitor'] }, expected_impact: { type: 'string' } } } },
+            confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy,
+          } } } } }, '400': { description: 'Missing delivery_metrics' }, '500': { description: 'Delivery status check failed' } },
+        },
+      },
     },
   });
 });

@@ -311,4 +311,133 @@ Return concise JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+router.post('/send-sequence', async (req: Request, res: Response) => {
+  const { sequence, recipient, start_step, send_window } = req.body;
+  if (!sequence) return res.status(400).json({ error: 'sequence is required' });
+  if (!recipient) return res.status(400).json({ error: 'recipient is required' });
+  try {
+    const raw = await callClaude(`Execute this outreach sequence for the recipient. Validate compliance, set timing, and generate send instructions for each step. Recipient: ${JSON.stringify(recipient)} Start step: ${start_step || 1} Send window: ${JSON.stringify(send_window || { days: ['Mon','Tue','Wed','Thu'], hours: '9-17' })} Sequence: ${JSON.stringify(sequence.slice(0, 10))}
+
+Return concise JSON:
+{
+  "sequence_id": "string (uuid-style)",
+  "recipient_email": "string",
+  "total_steps": number,
+  "steps_to_execute": [{ "step": number, "channel": "string", "scheduled_at": "string (ISO datetime)", "subject": "string or null", "message_preview": "string (first 100 chars)", "send_status": "scheduled|skipped|blocked", "skip_reason": "string or null" }],
+  "compliance_cleared": true|false,
+  "compliance_flags": ["string"],
+  "estimated_completion_date": "string",
+  "pause_triggers": ["string"],
+  "unsubscribe_link_injected": true|false,
+  "tracking_enabled": true|false,
+  "sequence_health": "healthy|warnings|blocked",
+  "confidence_per_section": { "scheduling": 0-1, "compliance": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/pause-on-reply', async (req: Request, res: Response) => {
+  const { reply_text, sequence_id, sequence_context } = req.body;
+  if (!reply_text) return res.status(400).json({ error: 'reply_text is required' });
+  try {
+    const raw = await callClaude(`Determine if this inbound reply should pause or stop the outreach sequence. Analyze intent, sentiment, and type of response. Sequence ID: "${sequence_id || 'unknown'}" Sequence context: "${sequence_context || 'not provided'}" Reply: "${reply_text.slice(0, 1000)}"
+
+Return concise JSON:
+{
+  "pause_sequence": true|false,
+  "stop_sequence": true|false,
+  "reason": "string",
+  "reply_type": "interested|not_interested|auto_reply|ooo|bounce|unsubscribe|complaint|neutral",
+  "human_reply_detected": true|false,
+  "urgency": "high|medium|low",
+  "recommended_action": "pause_and_notify|stop_and_archive|continue|escalate|transfer_to_human",
+  "notification_message": "string",
+  "resume_after_days": number|null,
+  "confidence": 0-1,
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/unsubscribe-check', async (req: Request, res: Response) => {
+  const { email, context } = req.body;
+  if (!email) return res.status(400).json({ error: 'email is required' });
+  try {
+    const raw = await callClaude(`Perform an unsubscribe and do-not-contact compliance check for this email address before sending outreach. Context: ${JSON.stringify(context || {})} Email: "${email}"
+
+Return concise JSON:
+{
+  "email": "string",
+  "can_contact": true|false,
+  "block_reason": "string or null",
+  "checks_performed": [{ "check": "string", "result": "pass|fail|unknown", "details": "string" }],
+  "dnc_signals": ["string"],
+  "gdpr_applicable": true|false,
+  "casl_applicable": true|false,
+  "recommended_action": "send|do_not_send|verify_first",
+  "verification_steps": ["string"],
+  "risk_level": "high|medium|low|none",
+  "confidence": 0-1,
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/compliance-guard', async (req: Request, res: Response) => {
+  const { message, sender_info, recipient_region } = req.body;
+  if (!message) return res.status(400).json({ error: 'message is required' });
+  try {
+    const raw = await callClaude(`Audit this outreach message for CAN-SPAM, GDPR, CASL, and general anti-spam compliance before sending. Sender info: ${JSON.stringify(sender_info || {})} Recipient region: "${recipient_region || 'unknown'}" Message: "${message.slice(0, 2000)}"
+
+Return concise JSON:
+{
+  "compliant": true|false,
+  "overall_risk": "high|medium|low|compliant",
+  "regulations_checked": ["CAN-SPAM","GDPR","CASL"],
+  "violations": [{ "regulation": "string", "violation": "string", "severity": "blocking|warning", "fix": "string" }],
+  "warnings": ["string"],
+  "required_elements": { "unsubscribe_link": true|false, "physical_address": true|false, "sender_identification": true|false, "subject_not_deceptive": true|false },
+  "spam_score": 0-100,
+  "spam_triggers": ["string"],
+  "cleared_to_send": true|false,
+  "recommended_modifications": ["string"],
+  "confidence_per_section": { "can_spam": 0-1, "gdpr": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/delivery-status', async (req: Request, res: Response) => {
+  const { campaign_id, delivery_metrics, domain } = req.body;
+  if (!delivery_metrics) return res.status(400).json({ error: 'delivery_metrics is required' });
+  try {
+    const raw = await callClaude(`Analyze outreach delivery performance and identify deliverability issues. Campaign ID: "${campaign_id || 'unknown'}" Domain: "${domain || 'not provided'}" Delivery metrics: ${JSON.stringify(delivery_metrics)}
+
+Return concise JSON:
+{
+  "campaign_id": "string",
+  "deliverability_score": 0-100,
+  "delivery_health": "excellent|good|degraded|critical",
+  "metrics_analysis": { "delivery_rate": "string", "open_rate": "string", "bounce_rate": "string", "spam_rate": "string", "unsubscribe_rate": "string" },
+  "issues_detected": [{ "issue": "string", "severity": "critical|high|medium|low", "likely_cause": "string", "fix": "string" }],
+  "domain_reputation": "good|fair|poor|unknown",
+  "inbox_placement_estimate": "high|medium|low",
+  "warming_needed": true|false,
+  "recommended_send_volume": "string",
+  "action_items": [{ "action": "string", "priority": "immediate|soon|monitor", "expected_impact": "string" }],
+  "confidence_per_section": { "deliverability": 0-1, "issues": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 export default router;

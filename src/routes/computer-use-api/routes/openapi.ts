@@ -225,6 +225,80 @@ router.get('/', (_req: Request, res: Response) => {
           },
         },
       },
+      '/click': {
+        post: {
+          operationId: 'click',
+          summary: 'Generate precise click action instructions with locator strategies and post-click verification',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['target', 'screen_context'], properties: { target: { type: 'string' }, screen_context: { type: 'string' }, click_type: { type: 'string', enum: ['single','double','right'] } } } } } },
+          responses: { '200': { description: 'Click action instructions', content: { 'application/json': { schema: { type: 'object', properties: {
+            action: { type: 'string' }, target: { type: 'string' }, click_type: { type: 'string', enum: ['single','double','right'] },
+            locator_primary: { type: 'string' }, locator_fallbacks: actions,
+            coordinates_hint: { type: 'string', nullable: true }, pre_click_steps: actions,
+            post_click_verification: { type: 'string' }, expected_outcome: { type: 'string' },
+            risk_level: { type: 'string', enum: ['safe','caution','destructive'] }, undo_possible: { type: 'boolean' },
+            confidence: { type: 'number', minimum: 0, maximum: 1 }, privacy,
+          } } } } }, '400': { description: 'Missing target or screen_context' }, '500': { description: 'Click generation failed' } },
+        },
+      },
+      '/type': {
+        post: {
+          operationId: 'type',
+          summary: 'Generate type/input action instructions for a field with clear, paste, or slow-type methods',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['field_target', 'text'], properties: { field_target: { type: 'string' }, text: { type: 'string' }, screen_context: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Type action instructions', content: { 'application/json': { schema: { type: 'object', properties: {
+            action: { type: 'string' }, field_target: { type: 'string' }, text: { type: 'string' },
+            locator: { type: 'string' }, clear_first: { type: 'boolean' },
+            type_method: { type: 'string', enum: ['direct','clipboard_paste','slow_type'] },
+            pre_type_steps: actions, post_type_verification: { type: 'string' }, expected_field_state: { type: 'string' },
+            sensitive_data: { type: 'boolean' }, confidence: { type: 'number', minimum: 0, maximum: 1 }, privacy,
+          } } } } }, '400': { description: 'Missing field_target or text' }, '500': { description: 'Type instruction generation failed' } },
+        },
+      },
+      '/keypress': {
+        post: {
+          operationId: 'keypress',
+          summary: 'Generate optimal keyboard shortcut or keypress sequence for an action goal',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['action_goal'], properties: { action_goal: { type: 'string' }, screen_context: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Keypress instructions', content: { 'application/json': { schema: { type: 'object', properties: {
+            action: { type: 'string' }, key_sequence: actions, shortcut_notation: { type: 'string' },
+            os_variants: { type: 'object', properties: { windows: { type: 'string' }, mac: { type: 'string' }, linux: { type: 'string' } } },
+            modifier_keys: actions, hold_sequence: { type: 'boolean' }, pre_keypress_steps: actions,
+            post_keypress_verification: { type: 'string' }, expected_outcome: { type: 'string' }, alternative_method: { type: 'string' },
+            confidence: { type: 'number', minimum: 0, maximum: 1 }, privacy,
+          } } } } }, '400': { description: 'Missing action_goal' }, '500': { description: 'Keypress generation failed' } },
+        },
+      },
+      '/open-app': {
+        post: {
+          operationId: 'openApp',
+          summary: 'Generate instructions to open an application and navigate to a target state across OS platforms',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['app_name'], properties: { app_name: { type: 'string' }, target_state: { type: 'string' } } } } } },
+          responses: { '200': { description: 'App open instructions', content: { 'application/json': { schema: { type: 'object', properties: {
+            app_name: { type: 'string' },
+            launch_instructions: { type: 'array', items: { type: 'object', properties: { step: { type: 'number' }, action: { type: 'string' }, method: { type: 'string', enum: ['shortcut','taskbar','start_menu','spotlight','terminal','dock'] }, value: { type: 'string' } } } },
+            os_variants: { type: 'object', properties: { windows: actions, mac: actions, linux: actions } },
+            navigation_to_target: actions, estimated_load_time_seconds: { type: 'number' },
+            verify_open: { type: 'string' }, expected_initial_screen: { type: 'string' },
+            common_issues: { type: 'array', items: { type: 'object', properties: { issue: { type: 'string' }, fix: { type: 'string' } } } },
+            confidence: { type: 'number', minimum: 0, maximum: 1 }, privacy,
+          } } } } }, '400': { description: 'Missing app_name' }, '500': { description: 'App open instruction generation failed' } },
+        },
+      },
+      '/run-desktop-task': {
+        post: {
+          operationId: 'runDesktopTask',
+          summary: 'ONE-CALL: generate a complete executable desktop task plan with all actions, verifications, and rollback',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['task', 'app'], properties: { task: { type: 'string' }, app: { type: 'string' }, starting_state: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Full desktop task execution plan', content: { 'application/json': { schema: { type: 'object', properties: {
+            task_id: { type: 'string' }, task: { type: 'string' }, app: { type: 'string' },
+            total_actions: { type: 'number' }, estimated_duration_seconds: { type: 'number' },
+            actions: { type: 'array', items: { type: 'object', properties: { step: { type: 'number' }, action_type: { type: 'string', enum: ['open_app','click','type','keypress','scroll','wait','screenshot','verify'] }, target: { type: 'string' }, value: { type: 'string', nullable: true }, locator: { type: 'string', nullable: true }, wait_after_ms: { type: 'number' }, verify: { type: 'string' }, on_failure: { type: 'string', enum: ['retry','skip','abort'] } } } },
+            success_criteria: actions, risk_assessment: { type: 'string', enum: ['low','medium','high'] },
+            reversible: { type: 'boolean' }, rollback_steps: actions, pre_execution_checks: actions,
+            confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy,
+          } } } } }, '400': { description: 'Missing task or app' }, '500': { description: 'Desktop task planning failed' } },
+        },
+      },
     },
   });
 });
