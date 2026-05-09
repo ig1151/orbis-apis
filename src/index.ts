@@ -2035,7 +2035,21 @@ app.get('/computer-use/info', (_req, res) => res.json({
   execution_chain: { previous: 'browser-task', next: 'agent-eval', optional_next: ['workflow-orchestrator'] },
 }));
 
+// ── agent-payments ────────────────────────────────────────────────────────────
+app.use('/agent-payments/openapi.json', agentPaymentsOpenapiRouter);
+app.use('/agent-payments', agentPaymentsRouter);
+app.get('/agent-payments/info', (_req, res) => res.json({ name: 'Agent Payments API', slug: 'agent-payments', version: '1.0.0', grade: 'A+', mcp_compatible: true, privacy: { data_stored: false, retention: 'none' }, rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' }, endpoints: [ { method: 'POST', path: '/create-wallet' }, { method: 'POST', path: '/request-payment' }, { method: 'POST', path: '/approve-spend' }, { method: 'POST', path: '/execute-payment' }, { method: 'POST', path: '/escrow' }, { method: 'POST', path: '/subscription-management' }, { method: 'POST', path: '/usage-billing' }, { method: 'POST', path: '/spending-limits' }, { method: 'POST', path: '/execution-gate' } ] }));
+
+// ── browser-automation ────────────────────────────────────────────────────────
+app.use('/browser-automation/openapi.json', browserAutomationOpenapiRouter);
+app.use('/browser-automation', browserAutomationRouter);
+app.get('/browser-automation/info', (_req, res) => res.json({ name: 'Browser Automation API', slug: 'browser-automation', version: '1.0.0', grade: 'A+', mcp_compatible: true, privacy: { data_stored: false, retention: 'none' }, rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' }, endpoints: [ { method: 'POST', path: '/open' }, { method: 'POST', path: '/click' }, { method: 'POST', path: '/type' }, { method: 'POST', path: '/extract' }, { method: 'POST', path: '/upload' }, { method: 'POST', path: '/download' }, { method: 'POST', path: '/wait' }, { method: 'POST', path: '/screenshot' }, { method: 'POST', path: '/session' }, { method: 'POST', path: '/run-workflow', x_one_call: true } ] }));
+
 // ── browser-task intelligence extension ───────────────────────────────────────
+import agentPaymentsRouter from './routes/agent-payments-api/routes/intelligence';
+import agentPaymentsOpenapiRouter from './routes/agent-payments-api/routes/openapi';
+import browserAutomationRouter from './routes/browser-automation-api/routes/intelligence';
+import browserAutomationOpenapiRouter from './routes/browser-automation-api/routes/openapi';
 import browserTaskIntelligenceRouter from './routes/browser-task-api/routes/intelligence';
 app.use('/browser-task', browserTaskIntelligenceRouter);
 
