@@ -1,3 +1,5 @@
+import complianceRouter from './routes/compliance-api/routes/intelligence';
+import complianceOpenapiRouter from './routes/compliance-api/routes/openapi';
 import agentPaymentsRouter from './routes/agent-payments-api/routes/intelligence';
 import agentPaymentsOpenapiRouter from './routes/agent-payments-api/routes/openapi';
 import browserAutomationRouter from './routes/browser-automation-api/routes/intelligence';
@@ -2038,6 +2040,11 @@ app.get('/computer-use/info', (_req, res) => res.json({
   ],
   execution_chain: { previous: 'browser-task', next: 'agent-eval', optional_next: ['workflow-orchestrator'] },
 }));
+
+// ── compliance ───────────────────────────────────────────────────────────────
+app.use('/compliance/openapi.json', complianceOpenapiRouter);
+app.use('/compliance', complianceRouter);
+app.get('/compliance/info', (_req, res) => res.json({ name: "Compliance API", slug: "compliance", version: "1.0.0", grade: "A+", mcp_compatible: true, privacy: { data_stored: false, retention: "none", pii_note: "Compliance data processed in-memory only, never persisted" }, pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { kyc_check: "$0.007", sanctions_screen: "$0.005", aml_check: "$0.006", jurisdiction_check: "$0.005", verify_counterparty: "$0.006", transaction_risk: "$0.005", watchlist_manage: "$0.004", audit_trail: "$0.003", risk_profile: "$0.008", compliance_report: "$0.012", execution_gate: "$0.002" }, high_volume: { kyc_check: "$0.004", risk_profile: "$0.005", compliance_report: "$0.007" } }, rate_limits: { free: "100/day", paid: "50000/day", enterprise: "500000/day" }, endpoints: [ { method: "POST", path: "/kyc-check", description: "KYC verification with identity scoring and document validation" }, { method: "POST", path: "/sanctions-screen", description: "Screen entity against OFAC, UN, EU, OFSI sanctions lists" }, { method: "POST", path: "/aml-check", description: "AML check with structuring detection and SAR/CTR requirements" }, { method: "POST", path: "/jurisdiction-check", description: "Cross-border jurisdiction compliance with licensing requirements" }, { method: "POST", path: "/verify-counterparty", description: "Full counterparty verification including KYC, sanctions and AML" }, { method: "POST", path: "/transaction-risk", description: "Comprehensive transaction risk scoring across all dimensions" }, { method: "POST", path: "/watchlist-manage", description: "Add, remove, check or update compliance watchlist entries" }, { method: "POST", path: "/audit-trail", description: "Generate immutable compliance audit trail with hash chaining" }, { method: "POST", path: "/risk-profile", description: "Build composite compliance risk profile for an entity" }, { method: "POST", path: "/compliance-report", description: "Generate full compliance report for a period" }, { method: "POST", path: "/execution-gate", description: "Gate compliance-sensitive actions with full compliance checks" } ], execution_chain: { previous: "agent-payments", next: "agent-identity", optional_next: ["agent-observability", "workflow-orchestrator"] } }));
 
 // ── agent-payments ────────────────────────────────────────────────────────────
 app.use('/agent-payments/openapi.json', agentPaymentsOpenapiRouter);
