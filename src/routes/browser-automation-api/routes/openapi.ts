@@ -33,7 +33,7 @@ router.get('/', (_req: Request, res: Response) => {
                   type: 'object',
                   required: ['url', 'session_id'],
                   properties: {
-                    url: { type: 'string' },
+                    url: { type: 'string', format: 'uri' },
                     session_id: { type: 'string' },
                     browser_context: {
                       type: 'object',
@@ -59,9 +59,9 @@ router.get('/', (_req: Request, res: Response) => {
                     type: 'object',
                     properties: {
                       session_id: { type: 'string' },
-                      url: { type: 'string' },
+                      url: { type: 'string', format: 'uri' },
                       status: { type: 'string', enum: ['opened', 'failed', 'redirected'] },
-                      final_url: { type: 'string' },
+                      final_url: { type: 'string', format: 'uri' },
                       page_title: { type: 'string' },
                       load_strategy: { type: 'string' },
                       initial_state: {
@@ -677,7 +677,10 @@ router.get('/', (_req: Request, res: Response) => {
           },
         },
       },
-      '/execution-gate': { post: { operationId: 'browserExecutionGate', summary: 'Gate autonomous browser action execution with risk scoring, destructive action detection and human-approval routing', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['browser_action', 'action_context'], properties: { browser_action: { type: 'string' }, action_context: { type: 'object' }, risk_threshold: { type: 'number', minimum: 0, maximum: 1 }, require_human_approval: { type: 'boolean' } } } } } }, responses: { '200': { description: 'Execution gate decision', content: { 'application/json': { schema: { type: 'object', properties: { execute: { type: 'boolean' }, confidence: { type: 'number' }, risk_score: { type: 'number' }, risk_level: { type: 'string', enum: ['high', 'medium', 'low'] }, destructive_action: { type: 'boolean' }, credential_interaction: { type: 'boolean' }, financial_interaction: { type: 'boolean' }, blocking_flags: actions, warnings: actions, human_approval_required: { type: 'boolean' }, recommended_action: { type: 'string', enum: ['proceed', 'require_approval', 'block'] }, safe_to_execute: { type: 'boolean' }, chain_to: actions, privacy } } } } }, '400': { description: 'Missing browser_action or action_context' }, '500': { description: 'Gate check failed' } } } },
+      '/replan-workflow': { post: { operationId: 'browserReplanWorkflow', summary: 'Autonomously replan a browser workflow after failure with alternative strategy generation', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['session_id', 'failed_step', 'goal'], properties: { session_id: { type: 'string' }, original_workflow: { type: 'array', items: { type: 'object' } }, failed_step: { type: 'object' }, failure_reason: { type: 'string' }, goal: { type: 'string' } } } } } }, responses: { '200': { description: 'Replanned workflow' }, '400': { description: 'Missing required fields' }, '500': { description: 'Replan failed' } } } },
+      '/evaluate-state': { post: { operationId: 'browserEvaluateState', summary: 'Evaluate current browser state against goal with loop-continuation decision', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['session_id', 'goal', 'current_state'], properties: { session_id: { type: 'string' }, goal: { type: 'string' }, current_state: { type: 'object' }, completed_steps: { type: 'number' }, expected_state: { type: 'object' } } } } } }, responses: { '200': { description: 'State evaluation result' }, '400': { description: 'Missing required fields' }, '500': { description: 'Evaluation failed' } } } },
+      '/resume-workflow': { post: { operationId: 'browserResumeWorkflow', summary: 'Resume a paused or interrupted browser workflow from a checkpoint', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['session_id', 'workflow_id', 'goal'], properties: { session_id: { type: 'string' }, workflow_id: { type: 'string' }, goal: { type: 'string' }, checkpoint: { type: 'object' }, remaining_steps: { type: 'number' } } } } } }, responses: { '200': { description: 'Workflow resumed' }, '400': { description: 'Missing required fields' }, '500': { description: 'Resume failed' } } } },
+      '/execution-gate': { post: { operationId: 'browserExecutionGate', summary: 'Gate autonomous browser action execution with risk scoring, destructive action detection and human-approval routing', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['browser_action', 'action_context'], properties: { browser_action: { type: 'string' }, action_context: { type: 'object' }, risk_threshold: { type: 'number', minimum: 0, maximum: 1 }, require_human_approval: { type: 'boolean' } } } } } }, responses: { '200': { description: 'Execution gate decision', content: { 'application/json': { schema: { type: 'object', properties: { execute: { type: 'boolean' }, confidence: { type: 'number', minimum: 0, maximum: 1 }, risk_score: { type: 'number', minimum: 0, maximum: 1 }, risk_level: { type: 'string', enum: ['high', 'medium', 'low'] }, destructive_action: { type: 'boolean' }, credential_interaction: { type: 'boolean' }, financial_interaction: { type: 'boolean' }, blocking_flags: actions, warnings: actions, human_approval_required: { type: 'boolean' }, recommended_action: { type: 'string', enum: ['proceed', 'require_approval', 'block'] }, safe_to_execute: { type: 'boolean' }, chain_to: actions, privacy } } } } }, '400': { description: 'Missing browser_action or action_context' }, '500': { description: 'Gate check failed' } } } },
     },
   });
 });
