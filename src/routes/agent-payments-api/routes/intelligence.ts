@@ -378,4 +378,56 @@ Return concise JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+
+router.post('/sanctions-screen', async (req: Request, res: Response) => {
+  const { agent_id, wallet_address, name, jurisdiction, screen_lists } = req.body;
+  if (!agent_id) return res.status(400).json({ error: 'agent_id is required' });
+  if (!wallet_address) return res.status(400).json({ error: 'wallet_address is required' });
+  try {
+    const raw = await callClaude(`Screen an agent or wallet against sanctions lists. Check OFAC, UN, EU lists and return clear/blocked decision with matched entities.
+Agent ID: "${agent_id}" Wallet: "${wallet_address}" Name: "${name || 'unknown'}" Jurisdiction: "${jurisdiction || 'global'}" Lists: ${JSON.stringify(screen_lists || ['OFAC','UN','EU'])}
+Return JSON: { "agent_id": "string", "wallet_address": "string", "screened_at": "string", "decision": "clear|blocked|review_required", "risk_level": "low|medium|high|critical", "matched_entities": [{"list":"string","entity":"string","match_confidence":0.95,"match_type":"exact|fuzzy|alias"}], "lists_checked": ["string"], "blocking_reason": "string or null", "recommended_action": "proceed|block|escalate_to_compliance", "review_notes": ["string"], "confidence_per_section": {"sanctions_check":0.95}, "recommended_actions_priority_order": ["string"], "privacy": {"data_stored":false,"retention":"none"} }`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/verify-counterparty', async (req: Request, res: Response) => {
+  const { agent_id, counterparty_id, wallet_address, verification_level, context } = req.body;
+  if (!agent_id) return res.status(400).json({ error: 'agent_id is required' });
+  if (!counterparty_id) return res.status(400).json({ error: 'counterparty_id is required' });
+  try {
+    const raw = await callClaude(`Verify identity and trustworthiness of a payment counterparty. Check reputation signals and return trust score with recommended interaction limits.
+Agent ID: "${agent_id}" Counterparty: "${counterparty_id}" Wallet: "${wallet_address || 'unknown'}" Level: "${verification_level || 'standard'}" Context: ${JSON.stringify(context || {})}
+Return JSON: { "agent_id": "string", "counterparty_id": "string", "verified": true, "trust_score": 0.85, "trust_level": "high|medium|low|untrusted", "verification_level": "basic|standard|enhanced|kyc", "identity_signals": [{"signal":"string","value":"string","weight":0.8}], "risk_factors": ["string"], "recommended_limit_usdc": 500, "interaction_history": {"total_transactions":0,"successful":0,"disputed":0}, "verification_notes": ["string"], "confidence_per_section": {"identity":0.9,"trust_score":0.85}, "recommended_actions_priority_order": ["string"], "privacy": {"data_stored":false,"retention":"none"} }`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/aml-check', async (req: Request, res: Response) => {
+  const { agent_id, wallet_address, amount_usdc, transaction_pattern, jurisdiction } = req.body;
+  if (!agent_id) return res.status(400).json({ error: 'agent_id is required' });
+  if (!wallet_address) return res.status(400).json({ error: 'wallet_address is required' });
+  if (!amount_usdc) return res.status(400).json({ error: 'amount_usdc is required' });
+  try {
+    const raw = await callClaude(`Perform anti-money laundering check. Analyze transaction patterns, velocity, structuring signals and jurisdiction risk.
+Agent ID: "${agent_id}" Wallet: "${wallet_address}" Amount USDC: ${amount_usdc} Pattern: ${JSON.stringify(transaction_pattern || {})} Jurisdiction: "${jurisdiction || 'global'}"
+Return JSON: { "agent_id": "string", "wallet_address": "string", "amount_usdc": 0.0, "aml_risk_score": 0.2, "aml_risk_level": "low|medium|high|critical", "decision": "clear|review_required|block|file_sar", "risk_signals": [{"signal":"string","severity":"low|medium|high","description":"string"}], "structuring_detected": false, "velocity_flag": false, "threshold_breach": false, "threshold_amount_usdc": 10000, "sar_required": false, "ctr_required": false, "jurisdiction_risk": "low|medium|high", "recommended_action": "proceed|enhanced_due_diligence|block|file_report", "confidence_per_section": {"pattern_analysis":0.9,"threshold_check":0.95}, "recommended_actions_priority_order": ["string"], "privacy": {"data_stored":false,"retention":"none"} }`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/transaction-risk', async (req: Request, res: Response) => {
+  const { agent_id, from_wallet, to_wallet, amount_usdc, purpose, metadata } = req.body;
+  if (!agent_id) return res.status(400).json({ error: 'agent_id is required' });
+  if (!from_wallet) return res.status(400).json({ error: 'from_wallet is required' });
+  if (!to_wallet) return res.status(400).json({ error: 'to_wallet is required' });
+  if (!amount_usdc) return res.status(400).json({ error: 'amount_usdc is required' });
+  try {
+    const raw = await callClaude(`Standalone transaction risk assessment. Score risk across counterparty, amount, pattern, jurisdiction and timing dimensions.
+Agent ID: "${agent_id}" From: "${from_wallet}" To: "${to_wallet}" Amount USDC: ${amount_usdc} Purpose: "${purpose || 'unspecified'}" Metadata: ${JSON.stringify(metadata || {})}
+Return JSON: { "agent_id": "string", "transaction_id": "string", "composite_risk_score": 0.25, "risk_level": "low|medium|high|critical", "risk_factors": {"counterparty_risk":0.2,"amount_risk":0.1,"pattern_risk":0.15,"jurisdiction_risk":0.1,"timing_risk":0.05}, "blocking_factors": ["string"], "warning_factors": ["string"], "proceed": true, "recommended_action": "proceed|add_controls|require_approval|block", "suggested_controls": ["string"], "risk_expiry_ms": 300000, "confidence_per_section": {"counterparty":0.9,"pattern":0.85}, "recommended_actions_priority_order": ["string"], "privacy": {"data_stored":false,"retention":"none"} }`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 export default router;
