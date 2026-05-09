@@ -1775,3 +1775,256 @@ app.get('/calendar-scheduling/info', (_req, res) => res.json({
   ],
   execution_chain: { previous: 'crm-update', next: 'meeting-analyzer', optional_next: ['cold-outreach', 'email-intelligence'] },
 }));
+
+// ── social-intelligence ───────────────────────────────────────────────────────
+import socialIntelligenceRouter from './routes/social-intelligence-api/routes/intelligence';
+import socialIntelligenceOpenapiRouter from './routes/social-intelligence-api/routes/openapi';
+app.use('/social-intelligence/openapi.json', socialIntelligenceOpenapiRouter);
+app.use('/social-intelligence', socialIntelligenceRouter);
+app.get('/social-intelligence/info', (_req, res) => res.json({
+  name: 'Social Intelligence API',
+  slug: 'social-intelligence',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { analyze_post: '$0.005', brand_monitor: '$0.008', influencer_score: '$0.007', trend_detect: '$0.006', competitor_social: '$0.008', audience_insights: '$0.007', content_performance: '$0.006', sentiment_timeline: '$0.007', social_proof: '$0.005', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-post', description: 'Analyze a social media post for sentiment, virality, engagement quality, and brand safety' },
+    { method: 'POST', path: '/brand-monitor', description: 'Monitor brand presence and reputation with sentiment scoring and competitor comparison' },
+    { method: 'POST', path: '/influencer-score', description: 'Score influencer authenticity, engagement quality, and brand fit for partnerships' },
+    { method: 'POST', path: '/trend-detect', description: 'Detect trending topics, hashtags, and content opportunities in an industry' },
+    { method: 'POST', path: '/competitor-social', description: 'Analyze competitor social media strategy, positioning, and content gaps' },
+    { method: 'POST', path: '/audience-insights', description: 'Derive audience demographics, psychographics, and content preferences' },
+    { method: 'POST', path: '/content-performance', description: 'Predict content performance and get improvement suggestions before posting' },
+    { method: 'POST', path: '/sentiment-timeline', description: 'Map sentiment trajectory through key events and forecast future sentiment' },
+    { method: 'POST', path: '/social-proof', description: 'Extract and assess social proof signals, trust indicators, and credibility gaps' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate social media actions based on brand risk, timing, and strategic fit' },
+  ],
+  execution_chain: { previous: 'lead-scoring', next: 'cold-outreach', optional_next: ['competitor-monitor', 'email-intelligence'] },
+}));
+
+// ── data-connector ─────────────────────────────────────────────────────────────
+import dataConnectorRouter from './routes/data-connector-api/routes/intelligence';
+import dataConnectorOpenapiRouter from './routes/data-connector-api/routes/openapi';
+app.use('/data-connector/openapi.json', dataConnectorOpenapiRouter);
+app.use('/data-connector', dataConnectorRouter);
+app.get('/data-connector/info', (_req, res) => res.json({
+  name: 'Data Connector API',
+  slug: 'data-connector',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { transform: '$0.004', validate: '$0.003', map_fields: '$0.005', merge: '$0.006', enrich: '$0.006', deduplicate: '$0.005', normalize: '$0.004', extract_schema: '$0.003', sync_check: '$0.005', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/transform', description: 'Transform data between formats (JSON, CSV, XML, YAML, TSV)' },
+    { method: 'POST', path: '/validate', description: 'Validate data against a JSON Schema with detailed error reporting' },
+    { method: 'POST', path: '/map-fields', description: 'Map fields between source and target schemas with confidence scoring' },
+    { method: 'POST', path: '/merge', description: 'Merge multiple datasets with conflict resolution and data quality reporting' },
+    { method: 'POST', path: '/enrich', description: 'Enrich records by deriving new fields, classifying, and adding computed scores' },
+    { method: 'POST', path: '/deduplicate', description: 'Remove duplicate records using exact and fuzzy matching with confidence scoring' },
+    { method: 'POST', path: '/normalize', description: 'Normalize dates, phones, emails, addresses, and currencies to standard formats' },
+    { method: 'POST', path: '/extract-schema', description: 'Infer schema from sample data with type detection, cardinality, and quality stats' },
+    { method: 'POST', path: '/sync-check', description: 'Compare two datasets to identify sync status, differences, and drift' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate data operations based on quality score and risk level' },
+  ],
+  execution_chain: { previous: 'extraction', next: 'crm-update', optional_next: ['lead-scoring', 'deep-research'] },
+}));
+
+// ── voice-intelligence ─────────────────────────────────────────────────────────
+import voiceIntelligenceRouter from './routes/voice-intelligence-api/routes/intelligence';
+import voiceIntelligenceOpenapiRouter from './routes/voice-intelligence-api/routes/openapi';
+app.use('/voice-intelligence/openapi.json', voiceIntelligenceOpenapiRouter);
+app.use('/voice-intelligence', voiceIntelligenceRouter);
+app.get('/voice-intelligence/info', (_req, res) => res.json({
+  name: 'Voice Intelligence API',
+  slug: 'voice-intelligence',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { analyze_transcript: '$0.008', extract_action_items: '$0.006', sentiment_score: '$0.005', objection_detect: '$0.007', call_summary: '$0.006', speaker_profile: '$0.007', coaching_insights: '$0.009', meeting_intelligence: '$0.008', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-transcript', description: 'Analyze call/meeting transcript for sentiment, themes, talk ratio, and key moments' },
+    { method: 'POST', path: '/extract-action-items', description: 'Extract action items, decisions, and commitments from transcripts with owners and deadlines' },
+    { method: 'POST', path: '/sentiment-score', description: 'Score emotional tone per-speaker with frustration, enthusiasm, and confidence levels' },
+    { method: 'POST', path: '/objection-detect', description: 'Detect and classify sales objections with handling quality scores and better response suggestions' },
+    { method: 'POST', path: '/call-summary', description: 'Generate structured call summary with key points, outcomes, and follow-up recommendations' },
+    { method: 'POST', path: '/speaker-profile', description: 'Build communication profile for a speaker with style, traits, and engagement approach' },
+    { method: 'POST', path: '/coaching-insights', description: 'Generate role-specific coaching feedback with wins, improvement areas, and practice scenarios' },
+    { method: 'POST', path: '/meeting-intelligence', description: 'Full meeting intelligence by type — decisions, blockers, alignment, and effectiveness score' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate call follow-up actions based on context, stage, and risk threshold' },
+  ],
+  execution_chain: { previous: 'calendar-scheduling', next: 'crm-update', optional_next: ['cold-outreach', 'proposal-generation'] },
+}));
+
+// ── agent-eval ────────────────────────────────────────────────────────────────
+import agentEvalRouter from './routes/agent-eval-api/routes/intelligence';
+import agentEvalOpenapiRouter from './routes/agent-eval-api/routes/openapi';
+app.use('/agent-eval/openapi.json', agentEvalOpenapiRouter);
+app.use('/agent-eval', agentEvalRouter);
+app.get('/agent-eval/info', (_req, res) => res.json({
+  name: 'Agent Evaluation API',
+  slug: 'agent-eval',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { benchmark: '$0.007', hallucination_detect: '$0.006', consistency_check: '$0.006', bias_audit: '$0.008', task_completion: '$0.005', reasoning_trace: '$0.007', safety_score: '$0.005', compare_responses: '$0.008', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/benchmark', description: 'Benchmark AI agent response quality across accuracy, relevance, completeness, and reasoning' },
+    { method: 'POST', path: '/hallucination-detect', description: 'Detect fabrications, unsupported claims, and hallucinations vs. provided source context' },
+    { method: 'POST', path: '/consistency-check', description: 'Check response consistency across multiple prompts for factual and behavioral drift' },
+    { method: 'POST', path: '/bias-audit', description: 'Audit agent responses for political, gender, racial, and cultural bias patterns' },
+    { method: 'POST', path: '/task-completion', description: 'Evaluate task completion quality against success criteria with gap analysis' },
+    { method: 'POST', path: '/reasoning-trace', description: 'Analyze reasoning chain quality for logical consistency and assumption transparency' },
+    { method: 'POST', path: '/safety-score', description: 'Score agent response for harmful content, privacy risk, legal risk, and misinformation' },
+    { method: 'POST', path: '/compare-responses', description: 'Compare multiple model responses to the same task with ranking and synthesis' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate agent deployment based on quality, safety, and reliability thresholds' },
+  ],
+  execution_chain: { previous: 'ai-output-safety', next: 'deep-research', optional_next: ['workflow-orchestrator'] },
+}));
+
+// ── proposal-generation ───────────────────────────────────────────────────────
+import proposalGenerationRouter from './routes/proposal-generation-api/routes/intelligence';
+import proposalGenerationOpenapiRouter from './routes/proposal-generation-api/routes/openapi';
+app.use('/proposal-generation/openapi.json', proposalGenerationOpenapiRouter);
+app.use('/proposal-generation', proposalGenerationRouter);
+app.get('/proposal-generation/info', (_req, res) => res.json({
+  name: 'Proposal Generation API',
+  slug: 'proposal-generation',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { generate_proposal: '$0.015', executive_summary: '$0.007', pricing_table: '$0.006', sow: '$0.012', rfp_response: '$0.015', case_study: '$0.008', document_score: '$0.005', personalize_document: '$0.008', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/generate-proposal', description: 'Generate a complete business proposal with executive summary, approach, timeline, team, and pricing' },
+    { method: 'POST', path: '/executive-summary', description: 'Generate a compelling executive summary tailored to decision-maker audience' },
+    { method: 'POST', path: '/pricing-table', description: 'Build tiered pricing table with ROI justification and competitive positioning' },
+    { method: 'POST', path: '/sow', description: 'Generate formal Statement of Work with scope, deliverables, acceptance criteria, and payment schedule' },
+    { method: 'POST', path: '/rfp-response', description: 'Generate RFP response addressing all requirements with win themes and gap analysis' },
+    { method: 'POST', path: '/case-study', description: 'Transform raw inputs into a compelling narrative case study with metrics and proof points' },
+    { method: 'POST', path: '/document-score', description: 'Score document quality on clarity, persuasiveness, completeness, and audience fit' },
+    { method: 'POST', path: '/personalize-document', description: 'Personalize a document template for a specific recipient with deep contextual relevance' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate document delivery based on completeness, quality, and legal review needs' },
+  ],
+  execution_chain: { previous: 'voice-intelligence', next: 'outreach-execution', optional_next: ['crm-update', 'calendar-scheduling'] },
+}));
+
+// ── outreach-execution ────────────────────────────────────────────────────────
+import outreachExecutionRouter from './routes/outreach-execution-api/routes/intelligence';
+import outreachExecutionOpenapiRouter from './routes/outreach-execution-api/routes/openapi';
+app.use('/outreach-execution/openapi.json', outreachExecutionOpenapiRouter);
+app.use('/outreach-execution', outreachExecutionRouter);
+app.get('/outreach-execution/info', (_req, res) => res.json({
+  name: 'Outreach Execution API',
+  slug: 'outreach-execution',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { compose_message: '$0.007', personalize: '$0.006', sequence_builder: '$0.012', timing_optimize: '$0.004', ab_test: '$0.006', response_classify: '$0.005', campaign_analytics: '$0.005', objection_handle: '$0.007', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/compose-message', description: 'Compose personalized outreach message for any channel with CTA and timing recommendation' },
+    { method: 'POST', path: '/personalize', description: 'Personalize outreach templates for specific recipients with deep contextual hooks' },
+    { method: 'POST', path: '/sequence-builder', description: 'Build multi-touch outreach sequences across channels with strategy and exit conditions' },
+    { method: 'POST', path: '/timing-optimize', description: 'Optimize send timing for maximum open and reply rates based on recipient profile' },
+    { method: 'POST', path: '/ab-test', description: 'Analyze message variants for A/B testing with predicted performance and test recommendations' },
+    { method: 'POST', path: '/response-classify', description: 'Classify inbound responses by intent, interest level, and next best action' },
+    { method: 'POST', path: '/campaign-analytics', description: 'Analyze campaign performance vs. benchmarks with issue detection and optimization recommendations' },
+    { method: 'POST', path: '/objection-handle', description: 'Generate empathetic objection responses with reframe strategy and proof points' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate outreach actions for compliance, spam risk, and strategic fit' },
+  ],
+  execution_chain: { previous: 'cold-outreach', next: 'crm-update', optional_next: ['calendar-scheduling', 'voice-intelligence'] },
+}));
+
+// ── real-time-monitor ─────────────────────────────────────────────────────────
+import realTimeMonitorRouter from './routes/real-time-monitor-api/routes/intelligence';
+import realTimeMonitorOpenapiRouter from './routes/real-time-monitor-api/routes/openapi';
+app.use('/real-time-monitor/openapi.json', realTimeMonitorOpenapiRouter);
+app.use('/real-time-monitor', realTimeMonitorRouter);
+app.get('/real-time-monitor/info', (_req, res) => res.json({
+  name: 'Real-Time Monitor API',
+  slug: 'real-time-monitor',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { anomaly_detect: '$0.006', check_status: '$0.004', incident_detect: '$0.008', alert_config: '$0.005', uptime_report: '$0.004', performance_baseline: '$0.006', root_cause_analysis: '$0.010', capacity_forecast: '$0.007', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/anomaly-detect', description: 'Detect anomalies in time-series metrics — spikes, drops, trend breaks, and seasonal deviations' },
+    { method: 'POST', path: '/check-status', description: 'Evaluate system health against thresholds and SLAs with time-to-breach estimation' },
+    { method: 'POST', path: '/incident-detect', description: 'Detect and classify incidents by correlating events and identifying root causes' },
+    { method: 'POST', path: '/alert-config', description: 'Generate optimized alerting rules with thresholds, escalation paths, and noise reduction' },
+    { method: 'POST', path: '/uptime-report', description: 'Calculate uptime, MTTR, MTBF, and SLA compliance from event history' },
+    { method: 'POST', path: '/performance-baseline', description: 'Establish performance baselines with normal ranges and threshold recommendations' },
+    { method: 'POST', path: '/root-cause-analysis', description: '5-Whys root cause analysis for incidents with corrective and preventive actions' },
+    { method: 'POST', path: '/capacity-forecast', description: 'Forecast future capacity needs and days-until-limit with scaling recommendations' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate monitoring actions and remediations based on change windows and system health' },
+  ],
+  execution_chain: { previous: 'workflow-orchestrator', next: 'deep-research', optional_next: ['agent-eval'] },
+}));
+
+// ── computer-use ──────────────────────────────────────────────────────────────
+import computerUseRouter from './routes/computer-use-api/routes/intelligence';
+import computerUseOpenapiRouter from './routes/computer-use-api/routes/openapi';
+app.use('/computer-use/openapi.json', computerUseOpenapiRouter);
+app.use('/computer-use', computerUseRouter);
+app.get('/computer-use/info', (_req, res) => res.json({
+  name: 'Computer Use API',
+  slug: 'computer-use',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { analyze_screen: '$0.006', generate_automation: '$0.010', find_element: '$0.004', workflow_detect: '$0.007', error_detect: '$0.005', accessibility_audit: '$0.008', task_planner: '$0.008', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-screen', description: 'Analyze screen state and recommend next action toward objective' },
+    { method: 'POST', path: '/generate-automation', description: 'Generate complete step-by-step desktop automation with error handling and rollback' },
+    { method: 'POST', path: '/find-element', description: 'Locate UI elements with multiple ranked locator strategies and fallbacks' },
+    { method: 'POST', path: '/workflow-detect', description: 'Detect workflow patterns from action sequences with automation potential and optimizations' },
+    { method: 'POST', path: '/error-detect', description: 'Detect UI errors, unexpected states, and anomalies with recovery actions' },
+    { method: 'POST', path: '/accessibility-audit', description: 'WCAG accessibility audit with violations, severity, and keyboard/screen reader scores' },
+    { method: 'POST', path: '/task-planner', description: 'Plan multi-phase computer tasks with required apps, dependencies, and risk factors' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate desktop actions based on risk score, reversibility, and admin requirements' },
+  ],
+  execution_chain: { previous: 'browser-task', next: 'agent-eval', optional_next: ['workflow-orchestrator'] },
+}));
+
+// ── browser-task intelligence extension ───────────────────────────────────────
+import browserTaskIntelligenceRouter from './routes/browser-task-api/routes/intelligence';
+app.use('/browser-task', browserTaskIntelligenceRouter);

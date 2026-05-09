@@ -10,6 +10,7 @@ import workflowRouter from './routes/workflow';
 import docsRouter from './routes/docs';
 import openapiRouter from './routes/openapi';
 import rootRouter from './routes/root';
+import intelligenceRouter from './routes/intelligence';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,6 +30,7 @@ app.use('/v1', taskRouter);
 app.use('/v1', workflowRouter);
 app.use('/docs', docsRouter);
 app.use('/openapi.json', openapiRouter);
+app.use('/v1/intelligence', intelligenceRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found', path: req.path });

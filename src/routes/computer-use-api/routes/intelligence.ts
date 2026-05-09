@@ -1,0 +1,271 @@
+import { Router, Request, Response } from 'express';
+import axios from 'axios';
+
+const router = Router();
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!;
+const MODEL = 'anthropic/claude-sonnet-4-5';
+
+async function callClaude(prompt: string): Promise<string> {
+  const res = await axios.post(
+    'https://openrouter.ai/api/v1/chat/completions',
+    { model: MODEL, messages: [{ role: 'user', content: prompt }] },
+    { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' } }
+  );
+  return res.data.choices[0].message.content;
+}
+
+function parseJSON(raw: string) {
+  return JSON.parse(raw.replace(/```json|```/g, '').trim());
+}
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({ name: 'Computer Use API', info: '/computer-use/info', openapi: '/computer-use/openapi.json', health: 'ok' });
+});
+
+router.post('/analyze-screen', async (req: Request, res: Response) => {
+  const { screen_description, objective, app_context, os, previous_steps = [] } = req.body;
+  if (!screen_description) return res.status(400).json({ error: 'screen_description is required' });
+  if (!objective) return res.status(400).json({ error: 'objective is required' });
+  try {
+    const raw = await callClaude(`Analyze this screen state and provide intelligent next action recommendations. Identify interactive elements, current app state, and the best action to take toward the objective.
+
+Screen description: "${screen_description}"
+Objective: "${objective}"
+App context: "${app_context || 'not provided'}"
+OS: "${os || 'not specified'}"
+Previous steps: ${JSON.stringify(previous_steps)}
+
+Return concise JSON:
+{
+  "current_state": "string",
+  "app_detected": "string",
+  "screen_type": "dialog|form|menu|document|browser|terminal|desktop|error",
+  "interactive_elements": [{ "element_type": "button|input|checkbox|dropdown|link", "label": "string", "location_hint": "string", "likely_action": "string" }],
+  "recommended_next_action": { "action": "click|type|scroll|keypress|wait|screenshot", "target": "string", "value": "string or null", "reason": "string" },
+  "objective_progress": "string",
+  "blockers": ["string"],
+  "confidence_per_section": { "screen_type": 0-1, "interactive_elements": 0-1, "recommended_next_action": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/generate-automation', async (req: Request, res: Response) => {
+  const { task_description, application, os, constraints = [], user_skill_level } = req.body;
+  if (!task_description) return res.status(400).json({ error: 'task_description is required' });
+  if (!application) return res.status(400).json({ error: 'application is required' });
+  try {
+    const raw = await callClaude(`Generate a complete automation script/steps for this desktop task. Provide detailed, executable steps with error handling and validation.
+
+Task description: "${task_description}"
+Application: "${application}"
+OS: "${os || 'not specified'}"
+Constraints: ${JSON.stringify(constraints)}
+User skill level: "${user_skill_level || 'intermediate'}"
+
+Return concise JSON:
+{
+  "task_description": "string",
+  "application": "string",
+  "automation_steps": [{ "step_number": number, "action": "string", "target": "string", "value": "string or null", "wait_after_ms": number, "verify": "string", "error_handling": "string" }],
+  "total_steps": number,
+  "estimated_duration_seconds": number,
+  "prerequisites": ["string"],
+  "risk_assessment": "low|medium|high",
+  "reversible": true|false,
+  "rollback_steps": ["string"] or null,
+  "confidence_per_section": { "automation_steps": 0-1, "risk_assessment": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/find-element', async (req: Request, res: Response) => {
+  const { element_description, screen_context, element_type, search_area, fallback_strategies = [] } = req.body;
+  if (!element_description) return res.status(400).json({ error: 'element_description is required' });
+  if (!screen_context) return res.status(400).json({ error: 'screen_context is required' });
+  try {
+    const raw = await callClaude(`Determine how to locate this UI element on screen. Provide multiple locator strategies ranked by reliability.
+
+Element description: "${element_description}"
+Screen context: "${screen_context}"
+Element type: "${element_type || 'not specified'}"
+Search area: "${search_area || 'full screen'}"
+Fallback strategies: ${JSON.stringify(fallback_strategies)}
+
+Return concise JSON:
+{
+  "element_found": true|false,
+  "locator_strategies": [{ "strategy": "text|aria_label|class|id|position|image", "locator": "string", "confidence": 0-1, "requires_scroll": true|false }],
+  "element_description": "string",
+  "closest_match": "string",
+  "disambiguation_needed": true|false,
+  "disambiguation_question": "string or null",
+  "fallback_if_not_found": "string",
+  "confidence_per_section": { "locator_strategies": 0-1, "element_found": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/workflow-detect', async (req: Request, res: Response) => {
+  const { steps_taken, goal_context, app, outcome } = req.body;
+  if (!steps_taken) return res.status(400).json({ error: 'steps_taken is required' });
+  if (!goal_context) return res.status(400).json({ error: 'goal_context is required' });
+  try {
+    const raw = await callClaude(`Analyze this sequence of user actions to detect the underlying workflow pattern. Identify the goal, classify the workflow type, and suggest optimizations.
+
+Steps taken: ${JSON.stringify(steps_taken.slice(0, 50))}
+Goal context: "${goal_context}"
+App: "${app || 'not specified'}"
+Outcome: "${outcome || 'not provided'}"
+
+Return concise JSON:
+{
+  "workflow_detected": "string",
+  "workflow_type": "data_entry|navigation|form_filling|file_management|communication|research|custom",
+  "goal_inferred": "string",
+  "pattern_confidence": 0-1,
+  "automation_potential": "high|medium|low",
+  "optimizations": [{ "current_steps": ["string"], "optimized_steps": ["string"], "time_saved_pct": number }],
+  "reusable_components": [{ "component": "string", "description": "string" }],
+  "similar_workflows": ["string"],
+  "confidence_per_section": { "workflow_type": 0-1, "optimizations": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/error-detect', async (req: Request, res: Response) => {
+  const { screen_description, expected_state, app_context, error_history = [], severity_threshold } = req.body;
+  if (!screen_description) return res.status(400).json({ error: 'screen_description is required' });
+  if (!expected_state) return res.status(400).json({ error: 'expected_state is required' });
+  try {
+    const raw = await callClaude(`Detect UI errors, unexpected states, and anomalies by comparing current screen state to expected state. Classify errors and recommend recovery actions.
+
+Screen description: "${screen_description}"
+Expected state: "${expected_state}"
+App context: "${app_context || 'not provided'}"
+Error history: ${JSON.stringify(error_history)}
+Severity threshold: "${severity_threshold || 'medium'}"
+
+Return concise JSON:
+{
+  "error_detected": true|false,
+  "error_type": "dialog|crash|freeze|unexpected_navigation|form_validation|permission|timeout|none",
+  "severity": "critical|high|medium|low",
+  "error_description": "string",
+  "divergence_from_expected": "string",
+  "recovery_actions": [{ "action": "string", "priority": "high|medium|low", "risk": "safe|caution|risky" }],
+  "auto_recoverable": true|false,
+  "escalation_needed": true|false,
+  "confidence_per_section": { "error_type": 0-1, "recovery_actions": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/accessibility-audit', async (req: Request, res: Response) => {
+  const { screen_description, application, wcag_level, focus_areas = [] } = req.body;
+  if (!screen_description) return res.status(400).json({ error: 'screen_description is required' });
+  if (!application) return res.status(400).json({ error: 'application is required' });
+  try {
+    const raw = await callClaude(`Audit this application screen for accessibility issues. Identify WCAG violations, missing labels, poor contrast, keyboard traps, and screen reader issues.
+
+Screen description: "${screen_description}"
+Application: "${application}"
+WCAG level: "${wcag_level || 'AA'}"
+Focus areas: ${JSON.stringify(focus_areas)}
+
+Return concise JSON:
+{
+  "accessibility_score": 0-100,
+  "wcag_level_met": "string",
+  "violations": [{ "criterion": "string", "severity": "critical|serious|moderate|minor", "description": "string", "element": "string", "fix": "string" }],
+  "warnings": ["string"],
+  "passing_criteria": ["string"],
+  "keyboard_navigation": "good|adequate|poor",
+  "screen_reader_compatibility": "good|adequate|poor",
+  "color_contrast_issues": number,
+  "recommendations": [{ "recommendation": "string", "impact": "high|medium|low" }],
+  "confidence_per_section": { "violations": 0-1, "accessibility_score": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/task-planner', async (req: Request, res: Response) => {
+  const { goal, current_context, available_apps = [], constraints = [], time_limit_minutes } = req.body;
+  if (!goal) return res.status(400).json({ error: 'goal is required' });
+  if (!current_context) return res.status(400).json({ error: 'current_context is required' });
+  try {
+    const raw = await callClaude(`Plan a complete multi-step computer task to achieve the given goal. Break it into phases, identify required apps, and sequence actions for maximum efficiency.
+
+Goal: "${goal}"
+Current context: "${current_context}"
+Available apps: ${JSON.stringify(available_apps)}
+Constraints: ${JSON.stringify(constraints)}
+Time limit (minutes): ${time_limit_minutes || 'none'}
+
+Return concise JSON:
+{
+  "goal": "string",
+  "plan_id": "string (uuid-style)",
+  "phases": [{ "phase_number": number, "name": "string", "objective": "string", "steps": [{ "step": "string", "app": "string", "action_type": "string", "estimated_seconds": number }], "success_criteria": "string" }],
+  "total_phases": number,
+  "total_estimated_minutes": number,
+  "required_apps": ["string"],
+  "dependencies": [{ "phase": number, "depends_on": [number] }],
+  "risk_factors": [{ "risk": "string", "mitigation": "string" }],
+  "confidence_per_section": { "phases": 0-1, "risk_factors": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/execution-gate', async (req: Request, res: Response) => {
+  const { desktop_action, system_context, risk_threshold, requires_admin, affects_files } = req.body;
+  if (!desktop_action) return res.status(400).json({ error: 'desktop_action is required' });
+  if (!system_context) return res.status(400).json({ error: 'system_context is required' });
+  try {
+    const raw = await callClaude(`Evaluate whether this desktop/computer action is safe to execute. Assess system impact, reversibility, and permission requirements.
+
+Desktop action: "${desktop_action}"
+System context: "${system_context}"
+Risk threshold: ${risk_threshold ?? 0.7}
+Requires admin: ${requires_admin ?? 'unknown'}
+Affects files: ${affects_files ?? 'unknown'}
+
+Return concise JSON:
+{
+  "execute": true|false,
+  "confidence": 0-1,
+  "risk_score": 0-1,
+  "requires_admin": true|false,
+  "affects_system_files": true|false,
+  "reversible": true|false,
+  "blocking_flags": ["string"],
+  "warnings": ["string"],
+  "recommended_action": "proceed|run_as_admin|confirm_first|sandbox_first|cancel",
+  "chain_to": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+export default router;
