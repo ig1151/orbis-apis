@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Agent Observability & Telemetry API",
+    "shortDescription": "Full-stack observability and telemetry for autonomous agents",
+    "description": "Enterprise-grade observability infrastructure for autonomous AI agents. Log tool calls, trace workflows, replay sessions, analyze costs, diagnose failures, score performance, detect anomalies, monitor agent sessions, ingest telemetry events, manage SLOs, calculate error budgets, export traces, and gate execution based on live operational signals.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/agent-observability",
+    "websiteUrl": "https://orbis-apis.onrender.com/agent-observability/info",
+    "docsUrl": "https://orbis-apis.onrender.com/agent-observability/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/agent-observability/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["observability", "telemetry", "monitoring", "agent-logs", "tracing", "performance", "anomaly-detection", "agentops", "mcp"],
+    "keywords": ["agent observability", "agent telemetry", "workflow tracing", "agent monitoring", "cost analysis", "anomaly detection", "session replay", "agentops"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/log-tool-call", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/trace-workflow", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/replay-agent", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/cost-analysis", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/failure-analysis", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/performance-score", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/anomaly-detect", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/ingest-event", "pricePerCallUsdc": 0.002 },
+          { "method": "POST", "pathPattern": "/session-summary", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/error-budget", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/slo-report", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/export-traces", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/webhook-alert", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/monitor-agent-session", "pricePerCallUsdc": 0.018 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0025,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/log-tool-call", "pricePerCallUsdc": 0.002 },
+          { "method": "POST", "pathPattern": "/trace-workflow", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/replay-agent", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/slo-report", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/monitor-agent-session", "pricePerCallUsdc": 0.012 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/log-tool-call", "description": "Log and classify agent tool calls with latency, cost, and outcome tracking" },
+      { "method": "POST", "path": "/trace-workflow", "description": "Trace a full agent workflow execution with step-level analysis and bottleneck detection" },
+      { "method": "POST", "path": "/replay-agent", "description": "Replay an agent session to debug failures and test counterfactual decisions" },
+      { "method": "POST", "path": "/cost-analysis", "description": "Analyze token usage and cost efficiency with optimization recommendations" },
+      { "method": "POST", "path": "/failure-analysis", "description": "Diagnose agent failures with root cause classification and prevention actions" },
+      { "method": "POST", "path": "/performance-score", "description": "Score agent performance across latency, accuracy, cost, and reliability dimensions" },
+      { "method": "POST", "path": "/anomaly-detect", "description": "Detect behavioral anomalies in agent execution patterns" },
+      { "method": "POST", "path": "/ingest-event", "description": "Ingest and normalize telemetry events with anomaly flagging" },
+      { "method": "POST", "path": "/session-summary", "description": "Summarize a session's events into cost, timeline, outcome, and key decisions" },
+      { "method": "POST", "path": "/error-budget", "description": "Calculate SLO error budget consumption, burn rate, and projected exhaustion" },
+      { "method": "POST", "path": "/slo-report", "description": "Evaluate SLO definitions and generate overall service health report" },
+      { "method": "POST", "path": "/export-traces", "description": "Export traces in JSON, OTLP, Jaeger, Zipkin, or CSV format" },
+      { "method": "POST", "path": "/webhook-alert", "description": "Configure and validate webhook alerts for agent operational conditions" },
+      { "method": "POST", "path": "/monitor-agent-session", "description": "ONE-CALL: ingest events, score performance, detect anomalies, check SLOs, and trigger alerts" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate agent execution based on live observability signals and risk thresholds" }
+    ]
+  }
+]

@@ -1,0 +1,75 @@
+[
+  {
+    "name": "Multi-Agent Coordination API",
+    "shortDescription": "Autonomous multi-agent coordination and workflow orchestration",
+    "description": "AI-powered multi-agent coordination infrastructure for autonomous systems. Create agent teams, assign tasks, route work, merge results, facilitate consensus, escalate failures, manage shared state, evaluate agents, and orchestrate complex multi-agent workflows with execution gating and confidence scoring.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/multi-agent",
+    "websiteUrl": "https://orbis-apis.onrender.com/multi-agent/info",
+    "docsUrl": "https://orbis-apis.onrender.com/multi-agent/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/multi-agent/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["multi-agent", "coordination", "workflow", "autonomous-agents", "agent-orchestration", "consensus", "task-routing", "agent-teams", "mcp"],
+    "keywords": ["multi agent coordination", "create agent team", "assign agent tasks", "agent workflow orchestration", "consensus engine", "shared agent state", "autonomous coordination", "agent collaboration"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/create-team", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/assign-task", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/route-work", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/merge-results", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/consensus", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/escalate", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/evaluate-agent", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/shared-state", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/create-plan", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/update-task-status", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/retry-task", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/resolve-conflict", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/agent-heartbeat", "pricePerCallUsdc": 0.002 },
+          { "method": "POST", "pathPattern": "/run-agent-team", "pricePerCallUsdc": 0.015 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/create-team", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/consensus", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/merge-results", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/run-agent-team", "pricePerCallUsdc": 0.010 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/create-team", "description": "Create and structure autonomous multi-agent teams with role assignments and capability mapping" },
+      { "method": "POST", "path": "/assign-task", "description": "Assign tasks to optimal agents based on capabilities and current workload" },
+      { "method": "POST", "path": "/route-work", "description": "Route work dynamically across agents with parallel and sequential pipeline options" },
+      { "method": "POST", "path": "/merge-results", "description": "Merge and reconcile outputs from multiple agents into a unified result" },
+      { "method": "POST", "path": "/consensus", "description": "Reach consensus across agent opinions with conflict resolution and confidence scoring" },
+      { "method": "POST", "path": "/escalate", "description": "Escalate a blocked or low-confidence agent task to a supervisor agent" },
+      { "method": "POST", "path": "/evaluate-agent", "description": "Evaluate agent performance, reliability, and cost efficiency" },
+      { "method": "POST", "path": "/shared-state", "description": "Manage shared memory and state across agents with conflict detection and merge strategies" },
+      { "method": "POST", "path": "/create-plan", "description": "Create a phased execution plan for a team goal with dependencies and critical path" },
+      { "method": "POST", "path": "/update-task-status", "description": "Update task lifecycle status and unblock downstream dependent tasks" },
+      { "method": "POST", "path": "/retry-task", "description": "Retry a failed task with backoff strategy and optional agent reassignment" },
+      { "method": "POST", "path": "/resolve-conflict", "description": "Resolve conflicts between agents on data, priority, or resource contention" },
+      { "method": "POST", "path": "/agent-heartbeat", "description": "Monitor agent health, workload, and capacity with action recommendations" },
+      { "method": "POST", "path": "/run-agent-team", "description": "ONE-CALL: assemble team, execute plan, merge results and return final output" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate multi-agent actions based on consensus threshold and risk level" }
+    ]
+  }
+]

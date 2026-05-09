@@ -1,0 +1,63 @@
+[
+  {
+    "name": "Voice Intelligence API",
+    "shortDescription": "Agent-ready call analysis, coaching and conversation intelligence",
+    "description": "AI-powered voice intelligence API for autonomous sales and operations agents. Analyze transcripts, extract action items, score sentiment per speaker, detect objections, summarize calls, profile speakers, generate coaching insights, extract meeting intelligence and gate call follow-up actions.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/voice-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com/voice-intelligence/info",
+    "docsUrl": "https://orbis-apis.onrender.com/voice-intelligence/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/voice-intelligence/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["voice-intelligence", "call-analysis", "transcript-analysis", "sentiment-score", "objection-detection", "sales-coaching", "meeting-intelligence", "execution-gate", "mcp"],
+    "keywords": ["analyze call transcript", "extract action items", "sentiment score", "objection detect", "call summary", "speaker profile", "coaching insights", "meeting intelligence", "voice intelligence api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/analyze-transcript", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/extract-action-items", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/sentiment-score", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/objection-detect", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/call-summary", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/speaker-profile", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/coaching-insights", "pricePerCallUsdc": 0.009 },
+          { "method": "POST", "pathPattern": "/meeting-intelligence", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/analyze-transcript", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/extract-action-items", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/coaching-insights", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/meeting-intelligence", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/analyze-transcript", "description": "Analyze call/meeting transcript for sentiment, themes, talk ratio, and key moments" },
+      { "method": "POST", "path": "/extract-action-items", "description": "Extract action items, decisions, and commitments with owners and deadlines" },
+      { "method": "POST", "path": "/sentiment-score", "description": "Score emotional tone per speaker with frustration, enthusiasm, and confidence levels" },
+      { "method": "POST", "path": "/objection-detect", "description": "Detect and classify sales objections with handling quality scores and better response suggestions" },
+      { "method": "POST", "path": "/call-summary", "description": "Generate structured call summary with key points, outcomes, and follow-up recommendations" },
+      { "method": "POST", "path": "/speaker-profile", "description": "Build communication profile for a speaker with style, traits, and engagement approach" },
+      { "method": "POST", "path": "/coaching-insights", "description": "Generate role-specific coaching feedback with wins, improvement areas, and practice scenarios" },
+      { "method": "POST", "path": "/meeting-intelligence", "description": "Full meeting intelligence by type — decisions, blockers, alignment, and effectiveness score" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate call follow-up actions based on context, stage, and risk threshold" }
+    ]
+  }
+]

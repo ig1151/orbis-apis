@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Proposal Generation API",
+    "shortDescription": "Agent-ready proposal, SOW and sales document generation",
+    "description": "AI-powered proposal generation API for autonomous sales and consulting agents. Generate proposals, executive summaries, pricing tables, SOWs, RFP responses, case studies, score documents, personalize documents and gate document delivery.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/proposal-generation",
+    "websiteUrl": "https://orbis-apis.onrender.com/proposal-generation/info",
+    "docsUrl": "https://orbis-apis.onrender.com/proposal-generation/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/proposal-generation/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["proposal-generation", "sow", "rfp-response", "case-study", "pricing-table", "document-scoring", "sales-documents", "execution-gate", "mcp"],
+    "keywords": ["generate proposal", "statement of work", "rfp response", "case study generator", "pricing table", "document score", "personalize document", "proposal api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/generate-proposal", "pricePerCallUsdc": 0.015 },
+          { "method": "POST", "pathPattern": "/executive-summary", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/pricing-table", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/sow", "pricePerCallUsdc": 0.012 },
+          { "method": "POST", "pathPattern": "/rfp-response", "pricePerCallUsdc": 0.015 },
+          { "method": "POST", "pathPattern": "/case-study", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/document-score", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/personalize-document", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/generate-proposal", "pricePerCallUsdc": 0.01 },
+          { "method": "POST", "pathPattern": "/executive-summary", "pricePerCallUsdc": 0.0045 },
+          { "method": "POST", "pathPattern": "/pricing-table", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/sow", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/rfp-response", "pricePerCallUsdc": 0.01 },
+          { "method": "POST", "pathPattern": "/case-study", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/document-score", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/personalize-document", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/generate-proposal", "description": "Generate complete business proposal" },
+      { "method": "POST", "path": "/executive-summary", "description": "Generate executive summary for proposal, report, plan or brief" },
+      { "method": "POST", "path": "/pricing-table", "description": "Build pricing table with ROI justification" },
+      { "method": "POST", "path": "/sow", "description": "Generate Statement of Work" },
+      { "method": "POST", "path": "/rfp-response", "description": "Generate RFP response with win themes and gaps" },
+      { "method": "POST", "path": "/case-study", "description": "Generate case study from raw inputs" },
+      { "method": "POST", "path": "/document-score", "description": "Score document quality and audience fit" },
+      { "method": "POST", "path": "/personalize-document", "description": "Personalize document template for recipient" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate document delivery based on quality and risk" }
+    ]
+  }
+]

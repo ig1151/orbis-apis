@@ -1,0 +1,73 @@
+[
+  {
+    "name": "Web Navigation API",
+    "shortDescription": "Autonomous web navigation and extraction for AI agents",
+    "description": "AI-powered web navigation infrastructure for autonomous agents. Navigate URLs, extract structured data, perform live search, follow link graphs, adaptive crawl websites, handle anti-bot challenges ethically, manage browser sessions, capture screenshots, detect forms, and execute navigation workflows.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/web-navigation",
+    "websiteUrl": "https://orbis-apis.onrender.com/web-navigation/info",
+    "docsUrl": "https://orbis-apis.onrender.com/web-navigation/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-navigation/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["browser-automation", "web-navigation", "web-scraping", "crawl", "automation", "browser", "data-extraction", "agent-tools", "mcp"],
+    "keywords": ["browser automation", "web navigation api", "extract structured data", "autonomous browser", "crawl websites", "browser session", "web extraction", "agent browser control"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/navigate", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/extract-structured-data", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/live-search", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/follow-links", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/adaptive-crawl", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/anti-bot-handling", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/content-diff", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/browser-session", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/screenshot", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/form-detect", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/submit-form-gated", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/download-assets", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/navigate-and-extract", "pricePerCallUsdc": 0.015 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0025,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/navigate", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/extract-structured-data", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/adaptive-crawl", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/navigate-and-extract", "pricePerCallUsdc": 0.010 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/navigate", "description": "Navigate and analyze a URL with goal-directed page intelligence extraction" },
+      { "method": "POST", "path": "/extract-structured-data", "description": "Extract structured data from a page according to a target schema" },
+      { "method": "POST", "path": "/live-search", "description": "Generate optimized search queries and structure results from any search engine" },
+      { "method": "POST", "path": "/follow-links", "description": "Generate a prioritized crawl plan following links from a seed URL toward a goal" },
+      { "method": "POST", "path": "/adaptive-crawl", "description": "Adaptive crawling strategy for dynamic content, JS rendering, and anti-bot challenges" },
+      { "method": "POST", "path": "/anti-bot-handling", "description": "Ethical anti-bot strategies with timing, headers, backoff, and robots.txt compliance" },
+      { "method": "POST", "path": "/content-diff", "description": "Detect and classify content changes between two versions of a web page" },
+      { "method": "POST", "path": "/browser-session", "description": "Plan browser session config, warmup steps, and auth requirements" },
+      { "method": "POST", "path": "/screenshot", "description": "Generate capture instructions and analysis hints for webpage screenshots" },
+      { "method": "POST", "path": "/form-detect", "description": "Detect and analyze all forms on a page including fields, validation, and CAPTCHA" },
+      { "method": "POST", "path": "/submit-form-gated", "description": "Gate form submissions with risk scoring, field validation, and step-by-step instructions" },
+      { "method": "POST", "path": "/download-assets", "description": "Plan and prioritize asset downloads with type filtering and size limits" },
+      { "method": "POST", "path": "/navigate-and-extract", "description": "ONE-CALL: navigate, detect, extract structured data, and handle challenges in one request" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate navigation actions for robots.txt compliance, rate limits, and ethical crawling" }
+    ]
+  }
+]

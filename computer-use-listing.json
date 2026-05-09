@@ -1,0 +1,70 @@
+[
+  {
+    "name": "Computer Use API",
+    "shortDescription": "Agent-ready desktop action execution and computer-use automation",
+    "description": "AI-powered computer-use API for autonomous desktop agents. Analyze screens, locate UI elements, click, type, send keypresses, open apps, run desktop tasks, generate automation plans, detect errors, audit accessibility and gate risky desktop actions.",
+    "category": "automation",
+    "baseUrl": "https://orbis-apis.onrender.com/computer-use",
+    "websiteUrl": "https://orbis-apis.onrender.com/computer-use/info",
+    "docsUrl": "https://orbis-apis.onrender.com/computer-use/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/computer-use/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["computer-use", "desktop-automation", "ui-automation", "click", "type", "keypress", "screen-analysis", "execution-gate", "mcp"],
+    "keywords": ["computer use api", "desktop automation", "click ui", "type into app", "keypress automation", "open app", "run desktop task", "screen analysis"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/analyze-screen", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/click", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/type", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/keypress", "pricePerCallUsdc": 0.002 },
+          { "method": "POST", "pathPattern": "/open-app", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/run-desktop-task", "pricePerCallUsdc": 0.018 },
+          { "method": "POST", "pathPattern": "/generate-automation", "pricePerCallUsdc": 0.01 },
+          { "method": "POST", "pathPattern": "/find-element", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/workflow-detect", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/error-detect", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/accessibility-audit", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/task-planner", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/analyze-screen", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/click", "pricePerCallUsdc": 0.002 },
+          { "method": "POST", "pathPattern": "/type", "pricePerCallUsdc": 0.002 },
+          { "method": "POST", "pathPattern": "/run-desktop-task", "pricePerCallUsdc": 0.012 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/analyze-screen", "description": "Analyze screen state and recommend next action" },
+      { "method": "POST", "path": "/click", "description": "Execute a UI click action on a target element" },
+      { "method": "POST", "path": "/type", "description": "Type text into a target field or active input" },
+      { "method": "POST", "path": "/keypress", "description": "Send keyboard shortcut or keypress action" },
+      { "method": "POST", "path": "/open-app", "description": "Open a desktop application or bring it into focus" },
+      { "method": "POST", "path": "/run-desktop-task", "description": "Execute a full multi-step desktop task with safety checks" },
+      { "method": "POST", "path": "/generate-automation", "description": "Generate desktop automation steps with rollback" },
+      { "method": "POST", "path": "/find-element", "description": "Locate UI elements with ranked locator strategies" },
+      { "method": "POST", "path": "/workflow-detect", "description": "Detect workflow patterns and automation opportunities" },
+      { "method": "POST", "path": "/error-detect", "description": "Detect UI errors and recovery actions" },
+      { "method": "POST", "path": "/accessibility-audit", "description": "Audit accessibility and WCAG issues" },
+      { "method": "POST", "path": "/task-planner", "description": "Plan multi-phase computer-use tasks" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate desktop actions based on risk and reversibility" }
+    ]
+  }
+]

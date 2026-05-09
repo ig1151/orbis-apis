@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Real-Time Monitor API",
+    "shortDescription": "Agent-ready monitoring, anomaly detection and alert intelligence",
+    "description": "AI-powered real-time monitoring API for autonomous infrastructure and operations agents. Detect anomalies, check system status, detect incidents, configure alerts, report uptime, establish baselines, perform root cause analysis, forecast capacity and gate remediation execution.",
+    "category": "automation",
+    "baseUrl": "https://orbis-apis.onrender.com/real-time-monitor",
+    "websiteUrl": "https://orbis-apis.onrender.com/real-time-monitor/info",
+    "docsUrl": "https://orbis-apis.onrender.com/real-time-monitor/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/real-time-monitor/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["monitoring", "anomaly-detection", "incident-detection", "uptime", "root-cause-analysis", "capacity-forecast", "alerting", "execution-gate", "mcp"],
+    "keywords": ["detect anomalies", "check status", "incident detection", "alert config", "uptime report", "root cause analysis", "capacity forecast", "monitoring api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/anomaly-detect", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/check-status", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/incident-detect", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/alert-config", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/uptime-report", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/performance-baseline", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/root-cause-analysis", "pricePerCallUsdc": 0.01 },
+          { "method": "POST", "pathPattern": "/capacity-forecast", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/anomaly-detect", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/check-status", "pricePerCallUsdc": 0.0025 },
+          { "method": "POST", "pathPattern": "/incident-detect", "pricePerCallUsdc": 0.0055 },
+          { "method": "POST", "pathPattern": "/alert-config", "pricePerCallUsdc": 0.0035 },
+          { "method": "POST", "pathPattern": "/uptime-report", "pricePerCallUsdc": 0.0025 },
+          { "method": "POST", "pathPattern": "/performance-baseline", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/root-cause-analysis", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/capacity-forecast", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/anomaly-detect", "description": "Detect anomalies in time-series metrics" },
+      { "method": "POST", "path": "/check-status", "description": "Evaluate system health against thresholds and SLAs" },
+      { "method": "POST", "path": "/incident-detect", "description": "Detect and classify incidents from events" },
+      { "method": "POST", "path": "/alert-config", "description": "Generate alert rules and escalation policies" },
+      { "method": "POST", "path": "/uptime-report", "description": "Calculate uptime, MTTR, MTBF and SLA compliance" },
+      { "method": "POST", "path": "/performance-baseline", "description": "Establish performance baselines and thresholds" },
+      { "method": "POST", "path": "/root-cause-analysis", "description": "Perform root cause analysis with corrective actions" },
+      { "method": "POST", "path": "/capacity-forecast", "description": "Forecast capacity needs and scaling urgency" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate monitoring actions and remediations" }
+    ]
+  }
+]

@@ -1,0 +1,64 @@
+[
+  {
+    "name": "Agent Evaluation API",
+    "shortDescription": "Agent-ready benchmarking, hallucination detection and safety scoring",
+    "description": "AI-powered agent evaluation API for autonomous system validation. Benchmark response quality, detect hallucinations, check consistency, audit bias, evaluate task completion, trace reasoning chains, score safety, compare model responses and gate agent deployment.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/agent-eval",
+    "websiteUrl": "https://orbis-apis.onrender.com/agent-eval/info",
+    "docsUrl": "https://orbis-apis.onrender.com/agent-eval/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/agent-eval/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["agent-evaluation", "hallucination-detection", "benchmark", "bias-audit", "safety-score", "reasoning-trace", "consistency-check", "execution-gate", "mcp"],
+    "keywords": ["benchmark agent", "hallucination detect", "consistency check", "bias audit", "task completion eval", "reasoning trace", "safety score", "compare responses", "agent evaluation api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/benchmark", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/hallucination-detect", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/consistency-check", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/bias-audit", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/task-completion", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/reasoning-trace", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/safety-score", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/compare-responses", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/benchmark", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/hallucination-detect", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/bias-audit", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/reasoning-trace", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/compare-responses", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/benchmark", "description": "Benchmark AI agent response quality across accuracy, relevance, completeness, and reasoning" },
+      { "method": "POST", "path": "/hallucination-detect", "description": "Detect fabrications, unsupported claims, and hallucinations vs. provided source context" },
+      { "method": "POST", "path": "/consistency-check", "description": "Check response consistency across multiple prompts for factual and behavioral drift" },
+      { "method": "POST", "path": "/bias-audit", "description": "Audit agent responses for political, gender, racial, and cultural bias patterns" },
+      { "method": "POST", "path": "/task-completion", "description": "Evaluate task completion quality against success criteria with gap analysis" },
+      { "method": "POST", "path": "/reasoning-trace", "description": "Analyze reasoning chain quality for logical consistency and assumption transparency" },
+      { "method": "POST", "path": "/safety-score", "description": "Score agent response for harmful content, privacy risk, legal risk, and misinformation" },
+      { "method": "POST", "path": "/compare-responses", "description": "Compare multiple model responses to the same task with ranking and synthesis" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate agent deployment based on quality, safety, and reliability thresholds" }
+    ]
+  }
+]

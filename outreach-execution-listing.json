@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Outreach Execution API",
+    "shortDescription": "Agent-ready outreach execution, sequencing and reply handling",
+    "description": "AI-powered outreach execution API for autonomous sales and marketing agents. Compose messages, personalize templates, build and send sequences, optimize timing, run A/B tests, classify replies, pause on reply, check unsubscribe status, enforce compliance, track delivery and gate outreach execution.",
+    "category": "automation",
+    "baseUrl": "https://orbis-apis.onrender.com/outreach-execution",
+    "websiteUrl": "https://orbis-apis.onrender.com/outreach-execution/info",
+    "docsUrl": "https://orbis-apis.onrender.com/outreach-execution/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/outreach-execution/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["outreach", "sales-automation", "email-sequences", "reply-classification", "unsubscribe-check", "compliance", "delivery-status", "execution-gate", "mcp"],
+    "keywords": ["send sequence", "outreach execution", "pause on reply", "unsubscribe check", "compliance guard", "delivery status", "sales outreach api", "autonomous outreach"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/compose-message", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/personalize", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/sequence-builder", "pricePerCallUsdc": 0.012 },
+          { "method": "POST", "pathPattern": "/send-sequence", "pricePerCallUsdc": 0.015 },
+          { "method": "POST", "pathPattern": "/pause-on-reply", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/unsubscribe-check", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/compliance-guard", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/delivery-status", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/timing-optimize", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/ab-test", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/response-classify", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/campaign-analytics", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/objection-handle", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/sequence-builder", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/send-sequence", "pricePerCallUsdc": 0.01 },
+          { "method": "POST", "pathPattern": "/response-classify", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/delivery-status", "pricePerCallUsdc": 0.0025 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/compose-message", "description": "Compose personalized outreach messages with CTA and timing recommendation" },
+      { "method": "POST", "path": "/personalize", "description": "Personalize templates with contextual hooks" },
+      { "method": "POST", "path": "/sequence-builder", "description": "Build multi-touch outreach sequences" },
+      { "method": "POST", "path": "/send-sequence", "description": "Execute/send outreach sequence with delivery tracking" },
+      { "method": "POST", "path": "/pause-on-reply", "description": "Pause active sequence automatically when a recipient replies" },
+      { "method": "POST", "path": "/unsubscribe-check", "description": "Check unsubscribe and suppression status before sending" },
+      { "method": "POST", "path": "/compliance-guard", "description": "Gate messages for spam, consent and compliance risk" },
+      { "method": "POST", "path": "/delivery-status", "description": "Track sent, delivered, bounced, opened, replied and failed states" },
+      { "method": "POST", "path": "/timing-optimize", "description": "Optimize send timing" },
+      { "method": "POST", "path": "/ab-test", "description": "Analyze outreach variants" },
+      { "method": "POST", "path": "/response-classify", "description": "Classify replies and recommend next action" },
+      { "method": "POST", "path": "/campaign-analytics", "description": "Analyze campaign performance" },
+      { "method": "POST", "path": "/objection-handle", "description": "Generate objection responses" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate outreach execution" }
+    ]
+  }
+]

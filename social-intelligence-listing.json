@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Social Intelligence API",
+    "shortDescription": "Agent-ready social monitoring, sentiment and audience intelligence",
+    "description": "AI-powered social intelligence API for autonomous marketing and sales agents. Analyze posts, monitor brands, score influencers, detect trends, analyze competitors, derive audience insights, predict content performance, track sentiment timelines, extract social proof and gate social actions.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/social-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com/social-intelligence/info",
+    "docsUrl": "https://orbis-apis.onrender.com/social-intelligence/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/social-intelligence/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["social-intelligence", "brand-monitoring", "influencer-score", "trend-detection", "competitor-social", "audience-insights", "content-performance", "sentiment-timeline", "mcp"],
+    "keywords": ["analyze social post", "brand monitor", "influencer score", "trend detect", "competitor social", "audience insights", "content performance", "sentiment timeline", "social proof", "social intelligence api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/analyze-post", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/brand-monitor", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/influencer-score", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/trend-detect", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/competitor-social", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/audience-insights", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/content-performance", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/sentiment-timeline", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/social-proof", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/brand-monitor", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/influencer-score", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/competitor-social", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/sentiment-timeline", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/analyze-post", "description": "Analyze a social media post for sentiment, virality, engagement quality, and brand safety" },
+      { "method": "POST", "path": "/brand-monitor", "description": "Monitor brand presence and reputation with sentiment scoring and competitor comparison" },
+      { "method": "POST", "path": "/influencer-score", "description": "Score influencer authenticity, engagement quality, and brand fit for partnerships" },
+      { "method": "POST", "path": "/trend-detect", "description": "Detect trending topics, hashtags, and content opportunities in an industry" },
+      { "method": "POST", "path": "/competitor-social", "description": "Analyze competitor social media strategy, positioning, and content gaps" },
+      { "method": "POST", "path": "/audience-insights", "description": "Derive audience demographics, psychographics, and content preferences" },
+      { "method": "POST", "path": "/content-performance", "description": "Predict content performance and get improvement suggestions before posting" },
+      { "method": "POST", "path": "/sentiment-timeline", "description": "Map sentiment trajectory through key events and forecast future sentiment" },
+      { "method": "POST", "path": "/social-proof", "description": "Extract and assess social proof signals, trust indicators, and credibility gaps" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate social media actions based on brand risk, timing, and strategic fit" }
+    ]
+  }
+]

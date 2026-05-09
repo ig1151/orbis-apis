@@ -2038,3 +2038,126 @@ app.get('/computer-use/info', (_req, res) => res.json({
 // ── browser-task intelligence extension ───────────────────────────────────────
 import browserTaskIntelligenceRouter from './routes/browser-task-api/routes/intelligence';
 app.use('/browser-task', browserTaskIntelligenceRouter);
+
+// ── enterprise-retrieval ──────────────────────────────────────────────────────
+import enterpriseRetrievalRouter from './routes/enterprise-retrieval-api/routes/intelligence';
+import enterpriseRetrievalOpenapiRouter from './routes/enterprise-retrieval-api/routes/openapi';
+app.use('/enterprise-retrieval/openapi.json', enterpriseRetrievalOpenapiRouter);
+app.use('/enterprise-retrieval', enterpriseRetrievalRouter);
+app.get('/enterprise-retrieval/info', (_req, res) => res.json({
+  name: 'Enterprise Retrieval API',
+  slug: 'enterprise-retrieval',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { search: '$0.007', retrieve_document: '$0.006', retrieve_thread: '$0.007', query_email: '$0.005', query_crm: '$0.008', query_calendar: '$0.005', query_notion: '$0.006', query_slack: '$0.006', query_drive: '$0.005', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/search', description: 'Universal enterprise search across Slack, Gmail, Drive, Notion, HubSpot, Salesforce, GitHub, Linear, Jira' },
+    { method: 'POST', path: '/retrieve-document', description: 'Retrieve a specific document by ID from any connected source' },
+    { method: 'POST', path: '/retrieve-thread', description: 'Retrieve full conversation thread with decisions and action items' },
+    { method: 'POST', path: '/query-email', description: 'Query email with natural language and get structured results' },
+    { method: 'POST', path: '/query-crm', description: 'Query CRM data with natural language across HubSpot and Salesforce' },
+    { method: 'POST', path: '/query-calendar', description: 'Query calendar events and extract scheduling intelligence' },
+    { method: 'POST', path: '/query-notion', description: 'Query Notion databases and pages with natural language' },
+    { method: 'POST', path: '/query-slack', description: 'Query Slack messages, channels, and threads with natural language' },
+    { method: 'POST', path: '/query-drive', description: 'Query Google Drive files and folders with natural language' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate data retrieval actions based on sensitivity, access, and audit requirements' },
+  ],
+  execution_chain: { previous: 'deep-research', next: 'agent-eval', optional_next: ['workflow-orchestrator'] },
+}));
+
+// ── multi-agent ───────────────────────────────────────────────────────────────
+import multiAgentRouter from './routes/multi-agent-api/routes/intelligence';
+import multiAgentOpenapiRouter from './routes/multi-agent-api/routes/openapi';
+app.use('/multi-agent/openapi.json', multiAgentOpenapiRouter);
+app.use('/multi-agent', multiAgentRouter);
+app.get('/multi-agent/info', (_req, res) => res.json({
+  name: 'Multi-Agent Coordination API',
+  slug: 'multi-agent',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { create_team: '$0.006', assign_task: '$0.005', route_work: '$0.006', merge_results: '$0.007', consensus: '$0.008', escalate: '$0.005', evaluate_agent: '$0.007', shared_state: '$0.004', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/create-team', description: 'Create and configure a multi-agent team for a goal with role assignments' },
+    { method: 'POST', path: '/assign-task', description: 'Assign a task to the optimal agent based on capabilities and workload' },
+    { method: 'POST', path: '/route-work', description: 'Route work items through an agent pipeline with parallel and sequential options' },
+    { method: 'POST', path: '/merge-results', description: 'Merge and reconcile results from multiple agents into a unified output' },
+    { method: 'POST', path: '/consensus', description: 'Reach consensus across agent opinions with conflict resolution and confidence scoring' },
+    { method: 'POST', path: '/escalate', description: 'Escalate a blocked or low-confidence agent to a supervisor agent' },
+    { method: 'POST', path: '/evaluate-agent', description: 'Evaluate agent performance, reliability, and cost efficiency' },
+    { method: 'POST', path: '/shared-state', description: 'Manage shared state across agents with conflict detection and merge strategies' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate multi-agent actions based on consensus threshold and risk level' },
+  ],
+  execution_chain: { previous: 'workflow-orchestrator', next: 'agent-eval', optional_next: ['enterprise-retrieval'] },
+}));
+
+// ── agent-observability ───────────────────────────────────────────────────────
+import agentObservabilityRouter from './routes/agent-observability-api/routes/intelligence';
+import agentObservabilityOpenapiRouter from './routes/agent-observability-api/routes/openapi';
+app.use('/agent-observability/openapi.json', agentObservabilityOpenapiRouter);
+app.use('/agent-observability', agentObservabilityRouter);
+app.get('/agent-observability/info', (_req, res) => res.json({
+  name: 'Agent Observability API',
+  slug: 'agent-observability',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { log_tool_call: '$0.003', trace_workflow: '$0.006', replay_agent: '$0.008', cost_analysis: '$0.005', failure_analysis: '$0.007', performance_score: '$0.005', anomaly_detect: '$0.006', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/log-tool-call', description: 'Log and classify an agent tool call with latency, cost, and outcome tracking' },
+    { method: 'POST', path: '/trace-workflow', description: 'Trace a full agent workflow execution with step-level analysis' },
+    { method: 'POST', path: '/replay-agent', description: 'Replay an agent session to debug failures and test counterfactuals' },
+    { method: 'POST', path: '/cost-analysis', description: 'Analyze agent token usage and cost efficiency across sessions' },
+    { method: 'POST', path: '/failure-analysis', description: 'Analyze agent failures with root cause classification and prevention recommendations' },
+    { method: 'POST', path: '/performance-score', description: 'Score agent performance across latency, accuracy, cost, and reliability dimensions' },
+    { method: 'POST', path: '/anomaly-detect', description: 'Detect behavioral anomalies in agent execution patterns' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate agent actions based on observability signals and risk thresholds' },
+  ],
+  execution_chain: { previous: 'agent-eval', next: 'real-time-monitor', optional_next: ['workflow-orchestrator'] },
+}));
+
+// ── web-navigation ────────────────────────────────────────────────────────────
+import webNavigationRouter from './routes/web-navigation-api/routes/intelligence';
+import webNavigationOpenapiRouter from './routes/web-navigation-api/routes/openapi';
+app.use('/web-navigation/openapi.json', webNavigationOpenapiRouter);
+app.use('/web-navigation', webNavigationRouter);
+app.get('/web-navigation/info', (_req, res) => res.json({
+  name: 'Web Navigation API',
+  slug: 'web-navigation',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { navigate: '$0.005', extract_structured_data: '$0.006', live_search: '$0.005', follow_links: '$0.006', adaptive_crawl: '$0.008', anti_bot_handling: '$0.004', content_diff: '$0.005', execution_gate: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/navigate', description: 'Navigate a URL with a goal and extract structured page intelligence' },
+    { method: 'POST', path: '/extract-structured-data', description: 'Extract structured data from a page according to a target schema' },
+    { method: 'POST', path: '/live-search', description: 'Generate optimized search queries and structure result data from any search engine' },
+    { method: 'POST', path: '/follow-links', description: 'Generate a prioritized crawl plan following links from a seed URL toward a goal' },
+    { method: 'POST', path: '/adaptive-crawl', description: 'Generate adaptive crawling strategy for dynamic content, JS rendering, and anti-bot challenges' },
+    { method: 'POST', path: '/anti-bot-handling', description: 'Generate ethical anti-bot handling strategies with timing, headers, and behavioral recommendations' },
+    { method: 'POST', path: '/content-diff', description: 'Detect and analyze content changes between two versions of a web page' },
+    { method: 'POST', path: '/execution-gate', description: 'Gate web navigation actions for safety, robots.txt compliance, and ethical crawling' },
+  ],
+  execution_chain: { previous: 'deep-research', next: 'enterprise-retrieval', optional_next: ['serp-intelligence'] },
+}));

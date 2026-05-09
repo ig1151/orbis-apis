@@ -1,0 +1,79 @@
+[
+  {
+    "name": "Enterprise Retrieval API",
+    "shortDescription": "Universal enterprise search and retrieval for autonomous agents",
+    "description": "AI-powered enterprise retrieval infrastructure across Slack, Gmail, Drive, Notion, HubSpot, Salesforce, GitHub, Linear, Jira and more. Enables semantic search, document retrieval, thread analysis, CRM intelligence, calendar querying, and enterprise knowledge orchestration with permission-aware access control.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/enterprise-retrieval",
+    "websiteUrl": "https://orbis-apis.onrender.com/enterprise-retrieval/info",
+    "docsUrl": "https://orbis-apis.onrender.com/enterprise-retrieval/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/enterprise-retrieval/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["enterprise-search", "retrieval", "slack", "gmail", "github", "crm", "knowledge-base", "connectors", "mcp"],
+    "keywords": ["enterprise search api", "query slack", "query gmail", "github retrieval", "crm search", "enterprise knowledge retrieval", "semantic enterprise search", "agent enterprise memory"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/search", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/retrieve-document", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/retrieve-thread", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/query-email", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/query-crm", "pricePerCallUsdc": 0.008 },
+          { "method": "POST", "pathPattern": "/query-calendar", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/query-notion", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/query-slack", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/query-drive", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/query-github", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/query-jira", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/query-linear", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/query-salesforce", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/query-hubspot", "pricePerCallUsdc": 0.007 },
+          { "method": "POST", "pathPattern": "/enterprise-briefing", "pricePerCallUsdc": 0.018 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/search", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/retrieve-thread", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/query-crm", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/query-salesforce", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/query-hubspot", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/enterprise-briefing", "pricePerCallUsdc": 0.012 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/search", "description": "Universal semantic search across Slack, Gmail, Drive, Notion, HubSpot, Salesforce, GitHub, Linear, Jira" },
+      { "method": "POST", "path": "/retrieve-document", "description": "Retrieve and analyze a specific enterprise document by ID and source" },
+      { "method": "POST", "path": "/retrieve-thread", "description": "Retrieve and analyze a full conversation thread with decisions and action items" },
+      { "method": "POST", "path": "/query-email", "description": "Search and structure Gmail data with natural language" },
+      { "method": "POST", "path": "/query-crm", "description": "Query HubSpot and Salesforce CRM records with natural language" },
+      { "method": "POST", "path": "/query-calendar", "description": "Query calendar events and extract scheduling intelligence" },
+      { "method": "POST", "path": "/query-notion", "description": "Query Notion databases and pages with natural language" },
+      { "method": "POST", "path": "/query-slack", "description": "Search Slack conversations, channels, and threads" },
+      { "method": "POST", "path": "/query-drive", "description": "Query Google Drive files and folders with natural language" },
+      { "method": "POST", "path": "/query-github", "description": "Search GitHub issues, PRs, commits, and code with permission-aware access" },
+      { "method": "POST", "path": "/query-jira", "description": "Query Jira issues and projects with JQL generation and status grouping" },
+      { "method": "POST", "path": "/query-linear", "description": "Search Linear issues, cycles, and teams with state and priority filtering" },
+      { "method": "POST", "path": "/query-salesforce", "description": "Query Salesforce objects with SOQL generation and relationship mapping" },
+      { "method": "POST", "path": "/query-hubspot", "description": "Search HubSpot contacts, companies, deals, and tickets with association mapping" },
+      { "method": "POST", "path": "/enterprise-briefing", "description": "ONE-CALL: cross-source enterprise briefing with decisions, action items, timeline, and citations" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate data retrieval actions based on sensitivity, access permissions, and audit requirements" }
+    ]
+  }
+]

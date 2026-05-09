@@ -1,0 +1,70 @@
+[
+  {
+    "name": "Data Connector API",
+    "shortDescription": "Agent-ready data transformation, validation and sync intelligence",
+    "description": "AI-powered data connector API for autonomous agents. Transform formats, validate schemas, map fields, merge datasets, enrich records, deduplicate, normalize, extract schemas, check sync status and gate data operations.",
+    "category": "automation",
+    "baseUrl": "https://orbis-apis.onrender.com/data-connector",
+    "websiteUrl": "https://orbis-apis.onrender.com/data-connector/info",
+    "docsUrl": "https://orbis-apis.onrender.com/data-connector/info",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-connector/openapi.json",
+    "logoUrl": "https://orbisapi.com/logo.png",
+    "tags": ["data-connector", "data-transformation", "schema-validation", "field-mapping", "deduplication", "normalization", "sync-check", "execution-gate", "mcp"],
+    "keywords": ["transform data", "validate schema", "map fields", "merge datasets", "deduplicate records", "normalize data", "extract schema", "sync check", "data connector api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/transform", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/map-fields", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/merge", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/enrich", "pricePerCallUsdc": 0.006 },
+          { "method": "POST", "pathPattern": "/deduplicate", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/normalize", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/extract-schema", "pricePerCallUsdc": 0.003 },
+          { "method": "POST", "pathPattern": "/sync-check", "pricePerCallUsdc": 0.005 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.002 }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/transform", "pricePerCallUsdc": 0.0025 },
+          { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.002 },
+          { "method": "POST", "pathPattern": "/map-fields", "pricePerCallUsdc": 0.0035 },
+          { "method": "POST", "pathPattern": "/merge", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/enrich", "pricePerCallUsdc": 0.004 },
+          { "method": "POST", "pathPattern": "/deduplicate", "pricePerCallUsdc": 0.0035 },
+          { "method": "POST", "pathPattern": "/normalize", "pricePerCallUsdc": 0.0025 },
+          { "method": "POST", "pathPattern": "/extract-schema", "pricePerCallUsdc": 0.002 },
+          { "method": "POST", "pathPattern": "/sync-check", "pricePerCallUsdc": 0.0035 },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/transform", "description": "Transform data between JSON, CSV, XML, YAML and TSV" },
+      { "method": "POST", "path": "/validate", "description": "Validate data against JSON Schema with detailed errors" },
+      { "method": "POST", "path": "/map-fields", "description": "Map fields between source and target schemas" },
+      { "method": "POST", "path": "/merge", "description": "Merge datasets with conflict resolution" },
+      { "method": "POST", "path": "/enrich", "description": "Enrich records by deriving fields, classifying and scoring" },
+      { "method": "POST", "path": "/deduplicate", "description": "Deduplicate records with exact and fuzzy matching" },
+      { "method": "POST", "path": "/normalize", "description": "Normalize dates, phones, emails, addresses and currencies" },
+      { "method": "POST", "path": "/extract-schema", "description": "Infer schema from sample data" },
+      { "method": "POST", "path": "/sync-check", "description": "Compare datasets for sync status and drift" },
+      { "method": "POST", "path": "/execution-gate", "description": "Gate data operations based on quality and risk" }
+    ]
+  }
+]
