@@ -1947,7 +1947,7 @@ app.get('/outreach-execution/info', (_req, res) => res.json({
   privacy: { data_stored: false, retention: 'none' },
   pricing: {
     free_tier: { requests_per_day: 100, requests_per_month: 3000 },
-    pay_per_call: { compose_message: '$0.007', personalize: '$0.006', sequence_builder: '$0.012', timing_optimize: '$0.004', ab_test: '$0.006', response_classify: '$0.005', campaign_analytics: '$0.005', objection_handle: '$0.007', execution_gate: '$0.002' },
+    pay_per_call: { compose_message: '$0.007', personalize: '$0.006', sequence_builder: '$0.012', timing_optimize: '$0.004', ab_test: '$0.006', response_classify: '$0.005', campaign_analytics: '$0.005', objection_handle: '$0.007', execution_gate: '$0.002', send_sequence: '$0.010', pause_on_reply: '$0.003', unsubscribe_check: '$0.002', compliance_guard: '$0.005', delivery_status: '$0.004' },
   },
   rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
   endpoints: [
@@ -1960,6 +1960,11 @@ app.get('/outreach-execution/info', (_req, res) => res.json({
     { method: 'POST', path: '/campaign-analytics', description: 'Analyze campaign performance vs. benchmarks with issue detection and optimization recommendations' },
     { method: 'POST', path: '/objection-handle', description: 'Generate empathetic objection responses with reframe strategy and proof points' },
     { method: 'POST', path: '/execution-gate', description: 'Gate outreach actions for compliance, spam risk, and strategic fit' },
+    { method: 'POST', path: '/send-sequence', description: 'Execute a multi-step outreach sequence with scheduling, compliance validation, and pause logic' },
+    { method: 'POST', path: '/pause-on-reply', description: 'Detect if an inbound reply should pause or stop an active outreach sequence' },
+    { method: 'POST', path: '/unsubscribe-check', description: 'Verify a contact is not on unsubscribe or do-not-contact lists before sending' },
+    { method: 'POST', path: '/compliance-guard', description: 'Audit outreach message for CAN-SPAM, GDPR, and CASL compliance before sending' },
+    { method: 'POST', path: '/delivery-status', description: 'Analyze delivery metrics and identify deliverability issues with remediation steps' },
   ],
   execution_chain: { previous: 'cold-outreach', next: 'crm-update', optional_next: ['calendar-scheduling', 'voice-intelligence'] },
 }));
@@ -2009,7 +2014,7 @@ app.get('/computer-use/info', (_req, res) => res.json({
   privacy: { data_stored: false, retention: 'none' },
   pricing: {
     free_tier: { requests_per_day: 100, requests_per_month: 3000 },
-    pay_per_call: { analyze_screen: '$0.006', generate_automation: '$0.010', find_element: '$0.004', workflow_detect: '$0.007', error_detect: '$0.005', accessibility_audit: '$0.008', task_planner: '$0.008', execution_gate: '$0.002' },
+    pay_per_call: { analyze_screen: '$0.006', generate_automation: '$0.010', find_element: '$0.004', workflow_detect: '$0.007', error_detect: '$0.005', accessibility_audit: '$0.008', task_planner: '$0.008', execution_gate: '$0.002', click: '$0.003', type: '$0.003', keypress: '$0.002', open_app: '$0.004', run_desktop_task: '$0.015' },
   },
   rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
   endpoints: [
@@ -2021,6 +2026,11 @@ app.get('/computer-use/info', (_req, res) => res.json({
     { method: 'POST', path: '/accessibility-audit', description: 'WCAG accessibility audit with violations, severity, and keyboard/screen reader scores' },
     { method: 'POST', path: '/task-planner', description: 'Plan multi-phase computer tasks with required apps, dependencies, and risk factors' },
     { method: 'POST', path: '/execution-gate', description: 'Gate desktop actions based on risk score, reversibility, and admin requirements' },
+    { method: 'POST', path: '/click', description: 'Generate precise click action instructions with locator strategies and post-click verification' },
+    { method: 'POST', path: '/type', description: 'Generate type/input instructions for a field with clear, paste, or slow-type methods' },
+    { method: 'POST', path: '/keypress', description: 'Generate optimal keyboard shortcut or keypress sequence for an action goal' },
+    { method: 'POST', path: '/open-app', description: 'Generate instructions to open an application and navigate to a target state across OS platforms' },
+    { method: 'POST', path: '/run-desktop-task', description: 'ONE-CALL: complete executable desktop task plan with all actions, verifications, and rollback', x_one_call: true },
   ],
   execution_chain: { previous: 'browser-task', next: 'agent-eval', optional_next: ['workflow-orchestrator'] },
 }));
