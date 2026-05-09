@@ -14,9 +14,7 @@ async function callClaude(prompt: string): Promise<string> {
   return res.data.choices[0].message.content;
 }
 
-function parseJSON(raw: string) {
-  return JSON.parse(raw.replace(/```json|```/g, '').trim());
-}
+function parseJSON(raw: string) { const cleaned = raw.replace(/```json|```/g, "").trim(); const match = cleaned.match(/\{[\s\S]*\}/); if (!match) throw new Error("No JSON found"); return JSON.parse(match[0]); }
 
 
 router.get('/', (_req: Request, res: Response) => {
