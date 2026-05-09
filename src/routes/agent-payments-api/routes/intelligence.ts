@@ -85,7 +85,7 @@ Return concise JSON:
 });
 
 router.post('/approve-spend', async (req: Request, res: Response) => {
-  const { payment_request_id, approver_id, decision, modified_amount_usdc, conditions, reason } = req.body;
+  const { payment_request_id, approver_id, decision, modified_amount_usdc, conditions, reason, idempotency_key } = req.body;
   if (!payment_request_id) return res.status(400).json({ error: 'payment_request_id is required' });
   if (!approver_id) return res.status(400).json({ error: 'approver_id is required' });
   if (!decision) return res.status(400).json({ error: 'decision is required' });
@@ -114,12 +114,12 @@ Return concise JSON:
 });
 
 router.post('/execute-payment', async (req: Request, res: Response) => {
-  const { payment_request_id, wallet_id, network, gas_strategy, simulate_first } = req.body;
+  const { payment_request_id, wallet_id, network, gas_strategy, simulate_first, idempotency_key } = req.body;
   if (!payment_request_id) return res.status(400).json({ error: 'payment_request_id is required' });
   if (!wallet_id) return res.status(400).json({ error: 'wallet_id is required' });
   try {
     const raw = await callClaude(`Generate payment execution instructions with simulation, gas optimization, and confirmation steps. Validate pre-conditions and prepare rollback.
-Payment request ID: "${payment_request_id}" Wallet ID: "${wallet_id}" Network: "${network || 'base'}" Gas strategy: "${gas_strategy || 'standard'}" Simulate first: ${simulate_first ?? true}
+Payment request ID: "${payment_request_id}" Wallet ID: "${wallet_id}" Network: "${network || 'base'}" Gas strategy: "${gas_strategy || 'standard'}" Simulate first: ${simulate_first ?? true} Idempotency key: "${idempotency_key || 'none'}"
 
 Return concise JSON:
 {
@@ -143,7 +143,7 @@ Return concise JSON:
 });
 
 router.post('/escrow', async (req: Request, res: Response) => {
-  const { action, escrow_id, amount_usdc, payer_id, payee_id, release_conditions, expiry_hours } = req.body;
+  const { action, escrow_id, amount_usdc, payer_id, payee_id, release_conditions, expiry_hours, idempotency_key } = req.body;
   if (!action) return res.status(400).json({ error: 'action is required' });
   if (!escrow_id) return res.status(400).json({ error: 'escrow_id is required' });
   if (amount_usdc === undefined) return res.status(400).json({ error: 'amount_usdc is required' });
