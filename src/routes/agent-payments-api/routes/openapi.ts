@@ -284,7 +284,7 @@ router.get('/', (_req: Request, res: Response) => {
               'application/json': {
                 schema: {
                   type: 'object',
-                  required: ['action', 'escrow_id', 'amount_usdc'],
+                  required: ['action'],
                   properties: {
                     action: { type: 'string', enum: ['create', 'release', 'refund', 'check'] },
                     escrow_id: { type: 'string' },

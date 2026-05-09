@@ -534,7 +534,7 @@ router.get('/', (_req: Request, res: Response) => {
               'application/json': {
                 schema: {
                   type: 'object',
-                  required: ['action', 'session_id'],
+                  required: ['action'],
                   properties: {
                     action: { type: 'string', enum: ['create', 'persist', 'restore', 'close', 'list'] },
                     session_id: { type: 'string' },
