@@ -285,4 +285,98 @@ Return concise JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+
+router.post('/simulate-payment', async (req: Request, res: Response) => {
+  const { payment_request_id, wallet_id, network, amount_usdc } = req.body;
+  if (!payment_request_id) return res.status(400).json({ error: 'payment_request_id is required' });
+  if (!wallet_id) return res.status(400).json({ error: 'wallet_id is required' });
+  try {
+    const raw = await callClaude(`Simulate a payment before execution. Observe current financial state, check balances, estimate fees, assess risk, and return go/no-go recommendation without executing.
+Payment request ID: "${payment_request_id}" Wallet ID: "${wallet_id}" Network: "${network || 'base'}" Amount USDC: ${amount_usdc || 'unknown'}
+
+Return concise JSON:
+{
+  "payment_request_id": "string",
+  "simulation_id": "string",
+  "go": true,
+  "balance_sufficient": true,
+  "estimated_fee_usdc": 0.002,
+  "total_cost_usdc": 0.0,
+  "risk_score": 0.1,
+  "risk_flags": ["string"],
+  "spending_limit_headroom_usdc": 0.0,
+  "network_congestion": "low|medium|high",
+  "recommended_gas_strategy": "fast|standard|economy",
+  "simulation_notes": ["string"],
+  "confidence_per_section": { "balance_check": 0.95, "risk_assessment": 0.9 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/verify-settlement', async (req: Request, res: Response) => {
+  const { transaction_id, expected_amount_usdc, recipient_id, max_wait_ms } = req.body;
+  if (!transaction_id) return res.status(400).json({ error: 'transaction_id is required' });
+  if (!expected_amount_usdc) return res.status(400).json({ error: 'expected_amount_usdc is required' });
+  try {
+    const raw = await callClaude(`Verify payment settlement after execution. Check confirmation status, validate amount received, detect anomalies, and return loop-continuation decision.
+Transaction ID: "${transaction_id}" Expected amount USDC: ${expected_amount_usdc} Recipient ID: "${recipient_id || 'unknown'}" Max wait ms: ${max_wait_ms || 30000}
+
+Return concise JSON:
+{
+  "transaction_id": "string",
+  "settled": true,
+  "confirmations": 3,
+  "amount_received_usdc": 0.0,
+  "amount_matched": true,
+  "settlement_time_ms": 0,
+  "anomalies": ["string"],
+  "recipient_confirmed": true,
+  "loop_decision": "continue|retry|escalate|abort",
+  "retry_recommended": false,
+  "retry_reason": "string or null",
+  "next_action": "string",
+  "confidence_per_section": { "settlement": 0.95, "anomaly_detection": 0.9 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/run-payment', async (req: Request, res: Response) => {
+  const { from_agent_id, to_agent_id, amount_usdc, purpose, wallet_id, network, auto_approve_below_usdc } = req.body;
+  if (!from_agent_id) return res.status(400).json({ error: 'from_agent_id is required' });
+  if (!to_agent_id) return res.status(400).json({ error: 'to_agent_id is required' });
+  if (!amount_usdc) return res.status(400).json({ error: 'amount_usdc is required' });
+  if (!purpose) return res.status(400).json({ error: 'purpose is required' });
+  if (!wallet_id) return res.status(400).json({ error: 'wallet_id is required' });
+  try {
+    const raw = await callClaude(`ONE-CALL: Execute a complete autonomous payment workflow. Simulate, gate, approve, execute and verify settlement in one response.
+From: "${from_agent_id}" To: "${to_agent_id}" Amount USDC: ${amount_usdc} Purpose: "${purpose}" Wallet: "${wallet_id}" Network: "${network || 'base'}" Auto-approve below USDC: ${auto_approve_below_usdc || 100}
+
+Return concise JSON:
+{
+  "workflow_id": "string",
+  "from_agent_id": "string",
+  "to_agent_id": "string",
+  "amount_usdc": 0.0,
+  "simulation": { "go": true, "risk_score": 0.1, "estimated_fee_usdc": 0.002 },
+  "gate": { "execute": true, "risk_level": "low", "human_approval_required": false },
+  "approval": { "decision": "approve", "auto_approved": true, "approver": "string" },
+  "execution": { "transaction_id": "string", "status": "confirmed", "total_cost_usdc": 0.0 },
+  "settlement": { "settled": true, "confirmations": 3, "amount_matched": true },
+  "overall_status": "completed|pending_approval|failed|escalated",
+  "loop_decision": "continue|retry|escalate|abort",
+  "audit_trail": [{ "stage": "string", "timestamp": "string", "result": "string" }],
+  "confidence_per_section": { "simulation": 0.95, "execution": 0.9, "settlement": 0.95 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 export default router;

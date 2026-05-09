@@ -305,7 +305,6 @@ Return concise JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-export default router;
 
 router.post('/execution-gate', async (req: Request, res: Response) => {
   const { browser_action, action_context, risk_threshold, require_human_approval } = req.body;
@@ -335,3 +334,93 @@ Return concise JSON:
     res.json(parseJSON(raw));
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
+
+router.post('/replan-workflow', async (req: Request, res: Response) => {
+  const { session_id, original_workflow, failed_step, failure_reason, goal } = req.body;
+  if (!session_id) return res.status(400).json({ error: 'session_id is required' });
+  if (!failed_step) return res.status(400).json({ error: 'failed_step is required' });
+  if (!goal) return res.status(400).json({ error: 'goal is required' });
+  try {
+    const raw = await callClaude(`Autonomously replan a browser workflow after a step failure. Inspect the failure, generate an alternative strategy, and produce a modified workflow that continues toward the original goal.
+Session ID: "${session_id}" Goal: "${goal}" Failed step: ${JSON.stringify(failed_step)} Failure reason: "${failure_reason || 'unknown'}" Original workflow length: ${original_workflow?.length || 'unknown'}
+
+Return concise JSON:
+{
+  "session_id": "string",
+  "goal": "string",
+  "failure_analysis": { "root_cause": "string", "failure_type": "selector_missing|timeout|navigation|auth|captcha|other", "recoverable": true },
+  "alternative_strategy": "string",
+  "modified_workflow": [{ "step": 1, "action": "string", "target": "string", "value": "string", "verification": "string" }],
+  "steps_skipped": [1],
+  "steps_added": [1],
+  "confidence": 0.85,
+  "loop_decision": "replan_and_continue|retry_original|escalate|abort",
+  "estimated_success_rate": 0.85,
+  "rollback_steps": ["string"],
+  "confidence_per_section": { "failure_analysis": 0.9, "modified_workflow": 0.85 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/evaluate-state', async (req: Request, res: Response) => {
+  const { session_id, goal, current_state, completed_steps, expected_state } = req.body;
+  if (!session_id) return res.status(400).json({ error: 'session_id is required' });
+  if (!goal) return res.status(400).json({ error: 'goal is required' });
+  if (!current_state) return res.status(400).json({ error: 'current_state is required' });
+  try {
+    const raw = await callClaude(`Evaluate current browser state against the agent goal. Determine if the goal is achieved, partially achieved, or failed, and return a loop-continuation decision.
+Session ID: "${session_id}" Goal: "${goal}" Current state: ${JSON.stringify(current_state)} Completed steps: ${completed_steps || 'unknown'} Expected state: ${JSON.stringify(expected_state || {})}
+
+Return concise JSON:
+{
+  "session_id": "string",
+  "goal": "string",
+  "goal_achieved": false,
+  "achievement_score": 0.7,
+  "state_match": { "matched": ["string"], "missing": ["string"], "unexpected": ["string"] },
+  "blockers": ["string"],
+  "loop_decision": "continue|goal_achieved|replan|retry|escalate|abort",
+  "next_recommended_action": "string",
+  "steps_remaining_estimate": 2,
+  "confidence_per_section": { "goal_assessment": 0.9, "state_match": 0.85 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+router.post('/resume-workflow', async (req: Request, res: Response) => {
+  const { session_id, workflow_id, checkpoint, remaining_steps, goal } = req.body;
+  if (!session_id) return res.status(400).json({ error: 'session_id is required' });
+  if (!workflow_id) return res.status(400).json({ error: 'workflow_id is required' });
+  if (!goal) return res.status(400).json({ error: 'goal is required' });
+  try {
+    const raw = await callClaude(`Resume a paused or interrupted browser workflow from a checkpoint. Validate session state, restore context, and generate continuation instructions.
+Session ID: "${session_id}" Workflow ID: "${workflow_id}" Goal: "${goal}" Checkpoint: ${JSON.stringify(checkpoint || {})} Remaining steps: ${remaining_steps || 'unknown'}
+
+Return concise JSON:
+{
+  "session_id": "string",
+  "workflow_id": "string",
+  "goal": "string",
+  "resume_viable": true,
+  "session_valid": true,
+  "context_restored": true,
+  "resume_from_step": 3,
+  "state_validation": { "checks": ["string"], "passed": true, "warnings": ["string"] },
+  "continuation_steps": [{ "step": 1, "action": "string", "target": "string", "verification": "string" }],
+  "estimated_completion_ms": 5000,
+  "loop_decision": "resume|replan|restart|abort",
+  "confidence_per_section": { "session_validation": 0.9, "continuation": 0.85 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+export default router;
