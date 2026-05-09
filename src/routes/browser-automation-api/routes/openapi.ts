@@ -14,9 +14,13 @@ router.get('/', (_req: Request, res: Response) => {
       description: 'AI-powered browser automation for autonomous agents — open sessions, click, type, extract, upload, download, wait, screenshot, manage sessions and run multi-step workflows',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
+      'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { open: '$0.004', click: '$0.003', type: '$0.003', extract: '$0.005', upload: '$0.005', download: '$0.005', wait: '$0.002', screenshot: '$0.004', session: '$0.004', run_workflow: '$0.015', execution_gate: '$0.002', replan_workflow: '$0.008', evaluate_state: '$0.005', resume_workflow: '$0.005' } },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/browser-automation' }],
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
+    security: [{ ApiKeyAuth: [] }],
     paths: {
+      '/': { get: { operationId: 'browserAutomationDiscovery', summary: 'API discovery — returns name, version, endpoints and capabilities', responses: { '200': { description: 'API discovery info' } } } },
       '/open': {
         post: {
           operationId: 'browserOpen',
@@ -667,12 +671,13 @@ router.get('/', (_req: Request, res: Response) => {
                 },
               },
             },
-            '/execution-gate': { post: { operationId: 'browserExecutionGate', summary: 'Gate autonomous browser action execution with risk scoring, destructive action detection and human-approval routing', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['browser_action', 'action_context'], properties: { browser_action: { type: 'string' }, action_context: { type: 'object' }, risk_threshold: { type: 'number', minimum: 0, maximum: 1 }, require_human_approval: { type: 'boolean' } } } } } }, responses: { '200': { description: 'Execution gate decision', content: { 'application/json': { schema: { type: 'object', properties: { execute: { type: 'boolean' }, confidence: { type: 'number' }, risk_score: { type: 'number' }, risk_level: { type: 'string', enum: ['high', 'medium', 'low'] }, destructive_action: { type: 'boolean' }, credential_interaction: { type: 'boolean' }, financial_interaction: { type: 'boolean' }, blocking_flags: actions, warnings: actions, human_approval_required: { type: 'boolean' }, recommended_action: { type: 'string', enum: ['proceed', 'require_approval', 'block'] }, safe_to_execute: { type: 'boolean' }, chain_to: actions, privacy } } } } }, '400': { description: 'Missing browser_action or action_context' }, '500': { description: 'Gate check failed' } } } },
+
             '400': { description: 'Missing workflow, session_id or goal' },
             '500': { description: 'Workflow planning failed' },
           },
         },
       },
+      '/execution-gate': { post: { operationId: 'browserExecutionGate', summary: 'Gate autonomous browser action execution with risk scoring, destructive action detection and human-approval routing', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['browser_action', 'action_context'], properties: { browser_action: { type: 'string' }, action_context: { type: 'object' }, risk_threshold: { type: 'number', minimum: 0, maximum: 1 }, require_human_approval: { type: 'boolean' } } } } } }, responses: { '200': { description: 'Execution gate decision', content: { 'application/json': { schema: { type: 'object', properties: { execute: { type: 'boolean' }, confidence: { type: 'number' }, risk_score: { type: 'number' }, risk_level: { type: 'string', enum: ['high', 'medium', 'low'] }, destructive_action: { type: 'boolean' }, credential_interaction: { type: 'boolean' }, financial_interaction: { type: 'boolean' }, blocking_flags: actions, warnings: actions, human_approval_required: { type: 'boolean' }, recommended_action: { type: 'string', enum: ['proceed', 'require_approval', 'block'] }, safe_to_execute: { type: 'boolean' }, chain_to: actions, privacy } } } } }, '400': { description: 'Missing browser_action or action_context' }, '500': { description: 'Gate check failed' } } } },
     },
   });
 });

@@ -14,9 +14,13 @@ router.get('/', (_req: Request, res: Response) => {
       description: 'AI-powered agent commerce and payments — create wallets, request and approve payments, execute transactions, manage escrow, subscriptions, usage billing, spending limits and autonomous execution gates for agent-to-agent commerce',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
+      'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { create_wallet: '$0.005', request_payment: '$0.006', approve_spend: '$0.005', execute_payment: '$0.007', escrow: '$0.006', execution_gate: '$0.002', simulate_payment: '$0.004', verify_settlement: '$0.004', run_payment: '$0.018' } },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/agent-payments' }],
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
+    security: [{ ApiKeyAuth: [] }],
     paths: {
+      '/': { get: { operationId: 'agentPaymentsDiscovery', summary: 'API discovery — returns name, version, endpoints and capabilities', responses: { '200': { description: 'API discovery info' } } } },
       '/create-wallet': {
         post: {
           operationId: 'createWallet',
