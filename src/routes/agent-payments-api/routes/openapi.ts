@@ -119,7 +119,7 @@ router.get('/', (_req: Request, res: Response) => {
                       risk_flags: actions,
                       approval_required: { type: 'boolean' },
                       approval_threshold_usdc: { type: 'number' },
-                      expires_at: { type: 'string' },
+                      expires_at: { type: 'string', format: 'date-time' },
                       payment_status: { type: 'string', enum: ['pending_approval', 'auto_approved', 'blocked'] },
                       routing: {
                         type: 'object',
@@ -182,14 +182,14 @@ router.get('/', (_req: Request, res: Response) => {
                       audit_entry: {
                         type: 'object',
                         properties: {
-                          timestamp: { type: 'string' },
+                          timestamp: { type: 'string', format: 'date-time' },
                           action: { type: 'string' },
                           actor: { type: 'string' },
                           hash: { type: 'string' },
                         },
                       },
                       execution_ready: { type: 'boolean' },
-                      expires_at: { type: 'string', nullable: true },
+                      expires_at: { type: 'string', format: 'date-time', nullable: true },
                       next_step: { type: 'string' },
                       confidence_per_section: confidence,
                       recommended_actions_priority_order: actions,
@@ -257,7 +257,7 @@ router.get('/', (_req: Request, res: Response) => {
                         type: 'object',
                         properties: {
                           block: { type: 'string' },
-                          timestamp: { type: 'string' },
+                          timestamp: { type: 'string', format: 'date-time' },
                           hash: { type: 'string' },
                         },
                       },
@@ -324,13 +324,13 @@ router.get('/', (_req: Request, res: Response) => {
                       },
                       all_conditions_met: { type: 'boolean' },
                       release_ready: { type: 'boolean' },
-                      expiry_at: { type: 'string' },
+                      expiry_at: { type: 'string', format: 'date-time' },
                       audit_trail: {
                         type: 'array',
                         items: {
                           type: 'object',
                           properties: {
-                            timestamp: { type: 'string' },
+                            timestamp: { type: 'string', format: 'date-time' },
                             event: { type: 'string' },
                             actor: { type: 'string' },
                           },
@@ -388,7 +388,7 @@ router.get('/', (_req: Request, res: Response) => {
                       status: { type: 'string', enum: ['active', 'cancelled', 'paused', 'past_due'] },
                       amount_usdc_per_period: { type: 'number' },
                       period: { type: 'string', enum: ['daily', 'weekly', 'monthly'] },
-                      next_billing_date: { type: 'string' },
+                      next_billing_date: { type: 'string', format: 'date-time' },
                       proration_credit_usdc: { type: 'number' },
                       features_enabled: actions,
                       features_removed: actions,
@@ -489,7 +489,7 @@ router.get('/', (_req: Request, res: Response) => {
                         },
                       },
                       invoice_id: { type: 'string' },
-                      due_date: { type: 'string' },
+                      due_date: { type: 'string', format: 'date-time' },
                       confidence_per_section: confidence,
                       recommended_actions_priority_order: actions,
                       privacy,
