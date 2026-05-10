@@ -431,6 +431,17 @@ app.use('/stablecoin-yield/protocol', stablecoinProtocolRouter);
 
 // ── Strategy Execution ────────────────────────────────────────────────────────
 import strategyExecutionRouter from './routes/strategy-execution-api/routes/strategy';
+
+app.use('/lead-discovery/openapi.json', leadDiscoveryOpenapiRouter);
+app.use('/lead-enrichment/openapi.json', leadEnrichmentOpenapiRouter);
+app.use('/lead-quality/openapi.json', leadQualityOpenapiRouter);
+app.use('/document-intelligence/openapi.json', documentIntelligenceOpenapiRouter);
+app.use('/website-monitor/openapi.json', websiteMonitorOpenapiRouter);
+app.use('/identity-intelligence/openapi.json', identityIntelligenceOpenapiRouter);
+app.use('/portfolio-rebalance/openapi.json', portfolioRebalanceOpenapiRouter);
+app.use('/strategy-execution/openapi.json', strategyExecutionOpenapiRouter);
+app.use('/unified-decision/openapi.json', unifiedDecisionOpenapiRouter);
+app.use('/dev-utilities/openapi.json', devUtilitiesOpenapiRouter);
 app.use('/strategy-execution', strategyExecutionRouter);
 
 // ── Token Trust ───────────────────────────────────────────────────────────────
@@ -2060,16 +2071,6 @@ app.get('/computer-use/info', (_req, res) => res.json({
 
 
 
-app.use('/lead-discovery/openapi.json', leadDiscoveryOpenapiRouter);
-app.use('/lead-enrichment/openapi.json', leadEnrichmentOpenapiRouter);
-app.use('/lead-quality/openapi.json', leadQualityOpenapiRouter);
-app.use('/document-intelligence/openapi.json', documentIntelligenceOpenapiRouter);
-app.use('/website-monitor/openapi.json', websiteMonitorOpenapiRouter);
-app.use('/identity-intelligence/openapi.json', identityIntelligenceOpenapiRouter);
-app.use('/portfolio-rebalance/openapi.json', portfolioRebalanceOpenapiRouter);
-app.use('/strategy-execution/openapi.json', strategyExecutionOpenapiRouter);
-app.use('/unified-decision/openapi.json', unifiedDecisionOpenapiRouter);
-app.use('/dev-utilities/openapi.json', devUtilitiesOpenapiRouter);
 
 // ── API Info Endpoints ────────────────────────────────────────────────────────
 app.get('/strategy-execution/info', (_req, res) => res.json({ name: "Strategy Execution API", slug: "strategy-execution", version: "1.0.0", grade: "A+", mcp_compatible: true, privacy: { data_stored: false, retention: "none" }, pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { strategies: "$0.005", execute: "$0.008", backtest: "$0.007" } }, rate_limits: { free: "100/day", paid: "50000/day", enterprise: "500000/day" }, endpoints: [ { method: "GET", path: "/strategies", description: "List available execution strategies" }, { method: "POST", path: "/execute", description: "Execute a trading or agent strategy with real-time tracking" }, { method: "POST", path: "/backtest", description: "Backtest a strategy against historical data with performance metrics" } ], execution_chain: { optional_next: ["unified-decision", "workflow-orchestrator", "agent-observability"] } }));
