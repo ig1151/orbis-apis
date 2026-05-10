@@ -72,6 +72,16 @@ app.get('/v1/health', (_req, res) => {
 // ── Wallet Balance ────────────────────────────────────────────────────────────
 import walletBalanceRouter from './routes/wallet/index';
 import walletOpenapiRouter from './routes/wallet/openapi';
+import agentMemoryOpenapiRouter from './routes/agent-memory-api/routes/openapi';
+import cryptoNewsImpactOpenapiRouter from './routes/crypto-news-impact-api/routes/openapi';
+import { openapiRouter as imageToContentOpenapiRouter } from './routes/image-to-content-api/routes/openapi.route';
+import marketTriggerOpenapiRouter from './routes/market-trigger-api/routes/openapi';
+import { openapiRouter as tokenTrustOpenapiRouter } from './routes/token-trust-api/routes/openapi.route';
+import onchainSignalDocsRouter from './routes/onchain-signal-api/routes/docs';
+import marketWebhookOpenapiRouter from './routes/market-webhook-api/routes/openapi';
+import stablecoinYieldDocsRouter from './routes/stablecoin-yield-api/routes/docs';
+import alphaSignalDocsRouter from './routes/alpha-signal/docs';
+import marketSnapshotRouter from './routes/market-snapshot/router';
 app.use('/wallet/openapi.json', walletOpenapiRouter);
 app.use('/wallet', walletBalanceRouter);
 
@@ -1098,7 +1108,6 @@ import imageGenRouter from './routes/image-gen/router';
 import textGenRouter from './routes/text-gen/router';
 import textGenOpenapiRouter from './routes/text-gen/openapi';
 import geocodingRouter from './routes/geocoding/router';
-import marketSnapshotRouter from './routes/market-snapshot/router';
 import webScraperRouter from './routes/web-scraper/router';
 app.use('/image-gen', imageGenInfoRouter);
 app.use('/image-gen', imageGenRouter);
