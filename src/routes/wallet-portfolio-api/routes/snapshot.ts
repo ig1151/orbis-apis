@@ -139,7 +139,7 @@ router.post('/snapshot', async (req: Request, res: Response): Promise<void> => {
   return (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' }));
 });
 
-router.post('/', validate(schema), async (req: Request, res: Response): Promise<void> => {
+router.post('/', (req: Request, _res, next) => { req.query = { ...req.query, ...req.body }; next(); }, validate(schema), async (req: Request, res: Response): Promise<void> => {
   req.query = { ...req.query, ...req.body };
   const { address, chain } = req.body as { address: string; chain: string };
   try {
