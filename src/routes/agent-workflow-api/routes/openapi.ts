@@ -50,7 +50,7 @@ router.get('/', (_req: Request, res: Response) => {
             created_at: { type: 'string', format: 'date-time' },
             completed_at: { type: 'string', format: 'date-time', nullable: true },
             duration_ms: { type: 'number' },
-            metadata: { type: 'object' }
+            metadata: { type: 'object' }, trace_id: { type: 'string' }, estimated_cost_usdc: { type: 'number' }, execution_summary: { type: 'string' }, chain_to: { type: 'array', items: { type: 'string' } }, blocking_flags: { type: 'array', items: { type: 'string' } }, recommended_actions_priority_order: { type: 'array', items: { type: 'string' } }
           }
         },
         Privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } }
