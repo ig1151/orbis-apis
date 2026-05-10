@@ -145,4 +145,48 @@ router.get('/', (_req: Request, res: Response) => {
 </html>`);
 });
 
+
+router.get('/openapi.json', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'Agent Trading Signal & Opportunity Detection API',
+      version: '2.0.0',
+      description: 'Real-time alpha signal engine for autonomous agents.',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+      'x-pricing': { '/scan-signals': 0.002, '/filter-signals': 0.0008, '/score-asset': 0.0015, '/explain': 0.0025, '/detect-event': 0.002, '/rank-opportunities': 0.0035 },
+    },
+    servers: [{ url: 'https://orbis-apis.onrender.com/alpha-signal' }],
+    paths: {
+      '/scan-signals': { post: { operationId: 'scanSignals', summary: 'Scan up to 10 assets for live signals', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['symbols'], properties: {
+          symbols: { type: 'array', items: { type: 'string' }, minItems: 1, maxItems: 10 },
+          timeframe: { type: 'string', default: '1h' },
+        }}}}},
+        responses: { '200': { description: 'Signals', content: { 'application/json': { schema: { type: 'object', properties: {
+          signals: { type: 'array', items: { type: 'object' } },
+          confidence_per_section: { type: 'object' },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'string' },
+        }}}}}}}},
+      '/score-asset': { post: { operationId: 'scoreAsset', summary: 'Score a single asset', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['symbol'], properties: { symbol: { type: 'string' } }}}}},
+        responses: { '200': { description: 'Asset score' }}}},
+      '/rank-opportunities': { post: { operationId: 'rankOpportunities', summary: 'Rank assets by opportunity score', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { universe: { type: 'string' }, limit: { type: 'integer', default: 10 } }}}}},
+        responses: { '200': { description: 'Ranked opportunities' }}}},
+      '/detect-event': { post: { operationId: 'detectEvent', summary: 'Detect significant market events', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['symbol'], properties: { symbol: { type: 'string' } }}}}},
+        responses: { '200': { description: 'Detected events' }}}},
+      '/explain': { post: { operationId: 'explainSignal', summary: 'Deep explanation of a signal', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['symbol'], properties: { symbol: { type: 'string' }, signal: { type: 'object' } }}}}},
+        responses: { '200': { description: 'Signal explanation' }}}},
+      '/filter-signals': { post: { operationId: 'filterSignals', summary: 'Filter signals by criteria', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['signals'], properties: { signals: { type: 'array' }, min_confidence: { type: 'number' }, action: { type: 'string' } }}}}},
+        responses: { '200': { description: 'Filtered signals' }}}},
+    },
+  });
+});
+
 export default router;
