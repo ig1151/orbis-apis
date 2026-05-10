@@ -58,6 +58,7 @@ router.get('/', (_req: Request, res: Response) => {
     },
     security: [{ ApiKeyAuth: [] }],
     paths: {
+      '/': { get: { operationId: 'agentWorkflowDiscovery', summary: 'API discovery — returns name, version, endpoints and capabilities', responses: { '200': { description: 'API discovery info' } } } },
       '/create': {
         post: {
           operationId: 'createWorkflow',
@@ -114,7 +115,7 @@ router.get('/', (_req: Request, res: Response) => {
           summary: 'Analyze a completed workflow and return optimization suggestions with estimated improvements',
           parameters: [{ name: 'workflow_id', in: 'path', required: true, schema: { type: 'string' } }],
           responses: {
-            '200': { description: 'Optimization suggestions', content: { 'application/json': { schema: { type: 'object', properties: { workflow_id: { type: 'string' }, suggestions: { type: 'array', items: { type: 'object', properties: { type: { type: 'string' }, description: { type: 'string' }, estimated_improvement_pct: { type: 'number' }, priority: { type: 'string', enum: ['high', 'medium', 'low'] } } } }, estimated_time_saving_ms: { type: 'number' }, estimated_cost_saving_pct: { type: 'number' }, parallelizable_steps: actions, confidence_per_section: confidence, privacy } } } } },
+            '200': { description: 'Optimization suggestions', content: { 'application/json': { schema: { type: 'object', properties: { workflow_id: { type: 'string' }, suggestions: { type: 'array', items: { type: 'object', properties: { type: { type: 'string' }, description: { type: 'string' }, estimated_improvement_pct: { type: 'number' }, priority: { type: 'string', enum: ['high', 'medium', 'low'] } } } }, estimated_time_saving_ms: { type: 'number' }, estimated_cost_saving_pct: { type: 'number' }, parallelizable_steps: actions, chain_to: { type: 'array', items: { type: 'string' } }, recommended_actions_priority_order: { type: 'array', items: { type: 'string' } }, confidence_per_section: confidence, privacy } } } } },
             '404': { description: 'Workflow not found' },
             '500': { description: 'Optimization failed' }
           }
@@ -126,7 +127,7 @@ router.get('/', (_req: Request, res: Response) => {
           summary: 'Decompose a goal into executable steps with type, dependencies, duration estimates and complexity rating',
           requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['goal'], properties: { goal: { type: 'string' }, context: { type: 'object' }, max_steps: { type: 'number' }, complexity: { type: 'string', enum: ['simple', 'moderate', 'complex'] } } } } } },
           responses: {
-            '200': { description: 'Decomposed workflow plan', content: { 'application/json': { schema: { type: 'object', properties: { goal: { type: 'string' }, complexity: { type: 'string', enum: ['simple', 'moderate', 'complex'] }, steps: { type: 'array', items: { type: 'object', properties: { step: { type: 'number' }, name: { type: 'string' }, type: { type: 'string' }, description: { type: 'string' }, estimated_duration_ms: { type: 'number' }, dependencies: { type: 'array', items: { type: 'number' } }, required: { type: 'boolean' } } } }, total_estimated_duration_ms: { type: 'number' }, parallel_opportunities: actions, recommended_template: { type: 'string', nullable: true }, confidence_per_section: confidence, privacy } } } } },
+            '200': { description: 'Decomposed workflow plan', content: { 'application/json': { schema: { type: 'object', properties: { goal: { type: 'string' }, complexity: { type: 'string', enum: ['simple', 'moderate', 'complex'] }, steps: { type: 'array', items: { type: 'object', properties: { step: { type: 'number' }, name: { type: 'string' }, type: { type: 'string' }, description: { type: 'string' }, estimated_duration_ms: { type: 'number' }, dependencies: { type: 'array', items: { type: 'number' } }, required: { type: 'boolean' } } } }, total_estimated_duration_ms: { type: 'number' }, parallel_opportunities: actions, recommended_template: { type: 'string', nullable: true }, chain_to: { type: 'array', items: { type: 'string' } }, blocking_flags: { type: 'array', items: { type: 'string' } }, recommended_actions_priority_order: { type: 'array', items: { type: 'string' } }, confidence_per_section: confidence, privacy } } } } },
             '400': { description: 'Missing goal' },
             '500': { description: 'Decomposition failed' }
           }

@@ -165,6 +165,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
     },
     security: [{ ApiKeyAuth: [] }],
     paths: {
+      '/': { get: { operationId: 'aiOutputSafetyDiscovery', summary: 'API discovery — returns name, version, endpoints and capabilities', responses: { '200': { description: 'API discovery info' } } } },
       '/check': {
         post: {
           operationId: 'checkSafety',

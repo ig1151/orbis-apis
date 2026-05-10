@@ -48,7 +48,8 @@ const openApiSpec = {
   },
   security: [{ ApiKeyAuth: [] }],
   paths: {
-    '/register': {
+    '/': { get: { operationId: 'agentSkillsDiscovery', summary: 'API discovery — returns name, version, endpoints and capabilities', responses: { '200': { description: 'API discovery info' } } } },
+      '/register': {
       post: {
         operationId: 'registerSkill',
         summary: 'Register a new agent skill in the marketplace with schema, pricing and capability metadata',
