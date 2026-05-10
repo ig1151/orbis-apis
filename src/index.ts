@@ -465,6 +465,8 @@ app.use('/agent-identity', agentIdentityInfoRouter);
 app.use('/crypto-narrative', cryptoNarrativeInfoRouter);
 app.use('/defi-risk', defiRiskInfoRouter);
 app.use('/crypto-alerts', cryptoAlertsInfoRouter);
+import agentSkillsDocsRouter from './routes/agent-skills-api/routes/docs';
+app.use('/agent-skills', agentSkillsDocsRouter);
 app.use('/agent-skills', agentSkillsInfoRouter);
 app.use('/defi-position-monitor', defiPositionInfoRouter);
 app.use('/wallet-portfolio', walletPortfolioInfoRouter);
