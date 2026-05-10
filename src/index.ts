@@ -127,6 +127,8 @@ import workflowRouter from './routes/agent-workflow-api/routes/workflow';
 
 // ── AI Output Safety ──────────────────────────────────────────────────────────
 import { safetyRouter } from './routes/ai-output-safety-api/routes/safety.route';
+import { openapiRouter as aiOutputSafetyOpenapiRouter } from './routes/ai-output-safety-api/routes/openapi.route';
+app.use('/ai-output-safety/openapi.json', aiOutputSafetyOpenapiRouter);
 app.use('/ai-output-safety', aiOutputSafetyInfoRouter);
 app.use('/ai-output-safety', safetyRouter);
 
