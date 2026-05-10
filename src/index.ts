@@ -124,6 +124,7 @@ app.use('/agent-memory', sessionsRouter);
 
 // ── Agent Workflow ────────────────────────────────────────────────────────────
 import workflowRouter from './routes/agent-workflow-api/routes/workflow';
+import agentWorkflowOpenapiRouter from './routes/agent-workflow-api/routes/openapi';
 
 // ── AI Output Safety ──────────────────────────────────────────────────────────
 import { safetyRouter } from './routes/ai-output-safety-api/routes/safety.route';
@@ -516,6 +517,7 @@ app.use('/action', actionInfoRouter);
 app.use("/action", actionRouter);
 app.use("/action", actionTaskTypesRouter);
 app.get('/agent-workflow/info', (_req, res) => res.json({ name: "Agent Workflow API", slug: "agent-workflow", version: "1.0.0", grade: "A+", mcp_compatible: true, privacy: { data_stored: false, retention: "none" }, pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { create: "$0.005", run: "$0.008", status: "$0.002", retry: "$0.004", optimize: "$0.005", decompose: "$0.006", templates: "$0.002" } }, rate_limits: { free: "100/day", paid: "50000/day", enterprise: "500000/day" }, endpoints: [ { method: "POST", path: "/create", description: "Create a multi-step agent workflow" }, { method: "POST", path: "/run", description: "Execute an agent workflow end-to-end" }, { method: "GET", path: "/:workflow_id/status", description: "Get workflow execution status" }, { method: "POST", path: "/:workflow_id/retry", description: "Retry a failed workflow step" }, { method: "POST", path: "/:workflow_id/optimize", description: "Optimize workflow for speed and cost" }, { method: "POST", path: "/decompose", description: "Decompose a goal into workflow steps" }, { method: "GET", path: "/templates", description: "List available workflow templates" } ], execution_chain: { optional_next: ["workflow-orchestrator", "agent-observability", "unified-decision"] } }));
+app.use('/agent-workflow/openapi.json', agentWorkflowOpenapiRouter);
 app.use('/agent-workflow', agentWorkflowInfoRouter);
 app.use('/agent-workflow', workflowRouter);
 app.use('/crypto-news-impact', cryptoNewsInfoRouter);
