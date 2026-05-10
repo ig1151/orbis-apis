@@ -1,22 +1,20 @@
 import { Router, Request, Response } from 'express';
 const router = Router();
-
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
 router.get('/', (_req: Request, res: Response) => {
   res.json({
-    openapi: '3.0.0',
-    info: { title: 'Website Monitor API', version: '1.0.0', description: 'Monitor any URL for changes — detects content diffs, summarizes what changed and delivers alerts via webhook.' },
+    openapi: '3.1.0',
+    info: { title: 'Website Monitor API', version: '2.0.0', description: 'Monitor websites for uptime, content changes, performance degradation and anomalies. Returns structured alerts, diff schemas and uptime reports.', 'x-agent-callable': true, 'x-mcp-compatible': true, 'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { create: '$0.004', status: '$0.003', history: '$0.002', webhook: '$0.003' }, high_volume: { create: '$0.002', status: '$0.002' } } },
     servers: [{ url: 'https://orbis-apis.onrender.com/website-monitor' }],
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
+    security: [{ ApiKeyAuth: [] }],
     paths: {
-      '/': {
-        post: {
-          summary: 'Create a monitor',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['url'], properties: { url: { type: 'string', description: 'URL to monitor (required)' }, interval: { type: 'string', description: 'Check interval — 1h|6h|12h|24h (default: 24h)' }, webhook_url: { type: 'string', description: 'Webhook URL for change alerts (optional)' }, alert_on: { type: 'array', items: { type: 'string' }, description: 'What to alert on — content|price|availability (default: all)' } } } } } },
-          responses: { '201': { description: 'Monitor created' } }
-        },
-        get: { summary: 'List all monitors', responses: { '200': { description: 'Monitor list' } } },
-      },
-    },
+      '/': { post: { operationId: 'createMonitor', summary: 'Create a website monitor with alert rules and check intervals', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['url'], properties: { url: { type: 'string', format: 'uri' }, name: { type: 'string' }, check_interval_ms: { type: 'number' }, alert_rules: { type: 'array', items: { type: 'object', properties: { type: { type: 'string', enum: ['uptime', 'content_change', 'performance', 'status_code'] }, threshold: { type: 'number' } } } }, webhook_url: { type: 'string', format: 'uri', nullable: true } } } } } }, responses: { '200': { description: 'Monitor created', content: { 'application/json': { schema: { type: 'object', properties: { monitor_id: { type: 'string' }, url: { type: 'string', format: 'uri' }, name: { type: 'string' }, status: { type: 'string', enum: ['active', 'paused'] }, check_interval_ms: { type: 'number' }, created_at: { type: 'string', format: 'date-time' }, privacy } } } } }, '400': { description: 'Missing url' }, '500': { description: 'Creation failed' } } } },
+      '/:id': { get: { operationId: 'getMonitorStatus', summary: 'Get monitor status and latest check result', parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { '200': { description: 'Monitor status', content: { 'application/json': { schema: { type: 'object', properties: { monitor_id: { type: 'string' }, url: { type: 'string', format: 'uri' }, status: { type: 'string', enum: ['up', 'down', 'degraded', 'unknown'] }, uptime_pct: { type: 'number', minimum: 0, maximum: 100 }, last_check_at: { type: 'string', format: 'date-time' }, response_time_ms: { type: 'number' }, last_status_code: { type: 'number' }, active_alerts: actions, content_changed: { type: 'boolean' }, diff_summary: { type: 'string', nullable: true }, privacy } } } } }, '404': { description: 'Monitor not found' }, '500': { description: 'Status check failed' } } } },
+      '/:id/history': { get: { operationId: 'getMonitorHistory', summary: 'Get monitor check history with uptime stats and incident timeline', parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }, { name: 'limit', in: 'query', schema: { type: 'number' } }, { name: 'from', in: 'query', schema: { type: 'string', format: 'date-time' } }], responses: { '200': { description: 'Monitor history', content: { 'application/json': { schema: { type: 'object', properties: { monitor_id: { type: 'string' }, uptime_pct: { type: 'number' }, avg_response_time_ms: { type: 'number' }, incidents: { type: 'array', items: { type: 'object', properties: { started_at: { type: 'string', format: 'date-time' }, resolved_at: { type: 'string', format: 'date-time', nullable: true }, type: { type: 'string' }, duration_ms: { type: 'number' } } } }, checks: { type: 'array', items: { type: 'object', properties: { checked_at: { type: 'string', format: 'date-time' }, status: { type: 'string' }, response_time_ms: { type: 'number' }, status_code: { type: 'number' } } } }, privacy } } } } }, '404': { description: 'Monitor not found' }, '500': { description: 'History fetch failed' } } } }
+    }
   });
 });
-
 export default router;

@@ -1,44 +1,24 @@
 import { Router, Request, Response } from 'express';
 const router = Router();
-
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
 router.get('/', (_req: Request, res: Response) => {
   res.json({
-    openapi: '3.0.0',
-    info: { title: 'Unified Decision API', version: '1.0.0', description: 'One API call combining market signals, news impact and portfolio analysis into a single actionable decision' },
-    servers: [{ url: 'https://unified-decision-api.onrender.com' }],
+    openapi: '3.1.0',
+    info: { title: 'Unified Decision API', version: '2.0.0', description: 'Unified decision-making infrastructure for autonomous agents. Combine signals from multiple sources into structured decisions with confidence scores, risk assessment and execution gates.', 'x-agent-callable': true, 'x-mcp-compatible': true, 'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { decide: '$0.007', create: '$0.005', run: '$0.008', optimize: '$0.005', decompose: '$0.006' }, high_volume: { decide: '$0.004', run: '$0.005' } } },
+    servers: [{ url: 'https://orbis-apis.onrender.com/unified-decision' }],
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
+    security: [{ ApiKeyAuth: [] }],
     paths: {
-      '/v1/decide': {
-        post: {
-          summary: 'Get unified trading decision',
-          requestBody: {
-            required: true,
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  required: ['portfolio', 'risk_tolerance'],
-                  properties: {
-                    portfolio: { type: 'array', items: { type: 'object', properties: { asset: { type: 'string' }, value: { type: 'number' } } } },
-                    risk_tolerance: { type: 'string', enum: ['low', 'medium', 'high'] },
-                    news: { type: 'array', items: { type: 'object' } },
-                    primary_asset: { type: 'string', example: 'BTC' }
-                  }
-                }
-              }
-            }
-          },
-          responses: {
-            '200': { description: 'Unified decision response' },
-            '400': { description: 'Invalid request' },
-            '500': { description: 'Server error' }
-          }
-        }
-      },
-      '/v1/health': {
-        get: { summary: 'Health check', responses: { '200': { description: 'OK' } } }
-      }
+      '/decide': { post: { operationId: 'makeDecision', summary: 'Make a unified decision combining multiple signals with confidence scoring and risk assessment', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['decision_context'], properties: { decision_context: { type: 'string' }, signals: { type: 'array', items: { type: 'object', properties: { source: { type: 'string' }, data: { type: 'object' }, weight: { type: 'number' } } } }, constraints: { type: 'object' }, require_confidence_above: { type: 'number', minimum: 0, maximum: 1 } } } } } }, responses: { '200': { description: 'Decision result', content: { 'application/json': { schema: { type: 'object', properties: { decision_id: { type: 'string' }, decision: { type: 'string' }, confidence: { type: 'number', minimum: 0, maximum: 1 }, risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] }, reasoning: { type: 'string' }, supporting_signals: { type: 'array', items: { type: 'object', properties: { source: { type: 'string' }, contribution_pct: { type: 'number' }, signal_strength: { type: 'number' } } } }, contradicting_signals: actions, recommended_action: { type: 'string' }, human_review_required: { type: 'boolean' }, chain_to: actions, confidence_per_section: confidence, privacy } } } } }, '400': { description: 'Missing decision_context' }, '500': { description: 'Decision failed' } } } },
+      '/create': { post: { operationId: 'createWorkflow', summary: 'Create a decision workflow with multiple steps and signal sources', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['name', 'goal'], properties: { name: { type: 'string' }, goal: { type: 'string' }, steps: { type: 'array', items: { type: 'object' } }, signal_sources: { type: 'array', items: { type: 'string' } } } } } } }, responses: { '200': { description: 'Workflow created', content: { 'application/json': { schema: { type: 'object', properties: { workflow_id: { type: 'string' }, name: { type: 'string' }, status: { type: 'string', enum: ['pending'] }, created_at: { type: 'string', format: 'date-time' }, privacy } } } } }, '400': { description: 'Missing required fields' }, '500': { description: 'Creation failed' } } } },
+      '/run': { post: { operationId: 'runWorkflow', summary: 'Execute a decision workflow end-to-end', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { workflow_id: { type: 'string' }, goal: { type: 'string' }, input: { type: 'object' } } } } } }, responses: { '200': { description: 'Workflow result', content: { 'application/json': { schema: { type: 'object', properties: { workflow_id: { type: 'string' }, status: { type: 'string', enum: ['completed', 'failed', 'partial'] }, final_decision: { type: 'string' }, confidence: { type: 'number', minimum: 0, maximum: 1 }, steps_completed: { type: 'number' }, steps_total: { type: 'number' }, privacy } } } } }, '400': { description: 'Missing workflow_id or goal' }, '500': { description: 'Execution failed' } } } },
+      '/:workflow_id/optimize': { post: { operationId: 'optimizeWorkflow', summary: 'Analyze and optimize a decision workflow for speed and accuracy', parameters: [{ name: 'workflow_id', in: 'path', required: true, schema: { type: 'string' } }], responses: { '200': { description: 'Optimization suggestions', content: { 'application/json': { schema: { type: 'object', properties: { workflow_id: { type: 'string' }, suggestions: actions, estimated_improvement_pct: { type: 'number' }, confidence_per_section: confidence, privacy } } } } }, '404': { description: 'Workflow not found' }, '500': { description: 'Optimization failed' } } } },
+      '/decompose': { post: { operationId: 'decomposeDecision', summary: 'Decompose a complex decision into sub-decisions with dependencies', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['decision'], properties: { decision: { type: 'string' }, context: { type: 'object' }, max_depth: { type: 'number' } } } } } }, responses: { '200': { description: 'Decomposed decision tree', content: { 'application/json': { schema: { type: 'object', properties: { decision: { type: 'string' }, sub_decisions: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, decision: { type: 'string' }, dependencies: actions, complexity: { type: 'string', enum: ['simple', 'moderate', 'complex'] } } } }, total_sub_decisions: { type: 'number' }, confidence_per_section: confidence, privacy } } } } }, '400': { description: 'Missing decision' }, '500': { description: 'Decomposition failed' } } } },
+      '/templates': { get: { operationId: 'listTemplates', summary: 'List available decision workflow templates', responses: { '200': { description: 'Templates', content: { 'application/json': { schema: { type: 'object', properties: { templates: { type: 'array', items: { type: 'object', properties: { template_id: { type: 'string' }, name: { type: 'string' }, description: { type: 'string' }, use_cases: actions } } }, privacy } } } } }, '500': { description: 'Failed to list' } } } },
+      '/execution-gate': { post: { operationId: 'decisionExecutionGate', summary: 'Gate decision execution based on confidence threshold and risk level', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['decision_id'], properties: { decision_id: { type: 'string' }, confidence_threshold: { type: 'number', minimum: 0, maximum: 1 }, risk_threshold: { type: 'number', minimum: 0, maximum: 1 }, require_human_approval: { type: 'boolean' } } } } } }, responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: { execute: { type: 'boolean' }, confidence: { type: 'number', minimum: 0, maximum: 1 }, risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] }, blocking_flags: actions, recommended_action: { type: 'string', enum: ['proceed', 'require_approval', 'block'] }, human_approval_required: { type: 'boolean' }, privacy } } } } }, '400': { description: 'Missing decision_id' }, '500': { description: 'Gate failed' } } } }
     }
   });
 });
-
 export default router;

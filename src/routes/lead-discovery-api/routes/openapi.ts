@@ -1,50 +1,20 @@
 import { Router, Request, Response } from 'express';
 const router = Router();
-
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
 router.get('/', (_req: Request, res: Response) => {
   res.json({
-    openapi: '3.0.0',
-    info: {
-      title: 'Lead Discovery API',
-      version: '1.0.0',
-      description: 'AI-powered lead discovery API — find companies and contacts matching any query, industry or hiring signal.',
-    },
-    servers: [{ url: 'https://lead-discovery-api.onrender.com' }],
+    openapi: '3.1.0',
+    info: { title: 'Lead Discovery API', version: '2.0.0', description: 'Discover high-quality leads matching your ICP using AI-powered search across company databases, social signals and intent data.', 'x-agent-callable': true, 'x-mcp-compatible': true, 'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { find: '$0.008', batch: '$0.020' }, high_volume: { find: '$0.005', batch: '$0.012' } } },
+    servers: [{ url: 'https://orbis-apis.onrender.com/lead-discovery' }],
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
+    security: [{ ApiKeyAuth: [] }],
     paths: {
-      '/v1/leads/find': {
-        post: {
-          summary: 'Discover leads matching a query',
-          requestBody: {
-            required: true,
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  required: ['query'],
-                  properties: {
-                    query: { type: 'string' },
-                    limit: { type: 'integer', default: 10 },
-                    filters: {
-                      type: 'object',
-                      properties: {
-                        industry: { type: 'string' },
-                        location: { type: 'string' },
-                        hiring: { type: 'boolean' },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-          responses: { '200': { description: 'Lead discovery results' } },
-        },
-      },
-      '/v1/health': {
-        get: { summary: 'Health check', responses: { '200': { description: 'OK' } } },
-      },
-    },
+      '/leads/find': { post: { operationId: 'findLeads', summary: 'Discover leads matching a query with scoring, contact signals and ICP fit', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['query'], properties: { query: { type: 'string' }, limit: { type: 'number' }, filters: { type: 'object', properties: { industry: { type: 'string' }, company_size: { type: 'string' }, location: { type: 'string' }, seniority: { type: 'string' } } }, min_score: { type: 'number', minimum: 0, maximum: 1 } } } } } }, responses: { '200': { description: 'Leads discovered', content: { 'application/json': { schema: { type: 'object', properties: { leads: { type: 'array', items: { type: 'object', properties: { lead_id: { type: 'string' }, name: { type: 'string' }, title: { type: 'string' }, company: { type: 'string' }, email: { type: 'string', nullable: true }, linkedin_url: { type: 'string', nullable: true }, score: { type: 'number', minimum: 0, maximum: 1 }, icp_fit: { type: 'string', enum: ['high', 'medium', 'low'] }, intent_signals: actions, contact_channels: actions } } }, total: { type: 'number' }, query: { type: 'string' }, confidence_per_section: confidence, privacy } } } } }, '400': { description: 'Missing query' }, '500': { description: 'Discovery failed' } } } },
+      '/leads/batch': { post: { operationId: 'findLeadsBatch', summary: 'Batch lead discovery for multiple queries in one request', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['queries'], properties: { queries: { type: 'array', items: { type: 'string' }, maxItems: 10 }, limit_per_query: { type: 'number' } } } } } }, responses: { '200': { description: 'Batch results', content: { 'application/json': { schema: { type: 'object', properties: { results: { type: 'array', items: { type: 'object', properties: { query: { type: 'string' }, leads: { type: 'array', items: { type: 'object' } }, total: { type: 'number' } } } }, privacy } } } } }, '400': { description: 'Missing queries' }, '500': { description: 'Batch failed' } } } },
+      '/execution-gate': { post: { operationId: 'leadDiscoveryGate', summary: 'Gate lead discovery based on query quality, budget and compliance', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['query'], properties: { query: { type: 'string' }, budget_usdc: { type: 'number' }, compliance_check: { type: 'boolean' } } } } } }, responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: { proceed: { type: 'boolean' }, estimated_cost_usdc: { type: 'number' }, query_quality_score: { type: 'number', minimum: 0, maximum: 1 }, blocking_flags: actions, recommended_action: { type: 'string', enum: ['proceed', 'refine_query', 'block'] }, privacy } } } } }, '400': { description: 'Missing query' }, '500': { description: 'Gate failed' } } } }
+    }
   });
 });
-
 export default router;

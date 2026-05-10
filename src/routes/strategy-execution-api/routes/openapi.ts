@@ -1,59 +1,21 @@
 import { Router, Request, Response } from 'express';
 const router = Router();
-
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
 router.get('/', (_req: Request, res: Response) => {
   res.json({
-    openapi: '3.0.0',
-    info: {
-      title: 'Strategy Execution API',
-      version: '1.0.0',
-      description: 'AI strategy engine that orchestrates news, signals and portfolio data into actionable trade decisions.',
-    },
-    servers: [{ url: 'https://strategy-execution-api.onrender.com' }],
+    openapi: '3.1.0',
+    info: { title: 'Strategy Execution API', version: '2.0.0', description: 'Execute, backtest and monitor trading and agent strategies with risk controls, paper mode, typed outputs and execution gates. Not financial advice.', 'x-agent-callable': true, 'x-mcp-compatible': true, 'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { strategies: '$0.003', execute: '$0.008', backtest: '$0.007' }, high_volume: { execute: '$0.005', backtest: '$0.004' } } },
+    servers: [{ url: 'https://orbis-apis.onrender.com/strategy-execution' }],
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
+    security: [{ ApiKeyAuth: [] }],
     paths: {
-      '/v1/strategy/execute': {
-        post: {
-          summary: 'Execute a trading strategy',
-          requestBody: {
-            required: true,
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  required: ['portfolio', 'strategy'],
-                  properties: {
-                    portfolio: { type: 'array', items: { type: 'object' } },
-                    strategy: { type: 'string', enum: ['news_momentum', 'trend_following', 'risk_adjusted'] },
-                    risk_tolerance: { type: 'string', enum: ['low', 'medium', 'high'], default: 'medium' },
-                    assets: { type: 'array', items: { type: 'string' } },
-                  },
-                },
-              },
-            },
-          },
-          responses: { '200': { description: 'Strategy result with actions and reasoning' } },
-        },
-      },
-      '/v1/strategy/backtest': {
-        post: {
-          summary: 'Backtest strategy across scenarios',
-          responses: { '200': { description: 'Results across bear/neutral/bull scenarios' } },
-        },
-      },
-      '/v1/strategy/list': {
-        get: {
-          summary: 'List available strategies',
-          responses: { '200': { description: 'List of strategies' } },
-        },
-      },
-      '/v1/health': {
-        get: {
-          summary: 'Health check',
-          responses: { '200': { description: 'OK' } },
-        },
-      },
-    },
+      '/strategies': { get: { operationId: 'listStrategies', summary: 'List available execution strategies with parameters and risk profiles', responses: { '200': { description: 'Available strategies', content: { 'application/json': { schema: { type: 'object', properties: { strategies: { type: 'array', items: { type: 'object', properties: { strategy_id: { type: 'string' }, name: { type: 'string' }, description: { type: 'string' }, risk_level: { type: 'string', enum: ['low', 'medium', 'high'] }, parameters: { type: 'object' }, supports_paper_mode: { type: 'boolean' } } } }, privacy } } } } }, '500': { description: 'Failed to list' } } } },
+      '/execute': { post: { operationId: 'executeStrategy', summary: 'Execute a strategy with risk controls and optional paper mode — not financial advice', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['strategy_id'], properties: { strategy_id: { type: 'string' }, parameters: { type: 'object' }, paper_mode: { type: 'boolean' }, risk_controls: { type: 'object', properties: { max_drawdown_pct: { type: 'number' }, stop_loss_pct: { type: 'number' }, position_size_pct: { type: 'number' } } }, portfolio: { type: 'object' } } } } } }, responses: { '200': { description: 'Execution result', content: { 'application/json': { schema: { type: 'object', properties: { execution_id: { type: 'string' }, strategy_id: { type: 'string' }, paper_mode: { type: 'boolean' }, status: { type: 'string', enum: ['completed', 'partial', 'failed', 'stopped'] }, signals: { type: 'array', items: { type: 'object', properties: { asset: { type: 'string' }, action: { type: 'string', enum: ['buy', 'sell', 'hold'] }, confidence: { type: 'number', minimum: 0, maximum: 1 }, reason: { type: 'string' } } } }, risk_metrics: { type: 'object', properties: { drawdown_pct: { type: 'number' }, sharpe_ratio: { type: 'number' }, volatility: { type: 'number' } } }, disclaimer: { type: 'string' }, confidence_per_section: confidence, privacy } } } } }, '400': { description: 'Missing strategy_id' }, '500': { description: 'Execution failed' } } } },
+      '/backtest': { post: { operationId: 'backtestStrategy', summary: 'Backtest a strategy against historical data with performance metrics', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['strategy_id', 'period'], properties: { strategy_id: { type: 'string' }, period: { type: 'string', enum: ['1m', '3m', '6m', '1y', '2y', '5y'] }, parameters: { type: 'object' }, benchmark: { type: 'string' } } } } } }, responses: { '200': { description: 'Backtest results', content: { 'application/json': { schema: { type: 'object', properties: { strategy_id: { type: 'string' }, period: { type: 'string' }, total_return_pct: { type: 'number' }, annualized_return_pct: { type: 'number' }, max_drawdown_pct: { type: 'number' }, sharpe_ratio: { type: 'number' }, win_rate_pct: { type: 'number' }, vs_benchmark_pct: { type: 'number' }, trades_count: { type: 'number' }, disclaimer: { type: 'string' }, confidence_per_section: confidence, privacy } } } } }, '400': { description: 'Missing required fields' }, '500': { description: 'Backtest failed' } } } },
+      '/execution-gate': { post: { operationId: 'strategyExecutionGate', summary: 'Gate strategy execution based on risk score, market conditions and compliance', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['strategy_id'], properties: { strategy_id: { type: 'string' }, risk_threshold: { type: 'number', minimum: 0, maximum: 1 }, paper_mode: { type: 'boolean' }, require_human_approval: { type: 'boolean' } } } } } }, responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: { execute: { type: 'boolean' }, risk_score: { type: 'number', minimum: 0, maximum: 1 }, risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] }, blocking_flags: actions, recommended_action: { type: 'string', enum: ['proceed', 'paper_mode_only', 'require_approval', 'block'] }, human_approval_required: { type: 'boolean' }, confidence_per_section: confidence, privacy } } } } }, '400': { description: 'Missing strategy_id' }, '500': { description: 'Gate failed' } } } }
+    }
   });
 });
-
 export default router;

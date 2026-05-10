@@ -1,42 +1,24 @@
 import { Router, Request, Response } from 'express';
 const router = Router();
-
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
 router.get('/', (_req: Request, res: Response) => {
   res.json({
-    openapi: '3.0.0',
-    info: {
-      title: 'Dev Utilities API',
-      version: '1.0.0',
-      description: 'Fast, simple utility APIs for developers — URL metadata, email extraction, and text normalization.',
-    },
-    servers: [{ url: 'https://dev-utilities-api.onrender.com' }],
+    openapi: '3.1.0',
+    info: { title: 'Dev Utilities API', version: '2.0.0', description: 'Agent-native developer utilities — summarize, extract keywords, analyze tone, validate data, enrich companies, optimize prompts, score readability and estimate task costs.', 'x-agent-callable': true, 'x-mcp-compatible': true, 'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { summarize: '$0.004', keywords: '$0.003', tone_analyze: '$0.003', email_extract: '$0.002', domain_intelligence: '$0.005', prompt_optimize: '$0.005', readability: '$0.003', text_clean: '$0.002', company_enrichment: '$0.006', decision_explain: '$0.004', task_cost: '$0.003', url_metadata: '$0.003' }, high_volume: { summarize: '$0.002', prompt_optimize: '$0.003', company_enrichment: '$0.004' } } },
+    servers: [{ url: 'https://orbis-apis.onrender.com/dev-utilities' }],
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
+    security: [{ ApiKeyAuth: [] }],
     paths: {
-      '/v1/url-metadata': {
-        post: {
-          summary: 'Extract metadata from any URL',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['url'], properties: { url: { type: 'string', format: 'uri' } } } } } },
-          responses: { '200': { description: 'URL metadata' } },
-        },
-      },
-      '/v1/email-extract': {
-        post: {
-          summary: 'Extract emails, names, companies from text',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' } } } } } },
-          responses: { '200': { description: 'Extracted contacts' } },
-        },
-      },
-      '/v1/text-clean': {
-        post: {
-          summary: 'Clean and normalize text with language detection',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' }, options: { type: 'object' } } } } } },
-          responses: { '200': { description: 'Cleaned text with stats' } },
-        },
-      },
-      '/v1/health': {
-        get: { summary: 'Health check', responses: { '200': { description: 'OK' } } },
-      },
-    },
+      '/summarize': { post: { operationId: 'summarizeText', summary: 'Summarize text content with configurable length and focus', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' }, max_length: { type: 'number' }, focus: { type: 'string' } } } } } }, responses: { '200': { description: 'Summary', content: { 'application/json': { schema: { type: 'object', properties: { summary: { type: 'string' }, word_count: { type: 'number' }, compression_ratio: { type: 'number' }, key_points: actions, privacy } } } } }, '400': { description: 'Missing text' }, '500': { description: 'Summarization failed' } } } },
+      '/keywords': { post: { operationId: 'extractKeywords', summary: 'Extract keywords and key phrases from text with relevance scoring', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' }, max_keywords: { type: 'number' }, language: { type: 'string' } } } } } }, responses: { '200': { description: 'Keywords', content: { 'application/json': { schema: { type: 'object', properties: { keywords: { type: 'array', items: { type: 'object', properties: { keyword: { type: 'string' }, score: { type: 'number', minimum: 0, maximum: 1 }, type: { type: 'string', enum: ['keyword', 'phrase', 'entity'] } } } }, language_detected: { type: 'string' }, privacy } } } } }, '400': { description: 'Missing text' }, '500': { description: 'Extraction failed' } } } },
+      '/tone-analyze': { post: { operationId: 'analyzeTone', summary: 'Analyze tone and sentiment of text across multiple dimensions', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' }, context: { type: 'string' } } } } } }, responses: { '200': { description: 'Tone analysis', content: { 'application/json': { schema: { type: 'object', properties: { overall_tone: { type: 'string' }, sentiment: { type: 'string', enum: ['positive', 'negative', 'neutral', 'mixed'] }, sentiment_score: { type: 'number', minimum: -1, maximum: 1 }, dimensions: { type: 'object', properties: { formal: { type: 'number' }, confident: { type: 'number' }, empathetic: { type: 'number' }, urgent: { type: 'number' } } }, privacy } } } } }, '400': { description: 'Missing text' }, '500': { description: 'Analysis failed' } } } },
+      '/prompt-optimize': { post: { operationId: 'optimizePrompt', summary: 'Optimize an AI prompt for clarity, specificity and better model performance', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['prompt'], properties: { prompt: { type: 'string' }, target_model: { type: 'string' }, optimization_goals: { type: 'array', items: { type: 'string', enum: ['clarity', 'specificity', 'output_format', 'safety', 'cost'] } } } } } } }, responses: { '200': { description: 'Optimized prompt', content: { 'application/json': { schema: { type: 'object', properties: { original_prompt: { type: 'string' }, optimized_prompt: { type: 'string' }, improvements: actions, clarity_score: { type: 'number', minimum: 0, maximum: 1 }, specificity_score: { type: 'number', minimum: 0, maximum: 1 }, estimated_token_reduction_pct: { type: 'number' }, privacy } } } } }, '400': { description: 'Missing prompt' }, '500': { description: 'Optimization failed' } } } },
+      '/company-enrichment': { post: { operationId: 'enrichCompany', summary: 'Enrich company data with firmographics, technographics and market signals', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['company'], properties: { company: { type: 'string' }, domain: { type: 'string' }, enrich_fields: { type: 'array', items: { type: 'string' } } } } } } }, responses: { '200': { description: 'Enriched company', content: { 'application/json': { schema: { type: 'object', properties: { company: { type: 'string' }, domain: { type: 'string' }, industry: { type: 'string' }, size: { type: 'string' }, location: { type: 'string' }, technologies: actions, funding_stage: { type: 'string', nullable: true }, revenue_range: { type: 'string', nullable: true }, data_quality_score: { type: 'number', minimum: 0, maximum: 1 }, privacy } } } } }, '400': { description: 'Missing company' }, '500': { description: 'Enrichment failed' } } } },
+      '/task-cost': { post: { operationId: 'estimateTaskCost', summary: 'Estimate cost and time for an AI agent task before execution', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['task'], properties: { task: { type: 'string' }, context: { type: 'object' }, model: { type: 'string' } } } } } }, responses: { '200': { description: 'Task cost estimate', content: { 'application/json': { schema: { type: 'object', properties: { task: { type: 'string' }, estimated_tokens: { type: 'number' }, estimated_cost_usdc: { type: 'number' }, estimated_duration_ms: { type: 'number' }, complexity: { type: 'string', enum: ['simple', 'moderate', 'complex'] }, breakdown: { type: 'object', properties: { input_tokens: { type: 'number' }, output_tokens: { type: 'number' }, api_calls: { type: 'number' } } }, confidence_per_section: confidence, privacy } } } } }, '400': { description: 'Missing task' }, '500': { description: 'Estimation failed' } } } },
+      '/url-metadata': { post: { operationId: 'extractUrlMetadata', summary: 'Extract metadata from a URL including title, description, og tags and structured data', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['url'], properties: { url: { type: 'string', format: 'uri' }, extract_fields: { type: 'array', items: { type: 'string' } } } } } } }, responses: { '200': { description: 'URL metadata', content: { 'application/json': { schema: { type: 'object', properties: { url: { type: 'string', format: 'uri' }, title: { type: 'string' }, description: { type: 'string' }, og_image: { type: 'string', nullable: true }, canonical_url: { type: 'string', nullable: true }, structured_data: { type: 'object' }, response_time_ms: { type: 'number' }, privacy } } } } }, '400': { description: 'Missing url' }, '500': { description: 'Extraction failed' } } } }
+    }
   });
 });
-
 export default router;
