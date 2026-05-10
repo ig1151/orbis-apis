@@ -1095,6 +1095,7 @@ app.get('/image-gen/info', (_req, res) => {
 import imageGenRouter from './routes/image-gen/router';
 import textGenRouter from './routes/text-gen/router';
 import geocodingRouter from './routes/geocoding/router';
+import marketSnapshotRouter from './routes/market-snapshot/router';
 import webScraperRouter from './routes/web-scraper/router';
 app.use('/image-gen', imageGenInfoRouter);
 app.use('/image-gen', imageGenRouter);
@@ -1102,6 +1103,7 @@ app.use('/text-gen', textGenInfoRouter);
 app.use('/text-gen', textGenRouter);
 app.use('/geocoding', geocodingInfoRouter);
 app.use('/geocoding', geocodingRouter);
+app.use('/market-snapshot', marketSnapshotRouter);
 app.get('/web-scraper/info', (_req, res) => {
   res.json({
     name: 'Web Scraper & Intelligence API',
