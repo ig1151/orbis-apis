@@ -13,6 +13,7 @@ router.get('/', (_req: Request, res: Response) => {
       privacy: { data_stored: false, retention: 'none' },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/wallet' }],
+    security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
@@ -40,7 +41,19 @@ router.get('/', (_req: Request, res: Response) => {
           { name: 'address', in: 'path', required: true, schema: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$' } },
           { name: 'chain', in: 'query', required: false, schema: { type: 'string', default: 'ethereum' } },
         ],
-        responses: { '200': { description: 'Wallet balances' }}}},
+        responses: { '200': { description: 'Wallet balances', content: { 'application/json': { schema: { type: 'object', properties: {
+          address: { type: 'string' }, chain: { type: 'string' },
+          eth_balance: { type: 'string' }, eth_balance_usd: { type: 'number' },
+          tokens: { type: 'array', items: { type: 'object', properties: {
+            symbol: { type: 'string' }, name: { type: 'string' }, contract_address: { type: 'string' },
+            balance: { type: 'string' }, decimals: { type: 'integer' },
+            usd_value: { type: 'number', nullable: true },
+          }}},
+          confidence_per_section: { type: 'object', properties: { balances: { type: 'number' }, prices: { type: 'number' } } },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'string' },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        }}}}}}}},
       '/tokens/{address}': { get: { operationId: 'getTokens', summary: 'Get ERC-20 token holdings for a wallet', 'x-agent-callable': true,
         parameters: [
           { name: 'address', in: 'path', required: true, schema: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$' } },

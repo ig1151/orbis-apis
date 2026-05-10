@@ -47,6 +47,7 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
       privacy: { data_stored: false, retention: 'none' },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/market-snapshot' }],
+    security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },

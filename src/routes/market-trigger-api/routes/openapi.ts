@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
     info: {
       title: 'Market Trigger API',
       version: '1.0.0',
-      description: 'Create and evaluate market condition triggers for automated agent responses and trading automation.',
+      description: 'Create and evaluate market condition triggers for automated agent responses.',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
       'x-pricing': { '/evaluate': 0.005, '/create': 0.005, '/list': 0.001, '/delete': 0.001 },
@@ -15,19 +15,19 @@ router.get('/', (_req: Request, res: Response) => {
       privacy: { data_stored: false, retention: 'none' },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/market-trigger' }],
+    security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
-      '/evaluate': { post: { operationId: 'evaluateTrigger', summary: 'Evaluate market conditions against a trigger definition', 'x-agent-callable': true,
+      '/evaluate': { post: { operationId: 'evaluateTrigger', summary: 'Evaluate market conditions against trigger definition', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['asset', 'conditions', 'context'], properties: {
-          asset: { type: 'string', description: 'Asset symbol e.g. BTC' },
+          asset: { type: 'string' },
           conditions: { type: 'object', properties: {
             min_impact_score: { type: 'number', minimum: 0, maximum: 100 },
             max_impact_score: { type: 'number', minimum: 0, maximum: 100 },
             action_bias: { oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] },
             sentiment: { oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }] },
             min_confidence: { type: 'number', minimum: 0, maximum: 1 },
-            event_types: { type: 'array', items: { type: 'string' } },
           }},
           context: { type: 'object', minProperties: 1, properties: {
             news_impact: { type: 'object' }, market_signal: { type: 'object' },
@@ -45,35 +45,46 @@ router.get('/', (_req: Request, res: Response) => {
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'string' },
           disclaimer: { type: 'string' },
-        }}}}}}}},
+        } } } } } } } },
       '/create': { post: { operationId: 'createTrigger', summary: 'Create a persistent market trigger', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['asset', 'conditions', 'context'], properties: {
           asset: { type: 'string' }, conditions: { type: 'object' },
           context: { type: 'object', minProperties: 1 },
-          webhook_url: { type: 'string', format: 'uri', description: 'Optional webhook to fire on trigger' },
-          name: { type: 'string', description: 'Human-readable trigger name' },
-        }}}}},
+          webhook_url: { type: 'string', format: 'uri' },
+          name: { type: 'string' },
+        } } } } },
         responses: { '200': { description: 'Trigger created', content: { 'application/json': { schema: { type: 'object', properties: {
           id: { type: 'string' }, name: { type: 'string' }, asset: { type: 'string' },
           status: { type: 'string', enum: ['active', 'paused'] },
           created_at: { type: 'string', format: 'date-time' },
           chain_to: { type: 'string' },
-        }}}}}}}},
+        } } } } } } } },
       '/list': { get: { operationId: 'listTriggers', summary: 'List all active triggers', 'x-agent-callable': true,
-        responses: { '200': { description: 'Active triggers' }}}},
+        responses: { '200': { description: 'Active triggers', content: { 'application/json': { schema: { type: 'object', properties: {
+          triggers: { type: 'array', items: { type: 'object', properties: {
+            id: { type: 'string' }, name: { type: 'string' }, asset: { type: 'string' },
+            status: { type: 'string', enum: ['active', 'paused', 'triggered'] },
+            created_at: { type: 'string', format: 'date-time' },
+            last_evaluated_at: { type: 'string', format: 'date-time', nullable: true },
+            trigger_count: { type: 'integer' },
+          } } },
+          count: { type: 'integer' },
+        } } } } } } } },
       '/delete': { post: { operationId: 'deleteTrigger', summary: 'Delete a trigger by ID', 'x-agent-callable': true,
-        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['id'], properties: { id: { type: 'string' } }}}}},
-        responses: { '200': { description: 'Trigger deleted' }}}},
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['id'], properties: { id: { type: 'string' } } } } } },
+        responses: { '200': { description: 'Trigger deleted', content: { 'application/json': { schema: { type: 'object', properties: {
+          id: { type: 'string' }, deleted: { type: 'boolean' }, message: { type: 'string' },
+        } } } } } } } },
       '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate action execution based on trigger state', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['trigger_id', 'action'], properties: {
           trigger_id: { type: 'string' }, action: { type: 'string' },
-        }}}}},
+        } } } } },
         responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: {
           execute: { type: 'boolean' }, confidence: { type: 'number' },
           blocking_flags: { type: 'array', items: { type: 'string' } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'string' }, disclaimer: { type: 'string' },
-        }}}}}}}},
+        } } } } } } } },
     },
   });
 });

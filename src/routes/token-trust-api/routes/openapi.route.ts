@@ -15,6 +15,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
       privacy: { data_stored: false, retention: 'none' },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/token-trust' }],
+    security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
@@ -42,10 +43,23 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
         }}}}}}}},
       '/check': { post: { operationId: 'checkToken', summary: 'Check token trust score', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['contract'], properties: {
-          contract: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$' },
+          contract: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$', description: 'Token contract address' },
           chain: { type: 'string', enum: ['ethereum', 'bsc', 'solana'], default: 'ethereum' },
         }}}}},
-        responses: { '200': { description: 'Trust check result' }}}},
+        responses: { '200': { description: 'Trust check result', content: { 'application/json': { schema: { type: 'object', properties: {
+          contract: { type: 'string' }, chain: { type: 'string' },
+          trust_score: { type: 'number', minimum: 0, maximum: 100 },
+          risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+          factors: { type: 'object', properties: {
+            contract_verified: { type: 'boolean' }, liquidity_score: { type: 'number' },
+            holder_distribution: { type: 'number' }, community_score: { type: 'number' },
+            age_days: { type: 'integer' }, honeypot_risk: { type: 'boolean' },
+          }},
+          chain_specific_notes: { type: 'array', items: { type: 'string' } },
+          confidence_per_section: { type: 'object', properties: { contract: { type: 'number' }, liquidity: { type: 'number' } } },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'string' }, disclaimer: { type: 'string' },
+        }}}}}}}},
       '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate token interaction based on trust score', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['contract', 'action'], properties: {
           contract: { type: 'string' }, chain: { type: 'string', default: 'ethereum' },

@@ -13,6 +13,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
       privacy: { data_stored: false, retention: 'none', note: 'Images processed in memory only, not stored' },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/image-to-content' }],
+    security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
