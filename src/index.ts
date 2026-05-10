@@ -83,6 +83,16 @@ import stablecoinYieldDocsRouter from './routes/stablecoin-yield-api/routes/docs
 import alphaSignalDocsRouter from './routes/alpha-signal/docs';
 import marketSnapshotRouter from './routes/market-snapshot/router';
 app.use('/wallet/openapi.json', walletOpenapiRouter);
+app.use('/agent-memory/openapi.json', agentMemoryOpenapiRouter);
+app.use('/crypto-news-impact/openapi.json', cryptoNewsImpactOpenapiRouter);
+app.use('/image-to-content/openapi.json', imageToContentOpenapiRouter);
+app.use('/market-trigger/openapi.json', marketTriggerOpenapiRouter);
+app.use('/token-trust/openapi.json', tokenTrustOpenapiRouter);
+app.use('/onchain-signal/openapi.json', onchainSignalDocsRouter);
+app.use('/market-webhook/openapi.json', marketWebhookOpenapiRouter);
+app.use('/stablecoin-yield/openapi.json', stablecoinYieldDocsRouter);
+app.use('/alpha-signal/openapi.json', alphaSignalDocsRouter);
+app.use('/market-snapshot/openapi.json', marketSnapshotRouter);
 app.use('/wallet', walletBalanceRouter);
 
 // ── Alpha Signal ──────────────────────────────────────────────────────────────
