@@ -12,7 +12,8 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
       'x-pricing': { '/signals': 0.002, '/flows': 0.002, '/analyze': 0.003 },
       disclaimer: 'For informational purposes only. Not financial advice.',
       privacy: { data_stored: false, retention: 'none' },
-    },
+    
+    'x-human-approval-required': true,},
     servers: [{ url: 'https://orbis-apis.onrender.com/onchain-signal' }],
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
@@ -36,8 +37,10 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
           wallet_risk: { type: 'object', properties: { score: { type: 'number' }, level: { type: 'string' } } },
           confidence_per_section: { type: 'object', properties: { signals: { type: 'number' }, wallet_risk: { type: 'number' } } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
-          chain_to: { type: 'string' },
-          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+          chain_to: { type: 'array', items: { type: 'string' } },
+          privacy: { type: 'object', properties: {
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' }, description: 'Ordered list of recommended next actions for the agent' },
+          privacy: { type: 'object', description: 'Privacy metadata for this response' }, data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         }}}}}}}},
       '/flows': { get: { operationId: 'getFlows', summary: 'Get smart money flow data for a token contract', 'x-agent-callable': true,
         parameters: [
@@ -46,18 +49,22 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
           { name: 'timeframe', in: 'query', required: false, schema: { type: 'string', enum: ['1h', '4h', '24h', '7d'], default: '24h' } },
         ],
         responses: { '200': { description: 'Flow data', content: { 'application/json': { schema: { type: 'object', properties: {
+          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           contract: { type: 'string' }, chain: { type: 'string' }, timeframe: { type: 'string' },
           net_flow_usd: { type: 'number' }, inflow_usd: { type: 'number' }, outflow_usd: { type: 'number' },
           whale_transactions: { type: 'integer' }, smart_money_score: { type: 'number', minimum: 0, maximum: 100 },
-          confidence_per_section: { type: 'object', properties: { flows: { type: 'number' }, source: { type: 'number' } } },
-          chain_to: { type: 'string' },
+          confidence_per_section: { type: 'object', properties: {
+          privacy: { type: 'object', description: 'Privacy metadata for this response' }, flows: { type: 'number' }, source: { type: 'number' } } },
+          chain_to: { type: 'array', items: { type: 'string' } },
         }}}}}}}},
       '/analyze': { post: { operationId: 'analyzeAddress', summary: 'Deep on-chain activity analysis for an address', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address'], properties: {
+          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           address: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$' },
           chain: { type: 'string', default: 'ethereum' },
         }}}}},
         responses: { '200': { description: 'Address analysis', content: { 'application/json': { schema: { type: 'object', properties: {
+          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           address: { type: 'string' }, chain: { type: 'string' },
           activity_score: { type: 'number', minimum: 0, maximum: 100 },
           transaction_count: { type: 'integer' }, unique_contracts: { type: 'integer' },
@@ -65,17 +72,21 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
           behavior_tags: { type: 'array', items: { type: 'string' } },
           confidence_per_section: { type: 'object' },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
-          chain_to: { type: 'string' },
+          chain_to: { type: 'array', items: { type: 'string' } },
         }}}}}}}},
       '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate action based on on-chain signal strength', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address', 'action'], properties: {
+          privacy: { type: 'object', description: 'Privacy metadata for this response' },
+          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           address: { type: 'string' }, action: { type: 'string' }, min_signal_strength: { type: 'string', enum: ['high', 'medium', 'low'], default: 'medium' },
         }}}}},
         responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: {
-          execute: { type: 'boolean' }, confidence: { type: 'number' },
+          privacy: { type: 'object', description: 'Privacy metadata for this response' },
+          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
+          execute: { type: 'boolean' }, confidence: { type: 'number', minimum: 0, maximum: 1 },
           blocking_flags: { type: 'array', items: { type: 'string' } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
-          chain_to: { type: 'string' },
+          chain_to: { type: 'array', items: { type: 'string' } },
         }}}}}}}},
     },
   });
