@@ -192,6 +192,7 @@ Return concise JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+router.post('/research', async (req, res) => { req.url = '/deep-research'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/deep-research', async (req: Request, res: Response) => {
   const { topic, depth, focus_areas = [], output_format } = req.body;
   if (!topic) return res.status(400).json({ error: 'topic is required' });

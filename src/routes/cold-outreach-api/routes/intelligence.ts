@@ -38,6 +38,7 @@ router.get('/', (_req, res) => {
 });
 
 
+router.post('/generate', async (req, res) => { req.url = '/generate-sequence'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/generate-sequence', async (req: Request, res: Response) => {
   const { prospect_name, company_name, industry, pain_points, your_solution, sequence_length, tone } = req.body;
   if (!prospect_name || !company_name) return res.status(400).json({ error: 'prospect_name and company_name are required' });

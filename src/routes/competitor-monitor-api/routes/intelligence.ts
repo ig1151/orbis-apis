@@ -38,6 +38,7 @@ router.get('/', (_req, res) => {
 });
 
 
+router.post('/analyze', async (req, res) => { req.url = '/analyze-competitor'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/analyze-competitor', async (req: Request, res: Response) => {
   const { competitor_name, your_company, industry, focus_areas } = req.body;
   if (!competitor_name || !industry) return res.status(400).json({ error: 'competitor_name and industry are required' });

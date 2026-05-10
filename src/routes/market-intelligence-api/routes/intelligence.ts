@@ -36,6 +36,11 @@ router.get('/:ticker', async (req: Request, res: Response): Promise<void> => {
 });
 
 
+router.post('/analyze', async (req: Request, res: Response): Promise<void> => {
+  req.url = '/';
+  return (router as any).handle(req, res, () => {});
+});
+
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   const ticker = (req.body.ticker || '').toUpperCase();
   const { error, value } = schema.validate({ ticker });

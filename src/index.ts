@@ -425,6 +425,7 @@ import stablecoinBestYieldRouter from './routes/stablecoin-yield-api/routes/best
 import stablecoinCompareRouter from './routes/stablecoin-yield-api/routes/compare';
 import stablecoinProtocolRouter from './routes/stablecoin-yield-api/routes/protocol';
 app.use('/stablecoin-yield/rates', stablecoinRatesRouter);
+app.use('/stablecoin-yield/top', stablecoinBestYieldRouter);
 app.use('/stablecoin-yield/best', stablecoinBestYieldRouter);
 app.use('/stablecoin-yield/compare', stablecoinCompareRouter);
 app.use('/stablecoin-yield/protocol', stablecoinProtocolRouter);

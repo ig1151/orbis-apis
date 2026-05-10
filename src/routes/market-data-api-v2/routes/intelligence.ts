@@ -91,6 +91,22 @@ Return only the JSON object:`);
   }
 });
 
+// ── POST /detect-market-event
+// Alias: POST /score → /score-ticker
+router.post('/score', async (req: Request, res: Response) => {
+  const { ticker, context } = req.body;
+  if (!ticker) { res.status(400).json({ error: 'Provide ticker' }); return; }
+  const start = Date.now();
+  try {
+    const quote = await getQuote(ticker.toUpperCase());
+    const data = await callClaude(`You are a stock market signal scoring engine. Score this ticker and return ONLY valid JSON with keys: signal_score (0-100), momentum, volatility, volume_signal, trend, confidence (0-1), key_signals (array), recommended_action, risk_level. Market data: ${JSON.stringify(quote)}. Return only the JSON object:`);
+    res.json({ endpoint: 'score', ticker: ticker.toUpperCase(), quote, intelligence: data, latency_ms: Date.now() - start, timestamp: new Date().toISOString() });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed';
+    res.status(500).json({ error: message });
+  }
+});
+
 // ── POST /detect-market-event ─────────────────────────────────────────────────
 router.post('/detect-market-event', async (req: Request, res: Response) => {
   const { ticker, context } = req.body;

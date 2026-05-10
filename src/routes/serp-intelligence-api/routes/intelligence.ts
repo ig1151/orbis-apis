@@ -30,6 +30,7 @@ router.get('/', (_req: Request, res: Response) => {
 });
 
 // POST /analyze-serp
+router.post('/analyze', async (req, res) => { req.url = '/analyze-serp'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/analyze-serp', async (req: Request, res: Response) => {
   const { keyword, domain, location = 'US', search_engine = 'google' } = req.body;
   if (!keyword) return res.status(400).json({ error: 'keyword is required' });

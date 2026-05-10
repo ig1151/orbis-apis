@@ -12,6 +12,15 @@ function etherscanUrl(params: Record<string, string>) {
 }
 
 // ── GET /v1/balance/:address ──────────────────────────────────────────────────
+router.get('/balance', async (req, res) => {
+  const address = (req.query.address || req.body?.address || '') as string;
+  if (!address) return res.status(400).json({ error: 'Provide address as query param or body field' });
+  req.params = req.params || {};
+  (req.params as any).address = address;
+  req.url = `/balance/${address}`;
+  (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' }));
+});
+
 router.get('/balance/:address', async (req: Request, res: Response) => {
   const schema = Joi.object({
     address: Joi.string().pattern(/^0x[a-fA-F0-9]{40}$/).required()

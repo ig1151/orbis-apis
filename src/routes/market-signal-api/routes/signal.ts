@@ -34,6 +34,25 @@ router.get('/:ticker', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+// Alias: POST /signal
+router.post('/signal', async (req: Request, res: Response): Promise<void> => {
+  const ticker = (req.body?.ticker || '').toUpperCase();
+  if (!ticker) { res.status(400).json({ error: 'Provide ticker in request body' }); return; }
+  const { error, value } = schema.validate({ ticker });
+  if (error) { res.status(400).json({ error: 'Invalid ticker', message: error.details[0].message }); return; }
+  try {
+    const prices = await getDailyPrices(value.ticker);
+    const result = buildSignal(value.ticker, prices);
+    res.json(result);
+  } catch (err: any) {
+    const msg: string = err.message || 'Unknown error';
+    logger.error({ ticker: value.ticker, msg }, 'Signal error');
+    if (msg.includes('No data found')) { res.status(404).json({ error: 'Ticker not found', message: msg }); return; }
+    if (msg.includes('rate limit')) { res.status(429).json({ error: 'Rate limit', message: msg }); return; }
+    res.status(500).json({ error: 'Internal server error', message: msg });
+  }
+});
+
 // Batch assets
 router.post('/batch', async (req: Request, res: Response): Promise<void> => {
   const { error, value } = batchSchema.validate(req.body);

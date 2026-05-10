@@ -22,6 +22,7 @@ router.get('/', (_req: Request, res: Response) => {
   res.json({ name: 'Workflow Orchestrator API', info: '/workflow-orchestrator/info', openapi: '/workflow-orchestrator/openapi.json', health: 'ok' });
 });
 
+router.post('/build', async (req, res) => { req.url = '/build-workflow'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/build-workflow', async (req: Request, res: Response) => {
   const { goal, available_apis = [], constraints, context, max_steps } = req.body;
   if (!goal) return res.status(400).json({ error: 'goal is required' });

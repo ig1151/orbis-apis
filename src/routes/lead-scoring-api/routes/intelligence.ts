@@ -38,6 +38,7 @@ router.get('/', (_req, res) => {
 });
 
 
+router.post('/score', async (req, res) => { req.url = '/score-lead'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/score-lead', async (req: Request, res: Response) => {
   const { company_name, industry, company_size, revenue, technology_stack, engagement_signals, budget_range, timeline, pain_points } = req.body;
   if (!company_name || !industry) return res.status(400).json({ error: 'company_name and industry are required' });

@@ -145,6 +145,7 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
   });
 });
 
+router.post('/analyze', async (req, res) => { req.url = '/analyze-local-business'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/analyze-local-business', async (req: Request, res: Response) => {
   const { business_name, location, category, competitors, review_data } = req.body;
   if (!business_name || !location) return res.status(400).json({ error: 'business_name and location are required' });

@@ -210,6 +210,7 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
 });
 
 // POST /analyze-meeting (one-call workflow)
+router.post('/analyze', async (req, res) => { req.url = '/analyze-meeting'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/analyze-meeting', async (req: Request, res: Response) => {
   const { transcript, meeting_type, attendees = [], sender_name } = req.body;
   if (!transcript) return res.status(400).json({ error: 'transcript is required' });

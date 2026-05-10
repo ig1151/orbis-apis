@@ -211,6 +211,7 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
 });
 
 // POST /analyze-shopify-store (one-call workflow)
+router.post('/analyze', async (req, res) => { req.url = '/analyze-shopify-store'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/analyze-shopify-store', async (req: Request, res: Response) => {
   const { store_url, niche, budget, competitors = [], goals } = req.body;
   if (!store_url) return res.status(400).json({ error: 'store_url is required' });
