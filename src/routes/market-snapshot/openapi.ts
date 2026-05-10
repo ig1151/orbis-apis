@@ -16,6 +16,7 @@ router.get('/', (_req: Request, res: Response) => {
       privacy: { data_stored: false, retention: 'none' },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/market-snapshot' }],
+    security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
@@ -39,9 +40,18 @@ router.get('/', (_req: Request, res: Response) => {
           }}}}}}},
         post: { operationId: 'postQuote', summary: 'Get quote via POST body', 'x-agent-callable': true,
           requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: {
-            symbol: { type: 'string' }, symbols: { type: 'array', items: { type: 'string' } },
-          }}}}},
-          responses: { '200': { description: 'Quote data' } }},
+            symbol: { type: 'string', description: 'Single ticker e.g. AAPL' },
+            symbols: { type: 'array', items: { type: 'string' }, description: 'Multiple tickers' },
+          } } } } },
+          responses: { '200': { description: 'Quote data', content: { 'application/json': { schema: { type: 'object', properties: {
+            success: { type: 'boolean' },
+            data: { type: 'object', properties: {
+              symbol: { type: 'string' }, price: { type: 'number' }, change: { type: 'number' },
+              change_pct: { type: 'string' }, volume: { type: 'integer' }, is_market_open: { type: 'boolean' },
+              confidence_per_section: { type: 'object', properties: { quote: { type: 'number' } } },
+            } },
+            latency_ms: { type: 'number' }, disclaimer: { type: 'string' },
+          } } } } } } },
       },
       '/watchlist': { get: { operationId: 'getWatchlist', summary: 'Get quotes for a watchlist of tickers', 'x-agent-callable': true,
         parameters: [{ name: 'symbols', in: 'query', required: true, schema: { type: 'string' }, description: 'Comma-separated tickers' }],
