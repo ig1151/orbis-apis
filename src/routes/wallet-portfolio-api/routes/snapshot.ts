@@ -134,7 +134,13 @@ router.get('/', validate(schema), async (req: Request, res: Response): Promise<v
 });
 
 
+router.post('/snapshot', async (req: Request, res: Response): Promise<void> => {
+  req.query = { ...req.query, ...req.body };
+  return (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' }));
+});
+
 router.post('/', validate(schema), async (req: Request, res: Response): Promise<void> => {
+  req.query = { ...req.query, ...req.body };
   const { address, chain } = req.body as { address: string; chain: string };
   try {
     const ethBalance = await getEthBalance(address, chain || 'ethereum');
