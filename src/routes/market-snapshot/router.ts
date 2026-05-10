@@ -44,9 +44,12 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
       'x-agent-callable': true,
       'x-mcp-compatible': true,
       'x-pricing': { '/quote': 0.001, '/watchlist': 0.002, '/search': 0.001, '/compare': 0.002, '/execution-gate': 0.002 },
+      privacy: { data_stored: false, retention: 'none' },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/market-snapshot' }],
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
+      '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
       '/quote': {
         get: { operationId: 'getQuote', summary: 'Get real-time stock quote', 'x-agent-callable': true,
           parameters: [{ name: 'symbol', in: 'query', required: true, schema: { type: 'string' }, description: 'Ticker(s) e.g. AAPL or AAPL,MSFT' }],

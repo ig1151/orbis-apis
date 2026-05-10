@@ -63,6 +63,17 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           results: { type: 'array', items: { type: 'object' } },
           latency_ms: { type: 'number' },
         }}}}}}}},
+      '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate image processing based on content safety', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['image'], properties: {
+          image: { type: 'string' }, safety_check: { type: 'boolean', default: true },
+          max_cost: { type: 'number' },
+        }}}}},
+        responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: {
+          execute: { type: 'boolean' }, confidence: { type: 'number' },
+          blocking_flags: { type: 'array', items: { type: 'string' } },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'string' },
+        }}}}}}}},
       '/jobs/{jobId}': { get: { operationId: 'getJob', summary: 'Poll async job status', 'x-agent-callable': true,
         parameters: [{ name: 'jobId', in: 'path', required: true, schema: { type: 'string' } }],
         responses: { '200': { description: 'Job status', content: { 'application/json': { schema: { type: 'object', properties: {

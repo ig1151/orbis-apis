@@ -46,6 +46,17 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           chain: { type: 'string', enum: ['ethereum', 'bsc', 'solana'], default: 'ethereum' },
         }}}}},
         responses: { '200': { description: 'Trust check result' }}}},
+      '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate token interaction based on trust score', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['contract', 'action'], properties: {
+          contract: { type: 'string' }, chain: { type: 'string', default: 'ethereum' },
+          action: { type: 'string' }, min_trust_score: { type: 'number', default: 60 },
+        }}}}},
+        responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: {
+          execute: { type: 'boolean' }, trust_score: { type: 'number' }, confidence: { type: 'number' },
+          blocking_flags: { type: 'array', items: { type: 'string' } },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'string' }, disclaimer: { type: 'string' },
+        }}}}}}}},
       '/check/batch': { post: { operationId: 'batchCheckTokens', summary: 'Batch check up to 10 token trust scores', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['tokens'], properties: {
           tokens: { type: 'array', minItems: 1, maxItems: 10, items: { type: 'object', required: ['contract'], properties: {

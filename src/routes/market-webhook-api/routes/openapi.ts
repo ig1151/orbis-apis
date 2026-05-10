@@ -58,6 +58,16 @@ router.get('/', (_req: Request, res: Response) => {
           }}},
           total_deliveries: { type: 'integer' }, success_rate: { type: 'number' },
         }}}}}}}},
+      '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate webhook delivery based on event risk', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['event_type', 'action'], properties: {
+          event_type: { type: 'string' }, action: { type: 'string' }, min_confidence: { type: 'number', default: 0.7 },
+        }}}}},
+        responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: {
+          execute: { type: 'boolean' }, confidence: { type: 'number' },
+          blocking_flags: { type: 'array', items: { type: 'string' } },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'string' },
+        }}}}}}}},
       '/verify': { post: { operationId: 'verifyWebhook', summary: 'Verify webhook signature for security', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['payload', 'signature', 'secret'], properties: {
           payload: { type: 'string' }, signature: { type: 'string' }, secret: { type: 'string' },

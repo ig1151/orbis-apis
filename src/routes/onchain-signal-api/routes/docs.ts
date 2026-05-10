@@ -66,6 +66,16 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'string' },
         }}}}}}}},
+      '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate action based on on-chain signal strength', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address', 'action'], properties: {
+          address: { type: 'string' }, action: { type: 'string' }, min_signal_strength: { type: 'string', enum: ['high', 'medium', 'low'], default: 'medium' },
+        }}}}},
+        responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: {
+          execute: { type: 'boolean' }, confidence: { type: 'number' },
+          blocking_flags: { type: 'array', items: { type: 'string' } },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'string' },
+        }}}}}}}},
     },
   });
 });
