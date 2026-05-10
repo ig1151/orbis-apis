@@ -67,9 +67,6 @@ router.get('/', (_req: Request, res: Response) => {
           confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           address: { type: 'string' },
           tokens: { type: 'array', items: { type: 'object', properties: {
-          recommended_actions_priority_order: { type: 'array', items: { type: 'string' }, description: 'Ordered list of recommended next actions for the agent' },
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
             symbol: { type: 'string' }, name: { type: 'string' }, contract_address: { type: 'string' },
             balance: { type: 'string' }, decimals: { type: 'integer' },
             usd_value: { type: 'number', nullable: true }, price_usd: { type: 'number', nullable: true },
@@ -101,9 +98,7 @@ router.get('/', (_req: Request, res: Response) => {
           tokens: { type: 'array', items: { type: 'object' } },
           allocation: { type: 'array', items: { type: 'object', properties: {
           asset: { type: 'string' }, pct: { type: 'number' } } } },
-          confidence_per_section: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' }, balances: { type: 'number' }, prices: { type: 'number' } } },
+          confidence_per_section: { type: 'object', properties: { balances: { type: 'number' }, prices: { type: 'number' } } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } },
           transfer_simulation: { type: 'object', properties: { estimated_gas: { type: 'number' }, estimated_fee_eth: { type: 'string' }, feasible: { type: 'boolean' } }, description: 'Simulated transfer cost estimate' },

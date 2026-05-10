@@ -39,7 +39,6 @@ router.get('/', (_req: Request, res: Response) => {
         }}}}}}}},
       '/retrieve': { post: { operationId: 'retrieveMemory', summary: 'Retrieve relevant memories by semantic query', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['query'], properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           query: { type: 'string' },
           agent_id: { type: 'string' },
           limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
@@ -65,25 +64,19 @@ router.get('/', (_req: Request, res: Response) => {
         }}}}}}}},
       '/search': { post: { operationId: 'searchMemory', summary: 'Keyword search across session memories', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['query'], properties: {
-          recommended_actions_priority_order: { type: 'array', items: { type: 'string' }, description: 'Ordered list of recommended next actions for the agent' },
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           query: { type: 'string' },
           session_id: { type: 'string' },
           limit: { type: 'integer', default: 10 },
         }}}}},
         responses: { '200': { description: 'Search results', content: { 'application/json': { schema: { type: 'object', properties: {
-          recommended_actions_priority_order: { type: 'array', items: { type: 'string' }, description: 'Ordered list of recommended next actions for the agent' },
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           results: { type: 'array', items: { type: 'object', properties: {
-          recommended_actions_priority_order: { type: 'array', items: { type: 'string' }, description: 'Ordered list of recommended next actions for the agent' },
-          privacy: { type: 'object', description: 'Privacy metadata for this response' }, id: { type: 'string' }, content: { type: 'string' }, score: { type: 'number' } } } },
+            id: { type: 'string' }, content: { type: 'string' }, score: { type: 'number' } } } },
           count: { type: 'integer' },
           confidence_per_section: { type: 'object' },
           chain_to: { type: 'array', items: { type: 'string' } },
         }}}}}}}},
       '/compress': { post: { operationId: 'compressMemory', summary: 'Compress long memory history into structured summary', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           session_id: { type: 'string' },
           agent_id: { type: 'string' },
           max_tokens: { type: 'integer', default: 500 },
@@ -100,7 +93,6 @@ router.get('/', (_req: Request, res: Response) => {
         }}}}}}}},
       '/extract': { post: { operationId: 'extractFromMemory', summary: 'Extract facts, entities or summary from memory content', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['content', 'type'], properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           content: { type: 'string' },
           type: { type: 'string', enum: ['facts', 'entities', 'summary'] },
           max_items: { type: 'integer', default: 10 },
@@ -118,8 +110,6 @@ router.get('/', (_req: Request, res: Response) => {
         }}}}}}}},
       '/sessions': { get: { operationId: 'listSessions', summary: 'List all active memory sessions', 'x-agent-callable': true,
         responses: { '200': { description: 'Session list', content: { 'application/json': { schema: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           sessions: { type: 'array', items: { type: 'object', properties: {
           id: { type: 'string' }, memory_count: { type: 'integer' }, created_at: { type: 'string', format: 'date-time' }, last_active: { type: 'string', format: 'date-time' } } } },
           count: { type: 'integer' },
@@ -199,8 +189,6 @@ router.get('/', (_req: Request, res: Response) => {
         }}}}}}}},
       '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate agent action based on memory confidence and context', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['agent_id', 'action'], properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           agent_id: { type: 'string' },
           action: { type: 'string' },
           min_memory_confidence: { type: 'number', default: 0.7, minimum: 0, maximum: 1 },

@@ -38,9 +38,7 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
           confidence_per_section: { type: 'object', properties: { signals: { type: 'number' }, wallet_risk: { type: 'number' } } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } },
-          privacy: { type: 'object', properties: {
-          recommended_actions_priority_order: { type: 'array', items: { type: 'string' }, description: 'Ordered list of recommended next actions for the agent' },
-          privacy: { type: 'object', description: 'Privacy metadata for this response' }, data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         }}}}}}}},
       '/flows': { get: { operationId: 'getFlows', summary: 'Get smart money flow data for a token contract', 'x-agent-callable': true,
         parameters: [
@@ -49,13 +47,13 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
           { name: 'timeframe', in: 'query', required: false, schema: { type: 'string', enum: ['1h', '4h', '24h', '7d'], default: '24h' } },
         ],
         responses: { '200': { description: 'Flow data', content: { 'application/json': { schema: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           contract: { type: 'string' }, chain: { type: 'string' }, timeframe: { type: 'string' },
           net_flow_usd: { type: 'number' }, inflow_usd: { type: 'number' }, outflow_usd: { type: 'number' },
           whale_transactions: { type: 'integer' }, smart_money_score: { type: 'number', minimum: 0, maximum: 100 },
           confidence_per_section: { type: 'object', properties: {
           flows: { type: 'number' }, source: { type: 'number' } } },
           chain_to: { type: 'array', items: { type: 'string' } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         }}}}}}}},
       '/analyze': { post: { operationId: 'analyzeAddress', summary: 'Deep on-chain activity analysis for an address', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address'], properties: {
@@ -75,8 +73,6 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
         }}}}}}}},
       '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate action based on on-chain signal strength', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address', 'action'], properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           address: { type: 'string' }, action: { type: 'string' }, min_signal_strength: { type: 'string', enum: ['high', 'medium', 'low'], default: 'medium' },
         }}}}},
         responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: {
