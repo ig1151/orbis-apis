@@ -100,21 +100,131 @@ docsRouter.get('/', (_req: Request, res: Response) => { res.setHeader('Content-T
 
 openapiRouter.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
-    openapi: '3.0.3',
-    info: { title: 'AI Output Safety API', version: '1.0.0', description: 'Check AI-generated text for hallucinations, toxicity, PII, policy violations, bias, misinformation and prompt injection.' },
-    servers: [{ url: 'https://ai-output-safety-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
-    paths: {
-      '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'OK' } } } },
-      '/v1/check': {
-        post: { summary: 'Check a single AI output', operationId: 'checkSafety', requestBody: { required: true, content: { 'application/json': { schema: { $ref: '#/components/schemas/CheckRequest' }, examples: { basic: { summary: 'Basic check', value: { text: 'The capital of France is Berlin.' } }, with_context: { summary: 'With context', value: { text: 'Here is the response...', context: 'Customer support chatbot' } } } } } }, responses: { '200': { description: 'Safety check result' }, '422': { description: 'Validation error' } } },
-      },
-      '/v1/check/batch': { post: { summary: 'Check up to 20 AI outputs', operationId: 'checkBatch', requestBody: { required: true, content: { 'application/json': { schema: { $ref: '#/components/schemas/BatchRequest' } } } }, responses: { '200': { description: 'Batch results' } } } },
+    openapi: '3.1.0',
+    info: {
+      title: 'AI Output Safety API',
+      version: '2.0.0',
+      description: 'Check AI-generated text for hallucinations, toxicity, PII, policy violations, bias, misinformation and prompt injection. Returns structured risk levels, category flags, confidence scores and suggested actions for agent decision-making.',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+      'x-pricing': {
+        free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+        pay_per_call: { check: '$0.004', batch: '$0.010', redact: '$0.005', score: '$0.003' },
+        high_volume: { check: '$0.002', batch: '$0.006' }
+      }
     },
+    servers: [{ url: 'https://orbis-apis.onrender.com/ai-output-safety', description: 'Production' }],
     components: {
+      securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } },
       schemas: {
-        CheckRequest: { type: 'object', required: ['text'], properties: { text: { type: 'string', maxLength: 10000 }, context: { type: 'string', maxLength: 2000 }, check_categories: { type: 'array', items: { type: 'string', enum: ['hallucination', 'toxicity', 'pii', 'policy_violation', 'bias', 'misinformation', 'prompt_injection'] } } } },
-        BatchRequest: { type: 'object', required: ['checks'], properties: { checks: { type: 'array', items: { $ref: '#/components/schemas/CheckRequest' }, minItems: 1, maxItems: 20 } } },
-      },
+        SafetyCategories: {
+          type: 'object',
+          properties: {
+            hallucination: { type: 'boolean' },
+            toxicity: { type: 'boolean' },
+            pii: { type: 'boolean' },
+            policy_violation: { type: 'boolean' },
+            bias: { type: 'boolean' },
+            misinformation: { type: 'boolean' },
+            prompt_injection: { type: 'boolean' }
+          }
+        },
+        SafetyResult: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            safe: { type: 'boolean' },
+            decision: { type: 'string', enum: ['safe', 'unsafe', 'review_required'] },
+            confidence: { type: 'number', minimum: 0, maximum: 1 },
+            risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+            issues: { type: 'array', items: { type: 'string' } },
+            categories: { '$ref': '#/components/schemas/SafetyCategories' },
+            flagged_segments: { type: 'array', items: { type: 'string' } },
+            recommendation: { type: 'string' },
+            recommended_action: { type: 'string', enum: ['allow', 'block', 'redact', 'review'] },
+            confidence_per_section: { type: 'object', additionalProperties: { type: 'number' } },
+            privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } }
+          }
+        },
+        CheckRequest: {
+          type: 'object',
+          required: ['text'],
+          properties: {
+            text: { type: 'string', maxLength: 10000 },
+            context: { type: 'string', maxLength: 2000 },
+            check_categories: { type: 'array', items: { type: 'string', enum: ['hallucination', 'toxicity', 'pii', 'policy_violation', 'bias', 'misinformation', 'prompt_injection'] } },
+            threshold: { type: 'number', minimum: 0, maximum: 1 }
+          }
+        },
+        BatchRequest: {
+          type: 'object',
+          required: ['checks'],
+          properties: { checks: { type: 'array', items: { '$ref': '#/components/schemas/CheckRequest' }, minItems: 1, maxItems: 20 } }
+        }
+      }
     },
+    security: [{ ApiKeyAuth: [] }],
+    paths: {
+      '/check': {
+        post: {
+          operationId: 'checkSafety',
+          summary: 'Evaluate a single AI output for safety risks — returns flags, categories, risk level, score and suggested action',
+          requestBody: { required: true, content: { 'application/json': { schema: { '$ref': '#/components/schemas/CheckRequest' } } } },
+          responses: {
+            '200': { description: 'Safety check result', content: { 'application/json': { schema: { '$ref': '#/components/schemas/SafetyResult' } } } },
+            '400': { description: 'Missing text' },
+            '500': { description: 'Check failed' }
+          }
+        }
+      },
+      '/batch': {
+        post: {
+          operationId: 'checkBatch',
+          summary: 'Validate multiple AI outputs efficiently in a single request — up to 20 outputs',
+          requestBody: { required: true, content: { 'application/json': { schema: { '$ref': '#/components/schemas/BatchRequest' } } } },
+          responses: {
+            '200': { description: 'Batch safety results', content: { 'application/json': { schema: { type: 'object', properties: { results: { type: 'array', items: { '$ref': '#/components/schemas/SafetyResult' } }, total: { type: 'number' }, safe_count: { type: 'number' }, unsafe_count: { type: 'number' }, privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } } } } } } },
+            '400': { description: 'Missing checks' },
+            '500': { description: 'Batch check failed' }
+          }
+        }
+      },
+      '/redact': {
+        post: {
+          operationId: 'redactOutput',
+          summary: 'Remove or mask unsafe content from AI output — returns cleaned output with redacted segments',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' }, redact_categories: { type: 'array', items: { type: 'string' } }, replacement: { type: 'string' } } } } } },
+          responses: {
+            '200': { description: 'Redacted output', content: { 'application/json': { schema: { type: 'object', properties: { original_length: { type: 'number' }, redacted_text: { type: 'string' }, redacted_segments: { type: 'array', items: { type: 'object', properties: { text: { type: 'string' }, category: { type: 'string' }, replacement: { type: 'string' } } } }, redaction_count: { type: 'number' }, safe_to_use: { type: 'boolean' }, privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } } } } } } },
+            '400': { description: 'Missing text' },
+            '500': { description: 'Redaction failed' }
+          }
+        }
+      },
+      '/score': {
+        post: {
+          operationId: 'scoreOutput',
+          summary: 'Return a numeric safety score 0-1 with threshold comparison for agent decision-making',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' }, threshold: { type: 'number', minimum: 0, maximum: 1 }, context: { type: 'string' } } } } } },
+          responses: {
+            '200': { description: 'Safety score', content: { 'application/json': { schema: { type: 'object', properties: { score: { type: 'number', minimum: 0, maximum: 1 }, threshold: { type: 'number', minimum: 0, maximum: 1 }, passes_threshold: { type: 'boolean' }, risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] }, recommended_action: { type: 'string', enum: ['allow', 'block', 'redact', 'review'] }, top_risk_categories: { type: 'array', items: { type: 'string' } }, privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } } } } } } },
+            '400': { description: 'Missing text' },
+            '500': { description: 'Score failed' }
+          }
+        }
+      },
+      '/execution-gate': {
+        post: {
+          operationId: 'safetyExecutionGate',
+          summary: 'Gate AI output usage based on safety score, risk level and configurable thresholds',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text', 'use_case'], properties: { text: { type: 'string' }, use_case: { type: 'string' }, risk_threshold: { type: 'number', minimum: 0, maximum: 1 }, block_categories: { type: 'array', items: { type: 'string' } } } } } } },
+          responses: {
+            '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: { allow: { type: 'boolean' }, score: { type: 'number', minimum: 0, maximum: 1 }, risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] }, blocking_flags: { type: 'array', items: { type: 'string' } }, recommended_action: { type: 'string', enum: ['allow', 'block', 'redact', 'review'] }, human_review_required: { type: 'boolean' }, confidence_per_section: { type: 'object', additionalProperties: { type: 'number' } }, privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } } } } } } },
+            '400': { description: 'Missing required fields' },
+            '500': { description: 'Gate check failed' }
+          }
+        }
+      }
+    }
   });
 });
