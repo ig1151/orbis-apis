@@ -82,6 +82,7 @@ import marketWebhookOpenapiRouter from './routes/market-webhook-api/routes/opena
 import stablecoinYieldDocsRouter from './routes/stablecoin-yield-api/routes/docs';
 import alphaSignalDocsRouter from './routes/alpha-signal/docs';
 import marketSnapshotRouter from './routes/market-snapshot/router';
+import marketSnapshotOpenapiRouter from './routes/market-snapshot/openapi';
 app.use('/wallet/openapi.json', walletOpenapiRouter);
 app.use('/agent-memory/openapi.json', agentMemoryOpenapiRouter);
 app.use('/crypto-news-impact/openapi.json', cryptoNewsImpactOpenapiRouter);
@@ -1126,6 +1127,7 @@ app.use('/text-gen', textGenInfoRouter);
 app.use('/text-gen', textGenRouter);
 app.use('/geocoding', geocodingInfoRouter);
 app.use('/geocoding', geocodingRouter);
+app.use('/market-snapshot/openapi.json', marketSnapshotOpenapiRouter);
 app.use('/market-snapshot', marketSnapshotRouter);
 app.get('/web-scraper/info', (_req, res) => {
   res.json({
