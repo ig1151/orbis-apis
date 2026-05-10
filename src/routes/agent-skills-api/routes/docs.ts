@@ -2,100 +2,160 @@ import { Router, Request, Response } from 'express';
 import { skillCount } from '../store/skills';
 const router = Router();
 
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
+
 const openApiSpec = {
-  openapi: '3.0.0',
+  openapi: '3.1.0',
   info: {
     title: 'Agent Skills API',
-    version: '1.0.0',
-    description: 'AI agent skill registry — register, discover, and AI-match agent capabilities for the agentic economy. Pre-seeded with OrbisAPI skills. Built for autonomous AI agents on x402 and Agentic.Market.',
-    contact: { url: 'https://orbisapi.com' },
+    version: '2.0.0',
+    description: 'AI agent skill registry — register, discover, match, compose and route agent capabilities for autonomous workflows. Pre-seeded with OrbisAPI skills. Built for autonomous AI agents on x402 and Agentic.Market.',
+    'x-agent-callable': true,
+    'x-mcp-compatible': true,
+    'x-pricing': {
+      free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+      pay_per_call: { register: '$0.004', discover: '$0.003', match: '$0.005', compose: '$0.007', trending: '$0.002', detail: '$0.002' },
+      high_volume: { match: '$0.003', compose: '$0.004' }
+    },
   },
-  servers: [{ url: 'https://agent-skills-api.onrender.com' }],
+  servers: [{ url: 'https://orbis-apis.onrender.com/agent-skills' }],
+  components: {
+    securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } },
+    schemas: {
+      Skill: {
+        type: 'object',
+        properties: {
+          skill_id: { type: 'string' },
+          name: { type: 'string' },
+          description: { type: 'string' },
+          category: { type: 'string' },
+          tags: actions,
+          input_schema: { type: 'object' },
+          output_schema: { type: 'object' },
+          version: { type: 'string' },
+          author: { type: 'string' },
+          endpoint: { type: 'string', format: 'uri' },
+          pricing: { type: 'object', properties: { per_call_usdc: { type: 'number' } } },
+          invocation_count: { type: 'number' },
+          rating: { type: 'number', minimum: 0, maximum: 5 },
+          created_at: { type: 'string', format: 'date-time' },
+        }
+      },
+      Privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } }
+    }
+  },
+  security: [{ ApiKeyAuth: [] }],
   paths: {
-    '/v1/health': { get: { summary: 'Health check with skill count', responses: { 200: { description: 'OK' } } } },
-    '/v1/skills/register': {
+    '/register': {
       post: {
-        summary: 'Register a new agent skill',
         operationId: 'registerSkill',
+        summary: 'Register a new agent skill in the marketplace with schema, pricing and capability metadata',
         requestBody: {
           required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                required: ['name', 'description', 'category', 'capabilities', 'endpoint'],
-                properties: {
-                  name: { type: 'string' },
-                  description: { type: 'string' },
-                  category: { type: 'string' },
-                  capabilities: { type: 'array', items: { type: 'string' } },
-                  endpoint: { type: 'string' },
-                  method: { type: 'string', enum: ['GET', 'POST'] },
-                  inputs: { type: 'array' },
-                  outputs: { type: 'array' },
-                  pricingType: { type: 'string', enum: ['free', 'per_call', 'subscription'] },
-                  pricePerCall: { type: 'number' },
-                  tags: { type: 'array', items: { type: 'string' } },
-                },
-              },
-            },
-          },
+          content: { 'application/json': { schema: { type: 'object', required: ['name', 'description', 'endpoint'], properties: { name: { type: 'string' }, description: { type: 'string' }, category: { type: 'string' }, tags: actions, endpoint: { type: 'string', format: 'uri' }, input_schema: { type: 'object' }, output_schema: { type: 'object' }, pricing: { type: 'object', properties: { per_call_usdc: { type: 'number' } } }, version: { type: 'string' }, author: { type: 'string' } } } } }
         },
-        responses: { 201: { description: 'Skill registered with skillId' } },
-      },
+        responses: {
+          '200': { description: 'Skill registered', content: { 'application/json': { schema: { type: 'object', properties: { skill_id: { type: 'string' }, name: { type: 'string' }, status: { type: 'string', enum: ['registered', 'pending_review'] }, endpoint: { type: 'string', format: 'uri' }, created_at: { type: 'string', format: 'date-time' }, confidence_per_section: confidence, privacy } } } } },
+          '400': { description: 'Missing required fields' },
+          '500': { description: 'Registration failed' }
+        }
+      }
     },
-    '/v1/skills/discover': {
+    '/discover': {
       get: {
-        summary: 'Discover skills by keyword, category, or tags',
-        operationId: 'discoverSkills',
+        operationId: 'discoverSkillsGet',
+        summary: 'Discover available agent skills by query, category or tags',
         parameters: [
-          { name: 'q', in: 'query', schema: { type: 'string' }, description: 'Search query' },
-          { name: 'category', in: 'query', schema: { type: 'string' }, description: 'Filter by category' },
-          { name: 'tags', in: 'query', schema: { type: 'string' }, description: 'Comma-separated tags' },
-          { name: 'limit', in: 'query', schema: { type: 'number', default: 10 } },
+          { name: 'query', in: 'query', schema: { type: 'string' } },
+          { name: 'category', in: 'query', schema: { type: 'string' } },
+          { name: 'limit', in: 'query', schema: { type: 'number' } }
         ],
-        responses: { 200: { description: 'List of matching skills' } },
+        responses: {
+          '200': { description: 'Skills discovered', content: { 'application/json': { schema: { type: 'object', properties: { skills: { type: 'array', items: { '$ref': '#/components/schemas/Skill' } }, total: { type: 'number' }, query: { type: 'string' }, confidence_per_section: confidence, privacy } } } } },
+          '500': { description: 'Discovery failed' }
+        }
       },
-    },
-    '/v1/skills/trending': {
-      get: {
-        summary: 'Most invoked skills in the last 24h',
-        operationId: 'trendingSkills',
-        parameters: [{ name: 'limit', in: 'query', schema: { type: 'number', default: 10 } }],
-        responses: { 200: { description: 'Trending skills by invocation count' } },
-      },
-    },
-    '/v1/skills/{skillId}': {
-      get: {
-        summary: 'Get full skill detail by ID',
-        operationId: 'getSkill',
-        parameters: [{ name: 'skillId', in: 'path', required: true, schema: { type: 'string' } }],
-        responses: { 200: { description: 'Full skill detail' } },
-      },
-    },
-    '/v1/skills/match': {
       post: {
-        summary: 'AI-powered skill matching — describe what you need, get best match',
+        operationId: 'discoverSkillsPost',
+        summary: 'Discover available agent skills by query, category or tags',
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { query: { type: 'string' }, category: { type: 'string' }, tags: actions, limit: { type: 'number' } } } } } },
+        responses: {
+          '200': { description: 'Skills discovered', content: { 'application/json': { schema: { type: 'object', properties: { skills: { type: 'array', items: { '$ref': '#/components/schemas/Skill' } }, total: { type: 'number' }, confidence_per_section: confidence, privacy } } } } },
+          '500': { description: 'Discovery failed' }
+        }
+      }
+    },
+    '/match': {
+      post: {
         operationId: 'matchSkill',
+        summary: 'Match the best skills from the registry to a specific agent request with confidence scoring',
         requestBody: {
           required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                required: ['request'],
-                properties: {
-                  request: { type: 'string', description: 'Natural language description of what you need' },
-                  limit: { type: 'number', default: 3 },
-                },
-              },
-            },
-          },
+          content: { 'application/json': { schema: { type: 'object', required: ['task'], properties: { task: { type: 'string' }, context: { type: 'object' }, max_results: { type: 'number' }, min_confidence: { type: 'number', minimum: 0, maximum: 1 } } } } }
         },
-        responses: { 200: { description: 'Ranked skill matches with AI explanation' } },
-      },
+        responses: {
+          '200': { description: 'Skills matched', content: { 'application/json': { schema: { type: 'object', properties: { task: { type: 'string' }, matches: { type: 'array', items: { type: 'object', properties: { skill: { '$ref': '#/components/schemas/Skill' }, match_score: { type: 'number', minimum: 0, maximum: 1 }, match_reason: { type: 'string' }, estimated_cost_usdc: { type: 'number' } } } }, recommended_skill_id: { type: 'string' }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } },
+          '400': { description: 'Missing task' },
+          '500': { description: 'Match failed' }
+        }
+      }
     },
-  },
+    '/compose': {
+      post: {
+        operationId: 'composeSkills',
+        summary: 'Given a task, return an ordered sequence of skills with dependencies, duration estimates and execution order',
+        requestBody: {
+          required: true,
+          content: { 'application/json': { schema: { type: 'object', required: ['task'], properties: { task: { type: 'string' }, context: { type: 'object' }, max_steps: { type: 'number' }, budget_usdc: { type: 'number' } } } } }
+        },
+        responses: {
+          '200': { description: 'Skill composition plan', content: { 'application/json': { schema: { type: 'object', properties: { task: { type: 'string' }, steps: { type: 'array', items: { type: 'object', properties: { step: { type: 'number' }, skill_id: { type: 'string' }, skill_name: { type: 'string' }, input_from: { type: 'string', nullable: true }, estimated_duration_ms: { type: 'number' }, estimated_cost_usdc: { type: 'number' }, required: { type: 'boolean' } } } }, total_estimated_cost_usdc: { type: 'number' }, total_estimated_duration_ms: { type: 'number' }, parallel_opportunities: actions, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } },
+          '400': { description: 'Missing task' },
+          '500': { description: 'Composition failed' }
+        }
+      }
+    },
+    '/trending': {
+      get: {
+        operationId: 'trendingSkills',
+        summary: 'Get trending agent skills ranked by recent invocation count and rating',
+        parameters: [{ name: 'limit', in: 'query', schema: { type: 'number' } }],
+        responses: {
+          '200': { description: 'Trending skills', content: { 'application/json': { schema: { type: 'object', properties: { skills: { type: 'array', items: { '$ref': '#/components/schemas/Skill' } }, period: { type: 'string' }, total_skills: { type: 'number' }, privacy } } } } },
+          '500': { description: 'Failed to fetch trending' }
+        }
+      }
+    },
+    '/:skillId': {
+      get: {
+        operationId: 'getSkillDetail',
+        summary: 'Get full details for a specific skill including schema, pricing and usage stats',
+        parameters: [{ name: 'skillId', in: 'path', required: true, schema: { type: 'string' } }],
+        responses: {
+          '200': { description: 'Skill details', content: { 'application/json': { schema: { '$ref': '#/components/schemas/Skill' } } } },
+          '404': { description: 'Skill not found' },
+          '500': { description: 'Failed to fetch skill' }
+        }
+      }
+    },
+    '/execution-gate': {
+      post: {
+        operationId: 'skillExecutionGate',
+        summary: 'Gate skill execution based on trust score, pricing limits and capability validation',
+        requestBody: {
+          required: true,
+          content: { 'application/json': { schema: { type: 'object', required: ['skill_id', 'agent_id'], properties: { skill_id: { type: 'string' }, agent_id: { type: 'string' }, budget_usdc: { type: 'number' }, context: { type: 'object' } } } } }
+        },
+        responses: {
+          '200': { description: 'Execution gate decision', content: { 'application/json': { schema: { type: 'object', properties: { execute: { type: 'boolean' }, skill_id: { type: 'string' }, agent_id: { type: 'string' }, trust_score: { type: 'number', minimum: 0, maximum: 1 }, budget_sufficient: { type: 'boolean' }, estimated_cost_usdc: { type: 'number' }, blocking_flags: actions, recommended_action: { type: 'string', enum: ['proceed', 'require_approval', 'block'] }, confidence_per_section: confidence, privacy } } } } },
+          '400': { description: 'Missing required fields' },
+          '500': { description: 'Gate check failed' }
+        }
+      }
+    }
+  }
 };
 
 router.get('/', (_req: Request, res: Response) => {
