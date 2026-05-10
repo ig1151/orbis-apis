@@ -88,11 +88,11 @@ app.use('/crypto-news-impact/openapi.json', cryptoNewsImpactOpenapiRouter);
 app.use('/image-to-content/openapi.json', imageToContentOpenapiRouter);
 app.use('/market-trigger/openapi.json', marketTriggerOpenapiRouter);
 app.use('/token-trust/openapi.json', tokenTrustOpenapiRouter);
-app.use('/onchain-signal/openapi.json', onchainSignalDocsRouter);
+app.use('/onchain-signal', onchainSignalDocsRouter);
 app.use('/market-webhook/openapi.json', marketWebhookOpenapiRouter);
-app.use('/stablecoin-yield/openapi.json', stablecoinYieldDocsRouter);
-app.use('/alpha-signal/openapi.json', alphaSignalDocsRouter);
-app.use('/market-snapshot/openapi.json', marketSnapshotRouter);
+app.use('/stablecoin-yield', stablecoinYieldDocsRouter);
+app.use('/alpha-signal', alphaSignalDocsRouter);
+
 app.use('/wallet', walletBalanceRouter);
 
 // ── Alpha Signal ──────────────────────────────────────────────────────────────
@@ -1121,8 +1121,8 @@ import geocodingRouter from './routes/geocoding/router';
 import webScraperRouter from './routes/web-scraper/router';
 app.use('/image-gen', imageGenInfoRouter);
 app.use('/image-gen', imageGenRouter);
-app.use('/text-gen', textGenInfoRouter);
 app.use('/text-gen/openapi.json', textGenOpenapiRouter);
+app.use('/text-gen', textGenInfoRouter);
 app.use('/text-gen', textGenRouter);
 app.use('/geocoding', geocodingInfoRouter);
 app.use('/geocoding', geocodingRouter);
