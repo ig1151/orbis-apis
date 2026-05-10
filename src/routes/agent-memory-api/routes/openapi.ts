@@ -35,7 +35,7 @@ router.get('/', (_req: Request, res: Response) => {
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' }, description: 'Suggested next API endpoint' },
           privacy: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' }, data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+          data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         }}}}}}}},
       '/retrieve': { post: { operationId: 'retrieveMemory', summary: 'Retrieve relevant memories by semantic query', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['query'], properties: {
@@ -50,7 +50,6 @@ router.get('/', (_req: Request, res: Response) => {
         responses: { '200': { description: 'Matching memories', content: { 'application/json': { schema: { type: 'object', properties: {
           privacy: { type: 'object', description: 'Privacy metadata for this response' },
           memories: { type: 'array', items: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
             id: { type: 'string' },
             content: { type: 'string' },
             tags: { type: 'array', items: { type: 'string' } },
@@ -60,7 +59,7 @@ router.get('/', (_req: Request, res: Response) => {
           }}},
           count: { type: 'integer' },
           confidence_per_section: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' }, retrieval: { type: 'number' }, relevance: { type: 'number' } } },
+          retrieval: { type: 'number' }, relevance: { type: 'number' } } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } },
         }}}}}}}},
@@ -96,7 +95,7 @@ router.get('/', (_req: Request, res: Response) => {
           compressed_tokens: { type: 'integer' },
           compression_ratio: { type: 'number' },
           confidence_per_section: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' }, compression: { type: 'number' } } },
+          compression: { type: 'number' } } },
           chain_to: { type: 'array', items: { type: 'string' } },
         }}}}}}}},
       '/extract': { post: { operationId: 'extractFromMemory', summary: 'Extract facts, entities or summary from memory content', 'x-agent-callable': true,
@@ -110,11 +109,10 @@ router.get('/', (_req: Request, res: Response) => {
           privacy: { type: 'object', description: 'Privacy metadata for this response' },
           type: { type: 'string' },
           items: { type: 'array', items: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' }, value: { type: 'string' }, confidence: { type: 'number', minimum: 0, maximum: 1 } } } },
+            value: { type: 'string' }, confidence: { type: 'number', minimum: 0, maximum: 1 } } } },
           count: { type: 'integer' },
           confidence_per_section: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' }, extraction: { type: 'number' } } },
+          extraction: { type: 'number' } } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } },
         }}}}}}}},
@@ -123,9 +121,81 @@ router.get('/', (_req: Request, res: Response) => {
           privacy: { type: 'object', description: 'Privacy metadata for this response' },
           confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           sessions: { type: 'array', items: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' }, id: { type: 'string' }, memory_count: { type: 'integer' }, created_at: { type: 'string', format: 'date-time' }, last_active: { type: 'string', format: 'date-time' } } } },
+          id: { type: 'string' }, memory_count: { type: 'integer' }, created_at: { type: 'string', format: 'date-time' }, last_active: { type: 'string', format: 'date-time' } } } },
           count: { type: 'integer' },
+        }}}}}}}},
+
+      '/update': { post: { operationId: 'updateMemory', summary: 'Update an existing memory by ID', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['id', 'session_id'], properties: {
+          id: { type: 'string', description: 'Memory ID to update' },
+          session_id: { type: 'string' },
+          content: { type: 'string', description: 'New content (optional)' },
+          tags: { type: 'array', items: { type: 'string' } },
+          importance: { type: 'number', minimum: 0, maximum: 1 },
+        }}}}},
+        responses: { '200': { description: 'Memory updated', content: { 'application/json': { schema: { type: 'object', properties: {
+          id: { type: 'string' }, updated: { type: 'boolean' },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'array', items: { type: 'string' } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        }}}}}}}},
+      '/delete': { post: { operationId: 'deleteMemory', summary: 'Delete a memory by ID', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['id', 'session_id'], properties: {
+          id: { type: 'string', description: 'Memory ID to delete' },
+          session_id: { type: 'string' },
+        }}}}},
+        responses: { '200': { description: 'Memory deleted', content: { 'application/json': { schema: { type: 'object', properties: {
+          id: { type: 'string' }, deleted: { type: 'boolean' },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'array', items: { type: 'string' } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        }}}}}}}},
+      '/merge': { post: { operationId: 'mergeMemories', summary: 'Merge duplicate or related memories into one', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['ids', 'session_id'], properties: {
+          ids: { type: 'array', items: { type: 'string' }, minItems: 2, description: 'Memory IDs to merge' },
+          session_id: { type: 'string' },
+          strategy: { type: 'string', enum: ['concatenate', 'summarize', 'deduplicate'], default: 'deduplicate' },
+        }}}}},
+        responses: { '200': { description: 'Merged memory', content: { 'application/json': { schema: { type: 'object', properties: {
+          merged_id: { type: 'string' }, deleted_ids: { type: 'array', items: { type: 'string' } },
+          content: { type: 'string' }, strategy_used: { type: 'string' },
+          confidence: { type: 'number', minimum: 0, maximum: 1 },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'array', items: { type: 'string' } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        }}}}}}}},
+      '/forget': { post: { operationId: 'forgetMemories', summary: 'Bulk forget memories by tag, scope, or age', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['session_id'], properties: {
+          session_id: { type: 'string' },
+          tags: { type: 'array', items: { type: 'string' }, description: 'Delete all memories with these tags' },
+          scope: { type: 'string', enum: ['session', 'agent', 'global'] },
+          older_than_hours: { type: 'number', description: 'Delete memories older than N hours' },
+          min_importance_below: { type: 'number', minimum: 0, maximum: 1, description: 'Delete memories with importance below this threshold' },
+        }}}}},
+        responses: { '200': { description: 'Memories forgotten', content: { 'application/json': { schema: { type: 'object', properties: {
+          deleted_count: { type: 'integer' }, criteria_used: { type: 'object' },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'array', items: { type: 'string' } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        }}}}}}}},
+      '/reflect': { post: { operationId: 'reflectOnMemory', summary: 'Analyze recent memories, identify failures, generate improved strategy', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['session_id'], properties: {
+          session_id: { type: 'string' },
+          agent_id: { type: 'string' },
+          window: { type: 'integer', default: 20, description: 'Number of recent memories to analyze' },
+          focus: { type: 'string', enum: ['failures', 'patterns', 'strategy', 'all'], default: 'all' },
+        }}}}},
+        responses: { '200': { description: 'Reflection output', content: { 'application/json': { schema: { type: 'object', properties: {
+          summary: { type: 'string', description: 'High-level reflection summary' },
+          failures_identified: { type: 'array', items: { type: 'string' }, description: 'Identified failure patterns' },
+          patterns: { type: 'array', items: { type: 'string' }, description: 'Recurring behavioral patterns' },
+          improved_strategy: { type: 'string', description: 'Suggested improved strategy going forward' },
+          memory_quality_score: { type: 'number', minimum: 0, maximum: 1, description: 'Overall quality score of memory set' },
+          confidence: { type: 'number', minimum: 0, maximum: 1 },
+          confidence_per_section: { type: 'object', properties: { failures: { type: 'number' }, patterns: { type: 'number' }, strategy: { type: 'number' } } },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'array', items: { type: 'string' } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         }}}}}}}},
       '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate agent action based on memory confidence and context', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['agent_id', 'action'], properties: {

@@ -54,12 +54,11 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
           net_flow_usd: { type: 'number' }, inflow_usd: { type: 'number' }, outflow_usd: { type: 'number' },
           whale_transactions: { type: 'integer' }, smart_money_score: { type: 'number', minimum: 0, maximum: 100 },
           confidence_per_section: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' }, flows: { type: 'number' }, source: { type: 'number' } } },
+          flows: { type: 'number' }, source: { type: 'number' } } },
           chain_to: { type: 'array', items: { type: 'string' } },
         }}}}}}}},
       '/analyze': { post: { operationId: 'analyzeAddress', summary: 'Deep on-chain activity analysis for an address', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address'], properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           address: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$' },
           chain: { type: 'string', default: 'ethereum' },
         }}}}},
@@ -69,7 +68,7 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
           activity_score: { type: 'number', minimum: 0, maximum: 100 },
           transaction_count: { type: 'integer' }, unique_contracts: { type: 'integer' },
           is_whale: { type: 'boolean' }, is_smart_money: { type: 'boolean' },
-          behavior_tags: { type: 'array', items: { type: 'string' } },
+          behavior_tags: { type: 'array', items: { type: 'string', enum: ['accumulator', 'distributor', 'whale', 'smart_money', 'bot', 'defi_user', 'nft_trader', 'high_frequency', 'dormant', 'new_wallet'] } },
           confidence_per_section: { type: 'object' },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } },

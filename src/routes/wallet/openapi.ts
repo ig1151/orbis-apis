@@ -51,13 +51,11 @@ router.get('/', (_req: Request, res: Response) => {
             usd_value: { type: 'number', nullable: true },
           }}},
           confidence_per_section: { type: 'object', properties: {
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' }, balances: { type: 'number' }, prices: { type: 'number' } } },
+          balances: { type: 'number' }, prices: { type: 'number' } } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } },
           privacy: { type: 'object', properties: {
-          recommended_actions_priority_order: { type: 'array', items: { type: 'string' }, description: 'Ordered list of recommended next actions for the agent' },
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' }, data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+          data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         }}}}}}}},
       '/tokens/{address}': { get: { operationId: 'getTokens', summary: 'Get ERC-20 token holdings for a wallet', 'x-agent-callable': true,
         parameters: [
@@ -84,11 +82,9 @@ router.get('/', (_req: Request, res: Response) => {
           { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 20, maximum: 100 } },
         ],
         responses: { '200': { description: 'Transaction history', content: { 'application/json': { schema: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           address: { type: 'string' },
           transactions: { type: 'array', items: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-            hash: { type: 'string' }, from: { type: 'string' }, to: { type: 'string' },
+          hash: { type: 'string' }, from: { type: 'string' }, to: { type: 'string' },
             value_eth: { type: 'string' }, value_usd: { type: 'number', nullable: true },
             gas_used: { type: 'integer' }, timestamp: { type: 'string', format: 'date-time' },
             status: { type: 'string', enum: ['success', 'failed'] },
@@ -100,22 +96,21 @@ router.get('/', (_req: Request, res: Response) => {
           { name: 'address', in: 'path', required: true, schema: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$' } },
         ],
         responses: { '200': { description: 'Portfolio snapshot', content: { 'application/json': { schema: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
           address: { type: 'string' }, chain: { type: 'string' },
           total_usd: { type: 'number' }, eth_usd: { type: 'number' }, tokens_usd: { type: 'number' },
           tokens: { type: 'array', items: { type: 'object' } },
           allocation: { type: 'array', items: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' }, asset: { type: 'string' }, pct: { type: 'number' } } } },
+          asset: { type: 'string' }, pct: { type: 'number' } } } },
           confidence_per_section: { type: 'object', properties: {
           privacy: { type: 'object', description: 'Privacy metadata for this response' },
           confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' }, balances: { type: 'number' }, prices: { type: 'number' } } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } },
+          transfer_simulation: { type: 'object', properties: { estimated_gas: { type: 'number' }, estimated_fee_eth: { type: 'string' }, feasible: { type: 'boolean' } }, description: 'Simulated transfer cost estimate' },
+          approval_risk_estimate: { type: 'object', properties: { risk_level: { type: 'string', enum: ['low', 'medium', 'high'] }, flags: { type: 'array', items: { type: 'string' } } }, description: 'Risk estimate before approving a transaction' },
         }}}}}}}},
       '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate agent action based on wallet state', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address', 'action'], properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           address: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$' },
           action: { type: 'string' },
           min_balance_eth: { type: 'number', description: 'Minimum ETH balance required' },

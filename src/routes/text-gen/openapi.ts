@@ -38,18 +38,16 @@ router.get('/', (_req: Request, res: Response) => {
             completion_tokens: { type: 'integer' },
           }},
           execution_ready: { type: 'boolean' },
-          confidence_per_section: { type: 'object', properties: {
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' }, generation: { type: 'number', minimum: 0, maximum: 1 }, safety: { type: 'number', minimum: 0, maximum: 1 } } },
+          confidence_per_section: { type: 'object', properties: { generation: { type: 'number', minimum: 0, maximum: 1 }, safety: { type: 'number', minimum: 0, maximum: 1 } } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' }, description: 'Suggested next endpoint e.g. ai-output-safety/check' },
-          privacy: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' }, data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+          model_capabilities: { type: 'object', properties: { supports_functions: { type: 'boolean' }, max_tokens: { type: 'integer' }, modalities: { type: 'array', items: { type: 'string' } } }, description: 'Capabilities of the model used' },
+          fallback_used: { type: 'boolean', description: 'True if primary provider failed and fallback was used' },
+          moderation_result: { type: 'object', properties: { flagged: { type: 'boolean' }, categories: { type: 'array', items: { type: 'string' } }, confidence: { type: 'number', minimum: 0, maximum: 1 } }, description: 'Content moderation result' },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         }}}}}}}},
       '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate text generation based on prompt safety and budget', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['prompt'], properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           prompt: { type: 'string' },
           max_cost: { type: 'number', description: 'Max allowed cost in USDC' },
           safety_check: { type: 'boolean', default: true },
