@@ -33,6 +33,58 @@ function parseQuote(d: Record<string, unknown>, symbol: string) {
 }
 
 // GET /quote?symbol=AAPL
+
+router.get('/openapi.json', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'Market Snapshot API',
+      version: '1.0.0',
+      description: 'Real-time stock market quotes, watchlists, search, and execution gating for autonomous agents.',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+      'x-pricing': { '/quote': 0.001, '/watchlist': 0.002, '/search': 0.001, '/compare': 0.002, '/execution-gate': 0.002 },
+    },
+    servers: [{ url: 'https://orbis-apis.onrender.com/market-snapshot' }],
+    paths: {
+      '/quote': {
+        get: { operationId: 'getQuote', summary: 'Get real-time stock quote', 'x-agent-callable': true,
+          parameters: [{ name: 'symbol', in: 'query', required: true, schema: { type: 'string' }, description: 'Ticker(s) e.g. AAPL or AAPL,MSFT' }],
+          responses: { '200': { description: 'Quote data', content: { 'application/json': { schema: { type: 'object', properties: {
+            success: { type: 'boolean' }, data: { type: 'object', properties: {
+              symbol: { type: 'string' }, name: { type: 'string' }, price: { type: 'number' },
+              change: { type: 'number' }, change_pct: { type: 'string' }, volume: { type: 'number' },
+              is_market_open: { type: 'boolean' }, confidence_per_section: { type: 'object' },
+            }}, latency_ms: { type: 'number' },
+          }}}}}}},
+        post: { operationId: 'postQuote', summary: 'Get quote via POST', 'x-agent-callable': true,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: {
+            symbol: { type: 'string' }, symbols: { type: 'array', items: { type: 'string' } },
+          }}}}},
+          responses: { '200': { description: 'Quote data' } }},
+      },
+      '/watchlist': { get: { operationId: 'getWatchlist', summary: 'Get quotes for multiple tickers', 'x-agent-callable': true,
+        parameters: [{ name: 'symbols', in: 'query', required: true, schema: { type: 'string' } }],
+        responses: { '200': { description: 'Watchlist quotes' } }}},
+      '/search': { get: { operationId: 'searchSymbol', summary: 'Search for ticker symbols', 'x-agent-callable': true,
+        parameters: [{ name: 'query', in: 'query', required: true, schema: { type: 'string' } }],
+        responses: { '200': { description: 'Search results' } }}},
+      '/compare': { post: { operationId: 'compareSymbols', summary: 'Compare multiple tickers side by side', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['symbols'], properties: {
+          symbols: { type: 'array', items: { type: 'string' }, minItems: 2, maxItems: 10 },
+        }}}}},
+        responses: { '200': { description: 'Comparison with winner and rankings' } }}},
+      '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate trading actions based on market conditions', 'x-agent-callable': true,
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['symbol', 'action'], properties: {
+          symbol: { type: 'string' }, action: { type: 'string', enum: ['buy', 'sell', 'hold'] },
+          threshold_pct: { type: 'number', default: 3 },
+        }}}}},
+        responses: { '200': { description: 'Execution gate decision with execute bool and chain_to' } }}},
+      '/health': { get: { operationId: 'health', summary: 'Health check', responses: { '200': { description: 'OK' } }}},
+    },
+  });
+});
+
 router.get('/quote', async (req: Request, res: Response) => {
   const symbol = (req.query.symbol as string || '').toUpperCase().trim();
   if (!symbol) { res.status(400).json({ error: 'Provide symbol as query param, e.g. /quote?symbol=AAPL' }); return; }
