@@ -15,6 +15,7 @@ lookupRouter.get('/', async (req: Request, res: Response, next: NextFunction) =>
   } catch (err) { next(err); }
 });
 
+lookupRouter.post('/lookup', async (req, res) => { req.url = '/'; (lookupRouter as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 lookupRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = lookupSchema.validate(req.body, { abortEarly: false });

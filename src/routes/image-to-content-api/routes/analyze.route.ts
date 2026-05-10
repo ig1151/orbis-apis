@@ -8,6 +8,7 @@ import type { AnalyzeRequest, BatchRequest } from '../types/index';
 export const analyzeRouter = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: config.upload.maxFileSizeMb * 1024 * 1024 }, fileFilter: (_req, file, cb) => { config.upload.allowedMimeTypes.includes(file.mimetype) ? cb(null, true) : cb(new Error(`Unsupported mime type: ${file.mimetype}`)); } });
 
+analyzeRouter.post('/analyze', async (req, res) => { req.url = '/'; (analyzeRouter as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 analyzeRouter.post('/', upload.single('image_file'), async (req: Request, res: Response, next: NextFunction) => {
   try {
     let body: AnalyzeRequest = req.body;

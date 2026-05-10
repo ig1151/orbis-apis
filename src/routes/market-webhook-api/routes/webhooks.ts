@@ -50,6 +50,7 @@ router.post('/', (req: Request, res: Response): void => {
   res.status(201).json(webhook);
 });
 
+router.get('/subscriptions', (_req, res) => { _req.url = '/'; (router as any).handle(_req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.get('/', (_req: Request, res: Response): void => {
   const webhooks = getAllWebhooks();
   res.json({ count: webhooks.length, webhooks });

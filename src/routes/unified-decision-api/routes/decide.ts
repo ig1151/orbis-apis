@@ -25,6 +25,7 @@ const schema = Joi.object({
   primary_asset: Joi.string().min(1).max(20).optional()
 });
 
+router.post('/decide', async (req, res) => { req.url = '/'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   const { error, value } = schema.validate(req.body);
   if (error) {

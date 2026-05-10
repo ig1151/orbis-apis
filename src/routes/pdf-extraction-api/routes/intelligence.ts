@@ -21,6 +21,7 @@ async function callClaude(prompt: string, maxTokens = 1500): Promise<Record<stri
   } catch { return { raw: data.choices[0].message.content }; }
 }
 
+router.post('/extract', async (req, res) => { req.url = '/extract-invoice'; (router as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 router.post('/extract-invoice', async (req: Request, res: Response) => {
   const { text, context } = req.body;
   if (!text) { res.status(400).json({ error: 'Provide text' }); return; }

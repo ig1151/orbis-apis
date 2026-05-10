@@ -4,6 +4,7 @@ import { checkToken } from '../services/token.service';
 import type { CheckRequest, BatchRequest } from '../types/index';
 export const tokenRouter = Router();
 
+tokenRouter.post('/score', async (req, res) => { req.url = '/check'; (tokenRouter as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 tokenRouter.post('/check', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error, value } = checkSchema.validate(req.body, { abortEarly: false });
