@@ -154,4 +154,22 @@ Return JSON: { "execute": true, "entity_id": "string", "action_type": "string", 
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+
+router.post('/policy-check', async (req: Request, res: Response) => {
+  const { entity_id, policy_domain, action, context, jurisdiction } = req.body;
+  if (!entity_id) return res.status(400).json({ error: 'entity_id is required' });
+  if (!policy_domain) return res.status(400).json({ error: 'policy_domain is required' });
+  if (!action) return res.status(400).json({ error: 'action is required' });
+  try {
+    const raw = await callClaude(`Check non-financial policy compliance for an agent action. Assess against HR, legal, healthcare, advertising, platform terms, or data privacy policies. Return permitted/blocked decision with policy citations and remediation steps.
+Entity ID: "${entity_id}" Policy domain: "${policy_domain}" Action: "${action}" Jurisdiction: "${jurisdiction || 'global'}" Context: ${JSON.stringify(context || {})}
+
+Policy domains include: hr (employment, discrimination, harassment), legal (IP, contracts, liability), healthcare (HIPAA, patient data, medical advice), advertising (FTC, GDPR consent, deceptive practices), platform (ToS violations, content policy, rate limits), data_privacy (GDPR, CCPA, data retention), content (copyright, defamation, hate speech).
+
+Return JSON: { "entity_id": "string", "policy_domain": "string", "action": "string", "permitted": true, "risk_level": "low|medium|high|critical", "policy_violations": [{"policy":"string","section":"string","severity":"low|medium|high","description":"string"}], "warnings": ["string"], "citations": [{"policy_name":"string","section":"string","url":"string or null"}], "jurisdiction_specific": [{"jurisdiction":"string","requirement":"string","status":"compliant|non_compliant|unknown"}], "remediation_steps": ["string"], "human_review_required": false, "recommended_action": "proceed|modify|escalate|block", "chain_to": ["compliance/audit-trail","compliance/execution-gate"], "confidence_per_section": {"policy_check":0.9,"jurisdiction":0.85}, "recommended_actions_priority_order": ["string"], "privacy": {"data_stored":false,"retention":"none"} }`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 export default router;
+
