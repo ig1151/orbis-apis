@@ -53,6 +53,7 @@ app.get('/v1/health', (_req, res) => {
 });
 
 app.use('/v1/memory', memoryRouter);
+app.use('/', memoryRouter);
 app.use('/v1/sessions', sessionsRouter);
 app.use('/docs', docsRouter);
 app.use('/openapi.json', openapiRouter);
