@@ -556,6 +556,7 @@ app.use('/liquidation-feed', liquidationFeedInfoRouter);
 app.use('/market-stress', marketStressInfoRouter);
 app.use('/wallet', walletInfoRouter);
 app.use('/stablecoin-yield', stablecoinYieldInfoRouter);
+app.use('/meta-strategy/openapi.json', metaStrategyDocsRouter);
 app.use('/meta-strategy', metaStrategyInfoRouter);
 app.use('/social-sentiment', socialSentimentInfoRouter);
 app.use('/action', actionInfoRouter);
@@ -681,6 +682,7 @@ app.use('/token-screener/opportunities', tokenOpportunitiesRouter);
 
 // ── Meta Strategy ─────────────────────────────────────────────────────────────
 import metaStrategyScanRouter from './routes/meta-strategy-api/routes/scan';
+import metaStrategyDocsRouter from './routes/meta-strategy-api/routes/docs';
 app.use('/meta-strategy/scan', metaStrategyScanRouter);
 
 // ── Token Unlock ──────────────────────────────────────────────────────────────
