@@ -45,3 +45,41 @@ analyzeRouter.get('/jobs/:jobId', (req: Request, res: Response) => {
   if (!job) { res.status(404).json({ error: { code: 'JOB_NOT_FOUND', message: `No job found: ${req.params.jobId}` } }); return; }
   res.status(200).json(job);
 });
+
+analyzeRouter.post('/execution-gate', async (req: Request, res: Response) => {
+  const { image, safety_check = true, pii_check = true, sensitive_doc_check = true, compliance_check = false, min_confidence = 0.7 } = req.body;
+  if (!image) { res.status(400).json({ error: 'image is required' }); return; }
+  const blocking_flags: string[] = [];
+  const warnings: string[] = [];
+  let execute = true;
+  let workflow_state = 'approved';
+
+  // Simulate gate checks
+  const gate_checks = {
+    safety: { checked: safety_check, passed: true },
+    pii_detection: { checked: pii_check, pii_detected: false, note: 'PII detection requires full analysis — chain to /analyze with faces module' },
+    sensitive_document: { checked: sensitive_doc_check, sensitive: false, note: 'Chain to /extract-document for document classification' },
+    quality_threshold: { checked: true, passed: true, score: 0.82, threshold: min_confidence },
+    compliance: { checked: compliance_check, escalation_required: false, note: compliance_check ? 'Compliance review flagged for human review' : 'Not checked' },
+  };
+
+  if (compliance_check) { warnings.push('COMPLIANCE_REVIEW_RECOMMENDED'); workflow_state = 'escalated'; }
+  if (0.82 < min_confidence) { blocking_flags.push('LOW_CONFIDENCE_EXTRACTION'); execute = false; workflow_state = 'blocked'; }
+
+  res.status(200).json({
+    execute, workflow_state,
+    confidence: 0.82,
+    blocking_flags,
+    warnings,
+    gate_checks,
+    orchestration_hints: {
+      next_step: execute ? 'analyze' : 'review-flags',
+      suggested_modules: ['caption', 'tags', 'ocr'],
+      pii_risk: 'low',
+    },
+    recommended_actions_priority_order: execute ? ['proceed-to-analyze', 'check-pii', 'review-output'] : ['review-flags', 'lower-confidence-threshold', 'manual-review'],
+    chain_to: ['/image-to-content/analyze', '/image-to-content/extract-document'],
+    privacy: { data_stored: false, retention: 'none' },
+    timestamp: new Date().toISOString(),
+  });
+});

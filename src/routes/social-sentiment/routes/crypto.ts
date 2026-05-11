@@ -52,11 +52,25 @@ router.get('/:symbol', async (req: Request, res: Response) => {
     const trace_id = `sent_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
     const execution_id = `exec_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
     const source_provenance = buildSourceProvenance(posts);
+    const score = sentiment.sentiment_score ?? 0;
+    const conf = sentiment.confidence ?? 0;
+    const market_regime = {
+      state: Math.abs(score) > 0.6 ? 'high_volatility' : Math.abs(score) > 0.3 ? 'moderate' : 'low_volatility',
+      risk_level: Math.abs(score) > 0.6 ? 'elevated' : Math.abs(score) > 0.3 ? 'moderate' : 'low',
+      signal_reliability: parseFloat((conf * (1 - Math.abs(score) * 0.2)).toFixed(2)),
+      regime_confidence: conf,
+      instability_detected: Math.abs(score) > 0.7 && conf < 0.6,
+    };
+    const session_id = req.query.session_id as string || null;
     return res.json({
       symbol: value.symbol,
-      trace_id, execution_id,
+      trace_id, execution_id, session_id,
+      workflow_state: 'completed',
+      retryable: false,
+      orchestration_hints: { next_step: 'narrative-cluster', suggested_gate_threshold: 0.4, chain_ready: true },
       ...sentiment,
       source_provenance,
+      market_regime,
       recommended_actions_priority_order: ['check-history', 'narrative-cluster', 'execution-gate'],
       chain_to: ['/social-sentiment/history/' + value.symbol, '/social-sentiment/narrative-cluster', '/alpha-signal/scan-signals'],
       privacy: { data_stored: false, retention: 'none' },
@@ -84,11 +98,25 @@ router.post('/:symbol', async (req: Request, res: Response) => {
     const trace_id = `sent_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
     const execution_id = `exec_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
     const source_provenance = buildSourceProvenance(posts);
+    const score = sentiment.sentiment_score ?? 0;
+    const conf = sentiment.confidence ?? 0;
+    const market_regime = {
+      state: Math.abs(score) > 0.6 ? 'high_volatility' : Math.abs(score) > 0.3 ? 'moderate' : 'low_volatility',
+      risk_level: Math.abs(score) > 0.6 ? 'elevated' : Math.abs(score) > 0.3 ? 'moderate' : 'low',
+      signal_reliability: parseFloat((conf * (1 - Math.abs(score) * 0.2)).toFixed(2)),
+      regime_confidence: conf,
+      instability_detected: Math.abs(score) > 0.7 && conf < 0.6,
+    };
+    const session_id = req.query.session_id as string || null;
     return res.json({
       symbol: value.symbol,
-      trace_id, execution_id,
+      trace_id, execution_id, session_id,
+      workflow_state: 'completed',
+      retryable: false,
+      orchestration_hints: { next_step: 'narrative-cluster', suggested_gate_threshold: 0.4, chain_ready: true },
       ...sentiment,
       source_provenance,
+      market_regime,
       recommended_actions_priority_order: ['check-history', 'narrative-cluster', 'execution-gate'],
       chain_to: ['/social-sentiment/history/' + value.symbol, '/social-sentiment/narrative-cluster', '/alpha-signal/scan-signals'],
       privacy: { data_stored: false, retention: 'none' },
