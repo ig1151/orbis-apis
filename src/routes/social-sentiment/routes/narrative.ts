@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Router, Request, Response } from 'express';
 import Joi from 'joi';
 import axios from 'axios';
@@ -41,8 +42,11 @@ Group them into 2-4 narrative clusters. Return ONLY valid JSON:
     const text = res2.data?.choices?.[0]?.message?.content || '{}';
     const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
 
+    const trace_id = `nar_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
+    const execution_id = `exec_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
     return res.json({
       symbol: value.symbol,
+      trace_id, execution_id,
       ...parsed,
       confidence: 0.78,
       recommended_actions_priority_order: ['monitor-dominant-narrative', 'check-conflict', 'execution-gate'],

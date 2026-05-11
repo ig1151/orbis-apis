@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Router, Request, Response } from 'express';
 import Joi from 'joi';
 import axios from 'axios';
@@ -47,8 +48,11 @@ Content: ${text.slice(0, 6000)}`;
     const raw = res2.data?.choices?.[0]?.message?.content || '{}';
     const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
 
+    const trace_id = `evt_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
+    const execution_id = `exec_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
     return res.json({
       symbol: value.symbol,
+      trace_id, execution_id,
       ...parsed,
       recommended_actions_priority_order: ['review-high-impact-events', 'execution-gate', 'alpha-signal'],
       chain_to: ['/social-sentiment/execution-gate', '/alpha-signal/detect-event'],

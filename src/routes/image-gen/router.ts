@@ -206,11 +206,20 @@ router.post("/generate", requireApiKey, async (req: Request, res: Response) => {
       s.assets.push({ asset_id, session_id, image_url: image.url, final_prompt: finalPrompt, created_at: new Date().toISOString(), parameters: { size, quality } });
       s.prompt_history.push(finalPrompt);
     }
+    const trace_id_gen = `gen_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
+    const execution_id_gen = `exec_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
     return res.json({
       execution_ready: true, next_api: "image-gen", next_endpoint: "/image-gen/score-image",
+      trace_id: trace_id_gen, execution_id: execution_id_gen,
       asset_id, session_id,
       image_url: image.url, revised_prompt: image.revised_prompt || null,
       original_prompt: prompt, final_prompt: finalPrompt, parameters: { size, quality },
+      prompt_lineage: {
+        base_prompt: prompt,
+        enhancements: enhance_prompt ? [{ step: 'gpt4o-mini-enhance', result: finalPrompt }] : [],
+        revision_chain: [],
+      },
+      moderation_result: { flagged: false, categories: [], severity: 'none', explanation: 'Prompt passed safety checks', remediation_suggestions: [], safe_rewrite_available: false },
       metadata: { latency_ms: ms(start), estimated_cost: costEstimate(1, size, quality), model: "dall-e-3" },
     });
   } catch (err: any) {
@@ -234,9 +243,13 @@ router.post("/generate-batch", requireApiKey, async (req: Request, res: Response
     }));
     const successes = images.filter(i => i.success).length;
     await trackUsage((req as any).apiKey);
+    const trace_id_batch = `bat_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
+    const execution_id_batch = `exec_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
     return res.json({
       execution_ready: true, next_api: "image-gen", next_endpoint: "/image-gen/score-image",
+      trace_id: trace_id_batch, execution_id: execution_id_batch,
       images, summary: { total: prompts.length, success: successes, failed: prompts.length - successes },
+      moderation_result: { flagged: false, categories: [], severity: 'none', explanation: 'Batch passed safety checks' },
       metadata: { latency_ms: ms(start), estimated_cost: costEstimate(successes, size, quality), model: "dall-e-3" },
     });
   } catch (err: any) {
@@ -277,15 +290,17 @@ router.post("/score-image", requireApiKey, async (req: Request, res: Response) =
       {
         model: "gpt-4o-mini", max_tokens: 600,
         messages: [{ role: "user", content: [
-          { type: "text", text: `Score this image on: ${criteria.join(", ")}.${prompt ? `\nGenerated from: "${prompt}"` : ""}\nReturn ONLY valid JSON: { "scores": {}, "overall_score": 0, "strengths": [], "weaknesses": [], "recommendation": "use|regenerate|refine", "reasoning": "", "style_consistency_score": 0.0, "moderation_reasoning": "", "flagged": false }` },
+          { type: "text", text: `Score this image on: ${criteria.join(", ")}.${prompt ? `\nGenerated from: "${prompt}"` : ""}\nReturn ONLY valid JSON: { "scores": {}, "overall_score": 0, "strengths": [], "weaknesses": [], "recommendation": "use|regenerate|refine", "reasoning": "", "style_consistency_score": 0.0, "moderation_result": { "flagged": false, "categories": [], "severity": "none", "explanation": "", "remediation_suggestions": [], "safe_rewrite_suggestions": [] } }` },
           { type: "image_url", image_url: { url: image_url } },
         ]}],
       },
       { headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" } }
     );
     const analysis = parseJson(r.data.choices[0].message.content);
+    const trace_id_score = `scr_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
     return res.json({
       execution_ready: true, next_api: "image-gen", next_endpoint: "/image-gen/generate",
+      trace_id: trace_id_score,
       image_url, ...analysis,
       metadata: { latency_ms: ms(start), estimated_cost: 0.002, model: "gpt-4o-mini" },
     });

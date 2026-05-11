@@ -40,6 +40,8 @@ export interface FacesResult {
   suitable_for_professional?: boolean;
   suitable_for_social?: boolean;
 }
-export interface AnalyzeResponse { id: string; status: JobStatus; model: string; caption?: CaptionResult; summary?: SummaryResult; tags?: TagResult[]; metadata?: MetadataResult; sentiment?: SentimentResult; ocr?: OcrResult; faces?: FacesResult; latency_ms: number; usage: UsageResult; created_at: string; }
+export interface ConfidencePerSection { caption?: number | null; tags?: number | null; ocr?: number | null; faces?: number | null; layout?: number | null; entity_detection?: number | null; }
+export interface VisualReasoning { contradiction_detected: boolean; visual_text_alignment_score?: number | null; semantic_anomaly_detected: boolean; reasoning_summary: string; }
+export interface AnalyzeResponse { id: string; execution_id?: string; status: JobStatus; model: string; caption?: CaptionResult; summary?: SummaryResult; tags?: TagResult[]; metadata?: MetadataResult; sentiment?: SentimentResult; ocr?: OcrResult; faces?: FacesResult; confidence_per_section?: ConfidencePerSection; visual_reasoning?: VisualReasoning; latency_ms: number; usage: UsageResult; created_at: string; }
 export interface Job { job_id: string; status: JobStatus; created_at: string; completed_at?: string; result?: AnalyzeResponse; error?: string; }
 export interface BatchRequest { images: AnalyzeRequest[]; }

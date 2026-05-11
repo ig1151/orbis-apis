@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 import Joi from 'joi';
 import axios from 'axios';
 import { analyzeSentiment } from '../services/sentiment.service';
@@ -60,9 +61,12 @@ router.get('/:symbol', async (req: Request, res: Response) => {
       ? latest.sentiment_score - earliest.sentiment_score
       : 0;
 
+    const trace_id = `hist_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
+    const execution_id = `exec_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
     return res.json({
       symbol: value.symbol,
       window: value.window,
+      trace_id, execution_id,
       trend_windows,
       momentum: parseFloat(momentum.toFixed(3)),
       momentum_direction: momentum > 0.1 ? 'improving' : momentum < -0.1 ? 'deteriorating' : 'stable',
