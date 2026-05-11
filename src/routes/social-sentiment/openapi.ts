@@ -24,8 +24,9 @@ router.get('/', (_req: Request, res: Response) => {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
       responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
         title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
-        endpoints: { type: 'array', items: { type: 'string' } },
         status: { type: 'string', enum: ['ok'] },
+        privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        endpoints: { type: 'array', items: { type: 'object', properties: { path: { type: 'string' }, method: { type: 'string' }, price_usdc: { type: 'number' }, description: { type: 'string' } } } },
       } } } } } } } },
       '/crypto-sentiment/{symbol}': { get: { operationId: 'getCryptoSentiment', summary: 'Get real-time social sentiment for a crypto asset', 'x-agent-callable': true, 'x-human-approval-required': true,
         parameters: [{ name: 'symbol', in: 'path', required: true, schema: { type: 'string', enum: ['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','LINK','DOT','MATIC','UNI','ARB','OP','SUI','APT','PEPE','WIF','BONK','INJ','TIA','ATOM','NEAR','FET'] }, description: 'Crypto asset symbol' }],

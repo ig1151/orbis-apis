@@ -16,6 +16,7 @@ router.get('/', (_req: Request, res: Response) => {
       'x-mcp-compatible': true,
       'x-execution-gate-required': true,
       'x-paper-mode-recommended': false,
+      privacy: { data_stored: false, retention: 'none' },
       'x-pricing': { '/analyze-store': 0.008, '/product-intelligence': 0.005, '/conversion-audit': 0.005, '/competitor-stores': 0.004, '/seo-audit': 0.005, '/pricing-strategy': 0.005, '/ad-intelligence': 0.006, '/growth-signals': 0.005, '/execution-gate': 0.002, '/analyze-shopify-store': 0.02 },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/shopify-analyzer' }],
@@ -45,6 +46,7 @@ router.get('/', (_req: Request, res: Response) => {
                 growth_potential: { type: 'object', properties: { score: { type: 'number' }, primary_opportunity: { type: 'string' }, estimated_upside: { type: 'string' } } },
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
+                chain_to: actions,
                 privacy,
               } } } },
             },
@@ -69,6 +71,7 @@ router.get('/', (_req: Request, res: Response) => {
                 winning_factors: actions,
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
+                chain_to: actions,
                 privacy,
               } } } },
             },
@@ -93,6 +96,7 @@ router.get('/', (_req: Request, res: Response) => {
                 mobile_experience: { type: 'object', properties: { score: { type: 'number' }, issues: actions, priority_fixes: actions } },
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
+                chain_to: actions,
                 privacy,
               } } } },
             },
@@ -152,7 +156,7 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'pricingStrategy',
           summary: 'Pricing model, bundle opportunities, discount strategy and psychological pricing',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['products','niche'], properties: { products: { type: 'array', items: { type: 'object' } }, niche: { type: 'string' }, business_model: { type: 'string' }, target_margin: { type: 'string' } } } } } },
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['products','niche'], properties: { products: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, current_price: { type: 'string' }, cost: { type: 'string' }, category: { type: 'string' } } } }, niche: { type: 'string' }, business_model: { type: 'string' }, target_margin: { type: 'string' } } } } } },
           responses: {
             '200': {
               description: 'Pricing strategy result',

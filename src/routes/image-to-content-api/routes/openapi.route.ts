@@ -21,8 +21,9 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
       responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
         title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
-        endpoints: { type: 'array', items: { type: 'string' } },
         status: { type: 'string', enum: ['ok'] },
+        privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        endpoints: { type: 'array', items: { type: 'object', properties: { path: { type: 'string' }, method: { type: 'string' }, price_usdc: { type: 'number' }, description: { type: 'string' } } } },
       } } } } } } } },
       '/analyze': { post: { operationId: 'analyzeImage', summary: 'Analyze an image and extract structured content', 'x-agent-callable': true, 'x-human-approval-required': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['image'], properties: {

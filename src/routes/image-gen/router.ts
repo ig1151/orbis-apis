@@ -359,7 +359,9 @@ router.get("/openapi.json", (_req, res) => {
           } } } } },
           responses: { "200": { description: "Image generated", content: { "application/json": { schema: { type: "object", properties: {
             execution_ready: { type: "boolean" },
-            image_url: { type: "string", description: "DALL-E 3 generated image URL" },
+            image_url: { type: "string", format: "uri", description: "DALL-E 3 generated image URL" },
+            confidence: { type: "number", minimum: 0, maximum: 1, description: "Generation confidence score" },
+            moderation_result: { type: "object", properties: { flagged: { type: "boolean" }, categories: { type: "array", items: { type: "string" } } } },
             revised_prompt: { type: "string", description: "DALL-E revised prompt if modified" },
             original_prompt: { type: "string" },
             final_prompt: { type: "string" },
@@ -383,6 +385,8 @@ router.get("/openapi.json", (_req, res) => {
           } } } } },
           responses: { "200": { description: "Batch results", content: { "application/json": { schema: { type: "object", properties: {
             execution_ready: { type: "boolean" },
+            confidence: { type: "number", minimum: 0, maximum: 1 },
+            moderation_result: { type: "object", properties: { flagged: { type: "boolean" }, categories: { type: "array", items: { type: "string" } } } },
             images: { type: "array", items: { type: "object", properties: { index: { type: "integer" }, prompt: { type: "string" }, success: { type: "boolean" }, image_url: { type: "string", nullable: true }, revised_prompt: { type: "string", nullable: true }, error: { type: "string", nullable: true } } } },
             summary: { type: "object", properties: { total: { type: "integer" }, success: { type: "integer" }, failed: { type: "integer" } } },
             metadata: { type: "object", properties: { latency_ms: { type: "number" }, estimated_cost: { type: "number" }, model: { type: "string" } } },
@@ -397,15 +401,16 @@ router.get("/openapi.json", (_req, res) => {
           operationId: "describePrompt",
           summary: "Turn a concept into an optimized DALL-E 3 prompt plus 3 variants",
           "x-agent-callable": true,
-          requestBody: { required: true, content: { "application/json": { schema: { type: "object", properties: {
-            concept: { type: "string" }, subject: { type: "string" }, style: { type: "string" },
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["concept"], properties: {
+            concept: { type: "string", description: "Core concept or idea to visualize" }, subject: { type: "string" }, style: { type: "string" },
             mood: { type: "string" }, additional_details: { type: "string" },
           } } } } },
           responses: { "200": { description: "Optimized prompt and variants", content: { "application/json": { schema: { type: "object", properties: {
             execution_ready: { type: "boolean" },
+            confidence: { type: "number", minimum: 0, maximum: 1 },
             optimized_prompt: { type: "string" },
             variants: { type: "array", items: { type: "string" } },
-            inputs: { type: "object" },
+            inputs: { type: "object", properties: { concept: { type: "string" }, subject: { type: "string" }, style: { type: "string" }, mood: { type: "string" }, additional_details: { type: "string" } } },
             metadata: { type: "object", properties: { latency_ms: { type: "number" }, estimated_cost: { type: "number" }, model: { type: "string" } } },
             recommended_actions_priority_order: { type: "array", items: { type: "string" } },
             chain_to: { type: "array", items: { type: "string" } },
