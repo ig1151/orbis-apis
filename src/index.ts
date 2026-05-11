@@ -682,7 +682,7 @@ app.use('/token-screener/opportunities', tokenOpportunitiesRouter);
 // ── Meta Strategy ─────────────────────────────────────────────────────────────
 import metaStrategyScanRouter from './routes/meta-strategy-api/routes/scan';
 import metaStrategyDocsRouter from './routes/meta-strategy-api/routes/docs';
-app.use('/meta-strategy/openapi.json', metaStrategyDocsRouter);
+app.use('/meta-strategy', metaStrategyDocsRouter);
 app.use('/meta-strategy/scan', metaStrategyScanRouter);
 
 // ── Token Unlock ──────────────────────────────────────────────────────────────
@@ -1122,8 +1122,8 @@ import textGenRouter from './routes/text-gen/router';
 import textGenOpenapiRouter from './routes/text-gen/openapi';
 import geocodingRouter from './routes/geocoding/router';
 import webScraperRouter from './routes/web-scraper/router';
-app.use('/image-gen', imageGenInfoRouter);
 app.use('/image-gen', imageGenRouter);
+app.use('/image-gen', imageGenInfoRouter);
 app.use('/text-gen/openapi.json', textGenOpenapiRouter);
 app.use('/text-gen', textGenInfoRouter);
 app.use('/text-gen', textGenRouter);
