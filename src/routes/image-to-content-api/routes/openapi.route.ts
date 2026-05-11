@@ -62,8 +62,6 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           }}},
         }}}}},
         responses: { '200': { description: 'Batch results', content: { 'application/json': { schema: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           batch_id: { type: 'string' },
           total: { type: 'integer' },
           succeeded: { type: 'integer' },
