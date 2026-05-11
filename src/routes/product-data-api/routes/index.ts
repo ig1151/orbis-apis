@@ -114,4 +114,154 @@ router.post('/monitor', (req: Request, res: Response) => {
   res.json({ ...buildRuntime(req), success: true, monitor_id: 'monitor_id_value', active: 'active_value', current_price: 'current_price_value', current_availability: 'current_availability_value', computed_at: new Date().toISOString() });
 });
 
+
+// ── Workflow Runtime Layer ────────────────────────────────────────────────────
+const workflowStore: Record<string, any> = {};
+
+function createWorkflow(id: string, goal: string, steps: string[], meta: any) {
+  const now = new Date().toISOString();
+  workflowStore[id] = {
+    workflow_id:   id,
+    goal,
+    steps,
+    current_step:  steps[0] || 'finalize',
+    step_index:    0,
+    status:        'running',
+    created_at:    now,
+    updated_at:    now,
+    completed_steps: [],
+    pending_steps:   steps.slice(1),
+    results:       {},
+    meta,
+  };
+  return workflowStore[id];
+}
+
+function advanceWorkflow(id: string) {
+  const wf = workflowStore[id];
+  if (!wf) return null;
+  if (wf.step_index < wf.steps.length - 1) {
+    wf.completed_steps.push(wf.current_step);
+    wf.step_index += 1;
+    wf.current_step  = wf.steps[wf.step_index];
+    wf.pending_steps = wf.steps.slice(wf.step_index + 1);
+    wf.status        = wf.step_index === wf.steps.length - 1 ? 'complete' : 'running';
+  } else {
+    wf.completed_steps.push(wf.current_step);
+    wf.status        = 'complete';
+    wf.pending_steps = [];
+  }
+  wf.updated_at = new Date().toISOString();
+  return wf;
+}
+
+// POST /workflow/start
+router.post('/workflow/start', (req: Request, res: Response) => {
+  const { goal, steps, meta, session_id } = req.body || {};
+  const workflow_id = `wf_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+  const defaultSteps = ["validate_inputs", "fetch_source", "extract_structure", "score_confidence", "finalize"];
+  const wf = createWorkflow(workflow_id, goal || 'execute', steps || defaultSteps, meta || {});
+  res.json({
+    ...buildRuntime(req, {
+      workflow_state: 'running',
+      retryable: false,
+      orchestration_hints: {
+        can_chain:       true,
+        suggested_next:  ['GET /workflow/' + workflow_id],
+        requires_review: false,
+      },
+    }),
+    success:      true,
+    workflow_id,
+    goal:         wf.goal,
+    status:       wf.status,
+    current_step: wf.current_step,
+    steps:        wf.steps,
+    pending_steps:wf.pending_steps,
+    created_at:   wf.created_at,
+    estimated_steps: wf.steps.length,
+    computed_at:  new Date().toISOString(),
+  });
+});
+
+// GET /workflow/:id
+router.get('/workflow/:id', (req: Request, res: Response) => {
+  const wf = workflowStore[req.params.id];
+  if (!wf) return res.status(404).json({ success: false, error: 'Workflow not found', workflow_id: req.params.id });
+  res.json({
+    ...buildRuntime(req, { workflow_state: wf.status }),
+    success:          true,
+    workflow_id:      wf.workflow_id,
+    goal:             wf.goal,
+    status:           wf.status,
+    current_step:     wf.current_step,
+    step_index:       wf.step_index,
+    total_steps:      wf.steps.length,
+    completed_steps:  wf.completed_steps,
+    pending_steps:    wf.pending_steps,
+    progress_pct:     Math.round((wf.step_index / wf.steps.length) * 100),
+    created_at:       wf.created_at,
+    updated_at:       wf.updated_at,
+    results:          wf.results,
+    computed_at:      new Date().toISOString(),
+  });
+});
+
+// POST /workflow/:id/resume
+router.post('/workflow/:id/resume', (req: Request, res: Response) => {
+  const wf = workflowStore[req.params.id];
+  if (!wf) return res.status(404).json({ success: false, error: 'Workflow not found', workflow_id: req.params.id });
+  if (wf.status === 'complete') return res.json({
+    ...buildRuntime(req, { workflow_state: 'complete' }),
+    success: true, workflow_id: wf.workflow_id, status: 'complete', message: 'Workflow already complete',
+  });
+  const advanced = advanceWorkflow(req.params.id);
+  res.json({
+    ...buildRuntime(req, {
+      workflow_state: advanced!.status,
+      retryable: advanced!.status !== 'complete',
+      orchestration_hints: {
+        can_chain:       true,
+        suggested_next:  advanced!.status === 'complete' ? [] : ['POST /workflow/' + req.params.id + '/resume'],
+        requires_review: false,
+      },
+    }),
+    success:          true,
+    workflow_id:      advanced!.workflow_id,
+    status:           advanced!.status,
+    current_step:     advanced!.current_step,
+    completed_steps:  advanced!.completed_steps,
+    pending_steps:    advanced!.pending_steps,
+    progress_pct:     Math.round((advanced!.step_index / advanced!.steps.length) * 100),
+    updated_at:       advanced!.updated_at,
+    computed_at:      new Date().toISOString(),
+  });
+});
+
+// GET /workflow/:id/state
+router.get('/workflow/:id/state', (req: Request, res: Response) => {
+  const wf = workflowStore[req.params.id];
+  if (!wf) return res.status(404).json({ success: false, error: 'Workflow not found', workflow_id: req.params.id });
+  res.json({
+    ...buildRuntime(req, { workflow_state: wf.status }),
+    success:     true,
+    workflow_id: wf.workflow_id,
+    state_machine: {
+      current_state:   wf.current_step,
+      previous_states: wf.completed_steps,
+      next_states:     wf.pending_steps,
+      terminal:        wf.status === 'complete',
+      transitions:     wf.steps.map((s: string, i: number) => ({
+        step:    i + 1,
+        state:   s,
+        status:  i < wf.step_index ? 'complete' : i === wf.step_index ? 'active' : 'pending',
+      })),
+    },
+    meta:        wf.meta,
+    created_at:  wf.created_at,
+    updated_at:  wf.updated_at,
+    computed_at: new Date().toISOString(),
+  });
+});
+
 export default router;
