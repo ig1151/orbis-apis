@@ -1,3 +1,4 @@
+import { createDocumentSession, getDocumentSession, updateDocumentSession, listDocumentSessions } from '../services/session.service';
 import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import { analyzeSchema, batchSchema } from '../utils/validation';
@@ -11,7 +12,7 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: con
 analyzeRouter.post('/analyze', async (req, res) => { req.url = '/'; (analyzeRouter as any).handle(req, res, () => res.status(404).json({ error: 'Not found' })); });
 analyzeRouter.post('/', upload.single('image_file'), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let body: AnalyzeRequest = req.body;
+    let body: AnalyzeRequest & { session_id?: string } = req.body;
     if (req.file) body = { ...body, image: req.file.buffer.toString('base64'), image_format: req.file.mimetype.split('/')[1] as AnalyzeRequest['image_format'] };
     const { error, value } = analyzeSchema.validate(body, { abortEarly: false });
     if (error) { res.status(422).json({ error: { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details.map((d) => d.message) } }); return; }
@@ -82,4 +83,21 @@ analyzeRouter.post('/execution-gate', async (req: Request, res: Response) => {
     privacy: { data_stored: false, retention: 'none' },
     timestamp: new Date().toISOString(),
   });
+});
+
+analyzeRouter.post('/sessions/start', (req: Request, res: Response) => {
+  const { document_type } = req.body;
+  const session = createDocumentSession(document_type);
+  res.status(200).json({ session_id: session.session_id, document_type: session.document_type, created_at: session.created_at, pages: 0, extractions: [], workflow_state: 'active', chain_to: ['/image-to-content/analyze', '/image-to-content/extract-document'], privacy: { data_stored: false, retention: 'session_only' } });
+});
+
+analyzeRouter.get('/sessions/:session_id', (req: Request, res: Response) => {
+  const session = getDocumentSession(req.params.session_id);
+  if (!session) { res.status(404).json({ error: 'Session not found' }); return; }
+  res.status(200).json({ ...session, workflow_state: 'active', chain_to: ['/image-to-content/analyze', '/image-to-content/extract-document'], privacy: { data_stored: false, retention: 'session_only' } });
+});
+
+analyzeRouter.get('/sessions', (_req: Request, res: Response) => {
+  const sessions = listDocumentSessions();
+  res.status(200).json({ sessions, count: sessions.length, privacy: { data_stored: false, retention: 'session_only' } });
 });

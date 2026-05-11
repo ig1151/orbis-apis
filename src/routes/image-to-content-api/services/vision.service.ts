@@ -18,7 +18,7 @@ function buildPrompt(modules: Module[], language: string, maxTags: number, capti
   return `Analyze this image. Return ONLY valid JSON — no markdown, no explanation.\n${langNote}\n{\n  ${fields.join(',\n  ')}\n}`;
 }
 
-export async function analyzeImage(req: AnalyzeRequest): Promise<AnalyzeResponse> {
+export async function analyzeImage(req: AnalyzeRequest & { session_id?: string }): Promise<AnalyzeResponse> {
   const id = `req_${uuidv4().replace(/-/g, '').slice(0, 12)}`;
   const modules = req.modules ?? ['caption', 'summary', 'tags', 'metadata'];
   const language = req.language ?? 'en';
@@ -84,9 +84,11 @@ export async function analyzeImage(req: AnalyzeRequest): Promise<AnalyzeResponse
   logger.info({ id, latency: Date.now() - t0 }, 'Analysis complete');
 
   const execution_id = `exec_${id}`;
+  const session_id = req.session_id || null;
   return {
     id,
     execution_id,
+    session_id,
     status: 'success',
     model: MODEL,
     ...(parsed.caption ? { caption: parsed.caption as AnalyzeResponse['caption'] } : {}),
