@@ -1,4 +1,5 @@
 import complianceRouter from './routes/compliance-api/routes/intelligence';
+import metaStrategyDocsRouter from './routes/meta-strategy-api/routes/docs';
 import complianceOpenapiRouter from './routes/compliance-api/routes/openapi';
 import agentPaymentsRouter from './routes/agent-payments-api/routes/intelligence';
 import agentPaymentsOpenapiRouter from './routes/agent-payments-api/routes/openapi';
@@ -682,7 +683,6 @@ app.use('/token-screener/opportunities', tokenOpportunitiesRouter);
 
 // ── Meta Strategy ─────────────────────────────────────────────────────────────
 import metaStrategyScanRouter from './routes/meta-strategy-api/routes/scan';
-import metaStrategyDocsRouter from './routes/meta-strategy-api/routes/docs';
 app.use('/meta-strategy/scan', metaStrategyScanRouter);
 
 // ── Token Unlock ──────────────────────────────────────────────────────────────
