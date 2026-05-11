@@ -25,9 +25,9 @@ export interface StrategyResult {
 }
 
 export async function getStrategySignal(symbol: string, predictionQuery?: string): Promise<StrategyResult | null> {
-  const baseUrl = process.env.STRATEGY_API_URL || 'https://strategy-signal-api.onrender.com';
+  const baseUrl = process.env.STRATEGY_API_URL || 'https://orbis-apis.onrender.com';
   try {
-    const res = await axios.get(`${baseUrl}/v1/strategy`, {
+    const res = await axios.get(`${baseUrl}/strategy-signal/signal`, {
       params: { symbol, ...(predictionQuery ? { predictionQuery } : {}) },
       timeout: 30000,
     });
