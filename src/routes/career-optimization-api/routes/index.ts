@@ -26,8 +26,12 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  // Strip markdown code fences if present
-  const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+  // Strip markdown fences, leading/trailing whitespace, and extract JSON object
+  let text = raw.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/im, '').trim();
+  // Find first { and last } to extract JSON object
+  const first = text.indexOf('{');
+  const last  = text.lastIndexOf('}');
+  if (first !== -1 && last !== -1) text = text.slice(first, last + 1);
   try { return JSON.parse(text); } catch { return { raw }; }
 }
 
@@ -126,7 +130,7 @@ router.post('/score-resume', async (req: Request, res: Response) => {
     const prompt = `Score this resume against the job description. Resume: "${(req.body?.resume_text || 'No resume').substring(0, 2000)}". Job description: "${(req.body?.job_description || 'No JD').substring(0, 1000)}". Role level: ${req.body?.role_level || 'mid-level'}. Be specific and actionable.`;
     const ai = await callAI(
       prompt,
-      'You are an expert resume reviewer and career coach. Score and analyze resumes. Return ONLY valid JSON with: score (number 0-100), gap_analysis (array of strings), recommended_edits (array of strings), keyword_matches (array of strings), ats_compatibility (number 0-100), strengths (array of strings), weaknesses (array of strings).',
+      'You are an expert resume reviewer and career coach. Respond with ONLY a raw JSON object, no markdown, no backticks. Include these exact fields: score (integer between 1-100, never 0), gap_analysis (array of strings), recommended_edits (array of strings), keyword_matches (array of strings), ats_compatibility (integer between 1-100, never 0), strengths (array of strings), weaknesses (array of strings).',
       1000
     );
     const latency = Date.now() - start;

@@ -26,8 +26,12 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  // Strip markdown code fences if present
-  const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+  // Strip markdown fences, leading/trailing whitespace, and extract JSON object
+  let text = raw.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/im, '').trim();
+  // Find first { and last } to extract JSON object
+  const first = text.indexOf('{');
+  const last  = text.lastIndexOf('}');
+  if (first !== -1 && last !== -1) text = text.slice(first, last + 1);
   try { return JSON.parse(text); } catch { return { raw }; }
 }
 
@@ -126,7 +130,7 @@ router.post('/generate', async (req: Request, res: Response) => {
     const prompt = `Write a professional business proposal for ${req.body?.client_name || 'the client'}. Brief: ${req.body?.brief || 'general services'}. Scope: ${req.body?.scope || 'to be defined'}. Budget: $${req.body?.budget_usd || 'TBD'}. Timeline: ${req.body?.timeline_weeks || 8} weeks. Tone: ${req.body?.tone || 'professional'}. Make it compelling and win-ready.`;
     const ai = await callAI(
       prompt,
-      'You are an expert business proposal writer. Generate compelling, structured proposals. Return ONLY valid JSON with: proposal (string — full proposal text), sections (array of section names), word_count (number), executive_summary (string), key_differentiators (array of strings), readability_score (number 0-100).',
+      'You are an expert business proposal writer. Respond with ONLY a raw JSON object, no markdown, no backticks. Include these exact fields: proposal (string), sections (array of strings), word_count (number), executive_summary (string, 2-3 sentences), key_differentiators (array of strings), readability_score (number 0-100).',
       1000
     );
     const latency = Date.now() - start;
