@@ -324,43 +324,142 @@ export default router;
 
 router.get("/openapi.json", (_req, res) => {
   res.json({
-    openapi: "3.0.0",
-    info: { title: "Image Generation & Intelligence", version: "2.0.0", description: "DALL-E 3 image generation with prompt engineering, batch support, GPT-4o vision scoring, and agentic execution gates." },
+    openapi: "3.1.0",
+    info: {
+      title: "Image Generation & Intelligence API",
+      version: "2.0.0",
+      description: "DALL-E 3 image generation with prompt engineering, batch support, GPT-4o vision scoring, and agentic execution gates.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x-pricing": { "/generate": 0.04, "/generate-batch": 0.04, "/describe-prompt": 0.002, "/score-image": 0.003, "/execution-gate": 0.04 },
+      privacy: { data_stored: false, retention: "none" },
+    },
     servers: [{ url: "https://orbis-apis.onrender.com/image-gen" }],
+    security: [{ ApiKeyAuth: [] }],
+    components: { securitySchemes: { ApiKeyAuth: { type: "apiKey", in: "header", name: "X-API-Key", description: "Generate via POST /image-gen/keys/generate or use X-Orbis-Proxy header for proxy access" } } },
     paths: {
+      "/": { get: { summary: "API discovery", operationId: "discovery", responses: { "200": { description: "API info" } } } },
       "/generate": {
         post: {
+          operationId: "generateImage",
           summary: "Generate a single image via DALL-E 3",
-          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["prompt"], properties: { prompt: { type: "string" }, size: { type: "string", enum: ["1024x1024","1024x1792","1792x1024"], default: "1024x1024" }, quality: { type: "string", enum: ["standard","hd"], default: "standard" }, enhance_prompt: { type: "boolean", default: false } } } } } },
-          responses: { "200": { description: "Image generated", content: { "application/json": { schema: { type: "object", properties: { execution_ready: { type: "boolean" }, image_url: { type: "string" }, revised_prompt: { type: "string" }, estimated_cost: { type: "number" } } } } } } }
+          "x-agent-callable": true,
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["prompt"], properties: {
+            prompt: { type: "string", description: "Image generation prompt" },
+            size: { type: "string", enum: ["1024x1024","1024x1792","1792x1024"], default: "1024x1024" },
+            quality: { type: "string", enum: ["standard","hd"], default: "standard" },
+            enhance_prompt: { type: "boolean", default: false, description: "Auto-enhance prompt with GPT-4o-mini" },
+          } } } } },
+          responses: { "200": { description: "Image generated", content: { "application/json": { schema: { type: "object", properties: {
+            execution_ready: { type: "boolean" },
+            image_url: { type: "string", description: "DALL-E 3 generated image URL" },
+            revised_prompt: { type: "string", description: "DALL-E revised prompt if modified" },
+            original_prompt: { type: "string" },
+            final_prompt: { type: "string" },
+            parameters: { type: "object", properties: { size: { type: "string" }, quality: { type: "string" } } },
+            metadata: { type: "object", properties: { latency_ms: { type: "number" }, estimated_cost: { type: "number" }, model: { type: "string" } } },
+            recommended_actions_priority_order: { type: "array", items: { type: "string" } },
+            chain_to: { type: "array", items: { type: "string" } },
+            privacy: { type: "object", properties: { data_stored: { type: "boolean" }, retention: { type: "string" } } },
+          } } } } } }
         }
       },
       "/generate-batch": {
         post: {
+          operationId: "generateBatch",
           summary: "Generate up to 5 images in parallel",
-          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["prompts"], properties: { prompts: { type: "array", items: { type: "string" }, maxItems: 5 }, size: { type: "string", default: "1024x1024" }, quality: { type: "string", default: "standard" } } } } } },
-          responses: { "200": { description: "Batch results", content: { "application/json": { schema: { type: "object", properties: { execution_ready: { type: "boolean" }, images: { type: "array" }, summary: { type: "object" } } } } } } }
+          "x-agent-callable": true,
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["prompts"], properties: {
+            prompts: { type: "array", items: { type: "string" }, maxItems: 5 },
+            size: { type: "string", enum: ["1024x1024","1024x1792","1792x1024"], default: "1024x1024" },
+            quality: { type: "string", enum: ["standard","hd"], default: "standard" },
+          } } } } },
+          responses: { "200": { description: "Batch results", content: { "application/json": { schema: { type: "object", properties: {
+            execution_ready: { type: "boolean" },
+            images: { type: "array", items: { type: "object", properties: { index: { type: "integer" }, prompt: { type: "string" }, success: { type: "boolean" }, image_url: { type: "string", nullable: true }, revised_prompt: { type: "string", nullable: true }, error: { type: "string", nullable: true } } } },
+            summary: { type: "object", properties: { total: { type: "integer" }, success: { type: "integer" }, failed: { type: "integer" } } },
+            metadata: { type: "object", properties: { latency_ms: { type: "number" }, estimated_cost: { type: "number" }, model: { type: "string" } } },
+            recommended_actions_priority_order: { type: "array", items: { type: "string" } },
+            chain_to: { type: "array", items: { type: "string" } },
+            privacy: { type: "object", properties: { data_stored: { type: "boolean" }, retention: { type: "string" } } },
+          } } } } } }
         }
       },
       "/describe-prompt": {
         post: {
+          operationId: "describePrompt",
           summary: "Turn a concept into an optimized DALL-E 3 prompt plus 3 variants",
-          requestBody: { required: true, content: { "application/json": { schema: { type: "object", properties: { concept: { type: "string" }, subject: { type: "string" }, style: { type: "string" }, mood: { type: "string" }, additional_details: { type: "string" } } } } } },
-          responses: { "200": { description: "Optimized prompt and variants", content: { "application/json": { schema: { type: "object", properties: { execution_ready: { type: "boolean" }, optimized_prompt: { type: "string" }, variants: { type: "array", items: { type: "string" } } } } } } } }
+          "x-agent-callable": true,
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", properties: {
+            concept: { type: "string" }, subject: { type: "string" }, style: { type: "string" },
+            mood: { type: "string" }, additional_details: { type: "string" },
+          } } } } },
+          responses: { "200": { description: "Optimized prompt and variants", content: { "application/json": { schema: { type: "object", properties: {
+            execution_ready: { type: "boolean" },
+            optimized_prompt: { type: "string" },
+            variants: { type: "array", items: { type: "string" } },
+            inputs: { type: "object" },
+            metadata: { type: "object", properties: { latency_ms: { type: "number" }, estimated_cost: { type: "number" }, model: { type: "string" } } },
+            recommended_actions_priority_order: { type: "array", items: { type: "string" } },
+            chain_to: { type: "array", items: { type: "string" } },
+            privacy: { type: "object", properties: { data_stored: { type: "boolean" }, retention: { type: "string" } } },
+          } } } } } }
         }
       },
       "/score-image": {
         post: {
+          operationId: "scoreImage",
           summary: "GPT-4o vision scoring of a generated image against custom criteria",
-          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["image_url"], properties: { image_url: { type: "string" }, prompt: { type: "string" }, scoring_criteria: { type: "array", items: { type: "string" } } } } } } },
-          responses: { "200": { description: "Scores and recommendation", content: { "application/json": { schema: { type: "object", properties: { execution_ready: { type: "boolean" }, overall_score: { type: "number" }, recommendation: { type: "string" }, scores: { type: "object" } } } } } } }
+          "x-agent-callable": true,
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["image_url"], properties: {
+            image_url: { type: "string" }, prompt: { type: "string" },
+            scoring_criteria: { type: "array", items: { type: "string" } },
+          } } } } },
+          responses: { "200": { description: "Scores and recommendation", content: { "application/json": { schema: { type: "object", properties: {
+            execution_ready: { type: "boolean" },
+            overall_score: { type: "number", minimum: 0, maximum: 10 },
+            scores: { type: "object", additionalProperties: { type: "number" } },
+            strengths: { type: "array", items: { type: "string" } },
+            weaknesses: { type: "array", items: { type: "string" } },
+            recommendation: { type: "string", enum: ["use","regenerate","refine"] },
+            reasoning: { type: "string" },
+            confidence: { type: "number", minimum: 0, maximum: 1 },
+            moderation_result: { type: "object", properties: { flagged: { type: "boolean" }, categories: { type: "array", items: { type: "string" } } } },
+            metadata: { type: "object", properties: { latency_ms: { type: "number" }, estimated_cost: { type: "number" }, model: { type: "string" } } },
+            recommended_actions_priority_order: { type: "array", items: { type: "string" } },
+            chain_to: { type: "array", items: { type: "string" } },
+            privacy: { type: "object", properties: { data_stored: { type: "boolean" }, retention: { type: "string" } } },
+          } } } } } }
         }
       },
       "/execution-gate": {
         post: {
+          operationId: "executionGate",
           summary: "Safety check, budget check, prompt enhancement, and generation in one call",
-          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["prompt"], properties: { prompt: { type: "string" }, target_use_case: { type: "string" }, budget_usd: { type: "number" }, quality_threshold: { type: "number", default: 7 }, auto_enhance: { type: "boolean", default: true }, size: { type: "string", default: "1024x1024" }, quality: { type: "string", default: "standard" } } } } } },
-          responses: { "200": { description: "Gate result and generated image", content: { "application/json": { schema: { type: "object", properties: { execution_ready: { type: "boolean" }, proceed: { type: "boolean" }, image_url: { type: "string" }, gate_result: { type: "object" } } } } } } }
+          "x-agent-callable": true,
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["prompt"], properties: {
+            prompt: { type: "string" }, target_use_case: { type: "string" },
+            budget_usd: { type: "number" }, quality_threshold: { type: "number", minimum: 0, maximum: 10, default: 7 },
+            auto_enhance: { type: "boolean", default: true },
+            size: { type: "string", enum: ["1024x1024","1024x1792","1792x1024"], default: "1024x1024" },
+            quality: { type: "string", enum: ["standard","hd"], default: "standard" },
+          } } } } },
+          responses: { "200": { description: "Gate result and generated image", content: { "application/json": { schema: { type: "object", properties: {
+            execution_ready: { type: "boolean" },
+            proceed: { type: "boolean" },
+            image_url: { type: "string", nullable: true },
+            revised_prompt: { type: "string", nullable: true },
+            original_prompt: { type: "string" },
+            final_prompt: { type: "string" },
+            gate_result: { type: "object", properties: { safe: { type: "boolean" }, quality_score: { type: "number" }, issues: { type: "array", items: { type: "string" } }, enhanced_prompt: { type: "string" }, proceed: { type: "boolean" }, reason: { type: "string" } } },
+            message: { type: "string", nullable: true },
+            confidence: { type: "number", minimum: 0, maximum: 1 },
+            moderation_result: { type: "object", properties: { flagged: { type: "boolean" }, categories: { type: "array", items: { type: "string" } } } },
+            metadata: { type: "object", properties: { latency_ms: { type: "number" }, estimated_cost: { type: "number" }, model: { type: "string" } } },
+            recommended_actions_priority_order: { type: "array", items: { type: "string" } },
+            chain_to: { type: "array", items: { type: "string" } },
+            privacy: { type: "object", properties: { data_stored: { type: "boolean" }, retention: { type: "string" } } },
+          } } } } } }
         }
       }
     }

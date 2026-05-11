@@ -19,9 +19,6 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
       '/analyze': { post: { operationId: 'analyzeImage', summary: 'Analyze an image and extract structured content', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['image'], properties: {
-          recommended_actions_priority_order: { type: 'array', items: { type: 'string' }, description: 'Ordered list of recommended next actions for the agent' },
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           image: { type: 'string', description: 'Base64-encoded image string' },
           image_format: { type: 'string', enum: ['jpeg', 'png', 'gif', 'webp'], description: 'Image format' },
           modules: { type: 'array', items: { type: 'string', enum: ['caption', 'summary', 'tags', 'metadata', 'ocr', 'faces'] }, default: ['caption', 'summary', 'tags', 'metadata'] },
@@ -47,22 +44,15 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
             safety_note: { type: 'string', description: 'Face detection used for profile scoring only, not identification' },
           }}},
           confidence_per_section: { type: 'object', properties: {
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
             caption: { type: 'number' }, tags: { type: 'number' }, ocr: { type: 'number' }, faces: { type: 'number' },
           }},
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } },
-          privacy: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' }, data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         }}}}}}}},
       '/batch': { post: { operationId: 'batchAnalyze', summary: 'Batch analyze up to 20 images', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['images'], properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           images: { type: 'array', minItems: 1, maxItems: 20, items: { type: 'object', required: ['image'], properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
             image: { type: 'string' }, image_format: { type: 'string' }, modules: { type: 'array', items: { type: 'string' } },
           }}},
         }}}}},
@@ -78,8 +68,6 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
         }}}}}}}},
       '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate image processing based on content safety', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['image'], properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           image: { type: 'string' }, safety_check: { type: 'boolean', default: true },
           max_cost: { type: 'number' },
         }}}}},
@@ -94,9 +82,6 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
       '/jobs/{jobId}': { get: { operationId: 'getJob', summary: 'Poll async job status', 'x-agent-callable': true,
         parameters: [{ name: 'jobId', in: 'path', required: true, schema: { type: 'string' } }],
         responses: { '200': { description: 'Job status', content: { 'application/json': { schema: { type: 'object', properties: {
-          recommended_actions_priority_order: { type: 'array', items: { type: 'string' }, description: 'Ordered list of recommended next actions for the agent' },
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           job_id: { type: 'string' }, status: { type: 'string', enum: ['pending', 'processing', 'success', 'error'] },
           result: { type: 'object' }, error: { type: 'string' },
         }}}}}}}},

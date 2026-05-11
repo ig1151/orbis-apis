@@ -1,9 +1,11 @@
+import openapiRouter from './openapi';
 import { Router } from 'express';
 import cryptoRouter from './routes/crypto';
 import signalsRouter from './routes/signals';
 import trendingRouter from './routes/trending';
 
 const router = Router();
+router.use('/openapi.json', openapiRouter);
 
 router.use('/crypto-sentiment', cryptoRouter);
 router.use('/signals', signalsRouter);

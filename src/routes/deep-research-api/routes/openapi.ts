@@ -14,9 +14,14 @@ router.get('/', (_req: Request, res: Response) => {
       description: 'AI-powered deep research synthesis for autonomous agents — research topics cross-source, extract facts, compare sources, score credibility, build timelines, generate citations and synthesize full research reports',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
+      'x-pricing': { '/research-topic': 0.008, '/extract-facts': 0.004, '/compare-sources': 0.006, '/credibility-analysis': 0.004, '/timeline-builder': 0.005, '/citation-builder': 0.003, '/execution-gate': 0.002, '/deep-research': 0.015 },
+      privacy: { data_stored: false, retention: 'none' },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/deep-research' }],
+    security: [{ ApiKeyAuth: [] }],
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
+      '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
       '/research-topic': {
         post: {
           operationId: 'researchTopic',
@@ -216,6 +221,9 @@ router.get('/', (_req: Request, res: Response) => {
                 report: { type: 'string' },
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
+                chain_to: actions,
+                trace_id: { type: 'string', description: 'Unique trace ID for this research run' },
+                research_session_id: { type: 'string', description: 'Session ID for multi-step research workflows' },
                 privacy,
               } } } },
             },

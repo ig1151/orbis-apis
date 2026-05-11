@@ -16,7 +16,10 @@ router.get('/', (_req: Request, res: Response) => {
       'x-mcp-compatible': true,
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/shopify-analyzer' }],
+    security: [{ ApiKeyAuth: [] }],
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
+      '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
       '/analyze-store': {
         post: {
           operationId: 'analyzeStore',
