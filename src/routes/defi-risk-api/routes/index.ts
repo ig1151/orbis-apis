@@ -85,7 +85,7 @@ router.post('/assess', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, risk_score: 'risk_score_value', risk_level: 'risk_level_value', factors: 'factors_value', recommended_actions: 'recommended_actions_value', human_approval_required: 'human_approval_required_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, risk_score: 0, risk_level: 'risk_level_value', factors: 'factors_value', recommended_actions: 'recommended_actions_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Get protocol risk score
@@ -95,7 +95,7 @@ router.get('/protocol/:name/score', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, protocol: 'protocol_value', score: 'score_value', audit_status: 'audit_status_value', incident_history: 'incident_history_value', tvl_usd: 'tvl_usd_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, protocol: 'protocol_value', score: 0, audit_status: 'audit_status_value', incident_history: 'incident_history_value', tvl_usd: 'tvl_usd_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Estimate liquidation risk for a leveraged position
@@ -108,7 +108,7 @@ router.post('/liquidation-risk', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, liquidation_price: 'liquidation_price_value', distance_pct: 'distance_pct_value', health_factor: 'health_factor_value', risk_level: 'risk_level_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, liquidation_price: 0, distance_pct: 0, health_factor: 0, risk_level: 'risk_level_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 export default router;

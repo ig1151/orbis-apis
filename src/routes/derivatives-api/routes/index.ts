@@ -82,7 +82,7 @@ router.get('/futures/:symbol', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, symbol: 'symbol_value', price: 'price_value', basis: 'basis_value', funding_rate: 'funding_rate_value', open_interest_usd: 'open_interest_usd_value', volume_24h: 'volume_24h_value', exchanges: 'exchanges_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, symbol: 'symbol_value', price: 'price_value', basis: 'basis_value', funding_rate: 'funding_rate_value', open_interest_usd: 0, volume_24h: 0, exchanges: 'exchanges_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Get options chain for a symbol
@@ -102,7 +102,7 @@ router.get('/funding-rates', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, rates: 'rates_value', avg_funding_rate: 'avg_funding_rate_value', highest: 'highest_value', lowest: 'lowest_value', signal: 'signal_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, rates: 'rates_value', avg_funding_rate: 0, highest: 'highest_value', lowest: 'lowest_value', signal: 'signal_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 export default router;

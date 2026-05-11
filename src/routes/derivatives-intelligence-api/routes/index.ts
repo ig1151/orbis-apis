@@ -85,7 +85,7 @@ router.post('/signal', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, signal: 'signal_value', direction: 'direction_value', confidence: 'confidence_value', basis_for_signal: 'basis_for_signal_value', human_approval_required: 'human_approval_required_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, signal: 'signal_value', direction: 'direction_value', confidence: 0, basis_for_signal: 'basis_for_signal_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Get market positioning analysis
@@ -95,7 +95,7 @@ router.get('/positioning/:symbol', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, symbol: 'symbol_value', long_short_ratio: 'long_short_ratio_value', whale_bias: 'whale_bias_value', retail_bias: 'retail_bias_value', net_positioning: 'net_positioning_value', regime: 'regime_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, symbol: 'symbol_value', long_short_ratio: 0, whale_bias: 'whale_bias_value', retail_bias: 'retail_bias_value', net_positioning: 'net_positioning_value', regime: 'regime_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Compute risk surface from options data
@@ -108,7 +108,7 @@ router.post('/risk-surface', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, risk_surface: 'risk_surface_value', max_pain: 'max_pain_value', gamma_exposure: 'gamma_exposure_value', put_call_ratio: 'put_call_ratio_value', tail_risk_score: 'tail_risk_score_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, risk_surface: 'risk_surface_value', max_pain: 'max_pain_value', gamma_exposure: 0, put_call_ratio: 0, tail_risk_score: 0, human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 export default router;

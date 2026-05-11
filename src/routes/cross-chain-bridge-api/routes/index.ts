@@ -85,7 +85,7 @@ router.post('/quote', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, routes: 'routes_value', best_route: 'best_route_value', estimated_time_seconds: 'estimated_time_seconds_value', fees_usd: 'fees_usd_value', human_approval_required: 'human_approval_required_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, routes: 'routes_value', best_route: 'best_route_value', estimated_time_seconds: 0, fees_usd: 0, human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Simulate a bridge transaction
@@ -98,7 +98,7 @@ router.post('/simulate', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, simulation_result: 'simulation_result_value', gas_estimate: 'gas_estimate_value', success_probability: 'success_probability_value', risk_flags: 'risk_flags_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, simulation_result: 'simulation_result_value', gas_estimate: 'gas_estimate_value', success_probability: 0, risk_flags: 'risk_flags_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Check bridge transaction status

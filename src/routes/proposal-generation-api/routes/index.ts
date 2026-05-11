@@ -85,7 +85,7 @@ router.post('/generate', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, proposal: 'proposal_value', sections: 'sections_value', word_count: 'word_count_value', readability_score: 'readability_score_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, proposal: 'proposal_value', sections: 'sections_value', word_count: 0, readability_score: 0, computed_at: new Date().toISOString() });
 });
 
 // Generate an RFP response
@@ -111,7 +111,7 @@ router.post('/review', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, score: 'score_value', strengths: 'strengths_value', weaknesses: 'weaknesses_value', recommended_edits: 'recommended_edits_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, score: 0, strengths: 'strengths_value', weaknesses: 'weaknesses_value', recommended_edits: 'recommended_edits_value', computed_at: new Date().toISOString() });
 });
 
 export default router;

@@ -85,7 +85,7 @@ router.post('/extract', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, extracted_data: 'extracted_data_value', page_title: 'page_title_value', extraction_method: 'extraction_method_value', confidence: 'confidence_value', token_count: 'token_count_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, extracted_data: 'extracted_data_value', page_title: 'page_title_value', extraction_method: 'extraction_method_value', confidence: 0, token_count: 'token_count_value', computed_at: new Date().toISOString() });
 });
 
 // Batch extract from multiple URLs
@@ -98,7 +98,7 @@ router.post('/batch', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, results: 'results_value', success_count: 'success_count_value', fail_count: 'fail_count_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, results: 'results_value', success_count: 0, fail_count: 0, computed_at: new Date().toISOString() });
 });
 
 // Parse and extract from a sitemap
@@ -111,7 +111,7 @@ router.post('/sitemap', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, pages: 'pages_value', total_found: 'total_found_value', sampled: 'sampled_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, pages: 'pages_value', total_found: 0, sampled: 'sampled_value', computed_at: new Date().toISOString() });
 });
 
 export default router;

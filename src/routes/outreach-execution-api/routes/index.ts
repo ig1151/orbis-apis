@@ -85,7 +85,7 @@ router.post('/generate', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, subject: 'subject_value', body: 'body_value', personalization_score: 'personalization_score_value', recommended_send_time: 'recommended_send_time_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, subject: 'subject_value', body: 'body_value', personalization_score: 0, recommended_send_time: 'recommended_send_time_value', computed_at: new Date().toISOString() });
 });
 
 // Create a multi-step outreach sequence
@@ -108,7 +108,7 @@ router.get('/sequence/:id/stats', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, sequence_id: 'sequence_id_value', sent: 'sent_value', opened: 'opened_value', replied: 'replied_value', bounced: 'bounced_value', reply_rate: 'reply_rate_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, sequence_id: 'sequence_id_value', sent: 'sent_value', opened: 'opened_value', replied: 'replied_value', bounced: 'bounced_value', reply_rate: 0, computed_at: new Date().toISOString() });
 });
 
 export default router;

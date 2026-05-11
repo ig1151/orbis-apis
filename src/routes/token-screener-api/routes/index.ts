@@ -85,7 +85,7 @@ router.post('/screen', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, tokens: 'tokens_value', total_matched: 'total_matched_value', screened_at: 'screened_at_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, tokens: 'tokens_value', total_matched: 0, screened_at: 'screened_at_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Get full token screening report
@@ -95,7 +95,7 @@ router.get('/token/:symbol', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, symbol: 'symbol_value', score: 'score_value', risk_flags: 'risk_flags_value', holder_concentration: 'holder_concentration_value', whale_activity: 'whale_activity_value', liquidity_score: 'liquidity_score_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, symbol: 'symbol_value', score: 0, risk_flags: 'risk_flags_value', holder_concentration: 'holder_concentration_value', whale_activity: 'whale_activity_value', liquidity_score: 'liquidity_score_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Save a token watchlist

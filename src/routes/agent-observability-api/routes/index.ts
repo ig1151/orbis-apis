@@ -85,7 +85,7 @@ router.post('/trace', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, stored: 'stored_value', span_count: 'span_count_value', duration_ms: 'duration_ms_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, stored: 'stored_value', span_count: 0, duration_ms: 0, computed_at: new Date().toISOString() });
 });
 
 // Retrieve a stored trace
@@ -95,7 +95,7 @@ router.get('/trace/:trace_id', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, spans: 'spans_value', outcome: 'outcome_value', duration_ms: 'duration_ms_value', agent_id: 'agent_id_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, spans: 'spans_value', outcome: 'outcome_value', duration_ms: 0, agent_id: 'agent_id_value', computed_at: new Date().toISOString() });
 });
 
 // Analyze traces for failure patterns
@@ -108,7 +108,7 @@ router.post('/analyze', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, failure_rate: 'failure_rate_value', common_failure_reasons: 'common_failure_reasons_value', bottleneck_spans: 'bottleneck_spans_value', recommended_actions: 'recommended_actions_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, failure_rate: 0, common_failure_reasons: 'common_failure_reasons_value', bottleneck_spans: 'bottleneck_spans_value', recommended_actions: 'recommended_actions_value', computed_at: new Date().toISOString() });
 });
 
 // Get performance dashboard for an agent
@@ -118,7 +118,7 @@ router.get('/dashboard/:agent_id', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, agent_id: 'agent_id_value', success_rate: 'success_rate_value', avg_duration_ms: 'avg_duration_ms_value', p95_duration_ms: 'p95_duration_ms_value', error_breakdown: 'error_breakdown_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, agent_id: 'agent_id_value', success_rate: 0, avg_duration_ms: 0, p95_duration_ms: 0, error_breakdown: 'error_breakdown_value', computed_at: new Date().toISOString() });
 });
 
 export default router;

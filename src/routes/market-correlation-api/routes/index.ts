@@ -108,7 +108,7 @@ router.post('/shift-detect', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, shift_detected: 'shift_detected_value', shift_date: 'shift_date_value', before_corr: 'before_corr_value', after_corr: 'after_corr_value', confidence: 'confidence_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, shift_detected: 'shift_detected_value', shift_date: 'shift_date_value', before_corr: 'before_corr_value', after_corr: 'after_corr_value', confidence: 0, human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 export default router;

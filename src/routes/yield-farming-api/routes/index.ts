@@ -82,7 +82,7 @@ router.get('/opportunities', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, opportunities: 'opportunities_value', updated_at: 'updated_at_value', total_tvl_usd: 'total_tvl_usd_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, opportunities: 'opportunities_value', updated_at: 'updated_at_value', total_tvl_usd: 0, human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Simulate yield on a given position
@@ -95,7 +95,7 @@ router.post('/simulate', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, projected_yield_usd: 'projected_yield_usd_value', projected_apy: 'projected_apy_value', gas_cost_usd: 'gas_cost_usd_value', net_yield_usd: 'net_yield_usd_value', risk_score: 'risk_score_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, projected_yield_usd: 0, projected_apy: 0, gas_cost_usd: 0, net_yield_usd: 0, risk_score: 0, human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Get protocol-level yield summary

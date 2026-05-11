@@ -82,7 +82,7 @@ router.get('/analyze/:symbol', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, symbol: 'symbol_value', circulating_supply: 'circulating_supply_value', max_supply: 'max_supply_value', inflation_rate: 'inflation_rate_value', vesting_overhang_pct: 'vesting_overhang_pct_value', score: 'score_value', risk_flags: 'risk_flags_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, symbol: 'symbol_value', circulating_supply: 0, max_supply: 0, inflation_rate: 0, vesting_overhang_pct: 0, score: 0, risk_flags: 'risk_flags_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Simulate token emission over time
@@ -95,7 +95,7 @@ router.post('/simulate', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, emission_curve: 'emission_curve_value', sell_pressure_index: 'sell_pressure_index_value', price_impact_estimate: 'price_impact_estimate_value', dilution_pct: 'dilution_pct_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, emission_curve: 'emission_curve_value', sell_pressure_index: 0, price_impact_estimate: 0, dilution_pct: 0, human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Compare tokenomics of multiple tokens

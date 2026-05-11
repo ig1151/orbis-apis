@@ -85,7 +85,7 @@ router.post('/extract', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, signals: 'signals_value', entities: 'entities_value', sentiment: 'sentiment_value', risk_flags: 'risk_flags_value', confidence: 'confidence_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, signals: 'signals_value', entities: 'entities_value', sentiment: 'sentiment_value', risk_flags: 'risk_flags_value', confidence: 0, computed_at: new Date().toISOString() });
 });
 
 // Configure an intelligence monitor
@@ -98,7 +98,7 @@ router.post('/monitor', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, monitor_id: 'monitor_id_value', active: 'active_value', estimated_latency_seconds: 'estimated_latency_seconds_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, monitor_id: 'monitor_id_value', active: 'active_value', estimated_latency_seconds: 0, computed_at: new Date().toISOString() });
 });
 
 // Batch extract from multiple text sources
@@ -111,7 +111,7 @@ router.post('/batch', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, results: 'results_value', total_signals: 'total_signals_value', processing_time_ms: 'processing_time_ms_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, results: 'results_value', total_signals: 0, processing_time_ms: 0, computed_at: new Date().toISOString() });
 });
 
 export default router;

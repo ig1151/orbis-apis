@@ -85,7 +85,7 @@ router.post('/generate', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, signal: 'signal_value', direction: 'direction_value', confidence: 'confidence_value', entry_price: 'entry_price_value', stop_loss: 'stop_loss_value', take_profit: 'take_profit_value', reasoning: 'reasoning_value', human_approval_required: 'human_approval_required_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, signal: 'signal_value', direction: 'direction_value', confidence: 0, entry_price: 'entry_price_value', stop_loss: 'stop_loss_value', take_profit: 'take_profit_value', reasoning: 'reasoning_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Retrieve backtest results for a strategy
@@ -95,7 +95,7 @@ router.get('/backtest/:strategy_id', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, strategy_id: 'strategy_id_value', sharpe: 'sharpe_value', max_drawdown: 'max_drawdown_value', win_rate: 'win_rate_value', total_return_pct: 'total_return_pct_value', period: 'period_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, strategy_id: 'strategy_id_value', sharpe: 0, max_drawdown: 0, win_rate: 0, total_return_pct: 0, period: 'period_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Rank assets by strategy signal strength

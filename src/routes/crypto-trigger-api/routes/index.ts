@@ -108,7 +108,7 @@ router.post('/test', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, would_fire: 'would_fire_value', current_value: 'current_value_value', threshold: 'threshold_value', delta: 'delta_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, would_fire: 'would_fire_value', current_value: 'current_value_value', threshold: 'threshold_value', delta: 0, human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Delete a trigger

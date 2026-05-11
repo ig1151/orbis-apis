@@ -105,7 +105,7 @@ router.get('/monitor/:id/events', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, monitor_id: 'monitor_id_value', events: 'events_value', total_fired: 'total_fired_value', last_fired_at: 'last_fired_at_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, monitor_id: 'monitor_id_value', events: 'events_value', total_fired: 0, last_fired_at: 'last_fired_at_value', computed_at: new Date().toISOString() });
 });
 
 // Delete a monitor

@@ -85,7 +85,7 @@ router.post('/issue', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, identity_token: 'identity_token_value', agent_id: 'agent_id_value', issued_at: 'issued_at_value', expires_at: 'expires_at_value', trust_score: 'trust_score_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, identity_token: 'identity_token_value', agent_id: 'agent_id_value', issued_at: 'issued_at_value', expires_at: 'expires_at_value', trust_score: 0, computed_at: new Date().toISOString() });
 });
 
 // Verify an agent identity token
@@ -98,7 +98,7 @@ router.post('/verify', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, valid: 'valid_value', agent_id: 'agent_id_value', capabilities: 'capabilities_value', trust_score: 'trust_score_value', expires_at: 'expires_at_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, valid: 'valid_value', agent_id: 'agent_id_value', capabilities: 'capabilities_value', trust_score: 0, expires_at: 'expires_at_value', computed_at: new Date().toISOString() });
 });
 
 // Revoke an agent identity
@@ -121,7 +121,7 @@ router.get('/trust/:agent_id', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, agent_id: 'agent_id_value', trust_score: 'trust_score_value', trust_factors: 'trust_factors_value', incident_count: 'incident_count_value', last_verified: 'last_verified_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, agent_id: 'agent_id_value', trust_score: 0, trust_factors: 'trust_factors_value', incident_count: 0, last_verified: 'last_verified_value', computed_at: new Date().toISOString() });
 });
 
 export default router;

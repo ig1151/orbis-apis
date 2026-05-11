@@ -85,7 +85,7 @@ router.post('/transcribe', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, transcript: 'transcript_value', speakers: 'speakers_value', duration_seconds: 'duration_seconds_value', confidence: 'confidence_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, transcript: 'transcript_value', speakers: 'speakers_value', duration_seconds: 'duration_seconds_value', confidence: 0, computed_at: new Date().toISOString() });
 });
 
 // Extract insights from a transcript

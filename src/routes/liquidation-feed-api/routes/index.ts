@@ -105,7 +105,7 @@ router.post('/alert-config', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, alert_id: 'alert_id_value', active: 'active_value', threshold_usd: 'threshold_usd_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, alert_id: 'alert_id_value', active: 'active_value', threshold_usd: 0, human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 export default router;

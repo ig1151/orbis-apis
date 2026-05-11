@@ -85,7 +85,7 @@ router.post('/simulate', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, gas_used: 'gas_used_value', gas_cost_usd: 'gas_cost_usd_value', state_changes: 'state_changes_value', revert_reason: 'revert_reason_value', risk_flags: 'risk_flags_value', human_approval_required: 'human_approval_required_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, gas_used: 0, gas_cost_usd: 0, state_changes: 'state_changes_value', revert_reason: 'revert_reason_value', risk_flags: 'risk_flags_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Simulate a sequence of transactions
@@ -98,7 +98,7 @@ router.post('/batch', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, results: 'results_value', total_gas_usd: 'total_gas_usd_value', sequence_risk: 'sequence_risk_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, results: 'results_value', total_gas_usd: 0, sequence_risk: 'sequence_risk_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Decode calldata for a transaction

@@ -85,7 +85,7 @@ router.post('/score-resume', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, score: 'score_value', gap_analysis: 'gap_analysis_value', recommended_edits: 'recommended_edits_value', keyword_matches: 'keyword_matches_value', ats_compatibility: 'ats_compatibility_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, score: 0, gap_analysis: 'gap_analysis_value', recommended_edits: 'recommended_edits_value', keyword_matches: 'keyword_matches_value', ats_compatibility: 'ats_compatibility_value', computed_at: new Date().toISOString() });
 });
 
 // Rewrite resume section for a role
@@ -98,7 +98,7 @@ router.post('/optimize', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, optimized_content: 'optimized_content_value', changes_made: 'changes_made_value', score_delta: 'score_delta_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, optimized_content: 'optimized_content_value', changes_made: 'changes_made_value', score_delta: 0, computed_at: new Date().toISOString() });
 });
 
 // Generate a personalized job search strategy
@@ -111,7 +111,7 @@ router.post('/strategy', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, strategy: 'strategy_value', priority_actions: 'priority_actions_value', target_companies: 'target_companies_value', estimated_success_rate: 'estimated_success_rate_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, strategy: 'strategy_value', priority_actions: 'priority_actions_value', target_companies: 'target_companies_value', estimated_success_rate: 0, computed_at: new Date().toISOString() });
 });
 
 export default router;

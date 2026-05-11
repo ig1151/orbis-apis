@@ -85,7 +85,7 @@ router.post('/analyze', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, risk_score: 'risk_score_value', risk_level: 'risk_level_value', vulnerability_flags: 'vulnerability_flags_value', audit_history: 'audit_history_value', ownership_risk: 'ownership_risk_value', human_approval_required: 'human_approval_required_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, risk_score: 0, risk_level: 'risk_level_value', vulnerability_flags: 'vulnerability_flags_value', audit_history: 'audit_history_value', ownership_risk: 'ownership_risk_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Compare two contracts for risk delta
@@ -108,7 +108,7 @@ router.get('/report/:address', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, address: 'address_value', report: 'report_value', generated_at: 'generated_at_value', confidence: 'confidence_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, address: 'address_value', report: 'report_value', generated_at: 'generated_at_value', confidence: 0, human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 export default router;

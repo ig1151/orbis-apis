@@ -85,7 +85,7 @@ router.post('/monitor', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, monitor_id: 'monitor_id_value', health_factor: 'health_factor_value', liquidation_price: 'liquidation_price_value', risk_level: 'risk_level_value', active: 'active_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, monitor_id: 'monitor_id_value', health_factor: 0, liquidation_price: 0, risk_level: 'risk_level_value', active: 'active_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Trigger a defensive action on a position
@@ -98,7 +98,7 @@ router.post('/defend', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, action_id: 'action_id_value', status: 'status_value', tx_hash: 'tx_hash_value', new_health_factor: 'new_health_factor_value', human_approval_required: 'human_approval_required_value', computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, action_id: 'action_id_value', status: 'status_value', tx_hash: 'tx_hash_value', new_health_factor: 0, human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Get current position risk metrics
@@ -108,7 +108,7 @@ router.get('/position/:wallet/:protocol', (req: Request, res: Response) => {
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
   res.set("x-trace-id", buildRuntime(req).trace_id);
   res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, wallet: 'wallet_value', protocol: 'protocol_value', health_factor: 'health_factor_value', collateral_usd: 'collateral_usd_value', debt_usd: 'debt_usd_value', liquidation_price: 'liquidation_price_value', risk_level: 'risk_level_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.json({ ...buildRuntime(req), success: true, wallet: 'wallet_value', protocol: 'protocol_value', health_factor: 0, collateral_usd: 0, debt_usd: 0, liquidation_price: 0, risk_level: 'risk_level_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 export default router;
