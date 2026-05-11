@@ -11,6 +11,8 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
       'x-mcp-compatible': true,
       'x-pricing': { '/analyze': 0.005, '/batch': 0.015, '/jobs/{jobId}': 0.0005 },
       privacy: { data_stored: false, retention: 'none', note: 'Images processed in memory only, not stored' },
+      'x-execution-gate-required': true,
+      'x-paper-mode-recommended': false,
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/image-to-content' }],
     security: [{ ApiKeyAuth: [] }],
