@@ -1,6 +1,48 @@
 import { Router, Request, Response } from 'express';
 import Joi from 'joi';
 
+// ── Universal Runtime Envelope ────────────────────────────────────────────────
+function buildRuntime(req: any, overrides: Record<string, any> = {}) {
+  const now = Date.now();
+  const trace_id     = req.headers['x-trace-id']     || `trace_${now}_${Math.random().toString(36).slice(2,8)}`;
+  const execution_id = req.headers['x-execution-id'] || `exec_${now}_${Math.random().toString(36).slice(2,8)}`;
+  const session_id   = req.body?.session_id || req.query?.session_id || req.headers['x-session-id'] || `session_${now}`;
+  const request_id   = `req_${now}_${Math.random().toString(36).slice(2,8)}`;
+
+  return {
+    trace_id,
+    execution_id,
+    session_id,
+    request_id,
+    workflow_state:    overrides.workflow_state    || 'complete',
+    retryable:         overrides.retryable         ?? false,
+    latency_breakdown: overrides.latency_breakdown || {
+      total_ms:      0,
+      inference_ms:  0,
+      io_ms:         0,
+      overhead_ms:   0,
+    },
+    cost_breakdown: overrides.cost_breakdown || {
+      total_usd:       0.002,
+      inference_usd:   0.0015,
+      io_usd:          0.0003,
+      overhead_usd:    0.0002,
+    },
+    provenance: overrides.provenance || {
+      api_version:    '1.0.0',
+      model:          'orbis-inference-v1',
+      data_sources:   [],
+      computed_at:    new Date().toISOString(),
+    },
+    orchestration_hints: overrides.orchestration_hints || {
+      can_chain:       true,
+      suggested_next:  [],
+      requires_review: false,
+    },
+  };
+}
+
+
 const router = Router();
 
 router.get('/discovery', (_req, res) => {
@@ -28,7 +70,9 @@ router.post('/execution-gate', (req, res) => {
     rate_limit_ok: true,
   };
   const passed = Object.values(checks).every(Boolean);
-  res.json({ passed, checks, approved_at: new Date().toISOString() });
+  res.set("x-trace-id", buildRuntime(req).trace_id);
+  res.set("x-execution-id", buildRuntime(req).execution_id);
+  res.json({ ...buildRuntime(req), passed, checks, approved_at: new Date().toISOString(), computed_at: new Date().toISOString() });
 });
 
 // List current yield farming opportunities
@@ -36,7 +80,9 @@ router.get('/opportunities', (req: Request, res: Response) => {
   const trace_id = `trace_${Date.now()}`;
   const execution_id = `exec_${Date.now()}`;
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
-  res.json({ success: true, trace_id, execution_id, session_id, opportunities: 'opportunities_value', updated_at: 'updated_at_value', total_tvl_usd: 'total_tvl_usd_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.set("x-trace-id", buildRuntime(req).trace_id);
+  res.set("x-execution-id", buildRuntime(req).execution_id);
+  res.json({ ...buildRuntime(req), success: true, opportunities: 'opportunities_value', updated_at: 'updated_at_value', total_tvl_usd: 'total_tvl_usd_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Simulate yield on a given position
@@ -47,7 +93,9 @@ router.post('/simulate', (req: Request, res: Response) => {
   const trace_id = `trace_${Date.now()}`;
   const execution_id = `exec_${Date.now()}`;
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
-  res.json({ success: true, trace_id, execution_id, session_id, projected_yield_usd: 'projected_yield_usd_value', projected_apy: 'projected_apy_value', gas_cost_usd: 'gas_cost_usd_value', net_yield_usd: 'net_yield_usd_value', risk_score: 'risk_score_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.set("x-trace-id", buildRuntime(req).trace_id);
+  res.set("x-execution-id", buildRuntime(req).execution_id);
+  res.json({ ...buildRuntime(req), success: true, projected_yield_usd: 'projected_yield_usd_value', projected_apy: 'projected_apy_value', gas_cost_usd: 'gas_cost_usd_value', net_yield_usd: 'net_yield_usd_value', risk_score: 'risk_score_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 // Get protocol-level yield summary
@@ -55,7 +103,9 @@ router.get('/protocol/:name', (req: Request, res: Response) => {
   const trace_id = `trace_${Date.now()}`;
   const execution_id = `exec_${Date.now()}`;
   const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
-  res.json({ success: true, trace_id, execution_id, session_id, protocol: 'protocol_value', pools: 'pools_value', avg_apy: 'avg_apy_value', tvl_usd: 'tvl_usd_value', audited: 'audited_value', human_approval_required: true, computed_at: new Date().toISOString() });
+  res.set("x-trace-id", buildRuntime(req).trace_id);
+  res.set("x-execution-id", buildRuntime(req).execution_id);
+  res.json({ ...buildRuntime(req), success: true, protocol: 'protocol_value', pools: 'pools_value', avg_apy: 'avg_apy_value', tvl_usd: 'tvl_usd_value', audited: 'audited_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
 export default router;
