@@ -547,4 +547,32 @@ router.get('/workflow/:id/state', (req: Request, res: Response) => {
 
 });
 
+
+// ── Debug endpoint — see raw Claude response ─────────────────────────────────
+router.post('/debug-raw', async (req: Request, res: Response) => {
+  try {
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    const prompt = `Write a 50-word business proposal summary for Acme Corp. Return ONLY valid JSON with exactly these fields: proposal (string), executive_summary (string), sections (array of strings), word_count (number), readability_score (number).`;
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://orbis-apis.onrender.com',
+        'X-Title': 'Orbis APIs',
+      },
+      body: JSON.stringify({
+        model: 'anthropic/claude-sonnet-4-5',
+        max_tokens: 500,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+    const data = await response.json() as any;
+    const raw = data.choices?.[0]?.message?.content || 'NO CONTENT';
+    res.json({ raw, length: raw.length, first_char: raw[0], last_char: raw[raw.length-1] });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;
