@@ -24,7 +24,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
         endpoints: { type: 'array', items: { type: 'string' } },
         status: { type: 'string', enum: ['ok'] },
       } } } } } } } },
-      '/analyze': { post: { operationId: 'analyzeImage', summary: 'Analyze an image and extract structured content', 'x-agent-callable': true,
+      '/analyze': { post: { operationId: 'analyzeImage', summary: 'Analyze an image and extract structured content', 'x-agent-callable': true, 'x-human-approval-required': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['image'], properties: {
           image: { type: 'string', description: 'Base64-encoded image string' },
           image_format: { type: 'string', enum: ['jpeg', 'png', 'gif', 'webp'], description: 'Image format' },
@@ -84,6 +84,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           blocking_flags: { type: 'array', items: { type: 'string' } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         }}}}}}}},
       '/jobs/{jobId}': { get: { operationId: 'getJob', summary: 'Poll async job status', 'x-agent-callable': true,
         parameters: [{ name: 'jobId', in: 'path', required: true, schema: { type: 'string' } }],
@@ -93,7 +94,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } },
           privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
-          result: { type: 'object', properties: { caption: { type: 'string' }, tags: { type: 'array', items: { type: 'string' } }, confidence_per_section: { type: 'object' } } }, error: { type: 'string', nullable: true },
+          result: { type: 'object', properties: { caption: { type: 'string' }, tags: { type: 'array', items: { type: 'string' } }, confidence_per_section: { type: 'object', properties: { caption: { type: 'number' }, tags: { type: 'number' }, ocr: { type: 'number' }, faces: { type: 'number' } } } } }, error: { type: 'string', nullable: true },
         }}}}}}}},
     },
   });

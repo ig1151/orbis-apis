@@ -63,13 +63,14 @@ router.get('/', (_req: Request, res: Response) => {
           privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
           timestamp: { type: 'string', format: 'date-time' },
         } } } } } } } },
-      '/trending': { get: { operationId: 'getTrending', summary: 'Get trending crypto assets by social mention volume', 'x-agent-callable': true,
+      '/trending': { get: { operationId: 'getTrending', summary: 'Get trending crypto assets by social mention volume', 'x-agent-callable': true, 'x-human-approval-required': true,
         responses: { '200': { description: 'Trending assets', content: { 'application/json': { schema: { type: 'object', properties: {
           trending: { type: 'array', items: { type: 'object', properties: {
             symbol: { type: 'string' },
             mention_volume: { type: 'integer' },
             sentiment_score: { type: 'number', minimum: -1, maximum: 1 },
             velocity: { type: 'string', enum: ['increasing', 'stable', 'decreasing'] },
+            confidence: { type: 'number', minimum: 0, maximum: 1 },
             rank: { type: 'integer' },
           }}},
           count: { type: 'integer' },
