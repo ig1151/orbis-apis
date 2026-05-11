@@ -1,5 +1,4 @@
 import complianceRouter from './routes/compliance-api/routes/intelligence';
-import metaStrategyDocsRouter from './routes/meta-strategy-api/routes/docs';
 import complianceOpenapiRouter from './routes/compliance-api/routes/openapi';
 import agentPaymentsRouter from './routes/agent-payments-api/routes/intelligence';
 import agentPaymentsOpenapiRouter from './routes/agent-payments-api/routes/openapi';
@@ -45,6 +44,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
+import metaStrategyDocsRouter from './routes/meta-strategy-api/routes/docs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
