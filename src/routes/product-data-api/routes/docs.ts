@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Agent Product Data Extraction Commerce Intelligence API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Extracts and structures product data from e-commerce pages and marketplace listings.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -14,21 +14,21 @@ const spec = {
       "unit_cost_usd": 0.002
     }
   },
-  "x-execution-gate-required": true,
-  "x-paper-mode-recommended": true,
+  "x-execution-gate-required": false,
+  "x-paper-mode-recommended": false,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/product-data"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Agent Product Data Extraction Commerce Intelligence API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Product Data Extraction Commerce Intelligence API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Product Data Extraction Commerce Intelligence API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/extract": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Extract product data from a URL",
+        "operationId": "post_extract",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Product Data Extraction Commerce Intelligence API"
         ],
         "responses": {
           "200": {
@@ -126,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "product",
+                    "price",
+                    "availability"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +144,28 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "product": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "price": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "availability": {
                       "type": "string"
                     },
-                    "factors": {
+                    "images": {
                       "type": "string"
                     },
-                    "recommended_actions": {
+                    "specs": {
+                      "type": "string"
+                    },
+                    "reviews_summary": {
+                      "type": "string"
+                    },
+                    "confidence": {
                       "type": "string"
                     }
                   }
@@ -177,20 +187,17 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "url",
+                  "fields"
                 ],
                 "properties": {
-                  "protocol": {
+                  "url": {
                     "type": "string"
                   },
-                  "pool": {
+                  "fields": {
                     "type": "string"
                   },
-                  "amount_usd": {
-                    "type": "string"
-                  },
-                  "chain": {
+                  "marketplace": {
                     "type": "string"
                   }
                 }
@@ -200,94 +207,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
-      "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "boolean",
-                      "default": true
-                    },
-                    "protocol": {
-                      "type": "string"
-                    },
-                    "score": {
-                      "type": "string"
-                    },
-                    "audit_status": {
-                      "type": "string"
-                    },
-                    "incident_history": {
-                      "type": "string"
-                    },
-                    "tvl_usd": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
-      }
-    },
-    "/liquidation-risk": {
+    "/compare": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Compare products across sources",
+        "operationId": "post_compare",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Product Data Extraction Commerce Intelligence API"
         ],
         "responses": {
           "200": {
@@ -300,9 +227,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "comparison",
+                    "best_value",
+                    "price_range"
                   ],
                   "properties": {
                     "success": {
@@ -319,18 +246,18 @@ const spec = {
                     },
                     "human_approval_required": {
                       "type": "boolean",
-                      "default": true
+                      "default": false
                     },
-                    "liquidation_price": {
+                    "comparison": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "best_value": {
                       "type": "string"
                     },
-                    "health_factor": {
+                    "price_range": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "key_differences": {
                       "type": "string"
                     }
                   }
@@ -352,20 +279,106 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "urls",
+                  "comparison_fields"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "urls": {
                     "type": "string"
                   },
-                  "debt_asset": {
+                  "comparison_fields": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitor": {
+      "post": {
+        "summary": "Monitor a product for price or availability changes",
+        "operationId": "post_monitor",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Product Data Extraction Commerce Intelligence API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "monitor_id",
+                    "active",
+                    "current_price"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "monitor_id": {
+                      "type": "string"
+                    },
+                    "active": {
+                      "type": "string"
+                    },
+                    "current_price": {
+                      "type": "string"
+                    },
+                    "current_availability": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "url",
+                  "webhook_url"
+                ],
+                "properties": {
+                  "url": {
                     "type": "string"
                   },
-                  "collateral_amount": {
+                  "webhook_url": {
                     "type": "string"
                   },
-                  "debt_amount": {
+                  "check_interval_minutes": {
                     "type": "string"
                   }
                 }

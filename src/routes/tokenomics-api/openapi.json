@@ -1,12 +1,9 @@
-import { Router, Request, Response } from 'express';
-
-const router = Router();
-const spec = {
+{
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Tokenomics API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Analyses token supply, emission schedules, vesting, and economic model health for any crypto project.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +15,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/tokenomics"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Tokenomics API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Tokenomics API"
         ],
         "responses": {
           "200": {
@@ -79,7 +76,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Tokenomics API"
         ],
         "requestBody": {
           "required": true,
@@ -106,108 +103,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
-      "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "string"
-                    },
-                    "risk_score": {
-                      "type": "string"
-                    },
-                    "risk_level": {
-                      "type": "string"
-                    },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "protocol",
-                  "pool"
-                ],
-                "properties": {
-                  "protocol": {
-                    "type": "string"
-                  },
-                  "pool": {
-                    "type": "string"
-                  },
-                  "amount_usd": {
-                    "type": "string"
-                  },
-                  "chain": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/protocol/:name/score": {
+    "/analyze/:symbol": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "Analyse tokenomics for a token",
+        "operationId": "get_analyze_symbol",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Tokenomics API"
         ],
         "responses": {
           "200": {
@@ -220,9 +123,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "symbol",
+                    "circulating_supply",
+                    "max_supply"
                   ],
                   "properties": {
                     "success": {
@@ -241,19 +144,25 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "protocol": {
+                    "symbol": {
+                      "type": "string"
+                    },
+                    "circulating_supply": {
+                      "type": "string"
+                    },
+                    "max_supply": {
+                      "type": "string"
+                    },
+                    "inflation_rate": {
+                      "type": "string"
+                    },
+                    "vesting_overhang_pct": {
                       "type": "string"
                     },
                     "score": {
                       "type": "string"
                     },
-                    "audit_status": {
-                      "type": "string"
-                    },
-                    "incident_history": {
-                      "type": "string"
-                    },
-                    "tvl_usd": {
+                    "risk_flags": {
                       "type": "string"
                     }
                   }
@@ -270,7 +179,7 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "symbol",
             "in": "path",
             "required": true,
             "schema": {
@@ -280,14 +189,14 @@ const spec = {
         ]
       }
     },
-    "/liquidation-risk": {
+    "/simulate": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Simulate token emission over time",
+        "operationId": "post_simulate",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Tokenomics API"
         ],
         "responses": {
           "200": {
@@ -300,9 +209,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "emission_curve",
+                    "sell_pressure_index",
+                    "price_impact_estimate"
                   ],
                   "properties": {
                     "success": {
@@ -321,16 +230,16 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "liquidation_price": {
+                    "emission_curve": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "sell_pressure_index": {
                       "type": "string"
                     },
-                    "health_factor": {
+                    "price_impact_estimate": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "dilution_pct": {
                       "type": "string"
                     }
                   }
@@ -352,20 +261,102 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "symbol",
+                  "duration_months"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "symbol": {
                     "type": "string"
                   },
-                  "debt_asset": {
+                  "duration_months": {
                     "type": "string"
                   },
-                  "collateral_amount": {
+                  "unlock_schedule": {
                     "type": "string"
-                  },
-                  "debt_amount": {
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/compare": {
+      "post": {
+        "summary": "Compare tokenomics of multiple tokens",
+        "operationId": "post_compare",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Tokenomics API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "comparison",
+                    "best_score",
+                    "worst_score"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "comparison": {
+                      "type": "string"
+                    },
+                    "best_score": {
+                      "type": "string"
+                    },
+                    "worst_score": {
+                      "type": "string"
+                    },
+                    "ranking": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "symbols"
+                ],
+                "properties": {
+                  "symbols": {
                     "type": "string"
                   }
                 }
@@ -376,11 +367,4 @@ const spec = {
       }
     }
   }
-};
-
-router.get('/', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(spec);
-});
-
-export default router;
+}

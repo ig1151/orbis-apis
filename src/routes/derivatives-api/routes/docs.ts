@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Derivatives API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Fetches live derivatives market data including futures, options, funding rates, and open interest.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +18,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/derivatives"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Derivatives API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Derivatives API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Derivatives API"
         ],
         "requestBody": {
           "required": true,
@@ -106,108 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
-      "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "string"
-                    },
-                    "risk_score": {
-                      "type": "string"
-                    },
-                    "risk_level": {
-                      "type": "string"
-                    },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "protocol",
-                  "pool"
-                ],
-                "properties": {
-                  "protocol": {
-                    "type": "string"
-                  },
-                  "pool": {
-                    "type": "string"
-                  },
-                  "amount_usd": {
-                    "type": "string"
-                  },
-                  "chain": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/protocol/:name/score": {
+    "/futures/:symbol": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "Get futures data for a symbol",
+        "operationId": "get_futures_symbol",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Derivatives API"
         ],
         "responses": {
           "200": {
@@ -220,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "symbol",
+                    "price",
+                    "basis"
                   ],
                   "properties": {
                     "success": {
@@ -241,19 +147,25 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "protocol": {
+                    "symbol": {
                       "type": "string"
                     },
-                    "score": {
+                    "price": {
                       "type": "string"
                     },
-                    "audit_status": {
+                    "basis": {
                       "type": "string"
                     },
-                    "incident_history": {
+                    "funding_rate": {
                       "type": "string"
                     },
-                    "tvl_usd": {
+                    "open_interest_usd": {
+                      "type": "string"
+                    },
+                    "volume_24h": {
+                      "type": "string"
+                    },
+                    "exchanges": {
                       "type": "string"
                     }
                   }
@@ -270,7 +182,7 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "symbol",
             "in": "path",
             "required": true,
             "schema": {
@@ -280,14 +192,14 @@ const spec = {
         ]
       }
     },
-    "/liquidation-risk": {
-      "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+    "/options/:symbol": {
+      "get": {
+        "summary": "Get options chain for a symbol",
+        "operationId": "get_options_symbol",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Derivatives API"
         ],
         "responses": {
           "200": {
@@ -300,9 +212,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "symbol",
+                    "expiries",
+                    "calls"
                   ],
                   "properties": {
                     "success": {
@@ -321,16 +233,22 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "liquidation_price": {
+                    "symbol": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "expiries": {
                       "type": "string"
                     },
-                    "health_factor": {
+                    "calls": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "puts": {
+                      "type": "string"
+                    },
+                    "max_pain": {
+                      "type": "string"
+                    },
+                    "iv_skew": {
                       "type": "string"
                     }
                   }
@@ -345,34 +263,104 @@ const spec = {
             "description": "Internal Server Error"
           }
         },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "collateral_asset",
-                  "debt_asset"
-                ],
-                "properties": {
-                  "collateral_asset": {
-                    "type": "string"
-                  },
-                  "debt_asset": {
-                    "type": "string"
-                  },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
-                    "type": "string"
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/funding-rates": {
+      "get": {
+        "summary": "Get funding rates across exchanges",
+        "operationId": "get_funding-rates",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Derivatives API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "rates",
+                    "avg_funding_rate",
+                    "highest"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "rates": {
+                      "type": "string"
+                    },
+                    "avg_funding_rate": {
+                      "type": "string"
+                    },
+                    "highest": {
+                      "type": "string"
+                    },
+                    "lowest": {
+                      "type": "string"
+                    },
+                    "signal": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "exchanges",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     }
   }

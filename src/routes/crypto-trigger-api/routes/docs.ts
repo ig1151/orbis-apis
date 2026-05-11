@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Agent Crypto Trigger Market Alert API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Monitors on-chain and market conditions to trigger agent workflows on configurable events.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +18,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/crypto-trigger"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Agent Crypto Trigger Market Alert API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Crypto Trigger Market Alert API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Crypto Trigger Market Alert API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/trigger": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Create a market trigger",
+        "operationId": "post_trigger",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Crypto Trigger Market Alert API"
         ],
         "responses": {
           "200": {
@@ -126,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "trigger_id",
+                    "active",
+                    "condition"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +144,19 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "trigger_id": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "active": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "condition": {
                       "type": "string"
                     },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
+                    "estimated_ttl_seconds": {
                       "type": "string"
                     }
                   }
@@ -177,20 +178,20 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "asset",
+                  "condition"
                 ],
                 "properties": {
-                  "protocol": {
+                  "asset": {
                     "type": "string"
                   },
-                  "pool": {
+                  "condition": {
                     "type": "string"
                   },
-                  "amount_usd": {
+                  "threshold": {
                     "type": "string"
                   },
-                  "chain": {
+                  "webhook_url": {
                     "type": "string"
                   }
                 }
@@ -200,14 +201,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
+    "/triggers": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "List active triggers",
+        "operationId": "get_triggers",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Crypto Trigger Market Alert API"
         ],
         "responses": {
           "200": {
@@ -220,9 +221,8 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "triggers",
+                    "total"
                   ],
                   "properties": {
                     "success": {
@@ -241,19 +241,10 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "protocol": {
+                    "triggers": {
                       "type": "string"
                     },
-                    "score": {
-                      "type": "string"
-                    },
-                    "audit_status": {
-                      "type": "string"
-                    },
-                    "incident_history": {
-                      "type": "string"
-                    },
-                    "tvl_usd": {
+                    "total": {
                       "type": "string"
                     }
                   }
@@ -270,9 +261,17 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
-            "in": "path",
-            "required": true,
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "asset",
+            "in": "query",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -280,14 +279,14 @@ const spec = {
         ]
       }
     },
-    "/liquidation-risk": {
+    "/test": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Test a trigger condition against current data",
+        "operationId": "post_test",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Crypto Trigger Market Alert API"
         ],
         "responses": {
           "200": {
@@ -300,9 +299,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "would_fire",
+                    "current_value",
+                    "threshold"
                   ],
                   "properties": {
                     "success": {
@@ -321,16 +320,16 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "liquidation_price": {
+                    "would_fire": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "current_value": {
                       "type": "string"
                     },
-                    "health_factor": {
+                    "threshold": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "delta": {
                       "type": "string"
                     }
                   }
@@ -352,20 +351,17 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "asset",
+                  "condition"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "asset": {
                     "type": "string"
                   },
-                  "debt_asset": {
+                  "condition": {
                     "type": "string"
                   },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
+                  "threshold": {
                     "type": "string"
                   }
                 }
@@ -373,6 +369,76 @@ const spec = {
             }
           }
         }
+      }
+    },
+    "/trigger/:id": {
+      "delete": {
+        "summary": "Delete a trigger",
+        "operationId": "delete_trigger_id",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Crypto Trigger Market Alert API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "deleted",
+                    "trigger_id"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "deleted": {
+                      "type": "string"
+                    },
+                    "trigger_id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     }
   }

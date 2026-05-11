@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Text Generation API Alias",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Alias route for text-gen providing LLM-powered text generation compatible with agent workflows.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -14,21 +14,21 @@ const spec = {
       "unit_cost_usd": 0.002
     }
   },
-  "x-execution-gate-required": true,
-  "x-paper-mode-recommended": true,
+  "x-execution-gate-required": false,
+  "x-paper-mode-recommended": false,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/text-generation"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Text Generation API Alias capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Text Generation API Alias"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Text Generation API Alias"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/generate": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Generate text from a prompt",
+        "operationId": "post_generate",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Text Generation API Alias"
         ],
         "responses": {
           "200": {
@@ -126,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "text",
+                    "tokens_used",
+                    "model"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +144,19 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "text": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "tokens_used": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "model": {
                       "type": "string"
                     },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
+                    "finish_reason": {
                       "type": "string"
                     }
                   }
@@ -177,20 +178,23 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "prompt",
+                  "system"
                 ],
                 "properties": {
-                  "protocol": {
+                  "prompt": {
                     "type": "string"
                   },
-                  "pool": {
+                  "system": {
                     "type": "string"
                   },
-                  "amount_usd": {
+                  "max_tokens": {
                     "type": "string"
                   },
-                  "chain": {
+                  "temperature": {
+                    "type": "string"
+                  },
+                  "model": {
                     "type": "string"
                   }
                 }
@@ -200,94 +204,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
-      "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "boolean",
-                      "default": true
-                    },
-                    "protocol": {
-                      "type": "string"
-                    },
-                    "score": {
-                      "type": "string"
-                    },
-                    "audit_status": {
-                      "type": "string"
-                    },
-                    "incident_history": {
-                      "type": "string"
-                    },
-                    "tvl_usd": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
-      }
-    },
-    "/liquidation-risk": {
+    "/batch": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Batch generate from multiple prompts",
+        "operationId": "post_batch",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Text Generation API Alias"
         ],
         "responses": {
           "200": {
@@ -300,9 +224,8 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "results",
+                    "total_tokens"
                   ],
                   "properties": {
                     "success": {
@@ -319,18 +242,12 @@ const spec = {
                     },
                     "human_approval_required": {
                       "type": "boolean",
-                      "default": true
+                      "default": false
                     },
-                    "liquidation_price": {
+                    "results": {
                       "type": "string"
                     },
-                    "distance_pct": {
-                      "type": "string"
-                    },
-                    "health_factor": {
-                      "type": "string"
-                    },
-                    "risk_level": {
+                    "total_tokens": {
                       "type": "string"
                     }
                   }
@@ -352,20 +269,17 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "prompts",
+                  "system"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "prompts": {
                     "type": "string"
                   },
-                  "debt_asset": {
+                  "system": {
                     "type": "string"
                   },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
+                  "max_tokens": {
                     "type": "string"
                   }
                 }

@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Market Stress API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Computes composite market stress indices using volatility and liquidity signals.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +18,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/market-stress"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Market Stress API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Market Stress API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Market Stress API"
         ],
         "requestBody": {
           "required": true,
@@ -106,108 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
-      "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "string"
-                    },
-                    "risk_score": {
-                      "type": "string"
-                    },
-                    "risk_level": {
-                      "type": "string"
-                    },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "protocol",
-                  "pool"
-                ],
-                "properties": {
-                  "protocol": {
-                    "type": "string"
-                  },
-                  "pool": {
-                    "type": "string"
-                  },
-                  "amount_usd": {
-                    "type": "string"
-                  },
-                  "chain": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/protocol/:name/score": {
+    "/index": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "Get current market stress index",
+        "operationId": "get_index",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Market Stress API"
         ],
         "responses": {
           "200": {
@@ -220,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "stress_index",
+                    "level",
+                    "components"
                   ],
                   "properties": {
                     "success": {
@@ -241,19 +147,19 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "protocol": {
+                    "stress_index": {
                       "type": "string"
                     },
-                    "score": {
+                    "level": {
                       "type": "string"
                     },
-                    "audit_status": {
+                    "components": {
                       "type": "string"
                     },
-                    "incident_history": {
+                    "signal_reliability": {
                       "type": "string"
                     },
-                    "tvl_usd": {
+                    "regime": {
                       "type": "string"
                     }
                   }
@@ -270,9 +176,9 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
-            "in": "path",
-            "required": true,
+            "name": "asset_class",
+            "in": "query",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -280,14 +186,14 @@ const spec = {
         ]
       }
     },
-    "/liquidation-risk": {
+    "/scenario": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Run a stress scenario simulation",
+        "operationId": "post_scenario",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Market Stress API"
         ],
         "responses": {
           "200": {
@@ -300,9 +206,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "scenario",
+                    "impact_by_asset",
+                    "portfolio_drawdown_pct"
                   ],
                   "properties": {
                     "success": {
@@ -321,16 +227,16 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "liquidation_price": {
+                    "scenario": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "impact_by_asset": {
                       "type": "string"
                     },
-                    "health_factor": {
+                    "portfolio_drawdown_pct": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "recovery_estimate_days": {
                       "type": "string"
                     }
                   }
@@ -352,20 +258,17 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "scenario",
+                  "assets"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "scenario": {
                     "type": "string"
                   },
-                  "debt_asset": {
+                  "assets": {
                     "type": "string"
                   },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
+                  "shock_pct": {
                     "type": "string"
                   }
                 }
@@ -373,6 +276,88 @@ const spec = {
             }
           }
         }
+      }
+    },
+    "/history": {
+      "get": {
+        "summary": "Historical stress index timeseries",
+        "operationId": "get_history",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Market Stress API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "timeseries",
+                    "peak_stress",
+                    "avg_stress"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "timeseries": {
+                      "type": "string"
+                    },
+                    "peak_stress": {
+                      "type": "string"
+                    },
+                    "avg_stress": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     }
   }

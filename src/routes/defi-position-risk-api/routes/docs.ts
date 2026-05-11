@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Agent DeFi Position Risk Liquidation Defense API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Monitors active DeFi positions and executes defensive actions to prevent liquidation.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +18,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/defi-position-risk"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Agent DeFi Position Risk Liquidation Defense API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent DeFi Position Risk Liquidation Defense API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent DeFi Position Risk Liquidation Defense API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/monitor": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Monitor a DeFi position for liquidation risk",
+        "operationId": "post_monitor",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent DeFi Position Risk Liquidation Defense API"
         ],
         "responses": {
           "200": {
@@ -126,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "monitor_id",
+                    "health_factor",
+                    "liquidation_price"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +144,22 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "monitor_id": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "health_factor": {
+                      "type": "string"
+                    },
+                    "liquidation_price": {
                       "type": "string"
                     },
                     "risk_level": {
                       "type": "string"
                     },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
+                    "active": {
                       "type": "string"
                     }
                   }
@@ -177,20 +181,23 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "wallet_address",
+                  "protocol"
                 ],
                 "properties": {
+                  "wallet_address": {
+                    "type": "string"
+                  },
                   "protocol": {
                     "type": "string"
                   },
-                  "pool": {
-                    "type": "string"
-                  },
-                  "amount_usd": {
-                    "type": "string"
-                  },
                   "chain": {
+                    "type": "string"
+                  },
+                  "alert_threshold": {
+                    "type": "string"
+                  },
+                  "webhook_url": {
                     "type": "string"
                   }
                 }
@@ -200,14 +207,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
-      "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+    "/defend": {
+      "post": {
+        "summary": "Trigger a defensive action on a position",
+        "operationId": "post_defend",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent DeFi Position Risk Liquidation Defense API"
         ],
         "responses": {
           "200": {
@@ -220,9 +227,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "action_id",
+                    "status",
+                    "tx_hash"
                   ],
                   "properties": {
                     "success": {
@@ -238,22 +245,18 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
-                      "type": "boolean",
-                      "default": true
-                    },
-                    "protocol": {
                       "type": "string"
                     },
-                    "score": {
+                    "action_id": {
                       "type": "string"
                     },
-                    "audit_status": {
+                    "status": {
                       "type": "string"
                     },
-                    "incident_history": {
+                    "tx_hash": {
                       "type": "string"
                     },
-                    "tvl_usd": {
+                    "new_health_factor": {
                       "type": "string"
                     }
                   }
@@ -268,26 +271,41 @@ const spec = {
             "description": "Internal Server Error"
           }
         },
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "monitor_id",
+                  "action"
+                ],
+                "properties": {
+                  "monitor_id": {
+                    "type": "string"
+                  },
+                  "action": {
+                    "type": "string"
+                  },
+                  "amount": {
+                    "type": "string"
+                  }
+                }
+              }
             }
           }
-        ]
+        }
       }
     },
-    "/liquidation-risk": {
-      "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+    "/position/:wallet/:protocol": {
+      "get": {
+        "summary": "Get current position risk metrics",
+        "operationId": "get_position_wallet_protocol",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent DeFi Position Risk Liquidation Defense API"
         ],
         "responses": {
           "200": {
@@ -300,8 +318,8 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
+                    "wallet",
+                    "protocol",
                     "health_factor"
                   ],
                   "properties": {
@@ -321,13 +339,22 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "liquidation_price": {
+                    "wallet": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "protocol": {
                       "type": "string"
                     },
                     "health_factor": {
+                      "type": "string"
+                    },
+                    "collateral_usd": {
+                      "type": "string"
+                    },
+                    "debt_usd": {
+                      "type": "string"
+                    },
+                    "liquidation_price": {
                       "type": "string"
                     },
                     "risk_level": {
@@ -345,34 +372,24 @@ const spec = {
             "description": "Internal Server Error"
           }
         },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "collateral_asset",
-                  "debt_asset"
-                ],
-                "properties": {
-                  "collateral_asset": {
-                    "type": "string"
-                  },
-                  "debt_asset": {
-                    "type": "string"
-                  },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
-                    "type": "string"
-                  }
-                }
-              }
+        "parameters": [
+          {
+            "name": "wallet",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "protocol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
-        }
+        ]
       }
     }
   }

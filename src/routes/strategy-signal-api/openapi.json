@@ -1,12 +1,9 @@
-import { Router, Request, Response } from 'express';
-
-const router = Router();
-const spec = {
+{
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Strategy Signal API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Generates trading and portfolio strategy signals from multi-factor quantitative models.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +15,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/strategy-signal"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Strategy Signal API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Strategy Signal API"
         ],
         "responses": {
           "200": {
@@ -79,7 +76,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Strategy Signal API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +103,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/generate": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Generate a strategy signal",
+        "operationId": "post_generate",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Strategy Signal API"
         ],
         "responses": {
           "200": {
@@ -126,9 +123,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "signal",
+                    "direction",
+                    "confidence"
                   ],
                   "properties": {
                     "success": {
@@ -146,16 +143,25 @@ const spec = {
                     "human_approval_required": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "signal": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "direction": {
                       "type": "string"
                     },
-                    "factors": {
+                    "confidence": {
                       "type": "string"
                     },
-                    "recommended_actions": {
+                    "entry_price": {
+                      "type": "string"
+                    },
+                    "stop_loss": {
+                      "type": "string"
+                    },
+                    "take_profit": {
+                      "type": "string"
+                    },
+                    "reasoning": {
                       "type": "string"
                     }
                   }
@@ -177,20 +183,20 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "assets",
+                  "strategy_type"
                 ],
                 "properties": {
-                  "protocol": {
+                  "assets": {
                     "type": "string"
                   },
-                  "pool": {
+                  "strategy_type": {
                     "type": "string"
                   },
-                  "amount_usd": {
+                  "risk_tolerance": {
                     "type": "string"
                   },
-                  "chain": {
+                  "horizon": {
                     "type": "string"
                   }
                 }
@@ -200,14 +206,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
+    "/backtest/:strategy_id": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "Retrieve backtest results for a strategy",
+        "operationId": "get_backtest_strategy_id",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Strategy Signal API"
         ],
         "responses": {
           "200": {
@@ -220,9 +226,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "strategy_id",
+                    "sharpe",
+                    "max_drawdown"
                   ],
                   "properties": {
                     "success": {
@@ -241,19 +247,22 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "protocol": {
+                    "strategy_id": {
                       "type": "string"
                     },
-                    "score": {
+                    "sharpe": {
                       "type": "string"
                     },
-                    "audit_status": {
+                    "max_drawdown": {
                       "type": "string"
                     },
-                    "incident_history": {
+                    "win_rate": {
                       "type": "string"
                     },
-                    "tvl_usd": {
+                    "total_return_pct": {
+                      "type": "string"
+                    },
+                    "period": {
                       "type": "string"
                     }
                   }
@@ -270,7 +279,7 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "strategy_id",
             "in": "path",
             "required": true,
             "schema": {
@@ -280,14 +289,14 @@ const spec = {
         ]
       }
     },
-    "/liquidation-risk": {
+    "/rank": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Rank assets by strategy signal strength",
+        "operationId": "post_rank",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Strategy Signal API"
         ],
         "responses": {
           "200": {
@@ -300,9 +309,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "ranked_assets",
+                    "top_pick",
+                    "signal_distribution"
                   ],
                   "properties": {
                     "success": {
@@ -321,16 +330,13 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "liquidation_price": {
+                    "ranked_assets": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "top_pick": {
                       "type": "string"
                     },
-                    "health_factor": {
-                      "type": "string"
-                    },
-                    "risk_level": {
+                    "signal_distribution": {
                       "type": "string"
                     }
                   }
@@ -352,20 +358,14 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "assets",
+                  "strategy_type"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "assets": {
                     "type": "string"
                   },
-                  "debt_asset": {
-                    "type": "string"
-                  },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
+                  "strategy_type": {
                     "type": "string"
                   }
                 }
@@ -376,11 +376,4 @@ const spec = {
       }
     }
   }
-};
-
-router.get('/', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(spec);
-});
-
-export default router;
+}

@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Real-Time Monitor API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Generic real-time event monitoring with configurable triggers, webhooks, and agent-callable alerts.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -14,21 +14,21 @@ const spec = {
       "unit_cost_usd": 0.002
     }
   },
-  "x-execution-gate-required": true,
-  "x-paper-mode-recommended": true,
+  "x-execution-gate-required": false,
+  "x-paper-mode-recommended": false,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/real-time-monitor"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Real-Time Monitor API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Real-Time Monitor API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Real-Time Monitor API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/monitor": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Create a real-time monitor",
+        "operationId": "post_monitor",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Real-Time Monitor API"
         ],
         "responses": {
           "200": {
@@ -126,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "monitor_id",
+                    "active",
+                    "name"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +144,19 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "monitor_id": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "active": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "name": {
                       "type": "string"
                     },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
+                    "condition": {
                       "type": "string"
                     }
                   }
@@ -177,20 +178,23 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "name",
+                  "data_source"
                 ],
                 "properties": {
-                  "protocol": {
+                  "name": {
                     "type": "string"
                   },
-                  "pool": {
+                  "data_source": {
                     "type": "string"
                   },
-                  "amount_usd": {
+                  "condition": {
                     "type": "string"
                   },
-                  "chain": {
+                  "threshold": {
+                    "type": "string"
+                  },
+                  "webhook_url": {
                     "type": "string"
                   }
                 }
@@ -200,14 +204,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
+    "/monitors": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "List all active monitors",
+        "operationId": "get_monitors",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Real-Time Monitor API"
         ],
         "responses": {
           "200": {
@@ -220,9 +224,8 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "monitors",
+                    "total"
                   ],
                   "properties": {
                     "success": {
@@ -239,21 +242,12 @@ const spec = {
                     },
                     "human_approval_required": {
                       "type": "boolean",
-                      "default": true
+                      "default": false
                     },
-                    "protocol": {
+                    "monitors": {
                       "type": "string"
                     },
-                    "score": {
-                      "type": "string"
-                    },
-                    "audit_status": {
-                      "type": "string"
-                    },
-                    "incident_history": {
-                      "type": "string"
-                    },
-                    "tvl_usd": {
+                    "total": {
                       "type": "string"
                     }
                   }
@@ -270,9 +264,17 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
-            "in": "path",
-            "required": true,
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "data_source",
+            "in": "query",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -280,14 +282,14 @@ const spec = {
         ]
       }
     },
-    "/liquidation-risk": {
-      "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+    "/monitor/:id/events": {
+      "get": {
+        "summary": "Get events fired by a monitor",
+        "operationId": "get_monitor_id_events",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Real-Time Monitor API"
         ],
         "responses": {
           "200": {
@@ -300,9 +302,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "monitor_id",
+                    "events",
+                    "total_fired"
                   ],
                   "properties": {
                     "success": {
@@ -319,18 +321,18 @@ const spec = {
                     },
                     "human_approval_required": {
                       "type": "boolean",
-                      "default": true
+                      "default": false
                     },
-                    "liquidation_price": {
+                    "monitor_id": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "events": {
                       "type": "string"
                     },
-                    "health_factor": {
+                    "total_fired": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "last_fired_at": {
                       "type": "string"
                     }
                   }
@@ -345,34 +347,86 @@ const spec = {
             "description": "Internal Server Error"
           }
         },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "collateral_asset",
-                  "debt_asset"
-                ],
-                "properties": {
-                  "collateral_asset": {
-                    "type": "string"
-                  },
-                  "debt_asset": {
-                    "type": "string"
-                  },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
-                    "type": "string"
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/monitor/:id": {
+      "delete": {
+        "summary": "Delete a monitor",
+        "operationId": "delete_monitor_id",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Real-Time Monitor API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "deleted",
+                    "monitor_id"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "deleted": {
+                      "type": "string"
+                    },
+                    "monitor_id": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     }
   }

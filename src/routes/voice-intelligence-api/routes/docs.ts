@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Voice Intelligence API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Transcribes, diarizes, and extracts structured intelligence from voice recordings.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -14,21 +14,21 @@ const spec = {
       "unit_cost_usd": 0.002
     }
   },
-  "x-execution-gate-required": true,
-  "x-paper-mode-recommended": true,
+  "x-execution-gate-required": false,
+  "x-paper-mode-recommended": false,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/voice-intelligence"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Voice Intelligence API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Voice Intelligence API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Voice Intelligence API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/transcribe": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Transcribe an audio file",
+        "operationId": "post_transcribe",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Voice Intelligence API"
         ],
         "responses": {
           "200": {
@@ -126,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "transcript",
+                    "speakers",
+                    "duration_seconds"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +144,19 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "transcript": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "speakers": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "duration_seconds": {
                       "type": "string"
                     },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
+                    "confidence": {
                       "type": "string"
                     }
                   }
@@ -177,20 +178,17 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "audio_url",
+                  "language"
                 ],
                 "properties": {
-                  "protocol": {
+                  "audio_url": {
                     "type": "string"
                   },
-                  "pool": {
+                  "language": {
                     "type": "string"
                   },
-                  "amount_usd": {
-                    "type": "string"
-                  },
-                  "chain": {
+                  "diarize": {
                     "type": "string"
                   }
                 }
@@ -200,94 +198,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
-      "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "boolean",
-                      "default": true
-                    },
-                    "protocol": {
-                      "type": "string"
-                    },
-                    "score": {
-                      "type": "string"
-                    },
-                    "audit_status": {
-                      "type": "string"
-                    },
-                    "incident_history": {
-                      "type": "string"
-                    },
-                    "tvl_usd": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
-      }
-    },
-    "/liquidation-risk": {
+    "/extract-insights": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Extract insights from a transcript",
+        "operationId": "post_extract-insights",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Voice Intelligence API"
         ],
         "responses": {
           "200": {
@@ -300,9 +218,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "insights",
+                    "action_items",
+                    "sentiment"
                   ],
                   "properties": {
                     "success": {
@@ -319,18 +237,21 @@ const spec = {
                     },
                     "human_approval_required": {
                       "type": "boolean",
-                      "default": true
+                      "default": false
                     },
-                    "liquidation_price": {
+                    "insights": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "action_items": {
                       "type": "string"
                     },
-                    "health_factor": {
+                    "sentiment": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "key_entities": {
+                      "type": "string"
+                    },
+                    "risk_flags": {
                       "type": "string"
                     }
                   }
@@ -352,20 +273,109 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "transcript",
+                  "signal_types"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "transcript": {
                     "type": "string"
                   },
-                  "debt_asset": {
+                  "signal_types": {
                     "type": "string"
                   },
-                  "collateral_amount": {
+                  "context": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/summarize": {
+      "post": {
+        "summary": "Summarize a call or meeting",
+        "operationId": "post_summarize",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Voice Intelligence API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "summary",
+                    "decisions",
+                    "next_steps"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "summary": {
+                      "type": "string"
+                    },
+                    "decisions": {
+                      "type": "string"
+                    },
+                    "next_steps": {
+                      "type": "string"
+                    },
+                    "participants": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "transcript",
+                  "format"
+                ],
+                "properties": {
+                  "transcript": {
                     "type": "string"
                   },
-                  "debt_amount": {
+                  "format": {
+                    "type": "string"
+                  },
+                  "max_length": {
                     "type": "string"
                   }
                 }

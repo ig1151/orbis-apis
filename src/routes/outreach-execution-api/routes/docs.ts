@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Outreach Execution API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Generates, sequences, and tracks personalized outreach campaigns for agent-driven sales workflows.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -14,21 +14,21 @@ const spec = {
       "unit_cost_usd": 0.002
     }
   },
-  "x-execution-gate-required": true,
-  "x-paper-mode-recommended": true,
+  "x-execution-gate-required": false,
+  "x-paper-mode-recommended": false,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/outreach-execution"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Outreach Execution API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Outreach Execution API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Outreach Execution API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/generate": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Generate a personalized outreach message",
+        "operationId": "post_generate",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Outreach Execution API"
         ],
         "responses": {
           "200": {
@@ -126,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "subject",
+                    "body",
+                    "personalization_score"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +144,19 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "subject": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "body": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "personalization_score": {
                       "type": "string"
                     },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
+                    "recommended_send_time": {
                       "type": "string"
                     }
                   }
@@ -177,20 +178,26 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "recipient_name",
+                  "recipient_role"
                 ],
                 "properties": {
-                  "protocol": {
+                  "recipient_name": {
                     "type": "string"
                   },
-                  "pool": {
+                  "recipient_role": {
                     "type": "string"
                   },
-                  "amount_usd": {
+                  "company": {
                     "type": "string"
                   },
-                  "chain": {
+                  "context": {
+                    "type": "string"
+                  },
+                  "channel": {
+                    "type": "string"
+                  },
+                  "tone": {
                     "type": "string"
                   }
                 }
@@ -200,14 +207,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
-      "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+    "/sequence": {
+      "post": {
+        "summary": "Create a multi-step outreach sequence",
+        "operationId": "post_sequence",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Outreach Execution API"
         ],
         "responses": {
           "200": {
@@ -220,9 +227,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "sequence_id",
+                    "steps",
+                    "estimated_reply_rate"
                   ],
                   "properties": {
                     "success": {
@@ -239,21 +246,116 @@ const spec = {
                     },
                     "human_approval_required": {
                       "type": "boolean",
-                      "default": true
+                      "default": false
                     },
-                    "protocol": {
+                    "sequence_id": {
                       "type": "string"
                     },
-                    "score": {
+                    "steps": {
                       "type": "string"
                     },
-                    "audit_status": {
+                    "estimated_reply_rate": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "recipients",
+                  "template_id"
+                ],
+                "properties": {
+                  "recipients": {
+                    "type": "string"
+                  },
+                  "template_id": {
+                    "type": "string"
+                  },
+                  "steps": {
+                    "type": "string"
+                  },
+                  "spacing_days": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sequence/:id/stats": {
+      "get": {
+        "summary": "Get outreach sequence performance stats",
+        "operationId": "get_sequence_id_stats",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Outreach Execution API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "sequence_id",
+                    "sent",
+                    "opened"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
                       "type": "string"
                     },
-                    "incident_history": {
+                    "execution_id": {
                       "type": "string"
                     },
-                    "tvl_usd": {
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "sequence_id": {
+                      "type": "string"
+                    },
+                    "sent": {
+                      "type": "string"
+                    },
+                    "opened": {
+                      "type": "string"
+                    },
+                    "replied": {
+                      "type": "string"
+                    },
+                    "bounced": {
+                      "type": "string"
+                    },
+                    "reply_rate": {
                       "type": "string"
                     }
                   }
@@ -270,7 +372,7 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -278,101 +380,6 @@ const spec = {
             }
           }
         ]
-      }
-    },
-    "/liquidation-risk": {
-      "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "boolean",
-                      "default": true
-                    },
-                    "liquidation_price": {
-                      "type": "string"
-                    },
-                    "distance_pct": {
-                      "type": "string"
-                    },
-                    "health_factor": {
-                      "type": "string"
-                    },
-                    "risk_level": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "collateral_asset",
-                  "debt_asset"
-                ],
-                "properties": {
-                  "collateral_asset": {
-                    "type": "string"
-                  },
-                  "debt_asset": {
-                    "type": "string"
-                  },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     }
   }

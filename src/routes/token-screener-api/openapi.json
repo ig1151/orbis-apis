@@ -1,12 +1,9 @@
-import { Router, Request, Response } from 'express';
-
-const router = Router();
-const spec = {
+{
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Token Screener API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Screens tokens by fundamentals, on-chain metrics, and risk signals.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +15,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/token-screener"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Token Screener API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Token Screener API"
         ],
         "responses": {
           "200": {
@@ -79,7 +76,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Token Screener API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +103,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/screen": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Screen tokens by criteria",
+        "operationId": "post_screen",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Token Screener API"
         ],
         "responses": {
           "200": {
@@ -126,9 +123,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "tokens",
+                    "total_matched",
+                    "screened_at"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +141,16 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "tokens": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "total_matched": {
                       "type": "string"
                     },
-                    "risk_level": {
-                      "type": "string"
-                    },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
+                    "screened_at": {
                       "type": "string"
                     }
                   }
@@ -177,20 +172,20 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "min_market_cap",
+                  "max_market_cap"
                 ],
                 "properties": {
-                  "protocol": {
+                  "min_market_cap": {
                     "type": "string"
                   },
-                  "pool": {
+                  "max_market_cap": {
                     "type": "string"
                   },
-                  "amount_usd": {
+                  "min_volume_24h": {
                     "type": "string"
                   },
-                  "chain": {
+                  "chains": {
                     "type": "string"
                   }
                 }
@@ -200,14 +195,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
+    "/token/:symbol": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "Get full token screening report",
+        "operationId": "get_token_symbol",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Token Screener API"
         ],
         "responses": {
           "200": {
@@ -220,9 +215,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
+                    "symbol",
                     "score",
-                    "audit_status"
+                    "risk_flags"
                   ],
                   "properties": {
                     "success": {
@@ -241,19 +236,22 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "protocol": {
+                    "symbol": {
                       "type": "string"
                     },
                     "score": {
                       "type": "string"
                     },
-                    "audit_status": {
+                    "risk_flags": {
                       "type": "string"
                     },
-                    "incident_history": {
+                    "holder_concentration": {
                       "type": "string"
                     },
-                    "tvl_usd": {
+                    "whale_activity": {
+                      "type": "string"
+                    },
+                    "liquidity_score": {
                       "type": "string"
                     }
                   }
@@ -270,7 +268,7 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "symbol",
             "in": "path",
             "required": true,
             "schema": {
@@ -280,14 +278,14 @@ const spec = {
         ]
       }
     },
-    "/liquidation-risk": {
+    "/watchlist": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Save a token watchlist",
+        "operationId": "post_watchlist",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Token Screener API"
         ],
         "responses": {
           "200": {
@@ -300,9 +298,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "watchlist_id",
+                    "name",
+                    "symbols"
                   ],
                   "properties": {
                     "success": {
@@ -321,16 +319,16 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "liquidation_price": {
+                    "watchlist_id": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "name": {
                       "type": "string"
                     },
-                    "health_factor": {
+                    "symbols": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "created_at": {
                       "type": "string"
                     }
                   }
@@ -352,20 +350,17 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "name",
+                  "symbols"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "name": {
                     "type": "string"
                   },
-                  "debt_asset": {
+                  "symbols": {
                     "type": "string"
                   },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
+                  "alert_on_change": {
                     "type": "string"
                   }
                 }
@@ -376,11 +371,4 @@ const spec = {
       }
     }
   }
-};
-
-router.get('/', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(spec);
-});
-
-export default router;
+}

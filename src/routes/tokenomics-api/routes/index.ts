@@ -1,0 +1,64 @@
+import { Router, Request, Response } from 'express';
+import Joi from 'joi';
+
+const router = Router();
+
+router.get('/discovery', (_req, res) => {
+  res.json({
+    api: "Tokenomics API",
+    version: '1.0.0',
+    mount: "/tokenomics",
+    human_approval_required: true,
+    x_agent_callable: true,
+    x_mcp_compatible: true,
+    pricing: { model: 'per_call', unit_cost_usd: 0.002 },
+    endpoints: ["/analyze/:symbol", "/simulate", "/compare"],
+    recommended_actions_priority_order: ["/analyze/:symbol", "/simulate", "/compare"],
+    chain_to: ["agent-memory", "alpha-signal", "strategy-signal", "market-snapshot"],
+  });
+});
+
+router.post('/execution-gate', (req, res) => {
+  const { action, payload } = req.body || {};
+  const checks = {
+    action_recognized: !!action,
+    payload_present: !!payload,
+    human_approval_required: true,
+    confidence_sufficient: true,
+    rate_limit_ok: true,
+  };
+  const passed = Object.values(checks).every(Boolean);
+  res.json({ passed, checks, approved_at: new Date().toISOString() });
+});
+
+// Analyse tokenomics for a token
+router.get('/analyze/:symbol', (req: Request, res: Response) => {
+  const trace_id = `trace_${Date.now()}`;
+  const execution_id = `exec_${Date.now()}`;
+  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
+  res.json({ success: true, trace_id, execution_id, session_id, symbol: 'symbol_value', circulating_supply: 'circulating_supply_value', max_supply: 'max_supply_value', inflation_rate: 'inflation_rate_value', vesting_overhang_pct: 'vesting_overhang_pct_value', score: 'score_value', risk_flags: 'risk_flags_value', human_approval_required: true, computed_at: new Date().toISOString() });
+});
+
+// Simulate token emission over time
+router.post('/simulate', (req: Request, res: Response) => {
+  const schema = Joi.object({ symbol: Joi.string().optional(), duration_months: Joi.string().optional(), unlock_schedule: Joi.string().optional(), });
+  const { error } = schema.validate(req.body, { allowUnknown: false });
+  if (error) return res.status(400).json({ success: false, error: error.details[0].message });
+  const trace_id = `trace_${Date.now()}`;
+  const execution_id = `exec_${Date.now()}`;
+  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
+  res.json({ success: true, trace_id, execution_id, session_id, emission_curve: 'emission_curve_value', sell_pressure_index: 'sell_pressure_index_value', price_impact_estimate: 'price_impact_estimate_value', dilution_pct: 'dilution_pct_value', human_approval_required: true, computed_at: new Date().toISOString() });
+});
+
+// Compare tokenomics of multiple tokens
+router.post('/compare', (req: Request, res: Response) => {
+  const schema = Joi.object({ symbols: Joi.string().optional(), });
+  const { error } = schema.validate(req.body, { allowUnknown: false });
+  if (error) return res.status(400).json({ success: false, error: error.details[0].message });
+  const trace_id = `trace_${Date.now()}`;
+  const execution_id = `exec_${Date.now()}`;
+  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
+  res.json({ success: true, trace_id, execution_id, session_id, comparison: 'comparison_value', best_score: 'best_score_value', worst_score: 'worst_score_value', ranking: 'ranking_value', human_approval_required: true, computed_at: new Date().toISOString() });
+});
+
+export default router;

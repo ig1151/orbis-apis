@@ -1,12 +1,9 @@
-import { Router, Request, Response } from 'express';
-
-const router = Router();
-const spec = {
+{
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Yield Farming API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Surfaces top yield farming opportunities across DeFi protocols with risk-adjusted APY rankings.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +15,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/yield-farming"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Yield Farming API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Yield Farming API"
         ],
         "responses": {
           "200": {
@@ -79,7 +76,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Yield Farming API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +103,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
-      "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+    "/opportunities": {
+      "get": {
+        "summary": "List current yield farming opportunities",
+        "operationId": "get_opportunities",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Yield Farming API"
         ],
         "responses": {
           "200": {
@@ -126,9 +123,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "opportunities",
+                    "updated_at",
+                    "total_tvl_usd"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +141,120 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "opportunities": {
+                      "type": "string"
+                    },
+                    "updated_at": {
+                      "type": "string"
+                    },
+                    "total_tvl_usd": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "chain",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "min_apy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "max_risk",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/simulate": {
+      "post": {
+        "summary": "Simulate yield on a given position",
+        "operationId": "post_simulate",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Yield Farming API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "projected_yield_usd",
+                    "projected_apy",
+                    "gas_cost_usd"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "projected_yield_usd": {
+                      "type": "string"
+                    },
+                    "projected_apy": {
+                      "type": "string"
+                    },
+                    "gas_cost_usd": {
+                      "type": "string"
+                    },
+                    "net_yield_usd": {
                       "type": "string"
                     },
                     "risk_score": {
-                      "type": "string"
-                    },
-                    "risk_level": {
-                      "type": "string"
-                    },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
                       "type": "string"
                     }
                   }
@@ -190,7 +289,7 @@ const spec = {
                   "amount_usd": {
                     "type": "string"
                   },
-                  "chain": {
+                  "duration_days": {
                     "type": "string"
                   }
                 }
@@ -200,14 +299,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
+    "/protocol/:name": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "Get protocol-level yield summary",
+        "operationId": "get_protocol_name",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Yield Farming API"
         ],
         "responses": {
           "200": {
@@ -221,8 +320,8 @@ const spec = {
                     "trace_id",
                     "execution_id",
                     "protocol",
-                    "score",
-                    "audit_status"
+                    "pools",
+                    "avg_apy"
                   ],
                   "properties": {
                     "success": {
@@ -244,16 +343,16 @@ const spec = {
                     "protocol": {
                       "type": "string"
                     },
-                    "score": {
+                    "pools": {
                       "type": "string"
                     },
-                    "audit_status": {
-                      "type": "string"
-                    },
-                    "incident_history": {
+                    "avg_apy": {
                       "type": "string"
                     },
                     "tvl_usd": {
+                      "type": "string"
+                    },
+                    "audited": {
                       "type": "string"
                     }
                   }
@@ -279,108 +378,6 @@ const spec = {
           }
         ]
       }
-    },
-    "/liquidation-risk": {
-      "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "boolean",
-                      "default": true
-                    },
-                    "liquidation_price": {
-                      "type": "string"
-                    },
-                    "distance_pct": {
-                      "type": "string"
-                    },
-                    "health_factor": {
-                      "type": "string"
-                    },
-                    "risk_level": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "collateral_asset",
-                  "debt_asset"
-                ],
-                "properties": {
-                  "collateral_asset": {
-                    "type": "string"
-                  },
-                  "debt_asset": {
-                    "type": "string"
-                  },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   }
-};
-
-router.get('/', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(spec);
-});
-
-export default router;
+}

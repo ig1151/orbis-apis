@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Agent Intelligence Extraction Monitoring API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Extracts structured intelligence signals from unstructured text sources.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -14,21 +14,21 @@ const spec = {
       "unit_cost_usd": 0.002
     }
   },
-  "x-execution-gate-required": true,
-  "x-paper-mode-recommended": true,
+  "x-execution-gate-required": false,
+  "x-paper-mode-recommended": false,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/intelligence-extraction"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Agent Intelligence Extraction Monitoring API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Intelligence Extraction Monitoring API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Intelligence Extraction Monitoring API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/extract": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Extract intelligence signals from text",
+        "operationId": "post_extract",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Intelligence Extraction Monitoring API"
         ],
         "responses": {
           "200": {
@@ -126,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "signals",
+                    "entities",
+                    "sentiment"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +144,22 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "signals": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "entities": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "sentiment": {
                       "type": "string"
                     },
-                    "factors": {
+                    "risk_flags": {
                       "type": "string"
                     },
-                    "recommended_actions": {
+                    "confidence": {
                       "type": "string"
                     }
                   }
@@ -177,20 +181,20 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "text",
+                  "source"
                 ],
                 "properties": {
-                  "protocol": {
+                  "text": {
                     "type": "string"
                   },
-                  "pool": {
+                  "source": {
                     "type": "string"
                   },
-                  "amount_usd": {
+                  "signal_types": {
                     "type": "string"
                   },
-                  "chain": {
+                  "asset_context": {
                     "type": "string"
                   }
                 }
@@ -200,94 +204,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
-      "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "boolean",
-                      "default": true
-                    },
-                    "protocol": {
-                      "type": "string"
-                    },
-                    "score": {
-                      "type": "string"
-                    },
-                    "audit_status": {
-                      "type": "string"
-                    },
-                    "incident_history": {
-                      "type": "string"
-                    },
-                    "tvl_usd": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ]
-      }
-    },
-    "/liquidation-risk": {
+    "/monitor": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Configure an intelligence monitor",
+        "operationId": "post_monitor",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Intelligence Extraction Monitoring API"
         ],
         "responses": {
           "200": {
@@ -300,9 +224,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "monitor_id",
+                    "active",
+                    "estimated_latency_seconds"
                   ],
                   "properties": {
                     "success": {
@@ -319,18 +243,15 @@ const spec = {
                     },
                     "human_approval_required": {
                       "type": "boolean",
-                      "default": true
+                      "default": false
                     },
-                    "liquidation_price": {
+                    "monitor_id": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "active": {
                       "type": "string"
                     },
-                    "health_factor": {
-                      "type": "string"
-                    },
-                    "risk_level": {
+                    "estimated_latency_seconds": {
                       "type": "string"
                     }
                   }
@@ -352,20 +273,106 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "query",
+                  "sources"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "query": {
                     "type": "string"
                   },
-                  "debt_asset": {
+                  "sources": {
                     "type": "string"
                   },
-                  "collateral_amount": {
+                  "signal_types": {
                     "type": "string"
                   },
-                  "debt_amount": {
+                  "webhook_url": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/batch": {
+      "post": {
+        "summary": "Batch extract from multiple text sources",
+        "operationId": "post_batch",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Intelligence Extraction Monitoring API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "results",
+                    "total_signals",
+                    "processing_time_ms"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "results": {
+                      "type": "string"
+                    },
+                    "total_signals": {
+                      "type": "string"
+                    },
+                    "processing_time_ms": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sources",
+                  "signal_types"
+                ],
+                "properties": {
+                  "sources": {
+                    "type": "string"
+                  },
+                  "signal_types": {
                     "type": "string"
                   }
                 }

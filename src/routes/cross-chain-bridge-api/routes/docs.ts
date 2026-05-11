@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Agent Cross-Chain Execution Bridge Intelligence API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Routes, quotes, and simulates cross-chain bridge transactions for agent execution.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +18,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/cross-chain-bridge"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Agent Cross-Chain Execution Bridge Intelligence API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Cross-Chain Execution Bridge Intelligence API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Cross-Chain Execution Bridge Intelligence API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/quote": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Get bridge route quotes",
+        "operationId": "post_quote",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Cross-Chain Execution Bridge Intelligence API"
         ],
         "responses": {
           "200": {
@@ -126,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "routes",
+                    "best_route",
+                    "estimated_time_seconds"
                   ],
                   "properties": {
                     "success": {
@@ -146,16 +146,16 @@ const spec = {
                     "human_approval_required": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "routes": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "best_route": {
                       "type": "string"
                     },
-                    "factors": {
+                    "estimated_time_seconds": {
                       "type": "string"
                     },
-                    "recommended_actions": {
+                    "fees_usd": {
                       "type": "string"
                     }
                   }
@@ -177,20 +177,23 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "from_chain",
+                  "to_chain"
                 ],
                 "properties": {
-                  "protocol": {
+                  "from_chain": {
                     "type": "string"
                   },
-                  "pool": {
+                  "to_chain": {
                     "type": "string"
                   },
-                  "amount_usd": {
+                  "token": {
                     "type": "string"
                   },
-                  "chain": {
+                  "amount": {
+                    "type": "string"
+                  },
+                  "slippage": {
                     "type": "string"
                   }
                 }
@@ -200,14 +203,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
-      "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+    "/simulate": {
+      "post": {
+        "summary": "Simulate a bridge transaction",
+        "operationId": "post_simulate",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Cross-Chain Execution Bridge Intelligence API"
         ],
         "responses": {
           "200": {
@@ -220,9 +223,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "simulation_result",
+                    "gas_estimate",
+                    "success_probability"
                   ],
                   "properties": {
                     "success": {
@@ -241,19 +244,105 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "protocol": {
+                    "simulation_result": {
                       "type": "string"
                     },
-                    "score": {
+                    "gas_estimate": {
                       "type": "string"
                     },
-                    "audit_status": {
+                    "success_probability": {
                       "type": "string"
                     },
-                    "incident_history": {
+                    "risk_flags": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "route_id",
+                  "from_address"
+                ],
+                "properties": {
+                  "route_id": {
+                    "type": "string"
+                  },
+                  "from_address": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status/:tx_hash": {
+      "get": {
+        "summary": "Check bridge transaction status",
+        "operationId": "get_status_tx_hash",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Cross-Chain Execution Bridge Intelligence API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "tx_hash",
+                    "status",
+                    "confirmations"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
                       "type": "string"
                     },
-                    "tvl_usd": {
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "tx_hash": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "confirmations": {
+                      "type": "string"
+                    },
+                    "estimated_completion": {
                       "type": "string"
                     }
                   }
@@ -270,7 +359,7 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "tx_hash",
             "in": "path",
             "required": true,
             "schema": {
@@ -278,101 +367,6 @@ const spec = {
             }
           }
         ]
-      }
-    },
-    "/liquidation-risk": {
-      "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "boolean",
-                      "default": true
-                    },
-                    "liquidation_price": {
-                      "type": "string"
-                    },
-                    "distance_pct": {
-                      "type": "string"
-                    },
-                    "health_factor": {
-                      "type": "string"
-                    },
-                    "risk_level": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "collateral_asset",
-                  "debt_asset"
-                ],
-                "properties": {
-                  "collateral_asset": {
-                    "type": "string"
-                  },
-                  "debt_asset": {
-                    "type": "string"
-                  },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     }
   }

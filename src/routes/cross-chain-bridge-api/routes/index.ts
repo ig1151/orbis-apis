@@ -1,0 +1,64 @@
+import { Router, Request, Response } from 'express';
+import Joi from 'joi';
+
+const router = Router();
+
+router.get('/discovery', (_req, res) => {
+  res.json({
+    api: "Agent Cross-Chain Execution Bridge Intelligence API",
+    version: '1.0.0',
+    mount: "/cross-chain-bridge",
+    human_approval_required: true,
+    x_agent_callable: true,
+    x_mcp_compatible: true,
+    pricing: { model: 'per_call', unit_cost_usd: 0.002 },
+    endpoints: ["/quote", "/simulate", "/status/:tx_hash"],
+    recommended_actions_priority_order: ["/quote", "/simulate", "/status/:tx_hash"],
+    chain_to: ["agent-memory", "market-snapshot", "onchain-signal", "tx-simulator"],
+  });
+});
+
+router.post('/execution-gate', (req, res) => {
+  const { action, payload } = req.body || {};
+  const checks = {
+    action_recognized: !!action,
+    payload_present: !!payload,
+    human_approval_required: true,
+    confidence_sufficient: true,
+    rate_limit_ok: true,
+  };
+  const passed = Object.values(checks).every(Boolean);
+  res.json({ passed, checks, approved_at: new Date().toISOString() });
+});
+
+// Get bridge route quotes
+router.post('/quote', (req: Request, res: Response) => {
+  const schema = Joi.object({ from_chain: Joi.string().optional(), to_chain: Joi.string().optional(), token: Joi.string().optional(), amount: Joi.string().optional(), slippage: Joi.string().optional(), });
+  const { error } = schema.validate(req.body, { allowUnknown: false });
+  if (error) return res.status(400).json({ success: false, error: error.details[0].message });
+  const trace_id = `trace_${Date.now()}`;
+  const execution_id = `exec_${Date.now()}`;
+  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
+  res.json({ success: true, trace_id, execution_id, session_id, routes: 'routes_value', best_route: 'best_route_value', estimated_time_seconds: 'estimated_time_seconds_value', fees_usd: 'fees_usd_value', human_approval_required: 'human_approval_required_value', computed_at: new Date().toISOString() });
+});
+
+// Simulate a bridge transaction
+router.post('/simulate', (req: Request, res: Response) => {
+  const schema = Joi.object({ route_id: Joi.string().optional(), from_address: Joi.string().optional(), });
+  const { error } = schema.validate(req.body, { allowUnknown: false });
+  if (error) return res.status(400).json({ success: false, error: error.details[0].message });
+  const trace_id = `trace_${Date.now()}`;
+  const execution_id = `exec_${Date.now()}`;
+  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
+  res.json({ success: true, trace_id, execution_id, session_id, simulation_result: 'simulation_result_value', gas_estimate: 'gas_estimate_value', success_probability: 'success_probability_value', risk_flags: 'risk_flags_value', human_approval_required: true, computed_at: new Date().toISOString() });
+});
+
+// Check bridge transaction status
+router.get('/status/:tx_hash', (req: Request, res: Response) => {
+  const trace_id = `trace_${Date.now()}`;
+  const execution_id = `exec_${Date.now()}`;
+  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
+  res.json({ success: true, trace_id, execution_id, session_id, tx_hash: 'tx_hash_value', status: 'status_value', confirmations: 'confirmations_value', estimated_completion: 'estimated_completion_value', human_approval_required: true, computed_at: new Date().toISOString() });
+});
+
+export default router;

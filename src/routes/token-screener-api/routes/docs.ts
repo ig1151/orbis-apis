@@ -1,79 +1,384 @@
 import { Router, Request, Response } from 'express';
-const router = Router();
 
-const openApiSpec = {
-  openapi: '3.0.0',
-  info: {
-    title: 'Token Screener API',
-    version: '1.0.0',
-    description: 'Crypto token screener — filter by momentum, volume spikes, gainers, losers, near ATH, and deep value. AI-powered opportunity detection with risk-adjusted recommendations. Powered by CoinGecko + Claude AI.',
-    contact: { url: 'https://orbisapi.com' },
+const router = Router();
+const spec = {
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Token Screener API",
+    "version": "1.0.0",
+    "description": "Screens tokens by fundamentals, on-chain metrics, and risk signals.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "model": "per_call",
+      "unit_cost_usd": 0.002
+    }
   },
-  servers: [{ url: 'https://token-screener-api.onrender.com' }],
-  paths: {
-    '/v1/health': { get: { summary: 'Health check', responses: { 200: { description: 'OK' } } } },
-    '/v1/screen': {
-      get: {
-        summary: 'Screen tokens by filter — gainers, losers, volume spike, momentum, near ATH, deep value',
-        operationId: 'screenTokens',
-        parameters: [
-          { name: 'filter', in: 'query', schema: { type: 'string', enum: ['gainers', 'losers', 'volume_spike', 'momentum', 'near_ath', 'deep_value', 'trending', 'all'], default: 'trending' } },
-          { name: 'limit', in: 'query', schema: { type: 'number', default: 10 } },
-          { name: 'minMarketCap', in: 'query', schema: { type: 'number', default: 0 } },
-          { name: 'maxMarketCap', in: 'query', schema: { type: 'number' } },
-          { name: 'minVolume', in: 'query', schema: { type: 'number', default: 0 } },
-          { name: 'category', in: 'query', schema: { type: 'string' }, description: 'CoinGecko category (e.g. layer-2, defi, meme-token)' },
+  "x-execution-gate-required": true,
+  "x-paper-mode-recommended": true,
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/token-screener"
+    }
+  ],
+  "paths": {
+    "/discovery": {
+      "get": {
+        "summary": "Discover Token Screener API capabilities",
+        "operationId": "discovery",
+        "x-agent-callable": true,
+        "tags": [
+          "Token Screener API"
         ],
-        responses: { 200: { description: 'Filtered tokens with momentum scores and signals' } },
-      },
+        "responses": {
+          "200": {
+            "description": "API capability discovery",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "api",
+                    "endpoints",
+                    "pricing",
+                    "human_approval_required"
+                  ],
+                  "properties": {
+                    "api": {
+                      "type": "string"
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "pricing": {
+                      "type": "object"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean"
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
-    '/v1/movers': {
-      get: {
-        summary: 'Top gainers and losers by timeframe',
-        operationId: 'getMovers',
-        parameters: [
-          { name: 'timeframe', in: 'query', schema: { type: 'string', enum: ['1h', '24h', '7d'], default: '24h' } },
-          { name: 'limit', in: 'query', schema: { type: 'number', default: 10 } },
-          { name: 'minMarketCap', in: 'query', schema: { type: 'number', default: 10000000 } },
+    "/execution-gate": {
+      "post": {
+        "summary": "Pre-flight execution gate check",
+        "operationId": "executionGate",
+        "x-agent-callable": true,
+        "tags": [
+          "Token Screener API"
         ],
-        responses: { 200: { description: 'Top gainers and losers' } },
-      },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string"
+                  },
+                  "payload": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result"
+          }
+        }
+      }
     },
-    '/v1/opportunities': {
-      get: {
-        summary: 'AI-identified trading opportunities with risk-adjusted recommendations',
-        operationId: 'getOpportunities',
-        parameters: [
-          { name: 'limit', in: 'query', schema: { type: 'number', default: 5 } },
-          { name: 'riskTolerance', in: 'query', schema: { type: 'string', enum: ['low', 'medium', 'high'], default: 'medium' } },
-          { name: 'minMarketCap', in: 'query', schema: { type: 'number', default: 100000000 } },
+    "/screen": {
+      "post": {
+        "summary": "Screen tokens by criteria",
+        "operationId": "post_screen",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Token Screener API"
         ],
-        responses: { 200: { description: 'AI-identified opportunities with type, reason, risk level, confidence' } },
-      },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "tokens",
+                    "total_matched",
+                    "screened_at"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "tokens": {
+                      "type": "string"
+                    },
+                    "total_matched": {
+                      "type": "string"
+                    },
+                    "screened_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "min_market_cap",
+                  "max_market_cap"
+                ],
+                "properties": {
+                  "min_market_cap": {
+                    "type": "string"
+                  },
+                  "max_market_cap": {
+                    "type": "string"
+                  },
+                  "min_volume_24h": {
+                    "type": "string"
+                  },
+                  "chains": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
-  },
+    "/token/:symbol": {
+      "get": {
+        "summary": "Get full token screening report",
+        "operationId": "get_token_symbol",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Token Screener API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "symbol",
+                    "score",
+                    "risk_flags"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "symbol": {
+                      "type": "string"
+                    },
+                    "score": {
+                      "type": "string"
+                    },
+                    "risk_flags": {
+                      "type": "string"
+                    },
+                    "holder_concentration": {
+                      "type": "string"
+                    },
+                    "whale_activity": {
+                      "type": "string"
+                    },
+                    "liquidity_score": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/watchlist": {
+      "post": {
+        "summary": "Save a token watchlist",
+        "operationId": "post_watchlist",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Token Screener API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "watchlist_id",
+                    "name",
+                    "symbols"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "watchlist_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "symbols": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "symbols"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "symbols": {
+                    "type": "string"
+                  },
+                  "alert_on_change": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 };
 
 router.get('/', (_req: Request, res: Response) => {
-  res.json({
-    service: 'Token Screener API',
-    version: '1.0.0',
-    description: 'Crypto token screener — momentum, volume spikes, gainers, losers, and AI opportunities',
-    docs: '/docs',
-    openapi: '/openapi.json',
-    health: '/v1/health',
-    endpoints: {
-      screen: 'GET /v1/screen?filter=trending',
-      movers: 'GET /v1/movers?timeframe=24h',
-      opportunities: 'GET /v1/opportunities?riskTolerance=medium',
-    },
-    source: 'https://orbisapi.com',
-  });
-});
-
-router.get('/openapi.json', (_req: Request, res: Response) => { res.json(openApiSpec); });
-router.get('/docs', (_req: Request, res: Response) => {
-  res.send(`<!DOCTYPE html><html><head><title>Token Screener API — Docs</title><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.css"></head><body><div id="swagger-ui"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js"></script><script>SwaggerUIBundle({ url: '/openapi.json', dom_id: '#swagger-ui', presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset], layout: 'BaseLayout' });</script></body></html>`);
+  res.setHeader('Content-Type', 'application/json');
+  res.json(spec);
 });
 
 export default router;

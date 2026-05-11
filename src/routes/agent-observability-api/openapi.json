@@ -1,12 +1,9 @@
-import { Router, Request, Response } from 'express';
-
-const router = Router();
-const spec = {
+{
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Agent Observability Telemetry API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Collects, stores, and surfaces agent execution traces, spans, and performance telemetry.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -14,21 +11,21 @@ const spec = {
       "unit_cost_usd": 0.002
     }
   },
-  "x-execution-gate-required": true,
-  "x-paper-mode-recommended": true,
+  "x-execution-gate-required": false,
+  "x-paper-mode-recommended": false,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/agent-observability"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Agent Observability Telemetry API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Observability Telemetry API"
         ],
         "responses": {
           "200": {
@@ -79,7 +76,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Observability Telemetry API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +103,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/trace": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Submit an agent execution trace",
+        "operationId": "post_trace",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Observability Telemetry API"
         ],
         "responses": {
           "200": {
@@ -126,9 +123,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "trace_id",
+                    "stored",
+                    "span_count"
                   ],
                   "properties": {
                     "success": {
@@ -144,15 +141,191 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "stored": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "span_count": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "duration_ms": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "trace_id",
+                  "session_id"
+                ],
+                "properties": {
+                  "trace_id": {
+                    "type": "string"
+                  },
+                  "session_id": {
+                    "type": "string"
+                  },
+                  "spans": {
+                    "type": "string"
+                  },
+                  "agent_id": {
+                    "type": "string"
+                  },
+                  "workflow_id": {
+                    "type": "string"
+                  },
+                  "outcome": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trace/:trace_id": {
+      "get": {
+        "summary": "Retrieve a stored trace",
+        "operationId": "get_trace_trace_id",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Observability Telemetry API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "trace_id",
+                    "spans",
+                    "outcome"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
                       "type": "string"
                     },
-                    "factors": {
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "spans": {
+                      "type": "string"
+                    },
+                    "outcome": {
+                      "type": "string"
+                    },
+                    "duration_ms": {
+                      "type": "string"
+                    },
+                    "agent_id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "trace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/analyze": {
+      "post": {
+        "summary": "Analyze traces for failure patterns",
+        "operationId": "post_analyze",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Observability Telemetry API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "failure_rate",
+                    "common_failure_reasons",
+                    "bottleneck_spans"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "failure_rate": {
+                      "type": "string"
+                    },
+                    "common_failure_reasons": {
+                      "type": "string"
+                    },
+                    "bottleneck_spans": {
                       "type": "string"
                     },
                     "recommended_actions": {
@@ -177,20 +350,17 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "agent_id",
+                  "window_hours"
                 ],
                 "properties": {
-                  "protocol": {
+                  "agent_id": {
                     "type": "string"
                   },
-                  "pool": {
+                  "window_hours": {
                     "type": "string"
                   },
-                  "amount_usd": {
-                    "type": "string"
-                  },
-                  "chain": {
+                  "signal_types": {
                     "type": "string"
                   }
                 }
@@ -200,14 +370,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
+    "/dashboard/:agent_id": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "Get performance dashboard for an agent",
+        "operationId": "get_dashboard_agent_id",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Observability Telemetry API"
         ],
         "responses": {
           "200": {
@@ -220,9 +390,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "agent_id",
+                    "success_rate",
+                    "avg_duration_ms"
                   ],
                   "properties": {
                     "success": {
@@ -239,21 +409,21 @@ const spec = {
                     },
                     "human_approval_required": {
                       "type": "boolean",
-                      "default": true
+                      "default": false
                     },
-                    "protocol": {
+                    "agent_id": {
                       "type": "string"
                     },
-                    "score": {
+                    "success_rate": {
                       "type": "string"
                     },
-                    "audit_status": {
+                    "avg_duration_ms": {
                       "type": "string"
                     },
-                    "incident_history": {
+                    "p95_duration_ms": {
                       "type": "string"
                     },
-                    "tvl_usd": {
+                    "error_breakdown": {
                       "type": "string"
                     }
                   }
@@ -270,7 +440,7 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "agent_id",
             "in": "path",
             "required": true,
             "schema": {
@@ -279,108 +449,6 @@ const spec = {
           }
         ]
       }
-    },
-    "/liquidation-risk": {
-      "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "boolean",
-                      "default": true
-                    },
-                    "liquidation_price": {
-                      "type": "string"
-                    },
-                    "distance_pct": {
-                      "type": "string"
-                    },
-                    "health_factor": {
-                      "type": "string"
-                    },
-                    "risk_level": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "collateral_asset",
-                  "debt_asset"
-                ],
-                "properties": {
-                  "collateral_asset": {
-                    "type": "string"
-                  },
-                  "debt_asset": {
-                    "type": "string"
-                  },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   }
-};
-
-router.get('/', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(spec);
-});
-
-export default router;
+}

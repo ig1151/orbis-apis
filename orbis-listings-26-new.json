@@ -1,0 +1,640 @@
+[
+  {
+    "slug": "agent-web-data-extraction",
+    "title": "Agent Web Data Extraction Intelligence API",
+    "description": "Extracts structured data from web pages and dynamic content for agent workflows.",
+    "baseUrl": "https://orbis-apis.onrender.com/agent-web-data-extraction",
+    "openApiUrl": "https://orbis-apis.onrender.com/agent-web-data-extraction/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/agent-web-data-extraction/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/agent-web-data-extraction/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "data",
+    "chain_to": [
+      "agent-memory",
+      "intelligence-extraction",
+      "text-gen"
+    ],
+    "endpoints": [
+      "/extract",
+      "/batch",
+      "/sitemap"
+    ]
+  },
+  {
+    "slug": "market-correlation",
+    "title": "Market Correlation API",
+    "description": "Calculates statistical correlations between crypto assets and macro indicators.",
+    "baseUrl": "https://orbis-apis.onrender.com/market-correlation",
+    "openApiUrl": "https://orbis-apis.onrender.com/market-correlation/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/market-correlation/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/market-correlation/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "market",
+    "chain_to": [
+      "agent-memory",
+      "alpha-signal",
+      "strategy-signal",
+      "market-snapshot"
+    ],
+    "endpoints": [
+      "/analyze",
+      "/heatmap/:base",
+      "/shift-detect"
+    ]
+  },
+  {
+    "slug": "yield-farming",
+    "title": "Yield Farming API",
+    "description": "Surfaces top yield farming opportunities across DeFi protocols with risk-adjusted APY rankings.",
+    "baseUrl": "https://orbis-apis.onrender.com/yield-farming",
+    "openApiUrl": "https://orbis-apis.onrender.com/yield-farming/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/yield-farming/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/yield-farming/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "defi",
+    "chain_to": [
+      "agent-memory",
+      "market-snapshot",
+      "onchain-signal",
+      "tx-simulator"
+    ],
+    "endpoints": [
+      "/opportunities",
+      "/simulate",
+      "/protocol/:name"
+    ]
+  },
+  {
+    "slug": "defi-risk",
+    "title": "DeFi Risk API",
+    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "baseUrl": "https://orbis-apis.onrender.com/defi-risk",
+    "openApiUrl": "https://orbis-apis.onrender.com/defi-risk/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/defi-risk/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/defi-risk/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "defi",
+    "chain_to": [
+      "agent-memory",
+      "market-snapshot",
+      "onchain-signal",
+      "tx-simulator"
+    ],
+    "endpoints": [
+      "/assess",
+      "/protocol/:name/score",
+      "/liquidation-risk"
+    ]
+  },
+  {
+    "slug": "liquidation-feed",
+    "title": "Liquidation Feed API",
+    "description": "Real-time and historical liquidation events across major DeFi lending protocols.",
+    "baseUrl": "https://orbis-apis.onrender.com/liquidation-feed",
+    "openApiUrl": "https://orbis-apis.onrender.com/liquidation-feed/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/liquidation-feed/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/liquidation-feed/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "defi",
+    "chain_to": [
+      "agent-memory",
+      "market-snapshot",
+      "onchain-signal",
+      "tx-simulator"
+    ],
+    "endpoints": [
+      "/recent",
+      "/asset/:symbol",
+      "/alert-config"
+    ]
+  },
+  {
+    "slug": "token-screener",
+    "title": "Token Screener API",
+    "description": "Screens tokens by fundamentals, on-chain metrics, and risk signals.",
+    "baseUrl": "https://orbis-apis.onrender.com/token-screener",
+    "openApiUrl": "https://orbis-apis.onrender.com/token-screener/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/token-screener/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/token-screener/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "market",
+    "chain_to": [
+      "agent-memory",
+      "alpha-signal",
+      "strategy-signal",
+      "market-snapshot"
+    ],
+    "endpoints": [
+      "/screen",
+      "/token/:symbol",
+      "/watchlist"
+    ]
+  },
+  {
+    "slug": "cross-chain-bridge",
+    "title": "Agent Cross-Chain Execution Bridge Intelligence API",
+    "description": "Routes, quotes, and simulates cross-chain bridge transactions for agent execution.",
+    "baseUrl": "https://orbis-apis.onrender.com/cross-chain-bridge",
+    "openApiUrl": "https://orbis-apis.onrender.com/cross-chain-bridge/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/cross-chain-bridge/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/cross-chain-bridge/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "defi",
+    "chain_to": [
+      "agent-memory",
+      "market-snapshot",
+      "onchain-signal",
+      "tx-simulator"
+    ],
+    "endpoints": [
+      "/quote",
+      "/simulate",
+      "/status/:tx_hash"
+    ]
+  },
+  {
+    "slug": "market-stress",
+    "title": "Market Stress API",
+    "description": "Computes composite market stress indices using volatility and liquidity signals.",
+    "baseUrl": "https://orbis-apis.onrender.com/market-stress",
+    "openApiUrl": "https://orbis-apis.onrender.com/market-stress/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/market-stress/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/market-stress/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "market",
+    "chain_to": [
+      "agent-memory",
+      "alpha-signal",
+      "strategy-signal",
+      "market-snapshot"
+    ],
+    "endpoints": [
+      "/index",
+      "/scenario",
+      "/history"
+    ]
+  },
+  {
+    "slug": "strategy-signal",
+    "title": "Strategy Signal API",
+    "description": "Generates trading and portfolio strategy signals from multi-factor quantitative models.",
+    "baseUrl": "https://orbis-apis.onrender.com/strategy-signal",
+    "openApiUrl": "https://orbis-apis.onrender.com/strategy-signal/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/strategy-signal/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/strategy-signal/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "market",
+    "chain_to": [
+      "agent-memory",
+      "alpha-signal",
+      "strategy-signal",
+      "market-snapshot"
+    ],
+    "endpoints": [
+      "/generate",
+      "/backtest/:strategy_id",
+      "/rank"
+    ]
+  },
+  {
+    "slug": "smart-contract-risk",
+    "title": "Agent Smart Contract Risk Due Diligence API",
+    "description": "Performs automated due diligence on smart contracts including audit history and vulnerability patterns.",
+    "baseUrl": "https://orbis-apis.onrender.com/smart-contract-risk",
+    "openApiUrl": "https://orbis-apis.onrender.com/smart-contract-risk/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/smart-contract-risk/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/smart-contract-risk/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "defi",
+    "chain_to": [
+      "agent-memory",
+      "market-snapshot",
+      "onchain-signal",
+      "tx-simulator"
+    ],
+    "endpoints": [
+      "/analyze",
+      "/compare",
+      "/report/:address"
+    ]
+  },
+  {
+    "slug": "crypto-trigger",
+    "title": "Agent Crypto Trigger Market Alert API",
+    "description": "Monitors on-chain and market conditions to trigger agent workflows on configurable events.",
+    "baseUrl": "https://orbis-apis.onrender.com/crypto-trigger",
+    "openApiUrl": "https://orbis-apis.onrender.com/crypto-trigger/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/crypto-trigger/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/crypto-trigger/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "market",
+    "chain_to": [
+      "agent-memory",
+      "alpha-signal",
+      "strategy-signal",
+      "market-snapshot"
+    ],
+    "endpoints": [
+      "/trigger",
+      "/triggers",
+      "/test",
+      "/trigger/:id"
+    ]
+  },
+  {
+    "slug": "intelligence-extraction",
+    "title": "Agent Intelligence Extraction Monitoring API",
+    "description": "Extracts structured intelligence signals from unstructured text sources.",
+    "baseUrl": "https://orbis-apis.onrender.com/intelligence-extraction",
+    "openApiUrl": "https://orbis-apis.onrender.com/intelligence-extraction/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/intelligence-extraction/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/intelligence-extraction/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "data",
+    "chain_to": [
+      "agent-memory",
+      "intelligence-extraction",
+      "text-gen"
+    ],
+    "endpoints": [
+      "/extract",
+      "/monitor",
+      "/batch"
+    ]
+  },
+  {
+    "slug": "career-optimization",
+    "title": "Agent Career Optimization Application Intelligence API",
+    "description": "Scores resumes, optimizes applications, and generates personalized career strategy recommendations.",
+    "baseUrl": "https://orbis-apis.onrender.com/career-optimization",
+    "openApiUrl": "https://orbis-apis.onrender.com/career-optimization/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/career-optimization/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/career-optimization/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "productivity",
+    "chain_to": [
+      "agent-memory",
+      "text-gen"
+    ],
+    "endpoints": [
+      "/score-resume",
+      "/optimize",
+      "/strategy"
+    ]
+  },
+  {
+    "slug": "tx-simulator",
+    "title": "TX Simulator API",
+    "description": "Simulates EVM and Solana transactions before execution to surface gas costs and revert risks.",
+    "baseUrl": "https://orbis-apis.onrender.com/tx-simulator",
+    "openApiUrl": "https://orbis-apis.onrender.com/tx-simulator/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/tx-simulator/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/tx-simulator/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "defi",
+    "chain_to": [
+      "agent-memory",
+      "market-snapshot",
+      "onchain-signal",
+      "tx-simulator"
+    ],
+    "endpoints": [
+      "/simulate",
+      "/batch",
+      "/decode"
+    ]
+  },
+  {
+    "slug": "outreach-execution",
+    "title": "Outreach Execution API",
+    "description": "Generates, sequences, and tracks personalized outreach campaigns for agent-driven sales workflows.",
+    "baseUrl": "https://orbis-apis.onrender.com/outreach-execution",
+    "openApiUrl": "https://orbis-apis.onrender.com/outreach-execution/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/outreach-execution/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/outreach-execution/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "productivity",
+    "chain_to": [
+      "agent-memory",
+      "text-gen"
+    ],
+    "endpoints": [
+      "/generate",
+      "/sequence",
+      "/sequence/:id/stats"
+    ]
+  },
+  {
+    "slug": "proposal-generation",
+    "title": "Proposal Generation API",
+    "description": "Generates structured business proposals, RFP responses, and SOW documents from briefs.",
+    "baseUrl": "https://orbis-apis.onrender.com/proposal-generation",
+    "openApiUrl": "https://orbis-apis.onrender.com/proposal-generation/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/proposal-generation/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/proposal-generation/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "productivity",
+    "chain_to": [
+      "agent-memory",
+      "text-gen"
+    ],
+    "endpoints": [
+      "/generate",
+      "/rfp-response",
+      "/review"
+    ]
+  },
+  {
+    "slug": "voice-intelligence",
+    "title": "Voice Intelligence API",
+    "description": "Transcribes, diarizes, and extracts structured intelligence from voice recordings.",
+    "baseUrl": "https://orbis-apis.onrender.com/voice-intelligence",
+    "openApiUrl": "https://orbis-apis.onrender.com/voice-intelligence/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/voice-intelligence/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/voice-intelligence/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "data",
+    "chain_to": [
+      "agent-memory",
+      "intelligence-extraction",
+      "text-gen"
+    ],
+    "endpoints": [
+      "/transcribe",
+      "/extract-insights",
+      "/summarize"
+    ]
+  },
+  {
+    "slug": "product-data",
+    "title": "Agent Product Data Extraction Commerce Intelligence API",
+    "description": "Extracts and structures product data from e-commerce pages and marketplace listings.",
+    "baseUrl": "https://orbis-apis.onrender.com/product-data",
+    "openApiUrl": "https://orbis-apis.onrender.com/product-data/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/product-data/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/product-data/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "data",
+    "chain_to": [
+      "agent-memory",
+      "intelligence-extraction",
+      "text-gen"
+    ],
+    "endpoints": [
+      "/extract",
+      "/compare",
+      "/monitor"
+    ]
+  },
+  {
+    "slug": "agent-observability",
+    "title": "Agent Observability Telemetry API",
+    "description": "Collects, stores, and surfaces agent execution traces, spans, and performance telemetry.",
+    "baseUrl": "https://orbis-apis.onrender.com/agent-observability",
+    "openApiUrl": "https://orbis-apis.onrender.com/agent-observability/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/agent-observability/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/agent-observability/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "agent-infra",
+    "chain_to": [
+      "agent-memory",
+      "agent-observability",
+      "agent-identity"
+    ],
+    "endpoints": [
+      "/trace",
+      "/trace/:trace_id",
+      "/analyze",
+      "/dashboard/:agent_id"
+    ]
+  },
+  {
+    "slug": "agent-identity",
+    "title": "Agent Identity Trust API",
+    "description": "Issues, verifies, and manages cryptographic identities and trust scores for autonomous agents.",
+    "baseUrl": "https://orbis-apis.onrender.com/agent-identity",
+    "openApiUrl": "https://orbis-apis.onrender.com/agent-identity/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/agent-identity/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/agent-identity/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "agent-infra",
+    "chain_to": [
+      "agent-memory",
+      "agent-observability",
+      "agent-identity"
+    ],
+    "endpoints": [
+      "/issue",
+      "/verify",
+      "/revoke",
+      "/trust/:agent_id"
+    ]
+  },
+  {
+    "slug": "real-time-monitor",
+    "title": "Real-Time Monitor API",
+    "description": "Generic real-time event monitoring with configurable triggers, webhooks, and agent-callable alerts.",
+    "baseUrl": "https://orbis-apis.onrender.com/real-time-monitor",
+    "openApiUrl": "https://orbis-apis.onrender.com/real-time-monitor/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/real-time-monitor/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/real-time-monitor/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "agent-infra",
+    "chain_to": [
+      "agent-memory",
+      "agent-observability",
+      "agent-identity"
+    ],
+    "endpoints": [
+      "/monitor",
+      "/monitors",
+      "/monitor/:id/events",
+      "/monitor/:id"
+    ]
+  },
+  {
+    "slug": "text-generation",
+    "title": "Text Generation API Alias",
+    "description": "Alias route for text-gen providing LLM-powered text generation compatible with agent workflows.",
+    "baseUrl": "https://orbis-apis.onrender.com/text-generation",
+    "openApiUrl": "https://orbis-apis.onrender.com/text-generation/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/text-generation/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/text-generation/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": false,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "productivity",
+    "chain_to": [
+      "agent-memory",
+      "text-gen"
+    ],
+    "endpoints": [
+      "/generate",
+      "/batch"
+    ]
+  },
+  {
+    "slug": "defi-position-risk",
+    "title": "Agent DeFi Position Risk Liquidation Defense API",
+    "description": "Monitors active DeFi positions and executes defensive actions to prevent liquidation.",
+    "baseUrl": "https://orbis-apis.onrender.com/defi-position-risk",
+    "openApiUrl": "https://orbis-apis.onrender.com/defi-position-risk/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/defi-position-risk/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/defi-position-risk/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "defi",
+    "chain_to": [
+      "agent-memory",
+      "market-snapshot",
+      "onchain-signal",
+      "tx-simulator"
+    ],
+    "endpoints": [
+      "/monitor",
+      "/defend",
+      "/position/:wallet/:protocol"
+    ]
+  },
+  {
+    "slug": "tokenomics",
+    "title": "Tokenomics API",
+    "description": "Analyses token supply, emission schedules, vesting, and economic model health for any crypto project.",
+    "baseUrl": "https://orbis-apis.onrender.com/tokenomics",
+    "openApiUrl": "https://orbis-apis.onrender.com/tokenomics/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/tokenomics/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/tokenomics/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "market",
+    "chain_to": [
+      "agent-memory",
+      "alpha-signal",
+      "strategy-signal",
+      "market-snapshot"
+    ],
+    "endpoints": [
+      "/analyze/:symbol",
+      "/simulate",
+      "/compare"
+    ]
+  },
+  {
+    "slug": "derivatives",
+    "title": "Derivatives API",
+    "description": "Fetches live derivatives market data including futures, options, funding rates, and open interest.",
+    "baseUrl": "https://orbis-apis.onrender.com/derivatives",
+    "openApiUrl": "https://orbis-apis.onrender.com/derivatives/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/derivatives/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/derivatives/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "market",
+    "chain_to": [
+      "agent-memory",
+      "alpha-signal",
+      "strategy-signal",
+      "market-snapshot"
+    ],
+    "endpoints": [
+      "/futures/:symbol",
+      "/options/:symbol",
+      "/funding-rates"
+    ]
+  },
+  {
+    "slug": "derivatives-intelligence",
+    "title": "Derivatives Intelligence API",
+    "description": "Derives trading signals and risk insights from derivatives market structure and positioning data.",
+    "baseUrl": "https://orbis-apis.onrender.com/derivatives-intelligence",
+    "openApiUrl": "https://orbis-apis.onrender.com/derivatives-intelligence/openapi.json",
+    "discoveryUrl": "https://orbis-apis.onrender.com/derivatives-intelligence/discovery",
+    "executionGateUrl": "https://orbis-apis.onrender.com/derivatives-intelligence/execution-gate",
+    "lowestPriceUsdc": 0.002,
+    "human_approval_required": true,
+    "x_agent_callable": true,
+    "x_mcp_compatible": true,
+    "category": "market",
+    "chain_to": [
+      "agent-memory",
+      "alpha-signal",
+      "strategy-signal",
+      "market-snapshot"
+    ],
+    "endpoints": [
+      "/signal",
+      "/positioning/:symbol",
+      "/risk-surface"
+    ]
+  }
+]

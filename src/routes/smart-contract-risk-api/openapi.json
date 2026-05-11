@@ -1,12 +1,9 @@
-import { Router, Request, Response } from 'express';
-
-const router = Router();
-const spec = {
+{
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Agent Smart Contract Risk Due Diligence API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Performs automated due diligence on smart contracts including audit history and vulnerability patterns.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +15,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/smart-contract-risk"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Agent Smart Contract Risk Due Diligence API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Smart Contract Risk Due Diligence API"
         ],
         "responses": {
           "200": {
@@ -79,7 +76,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Smart Contract Risk Due Diligence API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +103,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/analyze": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Analyze a smart contract for risk",
+        "operationId": "post_analyze",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Smart Contract Risk Due Diligence API"
         ],
         "responses": {
           "200": {
@@ -128,7 +125,7 @@ const spec = {
                     "execution_id",
                     "risk_score",
                     "risk_level",
-                    "factors"
+                    "vulnerability_flags"
                   ],
                   "properties": {
                     "success": {
@@ -152,10 +149,13 @@ const spec = {
                     "risk_level": {
                       "type": "string"
                     },
-                    "factors": {
+                    "vulnerability_flags": {
                       "type": "string"
                     },
-                    "recommended_actions": {
+                    "audit_history": {
+                      "type": "string"
+                    },
+                    "ownership_risk": {
                       "type": "string"
                     }
                   }
@@ -177,17 +177,11 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "contract_address",
+                  "chain"
                 ],
                 "properties": {
-                  "protocol": {
-                    "type": "string"
-                  },
-                  "pool": {
-                    "type": "string"
-                  },
-                  "amount_usd": {
+                  "contract_address": {
                     "type": "string"
                   },
                   "chain": {
@@ -200,14 +194,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
-      "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+    "/compare": {
+      "post": {
+        "summary": "Compare two contracts for risk delta",
+        "operationId": "post_compare",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Agent Smart Contract Risk Due Diligence API"
         ],
         "responses": {
           "200": {
@@ -220,9 +214,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "delta_score",
+                    "riskier_contract",
+                    "differentiating_factors"
                   ],
                   "properties": {
                     "success": {
@@ -241,19 +235,105 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "protocol": {
+                    "delta_score": {
                       "type": "string"
                     },
-                    "score": {
+                    "riskier_contract": {
                       "type": "string"
                     },
-                    "audit_status": {
+                    "differentiating_factors": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contract_a",
+                  "contract_b"
+                ],
+                "properties": {
+                  "contract_a": {
+                    "type": "string"
+                  },
+                  "contract_b": {
+                    "type": "string"
+                  },
+                  "chain": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/report/:address": {
+      "get": {
+        "summary": "Get cached risk report for a contract",
+        "operationId": "get_report_address",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Smart Contract Risk Due Diligence API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "address",
+                    "report",
+                    "generated_at"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
                       "type": "string"
                     },
-                    "incident_history": {
+                    "execution_id": {
                       "type": "string"
                     },
-                    "tvl_usd": {
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "report": {
+                      "type": "string"
+                    },
+                    "generated_at": {
+                      "type": "string"
+                    },
+                    "confidence": {
                       "type": "string"
                     }
                   }
@@ -270,7 +350,7 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "address",
             "in": "path",
             "required": true,
             "schema": {
@@ -279,108 +359,6 @@ const spec = {
           }
         ]
       }
-    },
-    "/liquidation-risk": {
-      "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "tags": [
-          "DeFi Risk API"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "success",
-                    "trace_id",
-                    "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
-                  ],
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "trace_id": {
-                      "type": "string"
-                    },
-                    "execution_id": {
-                      "type": "string"
-                    },
-                    "session_id": {
-                      "type": "string"
-                    },
-                    "human_approval_required": {
-                      "type": "boolean",
-                      "default": true
-                    },
-                    "liquidation_price": {
-                      "type": "string"
-                    },
-                    "distance_pct": {
-                      "type": "string"
-                    },
-                    "health_factor": {
-                      "type": "string"
-                    },
-                    "risk_level": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "collateral_asset",
-                  "debt_asset"
-                ],
-                "properties": {
-                  "collateral_asset": {
-                    "type": "string"
-                  },
-                  "debt_asset": {
-                    "type": "string"
-                  },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   }
-};
-
-router.get('/', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(spec);
-});
-
-export default router;
+}

@@ -4,9 +4,9 @@ const router = Router();
 const spec = {
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Derivatives Intelligence API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Derives trading signals and risk insights from derivatives market structure and positioning data.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +18,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/derivatives-intelligence"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Derivatives Intelligence API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Derivatives Intelligence API"
         ],
         "responses": {
           "200": {
@@ -79,7 +79,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Derivatives Intelligence API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +106,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/signal": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Generate signal from derivatives data",
+        "operationId": "post_signal",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Derivatives Intelligence API"
         ],
         "responses": {
           "200": {
@@ -126,9 +126,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "signal",
+                    "direction",
+                    "confidence"
                   ],
                   "properties": {
                     "success": {
@@ -146,16 +146,16 @@ const spec = {
                     "human_approval_required": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "signal": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "direction": {
                       "type": "string"
                     },
-                    "factors": {
+                    "confidence": {
                       "type": "string"
                     },
-                    "recommended_actions": {
+                    "basis_for_signal": {
                       "type": "string"
                     }
                   }
@@ -177,20 +177,17 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "symbol",
+                  "signal_types"
                 ],
                 "properties": {
-                  "protocol": {
+                  "symbol": {
                     "type": "string"
                   },
-                  "pool": {
+                  "signal_types": {
                     "type": "string"
                   },
-                  "amount_usd": {
-                    "type": "string"
-                  },
-                  "chain": {
+                  "horizon": {
                     "type": "string"
                   }
                 }
@@ -200,14 +197,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
+    "/positioning/:symbol": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "Get market positioning analysis",
+        "operationId": "get_positioning_symbol",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Derivatives Intelligence API"
         ],
         "responses": {
           "200": {
@@ -220,9 +217,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "symbol",
+                    "long_short_ratio",
+                    "whale_bias"
                   ],
                   "properties": {
                     "success": {
@@ -241,19 +238,22 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "protocol": {
+                    "symbol": {
                       "type": "string"
                     },
-                    "score": {
+                    "long_short_ratio": {
                       "type": "string"
                     },
-                    "audit_status": {
+                    "whale_bias": {
                       "type": "string"
                     },
-                    "incident_history": {
+                    "retail_bias": {
                       "type": "string"
                     },
-                    "tvl_usd": {
+                    "net_positioning": {
+                      "type": "string"
+                    },
+                    "regime": {
                       "type": "string"
                     }
                   }
@@ -270,7 +270,7 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "symbol",
             "in": "path",
             "required": true,
             "schema": {
@@ -280,14 +280,14 @@ const spec = {
         ]
       }
     },
-    "/liquidation-risk": {
+    "/risk-surface": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Compute risk surface from options data",
+        "operationId": "post_risk-surface",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Derivatives Intelligence API"
         ],
         "responses": {
           "200": {
@@ -300,9 +300,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "risk_surface",
+                    "max_pain",
+                    "gamma_exposure"
                   ],
                   "properties": {
                     "success": {
@@ -321,16 +321,19 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "liquidation_price": {
+                    "risk_surface": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "max_pain": {
                       "type": "string"
                     },
-                    "health_factor": {
+                    "gamma_exposure": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "put_call_ratio": {
+                      "type": "string"
+                    },
+                    "tail_risk_score": {
                       "type": "string"
                     }
                   }
@@ -352,20 +355,14 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "symbol",
+                  "expiry"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "symbol": {
                     "type": "string"
                   },
-                  "debt_asset": {
-                    "type": "string"
-                  },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
+                  "expiry": {
                     "type": "string"
                   }
                 }

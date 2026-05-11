@@ -1,12 +1,9 @@
-import { Router, Request, Response } from 'express';
-
-const router = Router();
-const spec = {
+{
   "openapi": "3.1.0",
   "info": {
-    "title": "DeFi Risk API",
+    "title": "Market Correlation API",
     "version": "1.0.0",
-    "description": "Assesses smart contract, liquidity, and protocol risk for DeFi positions.",
+    "description": "Calculates statistical correlations between crypto assets and macro indicators.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -18,17 +15,17 @@ const spec = {
   "x-paper-mode-recommended": true,
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/defi-risk"
+      "url": "https://orbis-apis.onrender.com/market-correlation"
     }
   ],
   "paths": {
     "/discovery": {
       "get": {
-        "summary": "Discover DeFi Risk API capabilities",
+        "summary": "Discover Market Correlation API capabilities",
         "operationId": "discovery",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Market Correlation API"
         ],
         "responses": {
           "200": {
@@ -79,7 +76,7 @@ const spec = {
         "operationId": "executionGate",
         "x-agent-callable": true,
         "tags": [
-          "DeFi Risk API"
+          "Market Correlation API"
         ],
         "requestBody": {
           "required": true,
@@ -106,14 +103,14 @@ const spec = {
         }
       }
     },
-    "/assess": {
+    "/analyze": {
       "post": {
-        "summary": "Assess risk of a DeFi position",
-        "operationId": "post_assess",
+        "summary": "Compute pairwise correlations",
+        "operationId": "post_analyze",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Market Correlation API"
         ],
         "responses": {
           "200": {
@@ -126,9 +123,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "risk_score",
-                    "risk_level",
-                    "factors"
+                    "correlation_matrix",
+                    "dominant_pair",
+                    "regime"
                   ],
                   "properties": {
                     "success": {
@@ -144,18 +141,19 @@ const spec = {
                       "type": "string"
                     },
                     "human_approval_required": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "correlation_matrix": {
                       "type": "string"
                     },
-                    "risk_score": {
+                    "dominant_pair": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "regime": {
                       "type": "string"
                     },
-                    "factors": {
-                      "type": "string"
-                    },
-                    "recommended_actions": {
+                    "signal_reliability": {
                       "type": "string"
                     }
                   }
@@ -177,20 +175,17 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "protocol",
-                  "pool"
+                  "assets",
+                  "window_days"
                 ],
                 "properties": {
-                  "protocol": {
+                  "assets": {
                     "type": "string"
                   },
-                  "pool": {
+                  "window_days": {
                     "type": "string"
                   },
-                  "amount_usd": {
-                    "type": "string"
-                  },
-                  "chain": {
+                  "interval": {
                     "type": "string"
                   }
                 }
@@ -200,14 +195,14 @@ const spec = {
         }
       }
     },
-    "/protocol/:name/score": {
+    "/heatmap/:base": {
       "get": {
-        "summary": "Get protocol risk score",
-        "operationId": "get_protocol_name_score",
+        "summary": "Correlation heatmap for base asset",
+        "operationId": "get_heatmap_base",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Market Correlation API"
         ],
         "responses": {
           "200": {
@@ -220,9 +215,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "protocol",
-                    "score",
-                    "audit_status"
+                    "heatmap",
+                    "base",
+                    "computed_at"
                   ],
                   "properties": {
                     "success": {
@@ -241,19 +236,13 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "protocol": {
+                    "heatmap": {
                       "type": "string"
                     },
-                    "score": {
+                    "base": {
                       "type": "string"
                     },
-                    "audit_status": {
-                      "type": "string"
-                    },
-                    "incident_history": {
-                      "type": "string"
-                    },
-                    "tvl_usd": {
+                    "computed_at": {
                       "type": "string"
                     }
                   }
@@ -270,7 +259,7 @@ const spec = {
         },
         "parameters": [
           {
-            "name": "name",
+            "name": "base",
             "in": "path",
             "required": true,
             "schema": {
@@ -280,14 +269,14 @@ const spec = {
         ]
       }
     },
-    "/liquidation-risk": {
+    "/shift-detect": {
       "post": {
-        "summary": "Estimate liquidation risk for a leveraged position",
-        "operationId": "post_liquidation-risk",
+        "summary": "Detect correlation regime shifts",
+        "operationId": "post_shift-detect",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
         "tags": [
-          "DeFi Risk API"
+          "Market Correlation API"
         ],
         "responses": {
           "200": {
@@ -300,9 +289,9 @@ const spec = {
                     "success",
                     "trace_id",
                     "execution_id",
-                    "liquidation_price",
-                    "distance_pct",
-                    "health_factor"
+                    "shift_detected",
+                    "shift_date",
+                    "before_corr"
                   ],
                   "properties": {
                     "success": {
@@ -321,16 +310,19 @@ const spec = {
                       "type": "boolean",
                       "default": true
                     },
-                    "liquidation_price": {
+                    "shift_detected": {
                       "type": "string"
                     },
-                    "distance_pct": {
+                    "shift_date": {
                       "type": "string"
                     },
-                    "health_factor": {
+                    "before_corr": {
                       "type": "string"
                     },
-                    "risk_level": {
+                    "after_corr": {
+                      "type": "string"
+                    },
+                    "confidence": {
                       "type": "string"
                     }
                   }
@@ -352,20 +344,17 @@ const spec = {
               "schema": {
                 "type": "object",
                 "required": [
-                  "collateral_asset",
-                  "debt_asset"
+                  "asset_a",
+                  "asset_b"
                 ],
                 "properties": {
-                  "collateral_asset": {
+                  "asset_a": {
                     "type": "string"
                   },
-                  "debt_asset": {
+                  "asset_b": {
                     "type": "string"
                   },
-                  "collateral_amount": {
-                    "type": "string"
-                  },
-                  "debt_amount": {
+                  "lookback_days": {
                     "type": "string"
                   }
                 }
@@ -376,11 +365,4 @@ const spec = {
       }
     }
   }
-};
-
-router.get('/', (_req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(spec);
-});
-
-export default router;
+}

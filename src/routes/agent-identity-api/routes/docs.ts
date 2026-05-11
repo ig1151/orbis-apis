@@ -1,89 +1,469 @@
 import { Router, Request, Response } from 'express';
-const router = Router();
 
-const openApiSpec = {
-  openapi: '3.0.0',
-  info: {
-    title: 'Agent Identity API',
-    version: '1.0.0',
-    description: 'KYA (Know Your Agent) — generate, verify, and score AI agent identities and reputation for the agentic economy. Built for autonomous AI agents operating on x402 and Agentic.Market.',
-    contact: { url: 'https://orbisapi.com' },
+const router = Router();
+const spec = {
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Agent Identity Trust API",
+    "version": "1.0.0",
+    "description": "Issues, verifies, and manages cryptographic identities and trust scores for autonomous agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "model": "per_call",
+      "unit_cost_usd": 0.002
+    }
   },
-  servers: [{ url: 'https://agent-identity-api.onrender.com' }],
-  paths: {
-    '/v1/health': { get: { summary: 'Health check', responses: { 200: { description: 'OK' } } } },
-    '/v1/identity/generate': {
-      post: {
-        summary: 'Generate a signed agent identity proof',
-        operationId: 'generateIdentity',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                required: ['name', 'description', 'capabilities'],
-                properties: {
-                  name: { type: 'string', description: 'Agent name' },
-                  description: { type: 'string', description: 'What this agent does' },
-                  capabilities: { type: 'array', items: { type: 'string' }, description: 'List of capabilities (e.g. web-search, trading, code-execution)' },
-                  walletAddress: { type: 'string', description: 'EVM wallet address for onchain reputation' },
-                  framework: { type: 'string', enum: ['langchain', 'autogen', 'crewai', 'custom', 'openai', 'anthropic', 'other'] },
-                  operator: { type: 'string', description: 'Organization or person operating this agent' },
-                  ttlDays: { type: 'number', default: 90, description: 'Identity validity in days' },
-                },
-              },
-            },
-          },
-        },
-        responses: { 201: { description: 'Agent identity created with signed proof' } },
-      },
-    },
-    '/v1/identity/verify': {
-      post: {
-        summary: 'Verify an agent identity proof',
-        operationId: 'verifyIdentity',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                required: ['proof'],
-                properties: { proof: { type: 'string', description: 'JWT proof from generate endpoint' } },
-              },
-            },
-          },
-        },
-        responses: { 200: { description: 'Verification result with identity details' } },
-      },
-    },
-    '/v1/reputation/{agentId}': {
-      get: {
-        summary: 'Get agent reputation score based on onchain activity',
-        operationId: 'getReputation',
-        parameters: [
-          { name: 'agentId', in: 'path', required: true, schema: { type: 'string' } },
+  "x-execution-gate-required": false,
+  "x-paper-mode-recommended": false,
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/agent-identity"
+    }
+  ],
+  "paths": {
+    "/discovery": {
+      "get": {
+        "summary": "Discover Agent Identity Trust API capabilities",
+        "operationId": "discovery",
+        "x-agent-callable": true,
+        "tags": [
+          "Agent Identity Trust API"
         ],
-        responses: { 200: { description: 'Reputation score with trust level and AI summary' } },
-      },
+        "responses": {
+          "200": {
+            "description": "API capability discovery",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "api",
+                    "endpoints",
+                    "pricing",
+                    "human_approval_required"
+                  ],
+                  "properties": {
+                    "api": {
+                      "type": "string"
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "pricing": {
+                      "type": "object"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean"
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
-    '/v1/identity/lookup/{agentId}': {
-      get: {
-        summary: 'Look up a registered agent profile',
-        operationId: 'lookupIdentity',
-        parameters: [
-          { name: 'agentId', in: 'path', required: true, schema: { type: 'string' }, description: 'Agent ID or wallet address' },
+    "/execution-gate": {
+      "post": {
+        "summary": "Pre-flight execution gate check",
+        "operationId": "executionGate",
+        "x-agent-callable": true,
+        "tags": [
+          "Agent Identity Trust API"
         ],
-        responses: { 200: { description: 'Agent profile without proof token' } },
-      },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string"
+                  },
+                  "payload": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result"
+          }
+        }
+      }
     },
-  },
+    "/issue": {
+      "post": {
+        "summary": "Issue an agent identity token",
+        "operationId": "post_issue",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Identity Trust API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "identity_token",
+                    "agent_id",
+                    "issued_at"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "identity_token": {
+                      "type": "string"
+                    },
+                    "agent_id": {
+                      "type": "string"
+                    },
+                    "issued_at": {
+                      "type": "string"
+                    },
+                    "expires_at": {
+                      "type": "string"
+                    },
+                    "trust_score": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "agent_id",
+                  "capabilities"
+                ],
+                "properties": {
+                  "agent_id": {
+                    "type": "string"
+                  },
+                  "capabilities": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "ttl_seconds": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/verify": {
+      "post": {
+        "summary": "Verify an agent identity token",
+        "operationId": "post_verify",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Identity Trust API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "valid",
+                    "agent_id",
+                    "capabilities"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "valid": {
+                      "type": "string"
+                    },
+                    "agent_id": {
+                      "type": "string"
+                    },
+                    "capabilities": {
+                      "type": "string"
+                    },
+                    "trust_score": {
+                      "type": "string"
+                    },
+                    "expires_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "identity_token"
+                ],
+                "properties": {
+                  "identity_token": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/revoke": {
+      "post": {
+        "summary": "Revoke an agent identity",
+        "operationId": "post_revoke",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Identity Trust API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "revoked",
+                    "agent_id",
+                    "revoked_at"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "revoked": {
+                      "type": "string"
+                    },
+                    "agent_id": {
+                      "type": "string"
+                    },
+                    "revoked_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "agent_id",
+                  "reason"
+                ],
+                "properties": {
+                  "agent_id": {
+                    "type": "string"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trust/:agent_id": {
+      "get": {
+        "summary": "Get trust score and history for an agent",
+        "operationId": "get_trust_agent_id",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": [
+          "Agent Identity Trust API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "trace_id",
+                    "execution_id",
+                    "agent_id",
+                    "trust_score",
+                    "trust_factors"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string"
+                    },
+                    "execution_id": {
+                      "type": "string"
+                    },
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "human_approval_required": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "agent_id": {
+                      "type": "string"
+                    },
+                    "trust_score": {
+                      "type": "string"
+                    },
+                    "trust_factors": {
+                      "type": "string"
+                    },
+                    "incident_count": {
+                      "type": "string"
+                    },
+                    "last_verified": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  }
 };
 
-router.get('/openapi.json', (_req: Request, res: Response) => { res.json(openApiSpec); });
-router.get('/docs', (_req: Request, res: Response) => {
-  res.send(`<!DOCTYPE html><html><head><title>Agent Identity API — Docs</title><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.css"></head><body><div id="swagger-ui"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js"></script><script>SwaggerUIBundle({ url: '/openapi.json', dom_id: '#swagger-ui', presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset], layout: 'BaseLayout' });</script></body></html>`);
+router.get('/', (_req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.json(spec);
 });
 
 export default router;
