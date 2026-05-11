@@ -25,8 +25,10 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   });
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
-  const text = data.choices?.[0]?.message?.content || '{}';
-  try { return JSON.parse(text); } catch { return { raw: text }; }
+  const raw = data.choices?.[0]?.message?.content || '{}';
+  // Strip markdown code fences if present
+  const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+  try { return JSON.parse(text); } catch { return { raw }; }
 }
 
 
