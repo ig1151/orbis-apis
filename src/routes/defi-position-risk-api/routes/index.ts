@@ -274,4 +274,183 @@ router.get('/workflow/:id/state', (req: Request, res: Response) => {
   });
 });
 
+
+// ── Event Store ───────────────────────────────────────────────────────────────
+const eventStore: Record<string, any[]> = {};
+
+function emitEvent(execution_id: string, event: string, step: string, data: any = {}) {
+  if (!eventStore[execution_id]) eventStore[execution_id] = [];
+  eventStore[execution_id].push({
+    event_id:    `evt_${Date.now()}_${Math.random().toString(36).slice(2,6)}`,
+    event,
+    step,
+    timestamp:   new Date().toISOString(),
+    execution_id,
+    data,
+  });
+}
+
+// ── Agent Governance ──────────────────────────────────────────────────────────
+const REQUIRED_SCOPES: string[]    = ["defi:read", "defi:simulate", "defi:execute", "defi:risk"];
+const EXECUTION_AUTHORITY: string  = "high";
+
+function evaluateGovernance(req: any): {
+  permitted: boolean;
+  agent_id: string | null;
+  scopes: string[];
+  trust_score: number;
+  execution_authority: string;
+  sandbox_mode: boolean;
+  violations: string[];
+  audit_entry: any;
+} {
+  const agent_id        = req.headers['x-agent-id']    || req.body?.agent_id    || null;
+  const provided_scopes = (req.headers['x-agent-scopes'] || '').split(',').filter(Boolean);
+  const trust_header    = parseFloat(req.headers['x-agent-trust-score'] || '1.0');
+  const trust_score     = isNaN(trust_header) ? 1.0 : Math.min(1.0, Math.max(0.0, trust_header));
+  const sandbox_mode    = req.headers['x-sandbox-mode'] === 'true' || trust_score < 0.5;
+  const violations: string[] = [];
+
+  // Scope check — warn but don't block (permissive mode)
+  const missing = REQUIRED_SCOPES.filter(s => provided_scopes.length > 0 && !provided_scopes.includes(s));
+  if (missing.length > 0) violations.push(`missing_scopes: ${missing.join(',')}`);
+
+  // Trust threshold
+  if (trust_score < 0.3) violations.push('trust_score_below_threshold');
+
+  const permitted = violations.filter(v => v.includes('trust_score_below_threshold')).length === 0;
+
+  return {
+    permitted,
+    agent_id,
+    scopes:              provided_scopes.length > 0 ? provided_scopes : REQUIRED_SCOPES,
+    trust_score,
+    execution_authority: EXECUTION_AUTHORITY,
+    sandbox_mode,
+    violations,
+    audit_entry: {
+      agent_id,
+      timestamp:  new Date().toISOString(),
+      endpoint:   req.path,
+      method:     req.method,
+      permitted,
+      trust_score,
+      sandbox_mode,
+    },
+  };
+}
+
+// ── GET /events/:execution_id ─────────────────────────────────────────────────
+router.get('/events/:execution_id', (req: Request, res: Response) => {
+  const events = eventStore[req.params.execution_id] || [];
+  res.json({
+    ...buildRuntime(req, { workflow_state: 'complete' }),
+    success:       true,
+    execution_id:  req.params.execution_id,
+    events,
+    total:         events.length,
+    computed_at:   new Date().toISOString(),
+  });
+});
+
+// ── GET /events/:execution_id/stream (SSE) ────────────────────────────────────
+router.get('/events/:execution_id/stream', (req: Request, res: Response) => {
+  res.setHeader('Content-Type',                'text/event-stream');
+  res.setHeader('Cache-Control',               'no-cache');
+  res.setHeader('Connection',                  'keep-alive');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.flushHeaders();
+
+  const execution_id = req.params.execution_id;
+  let   index        = 0;
+
+  // Replay existing events
+  const existing = eventStore[execution_id] || [];
+  existing.forEach(evt => {
+    res.write(`data: ${JSON.stringify(evt)}
+
+`);
+    index++;
+  });
+
+  // Poll for new events every 500ms
+  const interval = setInterval(() => {
+    const current = eventStore[execution_id] || [];
+    while (index < current.length) {
+      res.write(`data: ${JSON.stringify(current[index])}
+
+`);
+      index++;
+    }
+  }, 500);
+
+  req.on('close', () => clearInterval(interval));
+});
+
+// ── POST /governance/check ────────────────────────────────────────────────────
+router.post('/governance/check', (req: Request, res: Response) => {
+  const gov = evaluateGovernance(req);
+  emitEvent(
+    buildRuntime(req).execution_id,
+    'governance_check',
+    'evaluate_permissions',
+    { permitted: gov.permitted, trust_score: gov.trust_score, violations: gov.violations }
+  );
+  res.json({
+    ...buildRuntime(req, {
+      workflow_state: gov.permitted ? 'complete' : 'blocked',
+      retryable:      !gov.permitted && !gov.violations.includes('trust_score_below_threshold'),
+    }),
+    success:             gov.permitted,
+    permitted:           gov.permitted,
+    agent_id:            gov.agent_id,
+    scopes:              gov.scopes,
+    required_scopes:     REQUIRED_SCOPES,
+    trust_score:         gov.trust_score,
+    execution_authority: gov.execution_authority,
+    sandbox_mode:        gov.sandbox_mode,
+    violations:          gov.violations,
+    audit_entry:         gov.audit_entry,
+    computed_at:         new Date().toISOString(),
+  });
+});
+
+// ── GET /governance/scopes ────────────────────────────────────────────────────
+router.get('/governance/scopes', (_req: Request, res: Response) => {
+  res.json({
+    ...buildRuntime(_req, { workflow_state: 'complete' }),
+    success:             true,
+    required_scopes:     REQUIRED_SCOPES,
+    execution_authority: EXECUTION_AUTHORITY,
+    scope_descriptions:  REQUIRED_SCOPES.reduce((acc: any, s: string) => {
+      acc[s] = `Permission to ${s.replace(':', ' ')} on this API`;
+      return acc;
+    }, {}),
+    computed_at: new Date().toISOString(),
+  });
+});
+
+// ── POST /governance/audit ────────────────────────────────────────────────────
+router.post('/governance/audit', (req: Request, res: Response) => {
+  const { execution_id } = req.body || {};
+  const events = execution_id ? (eventStore[execution_id] || []) : [];
+  const gov    = evaluateGovernance(req);
+  res.json({
+    ...buildRuntime(req, { workflow_state: 'complete' }),
+    success:        true,
+    audit_trail:    events,
+    total_events:   events.length,
+    agent_id:       gov.agent_id,
+    trust_score:    gov.trust_score,
+    sandbox_mode:   gov.sandbox_mode,
+    audit_summary: {
+      governance_checks: events.filter((e: any) => e.event === 'governance_check').length,
+      step_completions:  events.filter((e: any) => e.event === 'step_completed').length,
+      violations:        gov.violations,
+      permitted:         gov.permitted,
+    },
+    computed_at: new Date().toISOString(),
+  });
+});
+
 export default router;
