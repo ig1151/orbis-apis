@@ -199,8 +199,16 @@ router.post("/generate", requireApiKey, async (req: Request, res: Response) => {
     }
     const image = await openaiGenerate(finalPrompt, size, quality);
     await trackUsage((req as any).apiKey);
+    const asset_id = `asset_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
+    const session_id = req.body.session_id || null;
+    if (session_id && sessions.has(session_id)) {
+      const s = sessions.get(session_id)!;
+      s.assets.push({ asset_id, session_id, image_url: image.url, final_prompt: finalPrompt, created_at: new Date().toISOString(), parameters: { size, quality } });
+      s.prompt_history.push(finalPrompt);
+    }
     return res.json({
       execution_ready: true, next_api: "image-gen", next_endpoint: "/image-gen/score-image",
+      asset_id, session_id,
       image_url: image.url, revised_prompt: image.revised_prompt || null,
       original_prompt: prompt, final_prompt: finalPrompt, parameters: { size, quality },
       metadata: { latency_ms: ms(start), estimated_cost: costEstimate(1, size, quality), model: "dall-e-3" },
@@ -269,7 +277,7 @@ router.post("/score-image", requireApiKey, async (req: Request, res: Response) =
       {
         model: "gpt-4o-mini", max_tokens: 600,
         messages: [{ role: "user", content: [
-          { type: "text", text: `Score this image on: ${criteria.join(", ")}.${prompt ? `\nGenerated from: "${prompt}"` : ""}\nReturn ONLY valid JSON: { "scores": {}, "overall_score": 0, "strengths": [], "weaknesses": [], "recommendation": "use|regenerate|refine", "reasoning": "" }` },
+          { type: "text", text: `Score this image on: ${criteria.join(", ")}.${prompt ? `\nGenerated from: "${prompt}"` : ""}\nReturn ONLY valid JSON: { "scores": {}, "overall_score": 0, "strengths": [], "weaknesses": [], "recommendation": "use|regenerate|refine", "reasoning": "", "style_consistency_score": 0.0, "moderation_reasoning": "", "flagged": false }` },
           { type: "image_url", image_url: { url: image_url } },
         ]}],
       },
@@ -320,6 +328,47 @@ router.post("/execution-gate", requireApiKey, async (req: Request, res: Response
   }
 });
 
+
+// ── Session management ────────────────────────────────────────────────────────
+const sessions = new Map<string, { id: string; created_at: string; assets: any[]; prompt_history: string[] }>();
+
+router.post("/session/start", requireApiKey, async (req: Request, res: Response) => {
+  const start = Date.now();
+  const { label, style_guide } = req.body;
+  const session_id = `sess_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+  const session = { id: session_id, label: label || "untitled", style_guide: style_guide || null, created_at: new Date().toISOString(), assets: [], prompt_history: [] };
+  sessions.set(session_id, session);
+  return res.json({ execution_ready: true, session_id, label: session.label, created_at: session.created_at, asset_count: 0, chain_to: ["/image-gen/generate"], metadata: { latency_ms: ms(start) }, privacy: { data_stored: false, retention: "session_only" } });
+});
+
+router.get("/session/:id", requireApiKey, async (req: Request, res: Response) => {
+  const start = Date.now();
+  const session = sessions.get(req.params.id);
+  if (!session) return res.status(404).json({ error: "Session not found", execution_ready: false });
+  return res.json({ execution_ready: true, session_id: session.id, created_at: session.created_at, asset_count: session.assets.length, assets: session.assets, prompt_history: session.prompt_history, chain_to: ["/image-gen/generate", "/image-gen/session/" + session.id + "/revise"], metadata: { latency_ms: ms(start) }, privacy: { data_stored: false, retention: "session_only" } });
+});
+
+router.post("/session/:id/revise", requireApiKey, async (req: Request, res: Response) => {
+  const start = Date.now();
+  const session = sessions.get(req.params.id);
+  if (!session) return res.status(404).json({ error: "Session not found", execution_ready: false });
+  const { asset_id, revision_prompt, size = "1024x1024", quality = "standard" } = req.body;
+  if (!revision_prompt) return res.status(400).json({ error: "revision_prompt is required", execution_ready: false });
+  const original = session.assets.find((a: any) => a.asset_id === asset_id);
+  const basePrompt = original ? original.final_prompt + " " + revision_prompt : revision_prompt;
+  try {
+    const image = await openaiGenerate(basePrompt, size, quality);
+    const asset_id_new = `asset_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`;
+    const asset = { asset_id: asset_id_new, session_id: req.params.id, image_url: image.url, revised_prompt: image.revised_prompt || null, final_prompt: basePrompt, revision_of: asset_id || null, created_at: new Date().toISOString(), parameters: { size, quality } };
+    session.assets.push(asset);
+    session.prompt_history.push(revision_prompt);
+    await trackUsage((req as any).apiKey);
+    return res.json({ execution_ready: true, ...asset, revision_number: session.assets.length, chain_to: ["/image-gen/score-image", "/image-gen/session/" + req.params.id], metadata: { latency_ms: ms(start), estimated_cost: costEstimate(1, size, quality), model: "dall-e-3" }, privacy: { data_stored: false, retention: "session_only" } });
+  } catch (err: any) {
+    return res.status(500).json({ error: err?.response?.data?.error?.message || err.message, execution_ready: false });
+  }
+});
+
 export default router;
 
 router.get("/openapi.json", (_req, res) => {
@@ -333,7 +382,7 @@ router.get("/openapi.json", (_req, res) => {
       "x-mcp-compatible": true,
       "x-execution-gate-required": true,
       "x-paper-mode-recommended": false,
-      "x-pricing": { "/generate": 0.04, "/generate-batch": 0.04, "/describe-prompt": 0.002, "/score-image": 0.003, "/execution-gate": 0.04 },
+      "x-pricing": { "/generate": 0.04, "/generate-batch": 0.04, "/describe-prompt": 0.002, "/score-image": 0.003, "/session/start": 0.001, "/session/{id}/revise": 0.04, "/execution-gate": 0.04 },
       privacy: { data_stored: false, retention: "none" },
     },
     servers: [{ url: "https://orbis-apis.onrender.com/image-gen" }],
@@ -440,6 +489,72 @@ router.get("/openapi.json", (_req, res) => {
             metadata: { type: "object", properties: { latency_ms: { type: "number" }, estimated_cost: { type: "number" }, model: { type: "string" } } },
             recommended_actions_priority_order: { type: "array", items: { type: "string" } },
             chain_to: { type: "array", items: { type: "string" } },
+            privacy: { type: "object", properties: { data_stored: { type: "boolean" }, retention: { type: "string" } } },
+          } } } } } }
+        }
+      },
+
+      "/session/start": {
+        post: {
+          operationId: "startSession",
+          summary: "Start a new image generation session for workflow tracking",
+          "x-agent-callable": true,
+          requestBody: { required: false, content: { "application/json": { schema: { type: "object", properties: {
+            label: { type: "string", description: "Session label" },
+            style_guide: { type: "string", description: "Style consistency guide for this session" },
+          } } } } },
+          responses: { "200": { description: "Session created", content: { "application/json": { schema: { type: "object", required: ["session_id"], properties: {
+            execution_ready: { type: "boolean" },
+            session_id: { type: "string" },
+            label: { type: "string" },
+            created_at: { type: "string", format: "date-time" },
+            asset_count: { type: "integer" },
+            chain_to: { type: "array", items: { type: "string" } },
+            privacy: { type: "object", properties: { data_stored: { type: "boolean" }, retention: { type: "string" } } },
+          } } } } } }
+        }
+      },
+      "/session/{id}": {
+        get: {
+          operationId: "getSession",
+          summary: "Get session history including all generated assets and prompt history",
+          "x-agent-callable": true,
+          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+          responses: { "200": { description: "Session details", content: { "application/json": { schema: { type: "object", required: ["session_id", "assets"], properties: {
+            execution_ready: { type: "boolean" },
+            session_id: { type: "string" },
+            created_at: { type: "string", format: "date-time" },
+            asset_count: { type: "integer" },
+            assets: { type: "array", items: { type: "object", properties: { asset_id: { type: "string" }, image_url: { type: "string", format: "uri" }, final_prompt: { type: "string" }, created_at: { type: "string" } } } },
+            prompt_history: { type: "array", items: { type: "string" } },
+            chain_to: { type: "array", items: { type: "string" } },
+            privacy: { type: "object", properties: { data_stored: { type: "boolean" }, retention: { type: "string" } } },
+          } } } } } }
+        }
+      },
+      "/session/{id}/revise": {
+        post: {
+          operationId: "reviseAsset",
+          summary: "Revise an existing asset within a session with a new prompt directive",
+          "x-agent-callable": true,
+          parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+          requestBody: { required: true, content: { "application/json": { schema: { type: "object", required: ["revision_prompt"], properties: {
+            asset_id: { type: "string", description: "Asset ID to revise (optional, uses base prompt if omitted)" },
+            revision_prompt: { type: "string", description: "Revision directive e.g. make it darker, add snow" },
+            size: { type: "string", enum: ["1024x1024","1024x1792","1792x1024"], default: "1024x1024" },
+            quality: { type: "string", enum: ["standard","hd"], default: "standard" },
+          } } } } },
+          responses: { "200": { description: "Revised asset", content: { "application/json": { schema: { type: "object", required: ["asset_id", "image_url"], properties: {
+            execution_ready: { type: "boolean" },
+            asset_id: { type: "string" },
+            session_id: { type: "string" },
+            image_url: { type: "string", format: "uri" },
+            revised_prompt: { type: "string", nullable: true },
+            final_prompt: { type: "string" },
+            revision_of: { type: "string", nullable: true },
+            revision_number: { type: "integer" },
+            chain_to: { type: "array", items: { type: "string" } },
+            metadata: { type: "object", properties: { latency_ms: { type: "number" }, estimated_cost: { type: "number" }, model: { type: "string" } } },
             privacy: { type: "object", properties: { data_stored: { type: "boolean" }, retention: { type: "string" } } },
           } } } } } }
         }
