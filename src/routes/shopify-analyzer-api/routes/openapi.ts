@@ -14,13 +14,20 @@ router.get('/', (_req: Request, res: Response) => {
       description: 'AI-powered Shopify store analysis, product intelligence, conversion optimization and ecommerce growth signals for autonomous agents',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
+      'x-execution-gate-required': true,
+      'x-paper-mode-recommended': false,
       'x-pricing': { '/analyze': 0.008, '/seo-audit': 0.005, '/pricing-strategy': 0.005, '/ad-intelligence': 0.006, '/growth-signals': 0.005, '/execution-gate': 0.002, '/analyze-shopify-store': 0.02 },
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/shopify-analyzer' }],
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
-      '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
+      '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
+      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
+        title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
+        endpoints: { type: 'array', items: { type: 'string' } },
+        status: { type: 'string', enum: ['ok'] },
+      } } } } } } } },
       '/analyze-store': {
         post: {
           operationId: 'analyzeStore',
@@ -229,6 +236,8 @@ router.get('/', (_req: Request, res: Response) => {
                 blocking_flags: { type: 'array', items: { type: 'string' } },
                 flag_definitions: { type: 'object', additionalProperties: { type: 'string' } },
                 confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                chain_to: actions,
                 privacy,
               } } } },
             },

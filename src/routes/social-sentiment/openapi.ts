@@ -10,6 +10,9 @@ router.get('/', (_req: Request, res: Response) => {
       'x-agent-callable': true,
       'x-mcp-compatible': true,
       'x-human-approval-required': true,
+      'x-execution-gate-required': true,
+      'x-paper-mode-recommended': true,
+      'x-crypto-safety': 'Sentiment data is for informational purposes only. Do not use as sole basis for financial decisions.',
       'x-pricing': { '/crypto-sentiment/{symbol}': 0.002, '/signals': 0.002, '/trending': 0.001, '/execution-gate': 0.001 },
       privacy: { data_stored: false, retention: 'none' },
       disclaimer: 'For informational purposes only. Not financial advice.',
@@ -18,8 +21,13 @@ router.get('/', (_req: Request, res: Response) => {
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
-      '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
-      '/crypto-sentiment/{symbol}': { get: { operationId: 'getCryptoSentiment', summary: 'Get real-time social sentiment for a crypto asset', 'x-agent-callable': true,
+      '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
+      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
+        title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
+        endpoints: { type: 'array', items: { type: 'string' } },
+        status: { type: 'string', enum: ['ok'] },
+      } } } } } } } },
+      '/crypto-sentiment/{symbol}': { get: { operationId: 'getCryptoSentiment', summary: 'Get real-time social sentiment for a crypto asset', 'x-agent-callable': true, 'x-human-approval-required': true,
         parameters: [{ name: 'symbol', in: 'path', required: true, schema: { type: 'string', enum: ['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','LINK','DOT','MATIC','UNI','ARB','OP','SUI','APT','PEPE','WIF','BONK','INJ','TIA','ATOM','NEAR','FET'] }, description: 'Crypto asset symbol' }],
         responses: { '200': { description: 'Sentiment analysis result', content: { 'application/json': { schema: { type: 'object', properties: {
           symbol: { type: 'string' },
@@ -39,7 +47,7 @@ router.get('/', (_req: Request, res: Response) => {
           privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
           timestamp: { type: 'string', format: 'date-time' },
         } } } } } } } },
-      '/signals': { get: { operationId: 'getSentimentSignals', summary: 'Get aggregated sentiment signals across all tracked assets', 'x-agent-callable': true,
+      '/signals': { get: { operationId: 'getSentimentSignals', summary: 'Get aggregated sentiment signals across all tracked assets', 'x-agent-callable': true, 'x-human-approval-required': true,
         responses: { '200': { description: 'Sentiment signals', content: { 'application/json': { schema: { type: 'object', properties: {
           signals: { type: 'array', items: { type: 'object', properties: {
             symbol: { type: 'string' },

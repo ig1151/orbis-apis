@@ -16,7 +16,12 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
-      '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
+      '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
+      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
+        title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
+        endpoints: { type: 'array', items: { type: 'string' } },
+        status: { type: 'string', enum: ['ok'] },
+      } } } } } } } },
       '/analyze': { post: { operationId: 'analyzeImage', summary: 'Analyze an image and extract structured content', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['image'], properties: {
           image: { type: 'string', description: 'Base64-encoded image string' },
@@ -41,7 +46,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
             emotion: { type: 'string' }, age_range: { type: 'string' },
             profile_score: { type: 'integer', minimum: 0, maximum: 100 },
             improvement_suggestions: { type: 'array', items: { type: 'string' } },
-            safety_note: { type: 'string', description: 'Face detection used for profile scoring only, not identification' },
+            safety_note: { type: 'string', description: 'Face detection is used for aesthetic profile scoring only. This API does not identify individuals, verify identity, infer protected characteristics, or perform biometric recognition of any kind.' },
           }}},
           confidence_per_section: { type: 'object', properties: {
             caption: { type: 'number' }, tags: { type: 'number' }, ocr: { type: 'number' }, faces: { type: 'number' },
@@ -63,8 +68,11 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           total: { type: 'integer' },
           succeeded: { type: 'integer' },
           failed: { type: 'integer' },
-          results: { type: 'array', items: { type: 'object' } },
+          results: { type: 'array', items: { type: 'object', properties: { index: { type: 'integer' }, success: { type: 'boolean' }, caption: { type: 'string' }, tags: { type: 'array', items: { type: 'string' } }, error: { type: 'string', nullable: true } } } },
           latency_ms: { type: 'number' },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'array', items: { type: 'string' } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         }}}}}}}},
       '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate image processing based on content safety', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['image'], properties: {
@@ -72,8 +80,6 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           max_cost: { type: 'number' },
         }}}}},
         responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: {
-          privacy: { type: 'object', description: 'Privacy metadata for this response' },
-          confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },
           execute: { type: 'boolean' }, confidence: { type: 'number', minimum: 0, maximum: 1 },
           blocking_flags: { type: 'array', items: { type: 'string' } },
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
@@ -83,7 +89,11 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
         parameters: [{ name: 'jobId', in: 'path', required: true, schema: { type: 'string' } }],
         responses: { '200': { description: 'Job status', content: { 'application/json': { schema: { type: 'object', properties: {
           job_id: { type: 'string' }, status: { type: 'string', enum: ['pending', 'processing', 'success', 'error'] },
-          result: { type: 'object' }, error: { type: 'string' },
+          confidence: { type: 'number', minimum: 0, maximum: 1 },
+          recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+          chain_to: { type: 'array', items: { type: 'string' } },
+          privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+          result: { type: 'object', properties: { caption: { type: 'string' }, tags: { type: 'array', items: { type: 'string' } }, confidence_per_section: { type: 'object' } } }, error: { type: 'string', nullable: true },
         }}}}}}}},
     },
   });

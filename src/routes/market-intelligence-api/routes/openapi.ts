@@ -11,7 +11,9 @@ router.get('/', (_req: Request, res: Response) => {
       'x-agent-callable': true,
       'x-mcp-compatible': true,
       'x-human-approval-required': true,
-      'x-pricing': { '/analyze': 0.005, '/execution-gate': 0.002 },
+      'x-execution-gate-required': true,
+      'x-paper-mode-recommended': true,
+      'x-pricing': { '/analyze/{ticker}': 0.005, '/execution-gate': 0.002 },
       privacy: { data_stored: false, retention: 'none' },
       disclaimer: 'For informational purposes only. Not financial advice.',
     },
@@ -19,12 +21,20 @@ router.get('/', (_req: Request, res: Response) => {
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
-      '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
+      '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
+      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
+        title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
+        endpoints: { type: 'array', items: { type: 'string' } },
+        status: { type: 'string', enum: ['ok'] },
+      } } } } } } } },
       '/analyze/{ticker}': {
         get: {
           operationId: 'analyzeMarket',
           summary: 'Get unified market intelligence for a crypto asset — price, trust, signals and decision',
           'x-agent-callable': true,
+          'x-human-approval-required': true,
+          'x-execution-gate-required': true,
+          'x-paper-mode-recommended': true,
           parameters: [{ name: 'ticker', in: 'path', required: true, schema: { type: 'string', enum: ['BTC','ETH','SOL','BNB','ARB','OP','AVAX','MATIC','LINK','UNI','DOGE','SUI','APT','INJ','ATOM','NEAR'] }, description: 'Crypto asset symbol' }],
           responses: {
             '200': { description: 'Market intelligence result', content: { 'application/json': { schema: { type: 'object', properties: {
@@ -79,7 +89,7 @@ router.get('/', (_req: Request, res: Response) => {
             execute: { type: 'boolean' },
             confidence: { type: 'number', minimum: 0, maximum: 1 },
             blocking_flags: { type: 'array', items: { type: 'string' } },
-            intelligence_summary: { type: 'object' },
+            intelligence_summary: { type: 'object', properties: { ticker: { type: 'string' }, decision: { type: 'string' }, overall_score: { type: 'number' }, confidence: { type: 'number', minimum: 0, maximum: 1 }, risk_level: { type: 'string' } } },
             recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
             chain_to: { type: 'array', items: { type: 'string' } },
             privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },

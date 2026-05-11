@@ -16,12 +16,19 @@ router.get('/', (_req: Request, res: Response) => {
       'x-mcp-compatible': true,
       'x-pricing': { '/research-topic': 0.008, '/extract-facts': 0.004, '/compare-sources': 0.006, '/credibility-analysis': 0.004, '/timeline-builder': 0.005, '/citation-builder': 0.003, '/execution-gate': 0.002, '/deep-research': 0.015 },
       privacy: { data_stored: false, retention: 'none' },
+      'x-execution-gate-required': false,
+      'x-paper-mode-recommended': false,
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/deep-research' }],
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
-      '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
+      '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
+      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
+        title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
+        endpoints: { type: 'array', items: { type: 'string' } },
+        status: { type: 'string', enum: ['ok'] },
+      } } } } } } } },
       '/research-topic': {
         post: {
           operationId: 'researchTopic',

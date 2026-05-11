@@ -331,6 +331,8 @@ router.get("/openapi.json", (_req, res) => {
       description: "DALL-E 3 image generation with prompt engineering, batch support, GPT-4o vision scoring, and agentic execution gates.",
       "x-agent-callable": true,
       "x-mcp-compatible": true,
+      "x-execution-gate-required": true,
+      "x-paper-mode-recommended": false,
       "x-pricing": { "/generate": 0.04, "/generate-batch": 0.04, "/describe-prompt": 0.002, "/score-image": 0.003, "/execution-gate": 0.04 },
       privacy: { data_stored: false, retention: "none" },
     },
@@ -338,7 +340,12 @@ router.get("/openapi.json", (_req, res) => {
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: "apiKey", in: "header", name: "X-API-Key", description: "Generate via POST /image-gen/keys/generate or use X-Orbis-Proxy header for proxy access" } } },
     paths: {
-      "/": { get: { summary: "API discovery", operationId: "discovery", responses: { "200": { description: "API info" } } } },
+      "/": { get: { summary: "API discovery", operationId: "discovery", "x-agent-callable": true,
+      responses: { "200": { description: "API info", content: { "application/json": { schema: { type: "object", properties: {
+        title: { type: "string" }, version: { type: "string" }, description: { type: "string" },
+        endpoints: { type: "array", items: { type: "string" } },
+        status: { type: "string", enum: ["ok"] },
+      } } } } } } } },
       "/generate": {
         post: {
           operationId: "generateImage",
