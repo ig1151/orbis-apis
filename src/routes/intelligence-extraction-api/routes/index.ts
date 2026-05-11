@@ -16,7 +16,6 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
     body: JSON.stringify({
       model: 'anthropic/claude-sonnet-4-5',
       max_tokens,
-      response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: system },
         { role: 'user',   content: prompt },
@@ -26,16 +25,10 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  // Strip markdown fences, leading/trailing whitespace, and extract JSON object
-  // Strip ALL variations of markdown fences robustly
-  let text = raw;
-  text = text.replace(/^\s*```+(?:json)?\s*/i, '');
-  text = text.replace(/\s*```+\s*$/i, '');
-  text = text.trim();
-  // Extract JSON object — find outermost { }
-  const first = text.indexOf('{');
-  const last  = text.lastIndexOf('}');
-  if (first !== -1 && last !== -1) text = text.slice(first, last + 1);
+  const first = raw.indexOf('{');
+  const last  = raw.lastIndexOf('}');
+  if (first === -1 || last === -1) return { raw };
+  const text = raw.slice(first, last + 1);
   try { return JSON.parse(text); } catch (e) { return { raw, parse_error: String(e) }; }
 }
 

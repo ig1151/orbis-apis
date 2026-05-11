@@ -16,7 +16,6 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
     body: JSON.stringify({
       model: 'anthropic/claude-sonnet-4-5',
       max_tokens,
-      response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: system },
         { role: 'user',   content: prompt },
@@ -26,7 +25,6 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  // Extract JSON by finding outermost { } — works regardless of markdown fences
   const first = raw.indexOf('{');
   const last  = raw.lastIndexOf('}');
   if (first === -1 || last === -1) return { raw };
