@@ -25,11 +25,18 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  const first = raw.indexOf('{');
-  const last  = raw.lastIndexOf('}');
-  if (first === -1 || last === -1) return { raw };
-  const text = raw.slice(first, last + 1);
-  try { return JSON.parse(text); } catch (e) { return { raw, parse_error: String(e) }; }
+  // Split into lines and find JSON block
+  const lines = raw.split('\n');
+  const jsonStart = lines.findIndex((l: string) => l.trim().startsWith('{'));
+  const jsonEnd   = lines.map((l: string) => l.trim()).lastIndexOf('}');
+  if (jsonStart === -1 || jsonEnd === -1) return { raw };
+  const jsonLines = lines.slice(jsonStart, jsonEnd + 1).join('\n');
+  try { return JSON.parse(jsonLines); } catch (e) {
+    // fallback: indexOf approach
+    const f2 = raw.indexOf('{'); const l2 = raw.lastIndexOf('}');
+    if (f2 !== -1 && l2 !== -1) { try { return JSON.parse(raw.slice(f2, l2+1)); } catch {} }
+    return { raw, parse_error: String(e) };
+  }
 }
 
 
