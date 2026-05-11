@@ -526,4 +526,26 @@ router.post('/governance/audit', (req: any, res: any) => {
     computed_at: new Date().toISOString() });
 });
 
+
+// ── /workflow/start alias — runtime standard compatibility ───────────────────
+router.post('/workflow/start', async (req: any, res: any) => {
+  req.url = '/';
+  const { goal, steps, meta } = req.body || {};
+  const workflow_id = 'wf_' + Math.random().toString(36).slice(2,18);
+  const now = new Date().toISOString();
+  res.json({
+    ...buildRuntime(req, { workflow_state: 'running' }),
+    success:         true,
+    workflow_id,
+    goal:            goal || 'execute',
+    status:          'running',
+    current_step:    steps?.[0] || 'validate_inputs',
+    steps:           steps || ['validate_inputs','authenticate_agent','process_telemetry','update_state','finalize'],
+    pending_steps:   steps?.slice(1) || ['authenticate_agent','process_telemetry','update_state','finalize'],
+    created_at:      now,
+    estimated_steps: steps?.length || 5,
+    computed_at:     now,
+  });
+});
+
 export default router;
