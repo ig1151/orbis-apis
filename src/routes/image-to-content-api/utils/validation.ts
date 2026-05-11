@@ -11,6 +11,7 @@ export const analyzeSchema = Joi.object({
   caption_style: Joi.string().valid(...CAPTION_STYLES).default('detailed'),
   async: Joi.boolean().default(false),
   webhook_url: Joi.string().uri({ scheme: ['https'] }).optional().when('async', { is: false, then: Joi.forbidden() }),
+  session_id: Joi.string().optional(),
 });
 export const batchSchema = Joi.object({
   images: Joi.array().items(analyzeSchema).min(1).max(20).required().messages({ 'array.max': 'Batch endpoint accepts a maximum of 20 images per request' }),

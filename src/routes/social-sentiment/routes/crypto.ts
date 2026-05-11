@@ -61,7 +61,7 @@ router.get('/:symbol', async (req: Request, res: Response) => {
       regime_confidence: conf,
       instability_detected: Math.abs(score) > 0.7 && conf < 0.6,
     };
-    const session_id = req.query.session_id as string || null;
+    const session_id = (req as any).body?.session_id || req.query.session_id as string || null;
     return res.json({
       symbol: value.symbol,
       trace_id, execution_id, session_id,
@@ -107,7 +107,7 @@ router.post('/:symbol', async (req: Request, res: Response) => {
       regime_confidence: conf,
       instability_detected: Math.abs(score) > 0.7 && conf < 0.6,
     };
-    const session_id = req.query.session_id as string || null;
+    const session_id = (req as any).body?.session_id || req.query.session_id as string || null;
     return res.json({
       symbol: value.symbol,
       trace_id, execution_id, session_id,
