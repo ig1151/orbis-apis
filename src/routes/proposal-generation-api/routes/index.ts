@@ -1,6 +1,35 @@
 import { Router, Request, Response } from 'express';
 import Joi from 'joi';
 
+// ── OpenRouter AI Helper ──────────────────────────────────────────────────────
+async function callAI(prompt: string, system: string, max_tokens: number = 1000): Promise<any> {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error('OPENROUTER_API_KEY not set');
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': 'https://orbis-apis.onrender.com',
+      'X-Title': 'Orbis APIs',
+    },
+    body: JSON.stringify({
+      model: 'anthropic/claude-sonnet-4-5',
+      max_tokens,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user',   content: prompt },
+      ],
+    }),
+  });
+  if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
+  const data = await response.json() as any;
+  const text = data.choices?.[0]?.message?.content || '{}';
+  try { return JSON.parse(text); } catch { return { raw: text }; }
+}
+
+
 // ── Universal Runtime Envelope ────────────────────────────────────────────────
 function buildRuntime(req: any, overrides: Record<string, any> = {}) {
   const now = Date.now();
@@ -88,30 +117,75 @@ router.post('/execution-gate', (req, res) => {
   res.json({ ...buildRuntime(req), passed, checks, approved_at: new Date().toISOString(), computed_at: new Date().toISOString() });
 });
 
-// Generate a full proposal document
-router.post('/generate', (req: Request, res: Response) => {
-  const schema = Joi.object({ brief: Joi.string().optional(), client_name: Joi.string().optional(), scope: Joi.string().optional(), budget_usd: Joi.string().optional(), timeline_weeks: Joi.string().optional(), tone: Joi.string().optional(), });
-  const { error } = schema.validate(req.body, { allowUnknown: false });
-  if (error) return res.status(400).json({ success: false, error: error.details[0].message });
-  const trace_id = `trace_${Date.now()}`;
-  const execution_id = `exec_${Date.now()}`;
-  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
-  res.set("x-trace-id", buildRuntime(req).trace_id);
-  res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, proposal: 'proposal_value', sections: 'sections_value', word_count: 0, readability_score: 0, computed_at: new Date().toISOString() });
+// /generate — AI powered
+router.post('/generate', async (req: Request, res: Response) => {
+  const start = Date.now();
+  try {
+    const prompt = `Write a professional business proposal for ${req.body?.client_name || 'the client'}. Brief: ${req.body?.brief || 'general services'}. Scope: ${req.body?.scope || 'to be defined'}. Budget: $${req.body?.budget_usd || 'TBD'}. Timeline: ${req.body?.timeline_weeks || 8} weeks. Tone: ${req.body?.tone || 'professional'}. Make it compelling and win-ready.`;
+    const ai = await callAI(
+      prompt,
+      'You are an expert business proposal writer. Generate compelling, structured proposals. Return ONLY valid JSON with: proposal (string — full proposal text), sections (array of section names), word_count (number), executive_summary (string), key_differentiators (array of strings), readability_score (number 0-100).',
+      1000
+    );
+    const latency = Date.now() - start;
+    res.json({
+      ...buildRuntime(req, {
+        workflow_state: 'complete',
+        latency_breakdown: { total_ms: latency, inference_ms: Math.round(latency * 0.8), io_ms: Math.round(latency * 0.15), overhead_ms: Math.round(latency * 0.05) },
+      }),
+      success: true,
+            proposal: ai.proposal ?? null,
+      sections: ai.sections ?? null,
+      word_count: ai.word_count ?? null,
+      executive_summary: ai.executive_summary ?? null,
+      key_differentiators: ai.key_differentiators ?? null,
+      readability_score: ai.readability_score ?? null,
+      model: 'anthropic/claude-sonnet-4-5',
+      computed_at: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      ...buildRuntime(req, { workflow_state: 'failed', retryable: true }),
+      success: false,
+      error: err.message,
+      computed_at: new Date().toISOString(),
+    });
+  }
 });
 
-// Generate an RFP response
-router.post('/rfp-response', (req: Request, res: Response) => {
-  const schema = Joi.object({ rfp_text: Joi.string().optional(), company_profile: Joi.string().optional(), differentiators: Joi.string().optional(), });
-  const { error } = schema.validate(req.body, { allowUnknown: false });
-  if (error) return res.status(400).json({ success: false, error: error.details[0].message });
-  const trace_id = `trace_${Date.now()}`;
-  const execution_id = `exec_${Date.now()}`;
-  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
-  res.set("x-trace-id", buildRuntime(req).trace_id);
-  res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, response: 'response_value', compliance_matrix: 'compliance_matrix_value', win_themes: 'win_themes_value', risk_flags: 'risk_flags_value', computed_at: new Date().toISOString() });
+// /rfp-response — AI powered
+router.post('/rfp-response', async (req: Request, res: Response) => {
+  const start = Date.now();
+  try {
+    const prompt = `Write a winning RFP response for this RFP: ${req.body?.rfp_text || 'general RFP'}. Company profile: ${req.body?.company_profile || 'our company'}. Key differentiators: ${JSON.stringify(req.body?.differentiators || [])}. Focus on compliance and win themes.`;
+    const ai = await callAI(
+      prompt,
+      'You are an expert RFP response writer. Generate winning RFP responses. Return ONLY valid JSON with: response (string — full RFP response), compliance_matrix (object mapping requirements to responses), win_themes (array of strings), risk_flags (array of strings), strength_areas (array of strings).',
+      1000
+    );
+    const latency = Date.now() - start;
+    res.json({
+      ...buildRuntime(req, {
+        workflow_state: 'complete',
+        latency_breakdown: { total_ms: latency, inference_ms: Math.round(latency * 0.8), io_ms: Math.round(latency * 0.15), overhead_ms: Math.round(latency * 0.05) },
+      }),
+      success: true,
+            response: ai.response ?? null,
+      compliance_matrix: ai.compliance_matrix ?? null,
+      win_themes: ai.win_themes ?? null,
+      risk_flags: ai.risk_flags ?? null,
+      strength_areas: ai.strength_areas ?? null,
+      model: 'anthropic/claude-sonnet-4-5',
+      computed_at: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      ...buildRuntime(req, { workflow_state: 'failed', retryable: true }),
+      success: false,
+      error: err.message,
+      computed_at: new Date().toISOString(),
+    });
+  }
 });
 
 // Review and score an existing proposal

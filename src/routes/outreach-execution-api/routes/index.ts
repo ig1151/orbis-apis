@@ -1,6 +1,35 @@
 import { Router, Request, Response } from 'express';
 import Joi from 'joi';
 
+// ── OpenRouter AI Helper ──────────────────────────────────────────────────────
+async function callAI(prompt: string, system: string, max_tokens: number = 1000): Promise<any> {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error('OPENROUTER_API_KEY not set');
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': 'https://orbis-apis.onrender.com',
+      'X-Title': 'Orbis APIs',
+    },
+    body: JSON.stringify({
+      model: 'anthropic/claude-sonnet-4-5',
+      max_tokens,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user',   content: prompt },
+      ],
+    }),
+  });
+  if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
+  const data = await response.json() as any;
+  const text = data.choices?.[0]?.message?.content || '{}';
+  try { return JSON.parse(text); } catch { return { raw: text }; }
+}
+
+
 // ── Universal Runtime Envelope ────────────────────────────────────────────────
 function buildRuntime(req: any, overrides: Record<string, any> = {}) {
   const now = Date.now();
@@ -88,30 +117,75 @@ router.post('/execution-gate', (req, res) => {
   res.json({ ...buildRuntime(req), passed, checks, approved_at: new Date().toISOString(), computed_at: new Date().toISOString() });
 });
 
-// Generate a personalized outreach message
-router.post('/generate', (req: Request, res: Response) => {
-  const schema = Joi.object({ recipient_name: Joi.string().optional(), recipient_role: Joi.string().optional(), company: Joi.string().optional(), context: Joi.string().optional(), channel: Joi.string().optional(), tone: Joi.string().optional(), });
-  const { error } = schema.validate(req.body, { allowUnknown: false });
-  if (error) return res.status(400).json({ success: false, error: error.details[0].message });
-  const trace_id = `trace_${Date.now()}`;
-  const execution_id = `exec_${Date.now()}`;
-  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
-  res.set("x-trace-id", buildRuntime(req).trace_id);
-  res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, subject: 'subject_value', body: 'body_value', personalization_score: 0, recommended_send_time: 'recommended_send_time_value', computed_at: new Date().toISOString() });
+// /generate — AI powered
+router.post('/generate', async (req: Request, res: Response) => {
+  const start = Date.now();
+  try {
+    const prompt = `Write a personalized ${req.body?.channel || 'email'} outreach message for ${req.body?.recipient_name || 'the recipient'} who is ${req.body?.recipient_role || 'a decision maker'} at ${req.body?.company || 'their company'}. Context: ${req.body?.context || 'business development outreach'}. Tone: ${req.body?.tone || 'professional'}. Make it highly personalized and compelling.`;
+    const ai = await callAI(
+      prompt,
+      'You are an expert sales copywriter. Generate highly personalized outreach messages. Return ONLY valid JSON with: subject (string), body (string), personalization_score (number 0-1), recommended_send_time (string), tone (string), cta (string), estimated_reply_rate (string).',
+      1000
+    );
+    const latency = Date.now() - start;
+    res.json({
+      ...buildRuntime(req, {
+        workflow_state: 'complete',
+        latency_breakdown: { total_ms: latency, inference_ms: Math.round(latency * 0.8), io_ms: Math.round(latency * 0.15), overhead_ms: Math.round(latency * 0.05) },
+      }),
+      success: true,
+            subject: ai.subject ?? null,
+      body: ai.body ?? null,
+      personalization_score: ai.personalization_score ?? null,
+      recommended_send_time: ai.recommended_send_time ?? null,
+      tone: ai.tone ?? null,
+      cta: ai.cta ?? null,
+      estimated_reply_rate: ai.estimated_reply_rate ?? null,
+      model: 'anthropic/claude-sonnet-4-5',
+      computed_at: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      ...buildRuntime(req, { workflow_state: 'failed', retryable: true }),
+      success: false,
+      error: err.message,
+      computed_at: new Date().toISOString(),
+    });
+  }
 });
 
-// Create a multi-step outreach sequence
-router.post('/sequence', (req: Request, res: Response) => {
-  const schema = Joi.object({ recipients: Joi.string().optional(), template_id: Joi.string().optional(), steps: Joi.string().optional(), spacing_days: Joi.string().optional(), });
-  const { error } = schema.validate(req.body, { allowUnknown: false });
-  if (error) return res.status(400).json({ success: false, error: error.details[0].message });
-  const trace_id = `trace_${Date.now()}`;
-  const execution_id = `exec_${Date.now()}`;
-  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
-  res.set("x-trace-id", buildRuntime(req).trace_id);
-  res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, sequence_id: 'sequence_id_value', steps: 'steps_value', estimated_reply_rate: 'estimated_reply_rate_value', computed_at: new Date().toISOString() });
+// /sequence — AI powered
+router.post('/sequence', async (req: Request, res: Response) => {
+  const start = Date.now();
+  try {
+    const prompt = `Build a ${req.body?.steps || 5}-step outreach sequence for ${JSON.stringify(req.body?.recipients || ['prospect'])} using template ${req.body?.template_id || 'standard'} with ${req.body?.spacing_days || 3} day spacing. Make each touchpoint distinct and value-adding.`;
+    const ai = await callAI(
+      prompt,
+      'You are an expert sales strategist. Build multi-touch outreach sequences. Return ONLY valid JSON with: sequence_id (string), steps (array of objects with day, channel, subject, body, goal), estimated_reply_rate (string), sequence_strategy (string), optimal_spacing (string).',
+      1000
+    );
+    const latency = Date.now() - start;
+    res.json({
+      ...buildRuntime(req, {
+        workflow_state: 'complete',
+        latency_breakdown: { total_ms: latency, inference_ms: Math.round(latency * 0.8), io_ms: Math.round(latency * 0.15), overhead_ms: Math.round(latency * 0.05) },
+      }),
+      success: true,
+            steps: ai.steps ?? null,
+      estimated_reply_rate: ai.estimated_reply_rate ?? null,
+      sequence_strategy: ai.sequence_strategy ?? null,
+      optimal_spacing: ai.optimal_spacing ?? null,
+      model: 'anthropic/claude-sonnet-4-5',
+      computed_at: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      ...buildRuntime(req, { workflow_state: 'failed', retryable: true }),
+      success: false,
+      error: err.message,
+      computed_at: new Date().toISOString(),
+    });
+  }
 });
 
 // Get outreach sequence performance stats

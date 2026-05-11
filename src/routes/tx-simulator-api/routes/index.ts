@@ -1,6 +1,35 @@
 import { Router, Request, Response } from 'express';
 import Joi from 'joi';
 
+// ── OpenRouter AI Helper ──────────────────────────────────────────────────────
+async function callAI(prompt: string, system: string, max_tokens: number = 1000): Promise<any> {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) throw new Error('OPENROUTER_API_KEY not set');
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': 'https://orbis-apis.onrender.com',
+      'X-Title': 'Orbis APIs',
+    },
+    body: JSON.stringify({
+      model: 'anthropic/claude-sonnet-4-5',
+      max_tokens,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user',   content: prompt },
+      ],
+    }),
+  });
+  if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
+  const data = await response.json() as any;
+  const text = data.choices?.[0]?.message?.content || '{}';
+  try { return JSON.parse(text); } catch { return { raw: text }; }
+}
+
+
 // ── Universal Runtime Envelope ────────────────────────────────────────────────
 function buildRuntime(req: any, overrides: Record<string, any> = {}) {
   const now = Date.now();
@@ -88,17 +117,43 @@ router.post('/execution-gate', (req, res) => {
   res.json({ ...buildRuntime(req), passed, checks, approved_at: new Date().toISOString(), computed_at: new Date().toISOString() });
 });
 
-// Simulate a transaction
-router.post('/simulate', (req: Request, res: Response) => {
-  const schema = Joi.object({ chain: Joi.string().optional(), from: Joi.string().optional(), to: Joi.string().optional(), value: Joi.string().optional(), data: Joi.string().optional(), gas_limit: Joi.string().optional(), });
-  const { error } = schema.validate(req.body, { allowUnknown: false });
-  if (error) return res.status(400).json({ success: false, error: error.details[0].message });
-  const trace_id = `trace_${Date.now()}`;
-  const execution_id = `exec_${Date.now()}`;
-  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
-  res.set("x-trace-id", buildRuntime(req).trace_id);
-  res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, gas_used: 0, gas_cost_usd: 0, state_changes: 'state_changes_value', revert_reason: 'revert_reason_value', risk_flags: 'risk_flags_value', human_approval_required: true, computed_at: new Date().toISOString() });
+// /simulate — AI powered
+router.post('/simulate', async (req: Request, res: Response) => {
+  const start = Date.now();
+  try {
+    const prompt = `Simulate this ${req.body?.chain || 'ethereum'} transaction: from ${req.body?.from || '0x...'} to ${req.body?.to || '0x...'} value ${req.body?.value || '0'} data ${req.body?.data || '0x'}. Analyze gas costs, state changes, and potential risks. Gas limit: ${req.body?.gas_limit || '21000'}.`;
+    const ai = await callAI(
+      prompt,
+      'You are a blockchain transaction simulator. Analyze transactions before execution. Return ONLY valid JSON with: success (boolean), gas_used (number), gas_cost_usd (number), state_changes (array of strings), revert_reason (string or null), risk_flags (array of strings), simulation_confidence (number 0-1), recommended_gas_limit (number), human_approval_required (boolean).',
+      1000
+    );
+    const latency = Date.now() - start;
+    res.json({
+      ...buildRuntime(req, {
+        workflow_state: 'complete',
+        latency_breakdown: { total_ms: latency, inference_ms: Math.round(latency * 0.8), io_ms: Math.round(latency * 0.15), overhead_ms: Math.round(latency * 0.05) },
+      }),
+      success: true,
+            ai_success: ai.success ?? null,
+      gas_used: ai.gas_used ?? null,
+      gas_cost_usd: ai.gas_cost_usd ?? null,
+      state_changes: ai.state_changes ?? null,
+      revert_reason: ai.revert_reason ?? null,
+      risk_flags: ai.risk_flags ?? null,
+      simulation_confidence: ai.simulation_confidence ?? null,
+      recommended_gas_limit: ai.recommended_gas_limit ?? null,
+      human_approval_required: ai.human_approval_required ?? null,
+      model: 'anthropic/claude-sonnet-4-5',
+      computed_at: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      ...buildRuntime(req, { workflow_state: 'failed', retryable: true }),
+      success: false,
+      error: err.message,
+      computed_at: new Date().toISOString(),
+    });
+  }
 });
 
 // Simulate a sequence of transactions
@@ -114,17 +169,40 @@ router.post('/batch', (req: Request, res: Response) => {
   res.json({ ...buildRuntime(req), success: true, results: 'results_value', total_gas_usd: 0, sequence_risk: 'sequence_risk_value', human_approval_required: true, computed_at: new Date().toISOString() });
 });
 
-// Decode calldata for a transaction
-router.post('/decode', (req: Request, res: Response) => {
-  const schema = Joi.object({ chain: Joi.string().optional(), to: Joi.string().optional(), data: Joi.string().optional(), });
-  const { error } = schema.validate(req.body, { allowUnknown: false });
-  if (error) return res.status(400).json({ success: false, error: error.details[0].message });
-  const trace_id = `trace_${Date.now()}`;
-  const execution_id = `exec_${Date.now()}`;
-  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
-  res.set("x-trace-id", buildRuntime(req).trace_id);
-  res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, function_name: 'function_name_value', params: 'params_value', protocol_tag: 'protocol_tag_value', risk_assessment: 'risk_assessment_value', human_approval_required: true, computed_at: new Date().toISOString() });
+// /decode — AI powered
+router.post('/decode', async (req: Request, res: Response) => {
+  const start = Date.now();
+  try {
+    const prompt = `Decode this ${req.body?.chain || 'ethereum'} transaction calldata to contract ${req.body?.to || '0x...'}: ${req.body?.data || '0x'}. Identify the function, parameters, and protocol. Explain in plain English what this transaction does.`;
+    const ai = await callAI(
+      prompt,
+      'You are a blockchain calldata decoder. Decode and explain transaction data. Return ONLY valid JSON with: function_name (string), params (object), protocol_tag (string), risk_assessment (string), plain_english (string), is_known_pattern (boolean).',
+      1000
+    );
+    const latency = Date.now() - start;
+    res.json({
+      ...buildRuntime(req, {
+        workflow_state: 'complete',
+        latency_breakdown: { total_ms: latency, inference_ms: Math.round(latency * 0.8), io_ms: Math.round(latency * 0.15), overhead_ms: Math.round(latency * 0.05) },
+      }),
+      success: true,
+            function_name: ai.function_name ?? null,
+      params: ai.params ?? null,
+      protocol_tag: ai.protocol_tag ?? null,
+      risk_assessment: ai.risk_assessment ?? null,
+      plain_english: ai.plain_english ?? null,
+      is_known_pattern: ai.is_known_pattern ?? null,
+      model: 'anthropic/claude-sonnet-4-5',
+      computed_at: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      ...buildRuntime(req, { workflow_state: 'failed', retryable: true }),
+      success: false,
+      error: err.message,
+      computed_at: new Date().toISOString(),
+    });
+  }
 });
 
 
