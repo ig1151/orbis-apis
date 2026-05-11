@@ -22,10 +22,11 @@ router.get('/', (_req: Request, res: Response) => {
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
-      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
+      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', required: ['title', 'version', 'status'], properties: {
         title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
-        endpoints: { type: 'array', items: { type: 'string' } },
         status: { type: 'string', enum: ['ok'] },
+        privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        endpoints: { type: 'array', items: { type: 'object', properties: { path: { type: 'string' }, method: { type: 'string' }, price_usdc: { type: 'number' }, description: { type: 'string' } } } },
       } } } } } } } },
       '/analyze/{ticker}': {
         get: {
@@ -37,7 +38,7 @@ router.get('/', (_req: Request, res: Response) => {
           'x-paper-mode-recommended': true,
           parameters: [{ name: 'ticker', in: 'path', required: true, schema: { type: 'string', enum: ['BTC','ETH','SOL','BNB','ARB','OP','AVAX','MATIC','LINK','UNI','DOGE','SUI','APT','INJ','ATOM','NEAR'] }, description: 'Crypto asset symbol' }],
           responses: {
-            '200': { description: 'Market intelligence result', content: { 'application/json': { schema: { type: 'object', properties: {
+            '200': { description: 'Market intelligence result', content: { 'application/json': { schema: { type: 'object', required: ['ticker', 'decision', 'overall_score', 'confidence', 'analyzed_at'], properties: {
               ticker: { type: 'string' },
               decision: { type: 'string', enum: ['BUY','STRONG_BUY','SELL','STRONG_SELL','HOLD'], description: 'Autonomous trading decision' },
               overall_score: { type: 'number', minimum: -100, maximum: 100, description: 'Composite intelligence score' },
@@ -85,7 +86,7 @@ router.get('/', (_req: Request, res: Response) => {
             min_score: { type: 'number', minimum: -100, maximum: 100, default: 20 },
             max_risk: { type: 'string', enum: ['low','medium','high'], default: 'medium' },
           }}}}},
-          responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: {
+          responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', required: ['execute', 'confidence'], properties: {
             execute: { type: 'boolean' },
             confidence: { type: 'number', minimum: 0, maximum: 1 },
             blocking_flags: { type: 'array', items: { type: 'string' } },

@@ -21,10 +21,11 @@ const openApiSpec = {
   components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
   paths: {
     '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
-      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
+      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', required: ['title', 'version', 'status'], properties: {
         title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
-        endpoints: { type: 'array', items: { type: 'string' } },
         status: { type: 'string', enum: ['ok'] },
+        privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        endpoints: { type: 'array', items: { type: 'object', properties: { path: { type: 'string' }, method: { type: 'string' }, price_usdc: { type: 'number' }, description: { type: 'string' } } } },
       } } } } } } } },
     '/scan': {
       get: {
@@ -39,7 +40,7 @@ const openApiSpec = {
         responses: {
           '200': {
             description: 'Ranked signals with best buy/sell, market bias, and portfolio narrative',
-            content: { 'application/json': { schema: { type: 'object', properties: {
+            content: { 'application/json': { schema: { type: 'object', required: ['success', 'data'], properties: {
               success: { type: 'boolean' },
               data: { type: 'object', properties: {
                 scannedSymbols: { type: 'array', items: { type: 'string' } },
@@ -130,7 +131,7 @@ const openApiSpec = {
           min_confidence: { type: 'number', minimum: 0, maximum: 1, default: 0.5 },
           required_bias: { type: 'string', enum: ['RISK_ON','RISK_OFF','MIXED','NEUTRAL','any'], default: 'any' },
         }}}}},
-        responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', properties: {
+        responses: { '200': { description: 'Gate decision', content: { 'application/json': { schema: { type: 'object', required: ['execute', 'confidence', 'market_bias'], properties: {
           execute: { type: 'boolean' },
           confidence: { type: 'number', minimum: 0, maximum: 1 },
           market_bias: { type: 'string' },

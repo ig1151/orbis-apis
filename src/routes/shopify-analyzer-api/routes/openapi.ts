@@ -24,10 +24,11 @@ router.get('/', (_req: Request, res: Response) => {
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
-      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
+      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', required: ['title', 'version', 'status'], properties: {
         title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
-        endpoints: { type: 'array', items: { type: 'string' } },
         status: { type: 'string', enum: ['ok'] },
+        privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        endpoints: { type: 'array', items: { type: 'object', properties: { path: { type: 'string' }, method: { type: 'string' }, price_usdc: { type: 'number' }, description: { type: 'string' } } } },
       } } } } } } } },
       '/analyze-store': {
         post: {
@@ -37,7 +38,7 @@ router.get('/', (_req: Request, res: Response) => {
           responses: {
             '200': {
               description: 'Store analysis result',
-              content: { 'application/json': { schema: { type: 'object', properties: {
+              content: { 'application/json': { schema: { type: 'object', required: ['store_url', 'strengths', 'weaknesses', 'confidence_per_section'], properties: {
                 store_url: { type: 'string' },
                 store_overview: { type: 'object', properties: { niche: { type: 'string' }, maturity: { type: 'string', enum: ['new','growing','established'] }, estimated_monthly_revenue: { type: 'string' }, brand_strength: { type: 'number' } } },
                 strengths: actions,
@@ -120,6 +121,7 @@ router.get('/', (_req: Request, res: Response) => {
                 competitive_advantages: actions,
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
+                chain_to: actions,
                 privacy,
               } } } },
             },
@@ -145,6 +147,7 @@ router.get('/', (_req: Request, res: Response) => {
                 backlink_strategy: { type: 'object', properties: { current_estimate: { type: 'string' }, target: { type: 'string' }, top_sources: actions } },
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
+                chain_to: actions,
                 privacy,
               } } } },
             },
@@ -168,6 +171,7 @@ router.get('/', (_req: Request, res: Response) => {
                 psychological_pricing: { type: 'array', items: { type: 'object', properties: { tactic: { type: 'string' }, example: { type: 'string' }, impact: { type: 'string' } } } },
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
+                chain_to: actions,
                 privacy,
               } } } },
             },
@@ -192,6 +196,7 @@ router.get('/', (_req: Request, res: Response) => {
                 retargeting_strategy: { type: 'object', properties: { segments: actions, window_days: { type: 'number' }, message_sequence: actions } },
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
+                chain_to: actions,
                 privacy,
               } } } },
             },
@@ -216,6 +221,7 @@ router.get('/', (_req: Request, res: Response) => {
                 scaling_readiness: { type: 'object', properties: { score: { type: 'number' }, blockers: actions, enablers: actions } },
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
+                chain_to: actions,
                 privacy,
               } } } },
             },
@@ -258,7 +264,7 @@ router.get('/', (_req: Request, res: Response) => {
           responses: {
             '200': {
               description: 'Full Shopify store analysis report',
-              content: { 'application/json': { schema: { type: 'object', properties: {
+              content: { 'application/json': { schema: { type: 'object', required: ['store_url', 'executive_summary', 'top_issues', 'quick_wins'], properties: {
                 store_url: { type: 'string' },
                 executive_summary: { type: 'object', properties: { overall_score: { type: 'number' }, grade: { type: 'string' }, top_priority: { type: 'string' }, revenue_opportunity: { type: 'string' } } },
                 store_health: { type: 'object', properties: { conversion_score: { type: 'number' }, seo_score: { type: 'number' }, brand_score: { type: 'number' }, product_score: { type: 'number' } } },
@@ -270,6 +276,7 @@ router.get('/', (_req: Request, res: Response) => {
                 '90_day_plan': { type: 'array', items: { type: 'object', properties: { phase: { type: 'number' }, action: { type: 'string' }, timeline: { type: 'string' }, expected_outcome: { type: 'string' } } } },
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
+                chain_to: actions,
                 privacy,
               } } } },
             },

@@ -24,20 +24,21 @@ router.get('/', (_req: Request, res: Response) => {
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
       '/': { get: { summary: 'API discovery', operationId: 'discovery', 'x-agent-callable': true,
-      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', properties: {
+      responses: { '200': { description: 'API info', content: { 'application/json': { schema: { type: 'object', required: ['title', 'version', 'status'], properties: {
         title: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
-        endpoints: { type: 'array', items: { type: 'string' } },
         status: { type: 'string', enum: ['ok'] },
+        privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
+        endpoints: { type: 'array', items: { type: 'object', properties: { path: { type: 'string' }, method: { type: 'string' }, price_usdc: { type: 'number' }, description: { type: 'string' } } } },
       } } } } } } } },
       '/research-topic': {
         post: {
           operationId: 'researchTopic',
           summary: 'Cross-source research synthesis with key findings, subtopics, gaps and contradictions',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['topic'], properties: { topic: { type: 'string' }, depth: { type: 'string', enum: ['surface','standard','deep'] }, sources: { type: 'array', items: { type: 'string' } }, focus_areas: { type: 'array', items: { type: 'string' } }, max_sources: { type: 'number' } } } } } },
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['topic'], properties: { topic: { type: 'string' }, depth: { type: 'string', enum: ['surface','standard','deep'] }, sources: { type: 'array', items: { type: 'string' } }, focus_areas: { type: 'array', items: { type: 'string' } }, max_sources: { type: 'integer' } } } } } },
           responses: {
             '200': {
               description: 'Research synthesis result',
-              content: { 'application/json': { schema: { type: 'object', properties: {
+              content: { 'application/json': { schema: { type: 'object', required: ['topic', 'summary', 'key_findings', 'confidence_per_section'], properties: {
                 topic: { type: 'string' },
                 summary: { type: 'string' },
                 key_findings: { type: 'array', items: { type: 'object', properties: { finding: { type: 'string' }, confidence: { type: 'number', minimum: 0, maximum: 1 }, supporting_sources: actions, consensus_level: { type: 'string', enum: ['high','medium','low','disputed'] } } } },
@@ -59,14 +60,14 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'extractFacts',
           summary: 'Extract verified facts with type, confidence, verbatim quotes and entity recognition',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['content'], properties: { content: { type: 'string' }, fact_types: { type: 'array', items: { type: 'string' } }, min_confidence: { type: 'number' }, source_url: { type: 'string' } } } } } },
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['content'], properties: { content: { type: 'string' }, fact_types: { type: 'array', items: { type: 'string' } }, min_confidence: { type: 'number' }, source_url: { type: 'string', format: 'uri' } } } } } },
           responses: {
             '200': {
               description: 'Extracted facts result',
               content: { 'application/json': { schema: { type: 'object', properties: {
                 facts: { type: 'array', items: { type: 'object', properties: { fact: { type: 'string' }, fact_type: { type: 'string', enum: ['statistic','claim','date','entity','relationship','definition'] }, confidence: { type: 'number', minimum: 0, maximum: 1 }, verbatim_quote: { type: 'string' }, verifiable: { type: 'boolean' } } } },
-                total_facts: { type: 'number' },
-                high_confidence_facts: { type: 'number' },
+                total_facts: { type: 'integer' },
+                high_confidence_facts: { type: 'integer' },
                 entities_mentioned: { type: 'array', items: { type: 'object', properties: { entity: { type: 'string' }, type: { type: 'string', enum: ['person','org','location','product','event','concept'] }, role: { type: 'string' } } } },
                 temporal_markers: { type: 'array', items: { type: 'object', properties: { date: { type: 'string' }, event: { type: 'string' }, certainty: { type: 'string', enum: ['exact','approximate','relative'] } } } },
                 source_quality_indicators: { type: 'object', properties: { specificity: { type: 'number', minimum: 0, maximum: 1 }, recency_signals: actions, authority_signals: actions } },
@@ -84,12 +85,12 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'compareSources',
           summary: 'Compare multiple sources for consensus, divergence, unique insights and quality ranking',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['sources'], properties: { sources: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, title: { type: 'string' }, content: { type: 'string' }, url: { type: 'string' }, date: { type: 'string' } } } }, comparison_angle: { type: 'string' } } } } } },
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['sources'], properties: { sources: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, title: { type: 'string' }, content: { type: 'string' }, url: { type: 'string', format: 'uri' }, date: { type: 'string' } } } }, comparison_angle: { type: 'string' } } } } } },
           responses: {
             '200': {
               description: 'Source comparison result',
               content: { 'application/json': { schema: { type: 'object', properties: {
-                sources_analyzed: { type: 'number' },
+                sources_analyzed: { type: 'integer' },
                 consensus_claims: { type: 'array', items: { type: 'object', properties: { claim: { type: 'string' }, sources_agreeing: actions, confidence: { type: 'number', minimum: 0, maximum: 1 } } } },
                 divergent_claims: { type: 'array', items: { type: 'object', properties: { claim: { type: 'string' }, source_positions: { type: 'array', items: { type: 'object', properties: { source_id: { type: 'string' }, position: { type: 'string' } } } }, divergence_reason: { type: 'string' } } } },
                 unique_insights: { type: 'array', items: { type: 'object', properties: { source_id: { type: 'string' }, insight: { type: 'string' }, value: { type: 'string', enum: ['high','medium','low'] } } } },
@@ -110,7 +111,7 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'credibilityAnalysis',
           summary: 'Score source credibility with bias detection, quality signals and recommended use',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['content_sample'], properties: { source_url: { type: 'string' }, source_title: { type: 'string' }, author: { type: 'string' }, content_sample: { type: 'string' }, publication_date: { type: 'string' } } } } } },
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['content_sample'], properties: { source_url: { type: 'string', format: 'uri' }, source_title: { type: 'string' }, author: { type: 'string' }, content_sample: { type: 'string' }, publication_date: { type: 'string' } } } } } },
           responses: {
             '200': {
               description: 'Credibility analysis result',
@@ -145,7 +146,7 @@ router.get('/', (_req: Request, res: Response) => {
                 topic: { type: 'string' },
                 timeline_type: { type: 'string' },
                 events: { type: 'array', items: { type: 'object', properties: { date: { type: 'string' }, event: { type: 'string' }, significance: { type: 'string', enum: ['pivotal','major','minor'] }, actors: actions, consequences: actions, certainty: { type: 'string', enum: ['confirmed','probable','speculative'] } } } },
-                total_events: { type: 'number' },
+                total_events: { type: 'integer' },
                 date_range: { type: 'object', properties: { earliest: { type: 'string' }, latest: { type: 'string' }, span: { type: 'string' } } },
                 turning_points: { type: 'array', items: { type: 'object', properties: { date: { type: 'string' }, event: { type: 'string' }, reason: { type: 'string' } } } },
                 patterns: { type: 'array', items: { type: 'object', properties: { pattern: { type: 'string' }, period: { type: 'string' }, implications: { type: 'string' } } } },
@@ -164,7 +165,7 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'citationBuilder',
           summary: 'Format citations in APA, MLA, Chicago and Harvard styles with bibliography and in-text examples',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['sources'], properties: { sources: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, author: { type: 'string' }, url: { type: 'string' }, publication: { type: 'string' }, date: { type: 'string' }, accessed_date: { type: 'string' } } } }, citation_style: { type: 'string' }, context: { type: 'string' } } } } } },
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['sources'], properties: { sources: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, author: { type: 'string' }, url: { type: 'string', format: 'uri' }, publication: { type: 'string' }, date: { type: 'string' }, accessed_date: { type: 'string' } } } }, citation_style: { type: 'string' }, context: { type: 'string' } } } } } },
           responses: {
             '200': {
               description: 'Citations result',
@@ -173,7 +174,7 @@ router.get('/', (_req: Request, res: Response) => {
                 bibliography_apa: { type: 'string' },
                 bibliography_mla: { type: 'string' },
                 in_text_examples: { type: 'array', items: { type: 'object', properties: { source_index: { type: 'number' }, apa: { type: 'string' }, mla: { type: 'string' } } } },
-                source_count: { type: 'number' },
+                source_count: { type: 'integer' },
                 formatting_notes: actions,
                 missing_fields: { type: 'array', items: { type: 'object', properties: { source_index: { type: 'number' }, fields: actions } } },
                 confidence_per_section: confidence,
@@ -190,11 +191,11 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'researchExecutionGate',
           summary: 'Gate research execution based on quality, completeness and risk score',
-          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['research_context','intended_action'], properties: { research_context: { type: 'object' }, intended_action: { type: 'string' }, quality_threshold: { type: 'number' }, source_count: { type: 'number' } } } } } },
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['research_context','intended_action'], properties: { research_context: { type: 'object', properties: { topic: { type: 'string' }, sources_synthesized: { type: 'integer' }, research_quality_score: { type: 'number', minimum: 0, maximum: 100 }, key_findings_count: { type: 'integer' } } }, intended_action: { type: 'string' }, quality_threshold: { type: 'number' }, source_count: { type: 'integer' } } } } } },
           responses: {
             '200': {
               description: 'Execution gate result',
-              content: { 'application/json': { schema: { type: 'object', properties: {
+              content: { 'application/json': { schema: { type: 'object', required: ['execute', 'confidence', 'research_quality'], properties: {
                 execute: { type: 'boolean' },
                 confidence: { type: 'number', minimum: 0, maximum: 1 },
                 blocking_flags: actions,
@@ -220,7 +221,7 @@ router.get('/', (_req: Request, res: Response) => {
           responses: {
             '200': {
               description: 'Full deep research report',
-              content: { 'application/json': { schema: { type: 'object', properties: {
+              content: { 'application/json': { schema: { type: 'object', required: ['research_id', 'topic', 'executive_summary', 'report'], properties: {
                 research_id: { type: 'string' },
                 topic: { type: 'string' },
                 executive_summary: { type: 'string' },
@@ -229,7 +230,7 @@ router.get('/', (_req: Request, res: Response) => {
                 timeline: { type: 'array', items: { type: 'object', properties: { date: { type: 'string' }, event: { type: 'string' }, significance: { type: 'string', enum: ['pivotal','major','minor'] } } } },
                 contradictions: { type: 'array', items: { type: 'object', properties: { claim_a: { type: 'string' }, claim_b: { type: 'string' }, resolution: { type: 'string' } } } },
                 knowledge_gaps: actions,
-                sources_synthesized: { type: 'number' },
+                sources_synthesized: { type: 'integer' },
                 research_quality_score: { type: 'number', minimum: 0, maximum: 100 },
                 report: { type: 'string' },
                 confidence_per_section: confidence,
