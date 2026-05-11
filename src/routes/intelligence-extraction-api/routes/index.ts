@@ -127,7 +127,12 @@ router.post('/execution-gate', (req, res) => {
 router.post('/extract', async (req: Request, res: Response) => {
   const start = Date.now();
   try {
-    const prompt = `Extract intelligence signals from this text: "${req.body?.text || 'No text provided'}". Source: ${req.body?.source || 'unknown'}. Signal types to extract: ${JSON.stringify(req.body?.signal_types || ['sentiment','risk','opportunity'])}. Asset context: ${req.body?.asset_context || 'crypto markets'}.`;
+    const sourceText = req.body?.text || '';
+    const source = req.body?.source || 'unknown';
+    const signalTypes = JSON.stringify(req.body?.signal_types || ['sentiment','risk','opportunity']);
+    const assetCtx = req.body?.asset_context || 'crypto markets';
+    if (!sourceText) return res.status(400).json({ success: false, error: 'text is required' });
+    const prompt = `Extract intelligence signals from this text.\n\nTEXT:\n${sourceText}\n\nSource: ${source}\nSignal types: ${signalTypes}\nAsset context: ${assetCtx}`;
     const ai = await callAI(
       prompt,
       'You are an intelligence extraction specialist. Extract structured signals from text. Return ONLY valid JSON with: signals (array of objects with type, value, confidence), entities (array of objects with name, type, relevance), sentiment (string: positive/negative/neutral), risk_flags (array of strings), confidence (number 0-1), key_insights (array of strings), asset_impact (string).',

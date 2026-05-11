@@ -127,7 +127,13 @@ router.post('/execution-gate', (req, res) => {
 router.post('/generate', async (req: Request, res: Response) => {
   const start = Date.now();
   try {
-    const prompt = `Write a professional business proposal for ${req.body?.client_name || 'the client'}. Brief: ${req.body?.brief || 'general services'}. Scope: ${req.body?.scope || 'to be defined'}. Budget: $${req.body?.budget_usd || 'TBD'}. Timeline: ${req.body?.timeline_weeks || 8} weeks. Tone: ${req.body?.tone || 'professional'}. Make it compelling and win-ready.`;
+    const clientName = req.body?.client_name || 'the client';
+    const brief = req.body?.brief || 'general services';
+    const scope = req.body?.scope || 'to be defined';
+    const budget = req.body?.budget_usd || 'TBD';
+    const timeline = req.body?.timeline_weeks || 8;
+    const tone = req.body?.tone || 'professional';
+    const prompt = `Write a professional business proposal for ${clientName}. Brief: ${brief}. Scope: ${scope}. Budget: $${budget}. Timeline: ${timeline} weeks. Tone: ${tone}. Make it compelling and win-ready. Include an executive_summary field with 2-3 sentences.`;
     const ai = await callAI(
       prompt,
       'You are an expert business proposal writer. Respond with ONLY a raw JSON object, no markdown, no backticks. Include these exact fields: proposal (string), sections (array of strings), word_count (number), executive_summary (string, 2-3 sentences), key_differentiators (array of strings), readability_score (number 0-100).',
@@ -163,7 +169,10 @@ router.post('/generate', async (req: Request, res: Response) => {
 router.post('/rfp-response', async (req: Request, res: Response) => {
   const start = Date.now();
   try {
-    const prompt = `Write a winning RFP response for this RFP: ${req.body?.rfp_text || 'general RFP'}. Company profile: ${req.body?.company_profile || 'our company'}. Key differentiators: ${JSON.stringify(req.body?.differentiators || [])}. Focus on compliance and win themes.`;
+    const rfp = req.body?.rfp_text || 'general RFP';
+    const profile = req.body?.company_profile || 'our company';
+    const diffs = JSON.stringify(req.body?.differentiators || []);
+    const prompt = `Write a winning RFP response for this RFP: ${rfp}. Company profile: ${profile}. Key differentiators: ${diffs}. Focus on compliance and win themes.`;
     const ai = await callAI(
       prompt,
       'You are an expert RFP response writer. Generate winning RFP responses. Return ONLY valid JSON with: response (string — full RFP response), compliance_matrix (object mapping requirements to responses), win_themes (array of strings), risk_flags (array of strings), strength_areas (array of strings).',

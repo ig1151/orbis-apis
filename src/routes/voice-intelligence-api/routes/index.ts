@@ -140,7 +140,10 @@ router.post('/transcribe', (req: Request, res: Response) => {
 router.post('/extract-insights', async (req: Request, res: Response) => {
   const start = Date.now();
   try {
-    const prompt = `Extract insights from this transcript: "${(req.body?.transcript || 'No transcript').substring(0, 2000)}". Context: ${req.body?.context || 'business meeting'}. Signal types: ${JSON.stringify(req.body?.signal_types || ['action_items','sentiment','risks'])}.`;
+    const transcript1 = (req.body?.transcript || '').substring(0, 2000);
+    const ctx1 = req.body?.context || 'business meeting';
+    const sTypes = JSON.stringify(req.body?.signal_types || ['action_items','sentiment','risks']);
+    const prompt = `Extract insights from this transcript.\n\nTRANSCRIPT:\n${transcript1}\n\nContext: ${ctx1}\nSignal types: ${sTypes}`;
     const ai = await callAI(
       prompt,
       'You are a conversation intelligence analyst. Extract actionable insights from transcripts. Return ONLY valid JSON with: insights (array of strings), action_items (array of objects with task, owner, deadline), sentiment (string), key_entities (array of strings), risk_flags (array of strings), meeting_effectiveness (number 0-100), next_steps (array of strings).',
@@ -177,7 +180,10 @@ router.post('/extract-insights', async (req: Request, res: Response) => {
 router.post('/summarize', async (req: Request, res: Response) => {
   const start = Date.now();
   try {
-    const prompt = `Summarize this call/meeting transcript: "${(req.body?.transcript || 'No transcript').substring(0, 2000)}". Format: ${req.body?.format || 'executive'}. Max length: ${req.body?.max_length || '300 words'}.`;
+    const transcript2 = (req.body?.transcript || '').substring(0, 2000);
+    const fmt = req.body?.format || 'executive';
+    const maxLen = req.body?.max_length || '300 words';
+    const prompt = `Summarize this transcript.\n\nTRANSCRIPT:\n${transcript2}\n\nFormat: ${fmt}\nMax length: ${maxLen}`;
     const ai = await callAI(
       prompt,
       'You are a meeting summarization expert. Create structured summaries. Return ONLY valid JSON with: summary (string), decisions (array of strings), next_steps (array of strings), participants (array of strings), key_topics (array of strings), duration_estimate (string).',

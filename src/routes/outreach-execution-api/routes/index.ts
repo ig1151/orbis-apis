@@ -127,7 +127,13 @@ router.post('/execution-gate', (req, res) => {
 router.post('/generate', async (req: Request, res: Response) => {
   const start = Date.now();
   try {
-    const prompt = `Write a personalized ${req.body?.channel || 'email'} outreach message for ${req.body?.recipient_name || 'the recipient'} who is ${req.body?.recipient_role || 'a decision maker'} at ${req.body?.company || 'their company'}. Context: ${req.body?.context || 'business development outreach'}. Tone: ${req.body?.tone || 'professional'}. Make it highly personalized and compelling.`;
+    const channel = req.body?.channel || 'email';
+    const recipientName = req.body?.recipient_name || 'the recipient';
+    const recipientRole = req.body?.recipient_role || 'a decision maker';
+    const company = req.body?.company || 'their company';
+    const context = req.body?.context || 'business development outreach';
+    const tone = req.body?.tone || 'professional';
+    const prompt = `Write a personalized ${channel} outreach message.\n\nRecipient: ${recipientName}\nRole: ${recipientRole}\nCompany: ${company}\nContext: ${context}\nTone: ${tone}\n\nMake it highly specific, personalized and compelling with a clear CTA.`;
     const ai = await callAI(
       prompt,
       'You are an expert sales copywriter. Generate highly personalized outreach messages. Return ONLY valid JSON with: subject (string), body (string), personalization_score (number 0-1), recommended_send_time (string), tone (string), cta (string), estimated_reply_rate (string).',

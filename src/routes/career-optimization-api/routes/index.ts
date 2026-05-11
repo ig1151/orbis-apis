@@ -127,7 +127,11 @@ router.post('/execution-gate', (req, res) => {
 router.post('/score-resume', async (req: Request, res: Response) => {
   const start = Date.now();
   try {
-    const prompt = `Score this resume against the job description. Resume: "${(req.body?.resume_text || 'No resume').substring(0, 2000)}". Job description: "${(req.body?.job_description || 'No JD').substring(0, 1000)}". Role level: ${req.body?.role_level || 'mid-level'}. Be specific and actionable.`;
+    const resumeText = (req.body?.resume_text || '').substring(0, 2000);
+    const jobDesc = (req.body?.job_description || '').substring(0, 1000);
+    const roleLevel = req.body?.role_level || 'mid-level';
+    if (!resumeText) return res.status(400).json({ success: false, error: 'resume_text is required' });
+    const prompt = `Score this resume against the job description.\n\nRESUME:\n${resumeText}\n\nJOB DESCRIPTION:\n${jobDesc}\n\nROLE LEVEL: ${roleLevel}\n\nProvide a score from 1-100 and specific actionable feedback. Never return 0 for score or ats_compatibility.`;
     const ai = await callAI(
       prompt,
       'You are an expert resume reviewer and career coach. Respond with ONLY a raw JSON object, no markdown, no backticks. Include these exact fields: score (integer between 1-100, never 0), gap_analysis (array of strings), recommended_edits (array of strings), keyword_matches (array of strings), ats_compatibility (integer between 1-100, never 0), strengths (array of strings), weaknesses (array of strings).',
@@ -177,7 +181,12 @@ router.post('/optimize', (req: Request, res: Response) => {
 router.post('/strategy', async (req: Request, res: Response) => {
   const start = Date.now();
   try {
-    const prompt = `Create a personalized job search strategy. Current role: ${req.body?.current_role || 'unknown'}. Target role: ${req.body?.target_role || 'unknown'}. Skills: ${JSON.stringify(req.body?.skills || [])}. Location: ${req.body?.location || 'remote'}. Timeline: ${req.body?.timeline_weeks || 12} weeks.`;
+    const currentRole = req.body?.current_role || 'unknown';
+    const targetRole = req.body?.target_role || 'unknown';
+    const skills = JSON.stringify(req.body?.skills || []);
+    const location = req.body?.location || 'remote';
+    const tlWeeks = req.body?.timeline_weeks || 12;
+    const prompt = `Create a personalized job search strategy.\n\nCurrent role: ${currentRole}\nTarget role: ${targetRole}\nSkills: ${skills}\nLocation: ${location}\nTimeline: ${tlWeeks} weeks\n\nProvide specific, actionable strategy with real company names and concrete steps.`;
     const ai = await callAI(
       prompt,
       'You are an expert career strategist. Generate personalized job search strategies. Return ONLY valid JSON with: strategy (string), priority_actions (array of strings), target_companies (array of strings), estimated_success_rate (string), timeline_weeks (number), skill_gaps (array of strings), networking_approach (string).',
