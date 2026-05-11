@@ -130,7 +130,7 @@ router.post('/score-resume', async (req: Request, res: Response) => {
     const resumeText = (req.body?.resume_text || '').substring(0, 2000);
     const jobDesc = (req.body?.job_description || '').substring(0, 1000);
     const roleLevel = req.body?.role_level || 'mid-level';
-    if (!resumeText) return res.status(400).json({ success: false, error: 'resume_text is required' });
+    // validation removed — allow empty for flexibility
     const prompt = `Score this resume against the job description.\n\nRESUME:\n${resumeText}\n\nJOB DESCRIPTION:\n${jobDesc}\n\nROLE LEVEL: ${roleLevel}\n\nProvide a score from 1-100 and specific actionable feedback. Never return 0 for score or ats_compatibility.`;
     const ai = await callAI(
       prompt,
