@@ -27,19 +27,42 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
   // Strip fences using split on newlines — avoids regex backtick issues
+  // Strip backtick fences
   const rawLines = raw.split('\n');
-  const filteredLines = rawLines.filter((l: string) => {
-    const t = l.trim();
-    return !t.startsWith('\x60\x60\x60');
-  });
+  const filteredLines = rawLines.filter((l: string) => !l.trim().startsWith('\x60\x60\x60'));
   const stripped = filteredLines.join('\n').trim();
-  // Try 1: parse stripped directly
+  // Try 1: direct parse of stripped
   try { return JSON.parse(stripped); } catch {}
-  // Try 2: parse raw directly
-  try { return JSON.parse(raw); } catch {}
-  // Try 3: find outermost { }
-  const fi = stripped.indexOf('{'), la = stripped.lastIndexOf('}');
-  if (fi !== -1 && la !== -1) { try { return JSON.parse(stripped.slice(fi, la + 1)); } catch {} }
+  // Try 2: repair unescaped newlines inside JSON string values
+  // Replace literal newlines inside string values with \n
+  try {
+    const repaired = stripped.replace(/("(?:[^"\\]|\\.)*")|([\r\n]+)/g, (match: string, str: string) => {
+      if (str !== undefined) return str; // inside a string — keep as is
+      return ' '; // outside a string — replace newline with space
+    });
+    return JSON.parse(repaired);
+  } catch {}
+  // Try 3: extract just the JSON fields we need using regex
+  const result: any = {};
+  const fieldPatterns: Record<string, RegExp> = {
+    executive_summary: /"executive_summary"\s*:\s*"((?:[^"\\]|\\.)*)"/,
+    proposal:          /"proposal"\s*:\s*"((?:[^"\\]|\\.)*)"/,
+    word_count:        /"word_count"\s*:\s*(\d+)/,
+    readability_score: /"readability_score"\s*:\s*([\d.]+)/,
+    sections:          /"sections"\s*:\s*(\[[^\]]*\])/,
+    key_differentiators: /"key_differentiators"\s*:\s*(\[[^\]]*\])/,
+  };
+  for (const [key, pattern] of Object.entries(fieldPatterns)) {
+    const m = stripped.match(pattern);
+    if (m) {
+      if (key === 'word_count') result[key] = parseInt(m[1]);
+      else if (key === 'readability_score') result[key] = parseFloat(m[1]);
+      else if (key === 'sections' || key === 'key_differentiators') {
+        try { result[key] = JSON.parse(m[1]); } catch {}
+      } else result[key] = m[1].replace(/\\n/g, '\n');
+    }
+  }
+  if (Object.keys(result).length > 0) return result;
   return { raw };
 }
 
