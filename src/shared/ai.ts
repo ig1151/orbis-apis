@@ -89,7 +89,7 @@ function computeCost(route: string): { total_usd: number; inference_usd: number;
 // ── Shared buildRuntime ───────────────────────────────────────
 export function buildRuntime(req: any, overrides: Record<string, any> = {}): Record<string, any> {
   const now = Date.now();
-  const route = req.path || req.originalUrl || '';
+  const route = req.originalUrl || req.path || req.url || '';
   const trace_id     = req.headers?.['x-trace-id']     || `trace_${now}_${Math.random().toString(36).slice(2,8)}`;
   const execution_id = req.headers?.['x-execution-id'] || `exec_${now}_${Math.random().toString(36).slice(2,8)}`;
   const session_id   = req.body?.session_id || req.query?.session_id || req.headers?.['x-session-id'] || `session_${now}`;
