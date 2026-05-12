@@ -155,7 +155,7 @@ router.post('/generate', async (req: Request, res: Response) => {
     });
     const _data = await _resp.json() as any;
     const _raw = _data.choices?.[0]?.message?.content || '{}';
-    const _lines = _raw.split('\n').filter((l: string) => !l.trim().startsWith('`')).join('\n').trim();
+    const _lines = _raw.split('\n').filter((l: string) => !l.trim().startsWith('\x60')).join('\n').trim();
     let ai: any = {};
     try { ai = JSON.parse(_lines); } catch {
       try { ai = JSON.parse(_raw); } catch {
@@ -177,8 +177,7 @@ router.post('/generate', async (req: Request, res: Response) => {
       key_differentiators: ai.key_differentiators ?? ai.keyDifferentiators ?? ai.differentiators ?? null,
       readability_score: ai.readability_score ?? null,
       ai_keys: Object.keys(ai),
-      ai_raw: ai.raw ?? null,
-      ai_parse_error: ai.parse_error ?? null,
+
       model: 'anthropic/claude-sonnet-4-5',
       computed_at: new Date().toISOString(),
     });
@@ -218,8 +217,7 @@ router.post('/rfp-response', async (req: Request, res: Response) => {
       risk_flags: ai.risk_flags ?? null,
       strength_areas: ai.strength_areas ?? null,
       ai_keys: Object.keys(ai),
-      ai_raw: ai.raw ?? null,
-      ai_parse_error: ai.parse_error ?? null,
+
       model: 'anthropic/claude-sonnet-4-5',
       computed_at: new Date().toISOString(),
     });
