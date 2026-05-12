@@ -25,18 +25,15 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  // Split into lines and find JSON block
-  const lines = raw.split('\n');
-  const jsonStart = lines.findIndex((l: string) => l.trim().startsWith('{'));
-  const jsonEnd   = lines.map((l: string) => l.trim()).lastIndexOf('}');
-  if (jsonStart === -1 || jsonEnd === -1) return { raw };
-  const jsonLines = lines.slice(jsonStart, jsonEnd + 1).join('\n');
-  try { return JSON.parse(jsonLines); } catch (e) {
-    // fallback: indexOf approach
-    const f2 = raw.indexOf('{'); const l2 = raw.lastIndexOf('}');
-    if (f2 !== -1 && l2 !== -1) { try { return JSON.parse(raw.slice(f2, l2+1)); } catch {} }
-    return { raw, parse_error: String(e) };
+  // Find JSON using brace counting to handle nested objects correctly
+  let depth = 0, jsonStartIdx = -1, jsonEndIdx = -1;
+  for (let i = 0; i < raw.length; i++) {
+    if (raw[i] === '{') { if (depth === 0) jsonStartIdx = i; depth++; }
+    else if (raw[i] === '}') { depth--; if (depth === 0) { jsonEndIdx = i; break; } }
   }
+  if (jsonStartIdx === -1 || jsonEndIdx === -1) return { raw };
+  const jsonStr = raw.slice(jsonStartIdx, jsonEndIdx + 1);
+  try { return JSON.parse(jsonStr); } catch (e) { return { raw, parse_error: String(e) }; }
 }
 
 
