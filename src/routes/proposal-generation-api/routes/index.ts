@@ -142,11 +142,27 @@ router.post('/generate', async (req: Request, res: Response) => {
     const timeline = req.body?.timeline_weeks || 8;
     const tone = req.body?.tone || 'professional';
     const prompt = `Write a professional business proposal for ${clientName}. Brief: ${brief}. Scope: ${scope}. Budget: $${budget}. Timeline: ${timeline} weeks. Tone: ${tone}. Make it compelling and win-ready. Include an executive_summary field with 2-3 sentences.`;
-    const ai = await callAI(
-      prompt,
-      'You are an expert business proposal writer. Respond with ONLY a raw JSON object, no markdown, no backticks. Include these exact fields: proposal (string), sections (array of strings), word_count (number), executive_summary (string, 2-3 sentences), key_differentiators (array of strings), readability_score (number 0-100).',
-      1000
-    );
+    const _apiKey = process.env.OPENROUTER_API_KEY;
+    const _resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_apiKey}`, 'HTTP-Referer': 'https://orbis-apis.onrender.com', 'X-Title': 'Orbis APIs' },
+      body: JSON.stringify({ model: 'anthropic/claude-sonnet-4-5', max_tokens: 1000, response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: 'You are an expert business proposal writer. Return ONLY valid JSON with these fields: proposal (string), sections (array of strings), word_count (number), executive_summary (string), key_differentiators (array of strings), readability_score (number).' },
+          { role: 'user', content: prompt }
+        ]
+      }),
+    });
+    const _data = await _resp.json() as any;
+    const _raw = _data.choices?.[0]?.message?.content || '{}';
+    const _lines = _raw.split('\n').filter((l: string) => !l.trim().startsWith('`')).join('\n').trim();
+    let ai: any = {};
+    try { ai = JSON.parse(_lines); } catch {
+      try { ai = JSON.parse(_raw); } catch {
+        const f = _raw.indexOf('{'), l = _raw.lastIndexOf('}');
+        if (f !== -1 && l !== -1) try { ai = JSON.parse(_raw.slice(f, l+1)); } catch {}
+      }
+    }
     const latency = Date.now() - start;
     res.json({
       ...buildRuntime(req, {
