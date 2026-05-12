@@ -26,15 +26,19 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  // Find JSON using brace counting to handle nested objects correctly
-  let depth = 0, jsonStartIdx = -1, jsonEndIdx = -1;
-  for (let i = 0; i < raw.length; i++) {
-    if (raw[i] === '{') { if (depth === 0) jsonStartIdx = i; depth++; }
-    else if (raw[i] === '}') { depth--; if (depth === 0) { jsonEndIdx = i; break; } }
+  // Try 1: direct parse
+  try { return JSON.parse(raw); } catch {}
+  // Try 2: strip backtick fences then parse
+  const stripped = raw.replace(/^\s*```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+  try { return JSON.parse(stripped); } catch {}
+  // Try 3: brace counting on stripped
+  let depth = 0, s = -1, e2 = -1;
+  for (let i = 0; i < stripped.length; i++) {
+    if (stripped[i] === '{') { if (depth === 0) s = i; depth++; }
+    else if (stripped[i] === '}') { depth--; if (depth === 0) { e2 = i; break; } }
   }
-  if (jsonStartIdx === -1 || jsonEndIdx === -1) return { raw };
-  const jsonStr = raw.slice(jsonStartIdx, jsonEndIdx + 1);
-  try { return JSON.parse(jsonStr); } catch (e) { return { raw, parse_error: String(e) }; }
+  if (s !== -1 && e2 !== -1) { try { return JSON.parse(stripped.slice(s, e2 + 1)); } catch {} }
+  return { raw };
 }
 
 
