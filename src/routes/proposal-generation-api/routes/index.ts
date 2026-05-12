@@ -142,26 +142,11 @@ router.post('/generate', async (req: Request, res: Response) => {
     const timeline = req.body?.timeline_weeks || 8;
     const tone = req.body?.tone || 'professional';
     const prompt = `Write a professional business proposal for ${clientName}. Brief: ${brief}. Scope: ${scope}. Budget: $${budget}. Timeline: ${timeline} weeks. Tone: ${tone}. Make it compelling and win-ready. Include an executive_summary field with 2-3 sentences.`;
-    const _apiKey = process.env.OPENROUTER_API_KEY;
-    const _resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_apiKey}`, 'HTTP-Referer': 'https://orbis-apis.onrender.com', 'X-Title': 'Orbis APIs' },
-      body: JSON.stringify({ model: 'anthropic/claude-sonnet-4-5', max_tokens: 1500,
-        messages: [
-          { role: 'user', content: 'You are an expert business proposal writer. Respond with ONLY a JSON object (no markdown, no explanation). The JSON must have these keys:\n- proposal: full proposal text as a string\n- executive_summary: 2-3 sentence summary string\n- sections: array of section name strings\n- word_count: integer\n- key_differentiators: array of strings\n- readability_score: number 0-100\n\nHere is the request:\n' + prompt }
-        ]
-      }),
-    });
-    const _data = await _resp.json() as any;
-    const _raw = _data.choices?.[0]?.message?.content || '{}';
-    const _lines = _raw.split('\n').filter((l: string) => !l.trim().startsWith('\x60')).join('\n').trim();
-    let ai: any = {};
-    try { ai = JSON.parse(_lines); } catch {
-      try { ai = JSON.parse(_raw); } catch {
-        const f = _raw.indexOf('{'), l = _raw.lastIndexOf('}');
-        if (f !== -1 && l !== -1) try { ai = JSON.parse(_raw.slice(f, l+1)); } catch {}
-      }
-    }
+    const ai = await callAI(
+      prompt,
+      'You are an expert business proposal writer. You MUST respond with ONLY a JSON object. No markdown, no backticks, no explanation. The JSON object must contain exactly these keys: proposal (string with full proposal text), executive_summary (string, 2-3 sentences), sections (array of strings), word_count (integer), key_differentiators (array of strings), readability_score (number 0-100).',
+      1500
+    );
     const latency = Date.now() - start;
     res.json({
       ...buildRuntime(req, {
