@@ -135,6 +135,18 @@ router.post('/generate', async (req: Request, res: Response) => {
     const timeline = req.body?.timeline_weeks || 8;
     const tone = req.body?.tone || 'professional';
     const prompt = `Write a professional business proposal for ${clientName}. Brief: ${brief}. Scope: ${scope}. Budget: $${budget}. Timeline: ${timeline} weeks. Tone: ${tone}. Make it compelling and win-ready. Include an executive_summary field with 2-3 sentences.`;
+    // DEBUG: log full OpenRouter response
+    const debugResp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`, 'HTTP-Referer': 'https://orbis-apis.onrender.com', 'X-Title': 'Orbis APIs' },
+      body: JSON.stringify({ model: 'anthropic/claude-sonnet-4-5', max_tokens: 100, messages: [{ role: 'user', content: 'Reply with only this exact JSON: {"test": "ok", "value": 42}' }] }),
+    });
+    const debugData = await debugResp.json() as any;
+    const debugRaw = debugData?.choices?.[0]?.message?.content || 'NO_CONTENT';
+    const debugFirst = debugRaw.indexOf('{');
+    const debugLast  = debugRaw.lastIndexOf('}');
+    return res.json({ debug_raw: debugRaw, debug_first: debugFirst, debug_last: debugLast, debug_keys: Object.keys(debugData || {}), debug_choices: debugData?.choices?.length });
+
     const ai = await callAI(
       prompt,
       'You are an expert business proposal writer. Respond with ONLY a raw JSON object, no markdown, no backticks. Include these exact fields: proposal (string), sections (array of strings), word_count (number), executive_summary (string, 2-3 sentences), key_differentiators (array of strings), readability_score (number 0-100).',
