@@ -146,10 +146,9 @@ router.post('/generate', async (req: Request, res: Response) => {
     const _resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_apiKey}`, 'HTTP-Referer': 'https://orbis-apis.onrender.com', 'X-Title': 'Orbis APIs' },
-      body: JSON.stringify({ model: 'anthropic/claude-sonnet-4-5', max_tokens: 1500, response_format: { type: 'json_object' },
+      body: JSON.stringify({ model: 'anthropic/claude-sonnet-4-5', max_tokens: 1500,
         messages: [
-          { role: 'system', content: 'You are an expert business proposal writer. You MUST respond with a JSON object containing these exact keys: proposal, sections, word_count, executive_summary, key_differentiators, readability_score. The proposal field should contain the full proposal text. executive_summary should be 2-3 sentences. sections should be an array of section names. word_count should be an integer. readability_score should be 0-100.' },
-          { role: 'user', content: prompt }
+          { role: 'user', content: 'You are an expert business proposal writer. Respond with ONLY a JSON object (no markdown, no explanation). The JSON must have these keys:\n- proposal: full proposal text as a string\n- executive_summary: 2-3 sentence summary string\n- sections: array of section name strings\n- word_count: integer\n- key_differentiators: array of strings\n- readability_score: number 0-100\n\nHere is the request:\n' + prompt }
         ]
       }),
     });
