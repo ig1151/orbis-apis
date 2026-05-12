@@ -16,7 +16,6 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
     body: JSON.stringify({
       model: 'anthropic/claude-sonnet-4-5',
       max_tokens,
-      response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: system },
         { role: 'user',   content: prompt },
@@ -26,46 +25,27 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  // Strip fences using split on newlines — avoids regex backtick issues
-  // Strip backtick fences
-  const rawLines = raw.split('\n');
-  const filteredLines = rawLines.filter((l: string) => !l.trim().startsWith('\x60\x60\x60'));
-  const stripped = filteredLines.join('\n').trim();
-  // Try 1: direct parse of stripped
-  try { return JSON.parse(stripped); } catch {}
-  // Try 2: repair unescaped newlines inside JSON string values
-  // Replace literal newlines inside string values with \n
-  try {
-    const repaired = stripped.replace(/("(?:[^"\\]|\\.)*")|([\r\n]+)/g, (match: string, str: string) => {
-      if (str !== undefined) return str; // inside a string — keep as is
-      return ' '; // outside a string — replace newline with space
-    });
-    return JSON.parse(repaired);
-  } catch {}
-  // Try 3: extract just the JSON fields we need using regex
-  const result: any = {};
-  const fieldPatterns: Record<string, RegExp> = {
-    executive_summary: /"executive_summary"\s*:\s*"((?:[^"\\]|\\.)*)"/,
-    proposal:          /"proposal"\s*:\s*"((?:[^"\\]|\\.)*)"/,
-    word_count:        /"word_count"\s*:\s*(\d+)/,
-    readability_score: /"readability_score"\s*:\s*([\d.]+)/,
-    sections:          /"sections"\s*:\s*(\[[^\]]*\])/,
-    key_differentiators: /"key_differentiators"\s*:\s*(\[[^\]]*\])/,
-  };
-  for (const [key, pattern] of Object.entries(fieldPatterns)) {
-    const m = stripped.match(pattern);
-    if (m) {
-      if (key === 'word_count') result[key] = parseInt(m[1]);
-      else if (key === 'readability_score') result[key] = parseFloat(m[1]);
-      else if (key === 'sections' || key === 'key_differentiators') {
-        try { result[key] = JSON.parse(m[1]); } catch {}
-      } else result[key] = m[1].replace(/\\n/g, '\n');
-    }
+  // Extract JSON by finding first { and matching closing }
+  let depth = 0, start2 = -1, end2 = -1;
+  for (let i = 0; i < raw.length; i++) {
+    if (raw[i] === '{') { if (depth === 0) start2 = i; depth++; }
+    else if (raw[i] === '}') { depth--; if (depth === 0 && start2 !== -1) { end2 = i; break; } }
   }
-  if (Object.keys(result).length > 0) return result;
-  return { raw };
+  if (start2 === -1 || end2 === -1) return { raw };
+  const jsonStr = raw.slice(start2, end2 + 1);
+  // Fix unescaped newlines inside string values
+  let inString = false, escaped = false;
+  let fixed = '';
+  for (let i = 0; i < jsonStr.length; i++) {
+    const c = jsonStr[i];
+    if (escaped) { fixed += c; escaped = false; continue; }
+    if (c === '\\') { fixed += c; escaped = true; continue; }
+    if (c === '"') { inString = !inString; fixed += c; continue; }
+    if (inString && (c === '\n' || c === '\r')) { fixed += '\\n'; continue; }
+    fixed += c;
+  }
+  try { return JSON.parse(fixed); } catch { return { raw, fixed_preview: fixed.substring(0, 100) }; }
 }
-
 
 // ── Universal Runtime Envelope ────────────────────────────────────────────────
 function buildRuntime(req: any, overrides: Record<string, any> = {}) {
