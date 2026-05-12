@@ -26,18 +26,20 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  // Try 1: direct parse
-  try { return JSON.parse(raw); } catch {}
-  // Try 2: strip backtick fences then parse
-  const stripped = raw.replace(/^\s*```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+  // Strip fences using split on newlines — avoids regex backtick issues
+  const rawLines = raw.split('\n');
+  const filteredLines = rawLines.filter((l: string) => {
+    const t = l.trim();
+    return !t.startsWith('\x60\x60\x60');
+  });
+  const stripped = filteredLines.join('\n').trim();
+  // Try 1: parse stripped directly
   try { return JSON.parse(stripped); } catch {}
-  // Try 3: brace counting on stripped
-  let depth = 0, s = -1, e2 = -1;
-  for (let i = 0; i < stripped.length; i++) {
-    if (stripped[i] === '{') { if (depth === 0) s = i; depth++; }
-    else if (stripped[i] === '}') { depth--; if (depth === 0) { e2 = i; break; } }
-  }
-  if (s !== -1 && e2 !== -1) { try { return JSON.parse(stripped.slice(s, e2 + 1)); } catch {} }
+  // Try 2: parse raw directly
+  try { return JSON.parse(raw); } catch {}
+  // Try 3: find outermost { }
+  const fi = stripped.indexOf('{'), la = stripped.lastIndexOf('}');
+  if (fi !== -1 && la !== -1) { try { return JSON.parse(stripped.slice(fi, la + 1)); } catch {} }
   return { raw };
 }
 
