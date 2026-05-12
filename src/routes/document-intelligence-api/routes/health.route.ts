@@ -1,46 +1,11 @@
 import { Router, Request, Response } from 'express';
+import { buildRuntime } from '../../../shared/ai';
 
 const healthRouter = Router();
 
 const router = healthRouter;
 
 // ── Universal Runtime Envelope ────────────────────────────────────────────────
-function buildRuntime(req: any, overrides: Record<string, any> = {}) {
-  const now          = Date.now();
-  const trace_id     = req.headers?.['x-trace-id']     || `trace_${now}_${Math.random().toString(36).slice(2,8)}`;
-  const execution_id = req.headers?.['x-execution-id'] || `exec_${now}_${Math.random().toString(36).slice(2,8)}`;
-  const session_id   = req.body?.session_id || req.query?.session_id || req.headers?.['x-session-id'] || `session_${now}`;
-  const request_id   = `req_${now}_${Math.random().toString(36).slice(2,8)}`;
-  const unit         = 0.006;
-  return {
-    trace_id, execution_id, session_id, request_id,
-    workflow_state:    overrides.workflow_state    || 'complete',
-    retryable:         overrides.retryable         ?? false,
-    latency_breakdown: overrides.latency_breakdown || { total_ms: 0, inference_ms: 0, io_ms: 0, overhead_ms: 0 },
-    cost_breakdown:    overrides.cost_breakdown    || {
-      total_usd:     unit,
-      inference_usd: Math.round(unit * 0.70 * 1e6) / 1e6,
-      io_usd:        Math.round(unit * 0.15 * 1e6) / 1e6,
-      overhead_usd:  Math.round(unit * 0.15 * 1e6) / 1e6,
-    },
-    provenance: overrides.provenance || {
-      api_version: '1.0.0', model: 'orbis-inference-v1',
-      data_sources: [], computed_at: new Date().toISOString(),
-    },
-    retry_policy: overrides.retry_policy || {
-      max_attempts: 3, backoff_strategy: 'exponential',
-      backoff_base_ms: 500, safe_to_retry: true, idempotency_key: request_id,
-    },
-    dependencies: overrides.dependencies || {
-      parent_execution: req.body?.parent_execution || req.headers?.['x-parent-execution'] || null,
-      triggered_by:     req.body?.triggered_by     || req.headers?.['x-triggered-by']     || null,
-      downstream: [], dag_id: req.body?.dag_id || req.headers?.['x-dag-id'] || null,
-    },
-    orchestration_hints: overrides.orchestration_hints || {
-      can_chain: true, suggested_next: [], requires_review: false,
-    },
-  };
-}
 
 // ── Event Store + Governance ──────────────────────────────────────────────────
 const eventStore: Record<string, any[]> = {};

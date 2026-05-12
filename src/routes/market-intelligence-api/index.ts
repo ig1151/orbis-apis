@@ -1,46 +1,23 @@
 import 'dotenv/config';
 import express from 'express';
-import cors from 'cors';
 import helmet from 'helmet';
+import cors from 'cors';
 import compression from 'compression';
-import { requestLogger } from './middleware/requestLogger';
-import { rateLimiter } from './middleware/rateLimiter';
+import rateLimit from 'express-rate-limit';
+import { logger } from './logger';
 import intelligenceRouter from './routes/intelligence';
-import healthRouter from './routes/health';
-import docsRouter from './routes/docs';
-import openapiRouter from './routes/openapi';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || '3021', 10);
 
 app.use(helmet());
 app.use(cors());
 app.use(compression());
 app.use(express.json());
-app.use(requestLogger);
-app.use(rateLimiter);
+app.use(rateLimit({ windowMs: 60 * 1000, max: 20, standardHeaders: true, legacyHeaders: false }));
 
-app.use('/v1/health', healthRouter);
-app.use('/v1/analyze', intelligenceRouter);
-app.use('/docs', docsRouter);
-app.use('/openapi.json', openapiRouter);
+app.use('/v1/market-intelligence', intelligenceRouter);
+app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
 
-app.get('/', (_req, res) => {
-  res.json({
-    service: 'Market Intelligence API',
-    version: '1.0.0',
-    docs: '/docs',
-    health: '/v1/health',
-    example: '/v1/analyze/AAPL'
-  });
-});
-
-app.use((_req, res) => {
-  res.status(404).json({ error: 'Not found' });
-});
-
-app.listen(PORT, () => {
-  console.log(JSON.stringify({ level: 'info', msg: `Market Intelligence API running on port ${PORT}` }));
-});
-
+app.listen(PORT, () => logger.info({ port: PORT }, 'market-intelligence-api started'));
 export default app;

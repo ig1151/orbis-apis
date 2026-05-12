@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import Joi from 'joi';
+import { buildRuntime } from '../../../shared/ai';
 
 // ── OpenRouter AI Helper ──────────────────────────────────────────────────────
 async function callAI(prompt: string, system: string, max_tokens: number = 1000): Promise<any> {
@@ -25,81 +26,15 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  // Extract JSON by finding first { and matching closing }
-  let depth = 0, start2 = -1, end2 = -1;
-  for (let i = 0; i < raw.length; i++) {
-    if (raw[i] === '{') { if (depth === 0) start2 = i; depth++; }
-    else if (raw[i] === '}') { depth--; if (depth === 0 && start2 !== -1) { end2 = i; break; } }
-  }
-  if (start2 === -1 || end2 === -1) return { raw };
-  const jsonStr = raw.slice(start2, end2 + 1);
-  // Fix unescaped newlines inside string values
-  let inString = false, escaped = false;
-  let fixed = '';
-  for (let i = 0; i < jsonStr.length; i++) {
-    const c = jsonStr[i];
-    if (escaped) { fixed += c; escaped = false; continue; }
-    if (c === '\\') { fixed += c; escaped = true; continue; }
-    if (c === '"') { inString = !inString; fixed += c; continue; }
-    if (inString && (c === '\n' || c === '\r')) { fixed += '\\n'; continue; }
-    fixed += c;
-  }
-  try { return JSON.parse(fixed); } catch { return { raw, fixed_preview: fixed.substring(0, 100) }; }
+  // Strip markdown fences, fix unescaped newlines, extract JSON
+  const stripped = raw.replace(/```json|```/g, '').trim();
+  const cleaned = stripped.replace(/(?<=:[ ]*")([^"\\]*?)(?=")/gs, (m: string) => m.replace(/\n/g, ' ').replace(/\r/g, ''));
+  const match = cleaned.match(/\{[\s\S]*\}/);
+  if (!match) return { raw };
+  try { return JSON.parse(match[0]); } catch { return { raw }; }
 }
 
 // ── Universal Runtime Envelope ────────────────────────────────────────────────
-function buildRuntime(req: any, overrides: Record<string, any> = {}) {
-  const now = Date.now();
-  const trace_id     = req.headers['x-trace-id']     || `trace_${now}_${Math.random().toString(36).slice(2,8)}`;
-  const execution_id = req.headers['x-execution-id'] || `exec_${now}_${Math.random().toString(36).slice(2,8)}`;
-  const session_id   = req.body?.session_id || req.query?.session_id || req.headers['x-session-id'] || `session_${now}`;
-  const request_id   = `req_${now}_${Math.random().toString(36).slice(2,8)}`;
-
-  return {
-    trace_id,
-    execution_id,
-    session_id,
-    request_id,
-    workflow_state:    overrides.workflow_state    || 'complete',
-    retryable:         overrides.retryable         ?? false,
-    latency_breakdown: overrides.latency_breakdown || {
-      total_ms:      0,
-      inference_ms:  0,
-      io_ms:         0,
-      overhead_ms:   0,
-    },
-    cost_breakdown: overrides.cost_breakdown || {
-      total_usd:       0.008,
-      inference_usd:   0.0056,
-      io_usd:          0.0012,
-      overhead_usd:    0.0012,
-    },
-    provenance: overrides.provenance || {
-      api_version:    '1.0.0',
-      model:          'orbis-inference-v1',
-      data_sources:   [],
-      computed_at:    new Date().toISOString(),
-    },
-    retry_policy: overrides.retry_policy || {
-      max_attempts:     3,
-      backoff_strategy: 'exponential',
-      backoff_base_ms:  500,
-      safe_to_retry:    true,
-      idempotency_key:  request_id,
-    },
-    dependencies: overrides.dependencies || {
-      parent_execution: null,
-      triggered_by:     null,
-      downstream:       [],
-      dag_id:           null,
-    },
-    orchestration_hints: overrides.orchestration_hints || {
-      can_chain:       true,
-      suggested_next:  [],
-      requires_review: false,
-    },
-  };
-}
 
 
 const router = Router();

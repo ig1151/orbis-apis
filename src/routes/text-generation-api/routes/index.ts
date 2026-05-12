@@ -1,59 +1,8 @@
 import { Router, Request, Response } from 'express';
 import Joi from 'joi';
+import { buildRuntime } from '../../../shared/ai';
 
 // ── Universal Runtime Envelope ────────────────────────────────────────────────
-function buildRuntime(req: any, overrides: Record<string, any> = {}) {
-  const now = Date.now();
-  const trace_id     = req.headers['x-trace-id']     || `trace_${now}_${Math.random().toString(36).slice(2,8)}`;
-  const execution_id = req.headers['x-execution-id'] || `exec_${now}_${Math.random().toString(36).slice(2,8)}`;
-  const session_id   = req.body?.session_id || req.query?.session_id || req.headers['x-session-id'] || `session_${now}`;
-  const request_id   = `req_${now}_${Math.random().toString(36).slice(2,8)}`;
-
-  return {
-    trace_id,
-    execution_id,
-    session_id,
-    request_id,
-    workflow_state:    overrides.workflow_state    || 'complete',
-    retryable:         overrides.retryable         ?? false,
-    latency_breakdown: overrides.latency_breakdown || {
-      total_ms:      0,
-      inference_ms:  0,
-      io_ms:         0,
-      overhead_ms:   0,
-    },
-    cost_breakdown: overrides.cost_breakdown || {
-      total_usd:       0.003,
-      inference_usd:   0.0021,
-      io_usd:          0.00045,
-      overhead_usd:    0.00045,
-    },
-    provenance: overrides.provenance || {
-      api_version:    '1.0.0',
-      model:          'orbis-inference-v1',
-      data_sources:   [],
-      computed_at:    new Date().toISOString(),
-    },
-    retry_policy: overrides.retry_policy || {
-      max_attempts:     3,
-      backoff_strategy: 'exponential',
-      backoff_base_ms:  500,
-      safe_to_retry:    true,
-      idempotency_key:  request_id,
-    },
-    dependencies: overrides.dependencies || {
-      parent_execution: null,
-      triggered_by:     null,
-      downstream:       [],
-      dag_id:           null,
-    },
-    orchestration_hints: overrides.orchestration_hints || {
-      can_chain:       true,
-      suggested_next:  [],
-      requires_review: false,
-    },
-  };
-}
 
 
 const router = Router();

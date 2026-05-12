@@ -1,59 +1,8 @@
 import { Router, Request, Response } from 'express';
 import Joi from 'joi';
+import { buildRuntime } from '../../../shared/ai';
 
 // ── Universal Runtime Envelope ────────────────────────────────────────────────
-function buildRuntime(req: any, overrides: Record<string, any> = {}) {
-  const now = Date.now();
-  const trace_id     = req.headers['x-trace-id']     || `trace_${now}_${Math.random().toString(36).slice(2,8)}`;
-  const execution_id = req.headers['x-execution-id'] || `exec_${now}_${Math.random().toString(36).slice(2,8)}`;
-  const session_id   = req.body?.session_id || req.query?.session_id || req.headers['x-session-id'] || `session_${now}`;
-  const request_id   = `req_${now}_${Math.random().toString(36).slice(2,8)}`;
-
-  return {
-    trace_id,
-    execution_id,
-    session_id,
-    request_id,
-    workflow_state:    overrides.workflow_state    || 'complete',
-    retryable:         overrides.retryable         ?? false,
-    latency_breakdown: overrides.latency_breakdown || {
-      total_ms:      0,
-      inference_ms:  0,
-      io_ms:         0,
-      overhead_ms:   0,
-    },
-    cost_breakdown: overrides.cost_breakdown || {
-      total_usd:       0.025,
-      inference_usd:   0.0175,
-      io_usd:          0.00375,
-      overhead_usd:    0.00375,
-    },
-    provenance: overrides.provenance || {
-      api_version:    '1.0.0',
-      model:          'orbis-inference-v1',
-      data_sources:   [],
-      computed_at:    new Date().toISOString(),
-    },
-    retry_policy: overrides.retry_policy || {
-      max_attempts:     3,
-      backoff_strategy: 'exponential',
-      backoff_base_ms:  500,
-      safe_to_retry:    true,
-      idempotency_key:  request_id,
-    },
-    dependencies: overrides.dependencies || {
-      parent_execution: null,
-      triggered_by:     null,
-      downstream:       [],
-      dag_id:           null,
-    },
-    orchestration_hints: overrides.orchestration_hints || {
-      can_chain:       true,
-      suggested_next:  [],
-      requires_review: false,
-    },
-  };
-}
 
 
 const router = Router();
@@ -112,16 +61,21 @@ router.get('/trace/:trace_id', (req: Request, res: Response) => {
 });
 
 // Analyze traces for failure patterns
-router.post('/analyze', (req: Request, res: Response) => {
-  const schema = Joi.object({ agent_id: Joi.string().optional(), window_hours: Joi.string().optional(), signal_types: Joi.string().optional(), });
+router.post('/analyze', async (req: Request, res: Response) => {
+  const schema = Joi.object({ agent_id: Joi.string().optional(), window_hours: Joi.string().optional(), signal_types: Joi.string().optional(), logs: Joi.array().items(Joi.string()).optional(), metrics: Joi.object().optional(), });
   const { error } = schema.validate(req.body, { allowUnknown: false });
   if (error) return res.status(400).json({ success: false, error: error.details[0].message });
-  const trace_id = `trace_${Date.now()}`;
-  const execution_id = `exec_${Date.now()}`;
-  const session_id = req.body?.session_id || req.query?.session_id || `session_${Date.now()}`;
-  res.set("x-trace-id", buildRuntime(req).trace_id);
-  res.set("x-execution-id", buildRuntime(req).execution_id);
-  res.json({ ...buildRuntime(req), success: true, failure_rate: 0, common_failure_reasons: 'common_failure_reasons_value', bottleneck_spans: 'bottleneck_spans_value', recommended_actions: 'recommended_actions_value', computed_at: new Date().toISOString() });
+  const { agent_id = 'unknown', window_hours = '1', signal_types = 'all', logs = [], metrics = {} } = req.body;
+  try {
+    const { callAI, parseAIJson } = await import('../../../shared/ai');
+    const SYSTEM_PROMPT = 'You are an AI agent observability engine. Return a minified single-line JSON object with no newlines inside string values. Shape: {"agent_id":string,"healthScore":number,"status":"healthy"|"degraded"|"critical","anomalies":string[],"performanceInsights":string[],"errorPatterns":string[],"recommendedActions":string[],"loopDetected":boolean,"avgResponseMs":number,"summary":string}';
+    const prompt = `Analyze agent observability. Agent ID: "${agent_id}". Window: ${window_hours}h. Signal types: ${signal_types}. Metrics: ${JSON.stringify(metrics)}. Recent logs: ${JSON.stringify(logs.slice(-5))}. Return only the JSON object.`;
+    const raw = await callAI(prompt, SYSTEM_PROMPT);
+    const parsed = parseAIJson(raw, { agent_id, healthScore: 50, status: 'degraded', anomalies: [], performanceInsights: [], errorPatterns: [], recommendedActions: [], loopDetected: false, avgResponseMs: 0, summary: 'Analysis unavailable' });
+    res.json({ ...buildRuntime(req), success: true, ...parsed, computed_at: new Date().toISOString() });
+  } catch (err: any) {
+    res.status(500).json({ ...buildRuntime(req), success: false, error: err.message });
+  }
 });
 
 // Get performance dashboard for an agent

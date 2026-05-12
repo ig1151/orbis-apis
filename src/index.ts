@@ -127,6 +127,8 @@ import metaStrategyDocsRouter from './routes/meta-strategy-api/routes/docs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use('/agent-web-data-extraction/openapi.json', agent_web_data_extraction_docs);
 app.use('/agent-web-data-extraction',              agent_web_data_extraction_info);
 app.use('/agent-web-data-extraction',              agent_web_data_extraction_router);
