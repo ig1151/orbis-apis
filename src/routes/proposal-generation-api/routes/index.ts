@@ -26,12 +26,22 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  // Strip markdown fences, fix unescaped newlines, extract JSON
-  const stripped = raw.replace(/```json|```/g, '').trim();
-  const cleaned = stripped.replace(/(?<=:[ ]*")([^"\\]*?)(?=")/gs, (m: string) => m.replace(/\n/g, ' ').replace(/\r/g, ''));
-  const match = cleaned.match(/\{[\s\S]*\}/);
+  const stripped = raw.replace(/```json\s*|```\s*/g, '').trim();
+  const match = stripped.match(/\{[\s\S]*\}/);
   if (!match) return { raw };
-  try { return JSON.parse(match[0]); } catch { return { raw }; }
+  let jsonStr = match[0];
+  let result = '';
+  let inString = false;
+  let escaped = false;
+  for (let i = 0; i < jsonStr.length; i++) {
+    const c = jsonStr[i];
+    if (escaped) { result += c; escaped = false; continue; }
+    if (c === '\\') { result += c; escaped = true; continue; }
+    if (c === '"') { inString = !inString; result += c; continue; }
+    if (inString && (c === '\n' || c === '\r')) { result += ' '; continue; }
+    result += c;
+  }
+  try { return JSON.parse(result); } catch { return { raw }; }
 }
 
 // ── Universal Runtime Envelope ────────────────────────────────────────────────
@@ -82,7 +92,7 @@ router.post('/generate', async (req: Request, res: Response) => {
     const prompt = `Write a professional business proposal for ${clientName}. Brief: ${brief}. Scope: ${scope}. Budget: $${budget}. Timeline: ${timeline} weeks. Tone: ${tone}. Make it compelling and win-ready. Include an executive_summary field with 2-3 sentences.`;
     const ai = await callAI(
       prompt,
-      'You are an expert business proposal writer. You MUST respond with ONLY a JSON object. No markdown, no backticks, no explanation. The JSON object must contain exactly these keys: proposal (string with full proposal text), executive_summary (string, 2-3 sentences), sections (array of strings), word_count (integer), key_differentiators (array of strings), readability_score (number 0-100).',
+      'You are an expert business proposal writer. Return ONLY a single line of raw JSON with no newlines, no carriage returns, no markdown, no backticks, no explanation. The entire response must be one single line. Use spaces instead of newlines in all string values. Keys: proposal (string, use spaces not newlines), executive_summary (string, 2-3 sentences, no newlines), sections (array of strings), word_count (integer), key_differentiators (array of strings), readability_score (number 0-100).',
       1500
     );
     const latency = Date.now() - start;
@@ -124,7 +134,7 @@ router.post('/rfp-response', async (req: Request, res: Response) => {
     const prompt = `Write a winning RFP response for this RFP: ${rfp}. Company profile: ${profile}. Key differentiators: ${diffs}. Focus on compliance and win themes.`;
     const ai = await callAI(
       prompt,
-      'You are an expert RFP response writer. Generate winning RFP responses. Return ONLY valid JSON with: response (string — full RFP response), compliance_matrix (object mapping requirements to responses), win_themes (array of strings), risk_flags (array of strings), strength_areas (array of strings).',
+      'You are an expert RFP response writer. Return a minified single-line JSON object with no newlines inside string values. Keys: response (string), compliance_matrix (object), win_themes (array of strings), risk_flags (array of strings), strength_areas (array of strings). No markdown, no backticks.',
       1000
     );
     const latency = Date.now() - start;

@@ -26,11 +26,11 @@ async function callAI(prompt: string, system: string, max_tokens: number = 1000)
   if (!response.ok) throw new Error(`OpenRouter error: ${response.status}`);
   const data = await response.json() as any;
   const raw = data.choices?.[0]?.message?.content || '{}';
-  const first = raw.indexOf('{');
-  const last  = raw.lastIndexOf('}');
-  if (first === -1 || last === -1) return { raw };
-  const text = raw.slice(first, last + 1);
-  try { return JSON.parse(text); } catch (e) { return { raw, parse_error: String(e) }; }
+  const stripped = raw.replace(/```json\s*|```\s*/g, '').trim();
+  const cleaned = stripped.replace(/("(?:[^"\\]|\\.)*")/g, (m: string) => m.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t'));
+  const match = cleaned.match(/\{[\s\S]*\}/);
+  if (!match) return { raw };
+  try { return JSON.parse(match[0]); } catch { return { raw }; }
 }
 
 
@@ -135,7 +135,7 @@ router.post('/strategy', async (req: Request, res: Response) => {
     const prompt = `Create a personalized job search strategy.\n\nCurrent role: ${currentRole}\nTarget role: ${targetRole}\nSkills: ${skills}\nLocation: ${location}\nTimeline: ${tlWeeks} weeks\n\nProvide specific, actionable strategy with real company names and concrete steps.`;
     const ai = await callAI(
       prompt,
-      'You are an expert career strategist. Generate personalized job search strategies. Return ONLY valid JSON with: strategy (string), priority_actions (array of strings), target_companies (array of strings), estimated_success_rate (string), timeline_weeks (number), skill_gaps (array of strings), networking_approach (string).',
+      'You are an expert career strategist. Return a minified single-line JSON object with no newlines inside string values. Keys: strategy (string), priority_actions (array of strings), target_companies (array of strings), estimated_success_rate (string), timeline_weeks (number), skill_gaps (array of strings), networking_approach (string). No markdown, no backticks, no explanation.',
       1000
     );
     const latency = Date.now() - start;
