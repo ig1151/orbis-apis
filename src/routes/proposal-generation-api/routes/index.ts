@@ -585,4 +585,25 @@ router.post('/debug-raw', async (req: Request, res: Response) => {
   }
 });
 
+
+// ── Debug parse endpoint ──────────────────────────────────────────────────────
+router.post('/debug-parse', async (req: Request, res: Response) => {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}`, 'HTTP-Referer': 'https://orbis-apis.onrender.com', 'X-Title': 'Orbis APIs' },
+    body: JSON.stringify({ model: 'anthropic/claude-sonnet-4-5', max_tokens: 200, response_format: { type: 'json_object' }, messages: [{ role: 'system', content: 'Return ONLY valid JSON. No markdown.' }, { role: 'user', content: 'Return this exact JSON: {"test": "hello", "num": 42, "arr": [1,2,3]}' }] }),
+  });
+  const data = await response.json() as any;
+  const raw = data.choices?.[0]?.message?.content || 'NO_CONTENT';
+  const stripped = raw.replace(/^\s*```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+  let try1: any = null, try2: any = null, try3: any = null;
+  let err1 = '', err2 = '', err3 = '';
+  try { try1 = JSON.parse(raw); } catch(e: any) { err1 = e.message; }
+  try { try2 = JSON.parse(stripped); } catch(e: any) { err2 = e.message; }
+  const f = stripped.indexOf('{'), l = stripped.lastIndexOf('}');
+  if (f !== -1 && l !== -1) { try { try3 = JSON.parse(stripped.slice(f, l+1)); } catch(e: any) { err3 = e.message; } }
+  res.json({ raw, stripped, raw_length: raw.length, stripped_length: stripped.length, first_char: raw.charCodeAt(0), try1, try2, try3, err1, err2, err3 });
+});
+
 export default router;
