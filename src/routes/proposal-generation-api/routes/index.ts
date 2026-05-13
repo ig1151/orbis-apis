@@ -128,30 +128,26 @@ router.post('/generate', async (req: Request, res: Response) => {
 router.post('/rfp-response', async (req: Request, res: Response) => {
   const start = Date.now();
   try {
-    const rfp = req.body?.rfp_text || 'general RFP';
-    const profile = req.body?.company_profile || 'our company';
+    const rfp = req.body?.rfp_content || req.body?.rfp_text || 'general RFP';
+    const profile = req.body?.your_company || req.body?.company_profile || 'our company';
+    const caps = JSON.stringify(req.body?.capabilities || []);
     const diffs = JSON.stringify(req.body?.differentiators || []);
-    const prompt = `Write a winning RFP response for this RFP: ${rfp}. Company profile: ${profile}. Key differentiators: ${diffs}. Focus on compliance and win themes.`;
-    const ai = await callAI(
-      prompt,
-      'You are an expert RFP response writer. Return a minified single-line JSON object with no newlines inside string values. Keys: response (string), compliance_matrix (object), win_themes (array of strings), risk_flags (array of strings), strength_areas (array of strings). No markdown, no backticks.',
-      1000
-    );
+    const prompt = `Write a winning RFP response. RFP: ${rfp}. Company: ${profile}. Capabilities: ${caps}. Differentiators: ${diffs}. Use spaces not newlines in all string values.`;
+    const SYSTEM = 'You are an expert RFP response writer. Return ONLY a single line of raw JSON with no newlines, no carriage returns, no markdown, no backticks. Keys: response (string, no newlines), compliance_matrix (object), win_themes (array of strings), risk_flags (array of strings), strength_areas (array of strings).';
+    const parsed: any = await callAI(prompt, SYSTEM, 1000);
     const latency = Date.now() - start;
     res.json({
       ...buildRuntime(req, {
         workflow_state: 'complete',
         latency_breakdown: { total_ms: latency, inference_ms: Math.round(latency * 0.8), io_ms: Math.round(latency * 0.15), overhead_ms: Math.round(latency * 0.05) },
+        orchestration_hints: { can_chain: true, suggested_next: ['/proposal-generation/review', '/outreach-execution/generate'], requires_review: true },
       }),
       success: true,
-            response: ai.response ?? null,
-      compliance_matrix: ai.compliance_matrix ?? null,
-      win_themes: ai.win_themes ?? null,
-      risk_flags: ai.risk_flags ?? null,
-      strength_areas: ai.strength_areas ?? null,
-      ai_keys: Object.keys(ai),
-      ai_raw_preview: typeof ai.raw === 'string' ? ai.raw.substring(0, 300) : null,
-
+      response: parsed.response ?? null,
+      compliance_matrix: parsed.compliance_matrix ?? null,
+      win_themes: parsed.win_themes ?? null,
+      risk_flags: parsed.risk_flags ?? null,
+      strength_areas: parsed.strength_areas ?? null,
       model: 'anthropic/claude-sonnet-4-5',
       computed_at: new Date().toISOString(),
     });

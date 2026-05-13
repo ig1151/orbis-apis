@@ -90,6 +90,7 @@ router.post('/generate', async (req: Request, res: Response) => {
       ...buildRuntime(req, {
         workflow_state: 'complete',
         latency_breakdown: { total_ms: latency, inference_ms: Math.round(latency * 0.8), io_ms: Math.round(latency * 0.15), overhead_ms: Math.round(latency * 0.05) },
+        orchestration_hints: { can_chain: true, suggested_next: ['/outreach-execution/sequence', '/career-optimization/strategy', '/proposal-generation/generate'], requires_review: false },
       }),
       success: true,
             subject: ai.subject ?? null,

@@ -72,7 +72,8 @@ router.post('/analyze', async (req: Request, res: Response) => {
     const prompt = `Analyze agent observability. Agent ID: "${agent_id}". Window: ${window_hours}h. Signal types: ${signal_types}. Metrics: ${JSON.stringify(metrics)}. Recent logs: ${JSON.stringify(logs.slice(-5))}. Return only the JSON object.`;
     const raw = await callAI(prompt, SYSTEM_PROMPT);
     const parsed = parseAIJson(raw, { agent_id, healthScore: 50, status: 'degraded', anomalies: [], performanceInsights: [], errorPatterns: [], recommendedActions: [], loopDetected: false, avgResponseMs: 0, summary: 'Analysis unavailable' });
-    res.json({ ...buildRuntime(req), success: true, ...parsed, computed_at: new Date().toISOString() });
+    const { timestamp: _ts, ...parsedClean } = parsed as any;
+    res.json({ ...buildRuntime(req, { orchestration_hints: { can_chain: true, suggested_next: ['/agent-observability/trace', '/agent-identity/verify', '/real-time-monitor/monitor'], requires_review: parsedClean.status === 'critical' } }), success: true, ...parsedClean, computed_at: new Date().toISOString() });
   } catch (err: any) {
     res.status(500).json({ ...buildRuntime(req), success: false, error: err.message });
   }
