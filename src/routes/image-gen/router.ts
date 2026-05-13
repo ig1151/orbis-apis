@@ -37,7 +37,7 @@ function costEstimate(n: number, size: string, quality: string): number {
 async function openaiGenerate(prompt: string, size: string, quality: string): Promise<{ url: string; revised_prompt?: string }> {
   const r = await axios.post(
     `${OPENAI_BASE}/images/generations`,
-    { model: "dall-e-3", prompt, n: 1, size, quality, response_format: "url" },
+    { model: "dall-e-2", prompt, n: 1, size: size === "1024x1024" ? "1024x1024" : "512x512", response_format: "url" },
     { headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" } }
   );
   return r.data.data[0];
@@ -220,7 +220,7 @@ router.post("/generate", requireApiKey, async (req: Request, res: Response) => {
         revision_chain: [],
       },
       moderation_result: { flagged: false, categories: [], severity: 'none', explanation: 'Prompt passed safety checks', remediation_suggestions: [], safe_rewrite_available: false },
-      metadata: { latency_ms: ms(start), estimated_cost: costEstimate(1, size, quality), model: "dall-e-3" },
+      metadata: { latency_ms: ms(start), estimated_cost: costEstimate(1, size, quality), model: "dall-e-2" },
     });
   } catch (err: any) {
     return res.status(500).json({ error: err?.response?.data?.error?.message || err.message, execution_ready: false, metadata: { latency_ms: ms(start) } });
@@ -250,7 +250,7 @@ router.post("/generate-batch", requireApiKey, async (req: Request, res: Response
       trace_id: trace_id_batch, execution_id: execution_id_batch,
       images, summary: { total: prompts.length, success: successes, failed: prompts.length - successes },
       moderation_result: { flagged: false, categories: [], severity: 'none', explanation: 'Batch passed safety checks' },
-      metadata: { latency_ms: ms(start), estimated_cost: costEstimate(successes, size, quality), model: "dall-e-3" },
+      metadata: { latency_ms: ms(start), estimated_cost: costEstimate(successes, size, quality), model: "dall-e-2" },
     });
   } catch (err: any) {
     return res.status(500).json({ error: err.message, execution_ready: false, metadata: { latency_ms: ms(start) } });
@@ -336,7 +336,7 @@ router.post("/execution-gate", requireApiKey, async (req: Request, res: Response
       execution_ready: true, next_api: "image-gen", next_endpoint: "/image-gen/score-image",
       proceed: true, image_url: image.url, revised_prompt: image.revised_prompt || null,
       original_prompt: prompt, final_prompt: finalPrompt, gate_result: gate,
-      metadata: { latency_ms: ms(start), estimated_cost: genCost + 0.001, model: "dall-e-3" },
+      metadata: { latency_ms: ms(start), estimated_cost: genCost + 0.001, model: "dall-e-2" },
     });
   } catch (err: any) {
     return res.status(500).json({ error: err?.response?.data?.error?.message || err.message, execution_ready: false, metadata: { latency_ms: ms(start) } });
@@ -401,7 +401,7 @@ router.post("/session/:id/revise", requireApiKey, async (req: Request, res: Resp
         aligned: true,
       } : null,
     };
-    return res.json({ execution_ready: true, trace_id: trace_id_rev, workflow_state: 'revised', ...asset, revision_number: session.assets.length, style_drift_score, prompt_lineage, orchestration_hints: { consistency_ok: style_drift_score > 0.6, next_step: style_drift_score > 0.6 ? 'score-image' : 'revise-again' }, chain_to: ["/image-gen/score-image", "/image-gen/session/" + req.params.id], metadata: { latency_ms: ms(start), estimated_cost: costEstimate(1, size, quality), model: "dall-e-3" }, privacy: { data_stored: false, retention: "session_only" } });
+    return res.json({ execution_ready: true, trace_id: trace_id_rev, workflow_state: 'revised', ...asset, revision_number: session.assets.length, style_drift_score, prompt_lineage, orchestration_hints: { consistency_ok: style_drift_score > 0.6, next_step: style_drift_score > 0.6 ? 'score-image' : 'revise-again' }, chain_to: ["/image-gen/score-image", "/image-gen/session/" + req.params.id], metadata: { latency_ms: ms(start), estimated_cost: costEstimate(1, size, quality), model: "dall-e-2" }, privacy: { data_stored: false, retention: "session_only" } });
   } catch (err: any) {
     return res.status(500).json({ error: err?.response?.data?.error?.message || err.message, execution_ready: false });
   }
