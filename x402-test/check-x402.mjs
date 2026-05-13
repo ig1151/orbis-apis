@@ -23,7 +23,7 @@ const tests = [
   { slug: "agent-action-execution-api-7df4bf",                               path: "/execute",                        body: { action_type: "research", parameters: { query: "test" } } },
   { slug: "agent-identity-trust-api-6276af",                                 path: "/generate",                       body: { label: "test-agent" } },
   { slug: "agent-memory-api-717b41",                                         path: "/store",                          body: { content: "This is a test memory entry for validation purposes." } },
-  { slug: "agent-skills-api-bb73e2",                                         path: "/v1/skills/match",                body: { task: "research a company" } },
+  { slug: "agent-skills-api-bb73e2",                                         path: "/v1/skills/match",                body: { request: "research a company" } },
   { slug: "agent-workflow-api-28ee73",                                       path: "/v1/workflow/start",              body: { goal: "research competitors in the AI market", context: {} } },
   { slug: "ai-output-safety-api-1237d8",                                     path: "/check",                          body: { text: "This is a test output for safety validation." } },
   { slug: "agent-trading-signal-opportunity-detection-api-9d3ca1",          path: "/scan-signals",                   body: { symbols: ["BTC"] } },
@@ -44,7 +44,7 @@ const tests = [
   { slug: "agent-market-signal-portfolio-intelligence-api-4cbef1",          path: "/score-ticker",                   body: { ticker: "AAPL" } },
   { slug: "compliance-api-7f55eb",                                           path: "/kyc-check",                      body: { entity_id: "test-001", entity_type: "individual", name: "John Smith" } },
   { slug: "browser-automation-api-6f80d2",                                   path: "/open",                           body: { url: "https://example.com", session_id: "test-session" } },
-  { slug: "agent-payments-api-79969e",                                       path: "/create-wallet",                  body: { agent_id: "test-agent-001", label: "test wallet" } },
+  { slug: "agent-payments-api-79969e",                                       path: "/create-wallet",                  body: { agent_id: "test-agent-001", label: "test wallet", wallet_type: "hot" } },
 
   // ── Crypto & DeFi ─────────────────────────────────────────────────────────
   { slug: "market-signal-api-c2fb7d",                                        path: "/batch",                          body: { assets: ["BTC", "ETH"] } },
@@ -79,7 +79,7 @@ const tests = [
   { slug: "funding-rate-api-f2559c",                                         path: "/v1/rates/now",                  method: "GET" },
   { slug: "gas-optimizer-api-4f7b83",                                        path: "/v1/gas/now",                    method: "GET" },
   { slug: "alpha-signal-api-1f8d92",                                         path: "/scan-signals",                   body: { symbols: ["BTC", "ETH"] } },
-  { slug: "market-snapshot-api-3dc5d1",                                      path: "/quote?ticker=AAPL",             method: "GET" },
+  { slug: "market-snapshot-api-3dc5d1",                                      path: "/quote?symbol=AAPL",             method: "GET" },
   { slug: "stablecoin-yield-api-ca182f",                                     path: "/v1/rates",                      method: "GET" },
   { slug: "token-screener-api-344276",                                       path: "/v1/movers",                     method: "GET" },
   { slug: "wallet-portfolio-api-414e10",                                     path: "/v1/wallet/snapshot",             body: { address: WALLET } },
@@ -120,7 +120,7 @@ const tests = [
   { slug: "website-monitor-api-26349a",                                      path: "/",                               body: { url: "https://example.com" } },
   { slug: "web-researcher-api-ce3632",                                       path: "/research",                       body: { query: "latest AI developments in 2026" } },
   { slug: "market-intelligence-api-5a2e4e",                                  path: "/v1/market-intelligence",         body: { asset: "BTC" } },
-  { slug: "intelligence-extraction-api-c60b09",                              path: "/extract",                        body: { content: "Bitcoin price surges to record high as institutional demand grows" } },
+  { slug: "intelligence-extraction-api-c60b09",                              path: "/extract",                        body: { text: "Bitcoin price surges to record high as institutional demand grows" } },
   { slug: "career-optimization-api-ce63e8",                                  path: "/score-resume",                   body: { resume_text: "John Smith, Software Engineer with 5 years experience in Python and JavaScript." } },
   { slug: "text-generation-api-3b0db8",                                      path: "/",                               body: { prompt: "Explain AI in one sentence." } },
 
