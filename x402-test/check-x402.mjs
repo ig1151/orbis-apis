@@ -112,9 +112,9 @@ const tests = [
 
   // ── AI Tools & Research ───────────────────────────────────────────────────
   { slug: "document-intelligence-api-046f6c",                                path: "/",                               body: { document: "SW52b2ljZSAjMTIzLCAkNTAwIGZyb20gQWNtZSBDb3Jw" } },
-  { slug: "image-generation-intelligence-api-811894",                        path: "/generate",                       body: { prompt: "a red apple on a white background" } },
-  { slug: "image-to-content-api-3f51f9",                                     path: "/",                               body: { image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/240px-PNG_transparency_demonstration_1.png" } },
-  { slug: "image-to-content-api-5c7f80",                                     path: "/v1/analyze",                     body: { image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/240px-PNG_transparency_demonstration_1.png", modules: ["caption", "tags"] } },
+  { slug: "image-generation-intelligence-api-811894",                        path: "/keys/generate",                  body: { label: "test" } },
+  { slug: "image-to-content-api-3f51f9",                                     path: "/workflow/start",                 body: { goal: "analyze image" } },
+  { slug: "image-to-content-api-5c7f80",                                     path: "/workflow/start",                 body: { goal: "analyze image" } },
   { slug: "youtube-intelligence-api-8907c0",                                 path: "/summarize",                      body: { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" } },
   { slug: "deep-research-api-9bc015",                                        path: "/extract-facts",                  body: { content: "Artificial intelligence will transform industries by 2026 through automation and advanced reasoning." } },
   { slug: "website-monitor-api-26349a",                                      path: "/",                               body: { url: "https://example.com" } },
