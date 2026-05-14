@@ -23,7 +23,7 @@ const tests = [
   { slug: "agent-action-execution-api-7df4bf",                               path: "/execute",                        body: { action_type: "research", parameters: { query: "test" } } },
   { slug: "agent-identity-trust-api-6276af",                                 path: "/generate",                       body: { label: "test-agent" } },
   { slug: "agent-memory-api-717b41",                                         path: "/store",                          body: { content: "This is a test memory entry for validation purposes." } },
-  { slug: "agent-skills-api-bb73e2",                                         path: "/v1/skills/match",                body: { request: "research a company" } },
+  { slug: "agent-skills-api-bb73e2",                                         path: "/match",                          body: { request: "research a company" } },
   { slug: "agent-workflow-api-28ee73",                                       path: "/v1/workflow/start",              body: { goal: "research competitors in the AI market", context: {} } },
   { slug: "ai-output-safety-api-1237d8",                                     path: "/check",                          body: { text: "This is a test output for safety validation." } },
   { slug: "agent-trading-signal-opportunity-detection-api-9d3ca1",          path: "/scan-signals",                   body: { symbols: ["BTC"] } },
