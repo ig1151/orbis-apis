@@ -4,6 +4,11 @@ const router = Router();
 const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
 const confidence = { type: 'object', additionalProperties: { type: 'number' } };
 const actions = { type: 'array', items: { type: 'string' } };
+const legalMeta = {
+  legal_disclaimer: { type: 'string' },
+  requires_licensed_attorney_review: { type: 'boolean' },
+  jurisdiction_scope: { type: 'object', properties: { coverage: { type: 'string' }, limitations: actions, recommended_review: { type: 'string' } } },
+};
 
 router.get('/', (_req: Request, res: Response) => {
   res.json({
@@ -26,7 +31,7 @@ router.get('/', (_req: Request, res: Response) => {
             '200': {
               description: 'Extracted contract clauses',
               content: { 'application/json': { schema: { type: 'object', properties: {
-                clauses: { type: 'array', items: { type: 'object', properties: { clause_id: { type: 'string' }, title: { type: 'string' }, category: { type: 'string' }, text_excerpt: { type: 'string' }, page_ref: { type: 'string', nullable: true }, importance: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] } } } },
+                clauses: { type: 'array', items: { type: 'object', properties: { clause_id: { type: 'string' }, title: { type: 'string' }, category: { type: 'string' }, text_excerpt: { type: 'string' }, citation: { type: 'object', properties: { char_start: { type: 'number', nullable: true }, char_end: { type: 'number', nullable: true }, page_ref: { type: 'string', nullable: true }, section_ref: { type: 'string', nullable: true } } }, importance: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] } } } },
                 total_clauses: { type: 'number' },
                 categories_found: actions,
                 contract_type_detected: { type: 'string' },
@@ -35,6 +40,7 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                ...legalMeta,
               } } } },
             },
             '400': { description: 'Missing contract' }, '500': { description: 'Extraction failed' },
@@ -62,6 +68,7 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                ...legalMeta,
               } } } },
             },
             '400': { description: 'Missing contract' }, '500': { description: 'Scoring failed' },
@@ -88,6 +95,7 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                ...legalMeta,
               } } } },
             },
             '400': { description: 'Missing contract' }, '500': { description: 'Analysis failed' },
@@ -113,6 +121,7 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                ...legalMeta,
               } } } },
             },
             '400': { description: 'Missing contract' }, '500': { description: 'Analysis failed' },
@@ -139,6 +148,7 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                ...legalMeta,
               } } } },
             },
             '400': { description: 'Missing contract_a or contract_b' }, '500': { description: 'Comparison failed' },
@@ -168,6 +178,7 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                ...legalMeta,
               } } } },
             },
             '400': { description: 'Missing contract' }, '500': { description: 'Summarization failed' },
@@ -193,6 +204,7 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                ...legalMeta,
               } } } },
             },
             '400': { description: 'Missing contract' }, '500': { description: 'Analysis failed' },
@@ -250,6 +262,7 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                ...legalMeta,
               } } } },
             },
             '400': { description: 'Missing contract' }, '500': { description: 'Analysis failed' },

@@ -19,6 +19,19 @@ function parseJSON(raw: string) {
   return JSON.parse(raw.replace(/```json|```/g, '').trim());
 }
 
+function legalMeta(risk_level?: string) {
+  const highRisk = risk_level === 'critical' || risk_level === 'high';
+  return {
+    legal_disclaimer: 'This analysis is AI-generated for informational purposes only and does not constitute legal advice. Consult a licensed attorney before taking any contractual action.',
+    requires_licensed_attorney_review: highRisk ?? true,
+    jurisdiction_scope: {
+      coverage: 'general commercial law principles',
+      limitations: ['Jurisdiction-specific statutes not verified', 'Local regulations may vary', 'Analysis based on text provided only'],
+      recommended_review: highRisk ? 'Licensed attorney review strongly recommended before signing' : 'Legal review recommended for risk items',
+    },
+  };
+}
+
 router.get('/', (_req: Request, res: Response) => {
   res.json({ name: 'Legal Contract Risk API', info: '/legal-contract-risk/info', openapi: '/legal-contract-risk/openapi.json', health: 'ok' });
 });
@@ -34,7 +47,7 @@ Contract (first 4000 chars): "${contract.slice(0, 4000)}"
 
 Return concise JSON:
 {
-  "clauses": [{ "clause_id": "string", "title": "string", "category": "string", "text_excerpt": "string", "page_ref": "string|null", "importance": "critical|high|medium|low" }],
+  "clauses": [{ "clause_id": "string", "title": "string", "category": "string", "text_excerpt": "string", "citation": { "char_start": number|null, "char_end": number|null, "page_ref": "string|null", "section_ref": "string|null" }, "importance": "critical|high|medium|low" }],
   "total_clauses": number,
   "categories_found": ["string"],
   "contract_type_detected": "string",
@@ -44,7 +57,7 @@ Return concise JSON:
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
 }`);
-    res.json(parseJSON(raw));
+    res.json({ ...parseJSON(raw), ...legalMeta() });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
@@ -72,7 +85,8 @@ Return concise JSON:
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
 }`);
-    res.json(parseJSON(raw));
+    const parsed = parseJSON(raw);
+    res.json({ ...parsed, ...legalMeta(parsed.risk_level) });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
@@ -100,7 +114,9 @@ Return concise JSON:
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
 }`);
-    res.json(parseJSON(raw));
+    const parsed = parseJSON(raw);
+    const topSeverity = parsed.risk_flags?.[0]?.severity;
+    res.json({ ...parsed, ...legalMeta(topSeverity) });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
@@ -126,7 +142,7 @@ Return concise JSON:
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
 }`);
-    res.json(parseJSON(raw));
+    res.json({ ...parseJSON(raw), ...legalMeta() });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
@@ -155,7 +171,7 @@ Return concise JSON:
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
 }`);
-    res.json(parseJSON(raw));
+    res.json({ ...parseJSON(raw), ...legalMeta() });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
@@ -185,7 +201,7 @@ Return concise JSON:
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
 }`);
-    res.json(parseJSON(raw));
+    res.json({ ...parseJSON(raw), ...legalMeta() });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
@@ -211,7 +227,7 @@ Return concise JSON:
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
 }`);
-    res.json(parseJSON(raw));
+    res.json({ ...parseJSON(raw), ...legalMeta() });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
@@ -265,7 +281,8 @@ Return concise JSON:
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
 }`);
-    res.json(parseJSON(raw));
+    const parsed = parseJSON(raw);
+    res.json({ ...parsed, ...legalMeta(parsed.risk_level) });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 

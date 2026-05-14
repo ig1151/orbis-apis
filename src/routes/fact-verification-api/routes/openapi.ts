@@ -4,6 +4,8 @@ const router = Router();
 const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
 const confidence = { type: 'object', additionalProperties: { type: 'number' } };
 const actions = { type: 'array', items: { type: 'string' } };
+const provenance = { type: 'object', properties: { sources_checked: actions, knowledge_cutoff: { type: 'string' }, retrieval_confidence: { type: 'number' }, model_used: { type: 'string' }, verification_method: { type: 'string' }, external_lookup: { type: 'boolean' } } };
+const retryPolicy = { type: 'object', properties: { max_attempts: { type: 'number' }, backoff_strategy: { type: 'string' }, backoff_base_ms: { type: 'number' }, safe_to_retry: { type: 'boolean' } } };
 
 router.get('/', (_req: Request, res: Response) => {
   res.json({
@@ -38,6 +40,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                provenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing claim' }, '500': { description: 'Verification failed' },
@@ -65,6 +69,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                provenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing ai_output' }, '500': { description: 'Detection failed' },
@@ -91,6 +97,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                provenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing text' }, '500': { description: 'Check failed' },
@@ -116,6 +124,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                provenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing document' }, '500': { description: 'Check failed' },
@@ -141,6 +151,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                provenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing content or policies' }, '500': { description: 'Validation failed' },
@@ -168,6 +180,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                provenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing ai_output' }, '500': { description: 'Scoring failed' },
@@ -192,6 +206,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                provenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing text' }, '500': { description: 'Analysis failed' },
@@ -246,6 +262,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                provenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing content' }, '500': { description: 'Verification failed' },

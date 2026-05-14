@@ -4,6 +4,8 @@ const router = Router();
 const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
 const confidence = { type: 'object', additionalProperties: { type: 'number' } };
 const actions = { type: 'array', items: { type: 'string' } };
+const compressionProvenance = { type: 'object', properties: { strategy_selected: { type: 'string', enum: ['aggressive', 'balanced', 'light'] }, irreversible_loss_warning: { type: 'boolean' }, inferred_vs_stated_ratio: { type: 'number' }, reconstruction_fidelity: { type: 'string', enum: ['high', 'medium', 'low'] } } };
+const retryPolicy = { type: 'object', properties: { max_attempts: { type: 'number' }, backoff_strategy: { type: 'string' }, backoff_base_ms: { type: 'number' }, safe_to_retry: { type: 'boolean' } } };
 
 router.get('/', (_req: Request, res: Response) => {
   res.json({
@@ -37,6 +39,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                compression_provenance: compressionProvenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing transcript' }, '500': { description: 'Compression failed' },
@@ -89,6 +93,10 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                retrieval_embeddings_ready: { type: 'boolean' },
+                semantic_index: { type: 'object', properties: { cluster_count: { type: 'number' }, indexed_keywords: { type: 'number' }, embedding_model: { type: 'string' } } },
+                compression_provenance: compressionProvenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing memory_logs' }, '500': { description: 'Compression failed' },
@@ -167,6 +175,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                compression_provenance: compressionProvenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing document' }, '500': { description: 'Compression failed' },
@@ -246,6 +256,8 @@ router.get('/', (_req: Request, res: Response) => {
                 confidence_per_section: confidence,
                 recommended_actions_priority_order: actions,
                 privacy,
+                compression_provenance: compressionProvenance,
+                retry_policy: retryPolicy,
               } } } },
             },
             '400': { description: 'Missing content' }, '500': { description: 'Compression failed' },
