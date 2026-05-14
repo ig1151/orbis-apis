@@ -11,6 +11,17 @@ const router = riskRouter;
 
 // ── Universal Runtime Envelope ────────────────────────────────────────────────
 
+router.post('/assess', async (req: Request, res: Response): Promise<void> => {
+  const { error } = riskSchema.validate(req.body);
+  if (error) { res.status(400).json({ success: false, error: error.message }); return; }
+  try {
+    const result = await assessRisk(req.body as RiskRequest);
+    res.json({ ...buildRuntime(req, { workflow_state: 'complete' }), success: true, ...result });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ── Event Store + Governance ──────────────────────────────────────────────────
 const eventStore: Record<string, any[]> = {};
 function emitEvent(execution_id: string, event: string, step: string, data: any = {}) {
