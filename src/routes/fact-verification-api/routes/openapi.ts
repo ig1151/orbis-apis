@@ -1,0 +1,259 @@
+import { Router, Request, Response } from 'express';
+const router = Router();
+
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'Fact Verification API',
+      version: '1.0.0',
+      description: 'Detect hallucinations, verify claims, check citation accuracy, score AI output reliability, and validate content against policies. The safety layer for every agent workflow.',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+    },
+    servers: [{ url: 'https://orbis-apis.onrender.com/fact-verification' }],
+    paths: {
+      '/verify-claim': {
+        post: {
+          operationId: 'verifyClaim',
+          summary: 'Verify a specific claim with verdict, confidence, and supporting/contradicting evidence',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['claim'], properties: { claim: { type: 'string' }, context: { type: 'string' }, domain: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Claim verification result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                verdict: { type: 'string', enum: ['true', 'false', 'partially_true', 'unverifiable', 'misleading'] },
+                confidence: { type: 'number', minimum: 0, maximum: 1 },
+                reasoning: { type: 'string' },
+                supporting_evidence: actions,
+                contradicting_evidence: actions,
+                missing_context: actions,
+                nuances: actions,
+                suggested_correction: { type: 'string', nullable: true },
+                verifiability: { type: 'string', enum: ['high', 'medium', 'low'] },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing claim' }, '500': { description: 'Verification failed' },
+          },
+        },
+      },
+      '/detect-hallucination': {
+        post: {
+          operationId: 'detectHallucination',
+          summary: 'Score AI output for hallucination risk with fabricated fact detection and reliability grade',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['ai_output'], properties: { ai_output: { type: 'string' }, source_context: { type: 'string' }, output_type: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Hallucination detection result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                hallucination_risk: { type: 'string', enum: ['critical', 'high', 'medium', 'low', 'none'] },
+                hallucination_score: { type: 'number', minimum: 0, maximum: 100 },
+                fabricated_facts: { type: 'array', items: { type: 'object', properties: { claim: { type: 'string' }, issue: { type: 'string' }, severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] } } } },
+                unsupported_claims: { type: 'array', items: { type: 'object', properties: { claim: { type: 'string' }, missing_source: { type: 'string' } } } },
+                plausible_but_unverified: actions,
+                factually_grounded: actions,
+                overall_reliability: { type: 'string', enum: ['high', 'medium', 'low', 'unreliable'] },
+                safe_to_use: { type: 'boolean' },
+                recommended_fix: { type: 'string' },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing ai_output' }, '500': { description: 'Detection failed' },
+          },
+        },
+      },
+      '/check-citations': {
+        post: {
+          operationId: 'checkCitations',
+          summary: 'Verify citation accuracy, source credibility, and flag missing citations',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' }, citations: {} } } } } },
+          responses: {
+            '200': {
+              description: 'Citation check result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                citations_found: { type: 'array', items: { type: 'object', properties: { citation: { type: 'string' }, claim_supported: { type: 'boolean' }, accuracy: { type: 'string', enum: ['accurate', 'inaccurate', 'unverifiable'] }, issue: { type: 'string', nullable: true } } } },
+                missing_citations: actions,
+                suspicious_sources: { type: 'array', items: { type: 'object', properties: { source: { type: 'string' }, issue: { type: 'string' }, credibility: { type: 'string', enum: ['high', 'medium', 'low', 'unknown'] } } } },
+                citation_accuracy_score: { type: 'number' },
+                total_citations: { type: 'number' },
+                verified_count: { type: 'number' },
+                failed_count: { type: 'number' },
+                overall_trustworthiness: { type: 'string', enum: ['high', 'medium', 'low'] },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing text' }, '500': { description: 'Check failed' },
+          },
+        },
+      },
+      '/consistency-check': {
+        post: {
+          operationId: 'consistencyCheck',
+          summary: 'Check document for internal contradictions, logical errors, and numerical inconsistencies',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['document'], properties: { document: { type: 'string' }, check_type: { type: 'string', enum: ['internal', 'logical', 'numerical', 'temporal'] } } } } } },
+          responses: {
+            '200': {
+              description: 'Consistency check result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                consistency_score: { type: 'number' },
+                contradictions: { type: 'array', items: { type: 'object', properties: { statement_a: { type: 'string' }, statement_b: { type: 'string' }, conflict: { type: 'string' }, severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] } } } },
+                logical_errors: { type: 'array', items: { type: 'object', properties: { error: { type: 'string' }, location: { type: 'string' }, correction: { type: 'string' } } } },
+                numerical_inconsistencies: { type: 'array', items: { type: 'object', properties: { claim: { type: 'string' }, issue: { type: 'string' } } } },
+                temporal_conflicts: { type: 'array', items: { type: 'object', properties: { event: { type: 'string' }, conflict: { type: 'string' } } } },
+                internally_consistent_sections: actions,
+                overall_coherence: { type: 'string', enum: ['high', 'medium', 'low'] },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing document' }, '500': { description: 'Check failed' },
+          },
+        },
+      },
+      '/policy-validate': {
+        post: {
+          operationId: 'policyValidate',
+          summary: 'Validate content against specified policies with violation severity and required changes',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['content', 'policies'], properties: { content: { type: 'string' }, policies: {}, policy_domain: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Policy validation result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                policy_compliant: { type: 'boolean' },
+                compliance_score: { type: 'number' },
+                violations: { type: 'array', items: { type: 'object', properties: { policy: { type: 'string' }, violation: { type: 'string' }, severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] }, location: { type: 'string' } } } },
+                warnings: { type: 'array', items: { type: 'object', properties: { policy: { type: 'string' }, concern: { type: 'string' } } } },
+                compliant_sections: actions,
+                required_changes: { type: 'array', items: { type: 'object', properties: { change: { type: 'string' }, policy_reference: { type: 'string' }, priority: { type: 'string', enum: ['high', 'medium', 'low'] } } } },
+                risk_level: { type: 'string', enum: ['critical', 'high', 'medium', 'low', 'none'] },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing content or policies' }, '500': { description: 'Validation failed' },
+          },
+        },
+      },
+      '/output-score': {
+        post: {
+          operationId: 'outputScore',
+          summary: 'Score AI output across quality dimensions with grade and actionable improvement suggestions',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['ai_output'], properties: { ai_output: { type: 'string' }, task_description: { type: 'string' }, scoring_dimensions: { type: 'array', items: { type: 'string' } } } } } } },
+          responses: {
+            '200': {
+              description: 'AI output quality score',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                overall_score: { type: 'number' },
+                grade: { type: 'string', enum: ['A', 'B', 'C', 'D', 'F'] },
+                dimension_scores: { type: 'object', properties: { accuracy: { type: 'number' }, completeness: { type: 'number' }, clarity: { type: 'number' }, relevance: { type: 'number' }, hallucination_risk: { type: 'number' } } },
+                strengths: actions,
+                weaknesses: actions,
+                critical_issues: actions,
+                improvement_suggestions: actions,
+                safe_to_use: { type: 'boolean' },
+                use_with_caution: { type: 'boolean' },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing ai_output' }, '500': { description: 'Scoring failed' },
+          },
+        },
+      },
+      '/flag-uncertainty': {
+        post: {
+          operationId: 'flagUncertainty',
+          summary: 'Flag uncertain, speculative, and hedged statements with certainty score per section',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' }, threshold: { type: 'string', enum: ['low', 'medium', 'high'] } } } } } },
+          responses: {
+            '200': {
+              description: 'Uncertainty flags with certainty score',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                uncertainty_flags: { type: 'array', items: { type: 'object', properties: { statement: { type: 'string' }, uncertainty_type: { type: 'string', enum: ['speculative', 'hedged', 'unverified', 'ambiguous', 'outdated'] }, confidence: { type: 'number' }, reason: { type: 'string' } } } },
+                certain_statements: actions,
+                overall_certainty_score: { type: 'number' },
+                high_risk_sections: actions,
+                hedging_language_detected: actions,
+                recommendation: { type: 'string' },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing text' }, '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/execution-gate': {
+        post: {
+          operationId: 'executionGate',
+          summary: 'Execution readiness check before using AI output downstream',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['content'], properties: { content: { type: 'string' }, verification_type: { type: 'string' } } } } } },
+          responses: {
+            '200': {
+              description: 'Execution gate result',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                execution_ready: { type: 'boolean' },
+                verification_type: { type: 'string' },
+                content_length: { type: 'number' },
+                next_api: { type: 'string' },
+                next_endpoint: { type: 'string' },
+                blocking_flags: actions,
+                flag_definitions: { type: 'object', additionalProperties: { type: 'string' } },
+                confidence_per_section: confidence,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing content' }, '500': { description: 'Gate check failed' },
+          },
+        },
+      },
+      '/verify': {
+        post: {
+          operationId: 'verify',
+          summary: 'ONE-CALL: full verification — hallucination detection, consistency, citations, policy, and trust score',
+          'x-one-call': true,
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['content'], properties: { content: { type: 'string' }, content_type: { type: 'string' }, task_description: { type: 'string' }, policies: {} } } } } },
+          responses: {
+            '200': {
+              description: 'Full verification report',
+              content: { 'application/json': { schema: { type: 'object', properties: {
+                overall_verdict: { type: 'string', enum: ['pass', 'fail', 'review_needed'] },
+                trust_score: { type: 'number' },
+                hallucination_risk: { type: 'string', enum: ['critical', 'high', 'medium', 'low', 'none'] },
+                factual_accuracy: { type: 'string', enum: ['high', 'medium', 'low', 'unknown'] },
+                consistency: { type: 'string', enum: ['consistent', 'minor_issues', 'contradictions_found'] },
+                policy_compliant: { type: 'boolean', nullable: true },
+                critical_issues: { type: 'array', items: { type: 'object', properties: { issue: { type: 'string' }, severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] }, location: { type: 'string' } } } },
+                safe_to_use: { type: 'boolean' },
+                recommended_action: { type: 'string', enum: ['use_as_is', 'use_with_caution', 'requires_edit', 'reject'] },
+                corrections_needed: actions,
+                verification_summary: { type: 'string' },
+                confidence_per_section: confidence,
+                recommended_actions_priority_order: actions,
+                privacy,
+              } } } },
+            },
+            '400': { description: 'Missing content' }, '500': { description: 'Verification failed' },
+          },
+        },
+      },
+    },
+  });
+});
+
+export default router;

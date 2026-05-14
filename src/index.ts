@@ -2525,6 +2525,18 @@ app.get('/agent-observability/info', (_req, res) => res.json({
   execution_chain: { previous: 'agent-eval', next: 'real-time-monitor', optional_next: ['workflow-orchestrator'] },
 }));
 
+// ── context-compression ──────────────────────────────────────────────────────
+import contextCompressionRouter from './routes/context-compression-api/routes/intelligence';
+import contextCompressionOpenapiRouter from './routes/context-compression-api/routes/openapi';
+
+// ── fact-verification ─────────────────────────────────────────────────────────
+import factVerificationRouter from './routes/fact-verification-api/routes/intelligence';
+import factVerificationOpenapiRouter from './routes/fact-verification-api/routes/openapi';
+
+// ── legal-contract-risk ───────────────────────────────────────────────────────
+import legalContractRiskRouter from './routes/legal-contract-risk-api/routes/intelligence';
+import legalContractRiskOpenapiRouter from './routes/legal-contract-risk-api/routes/openapi';
+
 // ── web-navigation ────────────────────────────────────────────────────────────
 import webNavigationRouter from './routes/web-navigation-api/routes/intelligence';
 import webNavigationOpenapiRouter from './routes/web-navigation-api/routes/openapi';
@@ -2554,4 +2566,94 @@ app.get('/web-navigation/info', (_req, res) => res.json({
     { method: 'POST', path: '/execution-gate', description: 'Gate web navigation actions for safety, robots.txt compliance, and ethical crawling' },
   ],
   execution_chain: { previous: 'deep-research', next: 'enterprise-retrieval', optional_next: ['serp-intelligence'] },
+}));
+
+// ── context-compression ───────────────────────────────────────────────────────
+app.use('/context-compression/openapi.json', contextCompressionOpenapiRouter);
+app.use('/context-compression', contextCompressionRouter);
+app.get('/context-compression/info', (_req, res) => res.json({
+  name: 'Context Compression API',
+  slug: 'context-compression',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { compress_transcript: '$0.005', compress_agent_chain: '$0.006', compress_memory: '$0.006', extract_keypoints: '$0.004', token_estimate: '$0.001', compress_document: '$0.005', decompress: '$0.005', execution_gate: '$0.002', compress: '$0.007' },
+    high_volume: { compress_transcript: '$0.003', compress_document: '$0.003', compress: '$0.005' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/compress-transcript', description: 'Compress meeting or conversation transcript into dense token-efficient format' },
+    { method: 'POST', path: '/compress-agent-chain', description: 'Compress agent execution chain into compact reusable state with decisions preserved' },
+    { method: 'POST', path: '/compress-memory', description: 'Compress episodic memory logs into a semantically clustered retrievable snapshot' },
+    { method: 'POST', path: '/extract-keypoints', description: 'Extract only essential key points from any content — maximum signal, minimum tokens' },
+    { method: 'POST', path: '/token-estimate', description: 'Estimate token count and cost savings before compressing — no AI call required' },
+    { method: 'POST', path: '/compress-document', description: 'Compress any long document into structured essentials with entity extraction' },
+    { method: 'POST', path: '/decompress', description: 'Reconstruct a full readable document from compressed state' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with recommended compression endpoint and next API chaining' },
+    { method: 'POST', path: '/compress', description: 'ONE-CALL: full compression workflow — auto-selects strategy, compresses, and reports token savings' },
+  ],
+  execution_chain: { previous: 'agent-memory', next: 'fact-verification', optional_next: ['agent-observability', 'workflow-orchestrator'] },
+}));
+
+// ── fact-verification ─────────────────────────────────────────────────────────
+app.use('/fact-verification/openapi.json', factVerificationOpenapiRouter);
+app.use('/fact-verification', factVerificationRouter);
+app.get('/fact-verification/info', (_req, res) => res.json({
+  name: 'Fact Verification API',
+  slug: 'fact-verification',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { verify_claim: '$0.005', detect_hallucination: '$0.006', check_citations: '$0.006', consistency_check: '$0.005', policy_validate: '$0.006', output_score: '$0.005', flag_uncertainty: '$0.004', execution_gate: '$0.002', verify: '$0.009' },
+    high_volume: { detect_hallucination: '$0.004', verify_claim: '$0.003', verify: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/verify-claim', description: 'Verify a specific claim with verdict, confidence, and supporting/contradicting evidence' },
+    { method: 'POST', path: '/detect-hallucination', description: 'Score AI output for hallucination risk with fabricated fact detection and reliability grade' },
+    { method: 'POST', path: '/check-citations', description: 'Verify citation accuracy, source credibility, and flag missing citations' },
+    { method: 'POST', path: '/consistency-check', description: 'Check document for internal contradictions, logical errors, and numerical inconsistencies' },
+    { method: 'POST', path: '/policy-validate', description: 'Validate content against specified policies with violation severity and required changes' },
+    { method: 'POST', path: '/output-score', description: 'Score AI output across quality dimensions with grade and actionable improvement suggestions' },
+    { method: 'POST', path: '/flag-uncertainty', description: 'Flag uncertain, speculative, and hedged statements with certainty score per section' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check before using AI output downstream' },
+    { method: 'POST', path: '/verify', description: 'ONE-CALL: full verification — hallucination detection, consistency, citations, policy, and trust score' },
+  ],
+  execution_chain: { previous: 'context-compression', next: 'ai-output-safety', optional_next: ['agent-observability', 'deep-research'] },
+}));
+
+// ── legal-contract-risk ───────────────────────────────────────────────────────
+app.use('/legal-contract-risk/openapi.json', legalContractRiskOpenapiRouter);
+app.use('/legal-contract-risk', legalContractRiskRouter);
+app.get('/legal-contract-risk/info', (_req, res) => res.json({
+  name: 'Legal Contract Risk API',
+  slug: 'legal-contract-risk',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { extract_clauses: '$0.006', risk_score: '$0.007', flag_risks: '$0.007', missing_clauses: '$0.006', compare_contracts: '$0.008', summarize_contract: '$0.005', negotiation_points: '$0.007', execution_gate: '$0.002', analyze_contract: '$0.015' },
+    high_volume: { risk_score: '$0.005', flag_risks: '$0.005', analyze_contract: '$0.010' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/extract-clauses', description: 'Extract all clauses from a contract with category, importance, and text excerpts' },
+    { method: 'POST', path: '/risk-score', description: 'Score overall contract risk by category from a specific party perspective with sign recommendation' },
+    { method: 'POST', path: '/flag-risks', description: 'Flag risky clauses with severity, explanation, impact, and suggested revision language' },
+    { method: 'POST', path: '/missing-clauses', description: 'Identify standard clauses missing from the contract with risk of omission and suggested language' },
+    { method: 'POST', path: '/compare-contracts', description: 'Compare two contracts for material differences, identify which is more favorable' },
+    { method: 'POST', path: '/summarize-contract', description: 'Executive summary of contract terms including parties, key dates, payment terms, and obligations' },
+    { method: 'POST', path: '/negotiation-points', description: 'Identify negotiation opportunities, walk-away conditions, leverage points, and concessions to offer' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check before contract signing with recommended analysis workflow' },
+    { method: 'POST', path: '/analyze-contract', description: 'ONE-CALL: full contract analysis — risk score, top risks, missing clauses, negotiation points, and signing recommendation' },
+  ],
+  execution_chain: { previous: 'pdf-extraction', next: 'proposal-generation', optional_next: ['fact-verification', 'deep-research'] },
 }));
