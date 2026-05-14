@@ -3,7 +3,7 @@ import { logger } from '../utils/logger';
 import type { AnalyzeRequest, AnalyzeResponse, Module, CaptionStyle } from '../types/index';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'anthropic/claude-sonnet-4-5';
+const MODEL = 'anthropic/claude-sonnet-4-6';
 
 function buildPrompt(modules: Module[], language: string, maxTags: number, captionStyle: CaptionStyle): string {
   const fields: string[] = [];

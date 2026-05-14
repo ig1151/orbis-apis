@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 export const compareRouter = Router();
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'anthropic/claude-sonnet-4-5';
+const MODEL = 'anthropic/claude-sonnet-4-6';
 
 compareRouter.post('/', async (req: Request, res: Response) => {
   const { images, comparison_focus, language = 'en' } = req.body;

@@ -6,7 +6,7 @@ import { buildRuntime } from '../../../shared/ai';
 
 const router = Router();
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'anthropic/claude-sonnet-4-5';
+const MODEL = 'anthropic/claude-sonnet-4-6';
 
 router.post('/', async (req: Request, res: Response) => {
   const { image, image_format, extract_tables = true, extract_forms = true, extract_headings = true, language = 'en' } = req.body;
