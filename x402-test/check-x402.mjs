@@ -86,10 +86,10 @@ const tests = [
   { slug: "token-unlock-api-f1f131",                                         path: "/upcoming",                       method: "GET" },
   { slug: "prediction-market-api-4181e0",                                    path: "/trending",                       method: "GET" },
   { slug: "crypto-narrative-api-51cb0e",                                     path: "/trending",                       method: "GET" },
-  { slug: "meta-strategy-api-2a9c66",                                        path: "/",                               body: { symbols: "BTC,ETH", risk_tolerance: "medium" } },
+  { slug: "meta-strategy-api-2a9c66",                                        path: "/scan",                           body: { symbols: "BTC,ETH", risk_tolerance: "medium" } },
   { slug: "social-sentiment-api-e6aca7",                                     path: "/crypto-sentiment/BTC",           method: "GET" },
-  { slug: "smart-contract-risk-api-82fd41",                                  path: "/compare",                        body: { contractA: CONTRACT, contractB: "0x6B175474E89094C44Da98b954EedeAC495271d0F", comparisonDimensions: ["security"] } },
-  { slug: "defi-risk-api-0dff29",                                            path: "/assess",                         body: { protocol: "aave", tvl: 10000000, chain: "ethereum", auditStatus: "audited" } },
+  { slug: "smart-contract-risk-api-82fd41",                                  path: "/compare",                        body: { contract_a: CONTRACT, contract_b: "0x6B175474E89094C44Da98b954EedeAC495271d0F", chain: "ethereum" } },
+  { slug: "defi-risk-api-0dff29",                                            path: "/assess",                         body: { protocol: "aave", chain: "ethereum" } },
 
   // ── Identity & Security ───────────────────────────────────────────────────
   { slug: "identity-intelligence-api-9b4029",                                path: "/",                               body: { email: "test@example.com" } },
