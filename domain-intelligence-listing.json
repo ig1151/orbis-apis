@@ -1,0 +1,119 @@
+[
+  {
+    "name": "Domain Intelligence API",
+    "shortDescription": "WHOIS, tech stack detection, and company identification from domains",
+    "description": "Get WHOIS data, technology stack detection, and company identification from domain names for autonomous research and enrichment workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/domain-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/domain-intelligence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/domain-intelligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "domain",
+      "whois",
+      "tech-stack",
+      "enrichment",
+      "research"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Domain Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/whois",
+            "pricePerCallUsdc": 0.002,
+            "description": "WHOIS lookup"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/tech-stack",
+            "pricePerCallUsdc": 0.003,
+            "description": "Technology stack detection"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/company-from-domain",
+            "pricePerCallUsdc": 0.003,
+            "description": "Company identification from domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full domain intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/whois",
+            "pricePerCallUsdc": 0.001,
+            "description": "WHOIS lookup (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/tech-stack",
+            "pricePerCallUsdc": 0.002,
+            "description": "Tech stack detection (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL full domain intelligence (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/whois",
+        "description": "WHOIS data — registrar, dates, name servers, registrant country"
+      },
+      {
+        "method": "POST",
+        "path": "/tech-stack",
+        "description": "Technology stack detection — CMS, CDN, analytics, hosting, CRM"
+      },
+      {
+        "method": "POST",
+        "path": "/company-from-domain",
+        "description": "Identify company from domain — name, industry, headcount range, HQ"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full domain intelligence — WHOIS + tech stack + company"
+      }
+    ]
+  }
+]

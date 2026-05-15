@@ -1,0 +1,24 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "IP Geolocation API",
+    "version": "1.0.0",
+    "description": "IP address geolocation, risk scoring, and bulk lookups for fraud detection, personalization, and access control agent workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {"requests_per_day": 100, "requests_per_month": 3000},
+      "pay_per_call": {"lookup": "$0.001", "risk": "$0.002", "bulk": "$0.008", "execution-gate": "$0.001", "analyze": "$0.004"}
+    }
+  },
+  "servers": [{"url": "https://orbis-apis.onrender.com/ip-geolocation"}],
+  "security": [{"ApiKeyAuth": []}],
+  "paths": {
+    "/lookup": {"post": {"operationId": "ipLookup", "summary": "Geolocate IP — country, city, lat/lon, ISP, connection type", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["ip"], "properties": {"ip": {"type": "string"}}}}}}, "responses": {"200": {"description": "IP geolocation"}, "400": {"description": "Missing ip"}, "500": {"description": "Failed"}}}},
+    "/risk": {"post": {"operationId": "ipRisk", "summary": "IP risk score — VPN, Tor, proxy, bot, malicious, blacklist status", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["ip"], "properties": {"ip": {"type": "string"}}}}}}, "responses": {"200": {"description": "Risk assessment"}, "400": {"description": "Missing ip"}, "500": {"description": "Failed"}}}},
+    "/bulk": {"post": {"operationId": "ipBulk", "summary": "Bulk IP geolocation for up to 50 IPs", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["ips"], "properties": {"ips": {"type": "array", "items": {"type": "string"}, "maxItems": 50}}}}}}, "responses": {"200": {"description": "Bulk results"}, "400": {"description": "Missing or oversized ips"}, "500": {"description": "Failed"}}}},
+    "/execution-gate": {"post": {"operationId": "executionGate", "summary": "Execution readiness check before IP geolocation workflow", "requestBody": {"required": false, "content": {"application/json": {"schema": {"type": "object", "properties": {"ip": {"type": "string"}, "ips": {"type": "array", "items": {"type": "string"}}, "objective": {"type": "string"}}}}}}, "responses": {"200": {"description": "Gate result"}}}},
+    "/analyze": {"post": {"operationId": "analyze", "summary": "ONE-CALL: full IP intelligence — geo + network + risk + reputation + recommendation", "x-one-call": true, "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["ip"], "properties": {"ip": {"type": "string"}}}}}}, "responses": {"200": {"description": "Full IP intelligence"}, "400": {"description": "Missing ip"}, "500": {"description": "Failed"}}}}
+  },
+  "components": {"securitySchemes": {"ApiKeyAuth": {"type": "apiKey", "in": "header", "name": "X-API-Key"}}}
+}

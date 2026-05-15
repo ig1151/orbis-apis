@@ -1,0 +1,48 @@
+[
+  {
+    "name": "Weather API",
+    "shortDescription": "Current conditions, forecasts, and severe weather alerts",
+    "description": "Current conditions, multi-day forecasts, and severe weather alerts for location-aware agents, logistics workflows, and event planning automation.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/weather",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/weather/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/weather/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["weather", "forecast", "alerts", "logistics", "location"],
+    "tiers": [
+      {"name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000},
+      {
+        "name": "Weather Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/current", "pricePerCallUsdc": 0.001, "description": "Current weather conditions"},
+          {"method": "POST", "pathPattern": "/forecast", "pricePerCallUsdc": 0.002, "description": "7-day forecast"},
+          {"method": "POST", "pathPattern": "/alerts", "pricePerCallUsdc": 0.001, "description": "Severe weather alerts"},
+          {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check"},
+          {"method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.004, "description": "ONE-CALL full weather analysis"}
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/current", "pricePerCallUsdc": 0.0005, "description": "Current weather (discounted)"},
+          {"method": "POST", "pathPattern": "/forecast", "pricePerCallUsdc": 0.001, "description": "Forecast (discounted)"},
+          {"method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.003, "description": "ONE-CALL analyze (discounted)"}
+        ]
+      }
+    ],
+    "endpoints": [
+      {"method": "POST", "path": "/current", "description": "Current weather — temperature, humidity, wind, UV index, condition"},
+      {"method": "POST", "path": "/forecast", "description": "7-day forecast — high/low, precipitation, sunrise/sunset"},
+      {"method": "POST", "path": "/alerts", "description": "Severe weather alerts — type, severity, effective times, instructions"},
+      {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining"},
+      {"method": "POST", "path": "/analyze", "description": "ONE-CALL full weather analysis — current + 3-day forecast + alerts + operational impact"}
+    ]
+  }
+]

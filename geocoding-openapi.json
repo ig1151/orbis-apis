@@ -1,0 +1,24 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Geocoding API",
+    "version": "1.0.0",
+    "description": "Forward and reverse geocoding, timezone lookup, and place intelligence for mapping, logistics, and location-aware agent workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {"requests_per_day": 100, "requests_per_month": 3000},
+      "pay_per_call": {"geocode": "$0.001", "reverse": "$0.001", "timezone": "$0.001", "execution-gate": "$0.001", "lookup": "$0.003"}
+    }
+  },
+  "servers": [{"url": "https://orbis-apis.onrender.com/geocoding"}],
+  "security": [{"ApiKeyAuth": []}],
+  "paths": {
+    "/geocode": {"post": {"operationId": "geocode", "summary": "Forward geocoding — address to lat/lon, address components, accuracy", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["address"], "properties": {"address": {"type": "string"}}}}}}, "responses": {"200": {"description": "Geocoding result"}, "400": {"description": "Missing address"}, "500": {"description": "Failed"}}}},
+    "/reverse": {"post": {"operationId": "reverseGeocode", "summary": "Reverse geocoding — lat/lon to formatted address", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["lat", "lon"], "properties": {"lat": {"type": "number"}, "lon": {"type": "number"}}}}}}, "responses": {"200": {"description": "Reverse geocoding result"}, "400": {"description": "Missing lat/lon"}, "500": {"description": "Failed"}}}},
+    "/timezone": {"post": {"operationId": "timezone", "summary": "Timezone lookup — timezone ID, UTC offset, DST status, local time", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["lat", "lon"], "properties": {"lat": {"type": "number"}, "lon": {"type": "number"}}}}}}, "responses": {"200": {"description": "Timezone result"}, "400": {"description": "Missing lat/lon"}, "500": {"description": "Failed"}}}},
+    "/execution-gate": {"post": {"operationId": "executionGate", "summary": "Execution readiness check before geocoding workflow", "requestBody": {"required": false, "content": {"application/json": {"schema": {"type": "object", "properties": {"address": {"type": "string"}, "lat": {"type": "number"}, "lon": {"type": "number"}, "objective": {"type": "string"}}}}}}, "responses": {"200": {"description": "Gate result"}}}},
+    "/lookup": {"post": {"operationId": "lookup", "summary": "ONE-CALL: full geocoding intelligence — geocode + timezone + place intelligence", "x-one-call": true, "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["address"], "properties": {"address": {"type": "string"}}}}}}, "responses": {"200": {"description": "Full geocoding intelligence"}, "400": {"description": "Missing address"}, "500": {"description": "Failed"}}}}
+  },
+  "components": {"securitySchemes": {"ApiKeyAuth": {"type": "apiKey", "in": "header", "name": "X-API-Key"}}}
+}

@@ -1,0 +1,24 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Address Validation API",
+    "version": "1.0.0",
+    "description": "Validate, normalize, and geocode postal addresses for data quality, logistics, and compliance workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {"requests_per_day": 100, "requests_per_month": 3000},
+      "pay_per_call": {"validate": "$0.001", "normalize": "$0.002", "geocode": "$0.002", "execution-gate": "$0.001", "lookup": "$0.004"}
+    }
+  },
+  "servers": [{"url": "https://orbis-apis.onrender.com/address-validation"}],
+  "security": [{"ApiKeyAuth": []}],
+  "paths": {
+    "/validate": {"post": {"operationId": "validateAddress", "summary": "Validate address — deliverability, residential/commercial, DPV status", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["address"], "properties": {"address": {"type": "string"}}}}}}, "responses": {"200": {"description": "Validation result"}, "400": {"description": "Missing address"}, "500": {"description": "Failed"}}}},
+    "/normalize": {"post": {"operationId": "normalizeAddress", "summary": "Normalize address — standardize abbreviations, format components, corrections", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["address"], "properties": {"address": {"type": "string"}}}}}}, "responses": {"200": {"description": "Normalized address"}, "400": {"description": "Missing address"}, "500": {"description": "Failed"}}}},
+    "/geocode": {"post": {"operationId": "geocodeAddress", "summary": "Geocode address — lat/lon, accuracy, place ID, timezone", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["address"], "properties": {"address": {"type": "string"}}}}}}, "responses": {"200": {"description": "Geocoded result"}, "400": {"description": "Missing address"}, "500": {"description": "Failed"}}}},
+    "/execution-gate": {"post": {"operationId": "executionGate", "summary": "Execution readiness check before address validation workflow", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["address"], "properties": {"address": {"type": "string"}, "objective": {"type": "string"}}}}}}, "responses": {"200": {"description": "Gate result"}}}},
+    "/lookup": {"post": {"operationId": "lookup", "summary": "ONE-CALL: full address intelligence — validate + normalize + geocode + quality grade", "x-one-call": true, "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["address"], "properties": {"address": {"type": "string"}}}}}}, "responses": {"200": {"description": "Full address intelligence"}, "400": {"description": "Missing address"}, "500": {"description": "Failed"}}}}
+  },
+  "components": {"securitySchemes": {"ApiKeyAuth": {"type": "apiKey", "in": "header", "name": "X-API-Key"}}}
+}

@@ -1,0 +1,48 @@
+[
+  {
+    "name": "Address Validation API",
+    "shortDescription": "Validate, normalize, and geocode postal addresses for data quality and logistics",
+    "description": "Validate, normalize, and geocode postal addresses for data quality, logistics, and compliance workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/address-validation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/address-validation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/address-validation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["address", "validation", "geocoding", "logistics", "data-quality"],
+    "tiers": [
+      {"name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000},
+      {
+        "name": "Address Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.001, "description": "Address validation"},
+          {"method": "POST", "pathPattern": "/normalize", "pricePerCallUsdc": 0.002, "description": "Address normalization"},
+          {"method": "POST", "pathPattern": "/geocode", "pricePerCallUsdc": 0.002, "description": "Address geocoding"},
+          {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check"},
+          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "ONE-CALL full address intelligence"}
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.0005, "description": "Validate (discounted)"},
+          {"method": "POST", "pathPattern": "/normalize", "pricePerCallUsdc": 0.001, "description": "Normalize (discounted)"},
+          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL (discounted)"}
+        ]
+      }
+    ],
+    "endpoints": [
+      {"method": "POST", "path": "/validate", "description": "Validate address — deliverability, residential/commercial, DPV status"},
+      {"method": "POST", "path": "/normalize", "description": "Normalize address — standardize abbreviations, format components, corrections"},
+      {"method": "POST", "path": "/geocode", "description": "Geocode address — lat/lon, accuracy, place ID, timezone"},
+      {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining"},
+      {"method": "POST", "path": "/lookup", "description": "ONE-CALL full address intelligence — validate + normalize + geocode + quality grade"}
+    ]
+  }
+]

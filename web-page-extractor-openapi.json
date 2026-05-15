@@ -1,0 +1,24 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Web Page Extractor API",
+    "version": "1.0.0",
+    "description": "Extract clean text, links, and metadata from any URL for ingestion into RAG pipelines, research agents, and content workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {"requests_per_day": 100, "requests_per_month": 3000},
+      "pay_per_call": {"extract-text": "$0.003", "extract-links": "$0.002", "extract-metadata": "$0.002", "execution-gate": "$0.001", "extract": "$0.006"}
+    }
+  },
+  "servers": [{"url": "https://orbis-apis.onrender.com/web-page-extractor"}],
+  "security": [{"ApiKeyAuth": []}],
+  "paths": {
+    "/extract-text": {"post": {"operationId": "extractText", "summary": "Extract clean readable text — body, summary, word count, language", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["url"], "properties": {"url": {"type": "string"}}}}}}, "responses": {"200": {"description": "Extracted text"}, "400": {"description": "Missing url"}, "500": {"description": "Failed"}}}},
+    "/extract-links": {"post": {"operationId": "extractLinks", "summary": "Extract all links — internal, external, social, downloads", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["url"], "properties": {"url": {"type": "string"}}}}}}, "responses": {"200": {"description": "Extracted links"}, "400": {"description": "Missing url"}, "500": {"description": "Failed"}}}},
+    "/extract-metadata": {"post": {"operationId": "extractMetadata", "summary": "Extract metadata — title, description, author, OG tags, schema types", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["url"], "properties": {"url": {"type": "string"}}}}}}, "responses": {"200": {"description": "Extracted metadata"}, "400": {"description": "Missing url"}, "500": {"description": "Failed"}}}},
+    "/execution-gate": {"post": {"operationId": "executionGate", "summary": "Execution readiness check before page extraction workflow", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["url"], "properties": {"url": {"type": "string"}, "objective": {"type": "string"}}}}}}, "responses": {"200": {"description": "Gate result"}}}},
+    "/extract": {"post": {"operationId": "extract", "summary": "ONE-CALL: full page extraction — text + metadata + links + RAG-ready chunks", "x-one-call": true, "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["url"], "properties": {"url": {"type": "string"}}}}}}, "responses": {"200": {"description": "Full page extraction"}, "400": {"description": "Missing url"}, "500": {"description": "Failed"}}}}
+  },
+  "components": {"securitySchemes": {"ApiKeyAuth": {"type": "apiKey", "in": "header", "name": "X-API-Key"}}}
+}

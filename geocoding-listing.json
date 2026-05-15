@@ -1,0 +1,48 @@
+[
+  {
+    "name": "Geocoding API",
+    "shortDescription": "Forward/reverse geocoding, timezone lookup, and place intelligence",
+    "description": "Forward and reverse geocoding, timezone lookup, and place intelligence for mapping, logistics, and location-aware agent workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/geocoding",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/geocoding/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/geocoding/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["geocoding", "location", "maps", "timezone", "logistics"],
+    "tiers": [
+      {"name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000},
+      {
+        "name": "Geo Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/geocode", "pricePerCallUsdc": 0.001, "description": "Forward geocoding"},
+          {"method": "POST", "pathPattern": "/reverse", "pricePerCallUsdc": 0.001, "description": "Reverse geocoding"},
+          {"method": "POST", "pathPattern": "/timezone", "pricePerCallUsdc": 0.001, "description": "Timezone lookup"},
+          {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check"},
+          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL full geocoding intelligence"}
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/geocode", "pricePerCallUsdc": 0.0005, "description": "Geocode (discounted)"},
+          {"method": "POST", "pathPattern": "/reverse", "pricePerCallUsdc": 0.0005, "description": "Reverse (discounted)"},
+          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.002, "description": "ONE-CALL (discounted)"}
+        ]
+      }
+    ],
+    "endpoints": [
+      {"method": "POST", "path": "/geocode", "description": "Forward geocoding — address to lat/lon, address components, accuracy"},
+      {"method": "POST", "path": "/reverse", "description": "Reverse geocoding — lat/lon to formatted address"},
+      {"method": "POST", "path": "/timezone", "description": "Timezone lookup — timezone ID, UTC offset, DST status, local time"},
+      {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining"},
+      {"method": "POST", "path": "/lookup", "description": "ONE-CALL full geocoding intelligence — geocode + timezone + place intelligence"}
+    ]
+  }
+]

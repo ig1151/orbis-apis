@@ -1,0 +1,48 @@
+[
+  {
+    "name": "IP Geolocation API",
+    "shortDescription": "IP address geolocation, risk scoring, and bulk lookups for fraud detection",
+    "description": "IP address geolocation, risk scoring, and bulk lookups for fraud detection, personalization, and access control agent workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/ip-geolocation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ip-geolocation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ip-geolocation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["ip", "geolocation", "fraud", "security", "access-control"],
+    "tiers": [
+      {"name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000},
+      {
+        "name": "IP Intel Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.001, "description": "IP geolocation"},
+          {"method": "POST", "pathPattern": "/risk", "pricePerCallUsdc": 0.002, "description": "IP risk scoring"},
+          {"method": "POST", "pathPattern": "/bulk", "pricePerCallUsdc": 0.008, "description": "Bulk IP geolocation (up to 50)"},
+          {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check"},
+          {"method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.004, "description": "ONE-CALL full IP intelligence"}
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.0005, "description": "Lookup (discounted)"},
+          {"method": "POST", "pathPattern": "/risk", "pricePerCallUsdc": 0.001, "description": "Risk (discounted)"},
+          {"method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.003, "description": "ONE-CALL (discounted)"}
+        ]
+      }
+    ],
+    "endpoints": [
+      {"method": "POST", "path": "/lookup", "description": "Geolocate IP — country, city, lat/lon, ISP, connection type"},
+      {"method": "POST", "path": "/risk", "description": "IP risk score — VPN, Tor, proxy, bot, malicious, blacklist status"},
+      {"method": "POST", "path": "/bulk", "description": "Bulk IP geolocation for up to 50 IPs"},
+      {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining"},
+      {"method": "POST", "path": "/analyze", "description": "ONE-CALL full IP intelligence — geo + network + risk + reputation + recommendation"}
+    ]
+  }
+]

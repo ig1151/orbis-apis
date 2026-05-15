@@ -1,0 +1,48 @@
+[
+  {
+    "name": "Phone Validation API",
+    "shortDescription": "Validate phone numbers, detect carrier, and score risk for fraud prevention",
+    "description": "Validate phone numbers, detect carrier and line type, format for international standards, and score risk for fraud prevention workflows.",
+    "category": "communication",
+    "baseUrl": "https://orbis-apis.onrender.com/phone-validation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/phone-validation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/phone-validation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["phone", "validation", "carrier", "fraud", "communication"],
+    "tiers": [
+      {"name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000},
+      {
+        "name": "Phone Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.001, "description": "Phone validation"},
+          {"method": "POST", "pathPattern": "/carrier", "pricePerCallUsdc": 0.002, "description": "Carrier and line type detection"},
+          {"method": "POST", "pathPattern": "/format", "pricePerCallUsdc": 0.001, "description": "Phone number formatting"},
+          {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check"},
+          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL full phone intelligence"}
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.0005, "description": "Validate (discounted)"},
+          {"method": "POST", "pathPattern": "/carrier", "pricePerCallUsdc": 0.001, "description": "Carrier (discounted)"},
+          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.002, "description": "ONE-CALL (discounted)"}
+        ]
+      }
+    ],
+    "endpoints": [
+      {"method": "POST", "path": "/validate", "description": "Validate phone number — valid/possible, country, number type, risk score"},
+      {"method": "POST", "path": "/carrier", "description": "Carrier and line type detection — carrier name, network type, VOIP, ported status"},
+      {"method": "POST", "path": "/format", "description": "Format phone in international standards — E.164, national, international, RFC3966"},
+      {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining"},
+      {"method": "POST", "path": "/lookup", "description": "ONE-CALL full phone intelligence — validate + carrier + format + risk score"}
+    ]
+  }
+]

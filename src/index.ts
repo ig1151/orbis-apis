@@ -3096,6 +3096,46 @@ import openapiValidatorOpenapiRouter from './routes/openapi-validator-api/routes
 import addressRiskRouter from './routes/address-risk-api/routes/intelligence';
 import addressRiskOpenapiRouter from './routes/address-risk-api/routes/openapi';
 
+// ── domain-intelligence ───────────────────────────────────────────────────────
+import domainIntelligenceApiRouter from './routes/domain-intelligence-api/routes/intelligence';
+import domainIntelligenceApiOpenapiRouter from './routes/domain-intelligence-api/routes/openapi';
+
+// ── web-page-extractor ────────────────────────────────────────────────────────
+import webPageExtractorRouter from './routes/web-page-extractor-api/routes/intelligence';
+import webPageExtractorOpenapiRouter from './routes/web-page-extractor-api/routes/openapi';
+
+// ── news-search ───────────────────────────────────────────────────────────────
+import newsSearchRouter from './routes/news-search-api/routes/intelligence';
+import newsSearchOpenapiRouter from './routes/news-search-api/routes/openapi';
+
+// ── crypto-price ──────────────────────────────────────────────────────────────
+import cryptoPriceRouter from './routes/crypto-price-api/routes/intelligence';
+import cryptoPriceOpenapiRouter from './routes/crypto-price-api/routes/openapi';
+
+// ── fx-rates ──────────────────────────────────────────────────────────────────
+import fxRatesRouter from './routes/fx-rates-api/routes/intelligence';
+import fxRatesOpenapiRouter from './routes/fx-rates-api/routes/openapi';
+
+// ── weather ───────────────────────────────────────────────────────────────────
+import weatherRouter from './routes/weather-api/routes/intelligence';
+import weatherOpenapiRouter from './routes/weather-api/routes/openapi';
+
+// ── geocoding (new pattern) ───────────────────────────────────────────────────
+import geocodingIntelligenceRouter from './routes/geocoding-api/routes/intelligence';
+import geocodingIntelligenceOpenapiRouter from './routes/geocoding-api/routes/openapi';
+
+// ── ip-geolocation ────────────────────────────────────────────────────────────
+import ipGeolocationRouter from './routes/ip-geolocation-api/routes/intelligence';
+import ipGeolocationOpenapiRouter from './routes/ip-geolocation-api/routes/openapi';
+
+// ── phone-validation (new pattern) ───────────────────────────────────────────
+import phoneValidationIntelligenceRouter from './routes/phone-validation-api/routes/intelligence';
+import phoneValidationIntelligenceOpenapiRouter from './routes/phone-validation-api/routes/openapi';
+
+// ── address-validation ────────────────────────────────────────────────────────
+import addressValidationApiRouter from './routes/address-validation-api/routes/intelligence';
+import addressValidationApiOpenapiRouter from './routes/address-validation-api/routes/openapi';
+
 // ── due-diligence ─────────────────────────────────────────────────────────────
 import dueDiligenceRouter from './routes/due-diligence-api/routes/intelligence';
 import dueDiligenceOpenapiRouter from './routes/due-diligence-api/routes/openapi';
@@ -3346,4 +3386,226 @@ app.get('/address-risk/info', (_req, res) => res.json({
     { method: 'POST', path: '/assess', description: 'ONE-CALL: full address risk assessment — risk score + sanctions + labels + recommendations', x_one_call: true },
   ],
   execution_chain: { previous: 'wallet-intelligence', next: 'supply-chain-risk', optional_next: ['compliance', 'wallet-reputation'] },
+}));
+
+// ── domain-intelligence ───────────────────────────────────────────────────────
+app.use('/domain-intelligence/openapi.json', domainIntelligenceApiOpenapiRouter);
+app.use('/domain-intelligence', domainIntelligenceApiRouter);
+app.get('/domain-intelligence/info', (_req, res) => res.json({
+  name: 'Domain Intelligence API', slug: 'domain-intelligence', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { whois: '$0.002', tech_stack: '$0.003', company_from_domain: '$0.003', execution_gate: '$0.001', lookup: '$0.006' },
+    high_volume: { whois: '$0.001', tech_stack: '$0.002', lookup: '$0.004' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/whois', description: 'WHOIS data — registrar, dates, name servers, registrant country' },
+    { method: 'POST', path: '/tech-stack', description: 'Technology stack detection — CMS, CDN, analytics, hosting, CRM' },
+    { method: 'POST', path: '/company-from-domain', description: 'Identify company from domain — name, industry, headcount range, HQ' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full domain intelligence — WHOIS + tech stack + company identification', x_one_call: true },
+  ],
+  execution_chain: { previous: 'email-finder', next: 'company-enrichment', optional_next: ['due-diligence', 'linkedin-profile'] },
+}));
+
+// ── web-page-extractor ────────────────────────────────────────────────────────
+app.use('/web-page-extractor/openapi.json', webPageExtractorOpenapiRouter);
+app.use('/web-page-extractor', webPageExtractorRouter);
+app.get('/web-page-extractor/info', (_req, res) => res.json({
+  name: 'Web Page Extractor API', slug: 'web-page-extractor', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { extract_text: '$0.003', extract_links: '$0.002', extract_metadata: '$0.002', execution_gate: '$0.001', extract: '$0.006' },
+    high_volume: { extract_text: '$0.002', extract_links: '$0.001', extract: '$0.004' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/extract-text', description: 'Extract clean readable text — body, summary, word count, language' },
+    { method: 'POST', path: '/extract-links', description: 'Extract all links — internal, external, social, downloads' },
+    { method: 'POST', path: '/extract-metadata', description: 'Extract metadata — title, description, author, OG tags, schema types' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/extract', description: 'ONE-CALL: full page extraction — text + metadata + links + RAG-ready chunks', x_one_call: true },
+  ],
+  execution_chain: { previous: 'serp-intelligence', next: 'knowledge-graph', optional_next: ['competitor-monitor', 'web-scraper'] },
+}));
+
+// ── news-search ───────────────────────────────────────────────────────────────
+app.use('/news-search/openapi.json', newsSearchOpenapiRouter);
+app.use('/news-search', newsSearchRouter);
+app.get('/news-search/info', (_req, res) => res.json({
+  name: 'News Search API', slug: 'news-search', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { latest: '$0.002', by_topic: '$0.003', by_company: '$0.003', execution_gate: '$0.001', search: '$0.006' },
+    high_volume: { latest: '$0.001', by_company: '$0.002', search: '$0.004' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/latest', description: 'Latest top news articles with sentiment classification' },
+    { method: 'POST', path: '/by-topic', description: 'Search news by topic with sentiment trend analysis' },
+    { method: 'POST', path: '/by-company', description: 'Company news — sentiment, key themes, risk signals' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/search', description: 'ONE-CALL: full news intelligence — articles + sentiment + themes + risk signals', x_one_call: true },
+  ],
+  execution_chain: { previous: 'serp-intelligence', next: 'sentiment-api', optional_next: ['knowledge-graph', 'risk-event-forecast'] },
+}));
+
+// ── crypto-price ──────────────────────────────────────────────────────────────
+app.use('/crypto-price/openapi.json', cryptoPriceOpenapiRouter);
+app.use('/crypto-price', cryptoPriceRouter);
+app.get('/crypto-price/info', (_req, res) => res.json({
+  name: 'Crypto Price API', slug: 'crypto-price', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { price: '$0.001', ohlc: '$0.002', market_cap: '$0.002', execution_gate: '$0.001', lookup: '$0.004' },
+    high_volume: { price: '$0.0005', ohlc: '$0.001', lookup: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/price', description: 'Real-time crypto price — USD, 24h change, volume, ATH' },
+    { method: 'POST', path: '/ohlc', description: 'OHLC history — open, high, low, close, volume by interval' },
+    { method: 'POST', path: '/market-cap', description: 'Market cap data — rank, dominance, supply, FDV' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full crypto intelligence — price + market cap + technicals + on-chain signals', x_one_call: true },
+  ],
+  execution_chain: { previous: 'stock-quote', next: 'address-risk', optional_next: ['portfolio-risk', 'autonomous-negotiation'] },
+  financial_disclaimer: 'For informational purposes only. Crypto markets are highly volatile. Not financial advice.',
+  paper_mode_recommended: true,
+}));
+
+// ── fx-rates ──────────────────────────────────────────────────────────────────
+app.use('/fx-rates/openapi.json', fxRatesOpenapiRouter);
+app.use('/fx-rates', fxRatesRouter);
+app.get('/fx-rates/info', (_req, res) => res.json({
+  name: 'FX Rates API', slug: 'fx-rates', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { convert: '$0.001', latest: '$0.001', historical: '$0.002', execution_gate: '$0.001', lookup: '$0.004' },
+    high_volume: { convert: '$0.0005', latest: '$0.0005', lookup: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/convert', description: 'Convert currency amount — rate, bid/ask, spread' },
+    { method: 'POST', path: '/latest', description: 'Latest mid-market rates for 20 major currencies' },
+    { method: 'POST', path: '/historical', description: 'Historical FX rate for a currency pair on a specific date' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full FX intelligence — rate + historical context + technical signals', x_one_call: true },
+  ],
+  execution_chain: { previous: 'stock-quote', next: 'invoice-parser', optional_next: ['autonomous-negotiation', 'payment-routing'] },
+}));
+
+// ── weather ───────────────────────────────────────────────────────────────────
+app.use('/weather/openapi.json', weatherOpenapiRouter);
+app.use('/weather', weatherRouter);
+app.get('/weather/info', (_req, res) => res.json({
+  name: 'Weather API', slug: 'weather', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { current: '$0.001', forecast: '$0.002', alerts: '$0.001', execution_gate: '$0.001', analyze: '$0.004' },
+    high_volume: { current: '$0.0005', forecast: '$0.001', analyze: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/current', description: 'Current weather — temperature, humidity, wind, UV index, condition' },
+    { method: 'POST', path: '/forecast', description: '7-day forecast — high/low, precipitation, sunrise/sunset' },
+    { method: 'POST', path: '/alerts', description: 'Severe weather alerts — type, severity, effective times, instructions' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full weather intelligence — current + 3-day forecast + alerts + operational impact', x_one_call: true },
+  ],
+  execution_chain: { previous: 'geocoding', next: 'geocoding', optional_next: ['supply-chain-risk', 'risk-event-forecast'] },
+}));
+
+// ── geocoding (new intelligence pattern, after existing /geocoding mount) ─────
+app.use('/geocoding/openapi.json', geocodingIntelligenceOpenapiRouter);
+app.use('/geocoding/info', (_req, res) => res.json({
+  name: 'Geocoding API', slug: 'geocoding', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { geocode: '$0.001', reverse: '$0.001', timezone: '$0.001', execution_gate: '$0.001', lookup: '$0.003' },
+    high_volume: { geocode: '$0.0005', reverse: '$0.0005', lookup: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/geocode', description: 'Forward geocoding — address to lat/lon, address components, accuracy' },
+    { method: 'POST', path: '/reverse', description: 'Reverse geocoding — lat/lon to formatted address' },
+    { method: 'POST', path: '/timezone', description: 'Timezone lookup — timezone ID, UTC offset, DST status, local time' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full geocoding intelligence — geocode + timezone + place intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'ip-geolocation', next: 'weather', optional_next: ['address-validation', 'supply-chain-risk'] },
+}));
+app.use('/geocoding', geocodingIntelligenceRouter);
+
+// ── ip-geolocation ────────────────────────────────────────────────────────────
+app.use('/ip-geolocation/openapi.json', ipGeolocationOpenapiRouter);
+app.use('/ip-geolocation', ipGeolocationRouter);
+app.get('/ip-geolocation/info', (_req, res) => res.json({
+  name: 'IP Geolocation API', slug: 'ip-geolocation', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { lookup: '$0.001', risk: '$0.002', bulk: '$0.008', execution_gate: '$0.001', analyze: '$0.004' },
+    high_volume: { lookup: '$0.0005', risk: '$0.001', analyze: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/lookup', description: 'Geolocate IP — country, city, lat/lon, ISP, connection type' },
+    { method: 'POST', path: '/risk', description: 'IP risk score — VPN, Tor, proxy, bot, malicious, blacklist status' },
+    { method: 'POST', path: '/bulk', description: 'Bulk IP geolocation for up to 50 IPs' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full IP intelligence — geo + network + risk + reputation + recommendation', x_one_call: true },
+  ],
+  execution_chain: { previous: 'address-validation', next: 'user-risk', optional_next: ['phone-validation', 'address-risk'] },
+}));
+
+// ── phone-validation (new intelligence pattern) ───────────────────────────────
+app.use('/phone-validation/openapi.json', phoneValidationIntelligenceOpenapiRouter);
+app.use('/phone-validation', phoneValidationIntelligenceRouter);
+app.get('/phone-validation/info', (_req, res) => res.json({
+  name: 'Phone Validation API', slug: 'phone-validation', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { validate: '$0.001', carrier: '$0.002', format: '$0.001', execution_gate: '$0.001', lookup: '$0.003' },
+    high_volume: { validate: '$0.0005', carrier: '$0.001', lookup: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/validate', description: 'Validate phone number — valid/possible, country, number type, risk score' },
+    { method: 'POST', path: '/carrier', description: 'Carrier and line type detection — carrier name, network type, VOIP, ported status' },
+    { method: 'POST', path: '/format', description: 'Format phone in international standards — E.164, national, international, RFC3966' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full phone intelligence — validate + carrier + format + risk score', x_one_call: true },
+  ],
+  execution_chain: { previous: 'email-finder', next: 'address-validation', optional_next: ['ip-geolocation', 'cold-outreach'] },
+}));
+
+// ── address-validation ────────────────────────────────────────────────────────
+app.use('/address-validation/openapi.json', addressValidationApiOpenapiRouter);
+app.use('/address-validation', addressValidationApiRouter);
+app.get('/address-validation/info', (_req, res) => res.json({
+  name: 'Address Validation API', slug: 'address-validation', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { validate: '$0.001', normalize: '$0.002', geocode: '$0.002', execution_gate: '$0.001', lookup: '$0.004' },
+    high_volume: { validate: '$0.0005', normalize: '$0.001', lookup: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/validate', description: 'Validate address — deliverability, residential/commercial, DPV status' },
+    { method: 'POST', path: '/normalize', description: 'Normalize address — standardize abbreviations, format components, corrections' },
+    { method: 'POST', path: '/geocode', description: 'Geocode address — lat/lon, accuracy, place ID, timezone' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full address intelligence — validate + normalize + geocode + quality grade', x_one_call: true },
+  ],
+  execution_chain: { previous: 'phone-validation', next: 'geocoding', optional_next: ['ip-geolocation', 'supply-chain-risk'] },
 }));

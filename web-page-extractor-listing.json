@@ -1,0 +1,48 @@
+[
+  {
+    "name": "Web Page Extractor API",
+    "shortDescription": "Extract clean text, links, and metadata from any URL",
+    "description": "Extract clean text, links, and metadata from any URL for ingestion into RAG pipelines, research agents, and content workflows.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-page-extractor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-page-extractor/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-page-extractor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["web-scraping", "rag", "extraction", "content", "metadata"],
+    "tiers": [
+      {"name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000},
+      {
+        "name": "Extractor Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/extract-text", "pricePerCallUsdc": 0.003, "description": "Extract clean text"},
+          {"method": "POST", "pathPattern": "/extract-links", "pricePerCallUsdc": 0.002, "description": "Extract all links"},
+          {"method": "POST", "pathPattern": "/extract-metadata", "pricePerCallUsdc": 0.002, "description": "Extract metadata"},
+          {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check"},
+          {"method": "POST", "pathPattern": "/extract", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full page extraction"}
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/extract-text", "pricePerCallUsdc": 0.002, "description": "Extract text (discounted)"},
+          {"method": "POST", "pathPattern": "/extract-links", "pricePerCallUsdc": 0.001, "description": "Extract links (discounted)"},
+          {"method": "POST", "pathPattern": "/extract", "pricePerCallUsdc": 0.004, "description": "ONE-CALL extraction (discounted)"}
+        ]
+      }
+    ],
+    "endpoints": [
+      {"method": "POST", "path": "/extract-text", "description": "Extract clean readable text — body, summary, word count, language"},
+      {"method": "POST", "path": "/extract-links", "description": "Extract all links — internal, external, social, downloads"},
+      {"method": "POST", "path": "/extract-metadata", "description": "Extract metadata — title, description, author, OG tags, schema types"},
+      {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining"},
+      {"method": "POST", "path": "/extract", "description": "ONE-CALL full page extraction — text + metadata + links + RAG-ready chunks"}
+    ]
+  }
+]

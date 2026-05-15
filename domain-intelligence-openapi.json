@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Domain Intelligence API",
+    "version": "1.0.0",
+    "description": "WHOIS data, technology stack detection, and company identification from domain names for autonomous research and enrichment workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {"requests_per_day": 100, "requests_per_month": 3000},
+      "pay_per_call": {"whois": "$0.002", "tech-stack": "$0.003", "company-from-domain": "$0.003", "execution-gate": "$0.001", "lookup": "$0.006"}
+    }
+  },
+  "servers": [{"url": "https://orbis-apis.onrender.com/domain-intelligence"}],
+  "security": [{"ApiKeyAuth": []}],
+  "paths": {
+    "/whois": {
+      "post": {
+        "operationId": "whoisLookup",
+        "summary": "WHOIS data — registrar, dates, name servers, registrant country",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["domain"], "properties": {"domain": {"type": "string"}}}}}},
+        "responses": {"200": {"description": "WHOIS result"}, "400": {"description": "Missing domain"}, "500": {"description": "Failed"}}
+      }
+    },
+    "/tech-stack": {
+      "post": {
+        "operationId": "techStack",
+        "summary": "Technology stack detection — CMS, CDN, analytics, hosting, CRM",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["domain"], "properties": {"domain": {"type": "string"}}}}}},
+        "responses": {"200": {"description": "Tech stack"}, "400": {"description": "Missing domain"}, "500": {"description": "Failed"}}
+      }
+    },
+    "/company-from-domain": {
+      "post": {
+        "operationId": "companyFromDomain",
+        "summary": "Identify company from domain — name, industry, headcount range, HQ",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["domain"], "properties": {"domain": {"type": "string"}}}}}},
+        "responses": {"200": {"description": "Company identification"}, "400": {"description": "Missing domain"}, "500": {"description": "Failed"}}
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check before domain intelligence workflow",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["domain"], "properties": {"domain": {"type": "string"}, "objective": {"type": "string"}}}}}},
+        "responses": {"200": {"description": "Gate result"}}
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL: full domain intelligence — WHOIS + tech stack + company identification",
+        "x-one-call": true,
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["domain"], "properties": {"domain": {"type": "string"}}}}}},
+        "responses": {"200": {"description": "Full domain intelligence"}, "400": {"description": "Missing domain"}, "500": {"description": "Failed"}}
+      }
+    }
+  },
+  "components": {"securitySchemes": {"ApiKeyAuth": {"type": "apiKey", "in": "header", "name": "X-API-Key"}}}
+}

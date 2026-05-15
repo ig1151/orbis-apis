@@ -1,0 +1,48 @@
+[
+  {
+    "name": "News Search API",
+    "shortDescription": "Search latest news and surface market, competitive, and risk signals",
+    "description": "Search latest news, filter by topic or company, and surface signals for market, competitive, and risk intelligence workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/news-search",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/news-search/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/news-search/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["news", "search", "sentiment", "intelligence", "monitoring"],
+    "tiers": [
+      {"name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000},
+      {
+        "name": "News Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/latest", "pricePerCallUsdc": 0.002, "description": "Latest top news"},
+          {"method": "POST", "pathPattern": "/by-topic", "pricePerCallUsdc": 0.003, "description": "News by topic"},
+          {"method": "POST", "pathPattern": "/by-company", "pricePerCallUsdc": 0.003, "description": "News by company"},
+          {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check"},
+          {"method": "POST", "pathPattern": "/search", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full news intelligence"}
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/latest", "pricePerCallUsdc": 0.001, "description": "Latest news (discounted)"},
+          {"method": "POST", "pathPattern": "/by-company", "pricePerCallUsdc": 0.002, "description": "Company news (discounted)"},
+          {"method": "POST", "pathPattern": "/search", "pricePerCallUsdc": 0.004, "description": "ONE-CALL search (discounted)"}
+        ]
+      }
+    ],
+    "endpoints": [
+      {"method": "POST", "path": "/latest", "description": "Latest top news articles with sentiment classification"},
+      {"method": "POST", "path": "/by-topic", "description": "Search news by topic with sentiment trend analysis"},
+      {"method": "POST", "path": "/by-company", "description": "Company news — sentiment, key themes, risk signals"},
+      {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining"},
+      {"method": "POST", "path": "/search", "description": "ONE-CALL full news intelligence — articles + sentiment + themes + risk signals"}
+    ]
+  }
+]

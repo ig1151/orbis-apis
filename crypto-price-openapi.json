@@ -1,0 +1,26 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Crypto Price API",
+    "version": "1.0.0",
+    "description": "Real-time crypto prices, OHLC history, and market cap data for DeFi agents, portfolio trackers, and autonomous trading workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {"requests_per_day": 100, "requests_per_month": 3000},
+      "pay_per_call": {"price": "$0.001", "ohlc": "$0.002", "market-cap": "$0.002", "execution-gate": "$0.001", "lookup": "$0.004"}
+    },
+    "x-financial-disclaimer": "For informational purposes only. Crypto markets are highly volatile. Not financial advice.",
+    "x-paper-mode-recommended": true
+  },
+  "servers": [{"url": "https://orbis-apis.onrender.com/crypto-price"}],
+  "security": [{"ApiKeyAuth": []}],
+  "paths": {
+    "/price": {"post": {"operationId": "cryptoPrice", "summary": "Real-time crypto price — USD, 24h change, volume, ATH", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["symbol"], "properties": {"symbol": {"type": "string", "example": "BTC"}}}}}}, "responses": {"200": {"description": "Crypto price"}, "400": {"description": "Missing symbol"}, "500": {"description": "Failed"}}}},
+    "/ohlc": {"post": {"operationId": "cryptoOHLC", "summary": "OHLC history — open, high, low, close, volume by interval", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["symbol"], "properties": {"symbol": {"type": "string"}, "from_date": {"type": "string"}, "to_date": {"type": "string"}, "interval": {"type": "string", "default": "1d"}}}}}}, "responses": {"200": {"description": "OHLC data"}, "400": {"description": "Missing symbol"}, "500": {"description": "Failed"}}}},
+    "/market-cap": {"post": {"operationId": "cryptoMarketCap", "summary": "Market cap data — rank, dominance, supply, FDV", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["symbol"], "properties": {"symbol": {"type": "string"}}}}}}, "responses": {"200": {"description": "Market cap"}, "400": {"description": "Missing symbol"}, "500": {"description": "Failed"}}}},
+    "/execution-gate": {"post": {"operationId": "executionGate", "summary": "Execution readiness check before crypto price workflow", "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["symbol"], "properties": {"symbol": {"type": "string"}, "objective": {"type": "string"}}}}}}, "responses": {"200": {"description": "Gate result"}}}},
+    "/lookup": {"post": {"operationId": "lookup", "summary": "ONE-CALL: full crypto intelligence — price + market cap + technicals + on-chain signals", "x-one-call": true, "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["symbol"], "properties": {"symbol": {"type": "string"}}}}}}, "responses": {"200": {"description": "Full crypto intelligence"}, "400": {"description": "Missing symbol"}, "500": {"description": "Failed"}}}}
+  },
+  "components": {"securitySchemes": {"ApiKeyAuth": {"type": "apiKey", "in": "header", "name": "X-API-Key"}}}
+}

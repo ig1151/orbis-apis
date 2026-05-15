@@ -1,0 +1,48 @@
+[
+  {
+    "name": "Crypto Price API",
+    "shortDescription": "Real-time crypto prices, OHLC history, and market cap data",
+    "description": "Real-time crypto prices, OHLC history, and market cap data for DeFi agents, portfolio trackers, and autonomous trading workflows.",
+    "category": "blockchain-web3",
+    "baseUrl": "https://orbis-apis.onrender.com/crypto-price",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/crypto-price/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/crypto-price/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["crypto", "prices", "defi", "trading", "blockchain"],
+    "tiers": [
+      {"name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000},
+      {
+        "name": "Crypto Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/price", "pricePerCallUsdc": 0.001, "description": "Real-time crypto price"},
+          {"method": "POST", "pathPattern": "/ohlc", "pricePerCallUsdc": 0.002, "description": "OHLC history"},
+          {"method": "POST", "pathPattern": "/market-cap", "pricePerCallUsdc": 0.002, "description": "Market cap data"},
+          {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check"},
+          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "ONE-CALL full crypto intelligence"}
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {"method": "POST", "pathPattern": "/price", "pricePerCallUsdc": 0.0005, "description": "Price (discounted)"},
+          {"method": "POST", "pathPattern": "/ohlc", "pricePerCallUsdc": 0.001, "description": "OHLC (discounted)"},
+          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL (discounted)"}
+        ]
+      }
+    ],
+    "endpoints": [
+      {"method": "POST", "path": "/price", "description": "Real-time crypto price — USD, 24h change, volume, ATH"},
+      {"method": "POST", "path": "/ohlc", "description": "OHLC history — open, high, low, close, volume by interval"},
+      {"method": "POST", "path": "/market-cap", "description": "Market cap data — rank, dominance, supply, FDV"},
+      {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining"},
+      {"method": "POST", "path": "/lookup", "description": "ONE-CALL full crypto intelligence — price + market cap + technicals + on-chain signals"}
+    ]
+  }
+]
