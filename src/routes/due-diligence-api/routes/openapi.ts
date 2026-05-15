@@ -1,0 +1,488 @@
+import { Router, Request, Response } from 'express';
+const router = Router();
+
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+
+const contextEnum = { type: 'string', enum: ['acquisition', 'investment', 'partnership', 'vendor'] };
+
+const diligenceResultSchema = {
+  type: 'object',
+  properties: {
+    overall_score: { type: 'number', minimum: 0, maximum: 100 },
+    recommendation: { type: 'string', enum: ['proceed', 'proceed_with_conditions', 'request_more_info', 'avoid'] },
+    red_flags: { type: 'array', items: { type: 'string' } },
+    green_flags: { type: 'array', items: { type: 'string' } },
+    confidence_per_section: confidence,
+  },
+};
+
+const standardFooter = {
+  trace_id: { type: 'string' },
+  computed_at: { type: 'string', format: 'date-time' },
+  confidence_per_section: confidence,
+  recommended_actions_priority_order: actions,
+  privacy,
+};
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'Due Diligence API',
+      version: '1.0.0',
+      description: 'Perform AI-powered due diligence on companies: risk scoring, founder analysis, compliance checks, reputation analysis, financial health assessment, and legal risk evaluation.',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+      'x-pricing': {
+        company_risk: 0.007,
+        founder_analysis: 0.008,
+        compliance_check: 0.008,
+        reputation_analysis: 0.007,
+        financial_health: 0.007,
+        legal_risk: 0.008,
+        execution_gate: 0.001,
+        due_diligence: 0.018,
+        high_volume_discount: '~35% off',
+      },
+    },
+    servers: [{ url: 'https://orbis-apis.onrender.com/due-diligence' }],
+    components: {
+      securitySchemes: {
+        ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' },
+      },
+      schemas: {
+        DiligenceResult: diligenceResultSchema,
+      },
+    },
+    security: [{ ApiKeyAuth: [] }],
+    paths: {
+      '/': {
+        get: {
+          operationId: 'getOpenApiSpec',
+          summary: 'OpenAPI 3.1.0 specification for the Due Diligence API',
+          responses: { '200': { description: 'OpenAPI spec returned as JSON' } },
+        },
+      },
+      '/company-risk': {
+        post: {
+          operationId: 'companyRisk',
+          summary: 'Score overall company risk with red and green flags for a given transaction context',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string' },
+                    context: contextEnum,
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Company risk score with recommendation, red flags, and green flags',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      ...diligenceResultSchema.properties,
+                      risk_categories: {
+                        type: 'object',
+                        properties: {
+                          financial: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                          legal: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                          operational: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                          reputational: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                        },
+                      },
+                      context_used: { type: 'string' },
+                      ...standardFooter,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing company' },
+            '500': { description: 'Risk assessment failed' },
+          },
+        },
+      },
+      '/founder-analysis': {
+        post: {
+          operationId: 'founderAnalysis',
+          summary: 'Analyze founding team background, track record, and leadership risk signals',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string' },
+                    founder_name: { type: 'string' },
+                    team_description: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Founder and team analysis with track record assessment and risk signals',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      team_score: { type: 'number', minimum: 0, maximum: 100 },
+                      founders_analyzed: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            name: { type: 'string' },
+                            role: { type: 'string' },
+                            track_record_signals: actions,
+                            risk_signals: actions,
+                            credibility_score: { type: 'number', minimum: 0, maximum: 100 },
+                          },
+                        },
+                      },
+                      leadership_red_flags: actions,
+                      leadership_green_flags: actions,
+                      team_completeness: { type: 'string', enum: ['complete', 'partial', 'gaps_identified'] },
+                      ...standardFooter,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing company' },
+            '500': { description: 'Founder analysis failed' },
+          },
+        },
+      },
+      '/compliance-check': {
+        post: {
+          operationId: 'complianceCheck',
+          summary: 'Check regulatory compliance posture across jurisdictions and compliance areas',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string' },
+                    jurisdictions: { type: 'array', items: { type: 'string' } },
+                    compliance_areas: { type: 'array', items: { type: 'string' } },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Compliance posture with area-level findings and violation flags',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      compliance_score: { type: 'number', minimum: 0, maximum: 100 },
+                      overall_compliance_status: { type: 'string', enum: ['compliant', 'partially_compliant', 'non_compliant', 'unknown'] },
+                      area_results: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            area: { type: 'string' },
+                            jurisdiction: { type: 'string' },
+                            status: { type: 'string', enum: ['compliant', 'at_risk', 'violation', 'unknown'] },
+                            findings: actions,
+                          },
+                        },
+                      },
+                      regulatory_red_flags: actions,
+                      remediation_suggestions: actions,
+                      ...standardFooter,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing company' },
+            '500': { description: 'Compliance check failed' },
+          },
+        },
+      },
+      '/reputation-analysis': {
+        post: {
+          operationId: 'reputationAnalysis',
+          summary: 'Analyze company reputation from public signals, news, and provided content',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string' },
+                    content: {
+                      oneOf: [
+                        { type: 'string', description: 'Reputation content as free text' },
+                        { type: 'array', items: { type: 'string' }, description: 'Array of content snippets or URLs' },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Reputation assessment with sentiment, controversies, and brand health',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      reputation_score: { type: 'number', minimum: 0, maximum: 100 },
+                      sentiment: { type: 'string', enum: ['positive', 'neutral', 'mixed', 'negative'] },
+                      controversies: actions,
+                      positive_signals: actions,
+                      media_presence: { type: 'string', enum: ['strong', 'moderate', 'limited', 'minimal'] },
+                      brand_health: { type: 'string', enum: ['strong', 'healthy', 'at_risk', 'damaged'] },
+                      notable_incidents: actions,
+                      ...standardFooter,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing company' },
+            '500': { description: 'Reputation analysis failed' },
+          },
+        },
+      },
+      '/financial-health': {
+        post: {
+          operationId: 'financialHealth',
+          summary: 'Assess financial health and sustainability from company name or financial data text',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string' },
+                    financial_data_text: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Financial health score with key metrics and risk indicators',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      financial_health_score: { type: 'number', minimum: 0, maximum: 100 },
+                      financial_health_rating: { type: 'string', enum: ['excellent', 'good', 'fair', 'poor', 'critical'] },
+                      key_metrics: {
+                        type: 'object',
+                        properties: {
+                          revenue_trend: { type: 'string', enum: ['growing', 'stable', 'declining', 'unknown'] },
+                          profitability: { type: 'string', enum: ['profitable', 'break_even', 'unprofitable', 'unknown'] },
+                          cash_runway: { type: 'string' },
+                          debt_level: { type: 'string', enum: ['low', 'moderate', 'high', 'critical', 'unknown'] },
+                        },
+                      },
+                      financial_red_flags: actions,
+                      financial_green_flags: actions,
+                      ...standardFooter,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing company' },
+            '500': { description: 'Financial health assessment failed' },
+          },
+        },
+      },
+      '/legal-risk': {
+        post: {
+          operationId: 'legalRisk',
+          summary: 'Evaluate legal risk exposure including litigation, IP, and regulatory liability',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string' },
+                    legal_data: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Legal risk assessment with litigation exposure and liability flags',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      legal_risk_score: { type: 'number', minimum: 0, maximum: 100 },
+                      legal_risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                      litigation_exposure: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            case_type: { type: 'string' },
+                            status: { type: 'string' },
+                            estimated_exposure: { type: 'string' },
+                            severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+                          },
+                        },
+                      },
+                      ip_risk_flags: actions,
+                      regulatory_liability_flags: actions,
+                      legal_red_flags: actions,
+                      ...standardFooter,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing company' },
+            '500': { description: 'Legal risk assessment failed' },
+          },
+        },
+      },
+      '/execution-gate': {
+        post: {
+          operationId: 'executionGate',
+          summary: 'Validate company data readiness for due diligence and recommend the optimal endpoint',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Execution gate result with recommended due diligence endpoint',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      execution_ready: { type: 'boolean' },
+                      recommended_endpoint: { type: 'string' },
+                      next_api: { type: 'string' },
+                      next_endpoint: { type: 'string' },
+                      blocking_flags: actions,
+                      flag_definitions: { type: 'object', additionalProperties: { type: 'string' } },
+                      confidence_per_section: confidence,
+                      privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing company' },
+            '500': { description: 'Gate check failed' },
+          },
+        },
+      },
+      '/due-diligence': {
+        post: {
+          operationId: 'dueDiligence',
+          summary: 'ONE-CALL: full due diligence — risk, compliance, reputation, financials, legal, and founders in one step',
+          'x-one-call': true,
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string' },
+                    context: contextEnum,
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Comprehensive due diligence report across all risk dimensions',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      ...diligenceResultSchema.properties,
+                      financial_health_rating: { type: 'string', enum: ['excellent', 'good', 'fair', 'poor', 'critical'] },
+                      legal_risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                      overall_compliance_status: { type: 'string', enum: ['compliant', 'partially_compliant', 'non_compliant', 'unknown'] },
+                      reputation_score: { type: 'number', minimum: 0, maximum: 100 },
+                      team_score: { type: 'number', minimum: 0, maximum: 100 },
+                      risk_summary: {
+                        type: 'object',
+                        properties: {
+                          financial: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                          legal: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                          operational: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                          reputational: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                          compliance: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                        },
+                      },
+                      context_used: { type: 'string' },
+                      ...standardFooter,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing company' },
+            '500': { description: 'Due diligence failed' },
+          },
+        },
+      },
+    },
+  });
+});
+
+export default router;

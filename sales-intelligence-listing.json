@@ -1,0 +1,201 @@
+[{
+  "name": "Sales Intelligence API",
+  "shortDescription": "Qualify leads, enrich prospects, prioritize pipeline, generate outreach, and forecast sales",
+  "description": "Power autonomous sales agents with full-cycle intelligence. Qualify leads using BANT and ICP fit signals, enrich prospects with tech stack and buying triggers, rank pipeline by close probability, generate personalized outreach, analyze deal health, run win/loss analysis, and forecast revenue. Built for AI SDR agents, CRM automation workflows, and revenue intelligence platforms.",
+  "category": "sales-intelligence",
+  "baseUrl": "https://orbis-apis.onrender.com/sales-intelligence",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/sales-intelligence/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/sales-intelligence/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "sales-intelligence",
+    "lead-qualification",
+    "prospect-enrichment",
+    "pipeline-prioritization",
+    "outreach-generation",
+    "deal-analysis",
+    "win-loss-analysis",
+    "sales-forecasting"
+  ],
+  "keywords": [
+    "lead qualification api",
+    "prospect enrichment api",
+    "sales pipeline prioritization api",
+    "personalized outreach generation api",
+    "deal health analysis api",
+    "sales forecast api"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.007,
+      "requestsPerDay": 50000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/qualify-lead",
+          "pricePerCallUsdc": 0.006,
+          "description": "Score and qualify leads with ICP fit, BANT signals, and recommended action"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/enrich-prospect",
+          "pricePerCallUsdc": 0.007,
+          "description": "Enrich prospect with company data, tech stack, buying triggers, and decision makers"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/prioritize-pipeline",
+          "pricePerCallUsdc": 0.008,
+          "description": "Rank pipeline deals by priority score, close probability, and at-risk flags"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/generate-outreach",
+          "pricePerCallUsdc": 0.007,
+          "description": "Generate personalized outreach with subject, value prop, CTA, and A/B variant"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/analyze-deal",
+          "pricePerCallUsdc": 0.007,
+          "description": "Score deal health with blockers, champions, detractors, and close probability"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/win-loss-analysis",
+          "pricePerCallUsdc": 0.006,
+          "description": "Analyze win/loss patterns with decision criteria, competitor factors, and adjustments"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/sales-forecast",
+          "pricePerCallUsdc": 0.008,
+          "description": "Forecast pipeline value with confidence range and likely-to-close breakdown"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execution-gate",
+          "pricePerCallUsdc": 0.001,
+          "description": "Validate sales input and recommend best analysis endpoint"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execute",
+          "pricePerCallUsdc": 0.014,
+          "description": "ONE-CALL full sales intelligence — qualify, enrich, outreach, deal signals, and recommendations"
+        }
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.005,
+      "requestsPerDay": 500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/qualify-lead",
+          "pricePerCallUsdc": 0.004
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/enrich-prospect",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/prioritize-pipeline",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/generate-outreach",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/analyze-deal",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/win-loss-analysis",
+          "pricePerCallUsdc": 0.004
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/sales-forecast",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execution-gate",
+          "pricePerCallUsdc": 0.001
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execute",
+          "pricePerCallUsdc": 0.009
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/qualify-lead",
+      "description": "Score and qualify leads with ICP fit, BANT signals, and recommended action"
+    },
+    {
+      "method": "POST",
+      "path": "/enrich-prospect",
+      "description": "Enrich prospect with company data, tech stack, buying triggers, and decision makers"
+    },
+    {
+      "method": "POST",
+      "path": "/prioritize-pipeline",
+      "description": "Rank pipeline deals by priority score, close probability, and at-risk flags"
+    },
+    {
+      "method": "POST",
+      "path": "/generate-outreach",
+      "description": "Generate personalized outreach with subject, value prop, CTA, and A/B variant"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze-deal",
+      "description": "Score deal health with blockers, champions, detractors, and close probability"
+    },
+    {
+      "method": "POST",
+      "path": "/win-loss-analysis",
+      "description": "Analyze win/loss patterns with decision criteria, competitor factors, and adjustments"
+    },
+    {
+      "method": "POST",
+      "path": "/sales-forecast",
+      "description": "Forecast pipeline value with confidence range and likely-to-close breakdown"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Validate sales input and recommend best analysis endpoint"
+    },
+    {
+      "method": "POST",
+      "path": "/execute",
+      "description": "ONE-CALL full sales intelligence — qualify, enrich, outreach, deal signals, and recommendations"
+    }
+  ]
+}]

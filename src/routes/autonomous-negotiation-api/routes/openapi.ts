@@ -1,0 +1,600 @@
+import { Router, Request, Response } from 'express';
+const router = Router();
+
+const privacy = {
+  type: 'object',
+  properties: {
+    data_stored: { type: 'boolean' },
+    retention: { type: 'string' },
+  },
+};
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const strArr = { type: 'array', items: { type: 'string' } };
+const PartyRole = {
+  type: 'string',
+  enum: ['buyer', 'seller', 'licensor', 'licensee', 'employer', 'employee'],
+};
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'Autonomous Negotiation API',
+      version: '1.0.0',
+      description:
+        'Generate counteroffers, model negotiation strategies, analyze concessions, score BATNA strength, identify deal-breakers, and run full negotiation intelligence. Built for agent-driven deal optimization.',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+      'x-pricing': {
+        generate_counteroffer: 0.009,
+        negotiation_strategy: 0.008,
+        concession_analysis: 0.007,
+        batna_score: 0.007,
+        negotiation_risk: 0.007,
+        deal_breakers: 0.006,
+        execution_gate: 0.001,
+        negotiate: 0.014,
+        high_volume_discount: '~35%',
+        notes: 'High-volume discounts available. Contact for enterprise pricing.',
+      },
+    },
+    servers: [
+      {
+        url: 'https://orbis-apis.onrender.com/autonomous-negotiation',
+        description: 'Production',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' },
+      },
+      schemas: {
+        PartyRole: PartyRole,
+        BatnaStrength: {
+          type: 'string',
+          enum: ['strong', 'adequate', 'weak', 'none'],
+        },
+        Recommendation: {
+          type: 'string',
+          enum: ['accept', 'counter', 'reject', 'request_clarification'],
+        },
+        Privacy: privacy,
+        ConfidencePerSection: confidence,
+      },
+    },
+    security: [{ ApiKeyAuth: [] }],
+    paths: {
+      '/generate-counteroffer': {
+        post: {
+          operationId: 'generateCounteroffer',
+          summary: 'Generate a tailored counteroffer with suggested language, rationale, and negotiation posture',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['offer_text', 'party_role'],
+                  properties: {
+                    offer_text: { type: 'string', description: 'Current offer text or proposal to counter' },
+                    party_role: { $ref: '#/components/schemas/PartyRole' },
+                    priorities: {
+                      type: 'array',
+                      items: { type: 'string' },
+                      description: 'Key priorities to optimize in the counteroffer',
+                    },
+                    constraints: {
+                      type: 'array',
+                      items: { type: 'string' },
+                      description: 'Hard constraints that must be preserved',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Generated counteroffer with rationale and negotiation guidance',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      counteroffer_text: { type: 'string', description: 'Suggested counteroffer language' },
+                      counteroffer_summary: { type: 'string', description: 'Plain-language summary of changes made' },
+                      changes_made: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            term: { type: 'string' },
+                            original: { type: 'string' },
+                            proposed: { type: 'string' },
+                            rationale: { type: 'string' },
+                            priority: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+                          },
+                        },
+                      },
+                      negotiation_posture: {
+                        type: 'string',
+                        enum: ['aggressive', 'firm', 'collaborative', 'conciliatory'],
+                      },
+                      recommended_delivery_approach: { type: 'string' },
+                      fallback_positions: strArr,
+                      recommendation: { $ref: '#/components/schemas/Recommendation' },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing offer_text or party_role' },
+            '500': { description: 'Counteroffer generation failed' },
+          },
+        },
+      },
+      '/negotiation-strategy': {
+        post: {
+          operationId: 'negotiationStrategy',
+          summary: 'Develop a full negotiation strategy with opening position, tactics, and sequence',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['deal_context', 'party_role'],
+                  properties: {
+                    deal_context: {
+                      oneOf: [
+                        { type: 'string', description: 'Natural language description of the deal' },
+                        {
+                          type: 'object',
+                          description: 'Structured deal context',
+                          properties: {
+                            deal_type: { type: 'string' },
+                            deal_value: { type: 'number', nullable: true },
+                            key_terms: { type: 'array', items: { type: 'string' } },
+                            counterparty: { type: 'string', nullable: true },
+                            timeline: { type: 'string', nullable: true },
+                          },
+                        },
+                      ],
+                    },
+                    party_role: { $ref: '#/components/schemas/PartyRole' },
+                    priorities: {
+                      type: 'array',
+                      items: { type: 'string' },
+                    },
+                    risk_tolerance: {
+                      type: 'string',
+                      enum: ['low', 'moderate', 'high'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Negotiation strategy with recommended tactics, sequence, and scenario plans',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      strategy_summary: { type: 'string' },
+                      recommended_approach: {
+                        type: 'string',
+                        enum: ['collaborative', 'competitive', 'principled', 'accommodating', 'avoiding'],
+                      },
+                      opening_position: { type: 'string' },
+                      negotiation_sequence: strArr,
+                      key_tactics: strArr,
+                      leverage_points: strArr,
+                      anticipated_counterparty_tactics: strArr,
+                      countertactics: strArr,
+                      walk_away_conditions: strArr,
+                      best_case_outcome: { type: 'string' },
+                      realistic_outcome: { type: 'string' },
+                      worst_acceptable_outcome: { type: 'string' },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing deal_context or party_role' },
+            '500': { description: 'Strategy generation failed' },
+          },
+        },
+      },
+      '/concession-analysis': {
+        post: {
+          operationId: 'concessionAnalysis',
+          summary: 'Analyze concession patterns from an offer history and recommend next concession or firm position',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['offer_history', 'party_role'],
+                  properties: {
+                    offer_history: {
+                      oneOf: [
+                        { type: 'string', description: 'Text description of offer/counteroffer history' },
+                        {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              round: { type: 'number' },
+                              party: { type: 'string' },
+                              offer_summary: { type: 'string' },
+                            },
+                          },
+                          description: 'Structured offer history per round',
+                        },
+                      ],
+                    },
+                    party_role: { $ref: '#/components/schemas/PartyRole' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Concession analysis with pattern assessment and recommended next move',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      concession_pattern: {
+                        type: 'string',
+                        enum: ['consistent', 'accelerating', 'decelerating', 'erratic', 'one_sided'],
+                      },
+                      our_concession_total: { type: 'string', nullable: true },
+                      counterparty_concession_total: { type: 'string', nullable: true },
+                      balance_assessment: {
+                        type: 'string',
+                        enum: ['balanced', 'we_are_conceding_too_much', 'counterparty_conceding_too_much', 'stalled'],
+                      },
+                      recommended_next_move: { type: 'string' },
+                      concessions_to_offer: strArr,
+                      terms_to_hold_firm: strArr,
+                      negotiation_momentum: { type: 'string', enum: ['positive', 'neutral', 'negative', 'stalled'] },
+                      closing_probability: { type: 'number', minimum: 0, maximum: 100 },
+                      recommendation: { $ref: '#/components/schemas/Recommendation' },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing offer_history or party_role' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/batna-score': {
+        post: {
+          operationId: 'batnaScore',
+          summary: 'Score BATNA strength and reservation price to determine walk-away power in a negotiation',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['deal_description', 'party_role'],
+                  properties: {
+                    deal_description: { type: 'string', description: 'Description of the deal being negotiated' },
+                    party_role: { $ref: '#/components/schemas/PartyRole' },
+                    alternatives_text: {
+                      type: 'string',
+                      description: 'Description of known alternatives to this deal',
+                    },
+                    market_context: {
+                      type: 'string',
+                      description: 'Market conditions relevant to negotiating power',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'BATNA score with walk-away analysis and leverage assessment',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      batna_strength: { $ref: '#/components/schemas/BatnaStrength' },
+                      batna_score: { type: 'number', minimum: 0, maximum: 100 },
+                      walk_away_power: {
+                        type: 'string',
+                        enum: ['high', 'moderate', 'low', 'none'],
+                      },
+                      estimated_reservation_price: { type: 'string', nullable: true },
+                      top_alternatives: strArr,
+                      leverage_advantage: {
+                        type: 'string',
+                        enum: ['we_have_leverage', 'counterparty_has_leverage', 'balanced', 'unknown'],
+                      },
+                      recommended_posture: { type: 'string' },
+                      risk_of_no_deal: { type: 'string', enum: ['low', 'moderate', 'high', 'critical'] },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing deal_description or party_role' },
+            '500': { description: 'Scoring failed' },
+          },
+        },
+      },
+      '/negotiation-risk': {
+        post: {
+          operationId: 'negotiationRisk',
+          summary: 'Identify hidden risks, one-sided terms, and liability traps within a negotiation offer',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['offer_text'],
+                  properties: {
+                    offer_text: { type: 'string', description: 'Offer or proposal text to analyze for risks' },
+                    party_role: { $ref: '#/components/schemas/PartyRole' },
+                    industry: { type: 'string', description: 'Industry context for risk benchmarking' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Negotiation risk report with flagged terms and recommended revisions',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      risk_flags: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            term: { type: 'string' },
+                            risk_type: { type: 'string' },
+                            severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+                            explanation: { type: 'string' },
+                            suggested_revision: { type: 'string' },
+                          },
+                        },
+                      },
+                      overall_risk_score: { type: 'number', minimum: 0, maximum: 100 },
+                      risk_level: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+                      critical_count: { type: 'number' },
+                      high_count: { type: 'number' },
+                      one_sided_assessment: {
+                        type: 'string',
+                        enum: ['balanced', 'slightly_unfavorable', 'unfavorable', 'strongly_unfavorable'],
+                      },
+                      recommendation: { $ref: '#/components/schemas/Recommendation' },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing offer_text' },
+            '500': { description: 'Risk analysis failed' },
+          },
+        },
+      },
+      '/deal-breakers': {
+        post: {
+          operationId: 'dealBreakers',
+          summary: 'Identify non-negotiable terms and structural deal-breakers in an offer from a party perspective',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['offer_text', 'party_role'],
+                  properties: {
+                    offer_text: { type: 'string', description: 'Offer or contract text to analyze' },
+                    party_role: { $ref: '#/components/schemas/PartyRole' },
+                    must_have_terms: {
+                      type: 'array',
+                      items: { type: 'string' },
+                      description: 'Terms that are absolute requirements',
+                    },
+                    walk_away_thresholds: {
+                      type: 'array',
+                      items: { type: 'string' },
+                      description: 'Conditions that would trigger a walk-away',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Deal-breaker analysis with blocking terms and resolution paths',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      deal_breakers: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            term: { type: 'string' },
+                            reason: { type: 'string' },
+                            severity: { type: 'string', enum: ['absolute', 'strong', 'conditional'] },
+                            potential_resolution: { type: 'string', nullable: true },
+                          },
+                        },
+                      },
+                      deal_breaker_count: { type: 'number' },
+                      absolute_blockers: strArr,
+                      negotiable_concerns: strArr,
+                      deal_viability: {
+                        type: 'string',
+                        enum: ['viable', 'challenging', 'unlikely', 'not_viable'],
+                      },
+                      recommendation: { $ref: '#/components/schemas/Recommendation' },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing offer_text or party_role' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/execution-gate': {
+        post: {
+          operationId: 'executionGate',
+          summary: 'Pre-flight readiness check before running negotiation analysis — routes to optimal endpoint',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['offer_text'],
+                  properties: {
+                    offer_text: { type: 'string', description: 'Offer text to check analysis readiness for' },
+                    party_role: { $ref: '#/components/schemas/PartyRole' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Execution gate result with recommended workflow',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      execution_ready: { type: 'boolean' },
+                      recommended_workflow: strArr,
+                      next_api: { type: 'string' },
+                      next_endpoint: { type: 'string' },
+                      blocking_flags: strArr,
+                      flag_definitions: { type: 'object', additionalProperties: { type: 'string' } },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing offer_text' },
+            '500': { description: 'Gate check failed' },
+          },
+        },
+      },
+      '/negotiate': {
+        post: {
+          operationId: 'negotiate',
+          summary: 'ONE-CALL: full negotiation intelligence — risk, BATNA, deal-breakers, strategy, and counteroffer',
+          'x-one-call': true,
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['offer_text', 'party_role'],
+                  properties: {
+                    offer_text: { type: 'string', description: 'Offer or proposal to run full negotiation intelligence on' },
+                    party_role: { $ref: '#/components/schemas/PartyRole' },
+                    priorities: {
+                      type: 'array',
+                      items: { type: 'string' },
+                    },
+                    alternatives_text: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Full negotiation intelligence report',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      recommendation: { $ref: '#/components/schemas/Recommendation' },
+                      batna_strength: { $ref: '#/components/schemas/BatnaStrength' },
+                      overall_risk_score: { type: 'number', minimum: 0, maximum: 100 },
+                      risk_level: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+                      deal_viability: { type: 'string', enum: ['viable', 'challenging', 'unlikely', 'not_viable'] },
+                      executive_summary: { type: 'string' },
+                      top_risks: strArr,
+                      absolute_deal_breakers: strArr,
+                      top_negotiation_points: strArr,
+                      counteroffer_summary: { type: 'string', nullable: true },
+                      recommended_strategy: { type: 'string' },
+                      immediate_actions: strArr,
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing offer_text or party_role' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+    },
+  });
+});
+
+export default router;

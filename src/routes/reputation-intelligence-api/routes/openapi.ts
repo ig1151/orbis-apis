@@ -1,0 +1,576 @@
+import { Router, Request, Response } from 'express';
+const router = Router();
+
+const privacy = {
+  type: 'object',
+  properties: {
+    data_stored: { type: 'boolean' },
+    retention: { type: 'string' },
+  },
+};
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const strArr = { type: 'array', items: { type: 'string' } };
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'Reputation Intelligence API',
+      version: '1.0.0',
+      description:
+        'Score entity reputation, detect crises, analyze narratives, assess brand risk, profile executives, and track controversies. Replaces manual media monitoring at agent call speed.',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+      'x-pricing': {
+        reputation_score: 0.007,
+        crisis_detection: 0.007,
+        narrative_analysis: 0.006,
+        brand_risk: 0.007,
+        executive_analysis: 0.006,
+        controversy_tracking: 0.005,
+        execution_gate: 0.001,
+        monitor: 0.012,
+        high_volume_discount: '~35%',
+        notes: 'High-volume discounts available. Contact for enterprise pricing.',
+      },
+    },
+    servers: [
+      {
+        url: 'https://orbis-apis.onrender.com/reputation-intelligence',
+        description: 'Production',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' },
+      },
+      schemas: {
+        CrisisLevel: {
+          type: 'string',
+          enum: ['none', 'emerging', 'active', 'severe', 'recovering'],
+        },
+        Privacy: privacy,
+        ConfidencePerSection: confidence,
+      },
+    },
+    security: [{ ApiKeyAuth: [] }],
+    paths: {
+      '/reputation-score': {
+        post: {
+          operationId: 'reputationScore',
+          summary: 'Score entity reputation 0-100 across trust, sentiment, controversy, and credibility dimensions',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['entity'],
+                  properties: {
+                    entity: { type: 'string', description: 'Company, brand, or individual name to score' },
+                    content: {
+                      oneOf: [
+                        { type: 'string', description: 'News text, reviews, or social media content about the entity' },
+                        {
+                          type: 'array',
+                          items: { type: 'string' },
+                          description: 'Multiple content pieces to aggregate',
+                        },
+                      ],
+                    },
+                    entity_type: {
+                      type: 'string',
+                      enum: ['company', 'brand', 'executive', 'product', 'organization'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Reputation score with dimensional breakdown and trend',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      reputation_score: { type: 'number', minimum: 0, maximum: 100 },
+                      reputation_grade: { type: 'string', enum: ['A', 'B', 'C', 'D', 'F'] },
+                      reputation_level: {
+                        type: 'string',
+                        enum: ['excellent', 'good', 'fair', 'poor', 'critical'],
+                      },
+                      dimensional_scores: {
+                        type: 'object',
+                        properties: {
+                          trust: { type: 'number' },
+                          sentiment: { type: 'number' },
+                          credibility: { type: 'number' },
+                          controversy: { type: 'number' },
+                          visibility: { type: 'number' },
+                        },
+                      },
+                      trend: { type: 'string', enum: ['improving', 'stable', 'declining', 'volatile'] },
+                      strengths: strArr,
+                      vulnerabilities: strArr,
+                      key_narratives: strArr,
+                      crisis_level: { $ref: '#/components/schemas/CrisisLevel' },
+                      brand_risk_score: { type: 'number', minimum: 0, maximum: 100 },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing entity' },
+            '500': { description: 'Scoring failed' },
+          },
+        },
+      },
+      '/crisis-detection': {
+        post: {
+          operationId: 'crisisDetection',
+          summary: 'Detect active or emerging reputation crises with severity, velocity, and recommended response',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['entity'],
+                  properties: {
+                    entity: { type: 'string', description: 'Company, brand, or individual to monitor' },
+                    content: {
+                      oneOf: [
+                        { type: 'string', description: 'Content to analyze for crisis signals' },
+                        { type: 'array', items: { type: 'string' } },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Crisis detection report with level, velocity, and response playbook',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      crisis_level: { $ref: '#/components/schemas/CrisisLevel' },
+                      crisis_detected: { type: 'boolean' },
+                      crisis_type: { type: 'string', nullable: true },
+                      crisis_summary: { type: 'string', nullable: true },
+                      severity_score: { type: 'number', minimum: 0, maximum: 100 },
+                      velocity: { type: 'string', enum: ['accelerating', 'stable', 'decelerating', 'contained'] },
+                      estimated_spread_risk: {
+                        type: 'string',
+                        enum: ['viral', 'high', 'moderate', 'contained', 'low'],
+                      },
+                      key_triggers: strArr,
+                      affected_channels: strArr,
+                      immediate_response_actions: strArr,
+                      long_term_mitigation: strArr,
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing entity' },
+            '500': { description: 'Detection failed' },
+          },
+        },
+      },
+      '/narrative-analysis': {
+        post: {
+          operationId: 'narrativeAnalysis',
+          summary: 'Extract dominant narratives, themes, and framing in content about an entity',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['content', 'entity'],
+                  properties: {
+                    content: {
+                      oneOf: [
+                        { type: 'string', description: 'Content to analyze' },
+                        { type: 'array', items: { type: 'string' }, description: 'Multiple content pieces' },
+                      ],
+                    },
+                    entity: { type: 'string', description: 'Entity the content relates to' },
+                    focus: {
+                      type: 'string',
+                      enum: ['all', 'media', 'social', 'regulatory', 'financial'],
+                      description: 'Narrative focus area',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Narrative analysis with dominant themes, sentiment, and framing',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      dominant_narratives: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            narrative: { type: 'string' },
+                            sentiment: { type: 'string', enum: ['positive', 'negative', 'neutral', 'mixed'] },
+                            prevalence: { type: 'string', enum: ['dominant', 'significant', 'minor', 'emerging'] },
+                            key_claims: strArr,
+                          },
+                        },
+                      },
+                      overall_sentiment: { type: 'string', enum: ['positive', 'negative', 'neutral', 'mixed'] },
+                      sentiment_score: { type: 'number', minimum: -100, maximum: 100 },
+                      framing_type: {
+                        type: 'string',
+                        enum: ['favorable', 'unfavorable', 'mixed', 'neutral', 'sensationalized'],
+                      },
+                      top_themes: strArr,
+                      counter_narratives: strArr,
+                      narrative_risk_score: { type: 'number', minimum: 0, maximum: 100 },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing content or entity' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/brand-risk': {
+        post: {
+          operationId: 'brandRisk',
+          summary: 'Assess brand risk exposure from reputational, regulatory, and market threats',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['entity'],
+                  properties: {
+                    entity: { type: 'string', description: 'Brand or company name to assess' },
+                    content: {
+                      oneOf: [
+                        { type: 'string' },
+                        { type: 'array', items: { type: 'string' } },
+                      ],
+                    },
+                    industry: { type: 'string', description: 'Industry context for benchmarking' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Brand risk assessment with threat categories and mitigation priorities',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      brand_risk_score: { type: 'number', minimum: 0, maximum: 100 },
+                      risk_level: {
+                        type: 'string',
+                        enum: ['critical', 'high', 'medium', 'low', 'minimal'],
+                      },
+                      risk_categories: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            category: { type: 'string' },
+                            risk_score: { type: 'number', minimum: 0, maximum: 100 },
+                            primary_threat: { type: 'string' },
+                            severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+                          },
+                        },
+                      },
+                      top_threats: strArr,
+                      protective_factors: strArr,
+                      crisis_level: { $ref: '#/components/schemas/CrisisLevel' },
+                      recommended_actions: strArr,
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing entity' },
+            '500': { description: 'Assessment failed' },
+          },
+        },
+      },
+      '/executive-analysis': {
+        post: {
+          operationId: 'executiveAnalysis',
+          summary: 'Profile an executive\'s public reputation, controversies, communication style, and leadership perception',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['executive_name'],
+                  properties: {
+                    executive_name: { type: 'string', description: 'Full name of the executive to profile' },
+                    company: { type: 'string', description: 'Company or organization for context' },
+                    content: {
+                      oneOf: [
+                        { type: 'string' },
+                        { type: 'array', items: { type: 'string' } },
+                      ],
+                      description: 'Optional content about the executive',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Executive reputation profile with strengths, risks, and perception analysis',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      reputation_score: { type: 'number', minimum: 0, maximum: 100 },
+                      leadership_perception: {
+                        type: 'string',
+                        enum: ['highly_regarded', 'respected', 'mixed', 'controversial', 'negative'],
+                      },
+                      public_sentiment: { type: 'string', enum: ['positive', 'negative', 'neutral', 'mixed'] },
+                      key_strengths: strArr,
+                      key_risks: strArr,
+                      controversy_flags: strArr,
+                      communication_style: { type: 'string', nullable: true },
+                      media_presence: { type: 'string', enum: ['high', 'moderate', 'low', 'minimal'] },
+                      crisis_level: { $ref: '#/components/schemas/CrisisLevel' },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing executive_name' },
+            '500': { description: 'Analysis failed' },
+          },
+        },
+      },
+      '/controversy-tracking': {
+        post: {
+          operationId: 'controversyTracking',
+          summary: 'Identify and classify active controversies, legal issues, and ethical concerns surrounding an entity',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['entity'],
+                  properties: {
+                    entity: { type: 'string', description: 'Company, brand, or individual to track' },
+                    content: {
+                      oneOf: [
+                        { type: 'string' },
+                        { type: 'array', items: { type: 'string' } },
+                      ],
+                    },
+                    controversy_types: {
+                      type: 'array',
+                      items: { type: 'string' },
+                      description: 'Filter to specific types, e.g. ["legal", "ethical", "financial", "environmental"]',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Controversy report with severity, status, and reputational impact',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      controversies: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            type: { type: 'string' },
+                            severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+                            status: { type: 'string', enum: ['active', 'resolved', 'emerging', 'escalating', 'monitoring'] },
+                            summary: { type: 'string' },
+                            reputational_impact: { type: 'string', enum: ['severe', 'significant', 'moderate', 'minor'] },
+                            started: { type: 'string', nullable: true },
+                          },
+                        },
+                      },
+                      total_controversies: { type: 'number' },
+                      active_count: { type: 'number' },
+                      critical_count: { type: 'number' },
+                      overall_controversy_score: { type: 'number', minimum: 0, maximum: 100 },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing entity' },
+            '500': { description: 'Tracking failed' },
+          },
+        },
+      },
+      '/execution-gate': {
+        post: {
+          operationId: 'executionGate',
+          summary: 'Pre-flight readiness check before running reputation analysis — routes to optimal endpoint',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['entity'],
+                  properties: {
+                    entity: { type: 'string', description: 'Entity to check analysis readiness for' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Execution gate result with recommended workflow',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      execution_ready: { type: 'boolean' },
+                      entity: { type: 'string' },
+                      recommended_workflow: strArr,
+                      next_api: { type: 'string' },
+                      next_endpoint: { type: 'string' },
+                      blocking_flags: strArr,
+                      flag_definitions: { type: 'object', additionalProperties: { type: 'string' } },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing entity' },
+            '500': { description: 'Gate check failed' },
+          },
+        },
+      },
+      '/monitor': {
+        post: {
+          operationId: 'monitor',
+          summary: 'ONE-CALL: full reputation intelligence — score, crisis status, narratives, brand risk, and controversies',
+          'x-one-call': true,
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['entity'],
+                  properties: {
+                    entity: { type: 'string', description: 'Entity to monitor' },
+                    content: {
+                      oneOf: [
+                        { type: 'string' },
+                        { type: 'array', items: { type: 'string' } },
+                      ],
+                    },
+                    entity_type: {
+                      type: 'string',
+                      enum: ['company', 'brand', 'executive', 'product', 'organization'],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Full reputation intelligence report',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      reputation_score: { type: 'number', minimum: 0, maximum: 100 },
+                      reputation_level: { type: 'string', enum: ['excellent', 'good', 'fair', 'poor', 'critical'] },
+                      crisis_level: { $ref: '#/components/schemas/CrisisLevel' },
+                      brand_risk_score: { type: 'number', minimum: 0, maximum: 100 },
+                      crisis_detected: { type: 'boolean' },
+                      dominant_narratives: strArr,
+                      top_controversies: strArr,
+                      key_threats: strArr,
+                      recommended_actions: strArr,
+                      trend: { type: 'string', enum: ['improving', 'stable', 'declining', 'volatile'] },
+                      confidence_per_section: confidence,
+                      trace_id: { type: 'string' },
+                      computed_at: { type: 'string', format: 'date-time' },
+                      privacy: privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing entity' },
+            '500': { description: 'Monitoring failed' },
+          },
+        },
+      },
+    },
+  });
+});
+
+export default router;

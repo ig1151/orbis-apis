@@ -1,0 +1,169 @@
+[{
+  "name": "Risk Event Forecast API",
+  "shortDescription": "Forecast bankruptcy risk, volatility, tail risk, and stress propagation for companies and assets",
+  "description": "Predict financial risk events before they occur. Estimate 12-month bankruptcy probability with Altman Z-score signals, forecast volatility regimes, predict high-probability events like earnings misses and credit downgrades, model stress propagation through connected entities, and calculate tail risk metrics (VaR, CVaR). Built for autonomous risk agents, portfolio monitoring platforms, and financial intelligence workflows.",
+  "category": "financial-intelligence",
+  "baseUrl": "https://orbis-apis.onrender.com/risk-event-forecast",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/risk-event-forecast/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/risk-event-forecast/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "risk-forecasting",
+    "bankruptcy-prediction",
+    "volatility-forecast",
+    "tail-risk",
+    "stress-propagation",
+    "event-prediction",
+    "financial-risk",
+    "altman-z-score"
+  ],
+  "keywords": [
+    "bankruptcy probability api",
+    "volatility forecast api",
+    "tail risk VaR CVaR api",
+    "stress propagation api",
+    "risk event prediction api",
+    "financial distress signals api"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.009,
+      "requestsPerDay": 50000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/bankruptcy-probability",
+          "pricePerCallUsdc": 0.009,
+          "description": "Estimate 12-month bankruptcy probability with Altman Z-score, distress signals, and liquidity runway"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/volatility-forecast",
+          "pricePerCallUsdc": 0.008,
+          "description": "Forecast expected volatility regime, trend, and event-driven vol catalysts for an asset"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/event-prediction",
+          "pricePerCallUsdc": 0.009,
+          "description": "Predict high-probability risk events with timeframe, magnitude, and early warning signals"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/stress-propagation",
+          "pricePerCallUsdc": 0.010,
+          "description": "Model how a shock event propagates through connected entities with contagion probability"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/tail-risk",
+          "pricePerCallUsdc": 0.009,
+          "description": "Estimate VaR, CVaR, tail scenarios, and black swan sensitivity for a portfolio"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execution-gate",
+          "pricePerCallUsdc": 0.001,
+          "description": "Validate risk forecast input and recommend best analysis endpoint"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/forecast",
+          "pricePerCallUsdc": 0.016,
+          "description": "ONE-CALL full risk forecast — bankruptcy, volatility, events, tail risk, and overall risk score"
+        }
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.006,
+      "requestsPerDay": 500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/bankruptcy-probability",
+          "pricePerCallUsdc": 0.006
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/volatility-forecast",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/event-prediction",
+          "pricePerCallUsdc": 0.006
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/stress-propagation",
+          "pricePerCallUsdc": 0.007
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/tail-risk",
+          "pricePerCallUsdc": 0.006
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execution-gate",
+          "pricePerCallUsdc": 0.001
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/forecast",
+          "pricePerCallUsdc": 0.011
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/bankruptcy-probability",
+      "description": "Estimate 12-month bankruptcy probability with Altman Z-score, distress signals, and liquidity runway"
+    },
+    {
+      "method": "POST",
+      "path": "/volatility-forecast",
+      "description": "Forecast expected volatility regime, trend, and event-driven vol catalysts for an asset"
+    },
+    {
+      "method": "POST",
+      "path": "/event-prediction",
+      "description": "Predict high-probability risk events with timeframe, magnitude, and early warning signals"
+    },
+    {
+      "method": "POST",
+      "path": "/stress-propagation",
+      "description": "Model how a shock event propagates through connected entities with contagion probability"
+    },
+    {
+      "method": "POST",
+      "path": "/tail-risk",
+      "description": "Estimate VaR, CVaR, tail scenarios, and black swan sensitivity for a portfolio"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Validate risk forecast input and recommend best analysis endpoint"
+    },
+    {
+      "method": "POST",
+      "path": "/forecast",
+      "description": "ONE-CALL full risk forecast — bankruptcy, volatility, events, tail risk, and overall risk score"
+    }
+  ]
+}]

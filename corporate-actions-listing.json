@@ -1,0 +1,186 @@
+[{
+  "name": "Corporate Actions API",
+  "shortDescription": "Track stock splits, dividends, buybacks, M&A activity, and insider transactions",
+  "description": "Monitor and analyze corporate actions including stock splits, dividend safety scores, buyback yields, M&A activity, insider transactions, and corporate events. Designed for autonomous investment agents, portfolio monitoring workflows, and financial intelligence platforms.",
+  "category": "financial-intelligence",
+  "baseUrl": "https://orbis-apis.onrender.com/corporate-actions",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/corporate-actions/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/corporate-actions/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "corporate-actions",
+    "stock-splits",
+    "dividends",
+    "buybacks",
+    "mergers-acquisitions",
+    "insider-trading",
+    "corporate-events",
+    "finance-intelligence"
+  ],
+  "keywords": [
+    "corporate actions api",
+    "stock split analysis",
+    "dividend safety score",
+    "buyback yield api",
+    "merger acquisition tracking",
+    "insider transaction api",
+    "corporate events intelligence"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.007,
+      "requestsPerDay": 50000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/splits",
+          "pricePerCallUsdc": 0.006,
+          "description": "Analyze stock split history and signals"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/dividends",
+          "pricePerCallUsdc": 0.006,
+          "description": "Score dividend safety and yield sustainability"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/buybacks",
+          "pricePerCallUsdc": 0.006,
+          "description": "Analyze share buyback programs and yield"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/mergers",
+          "pricePerCallUsdc": 0.007,
+          "description": "Track and analyze M&A activity and impact"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/insider-activity",
+          "pricePerCallUsdc": 0.007,
+          "description": "Monitor and score insider transactions"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/corporate-events",
+          "pricePerCallUsdc": 0.005,
+          "description": "Track upcoming and recent corporate events"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execution-gate",
+          "pricePerCallUsdc": 0.001,
+          "description": "Corporate actions execution readiness check"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/analyze",
+          "pricePerCallUsdc": 0.012,
+          "description": "ONE-CALL full corporate actions analysis workflow"
+        }
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.005,
+      "requestsPerDay": 500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/splits",
+          "pricePerCallUsdc": 0.004
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/dividends",
+          "pricePerCallUsdc": 0.004
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/buybacks",
+          "pricePerCallUsdc": 0.004
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/mergers",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/insider-activity",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/corporate-events",
+          "pricePerCallUsdc": 0.003
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execution-gate",
+          "pricePerCallUsdc": 0.001
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/analyze",
+          "pricePerCallUsdc": 0.008
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/splits",
+      "description": "Analyze stock split history and signals"
+    },
+    {
+      "method": "POST",
+      "path": "/dividends",
+      "description": "Score dividend safety and yield sustainability"
+    },
+    {
+      "method": "POST",
+      "path": "/buybacks",
+      "description": "Analyze share buyback programs and yield"
+    },
+    {
+      "method": "POST",
+      "path": "/mergers",
+      "description": "Track and analyze M&A activity and impact"
+    },
+    {
+      "method": "POST",
+      "path": "/insider-activity",
+      "description": "Monitor and score insider transactions"
+    },
+    {
+      "method": "POST",
+      "path": "/corporate-events",
+      "description": "Track upcoming and recent corporate events"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Corporate actions execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full corporate actions analysis workflow"
+    }
+  ]
+}]

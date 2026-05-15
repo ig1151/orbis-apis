@@ -1,0 +1,169 @@
+[{
+  "name": "Economic Calendar API",
+  "shortDescription": "Track macro events, score economic impact, and model market scenarios for agent positioning",
+  "description": "Stay ahead of market-moving macro events including Fed decisions, CPI releases, jobs reports, and earnings. Score event impact, model volatility scenarios, and generate positioning signals for autonomous trading and economic analysis agents.",
+  "category": "macro-intelligence",
+  "baseUrl": "https://orbis-apis.onrender.com/economic-calendar",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/economic-calendar/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/economic-calendar/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "economic-calendar",
+    "macro-intelligence",
+    "fed-events",
+    "cpi-analysis",
+    "market-volatility",
+    "event-driven",
+    "macro-scenario",
+    "interest-rates"
+  ],
+  "keywords": [
+    "economic calendar api",
+    "fed event impact api",
+    "CPI market impact",
+    "macro scenario modeling",
+    "volatility estimate api",
+    "economic event signals"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.008,
+      "requestsPerDay": 50000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/upcoming-events",
+          "pricePerCallUsdc": 0.005,
+          "description": "Retrieve upcoming macro economic events"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/impact-score",
+          "pricePerCallUsdc": 0.006,
+          "description": "Score market impact of economic events"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/macro-scenario",
+          "pricePerCallUsdc": 0.008,
+          "description": "Model macro scenarios from event outcomes"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/volatility-estimate",
+          "pricePerCallUsdc": 0.007,
+          "description": "Estimate volatility around economic events"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/event-signals",
+          "pricePerCallUsdc": 0.006,
+          "description": "Generate trading signals from macro events"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execution-gate",
+          "pricePerCallUsdc": 0.001,
+          "description": "Economic calendar execution readiness check"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/analyze",
+          "pricePerCallUsdc": 0.010,
+          "description": "ONE-CALL full economic calendar analysis workflow"
+        }
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.005,
+      "requestsPerDay": 500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/upcoming-events",
+          "pricePerCallUsdc": 0.003
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/impact-score",
+          "pricePerCallUsdc": 0.004
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/macro-scenario",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/volatility-estimate",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/event-signals",
+          "pricePerCallUsdc": 0.004
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execution-gate",
+          "pricePerCallUsdc": 0.001
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/analyze",
+          "pricePerCallUsdc": 0.007
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/upcoming-events",
+      "description": "Retrieve upcoming macro economic events"
+    },
+    {
+      "method": "POST",
+      "path": "/impact-score",
+      "description": "Score market impact of economic events"
+    },
+    {
+      "method": "POST",
+      "path": "/macro-scenario",
+      "description": "Model macro scenarios from event outcomes"
+    },
+    {
+      "method": "POST",
+      "path": "/volatility-estimate",
+      "description": "Estimate volatility around economic events"
+    },
+    {
+      "method": "POST",
+      "path": "/event-signals",
+      "description": "Generate trading signals from macro events"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Economic calendar execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full economic calendar analysis workflow"
+    }
+  ]
+}]

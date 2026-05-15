@@ -1,0 +1,596 @@
+import { Router, Request, Response } from 'express';
+const router = Router();
+
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+
+const leadScoreSchema = {
+  type: 'object',
+  properties: {
+    lead_score: { type: 'number', minimum: 0, maximum: 100 },
+    grade: { type: 'string', enum: ['A', 'B', 'C', 'D'] },
+    icp_fit: { type: 'string', enum: ['strong', 'moderate', 'weak', 'no_fit'] },
+    qualified: { type: 'boolean' },
+  },
+};
+
+const prospectDataOneOf = {
+  oneOf: [
+    { type: 'string', description: 'Prospect description as free text' },
+    {
+      type: 'object',
+      description: 'Structured prospect data',
+      properties: {
+        company: { type: 'string' },
+        person_name: { type: 'string' },
+        role: { type: 'string' },
+        industry: { type: 'string' },
+      },
+    },
+  ],
+};
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'Sales Intelligence API',
+      version: '1.0.0',
+      description: 'Qualify leads, enrich prospects, prioritize pipelines, generate personalized outreach, analyze deals, and forecast sales with AI-powered intelligence.',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+      'x-pricing': {
+        qualify_lead: 0.006,
+        enrich_prospect: 0.007,
+        prioritize_pipeline: 0.008,
+        generate_outreach: 0.007,
+        analyze_deal: 0.007,
+        win_loss_analysis: 0.006,
+        sales_forecast: 0.008,
+        execution_gate: 0.001,
+        execute: 0.014,
+        high_volume_discount: '~35% off',
+      },
+    },
+    servers: [{ url: 'https://orbis-apis.onrender.com/sales-intelligence' }],
+    components: {
+      securitySchemes: {
+        ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' },
+      },
+      schemas: {
+        LeadScore: leadScoreSchema,
+      },
+    },
+    security: [{ ApiKeyAuth: [] }],
+    paths: {
+      '/': {
+        get: {
+          operationId: 'getOpenApiSpec',
+          summary: 'OpenAPI 3.1.0 specification for the Sales Intelligence API',
+          responses: { '200': { description: 'OpenAPI spec returned as JSON' } },
+        },
+      },
+      '/qualify-lead': {
+        post: {
+          operationId: 'qualifyLead',
+          summary: 'Score and qualify a lead against ICP criteria with grade and fit assessment',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['lead_data'],
+                  properties: {
+                    lead_data: {
+                      oneOf: [
+                        { type: 'string', description: 'Lead description as free text' },
+                        {
+                          type: 'object',
+                          description: 'Structured lead data',
+                          properties: {
+                            company: { type: 'string' },
+                            industry: { type: 'string' },
+                            revenue: { type: 'string' },
+                            employees: { type: 'number' },
+                            role: { type: 'string' },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Lead qualification result with score, grade, and ICP fit',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      ...leadScoreSchema.properties,
+                      qualification_reasons: actions,
+                      disqualification_reasons: actions,
+                      next_steps: actions,
+                      confidence_per_section: confidence,
+                      recommended_actions_priority_order: actions,
+                      privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing lead_data' },
+            '500': { description: 'Qualification failed' },
+          },
+        },
+      },
+      '/enrich-prospect': {
+        post: {
+          operationId: 'enrichProspect',
+          summary: 'Enrich a prospect with company intelligence, role insights, and trigger events',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string' },
+                    person_name: { type: 'string' },
+                    email: { type: 'string' },
+                    role: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Enriched prospect profile with buying triggers and pain points',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      company_summary: { type: 'string' },
+                      industry: { type: 'string' },
+                      estimated_revenue: { type: 'string' },
+                      employee_count_estimate: { type: 'string' },
+                      tech_stack_signals: actions,
+                      buying_triggers: actions,
+                      pain_points: actions,
+                      decision_maker_signals: actions,
+                      recent_news: actions,
+                      confidence_per_section: confidence,
+                      recommended_actions_priority_order: actions,
+                      privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing company' },
+            '500': { description: 'Enrichment failed' },
+          },
+        },
+      },
+      '/prioritize-pipeline': {
+        post: {
+          operationId: 'prioritizePipeline',
+          summary: 'Rank and prioritize deals in a pipeline by close probability and revenue impact',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['deals'],
+                  properties: {
+                    deals: {
+                      oneOf: [
+                        { type: 'string', description: 'Pipeline description as free text' },
+                        {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              deal_name: { type: 'string' },
+                              stage: { type: 'string' },
+                              value: { type: 'number' },
+                              close_date: { type: 'string' },
+                            },
+                          },
+                          description: 'Structured array of deal objects',
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Prioritized deal list with scores and recommended focus order',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      prioritized_deals: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            deal_name: { type: 'string' },
+                            priority_rank: { type: 'number' },
+                            close_probability: { type: 'number', minimum: 0, maximum: 1 },
+                            urgency: { type: 'string', enum: ['immediate', 'high', 'medium', 'low'] },
+                            risk_flags: actions,
+                            recommended_action: { type: 'string' },
+                          },
+                        },
+                      },
+                      pipeline_health: { type: 'string', enum: ['strong', 'healthy', 'at_risk', 'weak'] },
+                      total_pipeline_value: { type: 'number' },
+                      weighted_pipeline_value: { type: 'number' },
+                      confidence_per_section: confidence,
+                      recommended_actions_priority_order: actions,
+                      privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing deals' },
+            '500': { description: 'Prioritization failed' },
+          },
+        },
+      },
+      '/generate-outreach': {
+        post: {
+          operationId: 'generateOutreach',
+          summary: 'Generate personalized sales outreach copy tailored to prospect and goal',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['prospect_data', 'goal'],
+                  properties: {
+                    prospect_data: prospectDataOneOf,
+                    goal: { type: 'string', enum: ['first_contact', 'follow_up', 're_engage', 'close'] },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Personalized outreach copy with subject line and follow-up sequence',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      subject_line: { type: 'string' },
+                      email_body: { type: 'string' },
+                      linkedin_message: { type: 'string' },
+                      call_opener: { type: 'string' },
+                      personalization_hooks: actions,
+                      follow_up_sequence: actions,
+                      tone: { type: 'string', enum: ['formal', 'conversational', 'direct'] },
+                      confidence_per_section: confidence,
+                      recommended_actions_priority_order: actions,
+                      privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing prospect_data or goal' },
+            '500': { description: 'Outreach generation failed' },
+          },
+        },
+      },
+      '/analyze-deal': {
+        post: {
+          operationId: 'analyzeDeal',
+          summary: 'Analyze deal health, identify risks, and surface recommended next actions',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['deal_description'],
+                  properties: {
+                    deal_description: {
+                      oneOf: [
+                        { type: 'string', description: 'Deal description as free text' },
+                        {
+                          type: 'object',
+                          description: 'Structured deal data',
+                          properties: {
+                            deal_name: { type: 'string' },
+                            stage: { type: 'string' },
+                            value: { type: 'number' },
+                            stakeholders: { type: 'array', items: { type: 'string' } },
+                            objections: { type: 'array', items: { type: 'string' } },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Deal health analysis with risk flags and close strategy',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      deal_health: { type: 'string', enum: ['strong', 'progressing', 'stalled', 'at_risk'] },
+                      close_probability: { type: 'number', minimum: 0, maximum: 1 },
+                      risk_flags: actions,
+                      buying_signals: actions,
+                      objection_responses: { type: 'array', items: { type: 'object', properties: { objection: { type: 'string' }, response: { type: 'string' } } } },
+                      close_strategy: { type: 'string' },
+                      stakeholder_map: { type: 'array', items: { type: 'object', properties: { role: { type: 'string' }, influence: { type: 'string', enum: ['high', 'medium', 'low'] }, sentiment: { type: 'string' } } } },
+                      confidence_per_section: confidence,
+                      recommended_actions_priority_order: actions,
+                      privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing deal_description' },
+            '500': { description: 'Deal analysis failed' },
+          },
+        },
+      },
+      '/win-loss-analysis': {
+        post: {
+          operationId: 'winLossAnalysis',
+          summary: 'Analyze a won or lost deal to extract patterns and improvement insights',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['deal_outcome', 'deal_context'],
+                  properties: {
+                    deal_outcome: { type: 'string', enum: ['won', 'lost'] },
+                    deal_context: {
+                      oneOf: [
+                        { type: 'string', description: 'Deal context as free text' },
+                        {
+                          type: 'object',
+                          description: 'Structured deal context',
+                          properties: {
+                            deal_name: { type: 'string' },
+                            value: { type: 'number' },
+                            competitor: { type: 'string' },
+                            loss_reason: { type: 'string' },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Win/loss analysis with pattern insights and process improvements',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      primary_reason: { type: 'string' },
+                      contributing_factors: actions,
+                      competitive_insights: actions,
+                      process_gaps: actions,
+                      pattern_matches: actions,
+                      improvement_recommendations: actions,
+                      playbook_updates: actions,
+                      confidence_per_section: confidence,
+                      recommended_actions_priority_order: actions,
+                      privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing deal_outcome or deal_context' },
+            '500': { description: 'Win/loss analysis failed' },
+          },
+        },
+      },
+      '/sales-forecast': {
+        post: {
+          operationId: 'salesForecast',
+          summary: 'Forecast revenue and quota attainment from pipeline data',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['pipeline_data'],
+                  properties: {
+                    pipeline_data: {
+                      oneOf: [
+                        { type: 'string', description: 'Pipeline description as free text' },
+                        {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              deal_name: { type: 'string' },
+                              stage: { type: 'string' },
+                              value: { type: 'number' },
+                              close_date: { type: 'string' },
+                            },
+                          },
+                          description: 'Structured pipeline as deal array',
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Revenue forecast with quota attainment projection and confidence ranges',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      forecast_value: { type: 'number' },
+                      best_case_value: { type: 'number' },
+                      worst_case_value: { type: 'number' },
+                      quota_attainment_pct: { type: 'number' },
+                      forecast_accuracy_estimate: { type: 'number', minimum: 0, maximum: 1 },
+                      deals_likely_to_close: actions,
+                      deals_at_risk: actions,
+                      pipeline_coverage_ratio: { type: 'number' },
+                      confidence_per_section: confidence,
+                      recommended_actions_priority_order: actions,
+                      privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing pipeline_data' },
+            '500': { description: 'Forecast failed' },
+          },
+        },
+      },
+      '/execution-gate': {
+        post: {
+          operationId: 'executionGate',
+          summary: 'Validate lead or deal data readiness and recommend the optimal sales intelligence endpoint',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['input'],
+                  properties: {
+                    input: {
+                      oneOf: [
+                        { type: 'string', description: 'Lead or deal description as free text' },
+                        {
+                          type: 'object',
+                          description: 'Structured lead or deal data',
+                          properties: {
+                            company: { type: 'string' },
+                            stage: { type: 'string' },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Execution gate result with recommended sales intelligence endpoint',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      execution_ready: { type: 'boolean' },
+                      recommended_endpoint: { type: 'string' },
+                      next_api: { type: 'string' },
+                      next_endpoint: { type: 'string' },
+                      blocking_flags: actions,
+                      flag_definitions: { type: 'object', additionalProperties: { type: 'string' } },
+                      confidence_per_section: confidence,
+                      privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing input' },
+            '500': { description: 'Gate check failed' },
+          },
+        },
+      },
+      '/execute': {
+        post: {
+          operationId: 'execute',
+          summary: 'ONE-CALL: full sales intelligence workflow — enrich, qualify, score, and generate outreach in one step',
+          'x-one-call': true,
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['prospect_data'],
+                  properties: {
+                    prospect_data: prospectDataOneOf,
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Complete sales intelligence package: qualification, enrichment, and outreach',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      ...leadScoreSchema.properties,
+                      company_summary: { type: 'string' },
+                      buying_triggers: actions,
+                      pain_points: actions,
+                      subject_line: { type: 'string' },
+                      email_body: { type: 'string' },
+                      next_steps: actions,
+                      confidence_per_section: confidence,
+                      recommended_actions_priority_order: actions,
+                      privacy,
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Missing prospect_data' },
+            '500': { description: 'Execution failed' },
+          },
+        },
+      },
+    },
+  });
+});
+
+export default router;

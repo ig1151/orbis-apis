@@ -2825,3 +2825,256 @@ app.get('/vendor-ranking/info', (_req, res) => res.json({
   ],
   execution_chain: { previous: 'reddit-intelligence', next: 'deep-research', optional_next: ['company-research', 'lead-scoring'] },
 }));
+
+// ── sec-filing-intelligence ───────────────────────────────────────────────────
+import secFilingIntelligenceRouter from './routes/sec-filing-intelligence-api/routes/intelligence';
+import secFilingIntelligenceOpenapiRouter from './routes/sec-filing-intelligence-api/routes/openapi';
+app.use('/sec-filing-intelligence/openapi.json', secFilingIntelligenceOpenapiRouter);
+app.use('/sec-filing-intelligence', secFilingIntelligenceRouter);
+app.get('/sec-filing-intelligence/info', (_req, res) => res.json({
+  name: 'SEC Filing Intelligence API', slug: 'sec-filing-intelligence', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { analyze_filing: '$0.009', extract_risks: '$0.006', compare_filings: '$0.008', insider_activity: '$0.007', liquidity_analysis: '$0.007', management_changes: '$0.006', accounting_red_flags: '$0.008', execution_gate: '$0.001', analyze: '$0.015' }, high_volume: { analyze_filing: '$0.006', extract_risks: '$0.004', compare_filings: '$0.005', analyze: '$0.010' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-filing', description: 'Full filing analysis — revenue, EPS, margins, investment signal, and agent summary' },
+    { method: 'POST', path: '/extract-risks', description: 'Extract and categorize risk factors with severity, trend, and mitigation signals' },
+    { method: 'POST', path: '/compare-filings', description: 'Compare two filing periods for metric changes, risk delta, and momentum shift' },
+    { method: 'POST', path: '/insider-activity', description: 'Extract insider transactions with cluster signal and net sentiment' },
+    { method: 'POST', path: '/liquidity-analysis', description: 'Score liquidity with ratios, free cash flow, and going concern risk' },
+    { method: 'POST', path: '/management-changes', description: 'Detect leadership changes, succession risk, and stability assessment' },
+    { method: 'POST', path: '/accounting-red-flags', description: 'Flag accounting anomalies, auditor opinion, and fraud risk score' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate filing input and recommend best analysis endpoint' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full filing intelligence — metrics, risks, insider, liquidity, and investment signal' },
+  ],
+  execution_chain: { previous: 'earnings-analyzer', next: 'portfolio-risk', optional_next: ['fact-verification', 'company-research'] },
+}));
+
+// ── economic-calendar ─────────────────────────────────────────────────────────
+import economicCalendarRouter from './routes/economic-calendar-api/routes/intelligence';
+import economicCalendarOpenapiRouter from './routes/economic-calendar-api/routes/openapi';
+app.use('/economic-calendar/openapi.json', economicCalendarOpenapiRouter);
+app.use('/economic-calendar', economicCalendarRouter);
+app.get('/economic-calendar/info', (_req, res) => res.json({
+  name: 'Economic Calendar API', slug: 'economic-calendar', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { upcoming_events: '$0.005', impact_score: '$0.006', macro_scenario: '$0.008', volatility_estimate: '$0.007', event_signals: '$0.006', execution_gate: '$0.001', analyze: '$0.010' }, high_volume: { upcoming_events: '$0.003', impact_score: '$0.004', macro_scenario: '$0.005', analyze: '$0.007' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/upcoming-events', description: 'List upcoming macro events with impact scores, affected assets, and directional signals' },
+    { method: 'POST', path: '/impact-score', description: 'Score market impact of an economic event given actual vs expected values' },
+    { method: 'POST', path: '/macro-scenario', description: 'Model bull/base/bear macro scenarios from upcoming events for a portfolio type' },
+    { method: 'POST', path: '/volatility-estimate', description: 'Estimate expected volatility around an economic event for a specific asset' },
+    { method: 'POST', path: '/event-signals', description: 'Extract risk-on/risk-off signals from event results with sector and currency impacts' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate calendar input and recommend best analysis endpoint' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full macro intelligence — events, volatility outlook, and positioning recommendation' },
+  ],
+  execution_chain: { previous: 'financial-news-monitor', next: 'portfolio-risk', optional_next: ['earnings-analyzer', 'risk-event-forecast'] },
+}));
+
+// ── reputation-intelligence ───────────────────────────────────────────────────
+import reputationIntelligenceRouter from './routes/reputation-intelligence-api/routes/intelligence';
+import reputationIntelligenceOpenapiRouter from './routes/reputation-intelligence-api/routes/openapi';
+app.use('/reputation-intelligence/openapi.json', reputationIntelligenceOpenapiRouter);
+app.use('/reputation-intelligence', reputationIntelligenceRouter);
+app.get('/reputation-intelligence/info', (_req, res) => res.json({
+  name: 'Reputation Intelligence API', slug: 'reputation-intelligence', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { reputation_score: '$0.007', crisis_detection: '$0.007', narrative_analysis: '$0.006', brand_risk: '$0.007', executive_analysis: '$0.006', controversy_tracking: '$0.005', execution_gate: '$0.001', monitor: '$0.012' }, high_volume: { reputation_score: '$0.005', crisis_detection: '$0.005', brand_risk: '$0.005', monitor: '$0.008' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/reputation-score', description: 'Score entity reputation across public perception, media, social, and crisis history' },
+    { method: 'POST', path: '/crisis-detection', description: 'Detect active or emerging PR/legal/financial crises with velocity and response urgency' },
+    { method: 'POST', path: '/narrative-analysis', description: 'Analyze dominant media narrative, framing, and momentum around an entity' },
+    { method: 'POST', path: '/brand-risk', description: 'Score brand risk across media, social, legal, and competitive vectors with revenue impact' },
+    { method: 'POST', path: '/executive-analysis', description: 'Analyze executive reputation, controversies, leadership signals, and media sentiment' },
+    { method: 'POST', path: '/controversy-tracking', description: 'Track active and historical controversies with severity, status, and recurrence risk' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate reputation input and recommend best analysis endpoint' },
+    { method: 'POST', path: '/monitor', description: 'ONE-CALL: full reputation intelligence — score, crisis, narrative, brand risk, and controversies' },
+  ],
+  execution_chain: { previous: 'competitor-monitor', next: 'due-diligence', optional_next: ['vendor-ranking', 'company-research'] },
+}));
+
+// ── supply-chain-risk ─────────────────────────────────────────────────────────
+import supplyChainRiskRouter from './routes/supply-chain-risk-api/routes/intelligence';
+import supplyChainRiskOpenapiRouter from './routes/supply-chain-risk-api/routes/openapi';
+app.use('/supply-chain-risk/openapi.json', supplyChainRiskOpenapiRouter);
+app.use('/supply-chain-risk', supplyChainRiskRouter);
+app.get('/supply-chain-risk/info', (_req, res) => res.json({
+  name: 'Supply Chain Risk API', slug: 'supply-chain-risk', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { supplier_risk: '$0.007', disruption_analysis: '$0.007', geopolitical_exposure: '$0.008', concentration_risk: '$0.006', logistics_analysis: '$0.006', dependency_mapping: '$0.007', execution_gate: '$0.001', assess: '$0.014' }, high_volume: { supplier_risk: '$0.005', disruption_analysis: '$0.005', geopolitical_exposure: '$0.005', assess: '$0.009' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/supplier-risk', description: 'Score supplier risk with financial stability, lead time, quality, and single-source dependency flags' },
+    { method: 'POST', path: '/disruption-analysis', description: 'Detect active and emerging supply disruptions with impact probability and contingency flags' },
+    { method: 'POST', path: '/geopolitical-exposure', description: 'Map geopolitical supply exposure by region with trade war and sanctions risk' },
+    { method: 'POST', path: '/concentration-risk', description: 'Score supply concentration with Herfindahl index and top-supplier dependency metrics' },
+    { method: 'POST', path: '/logistics-analysis', description: 'Assess logistics risk across transport modes, port concentration, and customs exposure' },
+    { method: 'POST', path: '/dependency-mapping', description: 'Map critical supply dependencies with substitutability and switchover complexity' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate supply chain input and recommend best analysis endpoint' },
+    { method: 'POST', path: '/assess', description: 'ONE-CALL: full supply chain risk — suppliers, geopolitical, disruptions, concentration, and mitigations' },
+  ],
+  execution_chain: { previous: 'vendor-ranking', next: 'risk-event-forecast', optional_next: ['due-diligence', 'company-research'] },
+}));
+
+// ── autonomous-negotiation ────────────────────────────────────────────────────
+import autonomousNegotiationRouter from './routes/autonomous-negotiation-api/routes/intelligence';
+import autonomousNegotiationOpenapiRouter from './routes/autonomous-negotiation-api/routes/openapi';
+app.use('/autonomous-negotiation/openapi.json', autonomousNegotiationOpenapiRouter);
+app.use('/autonomous-negotiation', autonomousNegotiationRouter);
+app.get('/autonomous-negotiation/info', (_req, res) => res.json({
+  name: 'Autonomous Negotiation API', slug: 'autonomous-negotiation', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { generate_counteroffer: '$0.009', negotiation_strategy: '$0.008', concession_analysis: '$0.007', batna_score: '$0.007', negotiation_risk: '$0.007', deal_breakers: '$0.006', execution_gate: '$0.001', negotiate: '$0.014' }, high_volume: { generate_counteroffer: '$0.006', negotiation_strategy: '$0.005', batna_score: '$0.005', negotiate: '$0.009' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/generate-counteroffer', description: 'Generate a counteroffer with changed terms, concessions made, and strategy rationale' },
+    { method: 'POST', path: '/negotiation-strategy', description: 'Build a negotiation strategy with leverage points, opening position, and walk-away threshold' },
+    { method: 'POST', path: '/concession-analysis', description: 'Analyze concession patterns, reciprocity balance, and next concession recommendation' },
+    { method: 'POST', path: '/batna-score', description: 'Score BATNA strength, ZOPA existence, and negotiation leverage with walk-away trigger' },
+    { method: 'POST', path: '/negotiation-risk', description: 'Identify deal risks, hidden costs, unfavorable terms, and overall recommendation' },
+    { method: 'POST', path: '/deal-breakers', description: 'Surface deal-breakers, non-negotiables, and red lines with suggested fixes' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate negotiation input and recommend best analysis endpoint' },
+    { method: 'POST', path: '/negotiate', description: 'ONE-CALL: full negotiation intelligence — strategy, BATNA, risks, counteroffer, and next move' },
+  ],
+  execution_chain: { previous: 'legal-contract-risk', next: 'proposal-generation', optional_next: ['due-diligence', 'vendor-ranking'] },
+}));
+
+// ── corporate-actions ─────────────────────────────────────────────────────────
+import corporateActionsRouter from './routes/corporate-actions-api/routes/intelligence';
+import corporateActionsOpenapiRouter from './routes/corporate-actions-api/routes/openapi';
+app.use('/corporate-actions/openapi.json', corporateActionsOpenapiRouter);
+app.use('/corporate-actions', corporateActionsRouter);
+app.get('/corporate-actions/info', (_req, res) => res.json({
+  name: 'Corporate Actions API', slug: 'corporate-actions', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { splits: '$0.006', dividends: '$0.006', buybacks: '$0.006', mergers: '$0.007', insider_activity: '$0.007', corporate_events: '$0.005', execution_gate: '$0.001', analyze: '$0.012' }, high_volume: { splits: '$0.004', dividends: '$0.004', buybacks: '$0.004', mergers: '$0.005', insider_activity: '$0.005', analyze: '$0.008' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/splits', description: 'Analyze stock splits with ratio, rationale, and post-split performance signal' },
+    { method: 'POST', path: '/dividends', description: 'Extract dividend yield, safety, growth rate, and income signal' },
+    { method: 'POST', path: '/buybacks', description: 'Score buyback program with yield, management confidence signal, and price support' },
+    { method: 'POST', path: '/mergers', description: 'Detect M&A activity with deal status, premium, and deal risk assessment' },
+    { method: 'POST', path: '/insider-activity', description: 'Extract insider transactions with cluster signal, conviction score, and net flow' },
+    { method: 'POST', path: '/corporate-events', description: 'List all recent corporate events with significance and market impact' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate corporate actions input and recommend best analysis endpoint' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full corporate actions — splits, dividends, buybacks, M&A, insider, and overall signal' },
+  ],
+  execution_chain: { previous: 'sec-filing-intelligence', next: 'earnings-analyzer', optional_next: ['portfolio-risk', 'financial-news-monitor'] },
+}));
+
+// ── knowledge-graph ───────────────────────────────────────────────────────────
+import knowledgeGraphRouter from './routes/knowledge-graph-api/routes/intelligence';
+import knowledgeGraphOpenapiRouter from './routes/knowledge-graph-api/routes/openapi';
+app.use('/knowledge-graph/openapi.json', knowledgeGraphOpenapiRouter);
+app.use('/knowledge-graph', knowledgeGraphRouter);
+app.get('/knowledge-graph/info', (_req, res) => res.json({
+  name: 'Knowledge Graph API', slug: 'knowledge-graph', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { extract_entities: '$0.006', extract_relationships: '$0.007', build_graph: '$0.008', query_graph: '$0.008', find_paths: '$0.007', cluster_entities: '$0.007', execution_gate: '$0.001', extract: '$0.014' }, high_volume: { extract_entities: '$0.004', extract_relationships: '$0.005', build_graph: '$0.005', extract: '$0.009' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/extract-entities', description: 'Extract named entities with type, confidence, aliases, and context snippets' },
+    { method: 'POST', path: '/extract-relationships', description: 'Extract entity relationships with predicate, strength, and evidence quotes' },
+    { method: 'POST', path: '/build-graph', description: 'Build nodes/edges graph with clusters, central nodes, and graph statistics' },
+    { method: 'POST', path: '/query-graph', description: 'Answer natural language queries against a knowledge graph with reasoning path' },
+    { method: 'POST', path: '/find-paths', description: 'Find shortest and strongest paths between two entities in a graph' },
+    { method: 'POST', path: '/cluster-entities', description: 'Cluster entities by semantic similarity with theme labels and cohesion scores' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate text input and recommend best graph extraction endpoint' },
+    { method: 'POST', path: '/extract', description: 'ONE-CALL: full knowledge graph extraction — entities, relationships, clusters, and key insights' },
+  ],
+  execution_chain: { previous: 'deep-research', next: 'fact-verification', optional_next: ['company-research', 'intelligence-extraction'] },
+}));
+
+// ── risk-event-forecast ───────────────────────────────────────────────────────
+import riskEventForecastRouter from './routes/risk-event-forecast-api/routes/intelligence';
+import riskEventForecastOpenapiRouter from './routes/risk-event-forecast-api/routes/openapi';
+app.use('/risk-event-forecast/openapi.json', riskEventForecastOpenapiRouter);
+app.use('/risk-event-forecast', riskEventForecastRouter);
+app.get('/risk-event-forecast/info', (_req, res) => res.json({
+  name: 'Risk Event Forecast API', slug: 'risk-event-forecast', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { bankruptcy_probability: '$0.009', volatility_forecast: '$0.008', event_prediction: '$0.009', stress_propagation: '$0.010', tail_risk: '$0.009', execution_gate: '$0.001', forecast: '$0.016' }, high_volume: { bankruptcy_probability: '$0.006', volatility_forecast: '$0.005', event_prediction: '$0.006', forecast: '$0.011' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/bankruptcy-probability', description: 'Estimate 12-month bankruptcy probability with Altman Z-score, distress signals, and liquidity runway' },
+    { method: 'POST', path: '/volatility-forecast', description: 'Forecast expected volatility regime, trend, and event-driven vol catalysts for an asset' },
+    { method: 'POST', path: '/event-prediction', description: 'Predict high-probability risk events with timeframe, magnitude, and early warning signals' },
+    { method: 'POST', path: '/stress-propagation', description: 'Model how a shock event propagates through connected entities with contagion probability' },
+    { method: 'POST', path: '/tail-risk', description: 'Estimate VaR, CVaR, tail scenarios, and black swan sensitivity for a portfolio' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate risk forecast input and recommend best analysis endpoint' },
+    { method: 'POST', path: '/forecast', description: 'ONE-CALL: full risk forecast — bankruptcy, volatility, events, tail risk, and overall risk score' },
+  ],
+  execution_chain: { previous: 'supply-chain-risk', next: 'portfolio-risk', optional_next: ['sec-filing-intelligence', 'earnings-analyzer'] },
+}));
+
+// ── sales-intelligence ────────────────────────────────────────────────────────
+import salesIntelligenceRouter from './routes/sales-intelligence-api/routes/intelligence';
+import salesIntelligenceOpenapiRouter from './routes/sales-intelligence-api/routes/openapi';
+app.use('/sales-intelligence/openapi.json', salesIntelligenceOpenapiRouter);
+app.use('/sales-intelligence', salesIntelligenceRouter);
+app.get('/sales-intelligence/info', (_req, res) => res.json({
+  name: 'Sales Intelligence API', slug: 'sales-intelligence', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { qualify_lead: '$0.006', enrich_prospect: '$0.007', prioritize_pipeline: '$0.008', generate_outreach: '$0.007', analyze_deal: '$0.007', win_loss_analysis: '$0.006', sales_forecast: '$0.008', execution_gate: '$0.001', execute: '$0.014' }, high_volume: { qualify_lead: '$0.004', enrich_prospect: '$0.005', generate_outreach: '$0.005', execute: '$0.009' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/qualify-lead', description: 'Score and qualify leads with ICP fit, budget/authority/need signals, and recommended action' },
+    { method: 'POST', path: '/enrich-prospect', description: 'Enrich prospect with company data, tech stack, buying triggers, and decision makers' },
+    { method: 'POST', path: '/prioritize-pipeline', description: 'Rank pipeline deals by priority score, close probability, and at-risk flags' },
+    { method: 'POST', path: '/generate-outreach', description: 'Generate personalized outreach with subject, value prop, CTA, and A/B variant' },
+    { method: 'POST', path: '/analyze-deal', description: 'Score deal health with blockers, champions, detractors, and close probability' },
+    { method: 'POST', path: '/win-loss-analysis', description: 'Analyze win/loss patterns with decision criteria, competitor factors, and adjustments' },
+    { method: 'POST', path: '/sales-forecast', description: 'Forecast pipeline value with confidence range and likely-to-close breakdown' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate sales input and recommend best analysis endpoint' },
+    { method: 'POST', path: '/execute', description: 'ONE-CALL: full sales intelligence — qualify, enrich, outreach, deal signals, and recommendations' },
+  ],
+  execution_chain: { previous: 'lead-scoring', next: 'cold-outreach', optional_next: ['company-research', 'outreach-execution'] },
+}));
+
+// ── qa-testing ────────────────────────────────────────────────────────────────
+import qaTestingRouter from './routes/qa-testing-api/routes/intelligence';
+import qaTestingOpenapiRouter from './routes/qa-testing-api/routes/openapi';
+app.use('/qa-testing/openapi.json', qaTestingOpenapiRouter);
+app.use('/qa-testing', qaTestingRouter);
+app.get('/qa-testing/info', (_req, res) => res.json({
+  name: 'QA Testing API', slug: 'qa-testing', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { test_workflow: '$0.007', detect_regression: '$0.007', test_api_chain: '$0.008', validate_output: '$0.006', generate_test_cases: '$0.007', run_suite: '$0.008', execution_gate: '$0.001', test: '$0.014' }, high_volume: { test_workflow: '$0.005', detect_regression: '$0.005', test_api_chain: '$0.005', test: '$0.009' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/test-workflow', description: 'Generate test cases for a workflow with coverage assessment and missing test areas' },
+    { method: 'POST', path: '/detect-regression', description: 'Detect regressions between baseline and current output with diff analysis and root cause' },
+    { method: 'POST', path: '/test-api-chain', description: 'Validate an API chain for broken links, data flow issues, and contract violations' },
+    { method: 'POST', path: '/validate-output', description: 'Validate AI or API output against schema/expectations with hallucination and completeness scoring' },
+    { method: 'POST', path: '/generate-test-cases', description: 'Generate unit, integration, edge case, load, or security test cases from a spec' },
+    { method: 'POST', path: '/run-suite', description: 'Run a test suite and return pass rate, failures, critical issues, and QA grade' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate QA input and recommend best testing endpoint' },
+    { method: 'POST', path: '/test', description: 'ONE-CALL: full QA — test cases, regression risks, validation, coverage, and QA grade' },
+  ],
+  execution_chain: { previous: 'agent-observability', next: 'workflow-orchestrator', optional_next: ['ai-output-safety', 'fact-verification'] },
+}));
+
+// ── due-diligence ─────────────────────────────────────────────────────────────
+import dueDiligenceRouter from './routes/due-diligence-api/routes/intelligence';
+import dueDiligenceOpenapiRouter from './routes/due-diligence-api/routes/openapi';
+app.use('/due-diligence/openapi.json', dueDiligenceOpenapiRouter);
+app.use('/due-diligence', dueDiligenceRouter);
+app.get('/due-diligence/info', (_req, res) => res.json({
+  name: 'Due Diligence API', slug: 'due-diligence', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { company_risk: '$0.007', founder_analysis: '$0.008', compliance_check: '$0.008', reputation_analysis: '$0.007', financial_health: '$0.007', legal_risk: '$0.008', execution_gate: '$0.001', due_diligence: '$0.018' }, high_volume: { company_risk: '$0.005', founder_analysis: '$0.005', compliance_check: '$0.005', due_diligence: '$0.012' } },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/company-risk', description: 'Score company risk across financial, legal, operational, reputational, and regulatory dimensions' },
+    { method: 'POST', path: '/founder-analysis', description: 'Analyze founder/team track record, domain expertise, red flags, and execution risk' },
+    { method: 'POST', path: '/compliance-check', description: 'Check GDPR, SOX, AML, KYC, ISO27001, HIPAA, PCI compliance status with gap analysis' },
+    { method: 'POST', path: '/reputation-analysis', description: 'Score company reputation with controversies, media sentiment, and brand health trend' },
+    { method: 'POST', path: '/financial-health', description: 'Assess revenue trend, profitability, burn rate, runway, and unit economics signals' },
+    { method: 'POST', path: '/legal-risk', description: 'Identify active litigation, IP issues, regulatory investigations, and legal risk score' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate due diligence input and recommend best analysis endpoint' },
+    { method: 'POST', path: '/due-diligence', description: 'ONE-CALL: full due diligence — risk, financials, legal, compliance, founders, and recommendation' },
+  ],
+  execution_chain: { previous: 'reputation-intelligence', next: 'company-research', optional_next: ['legal-contract-risk', 'vendor-ranking'] },
+}));
