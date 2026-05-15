@@ -1,167 +1,205 @@
-[{
-  "name": "Vendor Ranking API",
-  "shortDescription": "Rank, score, and evaluate vendors for procurement and due diligence decisions",
-  "description": "AI-powered vendor evaluation — rank vendors, score individual vendors, head-to-head comparisons, review analysis, risk assessment, requirements matching, and full due diligence. ONE-CALL evaluate endpoint for complete procurement intelligence.",
-  "category": "procurement-intelligence",
-  "baseUrl": "https://orbis-apis.onrender.com/vendor-ranking",
-  "websiteUrl": "https://orbis-apis.onrender.com",
-  "docsUrl": "https://orbis-apis.onrender.com/vendor-ranking/openapi.json",
-  "openApiSpecUrl": "https://orbis-apis.onrender.com/vendor-ranking/openapi.json",
-  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-  "tags": [
-    "vendor-ranking",
-    "procurement",
-    "due-diligence",
-    "vendor-risk",
-    "vendor-comparison",
-    "supplier-intelligence",
-    "vendor-scoring",
-    "requirements-matching"
-  ],
-  "keywords": [
-    "rank vendors ai",
-    "vendor due diligence api",
-    "compare vendors api",
-    "vendor risk assessment",
-    "vendor scoring api",
-    "procurement intelligence",
-    "vendor requirements matching",
-    "vendor review analysis"
-  ],
-  "tiers": [
-    {
-      "name": "Free",
-      "isFree": true,
-      "requestsPerDay": 100,
-      "requestsPerMonth": 3000
-    },
-    {
-      "name": "Pay Per Call",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.008,
-      "requestsPerDay": 50000,
-      "endpointPricing": [
-        {
-          "method": "POST",
-          "pathPattern": "/rank-vendors",
-          "pricePerCallUsdc": 0.008,
-          "description": "Rank multiple vendors across weighted criteria"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/score-vendor",
-          "pricePerCallUsdc": 0.006,
-          "description": "Score a single vendor with grade and strengths/weaknesses"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/compare-vendors",
-          "pricePerCallUsdc": 0.007,
-          "description": "Head-to-head vendor comparison with per-criterion scores"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/check-reviews",
-          "pricePerCallUsdc": 0.006,
-          "description": "Analyze vendor reviews for trust score and fake review risk"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/assess-risk",
-          "pricePerCallUsdc": 0.007,
-          "description": "Assess vendor risk across financial, legal, and compliance dimensions"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/match-requirements",
-          "pricePerCallUsdc": 0.007,
-          "description": "Match vendors against requirements and score fit"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/due-diligence",
-          "pricePerCallUsdc": 0.009,
-          "description": "Comprehensive vendor due diligence report"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/execution-gate",
-          "pricePerCallUsdc": 0.001,
-          "description": "Validate vendor input and recommend best evaluation endpoint"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/evaluate",
-          "pricePerCallUsdc": 0.015,
-          "description": "ONE-CALL full vendor evaluation workflow"
-        }
-      ]
-    },
-    {
-      "name": "High Volume",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.005,
-      "requestsPerDay": 500000,
-      "endpointPricing": [
-        {
-          "method": "POST",
-          "pathPattern": "/rank-vendors",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/score-vendor",
-          "pricePerCallUsdc": 0.004
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/compare-vendors",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/check-reviews",
-          "pricePerCallUsdc": 0.004
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/assess-risk",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/match-requirements",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/due-diligence",
-          "pricePerCallUsdc": 0.006
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/execution-gate",
-          "pricePerCallUsdc": 0.001
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/evaluate",
-          "pricePerCallUsdc": 0.010
-        }
-      ]
-    }
-  ],
-  "endpoints": [
-    { "method": "POST", "path": "/rank-vendors", "description": "Rank multiple vendors across weighted criteria" },
-    { "method": "POST", "path": "/score-vendor", "description": "Score a single vendor with grade and strengths/weaknesses" },
-    { "method": "POST", "path": "/compare-vendors", "description": "Head-to-head vendor comparison with per-criterion scores" },
-    { "method": "POST", "path": "/check-reviews", "description": "Analyze vendor reviews for trust score and fake review risk" },
-    { "method": "POST", "path": "/assess-risk", "description": "Assess vendor risk across financial, legal, and compliance dimensions" },
-    { "method": "POST", "path": "/match-requirements", "description": "Match vendors against requirements and score fit" },
-    { "method": "POST", "path": "/due-diligence", "description": "Comprehensive vendor due diligence report" },
-    { "method": "POST", "path": "/execution-gate", "description": "Validate vendor input and recommend best evaluation endpoint" },
-    { "method": "POST", "path": "/evaluate", "description": "ONE-CALL full vendor evaluation workflow" }
-  ]
-}]
+[
+  {
+    "name": "Vendor Ranking API",
+    "shortDescription": "Rank, score, and evaluate vendors for procurement and due diligence decisions",
+    "description": "AI-powered vendor evaluation \u2014 rank vendors, score individual vendors, head-to-head comparisons, review analysis, risk assessment, requirements matching, and full due diligence. ONE-CALL evaluate endpoint for complete procurement intelligence.",
+    "category": "business",
+    "baseUrl": "https://orbis-apis.onrender.com/vendor-ranking",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/vendor-ranking/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/vendor-ranking/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "vendor-ranking",
+      "procurement",
+      "due-diligence",
+      "vendor-risk",
+      "vendor-comparison",
+      "supplier-intelligence",
+      "vendor-scoring",
+      "requirements-matching"
+    ],
+    "keywords": [
+      "rank vendors ai",
+      "vendor due diligence api",
+      "compare vendors api",
+      "vendor risk assessment",
+      "vendor scoring api",
+      "procurement intelligence",
+      "vendor requirements matching",
+      "vendor review analysis"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rank-vendors",
+            "pricePerCallUsdc": 0.008,
+            "description": "Rank multiple vendors across weighted criteria"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-vendor",
+            "pricePerCallUsdc": 0.006,
+            "description": "Score a single vendor with grade and strengths/weaknesses"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-vendors",
+            "pricePerCallUsdc": 0.007,
+            "description": "Head-to-head vendor comparison with per-criterion scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check-reviews",
+            "pricePerCallUsdc": 0.006,
+            "description": "Analyze vendor reviews for trust score and fake review risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/assess-risk",
+            "pricePerCallUsdc": 0.007,
+            "description": "Assess vendor risk across financial, legal, and compliance dimensions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/match-requirements",
+            "pricePerCallUsdc": 0.007,
+            "description": "Match vendors against requirements and score fit"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/due-diligence",
+            "pricePerCallUsdc": 0.009,
+            "description": "Comprehensive vendor due diligence report"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate vendor input and recommend best evaluation endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/evaluate",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL full vendor evaluation workflow"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rank-vendors",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-vendor",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-vendors",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check-reviews",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/assess-risk",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/match-requirements",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/due-diligence",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/evaluate",
+            "pricePerCallUsdc": 0.01
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/rank-vendors",
+        "description": "Rank multiple vendors across weighted criteria"
+      },
+      {
+        "method": "POST",
+        "path": "/score-vendor",
+        "description": "Score a single vendor with grade and strengths/weaknesses"
+      },
+      {
+        "method": "POST",
+        "path": "/compare-vendors",
+        "description": "Head-to-head vendor comparison with per-criterion scores"
+      },
+      {
+        "method": "POST",
+        "path": "/check-reviews",
+        "description": "Analyze vendor reviews for trust score and fake review risk"
+      },
+      {
+        "method": "POST",
+        "path": "/assess-risk",
+        "description": "Assess vendor risk across financial, legal, and compliance dimensions"
+      },
+      {
+        "method": "POST",
+        "path": "/match-requirements",
+        "description": "Match vendors against requirements and score fit"
+      },
+      {
+        "method": "POST",
+        "path": "/due-diligence",
+        "description": "Comprehensive vendor due diligence report"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Validate vendor input and recommend best evaluation endpoint"
+      },
+      {
+        "method": "POST",
+        "path": "/evaluate",
+        "description": "ONE-CALL full vendor evaluation workflow"
+      }
+    ]
+  }
+]

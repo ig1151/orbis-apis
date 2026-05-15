@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Company Enrichment API",
+    "shortDescription": "Company intelligence and firmographic enrichment",
+    "description": "Enrich companies with industry, employee size, revenue estimates, hiring trends, technologies, and business intelligence signals.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/company-enrichment",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/company-enrichment/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/company-enrichment/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "company-data",
+      "firmographics",
+      "business-intelligence",
+      "sales"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/company-profile",
+            "pricePerCallUsdc": 0.004,
+            "description": "Company profile enrichment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/technographics",
+            "pricePerCallUsdc": 0.005,
+            "description": "Technology stack analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/firmographics",
+            "pricePerCallUsdc": 0.005,
+            "description": "Firmographic data — employee count, revenue range, growth stage"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.015,
+            "description": "Batch enrich up to 10 companies at once"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enrich",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL full company enrichment"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/company-profile",
+        "description": "Company profile enrichment"
+      },
+      {
+        "method": "POST",
+        "path": "/firmographics",
+        "description": "Firmographic data — employee count, revenue range, growth stage"
+      },
+      {
+        "method": "POST",
+        "path": "/technographics",
+        "description": "Technology stack analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch enrich up to 10 companies at once"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/enrich",
+        "description": "ONE-CALL full company enrichment"
+      }
+    ]
+  }
+]

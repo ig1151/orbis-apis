@@ -1,0 +1,103 @@
+[
+  {
+    "name": "Stock Quote API",
+    "shortDescription": "Real-time stock quotes and market intelligence",
+    "description": "Get stock quotes, price movements, market status, and trading intelligence for finance agents and autonomous workflows.",
+    "category": "finance-payments",
+    "baseUrl": "https://orbis-apis.onrender.com/stock-quote",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/stock-quote/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/stock-quote/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "stocks",
+      "market-data",
+      "finance",
+      "quotes",
+      "trading"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Market Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/quote",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get stock quote"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch-quotes",
+            "pricePerCallUsdc": 0.004,
+            "description": "Batch quote retrieval"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/market-status",
+            "pricePerCallUsdc": 0.001,
+            "description": "Market open/close status"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/price-history",
+            "pricePerCallUsdc": 0.003,
+            "description": "Historical OHLC data for a ticker over a date range"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full stock intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/quote",
+        "description": "Get stock quote"
+      },
+      {
+        "method": "POST",
+        "path": "/batch-quotes",
+        "description": "Batch quote retrieval"
+      },
+      {
+        "method": "POST",
+        "path": "/market-status",
+        "description": "Market open/close status"
+      },
+      {
+        "method": "POST",
+        "path": "/price-history",
+        "description": "Historical OHLC data for a ticker over a date range"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full stock intelligence"
+      }
+    ]
+  }
+]

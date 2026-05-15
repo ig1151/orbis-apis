@@ -1,0 +1,134 @@
+[
+  {
+    "name": "LinkedIn Profile API",
+    "shortDescription": "LinkedIn profile analysis, company intelligence, and person enrichment for autonomous agents",
+    "description": "Analyze LinkedIn profiles, enrich people and companies, extract experience and skills, estimate engagement signals, identify hiring trends, and prepare outreach-ready intelligence for sales, recruiting, and due diligence workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/linkedin-profile",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/linkedin-profile/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/linkedin-profile/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "linkedin",
+      "profile-enrichment",
+      "company-intelligence",
+      "lead-generation",
+      "recruiting",
+      "sales-intelligence",
+      "agentic",
+      "business"
+    ],
+    "keywords": [
+      "linkedin profile api",
+      "linkedin enrichment",
+      "company intelligence",
+      "lead enrichment",
+      "person enrichment",
+      "sales prospecting",
+      "recruiting intelligence",
+      "linkedin company analysis"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/profile",
+            "pricePerCallUsdc": 0.004,
+            "description": "Analyze LinkedIn profile from URL or name"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/company",
+            "pricePerCallUsdc": 0.004,
+            "description": "LinkedIn company intelligence and hiring signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enrich",
+            "pricePerCallUsdc": 0.006,
+            "description": "Enrich a person with LinkedIn profile data and contact signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL: enrich person and company in one shot"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/profile",
+            "pricePerCallUsdc": 0.002,
+            "description": "High-volume profile analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enrich",
+            "pricePerCallUsdc": 0.004,
+            "description": "High-volume person enrichment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "High-volume full enrichment workflow"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/profile",
+        "description": "Analyze LinkedIn profile from URL or name"
+      },
+      {
+        "method": "POST",
+        "path": "/company",
+        "description": "LinkedIn company intelligence and hiring analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/enrich",
+        "description": "Enrich a person with LinkedIn profile and contact signals"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: enrich person and company in one shot"
+      }
+    ]
+  }
+]

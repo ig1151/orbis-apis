@@ -1,202 +1,204 @@
-[{
-  "name": "SEC Filing Intelligence API",
-  "shortDescription": "Analyze SEC filings for risks, metrics, insider activity, and investment signals",
-  "description": "Extract actionable intelligence from SEC filings including 10-K, 10-Q, 8-K, and proxy statements. Identify accounting red flags, liquidity risks, insider transactions, and management changes. Designed for autonomous agents, investment research workflows, and compliance automation.",
-  "category": "financial-intelligence",
-  "baseUrl": "https://orbis-apis.onrender.com/sec-filing-intelligence",
-  "websiteUrl": "https://orbis-apis.onrender.com",
-  "docsUrl": "https://orbis-apis.onrender.com/sec-filing-intelligence/openapi.json",
-  "openApiSpecUrl": "https://orbis-apis.onrender.com/sec-filing-intelligence/openapi.json",
-  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-  "tags": [
-    "sec-filing",
-    "financial-intelligence",
-    "10-k-analysis",
-    "insider-trading",
-    "risk-extraction",
-    "accounting-fraud",
-    "liquidity-analysis",
-    "investment-signals"
-  ],
-  "keywords": [
-    "analyze 10-K filing",
-    "extract SEC risks",
-    "insider transaction analysis",
-    "accounting red flags api",
-    "liquidity analysis api",
-    "compare quarterly filings",
-    "SEC filing intelligence"
-  ],
-  "tiers": [
-    {
-      "name": "Free",
-      "isFree": true,
-      "requestsPerDay": 100,
-      "requestsPerMonth": 3000
-    },
-    {
-      "name": "Pay Per Call",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.009,
-      "requestsPerDay": 50000,
-      "endpointPricing": [
-        {
-          "method": "POST",
-          "pathPattern": "/analyze-filing",
-          "pricePerCallUsdc": 0.009,
-          "description": "Full analysis of an SEC filing document"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/extract-risks",
-          "pricePerCallUsdc": 0.006,
-          "description": "Extract risk factors from SEC filings"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/compare-filings",
-          "pricePerCallUsdc": 0.008,
-          "description": "Compare filings across periods for changes"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/insider-activity",
-          "pricePerCallUsdc": 0.007,
-          "description": "Analyze insider transaction patterns"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/liquidity-analysis",
-          "pricePerCallUsdc": 0.007,
-          "description": "Assess liquidity metrics from filings"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/management-changes",
-          "pricePerCallUsdc": 0.006,
-          "description": "Detect executive and board changes"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/accounting-red-flags",
-          "pricePerCallUsdc": 0.008,
-          "description": "Identify accounting manipulation signals"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/execution-gate",
-          "pricePerCallUsdc": 0.001,
-          "description": "Filing analysis execution readiness check"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/analyze",
-          "pricePerCallUsdc": 0.015,
-          "description": "ONE-CALL full SEC filing intelligence workflow"
-        }
-      ]
-    },
-    {
-      "name": "High Volume",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.006,
-      "requestsPerDay": 500000,
-      "endpointPricing": [
-        {
-          "method": "POST",
-          "pathPattern": "/analyze-filing",
-          "pricePerCallUsdc": 0.006
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/extract-risks",
-          "pricePerCallUsdc": 0.004
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/compare-filings",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/insider-activity",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/liquidity-analysis",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/management-changes",
-          "pricePerCallUsdc": 0.004
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/accounting-red-flags",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/execution-gate",
-          "pricePerCallUsdc": 0.001
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/analyze",
-          "pricePerCallUsdc": 0.010
-        }
-      ]
-    }
-  ],
-  "endpoints": [
-    {
-      "method": "POST",
-      "path": "/analyze-filing",
-      "description": "Full analysis of an SEC filing document"
-    },
-    {
-      "method": "POST",
-      "path": "/extract-risks",
-      "description": "Extract risk factors from SEC filings"
-    },
-    {
-      "method": "POST",
-      "path": "/compare-filings",
-      "description": "Compare filings across periods for changes"
-    },
-    {
-      "method": "POST",
-      "path": "/insider-activity",
-      "description": "Analyze insider transaction patterns"
-    },
-    {
-      "method": "POST",
-      "path": "/liquidity-analysis",
-      "description": "Assess liquidity metrics from filings"
-    },
-    {
-      "method": "POST",
-      "path": "/management-changes",
-      "description": "Detect executive and board changes"
-    },
-    {
-      "method": "POST",
-      "path": "/accounting-red-flags",
-      "description": "Identify accounting manipulation signals"
-    },
-    {
-      "method": "POST",
-      "path": "/execution-gate",
-      "description": "Filing analysis execution readiness check"
-    },
-    {
-      "method": "POST",
-      "path": "/analyze",
-      "description": "ONE-CALL full SEC filing intelligence workflow"
-    }
-  ]
-}]
+[
+  {
+    "name": "SEC Filing Intelligence API",
+    "shortDescription": "Analyze SEC filings for risks, metrics, insider activity, and investment signals",
+    "description": "Extract actionable intelligence from SEC filings including 10-K, 10-Q, 8-K, and proxy statements. Identify accounting red flags, liquidity risks, insider transactions, and management changes. Designed for autonomous agents, investment research workflows, and compliance automation.",
+    "category": "finance-payments",
+    "baseUrl": "https://orbis-apis.onrender.com/sec-filing-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/sec-filing-intelligence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/sec-filing-intelligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "sec-filing",
+      "financial-intelligence",
+      "10-k-analysis",
+      "insider-trading",
+      "risk-extraction",
+      "accounting-fraud",
+      "liquidity-analysis",
+      "investment-signals"
+    ],
+    "keywords": [
+      "analyze 10-K filing",
+      "extract SEC risks",
+      "insider transaction analysis",
+      "accounting red flags api",
+      "liquidity analysis api",
+      "compare quarterly filings",
+      "SEC filing intelligence"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.009,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-filing",
+            "pricePerCallUsdc": 0.009,
+            "description": "Full analysis of an SEC filing document"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-risks",
+            "pricePerCallUsdc": 0.006,
+            "description": "Extract risk factors from SEC filings"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-filings",
+            "pricePerCallUsdc": 0.008,
+            "description": "Compare filings across periods for changes"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/insider-activity",
+            "pricePerCallUsdc": 0.007,
+            "description": "Analyze insider transaction patterns"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/liquidity-analysis",
+            "pricePerCallUsdc": 0.007,
+            "description": "Assess liquidity metrics from filings"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/management-changes",
+            "pricePerCallUsdc": 0.006,
+            "description": "Detect executive and board changes"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/accounting-red-flags",
+            "pricePerCallUsdc": 0.008,
+            "description": "Identify accounting manipulation signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Filing analysis execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL full SEC filing intelligence workflow"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-filing",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-risks",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-filings",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/insider-activity",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/liquidity-analysis",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/management-changes",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/accounting-red-flags",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.01
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze-filing",
+        "description": "Full analysis of an SEC filing document"
+      },
+      {
+        "method": "POST",
+        "path": "/extract-risks",
+        "description": "Extract risk factors from SEC filings"
+      },
+      {
+        "method": "POST",
+        "path": "/compare-filings",
+        "description": "Compare filings across periods for changes"
+      },
+      {
+        "method": "POST",
+        "path": "/insider-activity",
+        "description": "Analyze insider transaction patterns"
+      },
+      {
+        "method": "POST",
+        "path": "/liquidity-analysis",
+        "description": "Assess liquidity metrics from filings"
+      },
+      {
+        "method": "POST",
+        "path": "/management-changes",
+        "description": "Detect executive and board changes"
+      },
+      {
+        "method": "POST",
+        "path": "/accounting-red-flags",
+        "description": "Identify accounting manipulation signals"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Filing analysis execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full SEC filing intelligence workflow"
+      }
+    ]
+  }
+]

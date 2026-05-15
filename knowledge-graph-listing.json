@@ -1,185 +1,187 @@
-[{
-  "name": "Knowledge Graph API",
-  "shortDescription": "Extract entities, relationships, and clusters from text to build queryable knowledge graphs",
-  "description": "Transform unstructured text into structured knowledge graphs. Extract named entities with type and confidence, map relationships between them, build node/edge graphs with cluster detection, find paths between entities, and query graphs in natural language. Built for autonomous research agents, document intelligence platforms, and relationship mapping workflows.",
-  "category": "knowledge-intelligence",
-  "baseUrl": "https://orbis-apis.onrender.com/knowledge-graph",
-  "websiteUrl": "https://orbis-apis.onrender.com",
-  "docsUrl": "https://orbis-apis.onrender.com/knowledge-graph/openapi.json",
-  "openApiSpecUrl": "https://orbis-apis.onrender.com/knowledge-graph/openapi.json",
-  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-  "tags": [
-    "knowledge-graph",
-    "entity-extraction",
-    "relationship-mapping",
-    "graph-intelligence",
-    "nlp",
-    "entity-clustering",
-    "path-finding",
-    "document-intelligence"
-  ],
-  "keywords": [
-    "knowledge graph api",
-    "entity extraction api",
-    "relationship extraction api",
-    "graph building api",
-    "natural language graph query",
-    "entity clustering api"
-  ],
-  "tiers": [
-    {
-      "name": "Free",
-      "isFree": true,
-      "requestsPerDay": 100,
-      "requestsPerMonth": 3000
-    },
-    {
-      "name": "Pay Per Call",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.007,
-      "requestsPerDay": 50000,
-      "endpointPricing": [
-        {
-          "method": "POST",
-          "pathPattern": "/extract-entities",
-          "pricePerCallUsdc": 0.006,
-          "description": "Extract named entities with type, confidence, aliases, and context snippets"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/extract-relationships",
-          "pricePerCallUsdc": 0.007,
-          "description": "Extract entity relationships with predicate, strength, and evidence quotes"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/build-graph",
-          "pricePerCallUsdc": 0.008,
-          "description": "Build nodes/edges graph with clusters, central nodes, and graph statistics"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/query-graph",
-          "pricePerCallUsdc": 0.008,
-          "description": "Answer natural language queries against a knowledge graph with reasoning path"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/find-paths",
-          "pricePerCallUsdc": 0.007,
-          "description": "Find shortest and strongest paths between two entities in a graph"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/cluster-entities",
-          "pricePerCallUsdc": 0.007,
-          "description": "Cluster entities by semantic similarity with theme labels and cohesion scores"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/execution-gate",
-          "pricePerCallUsdc": 0.001,
-          "description": "Validate text input and recommend best graph extraction endpoint"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/extract",
-          "pricePerCallUsdc": 0.014,
-          "description": "ONE-CALL full knowledge graph extraction — entities, relationships, clusters, and key insights"
-        }
-      ]
-    },
-    {
-      "name": "High Volume",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.005,
-      "requestsPerDay": 500000,
-      "endpointPricing": [
-        {
-          "method": "POST",
-          "pathPattern": "/extract-entities",
-          "pricePerCallUsdc": 0.004
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/extract-relationships",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/build-graph",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/query-graph",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/find-paths",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/cluster-entities",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/execution-gate",
-          "pricePerCallUsdc": 0.001
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/extract",
-          "pricePerCallUsdc": 0.009
-        }
-      ]
-    }
-  ],
-  "endpoints": [
-    {
-      "method": "POST",
-      "path": "/extract-entities",
-      "description": "Extract named entities with type, confidence, aliases, and context snippets"
-    },
-    {
-      "method": "POST",
-      "path": "/extract-relationships",
-      "description": "Extract entity relationships with predicate, strength, and evidence quotes"
-    },
-    {
-      "method": "POST",
-      "path": "/build-graph",
-      "description": "Build nodes/edges graph with clusters, central nodes, and graph statistics"
-    },
-    {
-      "method": "POST",
-      "path": "/query-graph",
-      "description": "Answer natural language queries against a knowledge graph with reasoning path"
-    },
-    {
-      "method": "POST",
-      "path": "/find-paths",
-      "description": "Find shortest and strongest paths between two entities in a graph"
-    },
-    {
-      "method": "POST",
-      "path": "/cluster-entities",
-      "description": "Cluster entities by semantic similarity with theme labels and cohesion scores"
-    },
-    {
-      "method": "POST",
-      "path": "/execution-gate",
-      "description": "Validate text input and recommend best graph extraction endpoint"
-    },
-    {
-      "method": "POST",
-      "path": "/extract",
-      "description": "ONE-CALL full knowledge graph extraction — entities, relationships, clusters, and key insights"
-    }
-  ]
-}]
+[
+  {
+    "name": "Knowledge Graph API",
+    "shortDescription": "Extract entities, relationships, and clusters from text to build queryable knowledge graphs",
+    "description": "Transform unstructured text into structured knowledge graphs. Extract named entities with type and confidence, map relationships between them, build node/edge graphs with cluster detection, find paths between entities, and query graphs in natural language. Built for autonomous research agents, document intelligence platforms, and relationship mapping workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/knowledge-graph",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/knowledge-graph/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/knowledge-graph/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "knowledge-graph",
+      "entity-extraction",
+      "relationship-mapping",
+      "graph-intelligence",
+      "nlp",
+      "entity-clustering",
+      "path-finding",
+      "document-intelligence"
+    ],
+    "keywords": [
+      "knowledge graph api",
+      "entity extraction api",
+      "relationship extraction api",
+      "graph building api",
+      "natural language graph query",
+      "entity clustering api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract-entities",
+            "pricePerCallUsdc": 0.006,
+            "description": "Extract named entities with type, confidence, aliases, and context snippets"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-relationships",
+            "pricePerCallUsdc": 0.007,
+            "description": "Extract entity relationships with predicate, strength, and evidence quotes"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/build-graph",
+            "pricePerCallUsdc": 0.008,
+            "description": "Build nodes/edges graph with clusters, central nodes, and graph statistics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/query-graph",
+            "pricePerCallUsdc": 0.008,
+            "description": "Answer natural language queries against a knowledge graph with reasoning path"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/find-paths",
+            "pricePerCallUsdc": 0.007,
+            "description": "Find shortest and strongest paths between two entities in a graph"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cluster-entities",
+            "pricePerCallUsdc": 0.007,
+            "description": "Cluster entities by semantic similarity with theme labels and cohesion scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate text input and recommend best graph extraction endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.014,
+            "description": "ONE-CALL full knowledge graph extraction \u2014 entities, relationships, clusters, and key insights"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract-entities",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-relationships",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/build-graph",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/query-graph",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/find-paths",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cluster-entities",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.009
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract-entities",
+        "description": "Extract named entities with type, confidence, aliases, and context snippets"
+      },
+      {
+        "method": "POST",
+        "path": "/extract-relationships",
+        "description": "Extract entity relationships with predicate, strength, and evidence quotes"
+      },
+      {
+        "method": "POST",
+        "path": "/build-graph",
+        "description": "Build nodes/edges graph with clusters, central nodes, and graph statistics"
+      },
+      {
+        "method": "POST",
+        "path": "/query-graph",
+        "description": "Answer natural language queries against a knowledge graph with reasoning path"
+      },
+      {
+        "method": "POST",
+        "path": "/find-paths",
+        "description": "Find shortest and strongest paths between two entities in a graph"
+      },
+      {
+        "method": "POST",
+        "path": "/cluster-entities",
+        "description": "Cluster entities by semantic similarity with theme labels and cohesion scores"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Validate text input and recommend best graph extraction endpoint"
+      },
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "ONE-CALL full knowledge graph extraction \u2014 entities, relationships, clusters, and key insights"
+      }
+    ]
+  }
+]

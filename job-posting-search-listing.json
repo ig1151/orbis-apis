@@ -1,0 +1,103 @@
+[
+  {
+    "name": "Job Posting Search API",
+    "shortDescription": "Job search, salary estimates, and hiring intelligence",
+    "description": "Search jobs, analyze company hiring activity, estimate salaries, and generate application intelligence for recruiting and career workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/job-posting-search",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/job-posting-search/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/job-posting-search/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "jobs",
+      "recruiting",
+      "career",
+      "salary",
+      "hiring"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Career Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/search-jobs",
+            "pricePerCallUsdc": 0.004,
+            "description": "Search jobs by title and skills"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/salary-estimate",
+            "pricePerCallUsdc": 0.004,
+            "description": "Salary benchmarking"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/job-details",
+            "pricePerCallUsdc": 0.005,
+            "description": "Detailed job intelligence"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/company-jobs",
+            "pricePerCallUsdc": 0.005,
+            "description": "All open roles at a company with department breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL job intelligence workflow"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/search-jobs",
+        "description": "Search jobs by title and skills"
+      },
+      {
+        "method": "POST",
+        "path": "/company-jobs",
+        "description": "All open roles at a company with department breakdown"
+      },
+      {
+        "method": "POST",
+        "path": "/salary-estimate",
+        "description": "Salary benchmarking"
+      },
+      {
+        "method": "POST",
+        "path": "/job-details",
+        "description": "Detailed job intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/search",
+        "description": "ONE-CALL job intelligence workflow"
+      }
+    ]
+  }
+]

@@ -1,0 +1,103 @@
+[
+  {
+    "name": "Image OCR API",
+    "shortDescription": "OCR extraction and document intelligence from images",
+    "description": "Extract text, receipts, invoices, tables, and structured document data from uploaded images and scanned documents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/image-ocr",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/image-ocr/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/image-ocr/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "ocr",
+      "documents",
+      "vision",
+      "receipts",
+      "extraction"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50
+      },
+      {
+        "name": "OCR Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/ocr",
+            "pricePerCallUsdc": 0.004,
+            "description": "Extract text from image"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/receipt-ocr",
+            "pricePerCallUsdc": 0.006,
+            "description": "Receipt extraction"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/document-ocr",
+            "pricePerCallUsdc": 0.007,
+            "description": "Document OCR extraction"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/table-extract",
+            "pricePerCallUsdc": 0.007,
+            "description": "Extract tables from image as structured JSON"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL OCR intelligence workflow"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/ocr",
+        "description": "Extract text from image"
+      },
+      {
+        "method": "POST",
+        "path": "/receipt-ocr",
+        "description": "Receipt extraction"
+      },
+      {
+        "method": "POST",
+        "path": "/document-ocr",
+        "description": "Document OCR extraction"
+      },
+      {
+        "method": "POST",
+        "path": "/table-extract",
+        "description": "Extract tables from image as structured JSON"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "ONE-CALL OCR intelligence workflow"
+      }
+    ]
+  }
+]

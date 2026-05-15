@@ -1,0 +1,103 @@
+[
+  {
+    "name": "Website Screenshot API",
+    "shortDescription": "Website screenshot capture and visual analysis",
+    "description": "Capture website screenshots, compare visual changes, analyze layouts, and generate accessibility and UI quality insights.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/website-screenshot",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/website-screenshot/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/website-screenshot/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "screenshots",
+      "visual-testing",
+      "web",
+      "ui",
+      "automation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50
+      },
+      {
+        "name": "Capture Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/screenshot",
+            "pricePerCallUsdc": 0.004,
+            "description": "Desktop screenshot capture"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/mobile-screenshot",
+            "pricePerCallUsdc": 0.004,
+            "description": "Mobile screenshot capture"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/diff",
+            "pricePerCallUsdc": 0.006,
+            "description": "Visual diff analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.015,
+            "description": "Batch capture up to 10 URLs at once"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/capture",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL capture and visual analysis"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/screenshot",
+        "description": "Desktop screenshot capture"
+      },
+      {
+        "method": "POST",
+        "path": "/mobile-screenshot",
+        "description": "Mobile screenshot capture"
+      },
+      {
+        "method": "POST",
+        "path": "/diff",
+        "description": "Visual diff analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch capture up to 10 URLs at once"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/capture",
+        "description": "ONE-CALL capture and visual analysis"
+      }
+    ]
+  }
+]

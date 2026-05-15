@@ -1,0 +1,103 @@
+[
+  {
+    "name": "Email Finder API",
+    "shortDescription": "Find, verify, and enrich professional email addresses",
+    "description": "Find business emails, verify deliverability, detect company email patterns, and enrich contact profiles for sales, recruiting, and outreach workflows.",
+    "category": "communication",
+    "baseUrl": "https://orbis-apis.onrender.com/email-finder",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/email-finder/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/email-finder/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "email",
+      "lead-generation",
+      "sales",
+      "recruiting",
+      "enrichment"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/find-email",
+            "pricePerCallUsdc": 0.004,
+            "description": "Find professional email address"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/verify-email",
+            "pricePerCallUsdc": 0.003,
+            "description": "Verify email deliverability"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/domain-search",
+            "pricePerCallUsdc": 0.006,
+            "description": "Find all emails at a domain with role-based groupings"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/bulk",
+            "pricePerCallUsdc": 0.012,
+            "description": "Bulk find/verify up to 20 emails"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/find",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL email find and verify"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/find-email",
+        "description": "Find professional email address"
+      },
+      {
+        "method": "POST",
+        "path": "/verify-email",
+        "description": "Verify email deliverability"
+      },
+      {
+        "method": "POST",
+        "path": "/domain-search",
+        "description": "Find all emails at a domain with role-based groupings"
+      },
+      {
+        "method": "POST",
+        "path": "/bulk",
+        "description": "Bulk find/verify up to 20 emails"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/find",
+        "description": "ONE-CALL email find and verify"
+      }
+    ]
+  }
+]

@@ -1,0 +1,103 @@
+[
+  {
+    "name": "OpenAPI Validator API",
+    "shortDescription": "Validate, lint, score, and diff OpenAPI specifications",
+    "description": "Validate OpenAPI specs, lint for best practices, score agent-callability, compare versions, and analyze MCP compatibility.",
+    "category": "other",
+    "baseUrl": "https://orbis-apis.onrender.com/openapi-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/openapi-validator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/openapi-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "openapi",
+      "validation",
+      "mcp",
+      "developer-tools",
+      "linting"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Validator Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Validate OpenAPI spec"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lint",
+            "pricePerCallUsdc": 0.004,
+            "description": "Lint best practices"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/diff",
+            "pricePerCallUsdc": 0.006,
+            "description": "Diff two specs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.005,
+            "description": "Score spec quality — completeness, agent-callability, MCP compatibility"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL validation workflow"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate OpenAPI spec"
+      },
+      {
+        "method": "POST",
+        "path": "/lint",
+        "description": "Lint best practices"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score spec quality — completeness, agent-callability, MCP compatibility"
+      },
+      {
+        "method": "POST",
+        "path": "/diff",
+        "description": "Diff two specs"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "ONE-CALL validation workflow"
+      }
+    ]
+  }
+]

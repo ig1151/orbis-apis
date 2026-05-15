@@ -1,185 +1,187 @@
-[{
-  "name": "QA Testing API",
-  "shortDescription": "Generate test cases, detect regressions, validate AI outputs, and run test suites for agents",
-  "description": "Equip autonomous agents with intelligent QA capabilities. Generate test cases from workflow specs, detect regressions between baseline and current outputs, validate AI output against schemas, check API chain integrity, and run full test suites with graded results. Built for CI/CD automation, agent evaluation pipelines, and AI output validation workflows.",
-  "category": "developer-tools",
-  "baseUrl": "https://orbis-apis.onrender.com/qa-testing",
-  "websiteUrl": "https://orbis-apis.onrender.com",
-  "docsUrl": "https://orbis-apis.onrender.com/qa-testing/openapi.json",
-  "openApiSpecUrl": "https://orbis-apis.onrender.com/qa-testing/openapi.json",
-  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-  "tags": [
-    "qa-testing",
-    "regression-detection",
-    "test-generation",
-    "output-validation",
-    "api-chain-testing",
-    "ai-evaluation",
-    "test-automation",
-    "hallucination-detection"
-  ],
-  "keywords": [
-    "qa testing api",
-    "regression detection api",
-    "AI output validation api",
-    "test case generation api",
-    "API chain validation",
-    "agent output grading api"
-  ],
-  "tiers": [
-    {
-      "name": "Free",
-      "isFree": true,
-      "requestsPerDay": 100,
-      "requestsPerMonth": 3000
-    },
-    {
-      "name": "Pay Per Call",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.007,
-      "requestsPerDay": 50000,
-      "endpointPricing": [
-        {
-          "method": "POST",
-          "pathPattern": "/test-workflow",
-          "pricePerCallUsdc": 0.007,
-          "description": "Generate test cases for a workflow with coverage assessment and missing test areas"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/detect-regression",
-          "pricePerCallUsdc": 0.007,
-          "description": "Detect regressions between baseline and current output with diff analysis and root cause"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/test-api-chain",
-          "pricePerCallUsdc": 0.008,
-          "description": "Validate an API chain for broken links, data flow issues, and contract violations"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/validate-output",
-          "pricePerCallUsdc": 0.006,
-          "description": "Validate AI or API output against schema/expectations with hallucination and completeness scoring"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/generate-test-cases",
-          "pricePerCallUsdc": 0.007,
-          "description": "Generate unit, integration, edge case, load, or security test cases from a spec"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/run-suite",
-          "pricePerCallUsdc": 0.008,
-          "description": "Run a test suite and return pass rate, failures, critical issues, and QA grade"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/execution-gate",
-          "pricePerCallUsdc": 0.001,
-          "description": "Validate QA input and recommend best testing endpoint"
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/test",
-          "pricePerCallUsdc": 0.014,
-          "description": "ONE-CALL full QA — test cases, regression risks, validation, coverage, and QA grade"
-        }
-      ]
-    },
-    {
-      "name": "High Volume",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.005,
-      "requestsPerDay": 500000,
-      "endpointPricing": [
-        {
-          "method": "POST",
-          "pathPattern": "/test-workflow",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/detect-regression",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/test-api-chain",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/validate-output",
-          "pricePerCallUsdc": 0.004
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/generate-test-cases",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/run-suite",
-          "pricePerCallUsdc": 0.005
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/execution-gate",
-          "pricePerCallUsdc": 0.001
-        },
-        {
-          "method": "POST",
-          "pathPattern": "/test",
-          "pricePerCallUsdc": 0.009
-        }
-      ]
-    }
-  ],
-  "endpoints": [
-    {
-      "method": "POST",
-      "path": "/test-workflow",
-      "description": "Generate test cases for a workflow with coverage assessment and missing test areas"
-    },
-    {
-      "method": "POST",
-      "path": "/detect-regression",
-      "description": "Detect regressions between baseline and current output with diff analysis and root cause"
-    },
-    {
-      "method": "POST",
-      "path": "/test-api-chain",
-      "description": "Validate an API chain for broken links, data flow issues, and contract violations"
-    },
-    {
-      "method": "POST",
-      "path": "/validate-output",
-      "description": "Validate AI or API output against schema/expectations with hallucination and completeness scoring"
-    },
-    {
-      "method": "POST",
-      "path": "/generate-test-cases",
-      "description": "Generate unit, integration, edge case, load, or security test cases from a spec"
-    },
-    {
-      "method": "POST",
-      "path": "/run-suite",
-      "description": "Run a test suite and return pass rate, failures, critical issues, and QA grade"
-    },
-    {
-      "method": "POST",
-      "path": "/execution-gate",
-      "description": "Validate QA input and recommend best testing endpoint"
-    },
-    {
-      "method": "POST",
-      "path": "/test",
-      "description": "ONE-CALL full QA — test cases, regression risks, validation, coverage, and QA grade"
-    }
-  ]
-}]
+[
+  {
+    "name": "QA Testing API",
+    "shortDescription": "Generate test cases, detect regressions, validate AI outputs, and run test suites for agents",
+    "description": "Equip autonomous agents with intelligent QA capabilities. Generate test cases from workflow specs, detect regressions between baseline and current outputs, validate AI output against schemas, check API chain integrity, and run full test suites with graded results. Built for CI/CD automation, agent evaluation pipelines, and AI output validation workflows.",
+    "category": "other",
+    "baseUrl": "https://orbis-apis.onrender.com/qa-testing",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/qa-testing/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/qa-testing/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "qa-testing",
+      "regression-detection",
+      "test-generation",
+      "output-validation",
+      "api-chain-testing",
+      "ai-evaluation",
+      "test-automation",
+      "hallucination-detection"
+    ],
+    "keywords": [
+      "qa testing api",
+      "regression detection api",
+      "AI output validation api",
+      "test case generation api",
+      "API chain validation",
+      "agent output grading api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/test-workflow",
+            "pricePerCallUsdc": 0.007,
+            "description": "Generate test cases for a workflow with coverage assessment and missing test areas"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-regression",
+            "pricePerCallUsdc": 0.007,
+            "description": "Detect regressions between baseline and current output with diff analysis and root cause"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/test-api-chain",
+            "pricePerCallUsdc": 0.008,
+            "description": "Validate an API chain for broken links, data flow issues, and contract violations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate-output",
+            "pricePerCallUsdc": 0.006,
+            "description": "Validate AI or API output against schema/expectations with hallucination and completeness scoring"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-test-cases",
+            "pricePerCallUsdc": 0.007,
+            "description": "Generate unit, integration, edge case, load, or security test cases from a spec"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/run-suite",
+            "pricePerCallUsdc": 0.008,
+            "description": "Run a test suite and return pass rate, failures, critical issues, and QA grade"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate QA input and recommend best testing endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/test",
+            "pricePerCallUsdc": 0.014,
+            "description": "ONE-CALL full QA \u2014 test cases, regression risks, validation, coverage, and QA grade"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/test-workflow",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-regression",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/test-api-chain",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate-output",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-test-cases",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/run-suite",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/test",
+            "pricePerCallUsdc": 0.009
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/test-workflow",
+        "description": "Generate test cases for a workflow with coverage assessment and missing test areas"
+      },
+      {
+        "method": "POST",
+        "path": "/detect-regression",
+        "description": "Detect regressions between baseline and current output with diff analysis and root cause"
+      },
+      {
+        "method": "POST",
+        "path": "/test-api-chain",
+        "description": "Validate an API chain for broken links, data flow issues, and contract violations"
+      },
+      {
+        "method": "POST",
+        "path": "/validate-output",
+        "description": "Validate AI or API output against schema/expectations with hallucination and completeness scoring"
+      },
+      {
+        "method": "POST",
+        "path": "/generate-test-cases",
+        "description": "Generate unit, integration, edge case, load, or security test cases from a spec"
+      },
+      {
+        "method": "POST",
+        "path": "/run-suite",
+        "description": "Run a test suite and return pass rate, failures, critical issues, and QA grade"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Validate QA input and recommend best testing endpoint"
+      },
+      {
+        "method": "POST",
+        "path": "/test",
+        "description": "ONE-CALL full QA \u2014 test cases, regression risks, validation, coverage, and QA grade"
+      }
+    ]
+  }
+]

@@ -1,0 +1,145 @@
+[
+  {
+    "name": "Address Risk API",
+    "shortDescription": "Blockchain address risk scoring, sanctions checks, and entity labeling",
+    "description": "Score blockchain address risk, check sanctions exposure, identify known entity labels, cluster related wallets, and generate compliance-ready allow/review/block recommendations for autonomous wallet, DeFi, and compliance workflows.",
+    "category": "blockchain-web3",
+    "baseUrl": "https://orbis-apis.onrender.com/address-risk",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/address-risk/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/address-risk/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "blockchain",
+      "wallet-risk",
+      "sanctions",
+      "compliance",
+      "crypto",
+      "address-labeling",
+      "defi",
+      "risk-scoring"
+    ],
+    "keywords": [
+      "blockchain address risk",
+      "wallet risk score",
+      "crypto sanctions check",
+      "OFAC wallet screening",
+      "address labels",
+      "wallet clustering",
+      "crypto compliance API",
+      "DeFi risk screening"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/address-risk",
+            "pricePerCallUsdc": 0.004,
+            "description": "Score blockchain address risk with risk factors and entity type"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sanctions",
+            "pricePerCallUsdc": 0.005,
+            "description": "Check address against OFAC, EU, UN and related sanctions lists"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/labels",
+            "pricePerCallUsdc": 0.004,
+            "description": "Get known labels such as exchange, mixer, darknet, DeFi protocol or whale"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cluster",
+            "pricePerCallUsdc": 0.008,
+            "description": "Cluster related addresses by likely entity and common counterparties"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/assess",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL full address risk assessment with sanctions, labels and recommendations"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/address-risk",
+            "pricePerCallUsdc": 0.002,
+            "description": "High-volume address risk scoring"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sanctions",
+            "pricePerCallUsdc": 0.003,
+            "description": "High-volume sanctions screening"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/assess",
+            "pricePerCallUsdc": 0.008,
+            "description": "High-volume full address risk workflow"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/address-risk",
+        "description": "Score blockchain address risk"
+      },
+      {
+        "method": "POST",
+        "path": "/sanctions",
+        "description": "Check sanctions exposure"
+      },
+      {
+        "method": "POST",
+        "path": "/labels",
+        "description": "Get known address labels"
+      },
+      {
+        "method": "POST",
+        "path": "/cluster",
+        "description": "Cluster related addresses"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/assess",
+        "description": "ONE-CALL full address risk assessment"
+      }
+    ]
+  }
+]

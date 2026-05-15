@@ -1,0 +1,103 @@
+[
+  {
+    "name": "GitHub Repo Stats API",
+    "shortDescription": "GitHub repository health, contributors, and activity intelligence",
+    "description": "Analyze GitHub repositories, contributors, dependency risk, release cadence, commit velocity, and development activity for autonomous developer agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/github-repo-stats",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/github-repo-stats/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/github-repo-stats/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "github",
+      "developer-tools",
+      "repositories",
+      "devops",
+      "analytics"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Developer Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/repo",
+            "pricePerCallUsdc": 0.002,
+            "description": "Repository metadata"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/contributors",
+            "pricePerCallUsdc": 0.004,
+            "description": "Contributor analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/dependencies",
+            "pricePerCallUsdc": 0.005,
+            "description": "Dependency and risk analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/activity",
+            "pricePerCallUsdc": 0.004,
+            "description": "Commit frequency, PR velocity, issue close rate, release cadence"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL repo health analysis"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/repo",
+        "description": "Repository metadata"
+      },
+      {
+        "method": "POST",
+        "path": "/contributors",
+        "description": "Contributor analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/activity",
+        "description": "Commit frequency, PR velocity, issue close rate, release cadence"
+      },
+      {
+        "method": "POST",
+        "path": "/dependencies",
+        "description": "Dependency and risk analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL repo health analysis"
+      }
+    ]
+  }
+]
