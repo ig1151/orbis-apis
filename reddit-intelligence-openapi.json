@@ -1,0 +1,342 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Reddit Intelligence API",
+    "version": "1.0.0",
+    "description": "AI-powered Reddit analysis — subreddit sentiment, keyword tracking, complaint detection, virality scoring, buying intent, topic clustering, and competitor mentions. ONE-CALL monitor endpoint for full community intelligence.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": {
+        "analyze_subreddit": "$0.007",
+        "track_keywords": "$0.005",
+        "detect_complaints": "$0.006",
+        "score_virality": "$0.005",
+        "buying_intent": "$0.007",
+        "topic_clusters": "$0.006",
+        "competitor_mentions": "$0.006",
+        "execution_gate": "$0.001",
+        "monitor": "$0.012"
+      },
+      "high_volume": {
+        "analyze_subreddit": "$0.004",
+        "track_keywords": "$0.003",
+        "detect_complaints": "$0.004",
+        "score_virality": "$0.003",
+        "buying_intent": "$0.005",
+        "topic_clusters": "$0.004",
+        "competitor_mentions": "$0.004",
+        "execution_gate": "$0.001",
+        "monitor": "$0.008"
+      }
+    }
+  },
+  "servers": [
+    { "url": "https://orbis-apis.onrender.com/reddit-intelligence", "description": "Production" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "PrivacyBlock": {
+        "type": "object",
+        "properties": {
+          "data_stored": { "type": "boolean" },
+          "retention": { "type": "string" }
+        }
+      },
+      "TraceFields": {
+        "type": "object",
+        "properties": {
+          "trace_id": { "type": "string", "description": "Unique trace ID (rid_<ts>_<random>)" },
+          "computed_at": { "type": "string", "format": "date-time" },
+          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 } },
+          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+          "privacy": { "$ref": "#/components/schemas/PrivacyBlock" }
+        }
+      },
+      "PostsInput": {
+        "oneOf": [
+          { "type": "string", "description": "Raw post text or concatenated posts" },
+          { "type": "array", "items": { "type": "object", "properties": { "title": { "type": "string" }, "content": { "type": "string" }, "upvotes": { "type": "number" }, "comments": { "type": "number" } }, "required": ["title"] }, "description": "Array of post objects" }
+        ]
+      }
+    }
+  },
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "redditIntelligenceDiscovery",
+        "summary": "API discovery — returns name, version, endpoints and capabilities",
+        "responses": { "200": { "description": "API discovery info" } }
+      }
+    },
+    "/analyze-subreddit": {
+      "post": {
+        "operationId": "analyzeSubreddit",
+        "summary": "Analyze a subreddit for sentiment, top topics, pain points, and community health signals",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["subreddit"],
+                "properties": {
+                  "subreddit": { "type": "string" },
+                  "posts": { "$ref": "#/components/schemas/PostsInput" },
+                  "timeframe": { "type": "string", "enum": ["24h", "7d", "30d", "90d"], "default": "7d" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subreddit analysis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/TraceFields" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "subreddit": { "type": "string" },
+                        "member_sentiment": { "type": "string", "enum": ["very_positive", "positive", "neutral", "negative", "very_negative"] },
+                        "sentiment_score": { "type": "number", "minimum": -100, "maximum": 100 },
+                        "top_topics": { "type": "array", "items": { "type": "object" } },
+                        "pain_points": { "type": "array", "items": { "type": "string" } },
+                        "praised_aspects": { "type": "array", "items": { "type": "string" } },
+                        "trending_products": { "type": "array", "items": { "type": "string" } },
+                        "community_health": { "type": "string", "enum": ["thriving", "active", "declining", "toxic"] }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing subreddit" },
+          "500": { "description": "Analysis failed" }
+        }
+      }
+    },
+    "/track-keywords": {
+      "post": {
+        "operationId": "trackKeywords",
+        "summary": "Track keyword mentions, velocity, and sentiment across Reddit discussions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["keywords"],
+                "properties": {
+                  "keywords": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] },
+                  "posts": { "$ref": "#/components/schemas/PostsInput" },
+                  "subreddits": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Keyword tracking results" },
+          "400": { "description": "Missing keywords" },
+          "500": { "description": "Tracking failed" }
+        }
+      }
+    },
+    "/detect-complaints": {
+      "post": {
+        "operationId": "detectComplaints",
+        "summary": "Detect recurring complaints, pain points, and frustrations in Reddit posts with NPS estimate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["posts"],
+                "properties": {
+                  "posts": { "$ref": "#/components/schemas/PostsInput" },
+                  "product_or_brand": { "type": "string" },
+                  "subreddit": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Complaint detection results" },
+          "400": { "description": "Missing posts" },
+          "500": { "description": "Detection failed" }
+        }
+      }
+    },
+    "/score-virality": {
+      "post": {
+        "operationId": "scoreVirality",
+        "summary": "Score the virality potential of a Reddit post with predicted engagement and emotional triggers",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "post_title": { "type": "string" },
+                  "post_content": { "type": "string" },
+                  "subreddit": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Virality score" },
+          "400": { "description": "post_title or post_content required" },
+          "500": { "description": "Scoring failed" }
+        }
+      }
+    },
+    "/buying-intent": {
+      "post": {
+        "operationId": "detectBuyingIntent",
+        "summary": "Detect buying intent signals in Reddit discussions with purchase stage and decision triggers",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["posts"],
+                "properties": {
+                  "posts": { "$ref": "#/components/schemas/PostsInput" },
+                  "product_category": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Buying intent analysis" },
+          "400": { "description": "Missing posts" },
+          "500": { "description": "Intent analysis failed" }
+        }
+      }
+    },
+    "/topic-clusters": {
+      "post": {
+        "operationId": "clusterTopics",
+        "summary": "Cluster Reddit posts into semantic topic groups and identify dominant, emerging, and declining themes",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["posts"],
+                "properties": {
+                  "posts": { "$ref": "#/components/schemas/PostsInput" },
+                  "subreddit": { "type": "string" },
+                  "max_clusters": { "type": "number", "minimum": 2, "maximum": 20, "default": 8 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Topic clusters" },
+          "400": { "description": "Missing posts" },
+          "500": { "description": "Clustering failed" }
+        }
+      }
+    },
+    "/competitor-mentions": {
+      "post": {
+        "operationId": "analyzeCompetitorMentions",
+        "summary": "Analyze competitor mentions and brand comparisons in Reddit discussions with switching intent signals",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["posts"],
+                "properties": {
+                  "posts": { "$ref": "#/components/schemas/PostsInput" },
+                  "brand": { "type": "string" },
+                  "competitors": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Competitor mention analysis" },
+          "400": { "description": "Missing posts" },
+          "500": { "description": "Analysis failed" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "redditExecutionGate",
+        "summary": "Validate Reddit input readiness and recommend the best analysis endpoint",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "posts": { "$ref": "#/components/schemas/PostsInput" },
+                  "subreddit": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Execution gate result" },
+          "400": { "description": "Missing posts or subreddit" }
+        }
+      }
+    },
+    "/monitor": {
+      "post": {
+        "operationId": "monitorReddit",
+        "summary": "ONE-CALL: full Reddit intelligence — sentiment, complaints, trends, buying intent, and competitor signals in one response",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["posts"],
+                "properties": {
+                  "posts": { "$ref": "#/components/schemas/PostsInput" },
+                  "subreddit": { "type": "string" },
+                  "brand": { "type": "string" },
+                  "keywords": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] },
+                  "product_category": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Full Reddit intelligence" },
+          "400": { "description": "Missing posts" },
+          "500": { "description": "Monitor failed" }
+        }
+      }
+    }
+  }
+}

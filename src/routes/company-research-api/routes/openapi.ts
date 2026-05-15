@@ -3,17 +3,60 @@ const router = Router();
 
 router.get('/', (_req: Request, res: Response) => {
   res.json({
-    openapi: '3.0.0',
+    openapi: '3.1.0',
     info: {
       title: 'Company Research API',
-      version: '1.0.0',
-      description: 'AI-powered company research — summary, key people, recent news, tech stack and competitive intelligence in one call.',
+      version: '2.0.0',
+      description: 'AI-powered company intelligence — profile, score, risk detection, competitive analysis, signal monitoring, filing summaries, and target ranking. Designed for agent due diligence loops with 5-8 calls per cycle.',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+      'x-pricing': {
+        free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+        pay_per_call: { profile_company: '$0.003', score_company: '$0.0025', detect_risks: '$0.0035', find_competitors: '$0.003', compare_companies: '$0.004', monitor_signals: '$0.002', summarize_filings: '$0.0045', rank_targets: '$0.005' },
+        high_volume: { profile_company: '$0.002', score_company: '$0.0015', detect_risks: '$0.002', find_competitors: '$0.002', compare_companies: '$0.0025', monitor_signals: '$0.0012', summarize_filings: '$0.003', rank_targets: '$0.003' },
+      },
     },
-    servers: [{ url: 'https://company-research-api.onrender.com' }],
+    servers: [{ url: 'https://orbis-apis.onrender.com/company-research', description: 'Production' }],
+    components: {
+      securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } },
+      schemas: {
+        CompanyScore: {
+          type: 'object',
+          properties: {
+            company: { type: 'string' },
+            overall_score: { type: 'number', minimum: 0, maximum: 1 },
+            scores: { type: 'object', properties: { growth: { type: 'number' }, stability: { type: 'number' }, innovation: { type: 'number' }, market_position: { type: 'number' }, financial_health: { type: 'number' } } },
+            grade: { type: 'string', enum: ['A', 'B', 'C', 'D', 'F'] },
+            investment_signal: { type: 'string', enum: ['strong_buy', 'buy', 'hold', 'sell', 'strong_sell'] },
+            confidence: { type: 'number', minimum: 0, maximum: 1 },
+            summary: { type: 'string' },
+            red_flags: { type: 'array', items: { type: 'string' } },
+            green_flags: { type: 'array', items: { type: 'string' } },
+            sources: { type: 'array', items: { type: 'string', format: 'uri' } },
+          },
+        },
+        MetaBlock: {
+          type: 'object',
+          properties: {
+            latency_ms: { type: 'number' },
+            estimated_cost: { type: 'number' },
+          },
+        },
+      },
+    },
+    security: [{ ApiKeyAuth: [] }],
     paths: {
-      '/v1/research/company': {
+      '/': {
+        get: {
+          operationId: 'companyResearchDiscovery',
+          summary: 'API discovery — returns name, version, endpoints and capabilities',
+          responses: { '200': { description: 'API discovery info' } },
+        },
+      },
+      '/profile-company': {
         post: {
-          summary: 'Research any company',
+          operationId: 'profileCompany',
+          summary: 'Full company profile: summary, industry, key people, products, tech stack, and competitive positioning',
           requestBody: {
             required: true,
             content: {
@@ -22,18 +65,345 @@ router.get('/', (_req: Request, res: Response) => {
                   type: 'object',
                   required: ['company'],
                   properties: {
-                    company: { type: 'string' },
-                    focus: { type: 'string' },
+                    company: { type: 'string', minLength: 1, maxLength: 200 },
+                    focus: { type: 'string', maxLength: 200 },
                   },
                 },
               },
             },
           },
-          responses: { '200': { description: 'Company research result' } },
+          responses: {
+            '200': {
+              description: 'Company profile',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      company: { type: 'string' },
+                      summary: { type: 'string' },
+                      industry: { type: 'string' },
+                      founded: { type: 'string' },
+                      headquarters: { type: 'string' },
+                      employee_count: { type: 'string' },
+                      key_people: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, title: { type: 'string' } } } },
+                      products: { type: 'array', items: { type: 'string' } },
+                      tech_stack: { type: 'array', items: { type: 'string' } },
+                      competitors: { type: 'array', items: { type: 'string' } },
+                      recent_news: { type: 'array', items: { type: 'string' } },
+                      sources: { type: 'array', items: { type: 'string', format: 'uri' } },
+                      metadata: { '$ref': '#/components/schemas/MetaBlock' },
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Validation error' },
+            '500': { description: 'Profile failed' },
+          },
         },
       },
-      '/v1/health': {
-        get: { summary: 'Health check', responses: { '200': { description: 'OK' } } },
+      '/score-company': {
+        post: {
+          operationId: 'scoreCompany',
+          summary: 'Score a company on growth, stability, innovation, market position, and financial health with investment signal',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string', minLength: 1, maxLength: 200 },
+                    criteria: { type: 'array', items: { type: 'string' }, default: ['growth', 'stability', 'innovation', 'market_position', 'financial_health'] },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Company score', content: { 'application/json': { schema: { allOf: [{ '$ref': '#/components/schemas/CompanyScore' }, { type: 'object', properties: { timestamp: { type: 'string', format: 'date-time' }, metadata: { '$ref': '#/components/schemas/MetaBlock' } } }] } } } },
+            '400': { description: 'Validation error' },
+            '500': { description: 'Score failed' },
+          },
+        },
+      },
+      '/detect-risks': {
+        post: {
+          operationId: 'detectRisks',
+          summary: 'Detect financial, legal, reputational, operational, market, and regulatory risks with severity scores',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string', minLength: 1, maxLength: 200 },
+                    risk_types: { type: 'array', items: { type: 'string', enum: ['financial', 'legal', 'reputational', 'operational', 'market', 'regulatory'] }, default: ['financial', 'legal', 'reputational', 'operational', 'market', 'regulatory'] },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Risk detection results',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      company: { type: 'string' },
+                      risk_level: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
+                      overall_risk_score: { type: 'number', minimum: 0, maximum: 1 },
+                      risks: { type: 'array', items: { type: 'object', properties: { type: { type: 'string' }, description: { type: 'string' }, severity: { type: 'number', minimum: 0, maximum: 1 }, likelihood: { type: 'number', minimum: 0, maximum: 1 } } } },
+                      immediate_flags: { type: 'array', items: { type: 'string' } },
+                      due_diligence_required: { type: 'boolean' },
+                      confidence: { type: 'number', minimum: 0, maximum: 1 },
+                      sources: { type: 'array', items: { type: 'string', format: 'uri' } },
+                      timestamp: { type: 'string', format: 'date-time' },
+                      metadata: { '$ref': '#/components/schemas/MetaBlock' },
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Validation error' },
+            '500': { description: 'Risk detection failed' },
+          },
+        },
+      },
+      '/find-competitors': {
+        post: {
+          operationId: 'findCompetitors',
+          summary: 'Find top competitors with similarity scores, threat levels, market overlap, and competitive positioning',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string', minLength: 1, maxLength: 200 },
+                    max_results: { type: 'number', minimum: 1, maximum: 10, default: 5 },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Competitor analysis',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      company: { type: 'string' },
+                      competitors: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, similarity_score: { type: 'number', minimum: 0, maximum: 1 }, threat_level: { type: 'string', enum: ['low', 'medium', 'high'] }, strengths: { type: 'array', items: { type: 'string' } }, market_overlap: { type: 'string' } } } },
+                      market_summary: { type: 'string' },
+                      competitive_position: { type: 'string', enum: ['leader', 'challenger', 'follower', 'niche'] },
+                      confidence: { type: 'number', minimum: 0, maximum: 1 },
+                      sources: { type: 'array', items: { type: 'string', format: 'uri' } },
+                      timestamp: { type: 'string', format: 'date-time' },
+                      metadata: { '$ref': '#/components/schemas/MetaBlock' },
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Validation error' },
+            '500': { description: 'Competitor search failed' },
+          },
+        },
+      },
+      '/compare-companies': {
+        post: {
+          operationId: 'compareCompanies',
+          summary: 'Compare 2-5 companies across criteria — returns winner, per-company scores, and buy/hold/avoid recommendations',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['companies'],
+                  properties: {
+                    companies: { type: 'array', items: { type: 'string', minLength: 1, maxLength: 200 }, minItems: 2, maxItems: 5 },
+                    criteria: { type: 'array', items: { type: 'string' }, default: ['revenue', 'growth', 'innovation', 'market_share', 'talent'] },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Company comparison',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      companies: { type: 'array', items: { type: 'string' } },
+                      winner: { type: 'string' },
+                      comparison: { type: 'array', items: { type: 'object', properties: { company: { type: 'string' }, scores: { type: 'object', additionalProperties: { type: 'number' } }, overall: { type: 'number', minimum: 0, maximum: 1 }, recommendation: { type: 'string', enum: ['buy', 'hold', 'avoid'] } } } },
+                      key_differentiators: { type: 'array', items: { type: 'string' } },
+                      confidence: { type: 'number', minimum: 0, maximum: 1 },
+                      sources: { type: 'array', items: { type: 'string', format: 'uri' } },
+                      timestamp: { type: 'string', format: 'date-time' },
+                      metadata: { '$ref': '#/components/schemas/MetaBlock' },
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Validation error' },
+            '500': { description: 'Comparison failed' },
+          },
+        },
+      },
+      '/monitor-signals': {
+        post: {
+          operationId: 'monitorSignals',
+          summary: 'Detect hiring, funding, partnership, product, leadership signals — returns alert level and momentum score',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string', minLength: 1, maxLength: 200 },
+                    signal_types: { type: 'array', items: { type: 'string', enum: ['hiring', 'funding', 'partnerships', 'product', 'leadership', 'legal', 'financial'] }, default: ['hiring', 'funding', 'partnerships', 'product', 'leadership'] },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Company signals',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      company: { type: 'string' },
+                      signals: { type: 'array', items: { type: 'object', properties: { type: { type: 'string' }, description: { type: 'string' }, sentiment: { type: 'string', enum: ['positive', 'negative', 'neutral'] }, impact_score: { type: 'number', minimum: 0, maximum: 1 }, date: { type: 'string' } } } },
+                      overall_momentum: { type: 'string', enum: ['accelerating', 'stable', 'declining'] },
+                      alert_level: { type: 'string', enum: ['none', 'watch', 'alert', 'critical'] },
+                      next_check_ms: { type: 'number' },
+                      confidence: { type: 'number', minimum: 0, maximum: 1 },
+                      sources: { type: 'array', items: { type: 'string', format: 'uri' } },
+                      timestamp: { type: 'string', format: 'date-time' },
+                      metadata: { '$ref': '#/components/schemas/MetaBlock' },
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Validation error' },
+            '500': { description: 'Monitor failed' },
+          },
+        },
+      },
+      '/summarize-filings': {
+        post: {
+          operationId: 'summarizeFilings',
+          summary: 'Summarize 10-K, 10-Q, 8-K, S-1, or earnings filings with key metrics, highlights, risks, and agent summary',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['company'],
+                  properties: {
+                    company: { type: 'string', minLength: 1, maxLength: 200 },
+                    filing_type: { type: 'string', enum: ['10-K', '10-Q', '8-K', 'S-1', 'annual_report', 'earnings'], default: 'earnings' },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Filing summary',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      company: { type: 'string' },
+                      filing_type: { type: 'string' },
+                      key_metrics: { type: 'object', properties: { revenue: { type: 'string' }, growth: { type: 'string' }, profit_margin: { type: 'string' }, guidance: { type: 'string' } } },
+                      highlights: { type: 'array', items: { type: 'string' } },
+                      risks: { type: 'array', items: { type: 'string' } },
+                      sentiment: { type: 'string', enum: ['bullish', 'bearish', 'neutral'] },
+                      agent_summary: { type: 'string' },
+                      confidence: { type: 'number', minimum: 0, maximum: 1 },
+                      sources: { type: 'array', items: { type: 'string', format: 'uri' } },
+                      timestamp: { type: 'string', format: 'date-time' },
+                      metadata: { '$ref': '#/components/schemas/MetaBlock' },
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Validation error' },
+            '500': { description: 'Filing summary failed' },
+          },
+        },
+      },
+      '/rank-targets': {
+        post: {
+          operationId: 'rankTargets',
+          summary: 'Rank companies by investment, acquisition, partnership, or competitive threat objective with per-company action and confidence',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['companies'],
+                  properties: {
+                    companies: { type: 'array', items: { type: 'string', minLength: 1, maxLength: 200 }, minItems: 2, maxItems: 10 },
+                    objective: { type: 'string', enum: ['investment', 'acquisition', 'partnership', 'competitive_threat', 'hiring'], default: 'investment' },
+                    top_n: { type: 'number', minimum: 1, maximum: 10, default: 3 },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Ranked targets',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      objective: { type: 'string' },
+                      ranked: { type: 'array', items: { type: 'object', properties: { rank: { type: 'number' }, company: { type: 'string' }, score: { type: 'number', minimum: 0, maximum: 1 }, action: { type: 'string' }, reason: { type: 'string' }, confidence: { type: 'number', minimum: 0, maximum: 1 } } } },
+                      top_pick: { type: 'string' },
+                      summary: { type: 'string' },
+                      sources: { type: 'array', items: { type: 'string', format: 'uri' } },
+                      timestamp: { type: 'string', format: 'date-time' },
+                      metadata: { '$ref': '#/components/schemas/MetaBlock' },
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Validation error' },
+            '500': { description: 'Ranking failed' },
+          },
+        },
       },
     },
   });

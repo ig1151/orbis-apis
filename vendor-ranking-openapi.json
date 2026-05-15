@@ -1,0 +1,334 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Vendor Ranking API",
+    "version": "1.0.0",
+    "description": "AI-powered vendor evaluation — rank vendors, score individual vendors, head-to-head comparisons, review analysis, risk assessment, requirements matching, and full due diligence. ONE-CALL evaluate endpoint for complete procurement intelligence.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": {
+        "rank_vendors": "$0.008",
+        "score_vendor": "$0.006",
+        "compare_vendors": "$0.007",
+        "check_reviews": "$0.006",
+        "assess_risk": "$0.007",
+        "match_requirements": "$0.007",
+        "due_diligence": "$0.009",
+        "execution_gate": "$0.001",
+        "evaluate": "$0.015"
+      },
+      "high_volume": {
+        "rank_vendors": "$0.005",
+        "score_vendor": "$0.004",
+        "compare_vendors": "$0.005",
+        "check_reviews": "$0.004",
+        "assess_risk": "$0.005",
+        "match_requirements": "$0.005",
+        "due_diligence": "$0.006",
+        "execution_gate": "$0.001",
+        "evaluate": "$0.010"
+      }
+    }
+  },
+  "servers": [
+    { "url": "https://orbis-apis.onrender.com/vendor-ranking", "description": "Production" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "PrivacyBlock": {
+        "type": "object",
+        "properties": {
+          "data_stored": { "type": "boolean" },
+          "retention": { "type": "string" }
+        }
+      },
+      "TraceFields": {
+        "type": "object",
+        "properties": {
+          "trace_id": { "type": "string", "description": "Unique trace ID (vnd_<ts>_<random>)" },
+          "computed_at": { "type": "string", "format": "date-time" },
+          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 } },
+          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+          "privacy": { "$ref": "#/components/schemas/PrivacyBlock" }
+        }
+      },
+      "VendorsInput": {
+        "oneOf": [
+          { "type": "string", "description": "Comma-separated vendor names or descriptive text" },
+          { "type": "array", "items": { "type": "string" }, "description": "Array of vendor names" },
+          { "type": "array", "items": { "type": "object", "properties": { "name": { "type": "string" }, "description": { "type": "string" } }, "required": ["name"] }, "description": "Array of vendor objects" }
+        ]
+      },
+      "VendorScores": {
+        "type": "object",
+        "properties": {
+          "pricing": { "type": "number", "minimum": 0, "maximum": 100 },
+          "reliability": { "type": "number", "minimum": 0, "maximum": 100 },
+          "support": { "type": "number", "minimum": 0, "maximum": 100 },
+          "features": { "type": "number", "minimum": 0, "maximum": 100 },
+          "integrations": { "type": "number", "minimum": 0, "maximum": 100 },
+          "geographic_fit": { "type": "number", "minimum": 0, "maximum": 100 },
+          "security": { "type": "number", "minimum": 0, "maximum": 100 },
+          "scalability": { "type": "number", "minimum": 0, "maximum": 100 }
+        }
+      }
+    }
+  },
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "vendorRankingDiscovery",
+        "summary": "API discovery — returns name, version, endpoints and capabilities",
+        "responses": { "200": { "description": "API discovery info" } }
+      }
+    },
+    "/rank-vendors": {
+      "post": {
+        "operationId": "rankVendors",
+        "summary": "Rank multiple vendors across weighted criteria for a specific use case and budget",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["vendors"],
+                "properties": {
+                  "vendors": { "$ref": "#/components/schemas/VendorsInput" },
+                  "criteria": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] },
+                  "use_case": { "type": "string" },
+                  "budget": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Vendor rankings" },
+          "400": { "description": "Missing vendors" },
+          "500": { "description": "Ranking failed" }
+        }
+      }
+    },
+    "/score-vendor": {
+      "post": {
+        "operationId": "scoreVendor",
+        "summary": "Score a single vendor across all dimensions with grade, strengths, weaknesses, and recommended tier",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["vendor"],
+                "properties": {
+                  "vendor": { "type": "string" },
+                  "vendor_data": { "oneOf": [{ "type": "string" }, { "type": "object" }] },
+                  "use_case": { "type": "string" },
+                  "criteria": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Vendor score" },
+          "400": { "description": "Missing vendor" },
+          "500": { "description": "Scoring failed" }
+        }
+      }
+    },
+    "/compare-vendors": {
+      "post": {
+        "operationId": "compareVendors",
+        "summary": "Head-to-head vendor comparison with per-criterion scores, winner verdict, and conditional guidance",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["vendor_a", "vendor_b"],
+                "properties": {
+                  "vendor_a": { "oneOf": [{ "type": "string" }, { "type": "object" }] },
+                  "vendor_b": { "oneOf": [{ "type": "string" }, { "type": "object" }] },
+                  "use_case": { "type": "string" },
+                  "criteria": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Head-to-head comparison" },
+          "400": { "description": "Missing vendor_a or vendor_b" },
+          "500": { "description": "Comparison failed" }
+        }
+      }
+    },
+    "/check-reviews": {
+      "post": {
+        "operationId": "checkVendorReviews",
+        "summary": "Analyze vendor reviews for trust score, fake review risk, top praise, and top complaints",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["vendor"],
+                "properties": {
+                  "vendor": { "type": "string" },
+                  "reviews": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "object" } }] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Review analysis" },
+          "400": { "description": "Missing vendor" },
+          "500": { "description": "Review check failed" }
+        }
+      }
+    },
+    "/assess-risk": {
+      "post": {
+        "operationId": "assessVendorRisk",
+        "summary": "Assess vendor risk across financial, operational, legal, security, and compliance dimensions with exit complexity",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["vendor"],
+                "properties": {
+                  "vendor": { "type": "string" },
+                  "vendor_data": { "oneOf": [{ "type": "string" }, { "type": "object" }] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Vendor risk assessment" },
+          "400": { "description": "Missing vendor" },
+          "500": { "description": "Risk assessment failed" }
+        }
+      }
+    },
+    "/match-requirements": {
+      "post": {
+        "operationId": "matchVendorRequirements",
+        "summary": "Match vendors against specific requirements and score fit — met, missing, and partial requirements",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["vendors", "requirements"],
+                "properties": {
+                  "vendors": { "$ref": "#/components/schemas/VendorsInput" },
+                  "requirements": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }, { "type": "object" }] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Requirements match results" },
+          "400": { "description": "Missing vendors or requirements" },
+          "500": { "description": "Match failed" }
+        }
+      }
+    },
+    "/due-diligence": {
+      "post": {
+        "operationId": "vendorDueDiligence",
+        "summary": "Comprehensive vendor due diligence — financial health, product quality, support, contract risks, and procurement recommendation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["vendor"],
+                "properties": {
+                  "vendor": { "type": "string" },
+                  "vendor_data": { "oneOf": [{ "type": "string" }, { "type": "object" }] },
+                  "use_case": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Due diligence report" },
+          "400": { "description": "Missing vendor" },
+          "500": { "description": "Due diligence failed" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "vendorExecutionGate",
+        "summary": "Validate vendor input readiness and recommend the best evaluation endpoint",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vendors": { "$ref": "#/components/schemas/VendorsInput" },
+                  "vendor": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Execution gate result" },
+          "400": { "description": "Missing vendors or vendor" }
+        }
+      }
+    },
+    "/evaluate": {
+      "post": {
+        "operationId": "evaluateVendors",
+        "summary": "ONE-CALL: full vendor evaluation — rankings, risk, reviews, requirements match, and procurement recommendation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["vendors"],
+                "properties": {
+                  "vendors": { "$ref": "#/components/schemas/VendorsInput" },
+                  "use_case": { "type": "string" },
+                  "requirements": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }, { "type": "object" }] },
+                  "budget": { "type": "string" },
+                  "criteria": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Full vendor evaluation" },
+          "400": { "description": "Missing vendors" },
+          "500": { "description": "Evaluation failed" }
+        }
+      }
+    }
+  }
+}

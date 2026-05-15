@@ -499,6 +499,8 @@ app.use('/browser-task', taskRouter);
 
 // ── Company Research ──────────────────────────────────────────────────────────
 import researchRouter from './routes/company-research-api/routes/research';
+import companyResearchOpenapiRouter from './routes/company-research-api/routes/openapi';
+app.use('/company-research/openapi.json', companyResearchOpenapiRouter);
 app.use('/company-research', companyResearchInfoRouter);
 app.get('/company-research/info', (_req, res) => {
   res.json({
@@ -2758,4 +2760,68 @@ app.get('/legal-contract-risk/info', (_req, res) => res.json({
     { method: 'POST', path: '/analyze-contract', description: 'ONE-CALL: full contract analysis — risk score, top risks, missing clauses, negotiation points, and signing recommendation' },
   ],
   execution_chain: { previous: 'pdf-extraction', next: 'proposal-generation', optional_next: ['fact-verification', 'deep-research'] },
+}));
+
+// ── reddit-intelligence ───────────────────────────────────────────────────────
+import redditIntelligenceRouter from './routes/reddit-intelligence-api/routes/intelligence';
+import redditIntelligenceOpenapiRouter from './routes/reddit-intelligence-api/routes/openapi';
+app.use('/reddit-intelligence/openapi.json', redditIntelligenceOpenapiRouter);
+app.use('/reddit-intelligence', redditIntelligenceRouter);
+app.get('/reddit-intelligence/info', (_req, res) => res.json({
+  name: 'Reddit Intelligence API',
+  slug: 'reddit-intelligence',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { analyze_subreddit: '$0.007', track_keywords: '$0.005', detect_complaints: '$0.006', score_virality: '$0.005', buying_intent: '$0.007', topic_clusters: '$0.006', competitor_mentions: '$0.006', execution_gate: '$0.001', monitor: '$0.012' },
+    high_volume: { analyze_subreddit: '$0.004', detect_complaints: '$0.004', buying_intent: '$0.005', topic_clusters: '$0.004', competitor_mentions: '$0.004', monitor: '$0.008' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-subreddit', description: 'Analyze a subreddit for sentiment, top topics, pain points, and community health signals' },
+    { method: 'POST', path: '/track-keywords', description: 'Track keyword mentions, velocity, and sentiment across Reddit discussions' },
+    { method: 'POST', path: '/detect-complaints', description: 'Detect recurring complaints, pain points, and frustrations with NPS estimate' },
+    { method: 'POST', path: '/score-virality', description: 'Score virality potential of a Reddit post with predicted engagement and emotional triggers' },
+    { method: 'POST', path: '/buying-intent', description: 'Detect buying intent signals with purchase stage, decision triggers, and price sensitivity' },
+    { method: 'POST', path: '/topic-clusters', description: 'Cluster Reddit posts into semantic topic groups and identify dominant, emerging, and declining themes' },
+    { method: 'POST', path: '/competitor-mentions', description: 'Analyze competitor mentions and brand comparisons with switching intent signals' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate Reddit input readiness and recommend the best analysis endpoint' },
+    { method: 'POST', path: '/monitor', description: 'ONE-CALL: full Reddit intelligence — sentiment, complaints, trends, buying intent, and competitor signals' },
+  ],
+  execution_chain: { previous: 'serp-intelligence', next: 'vendor-ranking', optional_next: ['competitor-monitor', 'social-intelligence'] },
+}));
+
+// ── vendor-ranking ────────────────────────────────────────────────────────────
+import vendorRankingRouter from './routes/vendor-ranking-api/routes/intelligence';
+import vendorRankingOpenapiRouter from './routes/vendor-ranking-api/routes/openapi';
+app.use('/vendor-ranking/openapi.json', vendorRankingOpenapiRouter);
+app.use('/vendor-ranking', vendorRankingRouter);
+app.get('/vendor-ranking/info', (_req, res) => res.json({
+  name: 'Vendor Ranking API',
+  slug: 'vendor-ranking',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { rank_vendors: '$0.008', score_vendor: '$0.006', compare_vendors: '$0.007', check_reviews: '$0.006', assess_risk: '$0.007', match_requirements: '$0.007', due_diligence: '$0.009', execution_gate: '$0.001', evaluate: '$0.015' },
+    high_volume: { rank_vendors: '$0.005', score_vendor: '$0.004', compare_vendors: '$0.005', assess_risk: '$0.005', due_diligence: '$0.006', evaluate: '$0.010' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/rank-vendors', description: 'Rank multiple vendors across weighted criteria for a specific use case and budget' },
+    { method: 'POST', path: '/score-vendor', description: 'Score a single vendor with grade, strengths, weaknesses, and recommended tier' },
+    { method: 'POST', path: '/compare-vendors', description: 'Head-to-head vendor comparison with per-criterion scores, winner verdict, and conditional guidance' },
+    { method: 'POST', path: '/check-reviews', description: 'Analyze vendor reviews for trust score, fake review risk, top praise, and complaints' },
+    { method: 'POST', path: '/assess-risk', description: 'Assess vendor risk across financial, operational, legal, security, and compliance dimensions' },
+    { method: 'POST', path: '/match-requirements', description: 'Match vendors against requirements and score fit — met, missing, and partial requirements' },
+    { method: 'POST', path: '/due-diligence', description: 'Comprehensive due diligence — financial health, product quality, support, contract risks, and procurement recommendation' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate vendor input readiness and recommend the best evaluation endpoint' },
+    { method: 'POST', path: '/evaluate', description: 'ONE-CALL: full vendor evaluation — rankings, risk, reviews, requirements match, and procurement recommendation' },
+  ],
+  execution_chain: { previous: 'reddit-intelligence', next: 'deep-research', optional_next: ['company-research', 'lead-scoring'] },
 }));

@@ -1,0 +1,56 @@
+{
+  "name": "Vendor Ranking API",
+  "slug": "vendor-ranking",
+  "version": "1.0.0",
+  "description": "AI-powered vendor evaluation — rank vendors, score individual vendors, head-to-head comparisons, review analysis, risk assessment, requirements matching, and full due diligence. ONE-CALL evaluate endpoint for complete procurement intelligence.",
+  "category": "procurement-intelligence",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "x402_enabled": true,
+  "baseUrl": "https://orbis-apis.onrender.com/vendor-ranking",
+  "openapi": "https://orbis-apis.onrender.com/vendor-ranking/openapi.json",
+  "info": "https://orbis-apis.onrender.com/vendor-ranking/info",
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+    "pay_per_call": {
+      "rank_vendors": "$0.008",
+      "score_vendor": "$0.006",
+      "compare_vendors": "$0.007",
+      "check_reviews": "$0.006",
+      "assess_risk": "$0.007",
+      "match_requirements": "$0.007",
+      "due_diligence": "$0.009",
+      "execution_gate": "$0.001",
+      "evaluate": "$0.015"
+    },
+    "high_volume": {
+      "rank_vendors": "$0.005",
+      "score_vendor": "$0.004",
+      "compare_vendors": "$0.005",
+      "check_reviews": "$0.004",
+      "assess_risk": "$0.005",
+      "match_requirements": "$0.005",
+      "due_diligence": "$0.006",
+      "execution_gate": "$0.001",
+      "evaluate": "$0.010"
+    }
+  },
+  "rate_limits": { "free": "100/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": [
+    { "method": "POST", "path": "/rank-vendors", "description": "Rank multiple vendors across weighted criteria for a specific use case and budget" },
+    { "method": "POST", "path": "/score-vendor", "description": "Score a single vendor with grade, strengths, weaknesses, and recommended tier" },
+    { "method": "POST", "path": "/compare-vendors", "description": "Head-to-head vendor comparison with per-criterion scores, winner verdict, and conditional guidance" },
+    { "method": "POST", "path": "/check-reviews", "description": "Analyze vendor reviews for trust score, fake review risk, top praise, and complaints" },
+    { "method": "POST", "path": "/assess-risk", "description": "Assess vendor risk across financial, operational, legal, security, and compliance dimensions" },
+    { "method": "POST", "path": "/match-requirements", "description": "Match vendors against requirements and score fit — met, missing, and partial requirements" },
+    { "method": "POST", "path": "/due-diligence", "description": "Comprehensive due diligence — financial health, product quality, support, contract risks, and procurement recommendation" },
+    { "method": "POST", "path": "/execution-gate", "description": "Validate vendor input readiness and recommend the best evaluation endpoint" },
+    { "method": "POST", "path": "/evaluate", "description": "ONE-CALL: full vendor evaluation — rankings, risk, reviews, requirements match, and procurement recommendation" }
+  ],
+  "execution_chain": {
+    "previous": "reddit-intelligence",
+    "next": "deep-research",
+    "optional_next": ["company-research", "lead-scoring"]
+  }
+}

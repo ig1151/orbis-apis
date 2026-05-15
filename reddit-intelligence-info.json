@@ -1,0 +1,56 @@
+{
+  "name": "Reddit Intelligence API",
+  "slug": "reddit-intelligence",
+  "version": "1.0.0",
+  "description": "AI-powered Reddit analysis — subreddit sentiment, keyword tracking, complaint detection, virality scoring, buying intent, topic clustering, and competitor mentions. ONE-CALL monitor endpoint for full community intelligence.",
+  "category": "social-intelligence",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "x402_enabled": true,
+  "baseUrl": "https://orbis-apis.onrender.com/reddit-intelligence",
+  "openapi": "https://orbis-apis.onrender.com/reddit-intelligence/openapi.json",
+  "info": "https://orbis-apis.onrender.com/reddit-intelligence/info",
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+    "pay_per_call": {
+      "analyze_subreddit": "$0.007",
+      "track_keywords": "$0.005",
+      "detect_complaints": "$0.006",
+      "score_virality": "$0.005",
+      "buying_intent": "$0.007",
+      "topic_clusters": "$0.006",
+      "competitor_mentions": "$0.006",
+      "execution_gate": "$0.001",
+      "monitor": "$0.012"
+    },
+    "high_volume": {
+      "analyze_subreddit": "$0.004",
+      "track_keywords": "$0.003",
+      "detect_complaints": "$0.004",
+      "score_virality": "$0.003",
+      "buying_intent": "$0.005",
+      "topic_clusters": "$0.004",
+      "competitor_mentions": "$0.004",
+      "execution_gate": "$0.001",
+      "monitor": "$0.008"
+    }
+  },
+  "rate_limits": { "free": "100/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": [
+    { "method": "POST", "path": "/analyze-subreddit", "description": "Analyze a subreddit for sentiment, top topics, pain points, and community health signals" },
+    { "method": "POST", "path": "/track-keywords", "description": "Track keyword mentions, velocity, and sentiment across Reddit discussions" },
+    { "method": "POST", "path": "/detect-complaints", "description": "Detect recurring complaints, pain points, and frustrations with NPS estimate" },
+    { "method": "POST", "path": "/score-virality", "description": "Score virality potential of a Reddit post with predicted engagement and emotional triggers" },
+    { "method": "POST", "path": "/buying-intent", "description": "Detect buying intent signals with purchase stage, decision triggers, and price sensitivity" },
+    { "method": "POST", "path": "/topic-clusters", "description": "Cluster Reddit posts into semantic topic groups and identify dominant, emerging, and declining themes" },
+    { "method": "POST", "path": "/competitor-mentions", "description": "Analyze competitor mentions and brand comparisons with switching intent signals" },
+    { "method": "POST", "path": "/execution-gate", "description": "Validate Reddit input readiness and recommend the best analysis endpoint" },
+    { "method": "POST", "path": "/monitor", "description": "ONE-CALL: full Reddit intelligence — sentiment, complaints, trends, buying intent, and competitor signals" }
+  ],
+  "execution_chain": {
+    "previous": "serp-intelligence",
+    "next": "vendor-ranking",
+    "optional_next": ["competitor-monitor", "social-intelligence"]
+  }
+}
