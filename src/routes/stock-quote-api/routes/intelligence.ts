@@ -45,8 +45,10 @@ router.post('/quote', async (req: Request, res: Response) => {
   },
   "market_status": "open|closed|pre-market|after-hours",
   "signal": "bullish|bearish|neutral",
+  "financial_disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading or investment workflows.",
+  "paper_mode_recommended": true,
   "confidence_per_section": {"quote": 0-1, "signal": 0-1},
-  "recommended_actions_priority_order": ["string"],
+  "recommended_actions_priority_order": ["verify with authoritative data source", "check market status", "review price history"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));

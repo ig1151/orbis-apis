@@ -35,6 +35,9 @@ router.post('/screenshot', async (req: Request, res: Response) => {
   "computed_at": "${new Date().toISOString()}",
   "success": true,
   "url": "${url}",
+  "screenshot_url": "https://orbis-apis.onrender.com/website-screenshot/asset/[asset_id]",
+  "image_base64": null,
+  "asset_id": "asset_[trace_id]",
   "capture_config": {
     "viewport": {"width": number, "height": number},
     "full_page": true|false,

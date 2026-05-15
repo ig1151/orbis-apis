@@ -135,6 +135,38 @@ router.post('/diff', async (req: Request, res: Response) => {
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+// POST /orbis-score
+router.post('/orbis-score', async (req: Request, res: Response) => {
+  const { spec, spec_url } = req.body;
+  if (!spec && !spec_url) return res.status(400).json({ error: 'spec or spec_url is required' });
+  try {
+    const specStr = spec ? JSON.stringify(spec).slice(0, 3000) : `url: ${spec_url}`;
+    const raw = await callClaude(`Grade this OpenAPI spec against the Orbis A+ marketplace checklist. spec: ${specStr}. Return JSON:
+{
+  "trace_id": "${traceId()}",
+  "computed_at": "${new Date().toISOString()}",
+  "success": true,
+  "grade": "A+|A|B|C|D|F",
+  "score": 0-100,
+  "checklist": {
+    "has_security_schemes": true|false,
+    "has_x_pricing": true|false,
+    "has_x_compliance": true|false,
+    "has_mcp_metadata": true|false,
+    "has_typed_responses": true|false,
+    "has_operation_ids": true|false,
+    "has_execution_gate": true|false,
+    "has_one_call": true|false
+  },
+  "gaps": [{"field": "string", "impact": "high|medium|low", "fix": "string"}],
+  "confidence_per_section": {"checklist": 0-1, "grade": 0-1},
+  "recommended_actions_priority_order": ["add security schemes", "add x-pricing metadata", "add execution-gate endpoint"],
+  "privacy": {"data_stored": false, "retention": "none"}
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 // POST /execution-gate
 router.post('/execution-gate', async (req: Request, res: Response) => {
   const { spec_url, objective } = req.body;

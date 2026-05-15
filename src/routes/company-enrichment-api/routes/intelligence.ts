@@ -39,8 +39,9 @@ router.post('/company-profile', async (req: Request, res: Response) => {
     "industry": "string", "founded": number, "headquarters": "string",
     "website": "string", "linkedin_url": "string", "twitter_handle": "string"
   },
+  "source_provenance": {"source": "public_records_and_ai_synthesis", "last_updated": "${new Date().toISOString()}", "data_freshness_score": 0.82},
   "confidence_per_section": {"company": 0-1},
-  "recommended_actions_priority_order": ["string"],
+  "recommended_actions_priority_order": ["enrich firmographics", "check technographics", "score ICP fit"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));

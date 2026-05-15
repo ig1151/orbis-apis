@@ -38,6 +38,12 @@ router.post('/profile', async (req: Request, res: Response) => {
     "name": "string",
     "headline": "string",
     "location": "string",
+    "profile_url": "string or null",
+    "current_company": "string",
+    "past_companies": ["string"],
+    "certifications": ["string"],
+    "languages": ["string"],
+    "source_provenance": {"source": "public_profile", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.85},
     "connections_estimate": "500+|1000+|5000+",
     "engagement_score": 0-100,
     "industry": "string",
@@ -48,7 +54,7 @@ router.post('/profile', async (req: Request, res: Response) => {
   "education": [{"degree": "string", "institution": "string", "year": number}],
   "activity_signals": {"posting_frequency": "active|moderate|inactive", "content_topics": ["string"], "thought_leadership_score": 0-100},
   "confidence_per_section": {"profile": 0-1, "experience": 0-1, "skills": 0-1, "education": 0-1},
-  "recommended_actions_priority_order": ["string"],
+  "recommended_actions_priority_order": ["enrich company data", "find email address", "score decision-maker fit"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
@@ -137,6 +143,31 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
     recommended_actions_priority_order: ['Call /profile or /enrich first', 'Use /lookup for full enrichment'],
     privacy: { data_stored: false, retention: 'none' },
   });
+});
+
+// POST /decision-maker-fit
+router.post('/decision-maker-fit', async (req: Request, res: Response) => {
+  const { name, title, company, department } = req.body;
+  if (!name) return res.status(400).json({ error: 'name is required' });
+  try {
+    const raw = await callClaude(`Score decision-maker fit for outreach. name: "${name}" title: "${title || 'none'}" company: "${company || 'none'}" department: "${department || 'none'}". Return JSON:
+{
+  "trace_id": "${traceId()}",
+  "computed_at": "${new Date().toISOString()}",
+  "success": true,
+  "buyer_persona_fit": 0-100,
+  "decision_maker_likelihood": "high|medium|low",
+  "department": "string",
+  "seniority": "c-suite|vp|director|manager|individual_contributor",
+  "recommended_pitch_angle": "string describing best outreach angle",
+  "outreach_priority": "high|medium|low",
+  "fit_reasoning": ["string"],
+  "confidence_per_section": {"buyer_persona_fit": 0-1, "decision_maker_likelihood": 0-1},
+  "recommended_actions_priority_order": ["score company ICP fit", "personalize outreach", "find email address"],
+  "privacy": {"data_stored": false, "retention": "none"}
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
 // POST /lookup (one-call)

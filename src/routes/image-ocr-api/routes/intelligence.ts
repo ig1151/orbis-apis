@@ -35,7 +35,7 @@ router.post('/ocr', async (req: Request, res: Response) => {
   "computed_at": "${new Date().toISOString()}",
   "success": true,
   "raw_text": "string",
-  "text_blocks": [{"id": number, "text": "string", "type": "heading|paragraph|list|table|code|other", "confidence": 0-1}],
+  "text_blocks": [{"id": number, "text": "string", "type": "heading|paragraph|list|table|code|other", "confidence": 0-1, "bounding_box": {"x": number, "y": number, "width": number, "height": number}}],
   "language_detected": "string",
   "language_confidence": 0-1,
   "word_count": number,
