@@ -1,0 +1,172 @@
+{
+  "name": "Fact Verification API",
+  "shortDescription": "Hallucination detection, claim verification and AI trust scoring",
+  "description": "Detect hallucinations, verify claims, validate citations, score AI reliability, flag uncertainty, check consistency, and enforce policy validation for autonomous agent workflows. Built as a trust and safety infrastructure layer for AI systems.",
+  "category": "ai-ml",
+  "baseUrl": "https://orbis-apis.onrender.com/fact-verification",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/fact-verification/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/fact-verification/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "hallucination-detection",
+    "fact-checking",
+    "verification",
+    "trust-scoring",
+    "citation-validation",
+    "policy-validation",
+    "ai-safety",
+    "agentic"
+  ],
+  "keywords": [
+    "detect hallucinations",
+    "verify ai output",
+    "fact verification api",
+    "check citations",
+    "validate claims",
+    "ai trust score",
+    "policy compliance validation"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.009,
+      "requestsPerDay": 50000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/verify-claim",
+          "pricePerCallUsdc": 0.005,
+          "description": "Verify a specific factual claim"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/detect-hallucination",
+          "pricePerCallUsdc": 0.006,
+          "description": "Detect hallucinations and fabricated facts"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/check-citations",
+          "pricePerCallUsdc": 0.006,
+          "description": "Validate citations and source credibility"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/consistency-check",
+          "pricePerCallUsdc": 0.005,
+          "description": "Detect contradictions and inconsistencies"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/policy-validate",
+          "pricePerCallUsdc": 0.006,
+          "description": "Validate content against policies"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/output-score",
+          "pricePerCallUsdc": 0.005,
+          "description": "Score AI output quality and reliability"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/flag-uncertainty",
+          "pricePerCallUsdc": 0.004,
+          "description": "Flag uncertain or speculative statements"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execution-gate",
+          "pricePerCallUsdc": 0.002,
+          "description": "Execution readiness validation"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/verify",
+          "pricePerCallUsdc": 0.009,
+          "description": "ONE-CALL full verification workflow"
+        }
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.006,
+      "requestsPerDay": 500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/detect-hallucination",
+          "pricePerCallUsdc": 0.004
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/verify-claim",
+          "pricePerCallUsdc": 0.003
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/verify",
+          "pricePerCallUsdc": 0.006
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/verify-claim",
+      "description": "Verify a factual claim"
+    },
+    {
+      "method": "POST",
+      "path": "/detect-hallucination",
+      "description": "Detect hallucinations in AI output"
+    },
+    {
+      "method": "POST",
+      "path": "/check-citations",
+      "description": "Validate citations and sources"
+    },
+    {
+      "method": "POST",
+      "path": "/consistency-check",
+      "description": "Check consistency and contradictions"
+    },
+    {
+      "method": "POST",
+      "path": "/policy-validate",
+      "description": "Validate policy compliance"
+    },
+    {
+      "method": "POST",
+      "path": "/output-score",
+      "description": "Score AI output quality"
+    },
+    {
+      "method": "POST",
+      "path": "/flag-uncertainty",
+      "description": "Flag uncertain statements"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness validation"
+    },
+    {
+      "method": "POST",
+      "path": "/verify",
+      "description": "ONE-CALL full verification workflow"
+    }
+  ]
+}

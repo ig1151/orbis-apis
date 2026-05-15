@@ -1,0 +1,172 @@
+{
+  "name": "Legal Contract Risk API",
+  "shortDescription": "Contract risk scoring, clause extraction and negotiation intelligence",
+  "description": "Analyze contracts, extract clauses, score legal risk, identify dangerous terms, surface missing protections, compare agreements, and generate negotiation strategies for legal and procurement workflows.",
+  "category": "business",
+  "baseUrl": "https://orbis-apis.onrender.com/legal-contract-risk",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/legal-contract-risk/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/legal-contract-risk/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "legal",
+    "contracts",
+    "risk-analysis",
+    "negotiation",
+    "procurement",
+    "compliance",
+    "clause-extraction",
+    "agentic"
+  ],
+  "keywords": [
+    "analyze contracts",
+    "contract risk scoring",
+    "extract clauses",
+    "compare contracts",
+    "contract negotiation strategy",
+    "legal contract analysis",
+    "flag risky clauses"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.015,
+      "requestsPerDay": 50000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/extract-clauses",
+          "pricePerCallUsdc": 0.006,
+          "description": "Extract clauses and classify importance"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/risk-score",
+          "pricePerCallUsdc": 0.007,
+          "description": "Score overall contract risk"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/flag-risks",
+          "pricePerCallUsdc": 0.007,
+          "description": "Flag dangerous clauses and risks"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/missing-clauses",
+          "pricePerCallUsdc": 0.006,
+          "description": "Identify missing protections"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/compare-contracts",
+          "pricePerCallUsdc": 0.008,
+          "description": "Compare contracts and negotiation gaps"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/summarize-contract",
+          "pricePerCallUsdc": 0.005,
+          "description": "Executive summary of contract"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/negotiation-points",
+          "pricePerCallUsdc": 0.007,
+          "description": "Generate negotiation strategies"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/execution-gate",
+          "pricePerCallUsdc": 0.002,
+          "description": "Pre-signing execution readiness"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/analyze-contract",
+          "pricePerCallUsdc": 0.015,
+          "description": "ONE-CALL full contract analysis workflow"
+        }
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.01,
+      "requestsPerDay": 500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/risk-score",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/flag-risks",
+          "pricePerCallUsdc": 0.005
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/analyze-contract",
+          "pricePerCallUsdc": 0.01
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/extract-clauses",
+      "description": "Extract contract clauses"
+    },
+    {
+      "method": "POST",
+      "path": "/risk-score",
+      "description": "Score contract risk"
+    },
+    {
+      "method": "POST",
+      "path": "/flag-risks",
+      "description": "Flag risky clauses"
+    },
+    {
+      "method": "POST",
+      "path": "/missing-clauses",
+      "description": "Identify missing protections"
+    },
+    {
+      "method": "POST",
+      "path": "/compare-contracts",
+      "description": "Compare contracts"
+    },
+    {
+      "method": "POST",
+      "path": "/summarize-contract",
+      "description": "Summarize contract"
+    },
+    {
+      "method": "POST",
+      "path": "/negotiation-points",
+      "description": "Generate negotiation points"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze-contract",
+      "description": "ONE-CALL contract analysis"
+    }
+  ]
+}
