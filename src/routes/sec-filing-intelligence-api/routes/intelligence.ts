@@ -39,20 +39,24 @@ Extract and return a comprehensive analysis with revenue figures, EPS, margin tr
 
 Return JSON:
 {
-  "company": "string (company name extracted from filing)",
+  "company": "string",
   "filing_type": "string (10-K|10-Q|8-K|S-1|other)",
-  "period": "string (fiscal period e.g. Q3 2024, FY2024)",
-  "revenue": "string (e.g. $4.2B or $420M)",
-  "eps": "string (e.g. $2.14 diluted)",
-  "gross_margin": "string (e.g. 42.3%)",
-  "operating_margin": "string (e.g. 18.7%)",
-  "net_margin": "string (e.g. 14.2%)",
-  "yoy_revenue_growth": "string (e.g. +12.4%)",
-  "yoy_eps_growth": "string (e.g. +8.1%)",
+  "period": "string",
+  "financial_metrics": {
+    "revenue_growth_yoy": "number (e.g. 12.4 for 12.4%)",
+    "gross_margin": "number (e.g. 42.3 for 42.3%)",
+    "operating_margin": "number (e.g. 18.7 for 18.7%)",
+    "net_margin": "number (e.g. 14.2 for 14.2%)",
+    "free_cash_flow": "string (e.g. $340M)",
+    "debt_to_equity": "number (e.g. 0.45)",
+    "eps_growth_yoy": "number (e.g. 8.1 for 8.1%)"
+  },
+  "revenue": "string",
+  "eps": "string",
   "key_highlights": ["string"],
   "red_flags": ["string"],
   "investment_signal": "strong_buy|buy|hold|sell|strong_sell",
-  "agent_summary": "string (2-3 sentence professional summary)",
+  "agent_summary": "string",
   "confidence_per_section": { "metrics": 0.0, "growth": 0.0, "signal": 0.0, "highlights": 0.0 },
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
@@ -271,6 +275,38 @@ Return JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+// POST /extract-guidance
+router.post('/extract-guidance', async (req: Request, res: Response) => {
+  const { filing_text, company } = req.body;
+  if (!filing_text && !company) return res.status(400).json({ error: 'filing_text or company is required' });
+  try {
+    const input = filing_text || `${company} forward guidance management outlook`;
+    const raw = await callClaude(`You are a senior equity research analyst specializing in extracting forward guidance from SEC filings and earnings materials. Extract all forward-looking statements, management outlook, and guidance signals.
+
+Filing/Input: "${String(input).slice(0, 4000)}"
+
+Extract every piece of forward guidance management has provided. Include revenue guidance, EPS guidance, margin targets, capex plans, and any qualitative demand commentary. Assess management tone. Flag any guidance cuts or raises versus prior periods.
+
+Return JSON:
+{
+  "revenue_guidance": "string (e.g. $4.8-5.2B for FY2025, or 'not provided')",
+  "eps_guidance": "string (e.g. $2.20-2.40 diluted, or 'not provided')",
+  "margin_guidance": "string (e.g. Gross margin 41-43%, or 'not provided')",
+  "capex_guidance": "string (e.g. $1.2-1.4B, or 'not provided')",
+  "demand_commentary": ["string (key demand signals management mentioned)"],
+  "management_tone": "bullish|cautious|neutral|bearish",
+  "guidance_vs_prior": "raised|maintained|lowered|first_guidance|not_applicable",
+  "key_risks_flagged": ["string (risks management explicitly called out)"],
+  "forward_catalysts": ["string (opportunities management highlighted)"],
+  "agent_summary": "string (2-3 sentence synthesis of guidance outlook)",
+  "confidence_per_section": { "revenue_guidance": 0.0, "eps_guidance": 0.0, "management_tone": 0.0, "demand_commentary": 0.0 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    res.json({ ...parseJSON(raw), trace_id: traceId(), computed_at: new Date().toISOString() });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 // POST /execution-gate
 router.post('/execution-gate', async (req: Request, res: Response) => {
   const { filing_text, company } = req.body;
@@ -306,6 +342,9 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
       text_length,
       recommended_endpoint,
       blocking_flags,
+      recommended_next_api: 'risk-event-forecast',
+      execution_priority: 'high',
+      automation_safe: true,
       trace_id: traceId(),
       confidence_per_section: { filing_detection: filing_type_detected !== 'unknown' ? 0.85 : 0.4, readiness: blocking_flags.length === 0 ? 1.0 : 0.0 },
       privacy: { data_stored: false, retention: 'none' },

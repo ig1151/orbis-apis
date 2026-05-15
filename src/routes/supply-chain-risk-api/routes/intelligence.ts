@@ -206,7 +206,61 @@ router.post('/dependency-mapping', async (req: Request, res: Response) => {
   "tier_2_risks": ["string"],
   "orphan_dependencies": ["string"],
   "resilience_score": 0-100,
-  "confidence_per_section": { "critical_dependencies": 0-1, "resilience_score": 0-1 },
+  "graph": {
+    "nodes": [{ "id": "string", "label": "string", "type": "company|supplier|component|region", "risk_level": "critical|high|medium|low" }],
+    "edges": [{ "source": "string", "target": "string", "label": "string", "weight": 0.0 }],
+    "critical_paths": ["string (description of highest-risk dependency chains)"]
+  },
+  "confidence_per_section": { "critical_dependencies": 0-1, "resilience_score": 0-1, "graph": 0-1 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    const parsed = parseJSON(raw);
+    res.json({ ...parsed, trace_id: traceId(), computed_at: new Date().toISOString() });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /tariff-impact
+router.post('/tariff-impact', async (req: Request, res: Response) => {
+  const { company, suppliers, product_categories } = req.body;
+  if (!company && !suppliers) return res.status(400).json({ error: 'company or suppliers is required' });
+  try {
+    const supplierStr = suppliers ? (typeof suppliers === 'string' ? suppliers : JSON.stringify(suppliers).slice(0, 2000)) : '';
+    const categoriesStr = product_categories ? (Array.isArray(product_categories) ? product_categories.join(', ') : product_categories) : '';
+    const raw = await callClaude(`You are a global trade and tariff impact analyst. Analyze tariff exposure for this company's supply chain and estimate the financial and operational impact.
+
+Company: "${company || ''}"
+Suppliers/Regions: "${supplierStr}"
+Product categories: "${categoriesStr}"
+
+Assess current and potential tariff exposure by country pair and product category. Estimate cost impact as a percentage of COGS. Identify mitigation strategies including alternative sourcing and tariff engineering options.
+
+Return JSON:
+{
+  "tariff_exposure_score": 0,
+  "total_cost_impact_pct_cogs": "string (e.g. 3.2-5.8% COGS headwind)",
+  "high_risk_country_pairs": [
+    {
+      "origin": "string",
+      "destination": "string",
+      "tariff_rate_pct": "string",
+      "affected_categories": ["string"],
+      "annual_cost_estimate": "string"
+    }
+  ],
+  "most_exposed_categories": ["string"],
+  "active_tariff_disputes": ["string"],
+  "mitigation_strategies": [
+    {
+      "strategy": "string",
+      "feasibility": "high|medium|low",
+      "estimated_savings_pct": "string",
+      "implementation_timeline": "string"
+    }
+  ],
+  "nearshoring_opportunities": ["string"],
+  "tariff_regime": "escalating|stable|de-escalating",
+  "confidence_per_section": { "tariff_exposure_score": 0.0, "cost_impact": 0.0, "mitigation_strategies": 0.0 },
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
 }`);
@@ -226,6 +280,9 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
     supplier_count,
     recommended_endpoint: supplier_count > 0 ? '/supplier-risk' : '/assess',
     blocking_flags: [],
+    recommended_next_api: 'due-diligence',
+    execution_priority: 'high',
+    automation_safe: true,
     trace_id: traceId(),
     confidence_per_section: { execution_ready: 0.95, blocking_flags: 0.9 },
     privacy: { data_stored: false, retention: 'none' },

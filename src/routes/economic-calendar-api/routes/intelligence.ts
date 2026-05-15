@@ -190,6 +190,79 @@ Return JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+// POST /macro-regime
+router.post('/macro-regime', async (req: Request, res: Response) => {
+  const { region = 'US', economic_data } = req.body;
+  try {
+    const dataStr = economic_data ? `\n\nEconomic data: "${typeof economic_data === 'string' ? economic_data.slice(0, 3000) : JSON.stringify(economic_data).slice(0, 3000)}"` : '';
+    const raw = await callClaude(`You are a macro regime classification analyst. Determine the current macroeconomic regime and its investment implications.
+
+Region: "${String(region)}"${dataStr}
+
+Classify the current macro regime using standard economic framework categories. Assess the probability of regime transition within 6 months. Provide asset class implications for each major regime state. Identify the 3 most important regime indicators to watch.
+
+Return JSON:
+{
+  "current_regime": "inflationary|stagflationary|disinflationary|recessionary|liquidity_expansion|goldilocks|deflationary",
+  "regime_confidence": 0.0,
+  "regime_duration_estimate": "string (e.g. 3-6 more months, or 'regime transition imminent')",
+  "transition_probability_6m": 0.0,
+  "likely_next_regime": "string",
+  "asset_class_implications": {
+    "equities": "string",
+    "bonds": "string",
+    "commodities": "string",
+    "cash": "string",
+    "real_assets": "string"
+  },
+  "key_indicators_to_watch": ["string"],
+  "regime_drivers": ["string (factors currently driving this regime)"],
+  "tail_risk_scenarios": ["string"],
+  "confidence_per_section": { "regime_classification": 0.0, "asset_implications": 0.0, "transition_probability": 0.0 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    const parsed = parseJSON(raw);
+    res.json({ ...parsed, trace_id: traceId(), computed_at: new Date().toISOString() });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /cross-asset-impact
+router.post('/cross-asset-impact', async (req: Request, res: Response) => {
+  const { event, event_type, magnitude } = req.body;
+  if (!event) return res.status(400).json({ error: 'event is required' });
+  try {
+    const raw = await callClaude(`You are a cross-asset macro strategist. Analyze how the following economic event will impact multiple asset classes simultaneously. Model transmission mechanisms and second-order effects.
+
+Event: "${String(event)}"
+Event type: "${String(event_type || 'macro')}" (fed_decision|cpi|jobs|gdp|earnings|geopolitical|other)
+Magnitude: "${String(magnitude || 'as_described')}" (beat|in_line|miss|shock)
+
+For each asset class, determine direction (bullish/bearish/neutral), magnitude of impact (large/moderate/small), time horizon (immediate within hours, short_term within weeks, medium_term within months), and the transmission mechanism explaining why.
+
+Return JSON:
+{
+  "event_summary": "string",
+  "impact_by_asset": {
+    "us_equities": { "direction": "bullish|bearish|neutral", "magnitude": "large|moderate|small", "horizon": "immediate|short_term|medium_term", "mechanism": "string" },
+    "us_treasuries": { "direction": "bullish|bearish|neutral", "magnitude": "large|moderate|small", "horizon": "immediate|short_term|medium_term", "mechanism": "string" },
+    "usd": { "direction": "bullish|bearish|neutral", "magnitude": "large|moderate|small", "horizon": "immediate|short_term|medium_term", "mechanism": "string" },
+    "gold": { "direction": "bullish|bearish|neutral", "magnitude": "large|moderate|small", "horizon": "immediate|short_term|medium_term", "mechanism": "string" },
+    "oil": { "direction": "bullish|bearish|neutral", "magnitude": "large|moderate|small", "horizon": "immediate|short_term|medium_term", "mechanism": "string" },
+    "crypto": { "direction": "bullish|bearish|neutral", "magnitude": "large|moderate|small", "horizon": "immediate|short_term|medium_term", "mechanism": "string" }
+  },
+  "dominant_theme": "string (e.g. risk-off flight to safety, reflation trade, dollar strength)",
+  "most_impacted_asset": "string",
+  "second_order_effects": ["string"],
+  "confidence_per_section": { "impact_by_asset": 0.0, "second_order_effects": 0.0 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    const parsed = parseJSON(raw);
+    res.json({ ...parsed, trace_id: traceId(), computed_at: new Date().toISOString() });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 // POST /execution-gate
 router.post('/execution-gate', async (req: Request, res: Response) => {
   const { events, event_name } = req.body;
@@ -221,6 +294,9 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
       next_high_impact,
       recommended_endpoint,
       blocking_flags,
+      recommended_next_api: 'risk-event-forecast',
+      execution_priority: 'medium',
+      automation_safe: true,
       trace_id: traceId(),
       confidence_per_section: { event_detection: event_count > 0 ? 0.9 : 0.0, readiness: blocking_flags.length === 0 ? 1.0 : 0.0 },
       privacy: { data_stored: false, retention: 'none' },

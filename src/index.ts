@@ -3056,6 +3056,46 @@ app.get('/qa-testing/info', (_req, res) => res.json({
   execution_chain: { previous: 'agent-observability', next: 'workflow-orchestrator', optional_next: ['ai-output-safety', 'fact-verification'] },
 }));
 
+// ── linkedin-profile ──────────────────────────────────────────────────────────
+import linkedinProfileRouter from './routes/linkedin-profile-api/routes/intelligence';
+import linkedinProfileOpenapiRouter from './routes/linkedin-profile-api/routes/openapi';
+
+// ── company-enrichment ────────────────────────────────────────────────────────
+import companyEnrichmentApiRouter from './routes/company-enrichment-api/routes/intelligence';
+import companyEnrichmentApiOpenapiRouter from './routes/company-enrichment-api/routes/openapi';
+
+// ── email-finder ──────────────────────────────────────────────────────────────
+import emailFinderRouter from './routes/email-finder-api/routes/intelligence';
+import emailFinderOpenapiRouter from './routes/email-finder-api/routes/openapi';
+
+// ── stock-quote ───────────────────────────────────────────────────────────────
+import stockQuoteRouter from './routes/stock-quote-api/routes/intelligence';
+import stockQuoteOpenapiRouter from './routes/stock-quote-api/routes/openapi';
+
+// ── image-ocr ─────────────────────────────────────────────────────────────────
+import imageOcrRouter from './routes/image-ocr-api/routes/intelligence';
+import imageOcrOpenapiRouter from './routes/image-ocr-api/routes/openapi';
+
+// ── website-screenshot ────────────────────────────────────────────────────────
+import websiteScreenshotRouter from './routes/website-screenshot-api/routes/intelligence';
+import websiteScreenshotOpenapiRouter from './routes/website-screenshot-api/routes/openapi';
+
+// ── job-posting-search ────────────────────────────────────────────────────────
+import jobPostingSearchRouter from './routes/job-posting-search-api/routes/intelligence';
+import jobPostingSearchOpenapiRouter from './routes/job-posting-search-api/routes/openapi';
+
+// ── github-repo-stats ─────────────────────────────────────────────────────────
+import githubRepoStatsRouter from './routes/github-repo-stats-api/routes/intelligence';
+import githubRepoStatsOpenapiRouter from './routes/github-repo-stats-api/routes/openapi';
+
+// ── openapi-validator ─────────────────────────────────────────────────────────
+import openapiValidatorRouter from './routes/openapi-validator-api/routes/intelligence';
+import openapiValidatorOpenapiRouter from './routes/openapi-validator-api/routes/openapi';
+
+// ── address-risk ──────────────────────────────────────────────────────────────
+import addressRiskRouter from './routes/address-risk-api/routes/intelligence';
+import addressRiskOpenapiRouter from './routes/address-risk-api/routes/openapi';
+
 // ── due-diligence ─────────────────────────────────────────────────────────────
 import dueDiligenceRouter from './routes/due-diligence-api/routes/intelligence';
 import dueDiligenceOpenapiRouter from './routes/due-diligence-api/routes/openapi';
@@ -3077,4 +3117,233 @@ app.get('/due-diligence/info', (_req, res) => res.json({
     { method: 'POST', path: '/due-diligence', description: 'ONE-CALL: full due diligence — risk, financials, legal, compliance, founders, and recommendation' },
   ],
   execution_chain: { previous: 'reputation-intelligence', next: 'company-research', optional_next: ['legal-contract-risk', 'vendor-ranking'] },
+}));
+
+// ── linkedin-profile ──────────────────────────────────────────────────────────
+app.use('/linkedin-profile/openapi.json', linkedinProfileOpenapiRouter);
+app.use('/linkedin-profile', linkedinProfileRouter);
+app.get('/linkedin-profile/info', (_req, res) => res.json({
+  name: 'LinkedIn Profile API', slug: 'linkedin-profile', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { profile: '$0.004', company: '$0.004', enrich: '$0.006', execution_gate: '$0.001', lookup: '$0.010' },
+    high_volume: { profile: '$0.002', enrich: '$0.004', lookup: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/profile', description: 'LinkedIn profile analysis from URL or name — headline, experience, skills, education, engagement score' },
+    { method: 'POST', path: '/company', description: 'LinkedIn company page — industry, size, followers, hiring signals, growth signals' },
+    { method: 'POST', path: '/enrich', description: 'Enrich a person with LinkedIn data — full profile, contact signals, recent activity' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: enrich person + company in one shot', x_one_call: true },
+  ],
+  execution_chain: { previous: 'company-research', next: 'email-finder', optional_next: ['lead-scoring', 'cold-outreach'] },
+}));
+
+// ── company-enrichment ────────────────────────────────────────────────────────
+app.use('/company-enrichment/openapi.json', companyEnrichmentApiOpenapiRouter);
+app.use('/company-enrichment', companyEnrichmentApiRouter);
+app.get('/company-enrichment/info', (_req, res) => res.json({
+  name: 'Company Enrichment API', slug: 'company-enrichment', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { company_profile: '$0.002', firmographics: '$0.004', technographics: '$0.004', batch: '$0.012', execution_gate: '$0.001', enrich: '$0.008' },
+    high_volume: { company_profile: '$0.001', firmographics: '$0.002', enrich: '$0.005' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/company-profile', description: 'Basic company profile — name, domain, description, industry, founded, HQ' },
+    { method: 'POST', path: '/firmographics', description: 'Firmographic data — employee count, revenue range, growth stage, SIC code' },
+    { method: 'POST', path: '/technographics', description: 'Tech stack signals — tools used, categories, stack maturity' },
+    { method: 'POST', path: '/batch', description: 'Enrich up to 10 companies at once' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/enrich', description: 'ONE-CALL: full company enrichment — profile + firmographics + technographics + signals', x_one_call: true },
+  ],
+  execution_chain: { previous: 'email-finder', next: 'lead-scoring', optional_next: ['company-research', 'lead-enrichment'] },
+}));
+
+// ── email-finder ──────────────────────────────────────────────────────────────
+app.use('/email-finder/openapi.json', emailFinderOpenapiRouter);
+app.use('/email-finder', emailFinderRouter);
+app.get('/email-finder/info', (_req, res) => res.json({
+  name: 'Email Finder API', slug: 'email-finder', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { find_email: '$0.002', verify_email: '$0.002', domain_search: '$0.004', bulk: '$0.008', execution_gate: '$0.001', find: '$0.008' },
+    high_volume: { find_email: '$0.001', verify_email: '$0.001', find: '$0.005' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/find-email', description: 'Find professional email — candidates with confidence scores' },
+    { method: 'POST', path: '/verify-email', description: 'Verify email is valid, deliverable, catches-all, disposable' },
+    { method: 'POST', path: '/domain-search', description: 'Find all emails at a domain with role-based groupings' },
+    { method: 'POST', path: '/bulk', description: 'Bulk find/verify up to 20 emails' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/find', description: 'ONE-CALL: find + verify in one shot', x_one_call: true },
+  ],
+  execution_chain: { previous: 'linkedin-profile', next: 'company-enrichment', optional_next: ['cold-outreach', 'email-intelligence'] },
+}));
+
+// ── stock-quote ───────────────────────────────────────────────────────────────
+app.use('/stock-quote/openapi.json', stockQuoteOpenapiRouter);
+app.use('/stock-quote', stockQuoteRouter);
+app.get('/stock-quote/info', (_req, res) => res.json({
+  name: 'Stock Quote API', slug: 'stock-quote', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { quote: '$0.002', batch_quotes: '$0.004', market_status: '$0.001', price_history: '$0.004', execution_gate: '$0.001', lookup: '$0.010' },
+    high_volume: { quote: '$0.001', batch_quotes: '$0.002', lookup: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/quote', description: 'Real-time quote — price, change, volume, market cap, P/E, 52w high/low' },
+    { method: 'POST', path: '/batch-quotes', description: 'Quotes for up to 20 tickers' },
+    { method: 'POST', path: '/market-status', description: 'US market open/closed status, pre/after hours, upcoming holidays' },
+    { method: 'POST', path: '/price-history', description: 'Historical OHLC data for a ticker over a date range' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full stock intelligence — quote + fundamentals + signals', x_one_call: true },
+  ],
+  execution_chain: { previous: 'economic-calendar', next: 'earnings-analyzer', optional_next: ['portfolio-risk', 'financial-news-monitor'] },
+}));
+
+// ── image-ocr ─────────────────────────────────────────────────────────────────
+app.use('/image-ocr/openapi.json', imageOcrOpenapiRouter);
+app.use('/image-ocr', imageOcrRouter);
+app.get('/image-ocr/info', (_req, res) => res.json({
+  name: 'Image OCR API', slug: 'image-ocr', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { ocr: '$0.004', receipt_ocr: '$0.005', document_ocr: '$0.006', table_extract: '$0.005', execution_gate: '$0.001', extract: '$0.010' },
+    high_volume: { ocr: '$0.002', receipt_ocr: '$0.003', extract: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/ocr', description: 'Extract all text from image URL — raw text, structured blocks, language detection, confidence' },
+    { method: 'POST', path: '/receipt-ocr', description: 'Parse receipt image — merchant, date, line items, totals, tax, payment method' },
+    { method: 'POST', path: '/document-ocr', description: 'Parse document image — title, sections, paragraphs, tables, form fields' },
+    { method: 'POST', path: '/table-extract', description: 'Extract tables from image as structured JSON with headers and rows' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with recommended endpoint' },
+    { method: 'POST', path: '/extract', description: 'ONE-CALL: auto-detect document type and extract structured data', x_one_call: true },
+  ],
+  execution_chain: { previous: 'pdf-extraction', next: 'document-intelligence', optional_next: ['data-connector', 'fact-verification'] },
+}));
+
+// ── website-screenshot ────────────────────────────────────────────────────────
+app.use('/website-screenshot/openapi.json', websiteScreenshotOpenapiRouter);
+app.use('/website-screenshot', websiteScreenshotRouter);
+app.get('/website-screenshot/info', (_req, res) => res.json({
+  name: 'Website Screenshot API', slug: 'website-screenshot', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { screenshot: '$0.004', mobile_screenshot: '$0.004', diff: '$0.006', batch: '$0.008', execution_gate: '$0.001', capture: '$0.010' },
+    high_volume: { screenshot: '$0.002', diff: '$0.004', capture: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/screenshot', description: 'Desktop screenshot capture config — viewport, recommended tool, visual analysis' },
+    { method: 'POST', path: '/mobile-screenshot', description: 'Mobile viewport capture config with device presets (iPhone, Android, tablet)' },
+    { method: 'POST', path: '/diff', description: 'Compare two URLs or timestamps — visual diff analysis, change classification' },
+    { method: 'POST', path: '/batch', description: 'Batch capture plan for up to 10 URLs' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/capture', description: 'ONE-CALL: full capture + visual analysis + accessibility signals', x_one_call: true },
+  ],
+  execution_chain: { previous: 'web-navigation', next: 'competitor-monitor', optional_next: ['serp-intelligence', 'web-scraper'] },
+}));
+
+// ── job-posting-search ────────────────────────────────────────────────────────
+app.use('/job-posting-search/openapi.json', jobPostingSearchOpenapiRouter);
+app.use('/job-posting-search', jobPostingSearchRouter);
+app.get('/job-posting-search/info', (_req, res) => res.json({
+  name: 'Job Posting Search API', slug: 'job-posting-search', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { search_jobs: '$0.004', company_jobs: '$0.004', job_details: '$0.005', salary_estimate: '$0.004', execution_gate: '$0.001', search: '$0.010' },
+    high_volume: { search_jobs: '$0.002', salary_estimate: '$0.002', search: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/search-jobs', description: 'Search jobs by title/skills/location — matching job summaries with fit score' },
+    { method: 'POST', path: '/company-jobs', description: 'All open roles at a company with department breakdown' },
+    { method: 'POST', path: '/job-details', description: 'Full job details — requirements, skills, salary signals, culture signals' },
+    { method: 'POST', path: '/salary-estimate', description: 'Estimate salary range — percentiles, remote premium, equity signals' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/search', description: 'ONE-CALL: search + enrich top results + salary estimates', x_one_call: true },
+  ],
+  execution_chain: { previous: 'linkedin-profile', next: 'resume', optional_next: ['company-enrichment', 'cold-outreach'] },
+}));
+
+// ── github-repo-stats ─────────────────────────────────────────────────────────
+app.use('/github-repo-stats/openapi.json', githubRepoStatsOpenapiRouter);
+app.use('/github-repo-stats', githubRepoStatsRouter);
+app.get('/github-repo-stats/info', (_req, res) => res.json({
+  name: 'GitHub Repo Stats API', slug: 'github-repo-stats', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { repo: '$0.002', contributors: '$0.004', activity: '$0.004', dependencies: '$0.005', execution_gate: '$0.001', analyze: '$0.010' },
+    high_volume: { repo: '$0.001', contributors: '$0.002', analyze: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/repo', description: 'Repo metadata — stars, forks, watchers, language, license, topics, open issues, last commit' },
+    { method: 'POST', path: '/contributors', description: 'Top contributors with commit counts, activity trend, bus factor score' },
+    { method: 'POST', path: '/activity', description: 'Commit frequency, PR velocity, issue close rate, release cadence' },
+    { method: 'POST', path: '/dependencies', description: 'Package dependencies — outdated, vulnerable, license risks' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full repo health analysis — stats + contributors + activity + risk score', x_one_call: true },
+  ],
+  execution_chain: { previous: 'openapi-validator', next: 'qa-testing', optional_next: ['fact-verification', 'agent-eval'] },
+}));
+
+// ── openapi-validator ─────────────────────────────────────────────────────────
+app.use('/openapi-validator/openapi.json', openapiValidatorOpenapiRouter);
+app.use('/openapi-validator', openapiValidatorRouter);
+app.get('/openapi-validator/info', (_req, res) => res.json({
+  name: 'OpenAPI Validator API', slug: 'openapi-validator', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { validate: '$0.002', lint: '$0.004', score: '$0.004', diff: '$0.006', execution_gate: '$0.001', check: '$0.008' },
+    high_volume: { validate: '$0.001', lint: '$0.002', check: '$0.005' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/validate', description: 'Validate OpenAPI 3.x spec — structural errors, missing fields, schema violations' },
+    { method: 'POST', path: '/lint', description: 'Lint for best practices — missing descriptions, operationIds, examples, response schemas' },
+    { method: 'POST', path: '/score', description: 'Score spec quality — completeness, agent-callability, MCP compatibility, doc coverage' },
+    { method: 'POST', path: '/diff', description: 'Diff two OpenAPI specs — breaking changes, additions, removals' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/check', description: 'ONE-CALL: validate + lint + score in one shot', x_one_call: true },
+  ],
+  execution_chain: { previous: 'qa-testing', next: 'github-repo-stats', optional_next: ['agent-eval', 'fact-verification'] },
+}));
+
+// ── address-risk ──────────────────────────────────────────────────────────────
+app.use('/address-risk/openapi.json', addressRiskOpenapiRouter);
+app.use('/address-risk', addressRiskRouter);
+app.get('/address-risk/info', (_req, res) => res.json({
+  name: 'Address Risk API', slug: 'address-risk', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { address_risk: '$0.004', sanctions: '$0.005', labels: '$0.004', cluster: '$0.008', execution_gate: '$0.001', assess: '$0.012' },
+    high_volume: { address_risk: '$0.002', sanctions: '$0.003', assess: '$0.008' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/address-risk', description: 'Score blockchain address risk — risk level, risk factors, entity type, transaction pattern signals' },
+    { method: 'POST', path: '/sanctions', description: 'Check address against OFAC, EU, UN sanctions — match status, entity name, program' },
+    { method: 'POST', path: '/labels', description: 'Get known labels — exchange, mixer, darknet, defi protocol, whale' },
+    { method: 'POST', path: '/cluster', description: 'Cluster addresses by entity — cluster score, common counterparties' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/assess', description: 'ONE-CALL: full address risk assessment — risk score + sanctions + labels + recommendations', x_one_call: true },
+  ],
+  execution_chain: { previous: 'wallet-intelligence', next: 'supply-chain-risk', optional_next: ['compliance', 'wallet-reputation'] },
 }));

@@ -228,6 +228,44 @@ router.post('/corporate-events', async (req: Request, res: Response) => {
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+// POST /post-event-performance
+router.post('/post-event-performance', async (req: Request, res: Response) => {
+  const { company, event_type, event_date } = req.body;
+  if (!company || !event_type) return res.status(400).json({ error: 'company and event_type are required' });
+  try {
+    const raw = await callClaude(`You are a corporate event alpha analyst. Analyze the historical post-event performance for this type of corporate action and estimate the likely price impact and alpha generation opportunity.
+
+Company: "${String(company)}"
+Event type: "${String(event_type)}" (split|dividend_initiation|buyback|merger|acquisition|spinoff|ceo_change|restructuring)
+Event date: "${String(event_date || 'recent')}"
+
+Based on historical patterns for this event type, estimate post-event stock performance across multiple time horizons. Identify whether this event type historically generates alpha. Compare to sector peers where possible.
+
+Return JSON:
+{
+  "event_type": "${String(event_type)}",
+  "historical_alpha_pattern": "positive|neutral|negative|mixed",
+  "expected_performance": {
+    "1_day_pct": "string (e.g. +1.2% to +3.4%)",
+    "1_week_pct": "string",
+    "1_month_pct": "string",
+    "3_month_pct": "string"
+  },
+  "alpha_signal": "strong_buy|buy|hold|sell|strong_sell",
+  "historical_win_rate_pct": "string (e.g. 67% of similar events produced positive returns)",
+  "peer_comparison": "string (how this event compares to sector peer events)",
+  "key_catalysts_for_outperformance": ["string"],
+  "key_risks_to_thesis": ["string"],
+  "event_driven_trade_window": "string (e.g. Buy dip on announcement day, exit within 3 weeks)",
+  "confidence_per_section": { "historical_pattern": 0.0, "expected_performance": 0.0, "alpha_signal": 0.0 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    const parsed = parseJSON(raw);
+    res.json({ ...parsed, trace_id: traceId(), computed_at: new Date().toISOString() });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 // POST /execution-gate
 router.post('/execution-gate', async (req: Request, res: Response) => {
   const { company } = req.body;
@@ -237,6 +275,9 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
     company,
     recommended_endpoint: '/analyze',
     blocking_flags: [],
+    recommended_next_api: 'sec-filing-intelligence',
+    execution_priority: 'medium',
+    automation_safe: true,
     trace_id: traceId(),
     confidence_per_section: { execution_ready: 0.95, blocking_flags: 0.9 },
     privacy: { data_stored: false, retention: 'none' },

@@ -178,6 +178,81 @@ Return JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+// POST /update-graph
+router.post('/update-graph', async (req: Request, res: Response) => {
+  const { existing_graph, new_text, merge_strategy = 'additive' } = req.body;
+  if (!existing_graph || !new_text) return res.status(400).json({ error: 'existing_graph and new_text are required' });
+  try {
+    const graphStr = typeof existing_graph === 'string' ? existing_graph.slice(0, 2000) : JSON.stringify(existing_graph).slice(0, 2000);
+    const raw = await callClaude(`You are a knowledge graph update specialist. Update an existing knowledge graph by incorporating new information from additional text. Identify new entities and relationships, resolve conflicts with existing nodes, and return the updated graph.
+
+Existing graph: "${graphStr}"
+New text: "${String(new_text).slice(0, 2000)}"
+Merge strategy: "${merge_strategy}" (additive = add new nodes/edges | replace = update existing nodes | full = rebuild)
+
+Identify what is new vs. already in the graph. Return the delta (added/modified/removed nodes and edges) plus the full updated graph.
+
+Return JSON:
+{
+  "delta": {
+    "nodes_added": [{ "id": "string", "label": "string", "type": "string" }],
+    "nodes_modified": [{ "id": "string", "label": "string", "change": "string" }],
+    "edges_added": [{ "source": "string", "target": "string", "label": "string" }],
+    "conflicts_resolved": ["string"]
+  },
+  "updated_graph": {
+    "nodes": [{ "id": "string", "label": "string", "type": "string", "weight": 0.0 }],
+    "edges": [{ "source": "string", "target": "string", "label": "string", "weight": 0.0 }],
+    "clusters": [{ "cluster_id": "string", "theme": "string", "entities": ["string"] }]
+  },
+  "graph_version": "string (e.g. v2, v3)",
+  "knowledge_gain": "high|medium|low",
+  "confidence_per_section": { "delta": 0.0, "updated_graph": 0.0 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    const parsed = parseJSON(raw);
+    res.json({ ...parsed, trace_id: traceId(), computed_at: new Date().toISOString() });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /merge-graphs
+router.post('/merge-graphs', async (req: Request, res: Response) => {
+  const { graph_a, graph_b, dedup_strategy = 'similarity' } = req.body;
+  if (!graph_a || !graph_b) return res.status(400).json({ error: 'graph_a and graph_b are required' });
+  try {
+    const graphAStr = typeof graph_a === 'string' ? graph_a.slice(0, 1500) : JSON.stringify(graph_a).slice(0, 1500);
+    const graphBStr = typeof graph_b === 'string' ? graph_b.slice(0, 1500) : JSON.stringify(graph_b).slice(0, 1500);
+    const raw = await callClaude(`You are a knowledge graph merge specialist. Merge two knowledge graphs into a unified graph, resolving entity duplicates, merging overlapping relationships, and producing a coherent combined graph.
+
+Graph A: "${graphAStr}"
+Graph B: "${graphBStr}"
+Dedup strategy: "${dedup_strategy}" (similarity = merge similar entities | exact = merge only exact matches | aggressive = merge liberally)
+
+Identify overlapping entities, merge them, combine edges, and produce the unified graph. Report what was merged and what remained distinct.
+
+Return JSON:
+{
+  "merged_entities": ["string (entity pairs that were merged)"],
+  "unique_to_a": ["string (entities only in graph A)"],
+  "unique_to_b": ["string (entities only in graph B)"],
+  "merged_graph": {
+    "nodes": [{ "id": "string", "label": "string", "type": "string", "weight": 0.0, "source": "A|B|both" }],
+    "edges": [{ "source": "string", "target": "string", "label": "string", "weight": 0.0 }],
+    "clusters": [{ "cluster_id": "string", "theme": "string", "entities": ["string"] }],
+    "central_nodes": ["string"]
+  },
+  "merge_quality": "high|medium|low",
+  "conflict_resolutions": ["string"],
+  "confidence_per_section": { "merged_entities": 0.0, "merged_graph": 0.0 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    const parsed = parseJSON(raw);
+    res.json({ ...parsed, trace_id: traceId(), computed_at: new Date().toISOString() });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 // POST /execution-gate
 router.post('/execution-gate', async (req: Request, res: Response) => {
   const { text } = req.body;
@@ -191,6 +266,9 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
     entity_density_estimate: entityDensityEstimate,
     recommended_endpoint: textLength > 2000 ? '/extract' : '/extract-entities',
     blocking_flags: textLength < 50 ? ['TEXT_TOO_SHORT'] : [],
+    recommended_next_api: 'due-diligence',
+    execution_priority: 'medium',
+    automation_safe: true,
     trace_id: traceId(),
     confidence_per_section: { execution_ready: 0.95, entity_density_estimate: 0.8 },
     privacy: { data_stored: false, retention: 'none' },

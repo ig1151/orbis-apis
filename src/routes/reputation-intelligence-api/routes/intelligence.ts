@@ -51,6 +51,9 @@ Return JSON:
     "crisis_history": 0
   },
   "trend": "improving|stable|declining",
+  "trend_30d": "improving|stable|declining",
+  "trend_90d": "improving|stable|declining",
+  "momentum_shift": "string (e.g. 'Rapid decline over 30 days driven by product recall coverage' or 'Steady improvement following rebrand')",
   "industry_percentile": "string (e.g. 72nd percentile among S&P 500 companies)",
   "summary": "string (2-3 sentence reputation overview)",
   "confidence_per_section": { "overall_score": 0.0, "dimensions": 0.0, "trend": 0.0, "percentile": 0.0 },
@@ -220,6 +223,51 @@ Return JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+// POST /narrative-competition
+router.post('/narrative-competition', async (req: Request, res: Response) => {
+  const { entity, competitors, content } = req.body;
+  if (!entity) return res.status(400).json({ error: 'entity is required' });
+  try {
+    const competitorsStr = competitors ? (Array.isArray(competitors) ? competitors.join(', ') : competitors) : 'industry peers';
+    const contentStr = content ? `\n\nContent/signals:\n"${String(content).slice(0, 2000)}"` : '';
+    const raw = await callClaude(`You are a competitive narrative intelligence analyst. Compare the dominant media narratives between the target entity and its competitors. Identify who is winning the narrative battle, which frames dominate, and where the target entity has narrative advantages or vulnerabilities.${contentStr}
+
+Entity: "${String(entity)}"
+Competitors: "${competitorsStr}"
+
+For each entity (target + competitors), identify their dominant narrative, sentiment, media share of voice, and narrative momentum. Determine who is winning the overall narrative competition. Identify narrative opportunities the target entity should exploit and vulnerabilities to defend.
+
+Return JSON:
+{
+  "target_narrative": {
+    "entity": "${String(entity)}",
+    "dominant_narrative": "string",
+    "sentiment": "positive|neutral|negative",
+    "share_of_voice_pct": "string (e.g. 34% or 'insufficient data')",
+    "momentum": "gaining|stable|losing"
+  },
+  "competitor_narratives": [
+    {
+      "entity": "string",
+      "dominant_narrative": "string",
+      "sentiment": "positive|neutral|negative",
+      "share_of_voice_pct": "string",
+      "momentum": "gaining|stable|losing"
+    }
+  ],
+  "narrative_winner": "string (entity currently dominating positive narrative)",
+  "narrative_gaps": ["string (frames the target entity is losing or absent from)"],
+  "narrative_opportunities": ["string (frames the target entity should claim)"],
+  "vulnerability_narratives": ["string (negative frames that competitors or media are building against the target)"],
+  "confidence_per_section": { "target_narrative": 0.0, "competitor_narratives": 0.0, "narrative_gaps": 0.0 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    const parsed = parseJSON(raw);
+    res.json({ ...parsed, trace_id: traceId(), computed_at: new Date().toISOString() });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 // POST /execution-gate
 router.post('/execution-gate', async (req: Request, res: Response) => {
   const { entity } = req.body;
@@ -248,6 +296,9 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
       entity_type_detected,
       recommended_endpoint,
       blocking_flags,
+      recommended_next_api: 'due-diligence',
+      execution_priority: 'medium',
+      automation_safe: true,
       trace_id: traceId(),
       confidence_per_section: { entity_detection: 0.8, readiness: blocking_flags.length === 0 ? 1.0 : 0.0 },
       privacy: { data_stored: false, retention: 'none' },

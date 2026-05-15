@@ -39,7 +39,7 @@ Return JSON:
   "risk_level": "critical|high|medium|low",
   "risk_categories": [{ "category": "financial|legal|operational|reputational|market|regulatory", "score": 0-100, "key_flags": ["string"] }],
   "overall_recommendation": "proceed|proceed_with_conditions|request_more_info|avoid",
-  "red_flags": ["string"],
+  "red_flags": [{ "flag": "string", "evidence": "string", "source_type": "news|legal|financial|regulatory|social", "confidence": 0.0 }],
   "confidence_per_section": { "risk_score": 0-1, "risk_categories": 0-1, "overall_recommendation": 0-1 },
   "recommended_actions_priority_order": ["string"],
   "privacy": { "data_stored": false, "retention": "none" }
@@ -193,6 +193,47 @@ Return JSON:
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
+// POST /vendor-comparison
+router.post('/vendor-comparison', async (req: Request, res: Response) => {
+  const { vendors, comparison_criteria } = req.body;
+  if (!vendors) return res.status(400).json({ error: 'vendors is required' });
+  try {
+    const vendorsStr = typeof vendors === 'string' ? vendors.slice(0, 3000) : JSON.stringify(vendors).slice(0, 3000);
+    const criteriaStr = comparison_criteria ? `Focus criteria: ${Array.isArray(comparison_criteria) ? comparison_criteria.join(', ') : comparison_criteria}` : '';
+    const raw = await callClaude(`You are an enterprise procurement intelligence analyst. Compare the following vendors across risk, compliance, financial health, and strategic fit dimensions. Produce a ranked comparison suitable for procurement decision-making.
+
+Vendors: "${vendorsStr}"
+${criteriaStr}
+
+Score each vendor 0-100 on each dimension. Identify the recommended vendor with justification. Flag any vendors that should be excluded and why. The selection_rationale should be a clear, evidence-based explanation for the top-ranked vendor.
+
+Return JSON:
+{
+  "vendor_scores": [
+    {
+      "vendor": "string",
+      "overall_score": 0,
+      "risk_score": 0,
+      "compliance_score": 0,
+      "financial_health_score": 0,
+      "strategic_fit_score": 0,
+      "red_flags": [{ "flag": "string", "evidence": "string", "severity": "critical|high|medium|low" }],
+      "green_flags": ["string"]
+    }
+  ],
+  "recommended_vendor": "string",
+  "selection_rationale": "string",
+  "vendors_to_exclude": [{ "vendor": "string", "reason": "string" }],
+  "risk_ranking": ["string (vendors ordered by risk, lowest first)"],
+  "confidence_per_section": { "vendor_scores": 0.0, "recommended_vendor": 0.0, "risk_ranking": 0.0 },
+  "recommended_actions_priority_order": ["string"],
+  "privacy": { "data_stored": false, "retention": "none" }
+}`);
+    const parsed = parseJSON(raw);
+    res.json({ ...parsed, trace_id: traceId(), computed_at: new Date().toISOString() });
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
 // POST /execution-gate
 router.post('/execution-gate', async (req: Request, res: Response) => {
   const { company } = req.body;
@@ -201,6 +242,9 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
     execution_ready: true,
     recommended_endpoint: '/due-diligence',
     blocking_flags: [],
+    recommended_next_api: 'company-research',
+    execution_priority: 'high',
+    automation_safe: true,
     trace_id: traceId(),
     confidence_per_section: { execution_ready: 0.95 },
     privacy: { data_stored: false, retention: 'none' },
@@ -229,7 +273,7 @@ Return JSON:
   "compliance_score": 0-100,
   "founder_assessment": "string",
   "reputation_score": 0-100,
-  "red_flags": ["string"],
+  "red_flags": [{ "flag": "string", "evidence": "string", "source_type": "news|legal|financial|regulatory|social", "confidence": 0.0 }],
   "green_flags": ["string"],
   "agent_summary": "string",
   "confidence_per_section": { "overall_score": 0-1, "financial_health_score": 0-1, "legal_risk_score": 0-1 },
