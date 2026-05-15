@@ -1,0 +1,82 @@
+[{
+  "name": "Financial News Monitor API",
+  "shortDescription": "Analyze financial news sentiment, detect events, and generate trading signals",
+  "description": "Score financial news sentiment by ticker and sector, extract stock mentions, detect breaking events and M&A, identify trending themes, compare source coverage, and generate trading signals — built for financial agents and autonomous investment monitoring workflows.",
+  "category": "finance",
+  "baseUrl": "https://orbis-apis.onrender.com/financial-news-monitor",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/financial-news-monitor/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/financial-news-monitor/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "financial-news",
+    "sentiment-analysis",
+    "market-intelligence",
+    "trading-signals",
+    "event-detection",
+    "ticker-extraction",
+    "agentic",
+    "finance"
+  ],
+  "keywords": [
+    "financial news sentiment",
+    "detect market events",
+    "extract stock tickers from news",
+    "score news market impact",
+    "trending financial topics",
+    "trading signal from news",
+    "compare financial news sources"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.012,
+      "requestsPerDay": 50000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/analyze-sentiment", "pricePerCallUsdc": 0.006, "description": "Sentiment analysis by ticker/sector" },
+        { "method": "POST", "pathPattern": "/extract-tickers", "pricePerCallUsdc": 0.004, "description": "Extract tickers and entities" },
+        { "method": "POST", "pathPattern": "/score-impact", "pricePerCallUsdc": 0.007, "description": "Score market impact of news" },
+        { "method": "POST", "pathPattern": "/detect-events", "pricePerCallUsdc": 0.006, "description": "Detect breaking financial events" },
+        { "method": "POST", "pathPattern": "/trending-topics", "pricePerCallUsdc": 0.005, "description": "Identify trending themes" },
+        { "method": "POST", "pathPattern": "/compare-sources", "pricePerCallUsdc": 0.005, "description": "Compare coverage across sources" },
+        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness validation" },
+        { "method": "POST", "pathPattern": "/monitor", "pricePerCallUsdc": 0.012, "description": "ONE-CALL full news intelligence" }
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.008,
+      "requestsPerDay": 500000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/analyze-sentiment", "pricePerCallUsdc": 0.004 },
+        { "method": "POST", "pathPattern": "/extract-tickers", "pricePerCallUsdc": 0.002 },
+        { "method": "POST", "pathPattern": "/score-impact", "pricePerCallUsdc": 0.005 },
+        { "method": "POST", "pathPattern": "/detect-events", "pricePerCallUsdc": 0.004 },
+        { "method": "POST", "pathPattern": "/trending-topics", "pricePerCallUsdc": 0.003 },
+        { "method": "POST", "pathPattern": "/compare-sources", "pricePerCallUsdc": 0.003 },
+        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001 },
+        { "method": "POST", "pathPattern": "/monitor", "pricePerCallUsdc": 0.008 }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/analyze-sentiment", "description": "Sentiment analysis by ticker and sector" },
+    { "method": "POST", "path": "/extract-tickers", "description": "Extract tickers and financial entities" },
+    { "method": "POST", "path": "/score-impact", "description": "Score market impact of a news article" },
+    { "method": "POST", "path": "/detect-events", "description": "Detect breaking financial events" },
+    { "method": "POST", "path": "/trending-topics", "description": "Identify trending financial themes" },
+    { "method": "POST", "path": "/compare-sources", "description": "Compare coverage across news sources" },
+    { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+    { "method": "POST", "path": "/monitor", "description": "ONE-CALL full news intelligence" }
+  ]
+}]

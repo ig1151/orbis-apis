@@ -1,0 +1,85 @@
+[{
+  "name": "Portfolio Risk API",
+  "shortDescription": "Score portfolio risk, run stress tests, and generate rebalancing action plans",
+  "description": "Score portfolio risk by category, analyze concentration and sector exposure, estimate correlations, run historical stress scenarios, calculate drawdown and VaR, and generate specific rebalancing trades — built for investment agents and autonomous portfolio management workflows.",
+  "category": "finance",
+  "baseUrl": "https://orbis-apis.onrender.com/portfolio-risk",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/portfolio-risk/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/portfolio-risk/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "portfolio-risk",
+    "investment",
+    "stress-testing",
+    "rebalancing",
+    "drawdown",
+    "concentration-risk",
+    "agentic",
+    "finance"
+  ],
+  "keywords": [
+    "portfolio risk score",
+    "stress test portfolio",
+    "concentration risk analysis",
+    "portfolio rebalancing suggestions",
+    "drawdown analysis",
+    "sector exposure analysis",
+    "correlation matrix portfolio"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.015,
+      "requestsPerDay": 50000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/score-risk", "pricePerCallUsdc": 0.007, "description": "Overall portfolio risk score" },
+        { "method": "POST", "pathPattern": "/concentration-analysis", "pricePerCallUsdc": 0.006, "description": "Concentration risk analysis" },
+        { "method": "POST", "pathPattern": "/correlation-matrix", "pricePerCallUsdc": 0.007, "description": "Correlation matrix and clustering" },
+        { "method": "POST", "pathPattern": "/stress-test", "pricePerCallUsdc": 0.009, "description": "Historical stress scenarios" },
+        { "method": "POST", "pathPattern": "/sector-exposure", "pricePerCallUsdc": 0.006, "description": "Sector exposure vs benchmark" },
+        { "method": "POST", "pathPattern": "/drawdown-analysis", "pricePerCallUsdc": 0.007, "description": "Drawdown and VaR estimates" },
+        { "method": "POST", "pathPattern": "/rebalance-suggestions", "pricePerCallUsdc": 0.008, "description": "Rebalancing trade plan" },
+        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness validation" },
+        { "method": "POST", "pathPattern": "/analyze-portfolio", "pricePerCallUsdc": 0.015, "description": "ONE-CALL full portfolio analysis" }
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.010,
+      "requestsPerDay": 500000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/score-risk", "pricePerCallUsdc": 0.004 },
+        { "method": "POST", "pathPattern": "/concentration-analysis", "pricePerCallUsdc": 0.004 },
+        { "method": "POST", "pathPattern": "/correlation-matrix", "pricePerCallUsdc": 0.004 },
+        { "method": "POST", "pathPattern": "/stress-test", "pricePerCallUsdc": 0.006 },
+        { "method": "POST", "pathPattern": "/sector-exposure", "pricePerCallUsdc": 0.004 },
+        { "method": "POST", "pathPattern": "/drawdown-analysis", "pricePerCallUsdc": 0.004 },
+        { "method": "POST", "pathPattern": "/rebalance-suggestions", "pricePerCallUsdc": 0.005 },
+        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001 },
+        { "method": "POST", "pathPattern": "/analyze-portfolio", "pricePerCallUsdc": 0.010 }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/score-risk", "description": "Overall portfolio risk score" },
+    { "method": "POST", "path": "/concentration-analysis", "description": "Concentration risk analysis" },
+    { "method": "POST", "path": "/correlation-matrix", "description": "Correlation matrix between holdings" },
+    { "method": "POST", "path": "/stress-test", "description": "Historical stress test scenarios" },
+    { "method": "POST", "path": "/sector-exposure", "description": "Sector exposure vs benchmark" },
+    { "method": "POST", "path": "/drawdown-analysis", "description": "Drawdown and VaR estimates" },
+    { "method": "POST", "path": "/rebalance-suggestions", "description": "Rebalancing trade plan" },
+    { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+    { "method": "POST", "path": "/analyze-portfolio", "description": "ONE-CALL full portfolio analysis" }
+  ]
+}]

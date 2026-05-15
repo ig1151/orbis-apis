@@ -1,0 +1,34 @@
+{
+  "name": "Financial News Monitor API",
+  "slug": "financial-news-monitor",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "base_url": "https://orbis-apis.onrender.com/financial-news-monitor",
+  "openapi_url": "https://orbis-apis.onrender.com/financial-news-monitor/openapi.json",
+  "info_url": "https://orbis-apis.onrender.com/financial-news-monitor/info",
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+    "pay_per_call": {
+      "analyze_sentiment": "$0.006",
+      "extract_tickers": "$0.004",
+      "score_impact": "$0.007",
+      "detect_events": "$0.006",
+      "trending_topics": "$0.005",
+      "compare_sources": "$0.005",
+      "execution_gate": "$0.001",
+      "monitor": "$0.012"
+    }
+  },
+  "endpoints": [
+    { "method": "POST", "path": "/analyze-sentiment", "description": "Score financial news sentiment by ticker and sector with bullish/bearish themes and market-moving probability" },
+    { "method": "POST", "path": "/extract-tickers", "description": "Extract all stock tickers, companies, indices, and macro entities mentioned in news articles" },
+    { "method": "POST", "path": "/score-impact", "description": "Score the potential market impact of a news article with price direction, magnitude, and trade signal" },
+    { "method": "POST", "path": "/detect-events", "description": "Detect significant financial events, M&A activity, regulatory actions, and breaking developments" },
+    { "method": "POST", "path": "/trending-topics", "description": "Identify trending financial themes, dominant narratives, and sector-level sentiment shifts" },
+    { "method": "POST", "path": "/compare-sources", "description": "Compare sentiment and coverage across news sources to identify consensus and contrarian signals" },
+    { "method": "POST", "path": "/execution-gate", "description": "Validate news input readiness and recommend the best analysis endpoint" },
+    { "method": "POST", "path": "/monitor", "description": "ONE-CALL: full news intelligence — sentiment, tickers, events, trends, and trading signals" }
+  ]
+}

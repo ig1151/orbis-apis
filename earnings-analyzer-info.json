@@ -1,0 +1,38 @@
+{
+  "name": "Earnings Analyzer API",
+  "slug": "earnings-analyzer",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "base_url": "https://orbis-apis.onrender.com/earnings-analyzer",
+  "openapi_url": "https://orbis-apis.onrender.com/earnings-analyzer/openapi.json",
+  "info_url": "https://orbis-apis.onrender.com/earnings-analyzer/info",
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+    "pay_per_call": {
+      "analyze_earnings": "$0.008",
+      "extract_metrics": "$0.005",
+      "detect_beats_misses": "$0.006",
+      "compare_quarters": "$0.007",
+      "segment_analysis": "$0.006",
+      "management_sentiment": "$0.006",
+      "guidance_analysis": "$0.006",
+      "risk_factors": "$0.005",
+      "execution_gate": "$0.001",
+      "analyze": "$0.012"
+    }
+  },
+  "endpoints": [
+    { "method": "POST", "path": "/analyze-earnings", "description": "Analyze full earnings report and extract revenue, EPS, margins, segment performance, and investment signals" },
+    { "method": "POST", "path": "/extract-metrics", "description": "Extract specific financial metrics from earnings text with source quotes and confidence scores" },
+    { "method": "POST", "path": "/detect-beats-misses", "description": "Detect earnings beats and misses vs consensus with surprise factor and market reaction prediction" },
+    { "method": "POST", "path": "/compare-quarters", "description": "Compare two earnings periods to identify material changes in financial performance and momentum" },
+    { "method": "POST", "path": "/segment-analysis", "description": "Extract and analyze business segment revenue, growth, margins, highlights, and risks" },
+    { "method": "POST", "path": "/management-sentiment", "description": "Analyze management tone, confidence signals, hedging language, topics avoided, and red flags" },
+    { "method": "POST", "path": "/guidance-analysis", "description": "Extract forward guidance ranges, trend, key assumptions, and vs-consensus positioning" },
+    { "method": "POST", "path": "/risk-factors", "description": "Extract and categorize risk factors with severity, time horizon, and management response" },
+    { "method": "POST", "path": "/execution-gate", "description": "Validate earnings text readiness and recommend best analysis endpoint" },
+    { "method": "POST", "path": "/analyze", "description": "ONE-CALL: full earnings analysis — metrics, beats/misses, guidance, sentiment, and investment signal" }
+  ]
+}

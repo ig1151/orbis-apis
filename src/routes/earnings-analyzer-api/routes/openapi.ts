@@ -1,0 +1,104 @@
+import { Router, Request, Response } from 'express';
+const router = Router();
+
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'Earnings Analyzer API',
+      version: '1.0.0',
+      description: 'Parse earnings reports, extract financial metrics, detect analyst beats/misses, analyze management sentiment, and generate investment signals from earnings data.',
+      'x-agent-callable': true,
+      'x-mcp-compatible': true,
+    },
+    servers: [{ url: 'https://orbis-apis.onrender.com/earnings-analyzer' }],
+    paths: {
+      '/analyze-earnings': {
+        post: {
+          operationId: 'analyzeEarnings',
+          summary: 'Analyze full earnings report and extract revenue, EPS, margins, and investment signals',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['earnings_text'], properties: { earnings_text: { type: 'string' }, ticker: { type: 'string' }, fiscal_period: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Full earnings analysis', content: { 'application/json': { schema: { type: 'object', properties: { ticker: { type: 'string' }, fiscal_period: { type: 'string' }, revenue: { type: 'object', properties: { reported: { type: 'number' }, unit: { type: 'string' }, yoy_change_pct: { type: 'number' } } }, eps: { type: 'object', properties: { reported: { type: 'number' }, diluted: { type: 'number' }, yoy_change_pct: { type: 'number' } } }, gross_margin_pct: { type: 'number' }, operating_margin_pct: { type: 'number' }, free_cash_flow: { type: 'number' }, key_highlights: actions, sentiment: { type: 'string', enum: ['bullish', 'neutral', 'bearish'] }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing earnings_text' }, '500': { description: 'Analysis failed' } },
+        },
+      },
+      '/extract-metrics': {
+        post: {
+          operationId: 'extractMetrics',
+          summary: 'Extract specific financial metrics from earnings text with source quotes and confidence',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['earnings_text'], properties: { earnings_text: { type: 'string' }, metrics: { type: 'array', items: { type: 'string' } } } } } } },
+          responses: { '200': { description: 'Extracted metrics', content: { 'application/json': { schema: { type: 'object', properties: { metrics: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, value: { type: 'string' }, unit: { type: 'string' }, period: { type: 'string' }, source_quote: { type: 'string' }, confidence: { type: 'number' } } } }, metrics_not_found: actions, data_quality: { type: 'string', enum: ['high', 'medium', 'low'] }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing earnings_text' }, '500': { description: 'Extraction failed' } },
+        },
+      },
+      '/detect-beats-misses': {
+        post: {
+          operationId: 'detectBeatsMisses',
+          summary: 'Detect earnings beats and misses vs consensus estimates with surprise factor and market reaction prediction',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['earnings_text'], properties: { earnings_text: { type: 'string' }, consensus_estimates: { type: 'object' } } } } } },
+          responses: { '200': { description: 'Beat/miss analysis', content: { 'application/json': { schema: { type: 'object', properties: { overall_result: { type: 'string', enum: ['beat', 'miss', 'in-line'] }, revenue_result: { type: 'object', properties: { estimate: { type: 'number' }, actual: { type: 'number' }, beat_by_pct: { type: 'number' }, result: { type: 'string', enum: ['beat', 'miss', 'in-line'] } } }, eps_result: { type: 'object', properties: { estimate: { type: 'number' }, actual: { type: 'number' }, beat_by_pct: { type: 'number' }, result: { type: 'string', enum: ['beat', 'miss', 'in-line'] } } }, surprise_factor: { type: 'string', enum: ['large_beat', 'small_beat', 'in-line', 'small_miss', 'large_miss'] }, market_reaction_predicted: { type: 'string', enum: ['strong_positive', 'positive', 'neutral', 'negative', 'strong_negative'] }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing earnings_text' }, '500': { description: 'Analysis failed' } },
+        },
+      },
+      '/compare-quarters': {
+        post: {
+          operationId: 'compareQuarters',
+          summary: 'Compare two earnings periods to identify material changes in financial performance and momentum',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['current_quarter', 'prior_quarter'], properties: { current_quarter: {}, prior_quarter: {}, ticker: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Quarter comparison', content: { 'application/json': { schema: { type: 'object', properties: { trend: { type: 'string', enum: ['improving', 'stable', 'deteriorating'] }, revenue_change_pct: { type: 'number' }, eps_change_pct: { type: 'number' }, material_changes: { type: 'array', items: { type: 'object', properties: { metric: { type: 'string' }, change: { type: 'string' }, significance: { type: 'string', enum: ['high', 'medium', 'low'] } } } }, momentum_score: { type: 'number' }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing required fields' }, '500': { description: 'Comparison failed' } },
+        },
+      },
+      '/segment-analysis': {
+        post: {
+          operationId: 'segmentAnalysis',
+          summary: 'Extract and analyze business segment performance with growth, margins, and key highlights',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['earnings_text'], properties: { earnings_text: { type: 'string' }, ticker: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Segment analysis', content: { 'application/json': { schema: { type: 'object', properties: { segments: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, revenue: { type: 'number' }, growth_yoy_pct: { type: 'number' }, margin_pct: { type: 'number' }, highlights: actions, risks: actions } } }, largest_segment: { type: 'string' }, fastest_growing_segment: { type: 'string' }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing earnings_text' }, '500': { description: 'Analysis failed' } },
+        },
+      },
+      '/management-sentiment': {
+        post: {
+          operationId: 'managementSentiment',
+          summary: 'Analyze management tone, confidence signals, hedging language, and red flags from earnings call',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['earnings_text'], properties: { earnings_text: { type: 'string' }, transcript_type: { type: 'string', enum: ['call', 'report', 'press_release'] } } } } } },
+          responses: { '200': { description: 'Management sentiment analysis', content: { 'application/json': { schema: { type: 'object', properties: { overall_tone: { type: 'string', enum: ['very_confident', 'confident', 'cautious', 'defensive', 'concerned'] }, sentiment_score: { type: 'number' }, bullish_signals: actions, bearish_signals: actions, hedging_language: actions, red_flags: actions, analyst_qa_tone: { type: 'string', enum: ['open', 'guarded', 'deflecting'] }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing earnings_text' }, '500': { description: 'Analysis failed' } },
+        },
+      },
+      '/guidance-analysis': {
+        post: {
+          operationId: 'guidanceAnalysis',
+          summary: 'Extract and analyze forward guidance — quarterly and annual revenue/EPS ranges, trend, and vs consensus',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['earnings_text'], properties: { earnings_text: { type: 'string' }, ticker: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Guidance analysis', content: { 'application/json': { schema: { type: 'object', properties: { guidance_provided: { type: 'boolean' }, guidance_trend: { type: 'string', enum: ['raised', 'maintained', 'lowered', 'withdrawn'] }, guidance_confidence: { type: 'string', enum: ['specific', 'range', 'vague', 'none'] }, key_assumptions: actions, vs_consensus: { type: 'string', enum: ['above', 'inline', 'below', 'unavailable'] }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing earnings_text' }, '500': { description: 'Analysis failed' } },
+        },
+      },
+      '/risk-factors': {
+        post: {
+          operationId: 'riskFactors',
+          summary: 'Extract and categorize risk factors disclosed in earnings with severity, time horizon, and management response',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['earnings_text'], properties: { earnings_text: { type: 'string' }, ticker: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Risk factor analysis', content: { 'application/json': { schema: { type: 'object', properties: { risks: { type: 'array', items: { type: 'object', properties: { risk: { type: 'string' }, category: { type: 'string', enum: ['macro', 'competitive', 'operational', 'regulatory', 'financial', 'geopolitical'] }, severity: { type: 'string', enum: ['high', 'medium', 'low'] }, time_horizon: { type: 'string', enum: ['near-term', 'medium-term', 'long-term'] } } } }, overall_risk_rating: { type: 'string', enum: ['high', 'medium', 'low'] }, risk_trend: { type: 'string', enum: ['increasing', 'stable', 'decreasing'] }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing earnings_text' }, '500': { description: 'Analysis failed' } },
+        },
+      },
+      '/execution-gate': {
+        post: {
+          operationId: 'executionGate',
+          summary: 'Validate earnings text readiness and recommend the best analysis endpoint',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['earnings_text'], properties: { earnings_text: { type: 'string' }, ticker: { type: 'string' } } } } } },
+          responses: { '200': { description: 'Execution readiness', content: { 'application/json': { schema: { type: 'object', properties: { execution_ready: { type: 'boolean' }, recommended_endpoint: { type: 'string' }, next_api: { type: 'string' }, next_endpoint: { type: 'string' }, blocking_flags: actions, confidence_per_section: confidence, privacy } } } } }, '400': { description: 'Missing earnings_text' } },
+        },
+      },
+      '/analyze': {
+        post: {
+          operationId: 'analyzeEarningsFull',
+          summary: 'ONE-CALL: full earnings analysis — metrics, beats/misses, guidance, sentiment, and investment signal',
+          requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['earnings_text'], properties: { earnings_text: { type: 'string' }, ticker: { type: 'string' }, fiscal_period: { type: 'string' }, consensus_estimates: { type: 'object' } } } } } },
+          responses: { '200': { description: 'Complete earnings intelligence', content: { 'application/json': { schema: { type: 'object', properties: { ticker: { type: 'string' }, overall_result: { type: 'string', enum: ['beat', 'miss', 'in-line'] }, revenue: { type: 'object', properties: { reported: { type: 'number' }, estimate: { type: 'number' }, beat_by_pct: { type: 'number' } } }, eps: { type: 'object', properties: { reported: { type: 'number' }, estimate: { type: 'number' }, beat_by_pct: { type: 'number' } } }, guidance: { type: 'object', properties: { trend: { type: 'string' }, next_quarter_eps_range: { type: 'string' } } }, management_tone: { type: 'string', enum: ['very_confident', 'confident', 'cautious', 'defensive'] }, investment_signal: { type: 'string', enum: ['strong_buy', 'buy', 'hold', 'sell', 'strong_sell'] }, one_line_summary: { type: 'string' }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing earnings_text' }, '500': { description: 'Analysis failed' } },
+        },
+      },
+    },
+  });
+});
+
+export default router;

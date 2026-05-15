@@ -2537,6 +2537,18 @@ import factVerificationOpenapiRouter from './routes/fact-verification-api/routes
 import legalContractRiskRouter from './routes/legal-contract-risk-api/routes/intelligence';
 import legalContractRiskOpenapiRouter from './routes/legal-contract-risk-api/routes/openapi';
 
+// ── earnings-analyzer ─────────────────────────────────────────────────────────
+import earningsAnalyzerRouter from './routes/earnings-analyzer-api/routes/intelligence';
+import earningsAnalyzerOpenapiRouter from './routes/earnings-analyzer-api/routes/openapi';
+
+// ── portfolio-risk ────────────────────────────────────────────────────────────
+import portfolioRiskRouter from './routes/portfolio-risk-api/routes/intelligence';
+import portfolioRiskOpenapiRouter from './routes/portfolio-risk-api/routes/openapi';
+
+// ── financial-news-monitor ────────────────────────────────────────────────────
+import financialNewsMonitorRouter from './routes/financial-news-monitor-api/routes/intelligence';
+import financialNewsMonitorOpenapiRouter from './routes/financial-news-monitor-api/routes/openapi';
+
 // ── web-navigation ────────────────────────────────────────────────────────────
 import webNavigationRouter from './routes/web-navigation-api/routes/intelligence';
 import webNavigationOpenapiRouter from './routes/web-navigation-api/routes/openapi';
@@ -2626,6 +2638,96 @@ app.get('/fact-verification/info', (_req, res) => res.json({
     { method: 'POST', path: '/verify', description: 'ONE-CALL: full verification — hallucination detection, consistency, citations, policy, and trust score' },
   ],
   execution_chain: { previous: 'context-compression', next: 'ai-output-safety', optional_next: ['agent-observability', 'deep-research'] },
+}));
+
+// ── earnings-analyzer ─────────────────────────────────────────────────────────
+app.use('/earnings-analyzer/openapi.json', earningsAnalyzerOpenapiRouter);
+app.use('/earnings-analyzer', earningsAnalyzerRouter);
+app.get('/earnings-analyzer/info', (_req, res) => res.json({
+  name: 'Earnings Analyzer API',
+  slug: 'earnings-analyzer',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { analyze_earnings: '$0.008', extract_metrics: '$0.005', detect_beats_misses: '$0.006', compare_quarters: '$0.007', segment_analysis: '$0.006', management_sentiment: '$0.006', guidance_analysis: '$0.006', risk_factors: '$0.005', execution_gate: '$0.001', analyze: '$0.012' },
+    high_volume: { analyze_earnings: '$0.005', detect_beats_misses: '$0.004', management_sentiment: '$0.004', analyze: '$0.008' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-earnings', description: 'Analyze full earnings report and extract revenue, EPS, margins, segment performance, and investment signals' },
+    { method: 'POST', path: '/extract-metrics', description: 'Extract specific financial metrics from earnings text with source quotes and confidence scores' },
+    { method: 'POST', path: '/detect-beats-misses', description: 'Detect earnings beats and misses vs consensus with surprise factor and market reaction prediction' },
+    { method: 'POST', path: '/compare-quarters', description: 'Compare two earnings periods to identify material changes in financial performance and momentum' },
+    { method: 'POST', path: '/segment-analysis', description: 'Extract and analyze business segment revenue, growth, margins, highlights, and risks' },
+    { method: 'POST', path: '/management-sentiment', description: 'Analyze management tone, confidence signals, hedging language, topics avoided, and red flags' },
+    { method: 'POST', path: '/guidance-analysis', description: 'Extract forward guidance ranges, trend (raised/lowered), key assumptions, and vs-consensus positioning' },
+    { method: 'POST', path: '/risk-factors', description: 'Extract and categorize risk factors with severity, time horizon, and management response' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate earnings text readiness and recommend best analysis endpoint' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full earnings analysis — metrics, beats/misses, guidance, sentiment, and investment signal' },
+  ],
+  execution_chain: { previous: 'financial-news-monitor', next: 'portfolio-risk', optional_next: ['fact-verification', 'deep-research'] },
+}));
+
+// ── portfolio-risk ────────────────────────────────────────────────────────────
+app.use('/portfolio-risk/openapi.json', portfolioRiskOpenapiRouter);
+app.use('/portfolio-risk', portfolioRiskRouter);
+app.get('/portfolio-risk/info', (_req, res) => res.json({
+  name: 'Portfolio Risk API',
+  slug: 'portfolio-risk',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { score_risk: '$0.007', concentration_analysis: '$0.006', correlation_matrix: '$0.007', stress_test: '$0.009', sector_exposure: '$0.006', drawdown_analysis: '$0.007', rebalance_suggestions: '$0.008', execution_gate: '$0.001', analyze_portfolio: '$0.015' },
+    high_volume: { score_risk: '$0.004', stress_test: '$0.006', rebalance_suggestions: '$0.005', analyze_portfolio: '$0.010' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/score-risk', description: 'Score overall portfolio risk with breakdown by market, concentration, liquidity, and correlation risk' },
+    { method: 'POST', path: '/concentration-analysis', description: 'Analyze portfolio concentration across assets, sectors, and geographies with Herfindahl index' },
+    { method: 'POST', path: '/correlation-matrix', description: 'Estimate correlations between holdings, identify clustering risk, and surface hedging opportunities' },
+    { method: 'POST', path: '/stress-test', description: 'Run historical stress scenarios (GFC, COVID, rate shock) and estimate portfolio losses and recovery times' },
+    { method: 'POST', path: '/sector-exposure', description: 'Analyze sector weights vs benchmark, identify overweight/underweight positions, and score active risk' },
+    { method: 'POST', path: '/drawdown-analysis', description: 'Estimate max drawdown, VaR, CVaR, and time-to-recovery for the portfolio over a given time horizon' },
+    { method: 'POST', path: '/rebalance-suggestions', description: 'Generate specific buy/sell trades to rebalance portfolio toward target allocation with tax and cost considerations' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate portfolio data readiness before running risk analysis' },
+    { method: 'POST', path: '/analyze-portfolio', description: 'ONE-CALL: full portfolio risk — risk score, concentration, sector tilts, stress test, and rebalancing priority' },
+  ],
+  execution_chain: { previous: 'earnings-analyzer', next: 'financial-news-monitor', optional_next: ['deep-research', 'data-connector'] },
+}));
+
+// ── financial-news-monitor ────────────────────────────────────────────────────
+app.use('/financial-news-monitor/openapi.json', financialNewsMonitorOpenapiRouter);
+app.use('/financial-news-monitor', financialNewsMonitorRouter);
+app.get('/financial-news-monitor/info', (_req, res) => res.json({
+  name: 'Financial News Monitor API',
+  slug: 'financial-news-monitor',
+  version: '1.0.0',
+  grade: 'A+',
+  mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { analyze_sentiment: '$0.006', extract_tickers: '$0.004', score_impact: '$0.007', detect_events: '$0.006', trending_topics: '$0.005', compare_sources: '$0.005', execution_gate: '$0.001', monitor: '$0.012' },
+    high_volume: { analyze_sentiment: '$0.004', score_impact: '$0.005', detect_events: '$0.004', monitor: '$0.008' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/analyze-sentiment', description: 'Score financial news sentiment by ticker and sector with bullish/bearish themes and market-moving probability' },
+    { method: 'POST', path: '/extract-tickers', description: 'Extract all stock tickers, companies, indices, and macro entities mentioned in news articles' },
+    { method: 'POST', path: '/score-impact', description: 'Score the potential market impact of a news article with price direction, magnitude, and trade signal' },
+    { method: 'POST', path: '/detect-events', description: 'Detect significant financial events, M&A activity, regulatory actions, and breaking developments' },
+    { method: 'POST', path: '/trending-topics', description: 'Identify trending financial themes, dominant narratives, and sector-level sentiment shifts' },
+    { method: 'POST', path: '/compare-sources', description: 'Compare sentiment and coverage across news sources to identify consensus, divergence, and contrarian signals' },
+    { method: 'POST', path: '/execution-gate', description: 'Validate news input readiness and recommend the best analysis endpoint' },
+    { method: 'POST', path: '/monitor', description: 'ONE-CALL: full news intelligence — sentiment, tickers, events, trends, and trading signals in one response' },
+  ],
+  execution_chain: { previous: 'serp-intelligence', next: 'earnings-analyzer', optional_next: ['portfolio-risk', 'social-intelligence'] },
 }));
 
 // ── legal-contract-risk ───────────────────────────────────────────────────────
