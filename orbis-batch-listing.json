@@ -1,0 +1,5034 @@
+[
+  {
+    "name": "Restaurant Search API",
+    "shortDescription": "Search nearby restaurants, get details and menus, and summarize reviews",
+    "description": "Search nearby restaurants, get details and menus, and summarize reviews for travel, expense, and local business intelligence agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/restaurant-search",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/restaurant-search/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/restaurant-search/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurants",
+      "food",
+      "local-search",
+      "reviews",
+      "travel"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/nearby",
+            "pricePerCallUsdc": 0.003,
+            "description": "Search nearby restaurants"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/details",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get restaurant details"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reviews-summary",
+            "pricePerCallUsdc": 0.004,
+            "description": "AI-summarized reviews"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/menu-analysis",
+            "pricePerCallUsdc": 0.004,
+            "description": "Analyze restaurant menu"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reservation-availability",
+            "pricePerCallUsdc": 0.003,
+            "description": "Check reservation availability"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full restaurant intelligence"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.009,
+            "description": "Batch search for multiple locations"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/nearby",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Search nearby restaurants"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/details",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get restaurant details"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reviews-summary",
+            "pricePerCallUsdc": 0.002,
+            "description": "AI-summarized reviews"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/menu-analysis",
+            "pricePerCallUsdc": 0.002,
+            "description": "Analyze restaurant menu"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reservation-availability",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Check reservation availability"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL full restaurant intelligence"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.0045,
+            "description": "Batch search for multiple locations"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/nearby",
+        "description": "Search nearby restaurants"
+      },
+      {
+        "method": "POST",
+        "path": "/details",
+        "description": "Get restaurant details"
+      },
+      {
+        "method": "POST",
+        "path": "/reviews-summary",
+        "description": "AI-summarized reviews"
+      },
+      {
+        "method": "POST",
+        "path": "/menu-analysis",
+        "description": "Analyze restaurant menu"
+      },
+      {
+        "method": "POST",
+        "path": "/reservation-availability",
+        "description": "Check reservation availability"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/search",
+        "description": "ONE-CALL full restaurant intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch search for multiple locations"
+      }
+    ],
+    "keywords": [
+      "find restaurants nearby",
+      "restaurant search api",
+      "dining options by location",
+      "menu and hours lookup",
+      "food delivery restaurant"
+    ]
+  },
+  {
+    "name": "Maps Places API",
+    "shortDescription": "Search places, get details, and find nearby points of interest",
+    "description": "Search places by query or category, get detailed place info, and find nearby points of interest for location-aware agents and logistics workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/maps-places",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/maps-places/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/maps-places/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "maps",
+      "places",
+      "location",
+      "poi",
+      "logistics"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/search-place",
+            "pricePerCallUsdc": 0.002,
+            "description": "Search places by query"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/place-details",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get place details"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/nearby",
+            "pricePerCallUsdc": 0.003,
+            "description": "Find nearby POIs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/travel-time",
+            "pricePerCallUsdc": 0.003,
+            "description": "Calculate travel time between two points"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL full place intelligence"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.009,
+            "description": "Batch place search for multiple queries"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0025,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/search-place",
+            "pricePerCallUsdc": 0.001,
+            "description": "Search places by query"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/place-details",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get place details"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/nearby",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Find nearby POIs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/travel-time",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Calculate travel time"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.0025,
+            "description": "ONE-CALL full place intelligence"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.0045,
+            "description": "Batch place search for multiple queries"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/search-place",
+        "description": "Search places by query"
+      },
+      {
+        "method": "POST",
+        "path": "/place-details",
+        "description": "Get place details"
+      },
+      {
+        "method": "POST",
+        "path": "/nearby",
+        "description": "Find nearby POIs"
+      },
+      {
+        "method": "POST",
+        "path": "/travel-time",
+        "description": "Calculate travel time between two points"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full place intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch place search for multiple queries"
+      }
+    ],
+    "keywords": [
+      "search nearby places",
+      "google maps places api",
+      "find businesses near location",
+      "place details lookup",
+      "local business search"
+    ]
+  },
+  {
+    "name": "Event Search API",
+    "shortDescription": "Search local and virtual events, get venue details, and find tickets",
+    "description": "Search local and virtual events, get venue details, and find ticket links for travel planning, sales prospecting, and community intelligence agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/event-search",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/event-search/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/event-search/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "events",
+      "tickets",
+      "venues",
+      "travel",
+      "local"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Events Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/events",
+            "pricePerCallUsdc": 0.003,
+            "description": "Search events"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/venue",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get venue details"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ticket-links",
+            "pricePerCallUsdc": 0.002,
+            "description": "Find ticket links"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL full event intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0025,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/events",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Search events"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/venue",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get venue details"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ticket-links",
+            "pricePerCallUsdc": 0.001,
+            "description": "Find ticket links"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.0025,
+            "description": "ONE-CALL full event intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/events",
+        "description": "Search events"
+      },
+      {
+        "method": "POST",
+        "path": "/venue",
+        "description": "Get venue details"
+      },
+      {
+        "method": "POST",
+        "path": "/ticket-links",
+        "description": "Find ticket links"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/search",
+        "description": "ONE-CALL full event intelligence"
+      }
+    ],
+    "keywords": [
+      "search local events",
+      "find concerts near me",
+      "event discovery api",
+      "ticketed events search",
+      "live event finder"
+    ]
+  },
+  {
+    "name": "Sports Scores API",
+    "shortDescription": "Live and historical sports scores, schedules, and standings",
+    "description": "Get live and historical sports scores, team schedules, and league standings for sports intelligence, betting analysis, and fan engagement automation.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/sports-scores",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/sports-scores/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/sports-scores/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "sports",
+      "scores",
+      "schedule",
+      "standings",
+      "analytics"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Sports Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scores",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get live or historical scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schedule",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get team schedule"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/standings",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get league standings"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL full sports intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scores",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get live or historical scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schedule",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get team schedule"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/standings",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get league standings"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.002,
+            "description": "ONE-CALL full sports intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/scores",
+        "description": "Get live or historical scores"
+      },
+      {
+        "method": "POST",
+        "path": "/schedule",
+        "description": "Get team schedule"
+      },
+      {
+        "method": "POST",
+        "path": "/standings",
+        "description": "Get league standings"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full sports intelligence"
+      }
+    ],
+    "keywords": [
+      "get live sports scores",
+      "game score api",
+      "sports results today",
+      "live match updates",
+      "sports score by team"
+    ]
+  },
+  {
+    "name": "Betting Odds API",
+    "shortDescription": "Real-time betting odds, line movements, and best prices across bookmakers",
+    "description": "Get real-time betting odds, track line movements, and find the best price across bookmakers for sports analytics, arbitrage detection, and odds intelligence agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/betting-odds",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/betting-odds/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/betting-odds/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "betting",
+      "odds",
+      "sports",
+      "arbitrage",
+      "analytics"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Odds Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/odds",
+            "pricePerCallUsdc": 0.003,
+            "description": "Get betting odds"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/line-movement",
+            "pricePerCallUsdc": 0.004,
+            "description": "Track line movement"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/best-price",
+            "pricePerCallUsdc": 0.003,
+            "description": "Find best price"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full odds analysis"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/odds",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Get betting odds"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/line-movement",
+            "pricePerCallUsdc": 0.002,
+            "description": "Track line movement"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/best-price",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Find best price"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL full odds analysis"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/odds",
+        "description": "Get betting odds"
+      },
+      {
+        "method": "POST",
+        "path": "/line-movement",
+        "description": "Track line movement"
+      },
+      {
+        "method": "POST",
+        "path": "/best-price",
+        "description": "Find best price"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full odds analysis"
+      }
+    ],
+    "keywords": [
+      "get sports betting odds",
+      "compare odds across bookmakers",
+      "live betting odds api",
+      "sports odds data",
+      "moneyline odds lookup"
+    ]
+  },
+  {
+    "name": "Social Profile Lookup API",
+    "shortDescription": "Find social profiles across platforms and aggregate cross-platform links",
+    "description": "Find social profiles across platforms by name or email, get profile summaries, and aggregate cross-platform links for lead enrichment and outreach automation.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/social-profile-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/social-profile-lookup/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/social-profile-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "social-media",
+      "profiles",
+      "enrichment",
+      "outreach",
+      "leads"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Social Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/find-profiles",
+            "pricePerCallUsdc": 0.004,
+            "description": "Find social profiles"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/profile-summary",
+            "pricePerCallUsdc": 0.003,
+            "description": "Get profile summary"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/links",
+            "pricePerCallUsdc": 0.003,
+            "description": "Aggregate cross-platform links"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL full social profile intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0035,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/find-profiles",
+            "pricePerCallUsdc": 0.002,
+            "description": "Find social profiles"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/profile-summary",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Get profile summary"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/links",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Aggregate cross-platform links"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL full social profile intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/find-profiles",
+        "description": "Find social profiles"
+      },
+      {
+        "method": "POST",
+        "path": "/profile-summary",
+        "description": "Get profile summary"
+      },
+      {
+        "method": "POST",
+        "path": "/links",
+        "description": "Aggregate cross-platform links"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full social profile intelligence"
+      }
+    ],
+    "keywords": [
+      "lookup social media profile",
+      "find person social accounts",
+      "social profile search api",
+      "username profile lookup",
+      "social identity finder"
+    ]
+  },
+  {
+    "name": "X/Twitter Post Lookup API",
+    "shortDescription": "Look up posts, analyze profile metrics, and measure engagement on Twitter/X",
+    "description": "Look up Twitter/X posts and threads, analyze profile metrics, and measure engagement signals for social intelligence, brand monitoring, and sentiment agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/twitter-post-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/twitter-post-lookup/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/twitter-post-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "twitter",
+      "x",
+      "social-media",
+      "engagement",
+      "brand-monitoring"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Twitter Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/post",
+            "pricePerCallUsdc": 0.002,
+            "description": "Look up a post"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/profile",
+            "pricePerCallUsdc": 0.003,
+            "description": "Get profile metrics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/engagement",
+            "pricePerCallUsdc": 0.003,
+            "description": "Measure engagement"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full Twitter/X intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/post",
+            "pricePerCallUsdc": 0.001,
+            "description": "Look up a post"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/profile",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Get profile metrics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/engagement",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Measure engagement"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL full Twitter/X intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/post",
+        "description": "Look up a post"
+      },
+      {
+        "method": "POST",
+        "path": "/profile",
+        "description": "Get profile metrics"
+      },
+      {
+        "method": "POST",
+        "path": "/engagement",
+        "description": "Measure engagement"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full Twitter/X intelligence"
+      }
+    ],
+    "keywords": [
+      "search twitter posts",
+      "get tweet data api",
+      "twitter mention lookup",
+      "tweet engagement stats",
+      "twitter content search"
+    ]
+  },
+  {
+    "name": "YouTube Metadata API",
+    "shortDescription": "Extract YouTube video metadata, channel analytics, and transcripts",
+    "description": "Extract YouTube video metadata, channel analytics, and transcripts for content intelligence, competitive research, and media monitoring agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/youtube-metadata",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/youtube-metadata/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/youtube-metadata/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "youtube",
+      "video",
+      "transcripts",
+      "content-intelligence",
+      "media"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "YouTube Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/video",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get video metadata"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/channel",
+            "pricePerCallUsdc": 0.003,
+            "description": "Get channel analytics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/transcript",
+            "pricePerCallUsdc": 0.005,
+            "description": "Extract transcript"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL full YouTube intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/video",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get video metadata"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/channel",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Get channel analytics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/transcript",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Extract transcript"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL full YouTube intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/video",
+        "description": "Get video metadata"
+      },
+      {
+        "method": "POST",
+        "path": "/channel",
+        "description": "Get channel analytics"
+      },
+      {
+        "method": "POST",
+        "path": "/transcript",
+        "description": "Extract transcript"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full YouTube intelligence"
+      }
+    ],
+    "keywords": [
+      "get youtube video metadata",
+      "youtube video stats api",
+      "channel analytics data",
+      "video view count api",
+      "youtube content data"
+    ]
+  },
+  {
+    "name": "TikTok Metadata API",
+    "shortDescription": "Extract TikTok video metadata, creator analytics, and trending content signals",
+    "description": "Extract TikTok video metadata, creator analytics, and trending content signals for social intelligence, influencer discovery, and content strategy agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/tiktok-metadata",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/tiktok-metadata/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/tiktok-metadata/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "tiktok",
+      "social-media",
+      "influencer",
+      "content-strategy",
+      "trends"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "TikTok Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/video",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get video metadata"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/creator",
+            "pricePerCallUsdc": 0.003,
+            "description": "Get creator analytics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trend",
+            "pricePerCallUsdc": 0.004,
+            "description": "Get trending content"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL full TikTok intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0035,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/video",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get video metadata"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/creator",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Get creator analytics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trend",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get trending content"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL full TikTok intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/video",
+        "description": "Get video metadata"
+      },
+      {
+        "method": "POST",
+        "path": "/creator",
+        "description": "Get creator analytics"
+      },
+      {
+        "method": "POST",
+        "path": "/trend",
+        "description": "Get trending content"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full TikTok intelligence"
+      }
+    ],
+    "keywords": [
+      "get tiktok video data",
+      "tiktok engagement metrics",
+      "tiktok creator analytics",
+      "tiktok hashtag data",
+      "viral tiktok stats"
+    ]
+  },
+  {
+    "name": "Podcast Search API",
+    "shortDescription": "Search podcasts, retrieve episode metadata, and extract transcripts",
+    "description": "Search podcasts and episodes, retrieve episode metadata, and extract transcripts for content intelligence, research, and media monitoring agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/podcast-search",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/podcast-search/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/podcast-search/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "podcasts",
+      "audio",
+      "transcripts",
+      "media",
+      "content-intelligence"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Podcast Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.002,
+            "description": "Search podcasts"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/episode",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get episode metadata"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/transcript",
+            "pricePerCallUsdc": 0.006,
+            "description": "Extract transcript"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL full podcast intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0035,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.001,
+            "description": "Search podcasts"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/episode",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get episode metadata"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/transcript",
+            "pricePerCallUsdc": 0.003,
+            "description": "Extract transcript"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL full podcast intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/search",
+        "description": "Search podcasts"
+      },
+      {
+        "method": "POST",
+        "path": "/episode",
+        "description": "Get episode metadata"
+      },
+      {
+        "method": "POST",
+        "path": "/transcript",
+        "description": "Extract transcript"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full podcast intelligence"
+      }
+    ],
+    "keywords": [
+      "search podcast episodes",
+      "find podcast by topic",
+      "podcast discovery api",
+      "episode transcript search",
+      "podcast metadata lookup"
+    ]
+  },
+  {
+    "name": "Transcript Extraction API",
+    "shortDescription": "Extract transcripts from YouTube, podcasts, and audio URLs with speaker detection",
+    "description": "Extract transcripts from YouTube videos, podcast episodes, and audio URLs with speaker detection and timestamping for research, RAG, and media intelligence agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/transcript-extraction",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/transcript-extraction/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/transcript-extraction/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "transcripts",
+      "rag",
+      "youtube",
+      "podcasts",
+      "audio"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Extraction Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/youtube",
+            "pricePerCallUsdc": 0.004,
+            "description": "Extract YouTube transcript"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/podcast",
+            "pricePerCallUsdc": 0.005,
+            "description": "Extract podcast transcript"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/audio-url",
+            "pricePerCallUsdc": 0.006,
+            "description": "Extract audio URL transcript"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL extract any source"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/youtube",
+            "pricePerCallUsdc": 0.002,
+            "description": "Extract YouTube transcript"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/podcast",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Extract podcast transcript"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/audio-url",
+            "pricePerCallUsdc": 0.003,
+            "description": "Extract audio URL transcript"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL extract any source"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/youtube",
+        "description": "Extract YouTube transcript"
+      },
+      {
+        "method": "POST",
+        "path": "/podcast",
+        "description": "Extract podcast transcript"
+      },
+      {
+        "method": "POST",
+        "path": "/audio-url",
+        "description": "Extract audio URL transcript"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "ONE-CALL extract any source"
+      }
+    ],
+    "keywords": [
+      "extract video transcript",
+      "youtube captions api",
+      "get video subtitles",
+      "video to text transcript",
+      "closed caption extractor"
+    ]
+  },
+  {
+    "name": "Audio Transcription API",
+    "shortDescription": "Transcribe audio files with timestamps, speaker labels, and summaries",
+    "description": "Transcribe audio files with timestamps, speaker labels, and summaries for meeting intelligence, compliance recording, and voice workflow automation agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/audio-transcription",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/audio-transcription/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/audio-transcription/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "audio",
+      "transcription",
+      "meetings",
+      "compliance",
+      "voice"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Transcription Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/transcribe",
+            "pricePerCallUsdc": 0.008,
+            "description": "Transcribe audio"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/timestamps",
+            "pricePerCallUsdc": 0.006,
+            "description": "Transcribe with timestamps"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/summary",
+            "pricePerCallUsdc": 0.005,
+            "description": "Transcribe and summarize"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL full audio intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/transcribe",
+            "pricePerCallUsdc": 0.004,
+            "description": "Transcribe audio"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/timestamps",
+            "pricePerCallUsdc": 0.003,
+            "description": "Transcribe with timestamps"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/summary",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Transcribe and summarize"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full audio intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/transcribe",
+        "description": "Transcribe audio"
+      },
+      {
+        "method": "POST",
+        "path": "/timestamps",
+        "description": "Transcribe with timestamps"
+      },
+      {
+        "method": "POST",
+        "path": "/summary",
+        "description": "Transcribe and summarize"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full audio intelligence"
+      }
+    ],
+    "keywords": [
+      "transcribe audio to text",
+      "speech to text api",
+      "convert mp3 to transcript",
+      "audio file transcription",
+      "voice transcription api"
+    ]
+  },
+  {
+    "name": "Text Summarizer API",
+    "shortDescription": "Summarize text into paragraphs, bullets, or TL;DR formats",
+    "description": "Summarize long-form text into concise paragraphs, bullet points, or TL;DR formats for research agents, document intelligence, and content automation workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/text-summarizer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/text-summarizer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/text-summarizer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "summarization",
+      "nlp",
+      "documents",
+      "content",
+      "automation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Summarizer Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/summarize",
+            "pricePerCallUsdc": 0.004,
+            "description": "Summarize as paragraph"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/bullets",
+            "pricePerCallUsdc": 0.003,
+            "description": "Summarize as bullets"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/tldr",
+            "pricePerCallUsdc": 0.002,
+            "description": "Generate TL;DR"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full summarization"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/summarize",
+            "pricePerCallUsdc": 0.002,
+            "description": "Summarize as paragraph"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/bullets",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Summarize as bullets"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/tldr",
+            "pricePerCallUsdc": 0.001,
+            "description": "Generate TL;DR"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL full summarization"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/summarize",
+        "description": "Summarize as paragraph"
+      },
+      {
+        "method": "POST",
+        "path": "/bullets",
+        "description": "Summarize as bullets"
+      },
+      {
+        "method": "POST",
+        "path": "/tldr",
+        "description": "Generate TL;DR"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full summarization"
+      }
+    ],
+    "keywords": [
+      "summarize long text",
+      "document summary api",
+      "tldr generator",
+      "article summarizer ai",
+      "key points extractor"
+    ]
+  },
+  {
+    "name": "Language Detection API",
+    "shortDescription": "Detect language from text with ISO codes and confidence scores",
+    "description": "Detect language from text with confidence scores, batch-detect multiple strings, and return ISO language codes for multilingual routing and content classification agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/language-detection",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/language-detection/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/language-detection/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "language-detection",
+      "nlp",
+      "multilingual",
+      "iso",
+      "classification"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Detection Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.001,
+            "description": "Detect language"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.004,
+            "description": "Batch detect languages"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/confidence",
+            "pricePerCallUsdc": 0.002,
+            "description": "Detect with confidence breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL full language analysis"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Detect language"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.002,
+            "description": "Batch detect languages"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/confidence",
+            "pricePerCallUsdc": 0.001,
+            "description": "Detect with confidence breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "ONE-CALL full language analysis"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/detect",
+        "description": "Detect language"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch detect languages"
+      },
+      {
+        "method": "POST",
+        "path": "/confidence",
+        "description": "Detect with confidence breakdown"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full language analysis"
+      }
+    ],
+    "keywords": [
+      "detect text language",
+      "language identification api",
+      "identify spoken language",
+      "multilingual language detect",
+      "what language is this"
+    ]
+  },
+  {
+    "name": "Translation API",
+    "shortDescription": "Translate text between languages with auto-detection and batch support",
+    "description": "Translate text between languages, batch-translate multiple strings, and auto-detect source language before translating for multilingual automation and content localization agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/translation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/translation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/translation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "translation",
+      "multilingual",
+      "localization",
+      "nlp",
+      "languages"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Translation Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/translate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Translate text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.008,
+            "description": "Batch translate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-and-translate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Auto-detect and translate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL detect + translate + quality"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/translate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Translate text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.004,
+            "description": "Batch translate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-and-translate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Auto-detect and translate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.002,
+            "description": "ONE-CALL detect + translate + quality"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/translate",
+        "description": "Translate text"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch translate"
+      },
+      {
+        "method": "POST",
+        "path": "/detect-and-translate",
+        "description": "Auto-detect and translate"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL detect + translate + quality"
+      }
+    ],
+    "keywords": [
+      "translate text api",
+      "language translation ai",
+      "multilingual text converter",
+      "spanish to english api",
+      "real-time translation api"
+    ]
+  },
+  {
+    "name": "Sentiment API",
+    "shortDescription": "Analyze text sentiment, batch-score, and extract aspect-level sentiment",
+    "description": "Analyze text sentiment, batch-score multiple strings, and extract aspect-level sentiment for brand monitoring, customer feedback, and NLP pipeline agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/sentiment",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/sentiment/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/sentiment/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "sentiment",
+      "nlp",
+      "brand-monitoring",
+      "customer-feedback",
+      "nps"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Sentiment Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/sentiment",
+            "pricePerCallUsdc": 0.002,
+            "description": "Analyze sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.006,
+            "description": "Batch sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/aspect-sentiment",
+            "pricePerCallUsdc": 0.004,
+            "description": "Aspect-level sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL full sentiment analysis"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/sentiment",
+            "pricePerCallUsdc": 0.001,
+            "description": "Analyze sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.003,
+            "description": "Batch sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/aspect-sentiment",
+            "pricePerCallUsdc": 0.002,
+            "description": "Aspect-level sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0025,
+            "description": "ONE-CALL full sentiment analysis"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/sentiment",
+        "description": "Analyze sentiment"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch sentiment"
+      },
+      {
+        "method": "POST",
+        "path": "/aspect-sentiment",
+        "description": "Aspect-level sentiment"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full sentiment analysis"
+      }
+    ],
+    "keywords": [
+      "sentiment analysis api",
+      "positive negative text classifier",
+      "opinion mining api",
+      "customer review sentiment",
+      "emotion detection text"
+    ]
+  },
+  {
+    "name": "Entity Extraction API",
+    "shortDescription": "Extract named entities, keywords, and topics from text",
+    "description": "Extract named entities, keywords, and topics from text for knowledge graph construction, document tagging, and NLP pipeline automation agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/entity-extraction",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/entity-extraction/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/entity-extraction/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "nlp",
+      "ner",
+      "entities",
+      "knowledge-graph",
+      "tagging"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "NLP Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/entities",
+            "pricePerCallUsdc": 0.003,
+            "description": "Extract named entities"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/keywords",
+            "pricePerCallUsdc": 0.002,
+            "description": "Extract keywords"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/topics",
+            "pricePerCallUsdc": 0.003,
+            "description": "Extract topics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full NLP extraction"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/entities",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Extract named entities"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/keywords",
+            "pricePerCallUsdc": 0.001,
+            "description": "Extract keywords"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/topics",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Extract topics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL full NLP extraction"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/entities",
+        "description": "Extract named entities"
+      },
+      {
+        "method": "POST",
+        "path": "/keywords",
+        "description": "Extract keywords"
+      },
+      {
+        "method": "POST",
+        "path": "/topics",
+        "description": "Extract topics"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full NLP extraction"
+      }
+    ],
+    "keywords": [
+      "extract named entities",
+      "ner api",
+      "extract people places organizations",
+      "entity recognition nlp",
+      "structured data from text"
+    ]
+  },
+  {
+    "name": "Content Moderation API",
+    "shortDescription": "Moderate text, classify categories, and generate safe rewrites",
+    "description": "Moderate text for policy violations, classify content categories, and generate safe rewrites for trust-and-safety, UGC platforms, and compliance automation agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/content-moderation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/content-moderation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/content-moderation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "moderation",
+      "trust-safety",
+      "ugc",
+      "compliance",
+      "nlp"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Moderation Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/moderate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Moderate for violations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/categories",
+            "pricePerCallUsdc": 0.002,
+            "description": "Classify categories"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/safe-rewrite",
+            "pricePerCallUsdc": 0.005,
+            "description": "Safe rewrite"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL full moderation"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0035,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/moderate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Moderate for violations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/categories",
+            "pricePerCallUsdc": 0.001,
+            "description": "Classify categories"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/safe-rewrite",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Safe rewrite"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL full moderation"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/moderate",
+        "description": "Moderate for violations"
+      },
+      {
+        "method": "POST",
+        "path": "/categories",
+        "description": "Classify categories"
+      },
+      {
+        "method": "POST",
+        "path": "/safe-rewrite",
+        "description": "Safe rewrite"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full moderation"
+      }
+    ],
+    "keywords": [
+      "moderate user content",
+      "detect toxic content",
+      "nsfw content filter",
+      "hate speech detection api",
+      "ai content moderation"
+    ]
+  },
+  {
+    "name": "PII Detection API",
+    "shortDescription": "Detect, redact, and classify PII for GDPR, HIPAA, and data governance",
+    "description": "Detect personally identifiable information in text, redact PII for compliance, and classify PII types for GDPR, HIPAA, and data governance automation agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/pii-detection",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/pii-detection/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/pii-detection/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "pii",
+      "gdpr",
+      "hipaa",
+      "compliance",
+      "data-governance"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Compliance Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.003,
+            "description": "Detect PII"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/redact",
+            "pricePerCallUsdc": 0.004,
+            "description": "Redact PII"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/classify",
+            "pricePerCallUsdc": 0.003,
+            "description": "Classify PII types"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL detect + redact + classify"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0035,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Detect PII"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/redact",
+            "pricePerCallUsdc": 0.002,
+            "description": "Redact PII"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/classify",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Classify PII types"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL detect + redact + classify"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/detect",
+        "description": "Detect PII"
+      },
+      {
+        "method": "POST",
+        "path": "/redact",
+        "description": "Redact PII"
+      },
+      {
+        "method": "POST",
+        "path": "/classify",
+        "description": "Classify PII types"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL detect + redact + classify"
+      }
+    ],
+    "keywords": [
+      "detect pii in text",
+      "personal data finder",
+      "gdpr pii scanner",
+      "sensitive data detection api",
+      "redact personal information"
+    ]
+  },
+  {
+    "name": "Email Parser API",
+    "shortDescription": "Parse emails, extract action items, and classify by type for CRM automation",
+    "description": "Parse raw email content, extract action items and commitments, and classify emails by type for CRM automation, inbox intelligence, and workflow trigger agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/email-parser",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/email-parser/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/email-parser/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "email",
+      "crm",
+      "action-items",
+      "inbox-intelligence",
+      "automation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Email Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.003,
+            "description": "Parse raw email"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-action-items",
+            "pricePerCallUsdc": 0.005,
+            "description": "Extract action items"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/classify",
+            "pricePerCallUsdc": 0.003,
+            "description": "Classify email type"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL full email intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Parse raw email"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-action-items",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Extract action items"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/classify",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Classify email type"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL full email intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/parse",
+        "description": "Parse raw email"
+      },
+      {
+        "method": "POST",
+        "path": "/extract-action-items",
+        "description": "Extract action items"
+      },
+      {
+        "method": "POST",
+        "path": "/classify",
+        "description": "Classify email type"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full email intelligence"
+      }
+    ],
+    "keywords": [
+      "parse email content",
+      "extract email metadata",
+      "email action item extractor",
+      "email classification api",
+      "email data extraction"
+    ]
+  },
+  {
+    "name": "Invoice Parser API",
+    "shortDescription": "Parse invoices, extract line items, validate, and reconcile against POs for AP automation",
+    "description": "Parse invoice documents, extract line items with GL codes, validate financial accuracy, and reconcile against purchase orders for accounts payable automation agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/invoice-parser",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/invoice-parser/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/invoice-parser/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "invoice",
+      "accounts-payable",
+      "ocr",
+      "document",
+      "finance"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "AP Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-line-items",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/invoice-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reconcile",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.02
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/parse"
+      },
+      {
+        "method": "POST",
+        "path": "/extract-line-items"
+      },
+      {
+        "method": "POST",
+        "path": "/validate"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate"
+      },
+      {
+        "method": "POST",
+        "path": "/invoice-intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/reconcile"
+      },
+      {
+        "method": "POST",
+        "path": "/batch"
+      }
+    ],
+    "keywords": [
+      "parse invoice pdf",
+      "extract invoice line items",
+      "invoice data extraction",
+      "ap automation invoice",
+      "invoice total vendor parser"
+    ]
+  },
+  {
+    "name": "Receipt Parser API",
+    "shortDescription": "Parse receipts, categorize expenses, and generate expense reports for finance automation",
+    "description": "Parse receipts, categorize expenses, and generate expense reports for finance automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/receipt-parser",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/receipt-parser/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/receipt-parser/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "receipt",
+      "expense",
+      "ocr",
+      "finance",
+      "reimbursement"
+    ],
+    "keywords": [
+      "parse receipt photo",
+      "extract receipt items",
+      "expense receipt ocr",
+      "receipt data extraction",
+      "grocery receipt parser"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/categorize",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/summarize",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/receipt-intelligence",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/split",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.04
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/parse",
+        "description": "Parse receipt document"
+      },
+      {
+        "method": "POST",
+        "path": "/categorize",
+        "description": "Categorize receipt expenses"
+      },
+      {
+        "method": "POST",
+        "path": "/summarize",
+        "description": "Summarize receipt data"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/receipt-intelligence",
+        "description": "ONE-CALL full receipt intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/split",
+        "description": "Split receipt for shared expenses"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch parse up to 20 receipts"
+      }
+    ]
+  },
+  {
+    "name": "Contract Clause Extractor API",
+    "shortDescription": "Extract clauses, analyze risk, compare versions, and identify red flags for legal automation",
+    "description": "Extract clauses, analyze risk, compare versions, and identify red flags for legal automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/contract-clause",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/contract-clause/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/contract-clause/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "contract",
+      "legal",
+      "clause",
+      "risk",
+      "NDA"
+    ],
+    "keywords": [
+      "extract contract clauses",
+      "analyze contract terms",
+      "contract clause classifier",
+      "legal clause extractor",
+      "contract risk clauses"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/classify",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/contract-intelligence",
+            "pricePerCallUsdc": 0.015
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/risk-assess",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.06
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract clauses from contract"
+      },
+      {
+        "method": "POST",
+        "path": "/classify",
+        "description": "Classify clause types"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare clauses across documents"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/contract-intelligence",
+        "description": "ONE-CALL full contract intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/risk-assess",
+        "description": "Risk-assess contract clauses"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch analyze up to 10 contracts"
+      }
+    ]
+  },
+  {
+    "name": "Legal Citation Parser API",
+    "shortDescription": "Parse, validate, normalize, and resolve legal citations for legal research automation",
+    "description": "Parse, validate, normalize, and resolve legal citations for legal research automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/legal-citation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/legal-citation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/legal-citation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "legal",
+      "citation",
+      "bluebook",
+      "case-law",
+      "research"
+    ],
+    "keywords": [
+      "parse legal citation",
+      "validate case citation",
+      "legal cite format check",
+      "bluebook citation parser",
+      "court case reference lookup"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cross-reference",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/legal-intelligence",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/format",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.02
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/parse",
+        "description": "Parse legal citation"
+      },
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate citation format"
+      },
+      {
+        "method": "POST",
+        "path": "/cross-reference",
+        "description": "Cross-reference citations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/legal-intelligence",
+        "description": "ONE-CALL full legal citation intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/format",
+        "description": "Format citation to standard style"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch process up to 50 citations"
+      }
+    ]
+  },
+  {
+    "name": "Table Extraction API",
+    "shortDescription": "Extract tables from documents, convert to JSON/CSV, and merge datasets for document automation",
+    "description": "Extract tables from documents, convert to JSON/CSV, and merge datasets for document automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/table-extraction",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/table-extraction/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/table-extraction/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "table",
+      "extraction",
+      "csv",
+      "json",
+      "document"
+    ],
+    "keywords": [
+      "extract table from pdf",
+      "html table to json",
+      "structured data from document",
+      "spreadsheet data extraction",
+      "table parser api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/convert",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/merge",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/table-intelligence",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/clean",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.04
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract tables from document"
+      },
+      {
+        "method": "POST",
+        "path": "/convert",
+        "description": "Convert table to structured format"
+      },
+      {
+        "method": "POST",
+        "path": "/merge",
+        "description": "Merge multiple tables"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/table-intelligence",
+        "description": "ONE-CALL full table intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/clean",
+        "description": "Clean and normalize table data"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch extract from up to 10 documents"
+      }
+    ]
+  },
+  {
+    "name": "Signature Detection API",
+    "shortDescription": "Detect, verify, and locate signatures and generate audit trails for contract execution agents",
+    "description": "Detect, verify, and locate signatures and generate audit trails for contract execution agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/signature-detection",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/signature-detection/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/signature-detection/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "signature",
+      "contract",
+      "compliance",
+      "audit",
+      "esign"
+    ],
+    "keywords": [
+      "detect signature in document",
+      "signature verification api",
+      "esignature presence check",
+      "contract signed detection",
+      "signature location finder"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/verify",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/locate",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/signature-intelligence",
+            "pricePerCallUsdc": 0.012
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.04
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/detect",
+        "description": "Detect signatures in document"
+      },
+      {
+        "method": "POST",
+        "path": "/verify",
+        "description": "Verify signature authenticity"
+      },
+      {
+        "method": "POST",
+        "path": "/locate",
+        "description": "Locate signature positions"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/signature-intelligence",
+        "description": "ONE-CALL full signature intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract signature as image"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch detect in up to 20 documents"
+      }
+    ]
+  },
+  {
+    "name": "Document Classification API",
+    "shortDescription": "Classify document types, auto-tag metadata, and route to workflows for enterprise DMS agents",
+    "description": "Classify document types, auto-tag metadata, and route to workflows for enterprise DMS agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/document-classification",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/document-classification/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/document-classification/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "document",
+      "classification",
+      "routing",
+      "DMS",
+      "metadata"
+    ],
+    "keywords": [
+      "classify document type",
+      "auto-sort documents",
+      "document type detection",
+      "pdf classification api",
+      "document routing automation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/classify",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-metadata",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/document-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/segment",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.025
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/classify",
+        "description": "Classify document type"
+      },
+      {
+        "method": "POST",
+        "path": "/extract-metadata",
+        "description": "Extract document metadata"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare document similarity"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/document-intelligence",
+        "description": "ONE-CALL full document intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/segment",
+        "description": "Segment document into sections"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch classify up to 20 documents"
+      }
+    ]
+  },
+  {
+    "name": "PDF Generator API",
+    "shortDescription": "Generate PDFs from templates, merge documents, and add watermarks for document automation agents",
+    "description": "Generate PDFs from templates, merge documents, and add watermarks for document automation agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/pdf-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/pdf-generator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/pdf-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "pdf",
+      "generator",
+      "document",
+      "watermark",
+      "template"
+    ],
+    "keywords": [
+      "generate pdf from html",
+      "create pdf report api",
+      "html to pdf converter",
+      "pdf template generator",
+      "dynamic pdf creation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/merge",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/template",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/pdf-intelligence",
+            "pricePerCallUsdc": 0.015
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compress",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.06
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate PDF from content"
+      },
+      {
+        "method": "POST",
+        "path": "/merge",
+        "description": "Merge multiple PDFs"
+      },
+      {
+        "method": "POST",
+        "path": "/template",
+        "description": "Generate PDF from template"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/pdf-intelligence",
+        "description": "ONE-CALL full PDF intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/compress",
+        "description": "Compress PDF file size"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch generate up to 10 PDFs"
+      }
+    ]
+  },
+  {
+    "name": "GitHub Issue Search API",
+    "shortDescription": "Search, triage, and deduplicate GitHub issues for DevOps automation and developer productivity",
+    "description": "Search, triage, and deduplicate GitHub issues for DevOps automation and developer productivity \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/github-issue-search",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/github-issue-search/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/github-issue-search/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "github",
+      "issues",
+      "devops",
+      "triage",
+      "bugtracker"
+    ],
+    "keywords": [
+      "search github issues",
+      "find open bugs github",
+      "github repository issues",
+      "github issue tracker",
+      "developer issue search"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/summarize",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/issue-intelligence",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.035
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/search",
+        "description": "Search GitHub issues"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze issue patterns"
+      },
+      {
+        "method": "POST",
+        "path": "/summarize",
+        "description": "Summarize issue details"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/issue-intelligence",
+        "description": "ONE-CALL full issue intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/trending",
+        "description": "Get trending issues and topics"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch analyze up to 20 repos"
+      }
+    ]
+  },
+  {
+    "name": "JSON Schema Validator API",
+    "shortDescription": "Validate JSON against schemas, generate schemas, and compare versions for CI/CD automation",
+    "description": "Validate JSON against schemas, generate schemas, and compare versions for CI/CD automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/json-schema-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/json-schema-validator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/json-schema-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "json",
+      "schema",
+      "validation",
+      "api",
+      "developer"
+    ],
+    "keywords": [
+      "validate json schema",
+      "generate json schema",
+      "json data validation api",
+      "schema inference api",
+      "openapi schema validator"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 1000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/convert",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schema-intelligence",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/infer",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.01
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate JSON against schema"
+      },
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate JSON schema from example"
+      },
+      {
+        "method": "POST",
+        "path": "/convert",
+        "description": "Convert between schema formats"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/schema-intelligence",
+        "description": "ONE-CALL full schema intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/infer",
+        "description": "Infer schema from data samples"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch validate up to 50 items"
+      }
+    ]
+  },
+  {
+    "name": "API Health Check API",
+    "shortDescription": "Monitor API endpoint health, measure latency, and generate alerts for SRE and DevOps agents",
+    "description": "Monitor API endpoint health, measure latency, and generate alerts for SRE and DevOps agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/api-health-check",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/api-health-check/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/api-health-check/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "monitoring",
+      "uptime",
+      "latency",
+      "sre",
+      "devops"
+    ],
+    "keywords": [
+      "check api endpoint health",
+      "test api uptime",
+      "api latency benchmark",
+      "monitor api availability",
+      "api response time check"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/benchmark",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/health-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.02
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Check API endpoint health"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "Monitor API performance metrics"
+      },
+      {
+        "method": "POST",
+        "path": "/benchmark",
+        "description": "Benchmark API response times"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/health-intelligence",
+        "description": "ONE-CALL full health intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/history",
+        "description": "Get API uptime history"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch check up to 20 endpoints"
+      }
+    ]
+  },
+  {
+    "name": "SSL Certificate API",
+    "shortDescription": "Check SSL status, validate chains, monitor expiry, and grade TLS configuration for security agents",
+    "description": "Check SSL status, validate chains, monitor expiry, and grade TLS configuration for security agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/ssl-certificate",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ssl-certificate/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ssl-certificate/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "ssl",
+      "tls",
+      "certificate",
+      "security",
+      "monitoring"
+    ],
+    "keywords": [
+      "check ssl certificate",
+      "ssl expiry date lookup",
+      "tls certificate validity",
+      "https certificate check",
+      "domain ssl status"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ssl-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.025
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Check SSL certificate status"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze certificate details"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "Monitor certificate expiry"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/ssl-intelligence",
+        "description": "ONE-CALL full SSL intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Scan full certificate chain"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch check up to 20 domains"
+      }
+    ]
+  },
+  {
+    "name": "DNS Lookup API",
+    "shortDescription": "DNS record lookup, reverse DNS, MX checks, and propagation monitoring for networking agents",
+    "description": "DNS record lookup, reverse DNS, MX checks, and propagation monitoring for networking agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/dns-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/dns-lookup/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/dns-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "dns",
+      "networking",
+      "lookup",
+      "mx",
+      "propagation"
+    ],
+    "keywords": [
+      "dns record lookup",
+      "check mx records",
+      "domain dns query",
+      "txt record lookup",
+      "reverse dns lookup"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 1000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reverse",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trace",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/dns-intelligence",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.01
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Lookup DNS records"
+      },
+      {
+        "method": "POST",
+        "path": "/reverse",
+        "description": "Reverse DNS lookup"
+      },
+      {
+        "method": "POST",
+        "path": "/trace",
+        "description": "Trace DNS resolution path"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/dns-intelligence",
+        "description": "ONE-CALL full DNS intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "Monitor DNS record changes"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch lookup up to 50 domains"
+      }
+    ]
+  },
+  {
+    "name": "CVE Lookup API",
+    "shortDescription": "Look up CVE details, search vulnerabilities, and get remediation steps for security automation",
+    "description": "Look up CVE details, search vulnerabilities, and get remediation steps for security automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/cve-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/cve-lookup/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/cve-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "cve",
+      "security",
+      "vulnerability",
+      "cvss",
+      "patching"
+    ],
+    "keywords": [
+      "lookup cve vulnerability",
+      "search security vulnerabilities",
+      "cve severity score",
+      "cvss score lookup",
+      "vulnerability database search"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cve-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.025
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/search",
+        "description": "Search CVE database"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze CVE severity and impact"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "Monitor new CVEs for products"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/cve-intelligence",
+        "description": "ONE-CALL full CVE intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score CVE risk for your stack"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch lookup up to 20 CVEs"
+      }
+    ]
+  },
+  {
+    "name": "NPM Package Risk API",
+    "shortDescription": "Analyze NPM package risk, dependency trees, and license compliance for supply chain security",
+    "description": "Analyze NPM package risk, dependency trees, and license compliance for supply chain security \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/npm-package-risk",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/npm-package-risk/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/npm-package-risk/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "npm",
+      "security",
+      "dependencies",
+      "license",
+      "supply-chain"
+    ],
+    "keywords": [
+      "npm package security check",
+      "package vulnerability audit",
+      "npm dependency risk score",
+      "supply chain risk npm",
+      "node package safety check"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/audit",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/package-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.025
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze npm package risk"
+      },
+      {
+        "method": "POST",
+        "path": "/audit",
+        "description": "Audit package dependencies"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare package alternatives"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/package-intelligence",
+        "description": "ONE-CALL full package intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score package health and risk"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch analyze up to 20 packages"
+      }
+    ]
+  },
+  {
+    "name": "Image Resize API",
+    "shortDescription": "Resize, crop, convert, and optimize images for web, mobile, and print with responsive breakpoints",
+    "description": "Resize, crop, convert, and optimize images for web, mobile, and print with responsive breakpoints \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/image-resize",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/image-resize/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/image-resize/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "image",
+      "resize",
+      "crop",
+      "webp",
+      "optimization"
+    ],
+    "keywords": [
+      "resize image api",
+      "convert image format",
+      "optimize image for web",
+      "smart crop image",
+      "compress image size"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/resize",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/convert",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/image-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/crop",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.025
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/resize",
+        "description": "Resize image to target dimensions"
+      },
+      {
+        "method": "POST",
+        "path": "/convert",
+        "description": "Convert image format"
+      },
+      {
+        "method": "POST",
+        "path": "/optimize",
+        "description": "Optimize image for web performance"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/image-intelligence",
+        "description": "ONE-CALL full image intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/crop",
+        "description": "Smart crop image to subject"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch process up to 20 images"
+      }
+    ]
+  },
+  {
+    "name": "Background Removal API",
+    "shortDescription": "Remove or replace image backgrounds and generate segmentation masks for e-commerce and creative automation",
+    "description": "Remove or replace image backgrounds and generate segmentation masks for e-commerce and creative automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/background-removal",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/background-removal/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/background-removal/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "background-removal",
+      "image",
+      "ecommerce",
+      "ai",
+      "compositing"
+    ],
+    "keywords": [
+      "remove image background",
+      "background removal api",
+      "transparent png generator",
+      "cut out subject from photo",
+      "product photo background"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/remove",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/replace",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/mask",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/background-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enhance",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.04
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/remove",
+        "description": "Remove background from image"
+      },
+      {
+        "method": "POST",
+        "path": "/replace",
+        "description": "Replace background with new image or color"
+      },
+      {
+        "method": "POST",
+        "path": "/mask",
+        "description": "Generate segmentation mask"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/background-intelligence",
+        "description": "ONE-CALL detect subject + recommend operation + quality prediction"
+      },
+      {
+        "method": "POST",
+        "path": "/enhance",
+        "description": "Enhance subject after background removal"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch remove from up to 20 images"
+      }
+    ]
+  },
+  {
+    "name": "Color Palette API",
+    "shortDescription": "Extract color palettes from images, generate brand palettes, and check WCAG accessibility",
+    "description": "Extract color palettes from images, generate brand palettes, and check WCAG accessibility \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/color-palette",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/color-palette/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/color-palette/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "color",
+      "palette",
+      "brand",
+      "wcag",
+      "design"
+    ],
+    "keywords": [
+      "extract colors from image",
+      "generate brand color palette",
+      "wcag color contrast check",
+      "complementary color finder",
+      "hex color palette generator"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/match",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/palette-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/accessibility",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.02
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract color palette from image"
+      },
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate brand color palette"
+      },
+      {
+        "method": "POST",
+        "path": "/match",
+        "description": "Find complementary color matches"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/palette-intelligence",
+        "description": "ONE-CALL extract + brand fit + accessibility + dark mode check"
+      },
+      {
+        "method": "POST",
+        "path": "/accessibility",
+        "description": "Check WCAG color accessibility"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch extract from up to 10 images"
+      }
+    ]
+  },
+  {
+    "name": "Short Link API",
+    "shortDescription": "Shorten URLs, expand short links, analyze clicks, and validate safety for marketing automation",
+    "description": "Shorten URLs, expand short links, analyze clicks, and validate safety for marketing automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/short-link",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/short-link/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/short-link/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "url",
+      "shortener",
+      "link",
+      "analytics",
+      "marketing"
+    ],
+    "keywords": [
+      "shorten url api",
+      "create short link",
+      "url shortener api",
+      "expand short url",
+      "branded link shortener"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 1000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/shorten",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/expand",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/link-intelligence",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.008
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/shorten",
+        "description": "Shorten a URL with optional custom alias"
+      },
+      {
+        "method": "POST",
+        "path": "/expand",
+        "description": "Expand short URL to final destination"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze link click performance"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/link-intelligence",
+        "description": "ONE-CALL safety check + UTM suggestions + sharing score"
+      },
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate URL safety and reachability"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch shorten up to 20 URLs"
+      }
+    ]
+  },
+  {
+    "name": "Meme Caption Generator API",
+    "shortDescription": "Generate meme captions, analyze virality, localize for audiences, and find trending templates",
+    "description": "Generate meme captions, analyze virality, localize for audiences, and find trending templates \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/meme-caption",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/meme-caption/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/meme-caption/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "meme",
+      "social-media",
+      "content",
+      "viral",
+      "generator"
+    ],
+    "keywords": [
+      "generate meme caption",
+      "meme text generator",
+      "viral meme creator",
+      "meme template caption",
+      "social media meme ai"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/localize",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/meme-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.02
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate meme captions for a topic"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze meme format, humor, and virality"
+      },
+      {
+        "method": "POST",
+        "path": "/localize",
+        "description": "Localize meme caption for target audience"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/meme-intelligence",
+        "description": "ONE-CALL caption + template + hashtags + posting time + brand safety"
+      },
+      {
+        "method": "POST",
+        "path": "/trending",
+        "description": "Get trending meme formats and templates"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch generate captions for up to 10 topics"
+      }
+    ]
+  }
+]
