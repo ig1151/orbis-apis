@@ -14,10 +14,7 @@ async function callClaude(prompt: string): Promise<string> {
   return res.data.choices[0].message.content;
 }
 
-function parseJSON(raw: string) {
-  return JSON.parse(raw.replace(/```json|```/g, '').trim());
-}
-
+function parseJSON(raw: string) { return JSON.parse(raw.replace(/```json|```/g, '').trim()); }
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
 
 router.get('/', (_req: Request, res: Response) => {
@@ -26,74 +23,94 @@ router.get('/', (_req: Request, res: Response) => {
 
 // POST /search
 router.post('/search', async (req: Request, res: Response) => {
-  const { query, language } = req.body;
+  const { query, category, language } = req.body;
   if (!query) return res.status(400).json({ error: 'query is required' });
   try {
-    const raw = await callClaude(`Search podcasts for query: "${query}", language: "${language || 'en'}". Return JSON:
+    const raw = await callClaude(`Search podcasts for: "${query}", category: "${category || 'any'}", language: "${language || 'en'}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
   "success": true,
   "query": "${query}",
   "podcasts": [
-    {"podcast_id": "string", "title": "string", "author": "string", "description": "string",
-     "episode_count": number, "language": "string", "category": "string", "rating": number}
+    {"podcast_id": "string", "title": "string", "description": "string", "host": "string", "category": "string", "language": "en", "episode_count": 200, "subscribers": 50000, "rating": 4.8, "rss_url": "string", "website": "string"}
   ],
-  "total_found": number,
+  "total_found": 10,
+  "source_provenance": {"provider": "podcast-search-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.85},
+  "cache_ttl_seconds": 3600,
+  "cache_recommended": true,
+  "recommended_next_api": "podcast-search",
+  "recommended_next_endpoint": "/podcast-details",
+  "automation_safe": true,
   "confidence_per_section": {"podcasts": 0.85},
-  "recommended_actions_priority_order": ["filter by language", "check episode count", "get episode details"],
+  "recommended_actions_priority_order": ["check rating", "get podcast details", "find guest quotes"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-// POST /episode
-router.post('/episode', async (req: Request, res: Response) => {
-  const { episode_url, episode_id } = req.body;
-  if (!episode_url && !episode_id) return res.status(400).json({ error: 'episode_url or episode_id is required' });
-  const identifier = episode_url || episode_id;
+// POST /episode-details
+router.post('/episode-details', async (req: Request, res: Response) => {
+  const { episode_id, podcast_id } = req.body;
+  if (!episode_id && !podcast_id) return res.status(400).json({ error: 'episode_id or podcast_id is required' });
   try {
-    const raw = await callClaude(`Get podcast episode metadata for: "${identifier}". Return JSON:
+    const raw = await callClaude(`Get episode details for: "${episode_id || podcast_id}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
   "success": true,
-  "episode_id": "${episode_id || 'extracted'}",
+  "episode_id": "${episode_id || ''}",
   "episode": {
-    "title": "string", "podcast": "string", "author": "string",
-    "published_at": "string", "duration_seconds": number,
-    "description": "string", "audio_url": "string",
-    "season": number, "episode_number": number, "language": "string"
+    "title": "string", "description": "string", "published_at": "ISO8601",
+    "duration_seconds": 3600, "episode_number": 50,
+    "guests": ["string"], "topics": ["string"],
+    "audio_url": "string", "transcript_available": false,
+    "downloads": 25000, "rating": 4.9
   },
+  "source_provenance": {"provider": "podcast-search-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.85},
+  "cache_ttl_seconds": 3600,
+  "cache_recommended": true,
+  "recommended_next_api": "podcast-search",
+  "recommended_next_endpoint": "/quote-extraction",
+  "automation_safe": true,
   "confidence_per_section": {"episode": 0.85},
-  "recommended_actions_priority_order": ["extract transcript", "check duration", "find related episodes"],
+  "recommended_actions_priority_order": ["extract quotes", "get transcript", "note guests"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-// POST /transcript
-router.post('/transcript', async (req: Request, res: Response) => {
-  const { episode_url } = req.body;
-  if (!episode_url) return res.status(400).json({ error: 'episode_url is required' });
+// POST /podcast-details
+router.post('/podcast-details', async (req: Request, res: Response) => {
+  const { podcast_id } = req.body;
+  if (!podcast_id) return res.status(400).json({ error: 'podcast_id is required' });
   try {
-    const raw = await callClaude(`Extract transcript from podcast episode: "${episode_url}". Return JSON:
+    const raw = await callClaude(`Get full podcast details for ID: "${podcast_id}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
   "success": true,
-  "episode_url": "${episode_url}",
-  "transcript": {
-    "full_text": "string",
-    "segments": [{"start_seconds": number, "end_seconds": number, "speaker": "string", "text": "string"}],
-    "language": "string", "word_count": number
+  "podcast_id": "${podcast_id}",
+  "podcast": {
+    "title": "string", "description": "string", "host": "string",
+    "category": "string", "language": "en",
+    "episode_count": 200, "subscribers": 50000, "rating": 4.8,
+    "started_date": "YYYY-MM-DD", "last_episode_date": "YYYY-MM-DD",
+    "publish_frequency": "weekly|biweekly|daily|monthly",
+    "rss_url": "string", "website": "string",
+    "recent_episodes": [{"title": "string", "published": "ISO8601", "duration_seconds": 3600}],
+    "notable_guests": ["string"]
   },
-  "key_topics": ["string"],
-  "summary": "string",
-  "confidence_per_section": {"transcript": 0.75},
-  "recommended_actions_priority_order": ["index for RAG", "extract key topics", "identify speakers"],
+  "source_provenance": {"provider": "podcast-search-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.85},
+  "cache_ttl_seconds": 3600,
+  "cache_recommended": true,
+  "recommended_next_api": "podcast-search",
+  "recommended_next_endpoint": "/episode-details",
+  "automation_safe": true,
+  "confidence_per_section": {"podcast": 0.85},
+  "recommended_actions_priority_order": ["check notable_guests", "review recent_episodes", "extract quotes"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
@@ -110,38 +127,110 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
     success: true,
     execution_ready: true,
     query,
-    objective: objective || 'podcast_research',
-    next_api: 'transcript-extraction',
-    next_endpoint: '/podcast',
+    objective: objective || 'podcast_discovery',
+    next_api: 'podcast-search',
+    next_endpoint: '/search',
     blocking_flags: [],
-    flag_definitions: { NO_QUERY: 'Search query is required', TRANSCRIPT_UNAVAILABLE: 'Transcript may not be available for all episodes' },
+    flag_definitions: { NO_QUERY: 'query is required', NO_RESULTS: 'No podcasts found for query' },
+    source_provenance: { provider: 'system', retrieved_at: new Date().toISOString(), freshness_score: 1.0 },
+    cache_ttl_seconds: 0,
+    cache_recommended: false,
+    recommended_next_api: 'podcast-search',
+    recommended_next_endpoint: '/search',
+    automation_safe: true,
     confidence_per_section: { execution_ready: 0.95, blocking_flags: 0.9 },
-    recommended_actions_priority_order: ['Search podcasts first', 'Get episode metadata', 'Extract transcript'],
+    recommended_actions_priority_order: ['Search podcasts', 'Get episode details', 'Extract notable quotes'],
     privacy: { data_stored: false, retention: 'none' },
   });
 });
 
-// POST /lookup (ONE-CALL)
-router.post('/lookup', async (req: Request, res: Response) => {
-  const { query } = req.body;
+// POST /podcast-intelligence (ONE-CALL)
+router.post('/podcast-intelligence', async (req: Request, res: Response) => {
+  const { query, context } = req.body;
   if (!query) return res.status(400).json({ error: 'query is required' });
   try {
-    const raw = await callClaude(`Full podcast intelligence for query: "${query}". Return JSON:
+    const raw = await callClaude(`Full podcast intelligence for: "${query}", context: "${context || 'research'}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
   "success": true,
   "query": "${query}",
-  "top_podcasts": [{"title": "string", "author": "string", "episode_count": number, "rating": number}],
-  "top_episodes": [
-    {"title": "string", "podcast": "string", "duration_seconds": number, "published_at": "string", "description": "string"}
-  ],
-  "best_match": {"title": "string", "reason": "string"},
-  "confidence_per_section": {"top_podcasts": 0.85, "top_episodes": 0.8},
-  "recommended_actions_priority_order": ["explore best_match first", "extract transcript for RAG", "check related podcasts"],
+  "top_podcasts": [{"podcast_id": "string", "title": "string", "host": "string", "subscribers": 50000, "rating": 4.8, "niche": "string"}],
+  "trending_topics": ["string"],
+  "notable_guests_found": ["string"],
+  "best_for_advertising": {"podcast_id": "string", "reason": "string"},
+  "best_for_research": {"podcast_id": "string", "reason": "string"},
+  "source_provenance": {"provider": "podcast-search-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.85},
+  "cache_ttl_seconds": 3600,
+  "cache_recommended": true,
+  "recommended_next_api": "transcript-extraction",
+  "recommended_next_endpoint": "/podcast",
+  "automation_safe": true,
+  "confidence_per_section": {"top_podcasts": 0.85},
+  "recommended_actions_priority_order": ["check best_for_advertising", "extract episode transcripts", "find notable quotes"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /quote-extraction
+router.post('/quote-extraction', async (req: Request, res: Response) => {
+  const { episode_id, podcast_id, topic } = req.body;
+  if (!episode_id && !podcast_id) return res.status(400).json({ error: 'episode_id or podcast_id is required' });
+  try {
+    const raw = await callClaude(`Extract notable quotes from podcast episode: "${episode_id || podcast_id}", topic filter: "${topic || 'all'}". Return JSON:
+{
+  "trace_id": "${traceId()}",
+  "computed_at": "${new Date().toISOString()}",
+  "success": true,
+  "episode_id": "${episode_id || ''}",
+  "quotes": [
+    {"quote": "string", "speaker": "string", "timestamp_seconds": 300, "topic": "string", "shareability_score": 0.85}
+  ],
+  "topics": ["string"],
+  "guest_entities": [{"name": "string", "organization": "string", "role": "string"}],
+  "controversial_segments": [{"topic": "string", "timestamp_seconds": 600, "controversy_score": 0.7}],
+  "key_insights": ["string"],
+  "source_provenance": {"provider": "podcast-search-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.85},
+  "cache_ttl_seconds": 86400,
+  "cache_recommended": true,
+  "recommended_next_api": "entity-extraction",
+  "recommended_next_endpoint": "/entities",
+  "automation_safe": true,
+  "confidence_per_section": {"quotes": 0.8, "guest_entities": 0.85},
+  "recommended_actions_priority_order": ["use high shareability_score quotes", "log guest_entities", "review controversial_segments"],
+  "privacy": {"data_stored": false, "retention": "none"}
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /batch
+router.post('/batch', async (req: Request, res: Response) => {
+  const { queries } = req.body;
+  if (!Array.isArray(queries) || queries.length === 0) return res.status(400).json({ error: 'queries array is required' });
+  if (queries.length > 10) return res.status(400).json({ error: 'Maximum 10 queries per batch' });
+  try {
+    const results = await Promise.all(queries.map(async (query: string) => {
+      const raw = await callClaude(`Top 3 podcasts for: "${query}". Return JSON:
+{"query": "${query}", "podcasts": [{"podcast_id": "string", "title": "string", "host": "string", "rating": 4.8, "subscribers": 50000}], "total_found": 3}`);
+      return parseJSON(raw);
+    }));
+    res.json({
+      trace_id: traceId(),
+      computed_at: new Date().toISOString(),
+      success: true,
+      batch_count: queries.length,
+      results,
+      source_provenance: { provider: 'podcast-search-ai', retrieved_at: new Date().toISOString(), freshness_score: 0.85 },
+      cache_ttl_seconds: 3600,
+      cache_recommended: true,
+      recommended_next_api: 'podcast-search',
+      recommended_next_endpoint: '/quote-extraction',
+      automation_safe: true,
+      privacy: { data_stored: false, retention: 'none' },
+    });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 

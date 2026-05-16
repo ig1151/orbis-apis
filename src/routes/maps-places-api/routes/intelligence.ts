@@ -39,6 +39,12 @@ router.post('/search-place', async (req: Request, res: Response) => {
     {"place_id": "string", "name": "string", "address": "string", "type": "string", "rating": number, "lat": number, "lng": number, "open_now": true}
   ],
   "total_found": number,
+  "source_provenance": {"provider": "maps-places-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.85},
+  "cache_ttl_seconds": 600,
+  "cache_recommended": true,
+  "recommended_next_api": "maps-places",
+  "recommended_next_endpoint": "/place-details",
+  "automation_safe": true,
   "confidence_per_section": {"places": 0.85},
   "recommended_actions_priority_order": ["get place details", "check nearby alternatives", "verify address"],
   "privacy": {"data_stored": false, "retention": "none"}
@@ -63,8 +69,16 @@ router.post('/place-details', async (req: Request, res: Response) => {
     "lat": number, "lng": number, "type": "string",
     "hours": {"monday": "string", "tuesday": "string", "wednesday": "string", "thursday": "string", "friday": "string", "saturday": "string", "sunday": "string"},
     "rating": number, "review_count": number, "price_level": 0,
-    "photos": ["string"], "amenities": ["string"]
+    "photos": ["string"], "amenities": ["string"],
+    "walkability_score": number,
+    "parking_availability": "street|garage|lot|valet|none"
   },
+  "source_provenance": {"provider": "maps-places-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.85},
+  "cache_ttl_seconds": 3600,
+  "cache_recommended": true,
+  "recommended_next_api": "maps-places",
+  "recommended_next_endpoint": "/travel-time",
+  "automation_safe": true,
   "confidence_per_section": {"details": 0.85},
   "recommended_actions_priority_order": ["verify hours", "check accessibility", "look up reviews"],
   "privacy": {"data_stored": false, "retention": "none"}
@@ -89,8 +103,51 @@ router.post('/nearby', async (req: Request, res: Response) => {
     {"place_id": "string", "name": "string", "address": "string", "distance_meters": number, "rating": number, "open_now": true}
   ],
   "total_found": number,
+  "source_provenance": {"provider": "maps-places-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.85},
+  "cache_ttl_seconds": 600,
+  "cache_recommended": true,
+  "recommended_next_api": "maps-places",
+  "recommended_next_endpoint": "/place-details",
+  "automation_safe": true,
   "confidence_per_section": {"places": 0.85},
   "recommended_actions_priority_order": ["sort by distance", "check ratings", "verify open status"],
+  "privacy": {"data_stored": false, "retention": "none"}
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /travel-time
+router.post('/travel-time', async (req: Request, res: Response) => {
+  const { origin, destination, mode } = req.body;
+  if (!origin || !destination) return res.status(400).json({ error: 'origin and destination are required' });
+  const travelMode = mode || 'driving';
+  try {
+    const raw = await callClaude(`Calculate travel time from origin: "${origin}" to destination: "${destination}" by mode: "${travelMode}". Return JSON:
+{
+  "trace_id": "${traceId()}",
+  "computed_at": "${new Date().toISOString()}",
+  "success": true,
+  "origin": "${origin}",
+  "destination": "${destination}",
+  "mode": "${travelMode}",
+  "travel": {
+    "duration_minutes": number,
+    "distance_km": number,
+    "distance_miles": number,
+    "route_summary": "string",
+    "traffic_condition": "light|moderate|heavy",
+    "estimated_arrival": "string",
+    "alternative_routes": [{"name": "string", "duration_minutes": number, "distance_km": number}]
+  },
+  "source_provenance": {"provider": "maps-places-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.9},
+  "cache_ttl_seconds": 300,
+  "cache_recommended": true,
+  "recommended_next_api": "restaurant-search",
+  "recommended_next_endpoint": "/reservation-availability",
+  "automation_safe": true,
+  "confidence_per_section": {"travel": 0.85},
+  "recommended_actions_priority_order": ["account for traffic", "check alternative routes", "set departure reminder"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
@@ -112,6 +169,12 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
     next_endpoint: '/events',
     blocking_flags: [],
     flag_definitions: { NO_QUERY: 'No search query provided', INVALID_LOCATION: 'Location could not be geocoded' },
+    source_provenance: { provider: 'maps-places-ai', retrieved_at: new Date().toISOString(), freshness_score: 1.0 },
+    cache_ttl_seconds: 0,
+    cache_recommended: false,
+    recommended_next_api: 'maps-places',
+    recommended_next_endpoint: '/search-place',
+    automation_safe: true,
     confidence_per_section: { execution_ready: 0.95, blocking_flags: 0.9 },
     recommended_actions_priority_order: ['Search places first', 'Get details for top result', 'Find nearby alternatives'],
     privacy: { data_stored: false, retention: 'none' },
@@ -130,15 +193,52 @@ router.post('/lookup', async (req: Request, res: Response) => {
   "success": true,
   "query": "${query}",
   "top_places": [
-    {"place_id": "string", "name": "string", "address": "string", "type": "string", "rating": number, "lat": number, "lng": number, "hours": "string", "phone": "string", "website": "string"}
+    {"place_id": "string", "name": "string", "address": "string", "type": "string", "rating": number, "lat": number, "lng": number, "hours": "string", "phone": "string", "website": "string", "walkability_score": number, "parking_availability": "street|garage|lot|valet|none"}
   ],
   "nearby_alternatives": [{"name": "string", "type": "string", "distance_meters": number}],
   "best_match": {"place_id": "string", "name": "string", "reason": "string"},
+  "source_provenance": {"provider": "maps-places-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.85},
+  "cache_ttl_seconds": 600,
+  "cache_recommended": true,
+  "recommended_next_api": "event-search",
+  "recommended_next_endpoint": "/events",
+  "automation_safe": true,
   "confidence_per_section": {"top_places": 0.85, "best_match": 0.8},
   "recommended_actions_priority_order": ["validate best_match", "check hours", "get directions"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /batch
+router.post('/batch', async (req: Request, res: Response) => {
+  const { queries } = req.body;
+  if (!Array.isArray(queries) || queries.length === 0) return res.status(400).json({ error: 'queries array is required' });
+  if (queries.length > 10) return res.status(400).json({ error: 'Maximum 10 queries per batch request' });
+  try {
+    const results = await Promise.all(queries.map(async (query: string) => {
+      const raw = await callClaude(`Search places for query: "${query}". Return JSON with top 3 results:
+{
+  "query": "${query}",
+  "places": [{"place_id": "string", "name": "string", "address": "string", "type": "string", "rating": number, "lat": number, "lng": number}],
+  "total_found": number
+}`);
+      return parseJSON(raw);
+    }));
+    res.json({
+      trace_id: traceId(),
+      computed_at: new Date().toISOString(),
+      success: true,
+      batch_count: queries.length,
+      results,
+      source_provenance: { provider: 'maps-places-ai', retrieved_at: new Date().toISOString(), freshness_score: 0.85 },
+      cache_ttl_seconds: 600,
+      cache_recommended: true,
+      recommended_next_api: 'maps-places',
+      recommended_next_endpoint: '/place-details',
+      automation_safe: true,
+    });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 

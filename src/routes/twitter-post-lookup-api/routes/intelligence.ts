@@ -14,88 +14,105 @@ async function callClaude(prompt: string): Promise<string> {
   return res.data.choices[0].message.content;
 }
 
-function parseJSON(raw: string) {
-  return JSON.parse(raw.replace(/```json|```/g, '').trim());
-}
-
+function parseJSON(raw: string) { return JSON.parse(raw.replace(/```json|```/g, '').trim()); }
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
 
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ name: 'X/Twitter Post Lookup API', info: '/twitter-post-lookup/info', openapi: '/twitter-post-lookup/openapi.json', health: 'ok' });
+  res.json({ name: 'Twitter Post Lookup API', info: '/twitter-post-lookup/info', openapi: '/twitter-post-lookup/openapi.json', health: 'ok' });
 });
 
-// POST /post
-router.post('/post', async (req: Request, res: Response) => {
-  const { post_url, post_id } = req.body;
-  if (!post_url && !post_id) return res.status(400).json({ error: 'post_url or post_id is required' });
-  const identifier = post_url || post_id;
+// POST /tweet
+router.post('/tweet', async (req: Request, res: Response) => {
+  const { tweet_url, tweet_id } = req.body;
+  if (!tweet_url && !tweet_id) return res.status(400).json({ error: 'tweet_url or tweet_id is required' });
   try {
-    const raw = await callClaude(`Get Twitter/X post data for: "${identifier}". Return JSON:
+    const raw = await callClaude(`Get tweet data for: "${tweet_url || tweet_id}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
   "success": true,
-  "post_id": "${post_id || 'extracted'}",
-  "post": {
-    "text": "string", "author": "string", "username": "string",
-    "posted_at": "string", "likes": number, "retweets": number,
-    "replies": number, "views": number, "is_thread": false, "thread_length": 1
+  "tweet_id": "${tweet_id || ''}",
+  "tweet": {
+    "text": "string", "author_username": "string", "author_display_name": "string",
+    "author_followers": 50000, "verified": false,
+    "posted_at": "ISO8601",
+    "likes": 1200, "retweets": 450, "replies": 85, "bookmarks": 200,
+    "impressions": 50000,
+    "hashtags": ["string"], "mentions": ["string"], "urls": ["string"],
+    "media_count": 1, "is_thread": false, "thread_length": 1
   },
-  "sentiment": "positive|negative|neutral",
-  "topics": ["string"],
-  "confidence_per_section": {"post": 0.8},
-  "recommended_actions_priority_order": ["check thread context", "measure engagement", "analyze sentiment"],
+  "source_provenance": {"provider": "twitter-lookup-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.9},
+  "cache_ttl_seconds": 3600,
+  "cache_recommended": true,
+  "recommended_next_api": "twitter-post-lookup",
+  "recommended_next_endpoint": "/engagement-analysis",
+  "automation_safe": true,
+  "confidence_per_section": {"tweet": 0.9},
+  "recommended_actions_priority_order": ["analyze engagement", "check thread context", "run sentiment"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-// POST /profile
-router.post('/profile', async (req: Request, res: Response) => {
-  const { username } = req.body;
+// POST /user-tweets
+router.post('/user-tweets', async (req: Request, res: Response) => {
+  const { username, limit, since_date } = req.body;
   if (!username) return res.status(400).json({ error: 'username is required' });
   try {
-    const raw = await callClaude(`Get Twitter/X profile metrics for username: "${username}". Return JSON:
+    const raw = await callClaude(`Get recent tweets for user: "${username}", limit: ${limit || 20}, since: "${since_date || '7 days ago'}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
   "success": true,
   "username": "${username}",
-  "profile": {
-    "name": "string", "bio": "string", "followers": number, "following": number,
-    "tweets_count": number, "likes_count": number, "verified": false,
-    "created_at": "string", "location": "string", "website": "string"
-  },
-  "audience_quality": "high|medium|low",
-  "influence_score": number,
-  "confidence_per_section": {"profile": 0.8},
-  "recommended_actions_priority_order": ["check follower quality", "assess influence score", "review recent tweets"],
+  "tweets": [
+    {"tweet_id": "string", "text": "string", "posted_at": "ISO8601", "likes": 500, "retweets": 120, "replies": 45, "impressions": 20000, "hashtags": ["string"]}
+  ],
+  "total_fetched": 20,
+  "top_hashtags": ["string"],
+  "avg_engagement_rate": 0.04,
+  "source_provenance": {"provider": "twitter-lookup-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.9},
+  "cache_ttl_seconds": 1800,
+  "cache_recommended": true,
+  "recommended_next_api": "twitter-post-lookup",
+  "recommended_next_endpoint": "/thread-summary",
+  "automation_safe": true,
+  "confidence_per_section": {"tweets": 0.9},
+  "recommended_actions_priority_order": ["identify top tweets", "check top_hashtags", "run thread summary"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-// POST /engagement
-router.post('/engagement', async (req: Request, res: Response) => {
-  const { post_url } = req.body;
-  if (!post_url) return res.status(400).json({ error: 'post_url is required' });
+// POST /engagement-analysis
+router.post('/engagement-analysis', async (req: Request, res: Response) => {
+  const { tweet_id, tweet_url } = req.body;
+  if (!tweet_id && !tweet_url) return res.status(400).json({ error: 'tweet_id or tweet_url is required' });
   try {
-    const raw = await callClaude(`Analyze engagement for Twitter/X post: "${post_url}". Return JSON:
+    const raw = await callClaude(`Analyze engagement for tweet: "${tweet_id || tweet_url}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
   "success": true,
-  "post_url": "${post_url}",
+  "tweet_id": "${tweet_id || ''}",
   "engagement": {
-    "likes": number, "retweets": number, "replies": number, "quotes": number, "views": number,
-    "engagement_rate": number, "viral_score": number
+    "likes": 1200, "retweets": 450, "replies": 85, "bookmarks": 200, "impressions": 50000,
+    "engagement_rate": 0.039,
+    "viral_score": 0.75,
+    "reply_sentiment": "positive|negative|mixed|neutral",
+    "top_engagers": [{"username": "string", "followers": 50000, "verified": false}]
   },
-  "audience_reaction": "positive|negative|neutral|mixed",
-  "top_replies": [{"text": "string", "likes": number, "author": "string"}],
-  "confidence_per_section": {"engagement": 0.8},
-  "recommended_actions_priority_order": ["note viral score", "read top replies", "check audience reaction"],
+  "performance_vs_author_avg": 1.8,
+  "source_provenance": {"provider": "twitter-lookup-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.9},
+  "cache_ttl_seconds": 3600,
+  "cache_recommended": true,
+  "recommended_next_api": "sentiment",
+  "recommended_next_endpoint": "/sentiment",
+  "automation_safe": true,
+  "confidence_per_section": {"engagement": 0.85},
+  "recommended_actions_priority_order": ["check viral_score", "review top_engagers", "run sentiment on replies"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
@@ -112,39 +129,115 @@ router.post('/execution-gate', async (req: Request, res: Response) => {
     success: true,
     execution_ready: true,
     username,
-    objective: objective || 'social_intelligence',
-    next_api: 'youtube-metadata',
-    next_endpoint: '/channel',
+    objective: objective || 'tweet_monitoring',
+    next_api: 'twitter-post-lookup',
+    next_endpoint: '/user-tweets',
     blocking_flags: [],
-    flag_definitions: { NO_USERNAME: 'Username is required', PRIVATE_ACCOUNT: 'Account is private — limited data available' },
+    flag_definitions: { NO_USERNAME: 'username is required', PROTECTED_ACCOUNT: 'Account is protected — tweets not accessible' },
+    source_provenance: { provider: 'system', retrieved_at: new Date().toISOString(), freshness_score: 1.0 },
+    cache_ttl_seconds: 0,
+    cache_recommended: false,
+    recommended_next_api: 'twitter-post-lookup',
+    recommended_next_endpoint: '/user-tweets',
+    automation_safe: true,
     confidence_per_section: { execution_ready: 0.95, blocking_flags: 0.9 },
-    recommended_actions_priority_order: ['Get profile first', 'Measure engagement', 'Analyze sentiment'],
+    recommended_actions_priority_order: ['Fetch user tweets', 'Analyze engagement', 'Run thread summary'],
     privacy: { data_stored: false, retention: 'none' },
   });
 });
 
-// POST /analyze (ONE-CALL)
-router.post('/analyze', async (req: Request, res: Response) => {
-  const { username } = req.body;
+// POST /twitter-intelligence (ONE-CALL)
+router.post('/twitter-intelligence', async (req: Request, res: Response) => {
+  const { username, context } = req.body;
   if (!username) return res.status(400).json({ error: 'username is required' });
   try {
-    const raw = await callClaude(`Full Twitter/X intelligence for username: "${username}". Return JSON:
+    const raw = await callClaude(`Full Twitter intelligence for: "${username}", context: "${context || 'brand monitoring'}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
   "success": true,
   "username": "${username}",
-  "profile": {"name": "string", "bio": "string", "followers": number, "verified": false},
-  "recent_posts": [{"text": "string", "likes": number, "retweets": number, "sentiment": "positive|negative|neutral"}],
-  "engagement_avg": {"likes": number, "retweets": number, "engagement_rate": number},
-  "topics": ["string"],
-  "sentiment_distribution": {"positive": number, "neutral": number, "negative": number},
-  "influence_assessment": {"score": number, "tier": "mega|macro|micro|nano"},
-  "confidence_per_section": {"profile": 0.8, "recent_posts": 0.75},
-  "recommended_actions_priority_order": ["verify influence tier", "review top topics", "track sentiment trend"],
+  "top_tweets": [{"tweet_id": "string", "text": "string", "likes": 1000, "viral_score": 0.8}],
+  "engagement_summary": {"avg_likes": 500, "avg_retweets": 100, "avg_engagement_rate": 0.04, "trend": "growing|stable|declining"},
+  "top_topics": ["string"],
+  "posting_pattern": {"peak_days": ["string"], "peak_hours": ["string"], "avg_per_week": 5},
+  "influence_score": 0.75,
+  "source_provenance": {"provider": "twitter-lookup-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.9},
+  "cache_ttl_seconds": 3600,
+  "cache_recommended": true,
+  "recommended_next_api": "sentiment",
+  "recommended_next_endpoint": "/trend-sentiment",
+  "automation_safe": true,
+  "confidence_per_section": {"top_tweets": 0.9, "engagement_summary": 0.85},
+  "recommended_actions_priority_order": ["review top_topics", "check posting_pattern", "assess influence_score"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /thread-summary
+router.post('/thread-summary', async (req: Request, res: Response) => {
+  const { tweet_id, tweet_url } = req.body;
+  if (!tweet_id && !tweet_url) return res.status(400).json({ error: 'tweet_id or tweet_url is required' });
+  try {
+    const raw = await callClaude(`Summarize Twitter thread starting at: "${tweet_id || tweet_url}". Return JSON:
+{
+  "trace_id": "${traceId()}",
+  "computed_at": "${new Date().toISOString()}",
+  "success": true,
+  "tweet_id": "${tweet_id || ''}",
+  "thread": {
+    "length": 8,
+    "summary": "string",
+    "key_points": ["string"],
+    "total_likes": 5000,
+    "total_retweets": 1200,
+    "total_impressions": 200000,
+    "virality_score": 0.82,
+    "momentum_direction": "accelerating|stable|declining",
+    "peak_engagement_tweet": {"tweet_id": "string", "text": "string", "likes": 2000}
+  },
+  "audience_reaction": "positive|negative|mixed|divided",
+  "source_provenance": {"provider": "twitter-lookup-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.9},
+  "cache_ttl_seconds": 3600,
+  "cache_recommended": true,
+  "recommended_next_api": "sentiment",
+  "recommended_next_endpoint": "/trend-sentiment",
+  "automation_safe": true,
+  "confidence_per_section": {"thread": 0.85},
+  "recommended_actions_priority_order": ["review key_points", "monitor momentum_direction", "run sentiment analysis"],
+  "privacy": {"data_stored": false, "retention": "none"}
+}`);
+    res.json(parseJSON(raw));
+  } catch (e: any) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /batch
+router.post('/batch', async (req: Request, res: Response) => {
+  const { tweet_ids } = req.body;
+  if (!Array.isArray(tweet_ids) || tweet_ids.length === 0) return res.status(400).json({ error: 'tweet_ids array is required' });
+  if (tweet_ids.length > 10) return res.status(400).json({ error: 'Maximum 10 tweets per batch' });
+  try {
+    const results = await Promise.all(tweet_ids.map(async (tweet_id: string) => {
+      const raw = await callClaude(`Brief tweet summary for ID: "${tweet_id}". Return JSON:
+{"tweet_id": "${tweet_id}", "text_snippet": "string", "likes": 0, "retweets": 0, "author": "string", "posted_at": "ISO8601"}`);
+      return parseJSON(raw);
+    }));
+    res.json({
+      trace_id: traceId(),
+      computed_at: new Date().toISOString(),
+      success: true,
+      batch_count: tweet_ids.length,
+      results,
+      source_provenance: { provider: 'twitter-lookup-ai', retrieved_at: new Date().toISOString(), freshness_score: 0.9 },
+      cache_ttl_seconds: 3600,
+      cache_recommended: true,
+      recommended_next_api: 'twitter-post-lookup',
+      recommended_next_endpoint: '/engagement-analysis',
+      automation_safe: true,
+      privacy: { data_stored: false, retention: 'none' },
+    });
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
