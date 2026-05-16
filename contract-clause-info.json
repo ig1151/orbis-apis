@@ -1,0 +1,73 @@
+{
+  "name": "Contract Clause API",
+  "slug": "contract-clause",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 200
+    },
+    "pay_per_call": {
+      "extract": "$0.008",
+      "classify": "$0.005",
+      "compare": "$0.008",
+      "execution-gate": "$0.001",
+      "contract-intelligence": "$0.015",
+      "risk-assess": "$0.008",
+      "batch": "$0.060"
+    }
+  },
+  "rate_limits": {
+    "free": "200/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/extract",
+      "description": "Extract clauses from contract"
+    },
+    {
+      "method": "POST",
+      "path": "/classify",
+      "description": "Classify clause types"
+    },
+    {
+      "method": "POST",
+      "path": "/compare",
+      "description": "Compare clauses across documents"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/contract-intelligence",
+      "description": "ONE-CALL full contract intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/risk-assess",
+      "description": "Risk-assess contract clauses"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch analyze up to 10 contracts"
+    }
+  ],
+  "execution_chain": {
+    "previous": "receipt-parser",
+    "next": "legal-citation",
+    "optional_next": []
+  }
+}

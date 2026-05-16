@@ -1,0 +1,73 @@
+{
+  "name": "Signature Detection API",
+  "slug": "signature-detection",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 200
+    },
+    "pay_per_call": {
+      "detect": "$0.005",
+      "verify": "$0.008",
+      "locate": "$0.003",
+      "execution-gate": "$0.001",
+      "signature-intelligence": "$0.012",
+      "extract": "$0.005",
+      "batch": "$0.040"
+    }
+  },
+  "rate_limits": {
+    "free": "200/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/detect",
+      "description": "Detect signatures in document"
+    },
+    {
+      "method": "POST",
+      "path": "/verify",
+      "description": "Verify signature authenticity"
+    },
+    {
+      "method": "POST",
+      "path": "/locate",
+      "description": "Locate signature positions"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/signature-intelligence",
+      "description": "ONE-CALL full signature intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/extract",
+      "description": "Extract signature as image"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch detect in up to 20 documents"
+    }
+  ],
+  "execution_chain": {
+    "previous": "table-extraction",
+    "next": "document-classification",
+    "optional_next": []
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "name": "Background Removal API",
+  "slug": "background-removal",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 200
+    },
+    "pay_per_call": {
+      "remove": "$0.010",
+      "replace": "$0.010",
+      "mask": "$0.008",
+      "execution-gate": "$0.001",
+      "background-intelligence": "$0.008",
+      "enhance": "$0.008",
+      "batch": "$0.040"
+    }
+  },
+  "rate_limits": {
+    "free": "200/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/remove",
+      "description": "Remove background from image"
+    },
+    {
+      "method": "POST",
+      "path": "/replace",
+      "description": "Replace background with new image or color"
+    },
+    {
+      "method": "POST",
+      "path": "/mask",
+      "description": "Generate segmentation mask"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/background-intelligence",
+      "description": "ONE-CALL detect subject + recommend operation + quality prediction",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/enhance",
+      "description": "Enhance subject after background removal"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch remove from up to 20 images"
+    }
+  ],
+  "execution_chain": {
+    "previous": "image-resize",
+    "next": "color-palette",
+    "optional_next": []
+  }
+}

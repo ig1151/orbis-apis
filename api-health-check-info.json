@@ -1,0 +1,73 @@
+{
+  "name": "API Health Check API",
+  "slug": "api-health-check",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "check": "$0.002",
+      "monitor": "$0.003",
+      "benchmark": "$0.005",
+      "execution-gate": "$0.001",
+      "health-intelligence": "$0.008",
+      "history": "$0.002",
+      "batch": "$0.020"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/check",
+      "description": "Check API endpoint health"
+    },
+    {
+      "method": "POST",
+      "path": "/monitor",
+      "description": "Monitor API performance metrics"
+    },
+    {
+      "method": "POST",
+      "path": "/benchmark",
+      "description": "Benchmark API response times"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/health-intelligence",
+      "description": "ONE-CALL full health intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/history",
+      "description": "Get API uptime history"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch check up to 20 endpoints"
+    }
+  ],
+  "execution_chain": {
+    "previous": "json-schema-validator",
+    "next": "ssl-certificate",
+    "optional_next": []
+  }
+}

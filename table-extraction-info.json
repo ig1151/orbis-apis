@@ -1,0 +1,73 @@
+{
+  "name": "Table Extraction API",
+  "slug": "table-extraction",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 300
+    },
+    "pay_per_call": {
+      "extract": "$0.005",
+      "convert": "$0.003",
+      "merge": "$0.005",
+      "execution-gate": "$0.001",
+      "table-intelligence": "$0.010",
+      "clean": "$0.003",
+      "batch": "$0.040"
+    }
+  },
+  "rate_limits": {
+    "free": "300/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/extract",
+      "description": "Extract tables from document"
+    },
+    {
+      "method": "POST",
+      "path": "/convert",
+      "description": "Convert table to structured format"
+    },
+    {
+      "method": "POST",
+      "path": "/merge",
+      "description": "Merge multiple tables"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/table-intelligence",
+      "description": "ONE-CALL full table intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/clean",
+      "description": "Clean and normalize table data"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch extract from up to 10 documents"
+    }
+  ],
+  "execution_chain": {
+    "previous": "legal-citation",
+    "next": "signature-detection",
+    "optional_next": []
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "name": "Document Classification API",
+  "slug": "document-classification",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "classify": "$0.003",
+      "extract-metadata": "$0.003",
+      "compare": "$0.005",
+      "execution-gate": "$0.001",
+      "document-intelligence": "$0.008",
+      "segment": "$0.005",
+      "batch": "$0.025"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/classify",
+      "description": "Classify document type"
+    },
+    {
+      "method": "POST",
+      "path": "/extract-metadata",
+      "description": "Extract document metadata"
+    },
+    {
+      "method": "POST",
+      "path": "/compare",
+      "description": "Compare document similarity"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/document-intelligence",
+      "description": "ONE-CALL full document intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/segment",
+      "description": "Segment document into sections"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch classify up to 20 documents"
+    }
+  ],
+  "execution_chain": {
+    "previous": "signature-detection",
+    "next": "pdf-generator",
+    "optional_next": []
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "name": "GitHub Issue Search API",
+  "slug": "github-issue-search",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "search": "$0.003",
+      "analyze": "$0.005",
+      "summarize": "$0.005",
+      "execution-gate": "$0.001",
+      "issue-intelligence": "$0.010",
+      "trending": "$0.003",
+      "batch": "$0.035"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/search",
+      "description": "Search GitHub issues"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "Analyze issue patterns"
+    },
+    {
+      "method": "POST",
+      "path": "/summarize",
+      "description": "Summarize issue details"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/issue-intelligence",
+      "description": "ONE-CALL full issue intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/trending",
+      "description": "Get trending issues and topics"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch analyze up to 20 repos"
+    }
+  ],
+  "execution_chain": {
+    "previous": "pdf-generator",
+    "next": "json-schema-validator",
+    "optional_next": []
+  }
+}

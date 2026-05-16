@@ -1,0 +1,73 @@
+{
+  "name": "DNS Lookup API",
+  "slug": "dns-lookup",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 1000
+    },
+    "pay_per_call": {
+      "lookup": "$0.001",
+      "reverse": "$0.001",
+      "trace": "$0.003",
+      "execution-gate": "$0.001",
+      "dns-intelligence": "$0.005",
+      "monitor": "$0.002",
+      "batch": "$0.010"
+    }
+  },
+  "rate_limits": {
+    "free": "1000/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "Lookup DNS records"
+    },
+    {
+      "method": "POST",
+      "path": "/reverse",
+      "description": "Reverse DNS lookup"
+    },
+    {
+      "method": "POST",
+      "path": "/trace",
+      "description": "Trace DNS resolution path"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/dns-intelligence",
+      "description": "ONE-CALL full DNS intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/monitor",
+      "description": "Monitor DNS record changes"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch lookup up to 50 domains"
+    }
+  ],
+  "execution_chain": {
+    "previous": "ssl-certificate",
+    "next": "cve-lookup",
+    "optional_next": []
+  }
+}

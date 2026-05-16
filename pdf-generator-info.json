@@ -1,0 +1,73 @@
+{
+  "name": "PDF Generator API",
+  "slug": "pdf-generator",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 200
+    },
+    "pay_per_call": {
+      "generate": "$0.010",
+      "merge": "$0.008",
+      "template": "$0.010",
+      "execution-gate": "$0.001",
+      "pdf-intelligence": "$0.015",
+      "compress": "$0.005",
+      "batch": "$0.060"
+    }
+  },
+  "rate_limits": {
+    "free": "200/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/generate",
+      "description": "Generate PDF from content"
+    },
+    {
+      "method": "POST",
+      "path": "/merge",
+      "description": "Merge multiple PDFs"
+    },
+    {
+      "method": "POST",
+      "path": "/template",
+      "description": "Generate PDF from template"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/pdf-intelligence",
+      "description": "ONE-CALL full PDF intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/compress",
+      "description": "Compress PDF file size"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch generate up to 10 PDFs"
+    }
+  ],
+  "execution_chain": {
+    "previous": "document-classification",
+    "next": "github-issue-search",
+    "optional_next": []
+  }
+}

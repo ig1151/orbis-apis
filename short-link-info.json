@@ -1,0 +1,73 @@
+{
+  "name": "Short Link API",
+  "slug": "short-link",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 1000
+    },
+    "pay_per_call": {
+      "shorten": "$0.001",
+      "expand": "$0.001",
+      "analyze": "$0.003",
+      "execution-gate": "$0.001",
+      "link-intelligence": "$0.005",
+      "validate": "$0.002",
+      "batch": "$0.008"
+    }
+  },
+  "rate_limits": {
+    "free": "1000/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/shorten",
+      "description": "Shorten a URL with optional custom alias"
+    },
+    {
+      "method": "POST",
+      "path": "/expand",
+      "description": "Expand short URL to final destination"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "Analyze link click performance"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/link-intelligence",
+      "description": "ONE-CALL safety check + UTM suggestions + sharing score",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/validate",
+      "description": "Validate URL safety and reachability"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch shorten up to 20 URLs"
+    }
+  ],
+  "execution_chain": {
+    "previous": "color-palette",
+    "next": "meme-caption",
+    "optional_next": []
+  }
+}

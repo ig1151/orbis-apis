@@ -1,0 +1,73 @@
+{
+  "name": "Receipt Parser API",
+  "slug": "receipt-parser",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 300
+    },
+    "pay_per_call": {
+      "parse": "$0.005",
+      "categorize": "$0.003",
+      "summarize": "$0.003",
+      "execution-gate": "$0.001",
+      "receipt-intelligence": "$0.010",
+      "split": "$0.003",
+      "batch": "$0.040"
+    }
+  },
+  "rate_limits": {
+    "free": "300/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/parse",
+      "description": "Parse receipt document"
+    },
+    {
+      "method": "POST",
+      "path": "/categorize",
+      "description": "Categorize receipt expenses"
+    },
+    {
+      "method": "POST",
+      "path": "/summarize",
+      "description": "Summarize receipt data"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/receipt-intelligence",
+      "description": "ONE-CALL full receipt intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/split",
+      "description": "Split receipt for shared expenses"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch parse up to 20 receipts"
+    }
+  ],
+  "execution_chain": {
+    "previous": "invoice-parser",
+    "next": "contract-clause",
+    "optional_next": []
+  }
+}

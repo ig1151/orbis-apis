@@ -1,0 +1,73 @@
+{
+  "name": "JSON Schema Validator API",
+  "slug": "json-schema-validator",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 1000
+    },
+    "pay_per_call": {
+      "validate": "$0.001",
+      "generate": "$0.003",
+      "convert": "$0.003",
+      "execution-gate": "$0.001",
+      "schema-intelligence": "$0.005",
+      "infer": "$0.003",
+      "batch": "$0.010"
+    }
+  },
+  "rate_limits": {
+    "free": "1000/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/validate",
+      "description": "Validate JSON against schema"
+    },
+    {
+      "method": "POST",
+      "path": "/generate",
+      "description": "Generate JSON schema from example"
+    },
+    {
+      "method": "POST",
+      "path": "/convert",
+      "description": "Convert between schema formats"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/schema-intelligence",
+      "description": "ONE-CALL full schema intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/infer",
+      "description": "Infer schema from data samples"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch validate up to 50 items"
+    }
+  ],
+  "execution_chain": {
+    "previous": "github-issue-search",
+    "next": "api-health-check",
+    "optional_next": []
+  }
+}

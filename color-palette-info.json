@@ -1,0 +1,73 @@
+{
+  "name": "Color Palette API",
+  "slug": "color-palette",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "extract": "$0.003",
+      "generate": "$0.005",
+      "match": "$0.002",
+      "execution-gate": "$0.001",
+      "palette-intelligence": "$0.008",
+      "accessibility": "$0.002",
+      "batch": "$0.020"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/extract",
+      "description": "Extract color palette from image"
+    },
+    {
+      "method": "POST",
+      "path": "/generate",
+      "description": "Generate brand color palette"
+    },
+    {
+      "method": "POST",
+      "path": "/match",
+      "description": "Find complementary color matches"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/palette-intelligence",
+      "description": "ONE-CALL extract + brand fit + accessibility + dark mode check",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/accessibility",
+      "description": "Check WCAG color accessibility"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch extract from up to 10 images"
+    }
+  ],
+  "execution_chain": {
+    "previous": "background-removal",
+    "next": "short-link",
+    "optional_next": []
+  }
+}

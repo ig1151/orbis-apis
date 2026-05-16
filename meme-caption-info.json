@@ -1,0 +1,73 @@
+{
+  "name": "Meme Caption Generator API",
+  "slug": "meme-caption",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "generate": "$0.003",
+      "analyze": "$0.003",
+      "localize": "$0.005",
+      "execution-gate": "$0.001",
+      "meme-intelligence": "$0.008",
+      "trending": "$0.003",
+      "batch": "$0.020"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/generate",
+      "description": "Generate meme captions for a topic"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "Analyze meme format, humor, and virality"
+    },
+    {
+      "method": "POST",
+      "path": "/localize",
+      "description": "Localize meme caption for target audience"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/meme-intelligence",
+      "description": "ONE-CALL caption + template + hashtags + posting time + brand safety",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/trending",
+      "description": "Get trending meme formats and templates"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch generate captions for up to 10 topics"
+    }
+  ],
+  "execution_chain": {
+    "previous": "short-link",
+    "next": "html-to-markdown",
+    "optional_next": []
+  }
+}

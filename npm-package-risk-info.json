@@ -1,0 +1,73 @@
+{
+  "name": "NPM Package Risk API",
+  "slug": "npm-package-risk",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "analyze": "$0.003",
+      "audit": "$0.005",
+      "compare": "$0.003",
+      "execution-gate": "$0.001",
+      "package-intelligence": "$0.008",
+      "score": "$0.003",
+      "batch": "$0.025"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "Analyze npm package risk"
+    },
+    {
+      "method": "POST",
+      "path": "/audit",
+      "description": "Audit package dependencies"
+    },
+    {
+      "method": "POST",
+      "path": "/compare",
+      "description": "Compare package alternatives"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/package-intelligence",
+      "description": "ONE-CALL full package intelligence",
+      "x_one_call": true
+    },
+    {
+      "method": "POST",
+      "path": "/score",
+      "description": "Score package health and risk"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch analyze up to 20 packages"
+    }
+  ],
+  "execution_chain": {
+    "previous": "cve-lookup",
+    "next": "image-resize",
+    "optional_next": []
+  }
+}
