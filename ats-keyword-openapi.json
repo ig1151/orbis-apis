@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ATS Keyword API",
+    "version": "1.0.0",
+    "description": "Extract ATS-critical keywords from job descriptions, match resumes to job requirements, and score keyword coverage for recruiting automation and job-application agents",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": { "extract-keywords": "$0.004", "match": "$0.006", "score": "$0.005", "execution-gate": "$0.001", "analyze": "$0.010" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/ats-keyword" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/extract-keywords": {
+      "post": {
+        "operationId": "extractKeywords",
+        "summary": "Extract ATS-critical keywords from job description",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["job_description"], "properties": { "job_description": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Extracted keywords" }, "400": { "description": "Missing job_description" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/match": {
+      "post": {
+        "operationId": "matchResume",
+        "summary": "Match resume to job description keywords",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["resume_text", "job_description"], "properties": { "resume_text": { "type": "string" }, "job_description": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Match results" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/score": {
+      "post": {
+        "operationId": "scoreKeywords",
+        "summary": "Score keyword coverage and ATS readiness",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["resume_text", "job_description"], "properties": { "resume_text": { "type": "string" }, "job_description": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Score result" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["job_description"], "properties": { "job_description": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL: full ATS keyword analysis — extract + match + score",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["resume_url", "job_description"], "properties": { "resume_url": { "type": "string" }, "job_description": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full ATS analysis" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

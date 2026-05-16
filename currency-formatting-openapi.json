@@ -1,0 +1,61 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Currency Formatting API",
+    "version": "1.0.0",
+    "description": "Format currency amounts for any locale, convert between currencies with formatting, and look up currency symbols and metadata for invoicing and finance automation agents",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-financial-disclaimer": "Exchange rates are indicative only. Verify with authoritative source before use in financial transactions.",
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": { "format": "$0.001", "convert": "$0.001", "symbols": "$0.001", "execution-gate": "$0.001", "lookup": "$0.002" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/currency-formatting" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/format": {
+      "post": {
+        "operationId": "formatCurrency",
+        "summary": "Format a currency amount for a locale",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["amount", "currency"], "properties": { "amount": { "type": "number" }, "currency": { "type": "string" }, "locale": { "type": "string", "default": "en-US" } } } } } },
+        "responses": { "200": { "description": "Formatted currency" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/convert": {
+      "post": {
+        "operationId": "convertCurrency",
+        "summary": "Convert amount between currencies with formatting",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["amount", "from_currency", "to_currency"], "properties": { "amount": { "type": "number" }, "from_currency": { "type": "string" }, "to_currency": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Converted amount" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/symbols": {
+      "post": {
+        "operationId": "getCurrencySymbols",
+        "summary": "List currency symbols and metadata",
+        "requestBody": { "required": false, "content": { "application/json": { "schema": { "type": "object", "properties": { "region": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Currency symbols" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["currency"], "properties": { "currency": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL: full currency intelligence — metadata + examples + major pairs",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["currency"], "properties": { "currency": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full currency intelligence" }, "400": { "description": "Missing currency" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

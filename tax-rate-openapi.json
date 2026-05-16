@@ -1,0 +1,61 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tax Rate Lookup API",
+    "version": "1.0.0",
+    "description": "Look up US sales tax rates, VAT rates by country, and jurisdiction-level tax data for e-commerce checkout automation, invoicing, and compliance workflows",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-compliance-disclaimer": "Tax rates are indicative. Verify with a licensed tax professional before use in compliance workflows.",
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": { "sales-tax": "$0.002", "vat": "$0.002", "jurisdiction": "$0.003", "execution-gate": "$0.001", "lookup": "$0.004" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/tax-rate" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/sales-tax": {
+      "post": {
+        "operationId": "getSalesTax",
+        "summary": "Look up US sales tax rate by zip code",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["zip_code"], "properties": { "zip_code": { "type": "string" }, "state": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Sales tax rate" }, "400": { "description": "Missing zip_code" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/vat": {
+      "post": {
+        "operationId": "getVat",
+        "summary": "Look up VAT rate by country",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["country"], "properties": { "country": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "VAT rates" }, "400": { "description": "Missing country" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/jurisdiction": {
+      "post": {
+        "operationId": "getJurisdiction",
+        "summary": "Look up tax jurisdiction and rates by address",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["address"], "properties": { "address": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Jurisdiction tax data" }, "400": { "description": "Missing address" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["address"], "properties": { "address": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL: full tax rate intelligence — sales tax + VAT + jurisdiction + sample calculation",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["address"], "properties": { "address": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full tax intelligence" }, "400": { "description": "Missing address" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

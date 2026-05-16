@@ -3849,3 +3849,243 @@ app.get('/resume-parser/info', (_req, res) => res.json({
   ],
   execution_chain: { previous: 'job-posting-search', next: 'ats-keyword', optional_next: ['linkedin-profile', 'company-enrichment'] },
 }));
+
+// ── ats-keyword ────────────────────────────────────────────────────────────────
+import atsKeywordRouter from './routes/ats-keyword-api/routes/intelligence';
+import atsKeywordOpenapiRouter from './routes/ats-keyword-api/routes/openapi';
+app.use('/ats-keyword/openapi.json', atsKeywordOpenapiRouter);
+app.use('/ats-keyword', atsKeywordRouter);
+app.get('/ats-keyword/info', (_req, res) => res.json({
+  name: 'ATS Keyword API', slug: 'ats-keyword', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { 'extract-keywords': '$0.004', match: '$0.006', score: '$0.005', execution_gate: '$0.001', analyze: '$0.010' },
+    high_volume: { 'extract-keywords': '$0.002', match: '$0.003', analyze: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/extract-keywords', description: 'Extract ATS-critical keywords from job description' },
+    { method: 'POST', path: '/match', description: 'Match resume to job description keywords' },
+    { method: 'POST', path: '/score', description: 'Score keyword coverage and ATS readiness' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full ATS keyword analysis — extract + match + score', x_one_call: true },
+  ],
+  execution_chain: { previous: 'resume-parser', next: 'job-posting-search', optional_next: ['linkedin-profile', 'company-enrichment'] },
+}));
+
+// ── calendar-holiday ───────────────────────────────────────────────────────────
+import calendarHolidayRouter from './routes/calendar-holiday-api/routes/intelligence';
+import calendarHolidayOpenapiRouter from './routes/calendar-holiday-api/routes/openapi';
+app.use('/calendar-holiday/openapi.json', calendarHolidayOpenapiRouter);
+app.use('/calendar-holiday', calendarHolidayRouter);
+app.get('/calendar-holiday/info', (_req, res) => res.json({
+  name: 'Calendar Holiday API', slug: 'calendar-holiday', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { holidays: '$0.001', 'business-days': '$0.002', 'next-holiday': '$0.001', execution_gate: '$0.001', lookup: '$0.003' },
+    high_volume: { holidays: '$0.0005', 'business-days': '$0.001', lookup: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/holidays', description: 'List public holidays for a country and year' },
+    { method: 'POST', path: '/business-days', description: 'Calculate business days between two dates' },
+    { method: 'POST', path: '/next-holiday', description: 'Find next upcoming public holiday' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full calendar intelligence — holidays + business days + long weekends', x_one_call: true },
+  ],
+  execution_chain: { previous: 'timezone', next: 'timezone', optional_next: ['economic-calendar', 'scheduling-automation'] },
+}));
+
+// ── timezone ───────────────────────────────────────────────────────────────────
+import timezoneRouter from './routes/timezone-api/routes/intelligence';
+import timezoneOpenapiRouter from './routes/timezone-api/routes/openapi';
+app.use('/timezone/openapi.json', timezoneOpenapiRouter);
+app.use('/timezone', timezoneRouter);
+app.get('/timezone/info', (_req, res) => res.json({
+  name: 'Timezone API', slug: 'timezone', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { lookup: '$0.001', convert: '$0.001', 'meeting-times': '$0.002', execution_gate: '$0.001', analyze: '$0.003' },
+    high_volume: { lookup: '$0.0005', convert: '$0.0005', analyze: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/lookup', description: 'Look up timezone for a location' },
+    { method: 'POST', path: '/convert', description: 'Convert datetime between timezones' },
+    { method: 'POST', path: '/meeting-times', description: 'Find optimal meeting times across timezones' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full timezone intelligence — lookup + DST + overlapping zones', x_one_call: true },
+  ],
+  execution_chain: { previous: 'geocoding', next: 'calendar-holiday', optional_next: ['scheduling-automation', 'economic-calendar'] },
+}));
+
+// ── currency-formatting ────────────────────────────────────────────────────────
+import currencyFormattingRouter from './routes/currency-formatting-api/routes/intelligence';
+import currencyFormattingOpenapiRouter from './routes/currency-formatting-api/routes/openapi';
+app.use('/currency-formatting/openapi.json', currencyFormattingOpenapiRouter);
+app.use('/currency-formatting', currencyFormattingRouter);
+app.get('/currency-formatting/info', (_req, res) => res.json({
+  name: 'Currency Formatting API', slug: 'currency-formatting', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { format: '$0.001', convert: '$0.001', symbols: '$0.001', execution_gate: '$0.001', lookup: '$0.002' },
+    high_volume: { format: '$0.0005', convert: '$0.0005', lookup: '$0.001' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/format', description: 'Format currency amount for a locale' },
+    { method: 'POST', path: '/convert', description: 'Convert amount between currencies with formatting' },
+    { method: 'POST', path: '/symbols', description: 'List currency symbols and metadata' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full currency intelligence — metadata + examples + major pairs', x_one_call: true },
+  ],
+  execution_chain: { previous: 'fx-rates', next: 'unit-conversion', optional_next: ['tax-rate', 'invoicing-automation'] },
+}));
+
+// ── unit-conversion ────────────────────────────────────────────────────────────
+import unitConversionRouter from './routes/unit-conversion-api/routes/intelligence';
+import unitConversionOpenapiRouter from './routes/unit-conversion-api/routes/openapi';
+app.use('/unit-conversion/openapi.json', unitConversionOpenapiRouter);
+app.use('/unit-conversion', unitConversionRouter);
+app.get('/unit-conversion/info', (_req, res) => res.json({
+  name: 'Unit Conversion API', slug: 'unit-conversion', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { convert: '$0.001', batch: '$0.004', 'detect-unit': '$0.002', execution_gate: '$0.001', lookup: '$0.003' },
+    high_volume: { convert: '$0.0005', batch: '$0.002', lookup: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/convert', description: 'Convert a value from one unit to another' },
+    { method: 'POST', path: '/batch', description: 'Batch-convert multiple unit pairs' },
+    { method: 'POST', path: '/detect-unit', description: 'Detect and extract units from text' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full unit conversion intelligence — convert + related conversions + unit metadata', x_one_call: true },
+  ],
+  execution_chain: { previous: 'currency-formatting', next: 'tax-rate', optional_next: ['shipping-rate', 'supply-chain-risk'] },
+}));
+
+// ── tax-rate ───────────────────────────────────────────────────────────────────
+import taxRateRouter from './routes/tax-rate-api/routes/intelligence';
+import taxRateOpenapiRouter from './routes/tax-rate-api/routes/openapi';
+app.use('/tax-rate/openapi.json', taxRateOpenapiRouter);
+app.use('/tax-rate', taxRateRouter);
+app.get('/tax-rate/info', (_req, res) => res.json({
+  name: 'Tax Rate Lookup API', slug: 'tax-rate', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { 'sales-tax': '$0.002', vat: '$0.002', jurisdiction: '$0.003', execution_gate: '$0.001', lookup: '$0.004' },
+    high_volume: { 'sales-tax': '$0.001', vat: '$0.001', lookup: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/sales-tax', description: 'Look up US sales tax rate by zip code' },
+    { method: 'POST', path: '/vat', description: 'Look up VAT rate by country' },
+    { method: 'POST', path: '/jurisdiction', description: 'Look up tax jurisdiction and rates by address' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full tax rate intelligence — sales tax + VAT + jurisdiction + sample calculation', x_one_call: true },
+  ],
+  execution_chain: { previous: 'unit-conversion', next: 'shipping-rate', optional_next: ['invoicing-automation', 'compliance-monitor'] },
+}));
+
+// ── shipping-rate ──────────────────────────────────────────────────────────────
+import shippingRateRouter from './routes/shipping-rate-api/routes/intelligence';
+import shippingRateOpenapiRouter from './routes/shipping-rate-api/routes/openapi';
+app.use('/shipping-rate/openapi.json', shippingRateOpenapiRouter);
+app.use('/shipping-rate', shippingRateRouter);
+app.get('/shipping-rate/info', (_req, res) => res.json({
+  name: 'Shipping Rate API', slug: 'shipping-rate', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { estimate: '$0.003', track: '$0.002', 'carrier-compare': '$0.005', execution_gate: '$0.001', lookup: '$0.006' },
+    high_volume: { estimate: '$0.002', 'carrier-compare': '$0.003', lookup: '$0.004' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/estimate', description: 'Estimate shipping rate by carrier' },
+    { method: 'POST', path: '/track', description: 'Track a shipment by tracking number' },
+    { method: 'POST', path: '/carrier-compare', description: 'Compare rates across all major carriers' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full shipping intelligence — all rates + recommendation + zone', x_one_call: true },
+  ],
+  execution_chain: { previous: 'tax-rate', next: 'package-tracking', optional_next: ['supply-chain-risk', 'vendor-ranking'] },
+}));
+
+// ── package-tracking ───────────────────────────────────────────────────────────
+import packageTrackingRouter from './routes/package-tracking-api/routes/intelligence';
+import packageTrackingOpenapiRouter from './routes/package-tracking-api/routes/openapi';
+app.use('/package-tracking/openapi.json', packageTrackingOpenapiRouter);
+app.use('/package-tracking', packageTrackingRouter);
+app.get('/package-tracking/info', (_req, res) => res.json({
+  name: 'Package Tracking API', slug: 'package-tracking', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { track: '$0.002', 'detect-carrier': '$0.001', bulk: '$0.008', execution_gate: '$0.001', lookup: '$0.003' },
+    high_volume: { track: '$0.001', bulk: '$0.005', lookup: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/track', description: 'Track a package by tracking number' },
+    { method: 'POST', path: '/detect-carrier', description: 'Auto-detect carrier from tracking number' },
+    { method: 'POST', path: '/bulk', description: 'Bulk track up to 20 packages' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full package tracking — detect carrier + track + delay risk', x_one_call: true },
+  ],
+  execution_chain: { previous: 'shipping-rate', next: 'flight-status', optional_next: ['supply-chain-risk', 'vendor-ranking'] },
+}));
+
+// ── flight-status ──────────────────────────────────────────────────────────────
+import flightStatusRouter from './routes/flight-status-api/routes/intelligence';
+import flightStatusOpenapiRouter from './routes/flight-status-api/routes/openapi';
+app.use('/flight-status/openapi.json', flightStatusOpenapiRouter);
+app.use('/flight-status', flightStatusRouter);
+app.get('/flight-status/info', (_req, res) => res.json({
+  name: 'Flight Status API', slug: 'flight-status', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { status: '$0.003', 'airport-delays': '$0.002', route: '$0.004', execution_gate: '$0.001', lookup: '$0.006' },
+    high_volume: { status: '$0.002', 'airport-delays': '$0.001', lookup: '$0.004' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/status', description: 'Get real-time flight status' },
+    { method: 'POST', path: '/airport-delays', description: 'Get airport delay information' },
+    { method: 'POST', path: '/route', description: 'Find flights on a route between airports' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full flight intelligence — status + route + airport delays + delay risk', x_one_call: true },
+  ],
+  execution_chain: { previous: 'package-tracking', next: 'hotel-price', optional_next: ['expense-management', 'itinerary-planning'] },
+}));
+
+// ── hotel-price ────────────────────────────────────────────────────────────────
+import hotelPriceRouter from './routes/hotel-price-api/routes/intelligence';
+import hotelPriceOpenapiRouter from './routes/hotel-price-api/routes/openapi';
+app.use('/hotel-price/openapi.json', hotelPriceOpenapiRouter);
+app.use('/hotel-price', hotelPriceRouter);
+app.get('/hotel-price/info', (_req, res) => res.json({
+  name: 'Hotel Price Lookup API', slug: 'hotel-price', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { search: '$0.004', price: '$0.003', availability: '$0.003', execution_gate: '$0.001', lookup: '$0.008' },
+    high_volume: { search: '$0.002', price: '$0.002', lookup: '$0.005' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/search', description: 'Search hotels by location and date range' },
+    { method: 'POST', path: '/price', description: 'Get pricing for a specific hotel and dates' },
+    { method: 'POST', path: '/availability', description: 'Check room availability for a hotel' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full hotel intelligence — search + best value + best rated + price ranges', x_one_call: true },
+  ],
+  execution_chain: { previous: 'flight-status', next: 'restaurant-search', optional_next: ['expense-management', 'itinerary-planning'] },
+}));

@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Flight Status API",
+    "shortDescription": "Real-time flight status, airport delays, and route intelligence for travel agents",
+    "description": "Get real-time flight status, airport delay information, and route details for travel automation, expense management, and logistics coordination agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/flight-status",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/flight-status/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/flight-status/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["flights", "travel", "airport", "delays", "logistics"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/status", "pricePerCallUsdc": 0.003, "description": "Get real-time flight status" },
+          { "method": "POST", "pathPattern": "/airport-delays", "pricePerCallUsdc": 0.002, "description": "Get airport delay information" },
+          { "method": "POST", "pathPattern": "/route", "pricePerCallUsdc": 0.004, "description": "Find flights on a route between airports" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check with next API chaining" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full flight intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/status", "pricePerCallUsdc": 0.002, "description": "Get real-time flight status" },
+          { "method": "POST", "pathPattern": "/airport-delays", "pricePerCallUsdc": 0.001, "description": "Get airport delay information" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "ONE-CALL full flight intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/status", "description": "Get real-time flight status" },
+      { "method": "POST", "path": "/airport-delays", "description": "Get airport delay information" },
+      { "method": "POST", "path": "/route", "description": "Find flights on a route between airports" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL full flight intelligence" }
+    ]
+  }
+]

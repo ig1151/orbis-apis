@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Tax Rate Lookup API",
+    "shortDescription": "US sales tax, VAT, and jurisdiction tax data for e-commerce and compliance agents",
+    "description": "Look up US sales tax rates, VAT rates by country, and jurisdiction-level tax data for e-commerce checkout automation, invoicing, and compliance workflows.",
+    "category": "finance-payments",
+    "baseUrl": "https://orbis-apis.onrender.com/tax-rate",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/tax-rate/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/tax-rate/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["tax", "sales-tax", "vat", "compliance", "e-commerce"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/sales-tax", "pricePerCallUsdc": 0.002, "description": "Look up US sales tax rate by zip code" },
+          { "method": "POST", "pathPattern": "/vat", "pricePerCallUsdc": 0.002, "description": "Look up VAT rate by country" },
+          { "method": "POST", "pathPattern": "/jurisdiction", "pricePerCallUsdc": 0.003, "description": "Look up tax jurisdiction and rates by address" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check with next API chaining" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "ONE-CALL full tax rate intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/sales-tax", "pricePerCallUsdc": 0.001, "description": "Look up US sales tax rate by zip code" },
+          { "method": "POST", "pathPattern": "/vat", "pricePerCallUsdc": 0.001, "description": "Look up VAT rate by country" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.002, "description": "ONE-CALL full tax rate intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/sales-tax", "description": "Look up US sales tax rate by zip code" },
+      { "method": "POST", "path": "/vat", "description": "Look up VAT rate by country" },
+      { "method": "POST", "path": "/jurisdiction", "description": "Look up tax jurisdiction and rates by address" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL full tax rate intelligence" }
+    ]
+  }
+]

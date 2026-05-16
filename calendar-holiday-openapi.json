@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Calendar Holiday API",
+    "version": "1.0.0",
+    "description": "Look up public holidays by country and year, calculate business days between dates, and find the next upcoming holiday for scheduling and workflow automation agents",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": { "holidays": "$0.001", "business-days": "$0.002", "next-holiday": "$0.001", "execution-gate": "$0.001", "lookup": "$0.003" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/calendar-holiday" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/holidays": {
+      "post": {
+        "operationId": "getHolidays",
+        "summary": "List public holidays for a country and year",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["country", "year"], "properties": { "country": { "type": "string" }, "year": { "type": "integer" } } } } } },
+        "responses": { "200": { "description": "Holiday list" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/business-days": {
+      "post": {
+        "operationId": "businessDays",
+        "summary": "Calculate business days between two dates for a country",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["start_date", "end_date", "country"], "properties": { "start_date": { "type": "string" }, "end_date": { "type": "string" }, "country": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Business days result" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/next-holiday": {
+      "post": {
+        "operationId": "nextHoliday",
+        "summary": "Find the next upcoming public holiday for a country",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["country"], "properties": { "country": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Next holiday" }, "400": { "description": "Missing country" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["country"], "properties": { "country": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL: full calendar intelligence — holidays + business days + long weekends",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["country", "year"], "properties": { "country": { "type": "string" }, "year": { "type": "integer" } } } } } },
+        "responses": { "200": { "description": "Full calendar intelligence" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

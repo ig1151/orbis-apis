@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Flight Status API",
+    "version": "1.0.0",
+    "description": "Get real-time flight status, airport delay information, and route details for travel automation, expense management, and logistics coordination agents",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": { "status": "$0.003", "airport-delays": "$0.002", "route": "$0.004", "execution-gate": "$0.001", "lookup": "$0.006" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/flight-status" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/status": {
+      "post": {
+        "operationId": "getFlightStatus",
+        "summary": "Get real-time flight status",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["flight_number"], "properties": { "flight_number": { "type": "string" }, "date": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Flight status" }, "400": { "description": "Missing flight_number" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/airport-delays": {
+      "post": {
+        "operationId": "airportDelays",
+        "summary": "Get delay information for an airport (IATA code)",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["airport_code"], "properties": { "airport_code": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Airport delays" }, "400": { "description": "Missing airport_code" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/route": {
+      "post": {
+        "operationId": "getRoute",
+        "summary": "Find flights on a route between two airports",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["origin", "destination"], "properties": { "origin": { "type": "string" }, "destination": { "type": "string" }, "date": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Route flights" }, "400": { "description": "Missing origin or destination" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["flight_number"], "properties": { "flight_number": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL: full flight intelligence — status + route + airport delays + delay risk",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["flight_number"], "properties": { "flight_number": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full flight intelligence" }, "400": { "description": "Missing flight_number" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

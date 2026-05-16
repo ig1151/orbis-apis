@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Package Tracking API",
+    "version": "1.0.0",
+    "description": "Track packages across all major carriers, auto-detect carrier from tracking number, and bulk-track multiple shipments for logistics, e-commerce, and supply chain automation",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": { "track": "$0.002", "detect-carrier": "$0.001", "bulk": "$0.008", "execution-gate": "$0.001", "lookup": "$0.003" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/package-tracking" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/track": {
+      "post": {
+        "operationId": "trackPackage",
+        "summary": "Track a package by tracking number",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["tracking_number"], "properties": { "tracking_number": { "type": "string" }, "carrier": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Package tracking result" }, "400": { "description": "Missing tracking_number" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/detect-carrier": {
+      "post": {
+        "operationId": "detectCarrier",
+        "summary": "Auto-detect carrier from tracking number format",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["tracking_number"], "properties": { "tracking_number": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Carrier detection result" }, "400": { "description": "Missing tracking_number" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/bulk": {
+      "post": {
+        "operationId": "bulkTrack",
+        "summary": "Bulk track up to 20 packages",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["tracking_numbers"], "properties": { "tracking_numbers": { "type": "array", "items": { "type": "string" }, "maxItems": 20 } } } } } },
+        "responses": { "200": { "description": "Bulk tracking results" }, "400": { "description": "Missing tracking_numbers" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["tracking_number"], "properties": { "tracking_number": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL: full package tracking — detect carrier + track + delay risk",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["tracking_number"], "properties": { "tracking_number": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full tracking intelligence" }, "400": { "description": "Missing tracking_number" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

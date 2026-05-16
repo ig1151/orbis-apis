@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Shipping Rate API",
+    "version": "1.0.0",
+    "description": "Estimate shipping rates by carrier, track shipments, and compare carrier rates for e-commerce, logistics, and fulfillment automation agents",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": { "estimate": "$0.003", "track": "$0.002", "carrier-compare": "$0.005", "execution-gate": "$0.001", "lookup": "$0.006" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/shipping-rate" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/estimate": {
+      "post": {
+        "operationId": "estimateRate",
+        "summary": "Estimate shipping rate by carrier",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["origin_zip", "dest_zip", "weight_lbs"], "properties": { "origin_zip": { "type": "string" }, "dest_zip": { "type": "string" }, "weight_lbs": { "type": "number" }, "carrier": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Rate estimates" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/track": {
+      "post": {
+        "operationId": "trackShipment",
+        "summary": "Track a shipment by tracking number",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["tracking_number"], "properties": { "tracking_number": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Shipment tracking" }, "400": { "description": "Missing tracking_number" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/carrier-compare": {
+      "post": {
+        "operationId": "carrierCompare",
+        "summary": "Compare rates across all major carriers",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["origin_zip", "dest_zip", "weight_lbs"], "properties": { "origin_zip": { "type": "string" }, "dest_zip": { "type": "string" }, "weight_lbs": { "type": "number" } } } } } },
+        "responses": { "200": { "description": "Carrier comparison" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["origin_zip", "dest_zip"], "properties": { "origin_zip": { "type": "string" }, "dest_zip": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL: full shipping intelligence — all rates + recommendation + zone",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["origin_zip", "dest_zip", "weight_lbs"], "properties": { "origin_zip": { "type": "string" }, "dest_zip": { "type": "string" }, "weight_lbs": { "type": "number" } } } } } },
+        "responses": { "200": { "description": "Full shipping intelligence" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

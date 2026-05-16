@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Hotel Price Lookup API",
+    "shortDescription": "Hotel search, pricing, and availability for travel booking and itinerary agents",
+    "description": "Search hotels by location, look up pricing and availability, and compare options for travel booking automation, expense management, and itinerary planning agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/hotel-price",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/hotel-price/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/hotel-price/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["hotels", "travel", "pricing", "availability", "itinerary"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/search", "pricePerCallUsdc": 0.004, "description": "Search hotels by location and date range" },
+          { "method": "POST", "pathPattern": "/price", "pricePerCallUsdc": 0.003, "description": "Get pricing for a specific hotel and dates" },
+          { "method": "POST", "pathPattern": "/availability", "pricePerCallUsdc": 0.003, "description": "Check room availability for a hotel" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check with next API chaining" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL full hotel intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/search", "pricePerCallUsdc": 0.002, "description": "Search hotels by location and date range" },
+          { "method": "POST", "pathPattern": "/price", "pricePerCallUsdc": 0.002, "description": "Get pricing for a specific hotel and dates" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.005, "description": "ONE-CALL full hotel intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/search", "description": "Search hotels by location and date range" },
+      { "method": "POST", "path": "/price", "description": "Get pricing for a specific hotel and dates" },
+      { "method": "POST", "path": "/availability", "description": "Check room availability for a hotel" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL full hotel intelligence" }
+    ]
+  }
+]

@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Currency Formatting API",
+    "shortDescription": "Locale-aware currency formatting, conversion, and symbol lookup for finance agents",
+    "description": "Format currency amounts for any locale, convert between currencies with formatting, and look up currency symbols and metadata for invoicing and finance automation agents.",
+    "category": "finance-payments",
+    "baseUrl": "https://orbis-apis.onrender.com/currency-formatting",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/currency-formatting/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/currency-formatting/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["currency", "formatting", "finance", "invoicing", "locale"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/format", "pricePerCallUsdc": 0.001, "description": "Format currency amount for a locale" },
+          { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.001, "description": "Convert amount between currencies with formatting" },
+          { "method": "POST", "pathPattern": "/symbols", "pricePerCallUsdc": 0.001, "description": "List currency symbols and metadata" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check with next API chaining" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.002, "description": "ONE-CALL full currency intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/format", "pricePerCallUsdc": 0.0005, "description": "Format currency amount for a locale" },
+          { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.0005, "description": "Convert amount between currencies with formatting" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.001, "description": "ONE-CALL full currency intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/format", "description": "Format currency amount for a locale" },
+      { "method": "POST", "path": "/convert", "description": "Convert amount between currencies with formatting" },
+      { "method": "POST", "path": "/symbols", "description": "List currency symbols and metadata" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL full currency intelligence" }
+    ]
+  }
+]

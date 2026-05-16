@@ -1,0 +1,53 @@
+[
+  {
+    "name": "ATS Keyword API",
+    "shortDescription": "ATS keyword extraction and resume-job matching for recruiting automation",
+    "description": "Extract ATS-critical keywords from job descriptions, match resumes to job requirements, and score keyword coverage for recruiting automation and job-application agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/ats-keyword",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ats-keyword/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ats-keyword/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["ats", "resume", "keywords", "recruiting", "job-matching"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.010,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/extract-keywords", "pricePerCallUsdc": 0.004, "description": "Extract ATS-critical keywords from job description" },
+          { "method": "POST", "pathPattern": "/match", "pricePerCallUsdc": 0.006, "description": "Match resume to job description keywords" },
+          { "method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.005, "description": "Score keyword coverage and ATS readiness" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check with next API chaining" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.010, "description": "ONE-CALL full ATS keyword analysis" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/extract-keywords", "pricePerCallUsdc": 0.002, "description": "Extract ATS-critical keywords from job description" },
+          { "method": "POST", "pathPattern": "/match", "pricePerCallUsdc": 0.003, "description": "Match resume to job description keywords" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full ATS keyword analysis" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/extract-keywords", "description": "Extract ATS-critical keywords from job description" },
+      { "method": "POST", "path": "/match", "description": "Match resume to job description keywords" },
+      { "method": "POST", "path": "/score", "description": "Score keyword coverage and ATS readiness" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+      { "method": "POST", "path": "/analyze", "description": "ONE-CALL full ATS keyword analysis" }
+    ]
+  }
+]

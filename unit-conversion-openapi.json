@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Unit Conversion API",
+    "version": "1.0.0",
+    "description": "Convert between units of measurement, batch-convert multiple values, and detect unit types from text for engineering, logistics, and data normalization workflows",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": { "convert": "$0.001", "batch": "$0.004", "detect-unit": "$0.002", "execution-gate": "$0.001", "lookup": "$0.003" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/unit-conversion" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/convert": {
+      "post": {
+        "operationId": "convertUnit",
+        "summary": "Convert a value from one unit to another",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["value", "from_unit", "to_unit"], "properties": { "value": { "type": "number" }, "from_unit": { "type": "string" }, "to_unit": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Converted value" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batchConvert",
+        "summary": "Batch-convert multiple values across unit pairs",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["conversions"], "properties": { "conversions": { "type": "array", "items": { "type": "object", "required": ["value", "from_unit", "to_unit"], "properties": { "value": { "type": "number" }, "from_unit": { "type": "string" }, "to_unit": { "type": "string" } } }, "maxItems": 20 } } } } } },
+        "responses": { "200": { "description": "Batch results" }, "400": { "description": "Missing conversions" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/detect-unit": {
+      "post": {
+        "operationId": "detectUnit",
+        "summary": "Detect and extract units from free text",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["text"], "properties": { "text": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Detected units" }, "400": { "description": "Missing text" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["from_unit", "to_unit"], "properties": { "from_unit": { "type": "string" }, "to_unit": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL: full unit conversion — convert + related conversions + unit metadata",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["value", "from_unit", "to_unit"], "properties": { "value": { "type": "number" }, "from_unit": { "type": "string" }, "to_unit": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full unit conversion intelligence" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

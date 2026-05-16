@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Package Tracking API",
+    "shortDescription": "Multi-carrier package tracking, carrier detection, and bulk tracking for logistics agents",
+    "description": "Track packages across all major carriers, auto-detect carrier from tracking number, and bulk-track multiple shipments for logistics, e-commerce, and supply chain automation.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/package-tracking",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/package-tracking/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/package-tracking/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["tracking", "packages", "carriers", "logistics", "e-commerce"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/track", "pricePerCallUsdc": 0.002, "description": "Track a package by tracking number" },
+          { "method": "POST", "pathPattern": "/detect-carrier", "pricePerCallUsdc": 0.001, "description": "Auto-detect carrier from tracking number" },
+          { "method": "POST", "pathPattern": "/bulk", "pricePerCallUsdc": 0.008, "description": "Bulk track up to 20 packages" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check with next API chaining" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL full package tracking intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/track", "pricePerCallUsdc": 0.001, "description": "Track a package by tracking number" },
+          { "method": "POST", "pathPattern": "/bulk", "pricePerCallUsdc": 0.005, "description": "Bulk track up to 20 packages" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.002, "description": "ONE-CALL full package tracking intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/track", "description": "Track a package by tracking number" },
+      { "method": "POST", "path": "/detect-carrier", "description": "Auto-detect carrier from tracking number" },
+      { "method": "POST", "path": "/bulk", "description": "Bulk track up to 20 packages" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL full package tracking intelligence" }
+    ]
+  }
+]

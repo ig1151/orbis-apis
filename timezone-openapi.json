@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Timezone API",
+    "version": "1.0.0",
+    "description": "Look up timezones by location, convert times between zones, and find optimal meeting times across multiple timezones for scheduling and global workflow agents",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": { "lookup": "$0.001", "convert": "$0.001", "meeting-times": "$0.002", "execution-gate": "$0.001", "analyze": "$0.003" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/timezone" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/lookup": {
+      "post": {
+        "operationId": "lookupTimezone",
+        "summary": "Look up timezone for a location",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["location"], "properties": { "location": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Timezone info" }, "400": { "description": "Missing location" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/convert": {
+      "post": {
+        "operationId": "convertTime",
+        "summary": "Convert a datetime between two timezones",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["datetime", "from_tz", "to_tz"], "properties": { "datetime": { "type": "string" }, "from_tz": { "type": "string" }, "to_tz": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Converted time" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/meeting-times": {
+      "post": {
+        "operationId": "meetingTimes",
+        "summary": "Find optimal meeting times across multiple timezones",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["timezones"], "properties": { "timezones": { "type": "array", "items": { "type": "string" }, "maxItems": 10 }, "date": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Optimal meeting times" }, "400": { "description": "Missing timezones" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["location"], "properties": { "location": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL: full timezone intelligence — lookup + DST + overlapping zones",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["location"], "properties": { "location": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full timezone intelligence" }, "400": { "description": "Missing location" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Hotel Price Lookup API",
+    "version": "1.0.0",
+    "description": "Search hotels by location, look up pricing and availability, and compare options for travel booking automation, expense management, and itinerary planning agents",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+      "pay_per_call": { "search": "$0.004", "price": "$0.003", "availability": "$0.003", "execution-gate": "$0.001", "lookup": "$0.008" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/hotel-price" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/search": {
+      "post": {
+        "operationId": "searchHotels",
+        "summary": "Search hotels by location and date range",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["location", "check_in", "check_out"], "properties": { "location": { "type": "string" }, "check_in": { "type": "string" }, "check_out": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Hotel search results" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/price": {
+      "post": {
+        "operationId": "getHotelPrice",
+        "summary": "Get pricing for a specific hotel and dates",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["hotel_id", "check_in", "check_out"], "properties": { "hotel_id": { "type": "string" }, "check_in": { "type": "string" }, "check_out": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Hotel pricing" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/availability": {
+      "post": {
+        "operationId": "checkAvailability",
+        "summary": "Check room availability for a hotel and dates",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["hotel_id", "check_in", "check_out"], "properties": { "hotel_id": { "type": "string" }, "check_in": { "type": "string" }, "check_out": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Availability result" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["location"], "properties": { "location": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL: full hotel intelligence — search + best value + best rated + price ranges",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["location", "check_in", "check_out"], "properties": { "location": { "type": "string" }, "check_in": { "type": "string" }, "check_out": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full hotel intelligence" }, "400": { "description": "Missing fields" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}
