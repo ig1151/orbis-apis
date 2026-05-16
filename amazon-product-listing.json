@@ -1,0 +1,54 @@
+[
+  {
+    "name": "Amazon Product Scraper API",
+    "shortDescription": "Extract Amazon product details, reviews, and price history by ASIN",
+    "description": "Extract Amazon product details, reviews, and price history for market research, competitive pricing, and product intelligence agent workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/amazon-product",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/amazon-product/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/amazon-product/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["amazon", "asin", "product", "reviews", "price-history"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Amazon Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.010,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/product", "pricePerCallUsdc": 0.004, "description": "Extract Amazon product details" },
+          { "method": "POST", "pathPattern": "/reviews", "pricePerCallUsdc": 0.005, "description": "Extract Amazon reviews" },
+          { "method": "POST", "pathPattern": "/price-history", "pricePerCallUsdc": 0.004, "description": "Amazon price history" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.010, "description": "ONE-CALL full Amazon product intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/product", "pricePerCallUsdc": 0.002, "description": "Extract Amazon product details" },
+          { "method": "POST", "pathPattern": "/reviews", "pricePerCallUsdc": 0.003, "description": "Extract Amazon reviews" },
+          { "method": "POST", "pathPattern": "/price-history", "pricePerCallUsdc": 0.002, "description": "Amazon price history" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full Amazon product intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/product", "description": "Extract Amazon product details — title, brand, pricing, BSR, stock status" },
+      { "method": "POST", "path": "/reviews", "description": "Extract Amazon reviews — sentiment, themes, rating distribution" },
+      { "method": "POST", "path": "/price-history", "description": "Amazon price history — min, max, trend, deal score, buy recommendation" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+      { "method": "POST", "path": "/analyze", "description": "ONE-CALL full Amazon product intelligence — product + pricing + reviews + market position" }
+    ]
+  }
+]

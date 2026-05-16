@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Amazon Product Scraper API",
+    "version": "1.0.0",
+    "description": "Extract Amazon product details, reviews, and price history for market research, competitive pricing, and product intelligence agent workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 200, "requests_per_month": 6000 },
+      "pay_per_call": { "product": "$0.004", "reviews": "$0.005", "price-history": "$0.004", "execution-gate": "$0.001", "analyze": "$0.010" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/amazon-product" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/product": {
+      "post": {
+        "operationId": "getProduct",
+        "summary": "Extract Amazon product details — title, brand, pricing, BSR, stock status",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["asin"], "properties": { "asin": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Product details" }, "400": { "description": "Missing asin" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/reviews": {
+      "post": {
+        "operationId": "getReviews",
+        "summary": "Extract Amazon reviews — sentiment, themes, rating distribution",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["asin"], "properties": { "asin": { "type": "string" }, "limit": { "type": "integer", "default": 10 } } } } } },
+        "responses": { "200": { "description": "Reviews data" }, "400": { "description": "Missing asin" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/price-history": {
+      "post": {
+        "operationId": "priceHistory",
+        "summary": "Amazon price history — min, max, trend, deal score, buy recommendation",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["asin"], "properties": { "asin": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Price history" }, "400": { "description": "Missing asin" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["asin"], "properties": { "asin": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL: full Amazon product intelligence — product + pricing + reviews + market position",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["asin"], "properties": { "asin": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full Amazon product intelligence" }, "400": { "description": "Missing asin" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

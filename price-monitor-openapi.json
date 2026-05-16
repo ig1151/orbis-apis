@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Price Monitor API",
+    "version": "1.0.0",
+    "description": "Extract product prices from URLs, track price changes over time, and compare prices across sources for procurement, retail, and competitive pricing workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 200, "requests_per_month": 6000 },
+      "pay_per_call": { "extract-price": "$0.003", "track": "$0.004", "compare": "$0.008", "execution-gate": "$0.001", "analyze": "$0.008" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/price-monitor" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/extract-price": {
+      "post": {
+        "operationId": "extractPrice",
+        "summary": "Extract product price from URL — amount, currency, discount, stock status",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Price extracted" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/track": {
+      "post": {
+        "operationId": "track",
+        "summary": "Track price history for a product — min, max, avg, trend, buy recommendation",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url", "product_name"], "properties": { "url": { "type": "string" }, "product_name": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Price tracking data" }, "400": { "description": "Missing url or product_name" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/compare": {
+      "post": {
+        "operationId": "compare",
+        "summary": "Compare prices across up to 10 URLs — best deal, price spread",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["urls"], "properties": { "urls": { "type": "array", "items": { "type": "string" }, "maxItems": 10 } } } } } },
+        "responses": { "200": { "description": "Price comparison" }, "400": { "description": "Missing urls" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL: full price intelligence — extract + history + competitor prices + recommendation",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full price intelligence" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

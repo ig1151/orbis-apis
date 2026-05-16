@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PDF Text Extraction API",
+    "version": "1.0.0",
+    "description": "Extract clean text, structured tables, and metadata from PDF files for document intelligence, RAG ingestion, and autonomous research workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 200, "requests_per_month": 6000 },
+      "pay_per_call": { "extract-text": "$0.004", "extract-tables": "$0.006", "metadata": "$0.002", "execution-gate": "$0.001", "extract": "$0.008" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/pdf-extraction" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/extract-text": {
+      "post": {
+        "operationId": "extractText",
+        "summary": "Extract clean text from PDF — full text, word count, language, per-page breakdown",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["pdf_url"], "properties": { "pdf_url": { "type": "string" }, "pages": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Extracted text" }, "400": { "description": "Missing pdf_url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/extract-tables": {
+      "post": {
+        "operationId": "extractTables",
+        "summary": "Extract structured tables from PDF — headers, rows, confidence per table",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["pdf_url"], "properties": { "pdf_url": { "type": "string" }, "pages": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Extracted tables" }, "400": { "description": "Missing pdf_url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/metadata": {
+      "post": {
+        "operationId": "getPdfMetadata",
+        "summary": "Extract PDF metadata — title, author, page count, encryption status",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["pdf_url"], "properties": { "pdf_url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "PDF metadata" }, "400": { "description": "Missing pdf_url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["pdf_url"], "properties": { "pdf_url": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/extract": {
+      "post": {
+        "operationId": "extract",
+        "summary": "ONE-CALL: full PDF extraction — text + tables + metadata + RAG chunks",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["pdf_url"], "properties": { "pdf_url": { "type": "string" }, "pages": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full PDF extraction" }, "400": { "description": "Missing pdf_url" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

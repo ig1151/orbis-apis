@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Website Change Monitor API",
+    "version": "1.0.0",
+    "description": "Monitor web pages for content changes, detect diffs, and configure alert rules for competitive intelligence, compliance, and automated research workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 200, "requests_per_month": 6000 },
+      "pay_per_call": { "check": "$0.002", "diff": "$0.004", "alert-rule": "$0.003", "execution-gate": "$0.001", "monitor": "$0.006" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/website-change-monitor" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/check": {
+      "post": {
+        "operationId": "check",
+        "summary": "Check URL for content changes — hash, status, change flag",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Check result" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/diff": {
+      "post": {
+        "operationId": "diff",
+        "summary": "Content diff since a timestamp — added, removed, modified sections",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url", "since"], "properties": { "url": { "type": "string" }, "since": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Content diff" }, "400": { "description": "Missing url or since" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/alert-rule": {
+      "post": {
+        "operationId": "alertRule",
+        "summary": "Configure keyword alert rule for a URL",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url", "keywords"], "properties": { "url": { "type": "string" }, "keywords": { "type": "array", "items": { "type": "string" } } } } } } },
+        "responses": { "200": { "description": "Alert rule configured" }, "400": { "description": "Missing url or keywords" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/monitor": {
+      "post": {
+        "operationId": "monitor",
+        "summary": "ONE-CALL: full change monitoring — state + changes + alerts + health",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full monitoring intelligence" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

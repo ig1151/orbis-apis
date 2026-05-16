@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Favicon API",
+    "version": "1.0.0",
+    "description": "Fetch, detect, and analyze favicons from any URL or domain with batch support and format metadata.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 200, "requests_per_month": 6000 },
+      "pay_per_call": { "favicon": "$0.001", "batch": "$0.008", "metadata": "$0.002", "execution-gate": "$0.001", "detect": "$0.003" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/favicon" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/favicon": {
+      "post": {
+        "operationId": "getFavicon",
+        "summary": "Fetch favicon URL, format, and accessibility for a URL",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Favicon data" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batchFavicons",
+        "summary": "Batch favicon retrieval for up to 20 URLs",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["urls"], "properties": { "urls": { "type": "array", "items": { "type": "string" }, "maxItems": 20 } } } } } },
+        "responses": { "200": { "description": "Batch results" }, "400": { "description": "Missing urls" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/metadata": {
+      "post": {
+        "operationId": "getFaviconMetadata",
+        "summary": "Extract favicon metadata — size, color profile, transparency, dominant color",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Favicon metadata" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/detect": {
+      "post": {
+        "operationId": "detect",
+        "summary": "ONE-CALL: full favicon detection — favicon + metadata + quality score",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full favicon intelligence" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

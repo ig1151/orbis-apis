@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Resume Parser API",
+    "version": "1.0.0",
+    "description": "Parse resumes, extract skills and experience, and score ATS compatibility for recruiting automation, talent intelligence, and HR workflow agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 200, "requests_per_month": 6000 },
+      "pay_per_call": { "parse": "$0.005", "skills": "$0.004", "experience": "$0.004", "execution-gate": "$0.001", "analyze": "$0.010" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/resume-parser" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/parse": {
+      "post": {
+        "operationId": "parse",
+        "summary": "Parse resume — candidate info, education, experience, skills, certifications",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["resume_url"], "properties": { "resume_url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Parsed resume" }, "400": { "description": "Missing resume_url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/skills": {
+      "post": {
+        "operationId": "extractSkills",
+        "summary": "Extract and categorize skills — technical, soft, tools, frameworks, levels",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["resume_url"], "properties": { "resume_url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Skills extracted" }, "400": { "description": "Missing resume_url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/experience": {
+      "post": {
+        "operationId": "extractExperience",
+        "summary": "Extract and analyze work experience — career progression, tenure, red flags",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["resume_url"], "properties": { "resume_url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Experience analyzed" }, "400": { "description": "Missing resume_url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["resume_url"], "properties": { "resume_url": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL: full resume analysis — parse + ATS score + hire recommendation",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["resume_url"], "properties": { "resume_url": { "type": "string" }, "job_description": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full resume intelligence" }, "400": { "description": "Missing resume_url" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

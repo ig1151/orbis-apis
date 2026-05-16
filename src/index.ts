@@ -3609,3 +3609,243 @@ app.get('/address-validation/info', (_req, res) => res.json({
   ],
   execution_chain: { previous: 'phone-validation', next: 'geocoding', optional_next: ['ip-geolocation', 'supply-chain-risk'] },
 }));
+
+// ── logo-finder ────────────────────────────────────────────────────────────────
+import logoFinderRouter from './routes/logo-finder-api/routes/intelligence';
+import logoFinderOpenapiRouter from './routes/logo-finder-api/routes/openapi';
+app.use('/logo-finder/openapi.json', logoFinderOpenapiRouter);
+app.use('/logo-finder', logoFinderRouter);
+app.get('/logo-finder/info', (_req, res) => res.json({
+  name: 'Logo Finder API', slug: 'logo-finder', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { logo: '$0.002', brand_assets: '$0.003', favicon: '$0.001', execution_gate: '$0.001', lookup: '$0.004' },
+    high_volume: { logo: '$0.001', brand_assets: '$0.002', lookup: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/logo', description: 'Retrieve primary logo URL, format, and dimensions for a domain' },
+    { method: 'POST', path: '/brand-assets', description: 'Retrieve full brand asset kit — logos, icons, colors, fonts' },
+    { method: 'POST', path: '/favicon', description: 'Retrieve favicon URL, format, and size for a domain' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL: full brand intelligence — logo + favicon + brand assets', x_one_call: true },
+  ],
+  execution_chain: { previous: 'domain-intelligence', next: 'company-enrichment', optional_next: ['email-finder', 'web-page-extractor'] },
+}));
+
+// ── favicon ────────────────────────────────────────────────────────────────────
+import faviconRouter from './routes/favicon-api/routes/intelligence';
+import faviconOpenapiRouter from './routes/favicon-api/routes/openapi';
+app.use('/favicon/openapi.json', faviconOpenapiRouter);
+app.use('/favicon', faviconRouter);
+app.get('/favicon/info', (_req, res) => res.json({
+  name: 'Favicon API', slug: 'favicon', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { favicon: '$0.001', batch: '$0.008', metadata: '$0.002', execution_gate: '$0.001', detect: '$0.003' },
+    high_volume: { favicon: '$0.0005', batch: '$0.005', detect: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/favicon', description: 'Fetch favicon URL, format, and accessibility for a URL' },
+    { method: 'POST', path: '/batch', description: 'Batch favicon retrieval for up to 20 URLs' },
+    { method: 'POST', path: '/metadata', description: 'Extract favicon metadata — size, color profile, transparency, dominant color' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/detect', description: 'ONE-CALL: full favicon detection — favicon + metadata + quality score', x_one_call: true },
+  ],
+  execution_chain: { previous: 'logo-finder', next: 'web-page-extractor', optional_next: ['domain-intelligence', 'company-enrichment'] },
+}));
+
+// ── pdf-extraction ─────────────────────────────────────────────────────────────
+import pdfExtractionIntelligenceRouter from './routes/pdf-extraction-api/routes/intelligence';
+import pdfExtractionIntelligenceOpenapiRouter from './routes/pdf-extraction-api/routes/openapi';
+app.use('/pdf-extraction/openapi.json', pdfExtractionIntelligenceOpenapiRouter);
+app.use('/pdf-extraction', pdfExtractionIntelligenceRouter);
+app.get('/pdf-extraction/info', (_req, res) => res.json({
+  name: 'PDF Text Extraction API', slug: 'pdf-extraction', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { extract_text: '$0.004', extract_tables: '$0.006', metadata: '$0.002', execution_gate: '$0.001', extract: '$0.008' },
+    high_volume: { extract_text: '$0.002', extract_tables: '$0.004', extract: '$0.005' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/extract-text', description: 'Extract clean text from PDF — full text, word count, language, per-page breakdown' },
+    { method: 'POST', path: '/extract-tables', description: 'Extract structured tables from PDF — headers, rows, confidence per table' },
+    { method: 'POST', path: '/metadata', description: 'Extract PDF metadata — title, author, page count, encryption status' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/extract', description: 'ONE-CALL: full PDF extraction — text + tables + metadata + RAG chunks', x_one_call: true },
+  ],
+  execution_chain: { previous: 'web-page-extractor', next: 'image-ocr', optional_next: ['knowledge-graph', 'sec-filing-intelligence'] },
+}));
+
+// ── qr-barcode ─────────────────────────────────────────────────────────────────
+import qrBarcodeRouter from './routes/qr-barcode-api/routes/intelligence';
+import qrBarcodeOpenapiRouter from './routes/qr-barcode-api/routes/openapi';
+app.use('/qr-barcode/openapi.json', qrBarcodeOpenapiRouter);
+app.use('/qr-barcode', qrBarcodeRouter);
+app.get('/qr-barcode/info', (_req, res) => res.json({
+  name: 'QR / Barcode API', slug: 'qr-barcode', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { decode: '$0.002', generate: '$0.002', batch: '$0.008', execution_gate: '$0.001', process: '$0.004' },
+    high_volume: { decode: '$0.001', generate: '$0.001', process: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/decode', description: 'Decode QR code or barcode from image URL — format, data, data type' },
+    { method: 'POST', path: '/generate', description: 'Generate QR code from data — returns image URL and embed HTML' },
+    { method: 'POST', path: '/batch', description: 'Batch decode up to 20 QR/barcode image URLs' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/process', description: 'ONE-CALL: full QR/barcode intelligence — decode + parse + next-step recommendation', x_one_call: true },
+  ],
+  execution_chain: { previous: 'image-ocr', next: 'product-data', optional_next: ['amazon-product', 'supply-chain-risk'] },
+}));
+
+// ── url-screenshot-diff ────────────────────────────────────────────────────────
+import urlScreenshotDiffRouter from './routes/url-screenshot-diff-api/routes/intelligence';
+import urlScreenshotDiffOpenapiRouter from './routes/url-screenshot-diff-api/routes/openapi';
+app.use('/url-screenshot-diff/openapi.json', urlScreenshotDiffOpenapiRouter);
+app.use('/url-screenshot-diff', urlScreenshotDiffRouter);
+app.get('/url-screenshot-diff/info', (_req, res) => res.json({
+  name: 'URL Screenshot Diff API', slug: 'url-screenshot-diff', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { capture: '$0.004', diff: '$0.006', monitor: '$0.003', execution_gate: '$0.001', analyze: '$0.008' },
+    high_volume: { capture: '$0.002', diff: '$0.004', analyze: '$0.005' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/capture', description: 'Capture screenshot of URL — image URL, dimensions, load time' },
+    { method: 'POST', path: '/diff', description: 'Visual diff between two URLs — change %, changed regions, severity' },
+    { method: 'POST', path: '/monitor', description: 'Configure visual monitoring — interval, alert threshold, viewports' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full visual analysis — screenshot + page info + visual analysis + monitor recommendation', x_one_call: true },
+  ],
+  execution_chain: { previous: 'website-screenshot', next: 'website-change-monitor', optional_next: ['competitor-monitor', 'qa-testing'] },
+}));
+
+// ── website-change-monitor ─────────────────────────────────────────────────────
+import websiteChangeMonitorRouter from './routes/website-change-monitor-api/routes/intelligence';
+import websiteChangeMonitorOpenapiRouter from './routes/website-change-monitor-api/routes/openapi';
+app.use('/website-change-monitor/openapi.json', websiteChangeMonitorOpenapiRouter);
+app.use('/website-change-monitor', websiteChangeMonitorRouter);
+app.get('/website-change-monitor/info', (_req, res) => res.json({
+  name: 'Website Change Monitor API', slug: 'website-change-monitor', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { check: '$0.002', diff: '$0.004', alert_rule: '$0.003', execution_gate: '$0.001', monitor: '$0.006' },
+    high_volume: { check: '$0.001', diff: '$0.002', monitor: '$0.004' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/check', description: 'Check URL for content changes — hash, status, change flag' },
+    { method: 'POST', path: '/diff', description: 'Content diff since a timestamp — added, removed, modified sections' },
+    { method: 'POST', path: '/alert-rule', description: 'Configure keyword alert rule for a URL' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/monitor', description: 'ONE-CALL: full change monitoring — state + changes + alerts + health', x_one_call: true },
+  ],
+  execution_chain: { previous: 'url-screenshot-diff', next: 'competitor-monitor', optional_next: ['serp-intelligence', 'reputation-intelligence'] },
+}));
+
+// ── price-monitor ──────────────────────────────────────────────────────────────
+import priceMonitorRouter from './routes/price-monitor-api/routes/intelligence';
+import priceMonitorOpenapiRouter from './routes/price-monitor-api/routes/openapi';
+app.use('/price-monitor/openapi.json', priceMonitorOpenapiRouter);
+app.use('/price-monitor', priceMonitorRouter);
+app.get('/price-monitor/info', (_req, res) => res.json({
+  name: 'Price Monitor API', slug: 'price-monitor', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { extract_price: '$0.003', track: '$0.004', compare: '$0.008', execution_gate: '$0.001', analyze: '$0.008' },
+    high_volume: { extract_price: '$0.002', track: '$0.002', analyze: '$0.005' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/extract-price', description: 'Extract product price from URL — amount, currency, discount, stock status' },
+    { method: 'POST', path: '/track', description: 'Track price history for a product — min, max, avg, trend, buy recommendation' },
+    { method: 'POST', path: '/compare', description: 'Compare prices across up to 10 URLs — best deal, price spread' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full price intelligence — extract + history + competitor prices + recommendation', x_one_call: true },
+  ],
+  execution_chain: { previous: 'product-data', next: 'amazon-product', optional_next: ['supply-chain-risk', 'vendor-ranking'] },
+}));
+
+// ── product-data ───────────────────────────────────────────────────────────────
+import productDataIntelligenceRouter from './routes/product-data-api/routes/intelligence';
+import productDataIntelligenceOpenapiRouter from './routes/product-data-api/routes/openapi';
+app.use('/product-data/openapi.json', productDataIntelligenceOpenapiRouter);
+app.use('/product-data', productDataIntelligenceRouter);
+app.get('/product-data/info', (_req, res) => res.json({
+  name: 'Product Data API', slug: 'product-data', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { lookup: '$0.003', extract: '$0.004', compare: '$0.006', execution_gate: '$0.001', enrich: '$0.008' },
+    high_volume: { lookup: '$0.002', extract: '$0.002', enrich: '$0.005' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/lookup', description: 'Look up product details by name and brand — SKU, UPC, ASIN, specs, pricing' },
+    { method: 'POST', path: '/extract', description: 'Extract structured product data from URL — name, price, specs, variants' },
+    { method: 'POST', path: '/compare', description: 'Compare up to 5 products — winner, comparison matrix, pros/cons' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/enrich', description: 'ONE-CALL: full product enrichment — data + specs + ratings + SEO + pricing', x_one_call: true },
+  ],
+  execution_chain: { previous: 'qr-barcode', next: 'amazon-product', optional_next: ['price-monitor', 'supply-chain-risk'] },
+}));
+
+// ── amazon-product ─────────────────────────────────────────────────────────────
+import amazonProductRouter from './routes/amazon-product-api/routes/intelligence';
+import amazonProductOpenapiRouter from './routes/amazon-product-api/routes/openapi';
+app.use('/amazon-product/openapi.json', amazonProductOpenapiRouter);
+app.use('/amazon-product', amazonProductRouter);
+app.get('/amazon-product/info', (_req, res) => res.json({
+  name: 'Amazon Product Scraper API', slug: 'amazon-product', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { product: '$0.004', reviews: '$0.005', price_history: '$0.004', execution_gate: '$0.001', analyze: '$0.010' },
+    high_volume: { product: '$0.002', reviews: '$0.003', analyze: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/product', description: 'Extract Amazon product details — title, brand, pricing, BSR, stock status' },
+    { method: 'POST', path: '/reviews', description: 'Extract Amazon reviews — sentiment, themes, rating distribution' },
+    { method: 'POST', path: '/price-history', description: 'Amazon price history — min, max, trend, deal score, buy recommendation' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full Amazon product intelligence — product + pricing + reviews + market position', x_one_call: true },
+  ],
+  execution_chain: { previous: 'product-data', next: 'shopify-analyzer', optional_next: ['price-monitor', 'vendor-ranking'] },
+}));
+
+// ── resume-parser ──────────────────────────────────────────────────────────────
+import resumeParserRouter from './routes/resume-parser-api/routes/intelligence';
+import resumeParserOpenapiRouter from './routes/resume-parser-api/routes/openapi';
+app.use('/resume-parser/openapi.json', resumeParserOpenapiRouter);
+app.use('/resume-parser', resumeParserRouter);
+app.get('/resume-parser/info', (_req, res) => res.json({
+  name: 'Resume Parser API', slug: 'resume-parser', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { parse: '$0.005', skills: '$0.004', experience: '$0.004', execution_gate: '$0.001', analyze: '$0.010' },
+    high_volume: { parse: '$0.003', skills: '$0.002', analyze: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/parse', description: 'Parse resume — candidate info, education, experience, skills, certifications' },
+    { method: 'POST', path: '/skills', description: 'Extract and categorize skills — technical, soft, tools, frameworks, levels' },
+    { method: 'POST', path: '/experience', description: 'Extract and analyze work experience — career progression, tenure, red flags' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check with next API chaining' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL: full resume analysis — parse + ATS score + hire recommendation', x_one_call: true },
+  ],
+  execution_chain: { previous: 'job-posting-search', next: 'ats-keyword', optional_next: ['linkedin-profile', 'company-enrichment'] },
+}));

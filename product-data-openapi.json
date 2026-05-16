@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Product Data API",
+    "version": "1.0.0",
+    "description": "Look up product details, extract structured product data from URLs, and compare products for e-commerce, procurement, and shopping intelligence agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 200, "requests_per_month": 6000 },
+      "pay_per_call": { "lookup": "$0.003", "extract": "$0.004", "compare": "$0.006", "execution-gate": "$0.001", "enrich": "$0.008" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/product-data" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "Look up product details by name and brand — SKU, UPC, ASIN, specs, pricing",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["product_name"], "properties": { "product_name": { "type": "string" }, "brand": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Product details" }, "400": { "description": "Missing product_name" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/extract": {
+      "post": {
+        "operationId": "extract",
+        "summary": "Extract structured product data from URL — name, price, specs, variants",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Product data extracted" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/compare": {
+      "post": {
+        "operationId": "compare",
+        "summary": "Compare up to 5 products — winner, comparison matrix, pros/cons",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["product_ids"], "properties": { "product_ids": { "type": "array", "items": { "type": "string" }, "maxItems": 5 } } } } } },
+        "responses": { "200": { "description": "Product comparison" }, "400": { "description": "Missing product_ids" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["product_name"], "properties": { "product_name": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/enrich": {
+      "post": {
+        "operationId": "enrich",
+        "summary": "ONE-CALL: full product enrichment — data + specs + ratings + SEO + pricing",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full product intelligence" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

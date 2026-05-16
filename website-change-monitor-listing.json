@@ -1,0 +1,54 @@
+[
+  {
+    "name": "Website Change Monitor API",
+    "shortDescription": "Monitor web pages for content changes, detect diffs, and configure alert rules",
+    "description": "Monitor web pages for content changes, detect diffs, and configure alert rules for competitive intelligence, compliance, and automated research workflows.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/website-change-monitor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/website-change-monitor/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/website-change-monitor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["monitoring", "change-detection", "diff", "competitive-intelligence", "alerts"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Monitor Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.002, "description": "Check URL for content changes" },
+          { "method": "POST", "pathPattern": "/diff", "pricePerCallUsdc": 0.004, "description": "Content diff since a timestamp" },
+          { "method": "POST", "pathPattern": "/alert-rule", "pricePerCallUsdc": 0.003, "description": "Configure keyword alert rule" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/monitor", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full monitoring setup" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.001, "description": "Check URL for content changes" },
+          { "method": "POST", "pathPattern": "/diff", "pricePerCallUsdc": 0.002, "description": "Content diff since a timestamp" },
+          { "method": "POST", "pathPattern": "/alert-rule", "pricePerCallUsdc": 0.002, "description": "Configure keyword alert rule" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/monitor", "pricePerCallUsdc": 0.004, "description": "ONE-CALL full monitoring setup" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/check", "description": "Check URL for content changes — hash, status, change flag" },
+      { "method": "POST", "path": "/diff", "description": "Content diff since a timestamp — added, removed, modified sections" },
+      { "method": "POST", "path": "/alert-rule", "description": "Configure keyword alert rule for a URL" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+      { "method": "POST", "path": "/monitor", "description": "ONE-CALL full change monitoring — state + changes + alerts + health" }
+    ]
+  }
+]

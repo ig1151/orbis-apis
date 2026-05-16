@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "URL Screenshot Diff API",
+    "version": "1.0.0",
+    "description": "Capture screenshots of URLs, compare visual changes between two URLs or timestamps, and monitor visual regressions for QA and competitive intelligence agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 200, "requests_per_month": 6000 },
+      "pay_per_call": { "capture": "$0.004", "diff": "$0.006", "monitor": "$0.003", "execution-gate": "$0.001", "analyze": "$0.008" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/url-screenshot-diff" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/capture": {
+      "post": {
+        "operationId": "capture",
+        "summary": "Capture screenshot of URL — image URL, dimensions, load time",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Screenshot captured" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/diff": {
+      "post": {
+        "operationId": "diff",
+        "summary": "Visual diff between two URLs — change %, changed regions, severity",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url_a", "url_b"], "properties": { "url_a": { "type": "string" }, "url_b": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Visual diff result" }, "400": { "description": "Missing url_a or url_b" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/monitor": {
+      "post": {
+        "operationId": "monitor",
+        "summary": "Configure visual monitoring — interval, alert threshold, viewports",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" }, "interval": { "type": "string", "default": "1h" } } } } } },
+        "responses": { "200": { "description": "Monitor configured" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL: full visual analysis — screenshot + page info + visual analysis + monitor recommendation",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["url"], "properties": { "url": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full visual intelligence" }, "400": { "description": "Missing url" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}

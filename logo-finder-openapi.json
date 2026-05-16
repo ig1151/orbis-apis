@@ -1,0 +1,60 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Logo Finder API",
+    "version": "1.0.0",
+    "description": "Retrieve company logos, brand assets, and favicons from domain names for UI enrichment, CRM automation, and brand intelligence workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 200, "requests_per_month": 6000 },
+      "pay_per_call": { "logo": "$0.002", "brand-assets": "$0.003", "favicon": "$0.001", "execution-gate": "$0.001", "lookup": "$0.004" }
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/logo-finder" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/logo": {
+      "post": {
+        "operationId": "getLogo",
+        "summary": "Retrieve primary logo URL, format, and dimensions for a domain",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["domain"], "properties": { "domain": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Logo data" }, "400": { "description": "Missing domain" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/brand-assets": {
+      "post": {
+        "operationId": "getBrandAssets",
+        "summary": "Retrieve full brand asset kit — logos, icons, colors, fonts",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["domain"], "properties": { "domain": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Brand assets" }, "400": { "description": "Missing domain" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/favicon": {
+      "post": {
+        "operationId": "getFavicon",
+        "summary": "Retrieve favicon URL, format, and size for a domain",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["domain"], "properties": { "domain": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Favicon data" }, "400": { "description": "Missing domain" }, "500": { "description": "Failed" } }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["domain"], "properties": { "domain": { "type": "string" }, "objective": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Gate result" } }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL: full brand intelligence — logo + favicon + brand assets",
+        "x-one-call": true,
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["domain"], "properties": { "domain": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Full brand intelligence" }, "400": { "description": "Missing domain" }, "500": { "description": "Failed" } }
+      }
+    }
+  },
+  "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+}
