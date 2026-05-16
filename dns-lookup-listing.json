@@ -1,1 +1,115 @@
-[{"name":"DNS Lookup API","shortDescription":"DNS record lookup, reverse DNS, MX checks, and propagation monitoring for networking agents","description":"DNS record lookup, reverse DNS, MX checks, and propagation monitoring for networking agents — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/dns-lookup","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/dns-lookup/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/dns-lookup/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["dns","networking","lookup","mx","propagation"]}]
+[
+  {
+    "name": "DNS Lookup API",
+    "shortDescription": "DNS record lookup, reverse DNS, MX checks, and propagation monitoring for networking agents",
+    "description": "DNS record lookup, reverse DNS, MX checks, and propagation monitoring for networking agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/dns-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/dns-lookup/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/dns-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "dns",
+      "networking",
+      "lookup",
+      "mx",
+      "propagation"
+    ],
+    "keywords": [
+      "dns record lookup",
+      "check mx records",
+      "domain dns query",
+      "txt record lookup",
+      "reverse dns lookup"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 1000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reverse",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trace",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/dns-intelligence",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.01
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Lookup DNS records"
+      },
+      {
+        "method": "POST",
+        "path": "/reverse",
+        "description": "Reverse DNS lookup"
+      },
+      {
+        "method": "POST",
+        "path": "/trace",
+        "description": "Trace DNS resolution path"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/dns-intelligence",
+        "description": "ONE-CALL full DNS intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "Monitor DNS record changes"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch lookup up to 50 domains"
+      }
+    ]
+  }
+]

@@ -1,1 +1,115 @@
-[{"name":"Legal Citation Parser API","shortDescription":"Parse, validate, normalize, and resolve legal citations for legal research automation","description":"Parse, validate, normalize, and resolve legal citations for legal research automation — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/legal-citation","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/legal-citation/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/legal-citation/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["legal","citation","bluebook","case-law","research"]}]
+[
+  {
+    "name": "Legal Citation Parser API",
+    "shortDescription": "Parse, validate, normalize, and resolve legal citations for legal research automation",
+    "description": "Parse, validate, normalize, and resolve legal citations for legal research automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/legal-citation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/legal-citation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/legal-citation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "legal",
+      "citation",
+      "bluebook",
+      "case-law",
+      "research"
+    ],
+    "keywords": [
+      "parse legal citation",
+      "validate case citation",
+      "legal cite format check",
+      "bluebook citation parser",
+      "court case reference lookup"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cross-reference",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/legal-intelligence",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/format",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.02
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/parse",
+        "description": "Parse legal citation"
+      },
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate citation format"
+      },
+      {
+        "method": "POST",
+        "path": "/cross-reference",
+        "description": "Cross-reference citations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/legal-intelligence",
+        "description": "ONE-CALL full legal citation intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/format",
+        "description": "Format citation to standard style"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch process up to 50 citations"
+      }
+    ]
+  }
+]

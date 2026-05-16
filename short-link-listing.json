@@ -1,1 +1,115 @@
-[{"name":"Short Link API","shortDescription":"Shorten URLs, expand short links, analyze clicks, and validate safety for marketing automation","description":"Shorten URLs, expand short links, analyze clicks, and validate safety for marketing automation — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/short-link","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/short-link/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/short-link/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["url","shortener","link","analytics","marketing"]}]
+[
+  {
+    "name": "Short Link API",
+    "shortDescription": "Shorten URLs, expand short links, analyze clicks, and validate safety for marketing automation",
+    "description": "Shorten URLs, expand short links, analyze clicks, and validate safety for marketing automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/short-link",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/short-link/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/short-link/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "url",
+      "shortener",
+      "link",
+      "analytics",
+      "marketing"
+    ],
+    "keywords": [
+      "shorten url api",
+      "create short link",
+      "url shortener api",
+      "expand short url",
+      "branded link shortener"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 1000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/shorten",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/expand",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/link-intelligence",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.008
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/shorten",
+        "description": "Shorten a URL with optional custom alias"
+      },
+      {
+        "method": "POST",
+        "path": "/expand",
+        "description": "Expand short URL to final destination"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze link click performance"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/link-intelligence",
+        "description": "ONE-CALL safety check + UTM suggestions + sharing score"
+      },
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate URL safety and reachability"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch shorten up to 20 URLs"
+      }
+    ]
+  }
+]

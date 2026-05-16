@@ -1,1 +1,115 @@
-[{"name":"Signature Detection API","shortDescription":"Detect, verify, and locate signatures and generate audit trails for contract execution agents","description":"Detect, verify, and locate signatures and generate audit trails for contract execution agents — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/signature-detection","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/signature-detection/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/signature-detection/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["signature","contract","compliance","audit","esign"]}]
+[
+  {
+    "name": "Signature Detection API",
+    "shortDescription": "Detect, verify, and locate signatures and generate audit trails for contract execution agents",
+    "description": "Detect, verify, and locate signatures and generate audit trails for contract execution agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/signature-detection",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/signature-detection/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/signature-detection/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "signature",
+      "contract",
+      "compliance",
+      "audit",
+      "esign"
+    ],
+    "keywords": [
+      "detect signature in document",
+      "signature verification api",
+      "esignature presence check",
+      "contract signed detection",
+      "signature location finder"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/verify",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/locate",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/signature-intelligence",
+            "pricePerCallUsdc": 0.012
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.04
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/detect",
+        "description": "Detect signatures in document"
+      },
+      {
+        "method": "POST",
+        "path": "/verify",
+        "description": "Verify signature authenticity"
+      },
+      {
+        "method": "POST",
+        "path": "/locate",
+        "description": "Locate signature positions"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/signature-intelligence",
+        "description": "ONE-CALL full signature intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract signature as image"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch detect in up to 20 documents"
+      }
+    ]
+  }
+]

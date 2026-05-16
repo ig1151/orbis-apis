@@ -1,1 +1,115 @@
-[{"name":"API Health Check API","shortDescription":"Monitor API endpoint health, measure latency, and generate alerts for SRE and DevOps agents","description":"Monitor API endpoint health, measure latency, and generate alerts for SRE and DevOps agents — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/api-health-check","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/api-health-check/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/api-health-check/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["monitoring","uptime","latency","sre","devops"]}]
+[
+  {
+    "name": "API Health Check API",
+    "shortDescription": "Monitor API endpoint health, measure latency, and generate alerts for SRE and DevOps agents",
+    "description": "Monitor API endpoint health, measure latency, and generate alerts for SRE and DevOps agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/api-health-check",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/api-health-check/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/api-health-check/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "monitoring",
+      "uptime",
+      "latency",
+      "sre",
+      "devops"
+    ],
+    "keywords": [
+      "check api endpoint health",
+      "test api uptime",
+      "api latency benchmark",
+      "monitor api availability",
+      "api response time check"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/benchmark",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/health-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.02
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Check API endpoint health"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "Monitor API performance metrics"
+      },
+      {
+        "method": "POST",
+        "path": "/benchmark",
+        "description": "Benchmark API response times"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/health-intelligence",
+        "description": "ONE-CALL full health intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/history",
+        "description": "Get API uptime history"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch check up to 20 endpoints"
+      }
+    ]
+  }
+]

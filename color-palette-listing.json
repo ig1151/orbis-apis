@@ -1,1 +1,115 @@
-[{"name":"Color Palette API","shortDescription":"Extract color palettes from images, generate brand palettes, and check WCAG accessibility","description":"Extract color palettes from images, generate brand palettes, and check WCAG accessibility — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/color-palette","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/color-palette/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/color-palette/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["color","palette","brand","wcag","design"]}]
+[
+  {
+    "name": "Color Palette API",
+    "shortDescription": "Extract color palettes from images, generate brand palettes, and check WCAG accessibility",
+    "description": "Extract color palettes from images, generate brand palettes, and check WCAG accessibility \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/color-palette",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/color-palette/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/color-palette/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "color",
+      "palette",
+      "brand",
+      "wcag",
+      "design"
+    ],
+    "keywords": [
+      "extract colors from image",
+      "generate brand color palette",
+      "wcag color contrast check",
+      "complementary color finder",
+      "hex color palette generator"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/match",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/palette-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/accessibility",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.02
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract color palette from image"
+      },
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate brand color palette"
+      },
+      {
+        "method": "POST",
+        "path": "/match",
+        "description": "Find complementary color matches"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/palette-intelligence",
+        "description": "ONE-CALL extract + brand fit + accessibility + dark mode check"
+      },
+      {
+        "method": "POST",
+        "path": "/accessibility",
+        "description": "Check WCAG color accessibility"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch extract from up to 10 images"
+      }
+    ]
+  }
+]

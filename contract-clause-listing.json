@@ -1,1 +1,115 @@
-[{"name":"Contract Clause Extractor API","shortDescription":"Extract clauses, analyze risk, compare versions, and identify red flags for legal automation","description":"Extract clauses, analyze risk, compare versions, and identify red flags for legal automation — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/contract-clause","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/contract-clause/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/contract-clause/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["contract","legal","clause","risk","NDA"]}]
+[
+  {
+    "name": "Contract Clause Extractor API",
+    "shortDescription": "Extract clauses, analyze risk, compare versions, and identify red flags for legal automation",
+    "description": "Extract clauses, analyze risk, compare versions, and identify red flags for legal automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/contract-clause",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/contract-clause/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/contract-clause/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "contract",
+      "legal",
+      "clause",
+      "risk",
+      "NDA"
+    ],
+    "keywords": [
+      "extract contract clauses",
+      "analyze contract terms",
+      "contract clause classifier",
+      "legal clause extractor",
+      "contract risk clauses"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/classify",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/contract-intelligence",
+            "pricePerCallUsdc": 0.015
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/risk-assess",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.06
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract clauses from contract"
+      },
+      {
+        "method": "POST",
+        "path": "/classify",
+        "description": "Classify clause types"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare clauses across documents"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/contract-intelligence",
+        "description": "ONE-CALL full contract intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/risk-assess",
+        "description": "Risk-assess contract clauses"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch analyze up to 10 contracts"
+      }
+    ]
+  }
+]

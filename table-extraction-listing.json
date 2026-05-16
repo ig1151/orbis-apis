@@ -1,1 +1,115 @@
-[{"name":"Table Extraction API","shortDescription":"Extract tables from documents, convert to JSON/CSV, and merge datasets for document automation","description":"Extract tables from documents, convert to JSON/CSV, and merge datasets for document automation — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/table-extraction","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/table-extraction/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/table-extraction/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["table","extraction","csv","json","document"]}]
+[
+  {
+    "name": "Table Extraction API",
+    "shortDescription": "Extract tables from documents, convert to JSON/CSV, and merge datasets for document automation",
+    "description": "Extract tables from documents, convert to JSON/CSV, and merge datasets for document automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/table-extraction",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/table-extraction/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/table-extraction/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "table",
+      "extraction",
+      "csv",
+      "json",
+      "document"
+    ],
+    "keywords": [
+      "extract table from pdf",
+      "html table to json",
+      "structured data from document",
+      "spreadsheet data extraction",
+      "table parser api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/convert",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/merge",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/table-intelligence",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/clean",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.04
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract tables from document"
+      },
+      {
+        "method": "POST",
+        "path": "/convert",
+        "description": "Convert table to structured format"
+      },
+      {
+        "method": "POST",
+        "path": "/merge",
+        "description": "Merge multiple tables"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/table-intelligence",
+        "description": "ONE-CALL full table intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/clean",
+        "description": "Clean and normalize table data"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch extract from up to 10 documents"
+      }
+    ]
+  }
+]

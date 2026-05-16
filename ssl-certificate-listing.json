@@ -1,1 +1,115 @@
-[{"name":"SSL Certificate API","shortDescription":"Check SSL status, validate chains, monitor expiry, and grade TLS configuration for security agents","description":"Check SSL status, validate chains, monitor expiry, and grade TLS configuration for security agents — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/ssl-certificate","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/ssl-certificate/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/ssl-certificate/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["ssl","tls","certificate","security","monitoring"]}]
+[
+  {
+    "name": "SSL Certificate API",
+    "shortDescription": "Check SSL status, validate chains, monitor expiry, and grade TLS configuration for security agents",
+    "description": "Check SSL status, validate chains, monitor expiry, and grade TLS configuration for security agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/ssl-certificate",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ssl-certificate/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ssl-certificate/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "ssl",
+      "tls",
+      "certificate",
+      "security",
+      "monitoring"
+    ],
+    "keywords": [
+      "check ssl certificate",
+      "ssl expiry date lookup",
+      "tls certificate validity",
+      "https certificate check",
+      "domain ssl status"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ssl-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.025
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Check SSL certificate status"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze certificate details"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "Monitor certificate expiry"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/ssl-intelligence",
+        "description": "ONE-CALL full SSL intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Scan full certificate chain"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch check up to 20 domains"
+      }
+    ]
+  }
+]

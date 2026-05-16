@@ -1,1 +1,115 @@
-[{"name":"Document Classification API","shortDescription":"Classify document types, auto-tag metadata, and route to workflows for enterprise DMS agents","description":"Classify document types, auto-tag metadata, and route to workflows for enterprise DMS agents — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/document-classification","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/document-classification/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/document-classification/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["document","classification","routing","DMS","metadata"]}]
+[
+  {
+    "name": "Document Classification API",
+    "shortDescription": "Classify document types, auto-tag metadata, and route to workflows for enterprise DMS agents",
+    "description": "Classify document types, auto-tag metadata, and route to workflows for enterprise DMS agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/document-classification",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/document-classification/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/document-classification/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "document",
+      "classification",
+      "routing",
+      "DMS",
+      "metadata"
+    ],
+    "keywords": [
+      "classify document type",
+      "auto-sort documents",
+      "document type detection",
+      "pdf classification api",
+      "document routing automation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/classify",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-metadata",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/document-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/segment",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.025
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/classify",
+        "description": "Classify document type"
+      },
+      {
+        "method": "POST",
+        "path": "/extract-metadata",
+        "description": "Extract document metadata"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare document similarity"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/document-intelligence",
+        "description": "ONE-CALL full document intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/segment",
+        "description": "Segment document into sections"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch classify up to 20 documents"
+      }
+    ]
+  }
+]

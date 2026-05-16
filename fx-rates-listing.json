@@ -9,20 +9,56 @@
     "docsUrl": "https://orbis-apis.onrender.com/fx-rates/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/fx-rates/openapi.json",
     "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-    "tags": ["forex", "currency", "exchange-rates", "finance", "payments"],
+    "tags": [
+      "forex",
+      "currency",
+      "exchange-rates",
+      "finance",
+      "payments"
+    ],
     "tiers": [
-      {"name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000},
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
       {
         "name": "FX Pro",
         "isFree": false,
         "pricingType": "per_call",
         "pricePerCall": 0.004,
         "endpointPricing": [
-          {"method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.001, "description": "Currency conversion"},
-          {"method": "POST", "pathPattern": "/latest", "pricePerCallUsdc": 0.001, "description": "Latest multi-currency rates"},
-          {"method": "POST", "pathPattern": "/historical", "pricePerCallUsdc": 0.002, "description": "Historical FX rate"},
-          {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check"},
-          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "ONE-CALL full FX intelligence"}
+          {
+            "method": "POST",
+            "pathPattern": "/convert",
+            "pricePerCallUsdc": 0.001,
+            "description": "Currency conversion"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/latest",
+            "pricePerCallUsdc": 0.001,
+            "description": "Latest multi-currency rates"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/historical",
+            "pricePerCallUsdc": 0.002,
+            "description": "Historical FX rate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL full FX intelligence"
+          }
         ]
       },
       {
@@ -31,18 +67,60 @@
         "pricingType": "per_call",
         "pricePerCall": 0.003,
         "endpointPricing": [
-          {"method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.0005, "description": "Convert (discounted)"},
-          {"method": "POST", "pathPattern": "/latest", "pricePerCallUsdc": 0.0005, "description": "Latest rates (discounted)"},
-          {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL (discounted)"}
+          {
+            "method": "POST",
+            "pathPattern": "/convert",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Convert (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/latest",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Latest rates (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL (discounted)"
+          }
         ]
       }
     ],
     "endpoints": [
-      {"method": "POST", "path": "/convert", "description": "Convert currency amount — rate, bid/ask, spread"},
-      {"method": "POST", "path": "/latest", "description": "Latest mid-market rates for 20 major currencies"},
-      {"method": "POST", "path": "/historical", "description": "Historical FX rate for a currency pair on a specific date"},
-      {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining"},
-      {"method": "POST", "path": "/lookup", "description": "ONE-CALL full FX intelligence — rate + historical context + technical signals"}
+      {
+        "method": "POST",
+        "path": "/convert",
+        "description": "Convert currency amount \u2014 rate, bid/ask, spread"
+      },
+      {
+        "method": "POST",
+        "path": "/latest",
+        "description": "Latest mid-market rates for 20 major currencies"
+      },
+      {
+        "method": "POST",
+        "path": "/historical",
+        "description": "Historical FX rate for a currency pair on a specific date"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full FX intelligence \u2014 rate + historical context + technical signals"
+      }
+    ],
+    "keywords": [
+      "get currency exchange rate",
+      "forex rate api",
+      "usd to eur rate",
+      "live exchange rates",
+      "currency conversion rate"
     ]
   }
 ]

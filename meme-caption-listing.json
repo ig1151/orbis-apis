@@ -1,1 +1,115 @@
-[{"name":"Meme Caption Generator API","shortDescription":"Generate meme captions, analyze virality, localize for audiences, and find trending templates","description":"Generate meme captions, analyze virality, localize for audiences, and find trending templates — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/meme-caption","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/meme-caption/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/meme-caption/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["meme","social-media","content","viral","generator"]}]
+[
+  {
+    "name": "Meme Caption Generator API",
+    "shortDescription": "Generate meme captions, analyze virality, localize for audiences, and find trending templates",
+    "description": "Generate meme captions, analyze virality, localize for audiences, and find trending templates \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/meme-caption",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/meme-caption/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/meme-caption/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "meme",
+      "social-media",
+      "content",
+      "viral",
+      "generator"
+    ],
+    "keywords": [
+      "generate meme caption",
+      "meme text generator",
+      "viral meme creator",
+      "meme template caption",
+      "social media meme ai"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/localize",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/meme-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.02
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate meme captions for a topic"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze meme format, humor, and virality"
+      },
+      {
+        "method": "POST",
+        "path": "/localize",
+        "description": "Localize meme caption for target audience"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/meme-intelligence",
+        "description": "ONE-CALL caption + template + hashtags + posting time + brand safety"
+      },
+      {
+        "method": "POST",
+        "path": "/trending",
+        "description": "Get trending meme formats and templates"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch generate captions for up to 10 topics"
+      }
+    ]
+  }
+]

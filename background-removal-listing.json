@@ -1,1 +1,115 @@
-[{"name":"Background Removal API","shortDescription":"Remove or replace image backgrounds and generate segmentation masks for e-commerce and creative automation","description":"Remove or replace image backgrounds and generate segmentation masks for e-commerce and creative automation — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/background-removal","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/background-removal/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/background-removal/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["background-removal","image","ecommerce","ai","compositing"]}]
+[
+  {
+    "name": "Background Removal API",
+    "shortDescription": "Remove or replace image backgrounds and generate segmentation masks for e-commerce and creative automation",
+    "description": "Remove or replace image backgrounds and generate segmentation masks for e-commerce and creative automation \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/background-removal",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/background-removal/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/background-removal/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "background-removal",
+      "image",
+      "ecommerce",
+      "ai",
+      "compositing"
+    ],
+    "keywords": [
+      "remove image background",
+      "background removal api",
+      "transparent png generator",
+      "cut out subject from photo",
+      "product photo background"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/remove",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/replace",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/mask",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/background-intelligence",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enhance",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.04
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/remove",
+        "description": "Remove background from image"
+      },
+      {
+        "method": "POST",
+        "path": "/replace",
+        "description": "Replace background with new image or color"
+      },
+      {
+        "method": "POST",
+        "path": "/mask",
+        "description": "Generate segmentation mask"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/background-intelligence",
+        "description": "ONE-CALL detect subject + recommend operation + quality prediction"
+      },
+      {
+        "method": "POST",
+        "path": "/enhance",
+        "description": "Enhance subject after background removal"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch remove from up to 20 images"
+      }
+    ]
+  }
+]

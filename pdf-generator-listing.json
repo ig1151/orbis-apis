@@ -1,1 +1,115 @@
-[{"name":"PDF Generator API","shortDescription":"Generate PDFs from templates, merge documents, and add watermarks for document automation agents","description":"Generate PDFs from templates, merge documents, and add watermarks for document automation agents — powered by Claude AI for agent-native workflows.","category":"ai-ml","baseUrl":"https://orbis-apis.onrender.com/pdf-generator","websiteUrl":"https://orbis-apis.onrender.com","docsUrl":"https://orbis-apis.onrender.com/pdf-generator/openapi.json","openApiSpecUrl":"https://orbis-apis.onrender.com/pdf-generator/openapi.json","logoUrl":"https://orbis-apis.onrender.com/logo.png","tags":["pdf","generator","document","watermark","template"]}]
+[
+  {
+    "name": "PDF Generator API",
+    "shortDescription": "Generate PDFs from templates, merge documents, and add watermarks for document automation agents",
+    "description": "Generate PDFs from templates, merge documents, and add watermarks for document automation agents \u2014 powered by Claude AI for agent-native workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/pdf-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/pdf-generator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/pdf-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "pdf",
+      "generator",
+      "document",
+      "watermark",
+      "template"
+    ],
+    "keywords": [
+      "generate pdf from html",
+      "create pdf report api",
+      "html to pdf converter",
+      "pdf template generator",
+      "dynamic pdf creation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/merge",
+            "pricePerCallUsdc": 0.008
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/template",
+            "pricePerCallUsdc": 0.01
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/pdf-intelligence",
+            "pricePerCallUsdc": 0.015
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compress",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.06
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate PDF from content"
+      },
+      {
+        "method": "POST",
+        "path": "/merge",
+        "description": "Merge multiple PDFs"
+      },
+      {
+        "method": "POST",
+        "path": "/template",
+        "description": "Generate PDF from template"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/pdf-intelligence",
+        "description": "ONE-CALL full PDF intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/compress",
+        "description": "Compress PDF file size"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch generate up to 10 PDFs"
+      }
+    ]
+  }
+]

@@ -9,23 +9,73 @@
     "docsUrl": "https://orbis-apis.onrender.com/restaurant-search/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/restaurant-search/openapi.json",
     "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-    "tags": ["restaurants", "food", "local-search", "reviews", "travel"],
+    "tags": [
+      "restaurants",
+      "food",
+      "local-search",
+      "reviews",
+      "travel"
+    ],
     "tiers": [
-      { "name": "Free", "isFree": true, "requestsPerDay": 100 },
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
       {
         "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
         "pricePerCall": 0.006,
         "endpointPricing": [
-          { "method": "POST", "pathPattern": "/nearby", "pricePerCallUsdc": 0.003, "description": "Search nearby restaurants" },
-          { "method": "POST", "pathPattern": "/details", "pricePerCallUsdc": 0.002, "description": "Get restaurant details" },
-          { "method": "POST", "pathPattern": "/reviews-summary", "pricePerCallUsdc": 0.004, "description": "AI-summarized reviews" },
-          { "method": "POST", "pathPattern": "/menu-analysis", "pricePerCallUsdc": 0.004, "description": "Analyze restaurant menu" },
-          { "method": "POST", "pathPattern": "/reservation-availability", "pricePerCallUsdc": 0.003, "description": "Check reservation availability" },
-          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
-          { "method": "POST", "pathPattern": "/search", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full restaurant intelligence" },
-          { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.009, "description": "Batch search for multiple locations" }
+          {
+            "method": "POST",
+            "pathPattern": "/nearby",
+            "pricePerCallUsdc": 0.003,
+            "description": "Search nearby restaurants"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/details",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get restaurant details"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reviews-summary",
+            "pricePerCallUsdc": 0.004,
+            "description": "AI-summarized reviews"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/menu-analysis",
+            "pricePerCallUsdc": 0.004,
+            "description": "Analyze restaurant menu"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reservation-availability",
+            "pricePerCallUsdc": 0.003,
+            "description": "Check reservation availability"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full restaurant intelligence"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.009,
+            "description": "Batch search for multiple locations"
+          }
         ]
       },
       {
@@ -34,26 +84,105 @@
         "pricingType": "per_call",
         "pricePerCall": 0.003,
         "endpointPricing": [
-          { "method": "POST", "pathPattern": "/nearby", "pricePerCallUsdc": 0.0015, "description": "Search nearby restaurants" },
-          { "method": "POST", "pathPattern": "/details", "pricePerCallUsdc": 0.001, "description": "Get restaurant details" },
-          { "method": "POST", "pathPattern": "/reviews-summary", "pricePerCallUsdc": 0.002, "description": "AI-summarized reviews" },
-          { "method": "POST", "pathPattern": "/menu-analysis", "pricePerCallUsdc": 0.002, "description": "Analyze restaurant menu" },
-          { "method": "POST", "pathPattern": "/reservation-availability", "pricePerCallUsdc": 0.0015, "description": "Check reservation availability" },
-          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
-          { "method": "POST", "pathPattern": "/search", "pricePerCallUsdc": 0.003, "description": "ONE-CALL full restaurant intelligence" },
-          { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.0045, "description": "Batch search for multiple locations" }
+          {
+            "method": "POST",
+            "pathPattern": "/nearby",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Search nearby restaurants"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/details",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get restaurant details"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reviews-summary",
+            "pricePerCallUsdc": 0.002,
+            "description": "AI-summarized reviews"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/menu-analysis",
+            "pricePerCallUsdc": 0.002,
+            "description": "Analyze restaurant menu"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reservation-availability",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Check reservation availability"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/search",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL full restaurant intelligence"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.0045,
+            "description": "Batch search for multiple locations"
+          }
         ]
       }
     ],
     "endpoints": [
-      { "method": "POST", "path": "/nearby", "description": "Search nearby restaurants" },
-      { "method": "POST", "path": "/details", "description": "Get restaurant details" },
-      { "method": "POST", "path": "/reviews-summary", "description": "AI-summarized reviews" },
-      { "method": "POST", "path": "/menu-analysis", "description": "Analyze restaurant menu" },
-      { "method": "POST", "path": "/reservation-availability", "description": "Check reservation availability" },
-      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
-      { "method": "POST", "path": "/search", "description": "ONE-CALL full restaurant intelligence" },
-      { "method": "POST", "path": "/batch", "description": "Batch search for multiple locations" }
+      {
+        "method": "POST",
+        "path": "/nearby",
+        "description": "Search nearby restaurants"
+      },
+      {
+        "method": "POST",
+        "path": "/details",
+        "description": "Get restaurant details"
+      },
+      {
+        "method": "POST",
+        "path": "/reviews-summary",
+        "description": "AI-summarized reviews"
+      },
+      {
+        "method": "POST",
+        "path": "/menu-analysis",
+        "description": "Analyze restaurant menu"
+      },
+      {
+        "method": "POST",
+        "path": "/reservation-availability",
+        "description": "Check reservation availability"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/search",
+        "description": "ONE-CALL full restaurant intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch search for multiple locations"
+      }
+    ],
+    "keywords": [
+      "find restaurants nearby",
+      "restaurant search api",
+      "dining options by location",
+      "menu and hours lookup",
+      "food delivery restaurant"
     ]
   }
 ]
