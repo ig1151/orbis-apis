@@ -4089,3 +4089,483 @@ app.get('/hotel-price/info', (_req, res) => res.json({
   ],
   execution_chain: { previous: 'flight-status', next: 'restaurant-search', optional_next: ['expense-management', 'itinerary-planning'] },
 }));
+
+// ── restaurant-search ──────────────────────────────────────────────────────────
+import restaurantSearchRouter from './routes/restaurant-search-api/routes/intelligence';
+import restaurantSearchOpenapiRouter from './routes/restaurant-search-api/routes/openapi';
+app.use('/restaurant-search/openapi.json', restaurantSearchOpenapiRouter);
+app.use('/restaurant-search', restaurantSearchRouter);
+app.get('/restaurant-search/info', (_req, res) => res.json({
+  name: 'Restaurant Search API', slug: 'restaurant-search', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { nearby: '$0.003', details: '$0.002', 'reviews-summary': '$0.004', execution_gate: '$0.001', search: '$0.006' },
+    high_volume: { nearby: '$0.0015', details: '$0.001', search: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/nearby', description: 'Search nearby restaurants' },
+    { method: 'POST', path: '/details', description: 'Get restaurant details' },
+    { method: 'POST', path: '/reviews-summary', description: 'AI-summarized reviews' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/search', description: 'ONE-CALL full restaurant intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'hotel-price', next: 'maps-places', optional_next: ['event-search', 'expense-management'] },
+}));
+
+// ── maps-places ────────────────────────────────────────────────────────────────
+import mapsPlacesRouter from './routes/maps-places-api/routes/intelligence';
+import mapsPlacesOpenapiRouter from './routes/maps-places-api/routes/openapi';
+app.use('/maps-places/openapi.json', mapsPlacesOpenapiRouter);
+app.use('/maps-places', mapsPlacesRouter);
+app.get('/maps-places/info', (_req, res) => res.json({
+  name: 'Maps Places API', slug: 'maps-places', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { 'search-place': '$0.002', 'place-details': '$0.002', nearby: '$0.003', execution_gate: '$0.001', lookup: '$0.005' },
+    high_volume: { 'search-place': '$0.001', nearby: '$0.0015', lookup: '$0.0025' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/search-place', description: 'Search places by query' },
+    { method: 'POST', path: '/place-details', description: 'Get place details' },
+    { method: 'POST', path: '/nearby', description: 'Find nearby POIs' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL full place intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'restaurant-search', next: 'event-search', optional_next: ['restaurant-search', 'logistics'] },
+}));
+
+// ── event-search ───────────────────────────────────────────────────────────────
+import eventSearchRouter from './routes/event-search-api/routes/intelligence';
+import eventSearchOpenapiRouter from './routes/event-search-api/routes/openapi';
+app.use('/event-search/openapi.json', eventSearchOpenapiRouter);
+app.use('/event-search', eventSearchRouter);
+app.get('/event-search/info', (_req, res) => res.json({
+  name: 'Event Search API', slug: 'event-search', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { events: '$0.003', venue: '$0.002', 'ticket-links': '$0.002', execution_gate: '$0.001', search: '$0.005' },
+    high_volume: { events: '$0.0015', venue: '$0.001', search: '$0.0025' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/events', description: 'Search events' },
+    { method: 'POST', path: '/venue', description: 'Get venue details' },
+    { method: 'POST', path: '/ticket-links', description: 'Find ticket links' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/search', description: 'ONE-CALL full event intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'maps-places', next: 'sports-scores', optional_next: ['restaurant-search', 'travel-planning'] },
+}));
+
+// ── sports-scores ──────────────────────────────────────────────────────────────
+import sportsScoresRouter from './routes/sports-scores-api/routes/intelligence';
+import sportsScoresOpenapiRouter from './routes/sports-scores-api/routes/openapi';
+app.use('/sports-scores/openapi.json', sportsScoresOpenapiRouter);
+app.use('/sports-scores', sportsScoresRouter);
+app.get('/sports-scores/info', (_req, res) => res.json({
+  name: 'Sports Scores API', slug: 'sports-scores', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { scores: '$0.002', schedule: '$0.002', standings: '$0.002', execution_gate: '$0.001', lookup: '$0.004' },
+    high_volume: { scores: '$0.001', schedule: '$0.001', lookup: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/scores', description: 'Get live or historical scores' },
+    { method: 'POST', path: '/schedule', description: 'Get team schedule' },
+    { method: 'POST', path: '/standings', description: 'Get league standings' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL full sports intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'event-search', next: 'betting-odds', optional_next: ['social-profile-lookup'] },
+}));
+
+// ── betting-odds ───────────────────────────────────────────────────────────────
+import bettingOddsRouter from './routes/betting-odds-api/routes/intelligence';
+import bettingOddsOpenapiRouter from './routes/betting-odds-api/routes/openapi';
+app.use('/betting-odds/openapi.json', bettingOddsOpenapiRouter);
+app.use('/betting-odds', bettingOddsRouter);
+app.get('/betting-odds/info', (_req, res) => res.json({
+  name: 'Betting Odds API', slug: 'betting-odds', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { odds: '$0.003', 'line-movement': '$0.004', 'best-price': '$0.003', execution_gate: '$0.001', analyze: '$0.006' },
+    high_volume: { odds: '$0.0015', 'line-movement': '$0.002', analyze: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/odds', description: 'Get betting odds' },
+    { method: 'POST', path: '/line-movement', description: 'Track line movement' },
+    { method: 'POST', path: '/best-price', description: 'Find best price' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full odds analysis', x_one_call: true },
+  ],
+  execution_chain: { previous: 'sports-scores', next: 'social-profile-lookup', optional_next: ['reddit-intelligence'] },
+}));
+
+// ── social-profile-lookup ──────────────────────────────────────────────────────
+import socialProfileLookupRouter from './routes/social-profile-lookup-api/routes/intelligence';
+import socialProfileLookupOpenapiRouter from './routes/social-profile-lookup-api/routes/openapi';
+app.use('/social-profile-lookup/openapi.json', socialProfileLookupOpenapiRouter);
+app.use('/social-profile-lookup', socialProfileLookupRouter);
+app.get('/social-profile-lookup/info', (_req, res) => res.json({
+  name: 'Social Profile Lookup API', slug: 'social-profile-lookup', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { 'find-profiles': '$0.004', 'profile-summary': '$0.003', links: '$0.003', execution_gate: '$0.001', lookup: '$0.007' },
+    high_volume: { 'find-profiles': '$0.002', 'profile-summary': '$0.0015', lookup: '$0.0035' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/find-profiles', description: 'Find social profiles' },
+    { method: 'POST', path: '/profile-summary', description: 'Get profile summary' },
+    { method: 'POST', path: '/links', description: 'Aggregate cross-platform links' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL full social profile intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'betting-odds', next: 'twitter-post-lookup', optional_next: ['sales-intelligence', 'linkedin-profile'] },
+}));
+
+// ── twitter-post-lookup ────────────────────────────────────────────────────────
+import twitterPostLookupRouter from './routes/twitter-post-lookup-api/routes/intelligence';
+import twitterPostLookupOpenapiRouter from './routes/twitter-post-lookup-api/routes/openapi';
+app.use('/twitter-post-lookup/openapi.json', twitterPostLookupOpenapiRouter);
+app.use('/twitter-post-lookup', twitterPostLookupRouter);
+app.get('/twitter-post-lookup/info', (_req, res) => res.json({
+  name: 'X/Twitter Post Lookup API', slug: 'twitter-post-lookup', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { post: '$0.002', profile: '$0.003', engagement: '$0.003', execution_gate: '$0.001', analyze: '$0.006' },
+    high_volume: { post: '$0.001', profile: '$0.0015', analyze: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/post', description: 'Look up a post' },
+    { method: 'POST', path: '/profile', description: 'Get profile metrics' },
+    { method: 'POST', path: '/engagement', description: 'Measure engagement' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full Twitter/X intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'social-profile-lookup', next: 'youtube-metadata', optional_next: ['reddit-intelligence', 'sentiment'] },
+}));
+
+// ── youtube-metadata ───────────────────────────────────────────────────────────
+import youtubeMetadataRouter from './routes/youtube-metadata-api/routes/intelligence';
+import youtubeMetadataOpenapiRouter from './routes/youtube-metadata-api/routes/openapi';
+app.use('/youtube-metadata/openapi.json', youtubeMetadataOpenapiRouter);
+app.use('/youtube-metadata', youtubeMetadataRouter);
+app.get('/youtube-metadata/info', (_req, res) => res.json({
+  name: 'YouTube Metadata API', slug: 'youtube-metadata', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { video: '$0.002', channel: '$0.003', transcript: '$0.005', execution_gate: '$0.001', analyze: '$0.008' },
+    high_volume: { video: '$0.001', channel: '$0.0015', analyze: '$0.004' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/video', description: 'Get video metadata' },
+    { method: 'POST', path: '/channel', description: 'Get channel analytics' },
+    { method: 'POST', path: '/transcript', description: 'Extract transcript' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full YouTube intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'twitter-post-lookup', next: 'tiktok-metadata', optional_next: ['transcript-extraction', 'text-summarizer'] },
+}));
+
+// ── tiktok-metadata ────────────────────────────────────────────────────────────
+import tiktokMetadataRouter from './routes/tiktok-metadata-api/routes/intelligence';
+import tiktokMetadataOpenapiRouter from './routes/tiktok-metadata-api/routes/openapi';
+app.use('/tiktok-metadata/openapi.json', tiktokMetadataOpenapiRouter);
+app.use('/tiktok-metadata', tiktokMetadataRouter);
+app.get('/tiktok-metadata/info', (_req, res) => res.json({
+  name: 'TikTok Metadata API', slug: 'tiktok-metadata', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { video: '$0.002', creator: '$0.003', trend: '$0.004', execution_gate: '$0.001', analyze: '$0.007' },
+    high_volume: { video: '$0.001', creator: '$0.0015', analyze: '$0.0035' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/video', description: 'Get video metadata' },
+    { method: 'POST', path: '/creator', description: 'Get creator analytics' },
+    { method: 'POST', path: '/trend', description: 'Get trending content' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full TikTok intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'youtube-metadata', next: 'podcast-search', optional_next: ['social-profile-lookup', 'sentiment'] },
+}));
+
+// ── podcast-search ─────────────────────────────────────────────────────────────
+import podcastSearchRouter from './routes/podcast-search-api/routes/intelligence';
+import podcastSearchOpenapiRouter from './routes/podcast-search-api/routes/openapi';
+app.use('/podcast-search/openapi.json', podcastSearchOpenapiRouter);
+app.use('/podcast-search', podcastSearchRouter);
+app.get('/podcast-search/info', (_req, res) => res.json({
+  name: 'Podcast Search API', slug: 'podcast-search', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { search: '$0.002', episode: '$0.002', transcript: '$0.006', execution_gate: '$0.001', lookup: '$0.007' },
+    high_volume: { search: '$0.001', episode: '$0.001', lookup: '$0.0035' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/search', description: 'Search podcasts' },
+    { method: 'POST', path: '/episode', description: 'Get episode metadata' },
+    { method: 'POST', path: '/transcript', description: 'Extract transcript' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL full podcast intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'tiktok-metadata', next: 'transcript-extraction', optional_next: ['text-summarizer', 'entity-extraction'] },
+}));
+
+// ── transcript-extraction ──────────────────────────────────────────────────────
+import transcriptExtractionRouter from './routes/transcript-extraction-api/routes/intelligence';
+import transcriptExtractionOpenapiRouter from './routes/transcript-extraction-api/routes/openapi';
+app.use('/transcript-extraction/openapi.json', transcriptExtractionOpenapiRouter);
+app.use('/transcript-extraction', transcriptExtractionRouter);
+app.get('/transcript-extraction/info', (_req, res) => res.json({
+  name: 'Transcript Extraction API', slug: 'transcript-extraction', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { youtube: '$0.004', podcast: '$0.005', 'audio-url': '$0.006', execution_gate: '$0.001', extract: '$0.008' },
+    high_volume: { youtube: '$0.002', podcast: '$0.0025', extract: '$0.004' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/youtube', description: 'Extract YouTube transcript' },
+    { method: 'POST', path: '/podcast', description: 'Extract podcast transcript' },
+    { method: 'POST', path: '/audio-url', description: 'Extract audio URL transcript' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/extract', description: 'ONE-CALL extract any source', x_one_call: true },
+  ],
+  execution_chain: { previous: 'podcast-search', next: 'audio-transcription', optional_next: ['text-summarizer', 'entity-extraction'] },
+}));
+
+// ── audio-transcription ────────────────────────────────────────────────────────
+import audioTranscriptionRouter from './routes/audio-transcription-api/routes/intelligence';
+import audioTranscriptionOpenapiRouter from './routes/audio-transcription-api/routes/openapi';
+app.use('/audio-transcription/openapi.json', audioTranscriptionOpenapiRouter);
+app.use('/audio-transcription', audioTranscriptionRouter);
+app.get('/audio-transcription/info', (_req, res) => res.json({
+  name: 'Audio Transcription API', slug: 'audio-transcription', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { transcribe: '$0.008', timestamps: '$0.006', summary: '$0.005', execution_gate: '$0.001', analyze: '$0.012' },
+    high_volume: { transcribe: '$0.004', timestamps: '$0.003', analyze: '$0.006' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/transcribe', description: 'Transcribe audio' },
+    { method: 'POST', path: '/timestamps', description: 'Transcribe with timestamps' },
+    { method: 'POST', path: '/summary', description: 'Transcribe and summarize' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full audio intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'transcript-extraction', next: 'text-summarizer', optional_next: ['entity-extraction', 'sentiment'] },
+}));
+
+// ── text-summarizer ────────────────────────────────────────────────────────────
+import textSummarizerApiRouter from './routes/text-summarizer-api/routes/intelligence';
+import textSummarizerApiOpenapiRouter from './routes/text-summarizer-api/routes/openapi';
+app.use('/text-summarizer/openapi.json', textSummarizerApiOpenapiRouter);
+app.use('/text-summarizer', textSummarizerApiRouter);
+app.get('/text-summarizer/info', (_req, res) => res.json({
+  name: 'Text Summarizer API', slug: 'text-summarizer', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { summarize: '$0.004', bullets: '$0.003', tldr: '$0.002', execution_gate: '$0.001', analyze: '$0.006' },
+    high_volume: { summarize: '$0.002', bullets: '$0.0015', analyze: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/summarize', description: 'Summarize as paragraph' },
+    { method: 'POST', path: '/bullets', description: 'Summarize as bullets' },
+    { method: 'POST', path: '/tldr', description: 'Generate TL;DR' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full summarization', x_one_call: true },
+  ],
+  execution_chain: { previous: 'audio-transcription', next: 'language-detection', optional_next: ['entity-extraction', 'sentiment'] },
+}));
+
+// ── language-detection ─────────────────────────────────────────────────────────
+import languageDetectionRouter from './routes/language-detection-api/routes/intelligence';
+import languageDetectionOpenapiRouter from './routes/language-detection-api/routes/openapi';
+app.use('/language-detection/openapi.json', languageDetectionOpenapiRouter);
+app.use('/language-detection', languageDetectionRouter);
+app.get('/language-detection/info', (_req, res) => res.json({
+  name: 'Language Detection API', slug: 'language-detection', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { detect: '$0.001', batch: '$0.004', confidence: '$0.002', execution_gate: '$0.001', analyze: '$0.003' },
+    high_volume: { detect: '$0.0005', batch: '$0.002', analyze: '$0.0015' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/detect', description: 'Detect language' },
+    { method: 'POST', path: '/batch', description: 'Batch detect languages' },
+    { method: 'POST', path: '/confidence', description: 'Detect with confidence breakdown' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full language analysis', x_one_call: true },
+  ],
+  execution_chain: { previous: 'text-summarizer', next: 'translation', optional_next: ['sentiment', 'entity-extraction'] },
+}));
+
+// ── translation ────────────────────────────────────────────────────────────────
+import translationRouter from './routes/translation-api/routes/intelligence';
+import translationOpenapiRouter from './routes/translation-api/routes/openapi';
+app.use('/translation/openapi.json', translationOpenapiRouter);
+app.use('/translation', translationRouter);
+app.get('/translation/info', (_req, res) => res.json({
+  name: 'Translation API', slug: 'translation', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { translate: '$0.002', batch: '$0.008', 'detect-and-translate': '$0.003', execution_gate: '$0.001', lookup: '$0.004' },
+    high_volume: { translate: '$0.001', batch: '$0.004', lookup: '$0.002' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/translate', description: 'Translate text' },
+    { method: 'POST', path: '/batch', description: 'Batch translate' },
+    { method: 'POST', path: '/detect-and-translate', description: 'Auto-detect and translate' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/lookup', description: 'ONE-CALL detect + translate + quality', x_one_call: true },
+  ],
+  execution_chain: { previous: 'language-detection', next: 'sentiment', optional_next: ['content-moderation', 'pii-detection'] },
+}));
+
+// ── sentiment ──────────────────────────────────────────────────────────────────
+import sentimentRouter from './routes/sentiment-api/routes/intelligence';
+import sentimentOpenapiRouter from './routes/sentiment-api/routes/openapi';
+app.use('/sentiment/openapi.json', sentimentOpenapiRouter);
+app.use('/sentiment', sentimentRouter);
+app.get('/sentiment/info', (_req, res) => res.json({
+  name: 'Sentiment API', slug: 'sentiment', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { sentiment: '$0.002', batch: '$0.006', 'aspect-sentiment': '$0.004', execution_gate: '$0.001', analyze: '$0.005' },
+    high_volume: { sentiment: '$0.001', batch: '$0.003', analyze: '$0.0025' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/sentiment', description: 'Analyze sentiment' },
+    { method: 'POST', path: '/batch', description: 'Batch sentiment' },
+    { method: 'POST', path: '/aspect-sentiment', description: 'Aspect-level sentiment' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full sentiment analysis', x_one_call: true },
+  ],
+  execution_chain: { previous: 'translation', next: 'entity-extraction', optional_next: ['content-moderation', 'reddit-intelligence'] },
+}));
+
+// ── entity-extraction ──────────────────────────────────────────────────────────
+import entityExtractionRouter from './routes/entity-extraction-api/routes/intelligence';
+import entityExtractionOpenapiRouter from './routes/entity-extraction-api/routes/openapi';
+app.use('/entity-extraction/openapi.json', entityExtractionOpenapiRouter);
+app.use('/entity-extraction', entityExtractionRouter);
+app.get('/entity-extraction/info', (_req, res) => res.json({
+  name: 'Entity Extraction API', slug: 'entity-extraction', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { entities: '$0.003', keywords: '$0.002', topics: '$0.003', execution_gate: '$0.001', analyze: '$0.006' },
+    high_volume: { entities: '$0.0015', keywords: '$0.001', analyze: '$0.003' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/entities', description: 'Extract named entities' },
+    { method: 'POST', path: '/keywords', description: 'Extract keywords' },
+    { method: 'POST', path: '/topics', description: 'Extract topics' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full NLP extraction', x_one_call: true },
+  ],
+  execution_chain: { previous: 'sentiment', next: 'content-moderation', optional_next: ['knowledge-graph', 'pii-detection'] },
+}));
+
+// ── content-moderation ─────────────────────────────────────────────────────────
+import contentModerationRouter from './routes/content-moderation-api/routes/intelligence';
+import contentModerationOpenapiRouter from './routes/content-moderation-api/routes/openapi';
+app.use('/content-moderation/openapi.json', contentModerationOpenapiRouter);
+app.use('/content-moderation', contentModerationRouter);
+app.get('/content-moderation/info', (_req, res) => res.json({
+  name: 'Content Moderation API', slug: 'content-moderation', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { moderate: '$0.003', categories: '$0.002', 'safe-rewrite': '$0.005', execution_gate: '$0.001', analyze: '$0.007' },
+    high_volume: { moderate: '$0.0015', categories: '$0.001', analyze: '$0.0035' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/moderate', description: 'Moderate for violations' },
+    { method: 'POST', path: '/categories', description: 'Classify categories' },
+    { method: 'POST', path: '/safe-rewrite', description: 'Safe rewrite' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full moderation', x_one_call: true },
+  ],
+  execution_chain: { previous: 'entity-extraction', next: 'pii-detection', optional_next: ['pii-detection', 'qa-testing'] },
+}));
+
+// ── pii-detection ──────────────────────────────────────────────────────────────
+import piiDetectionRouter from './routes/pii-detection-api/routes/intelligence';
+import piiDetectionOpenapiRouter from './routes/pii-detection-api/routes/openapi';
+app.use('/pii-detection/openapi.json', piiDetectionOpenapiRouter);
+app.use('/pii-detection', piiDetectionRouter);
+app.get('/pii-detection/info', (_req, res) => res.json({
+  name: 'PII Detection API', slug: 'pii-detection', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { detect: '$0.003', redact: '$0.004', classify: '$0.003', execution_gate: '$0.001', analyze: '$0.007' },
+    high_volume: { detect: '$0.0015', redact: '$0.002', analyze: '$0.0035' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/detect', description: 'Detect PII' },
+    { method: 'POST', path: '/redact', description: 'Redact PII' },
+    { method: 'POST', path: '/classify', description: 'Classify PII types' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL detect + redact + classify', x_one_call: true },
+  ],
+  execution_chain: { previous: 'content-moderation', next: 'email-parser', optional_next: ['due-diligence', 'sec-filing-intelligence'] },
+}));
+
+// ── email-parser ───────────────────────────────────────────────────────────────
+import emailParserRouter from './routes/email-parser-api/routes/intelligence';
+import emailParserOpenapiRouter from './routes/email-parser-api/routes/openapi';
+app.use('/email-parser/openapi.json', emailParserOpenapiRouter);
+app.use('/email-parser', emailParserRouter);
+app.get('/email-parser/info', (_req, res) => res.json({
+  name: 'Email Parser API', slug: 'email-parser', version: '1.0.0', grade: 'A+', mcp_compatible: true,
+  privacy: { data_stored: false, retention: 'none' },
+  pricing: {
+    free_tier: { requests_per_day: 100, requests_per_month: 3000 },
+    pay_per_call: { parse: '$0.003', 'extract-action-items': '$0.005', classify: '$0.003', execution_gate: '$0.001', analyze: '$0.008' },
+    high_volume: { parse: '$0.0015', 'extract-action-items': '$0.0025', analyze: '$0.004' },
+  },
+  rate_limits: { free: '100/day', paid: '50000/day', enterprise: '500000/day' },
+  endpoints: [
+    { method: 'POST', path: '/parse', description: 'Parse raw email' },
+    { method: 'POST', path: '/extract-action-items', description: 'Extract action items' },
+    { method: 'POST', path: '/classify', description: 'Classify email type' },
+    { method: 'POST', path: '/execution-gate', description: 'Execution readiness check' },
+    { method: 'POST', path: '/analyze', description: 'ONE-CALL full email intelligence', x_one_call: true },
+  ],
+  execution_chain: { previous: 'pii-detection', next: 'invoice-parser', optional_next: ['sales-intelligence', 'autonomous-negotiation'] },
+}));

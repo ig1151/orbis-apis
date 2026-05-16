@@ -1,0 +1,67 @@
+{
+  "name": "Transcript Extraction API",
+  "slug": "transcript-extraction",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "youtube": "$0.004",
+      "podcast": "$0.005",
+      "audio_url": "$0.006",
+      "execution_gate": "$0.001",
+      "extract": "$0.008"
+    },
+    "high_volume": {
+      "youtube": "$0.002",
+      "podcast": "$0.0025",
+      "extract": "$0.004"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/youtube",
+      "description": "Extract YouTube transcript"
+    },
+    {
+      "method": "POST",
+      "path": "/podcast",
+      "description": "Extract podcast transcript"
+    },
+    {
+      "method": "POST",
+      "path": "/audio-url",
+      "description": "Extract audio URL transcript"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/extract",
+      "description": "ONE-CALL extract any source",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "podcast-search",
+    "next": "audio-transcription",
+    "optional_next": []
+  }
+}

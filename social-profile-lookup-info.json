@@ -1,0 +1,67 @@
+{
+  "name": "Social Profile Lookup API",
+  "slug": "social-profile-lookup",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "find_profiles": "$0.004",
+      "profile_summary": "$0.003",
+      "links": "$0.003",
+      "execution_gate": "$0.001",
+      "lookup": "$0.007"
+    },
+    "high_volume": {
+      "find_profiles": "$0.002",
+      "profile_summary": "$0.0015",
+      "lookup": "$0.0035"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/find-profiles",
+      "description": "Find social profiles"
+    },
+    {
+      "method": "POST",
+      "path": "/profile-summary",
+      "description": "Get profile summary"
+    },
+    {
+      "method": "POST",
+      "path": "/links",
+      "description": "Aggregate cross-platform links"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full social profile intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "betting-odds",
+    "next": "twitter-post-lookup",
+    "optional_next": []
+  }
+}

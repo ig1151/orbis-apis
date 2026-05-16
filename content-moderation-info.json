@@ -1,0 +1,67 @@
+{
+  "name": "Content Moderation API",
+  "slug": "content-moderation",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "moderate": "$0.003",
+      "categories": "$0.002",
+      "safe_rewrite": "$0.005",
+      "execution_gate": "$0.001",
+      "analyze": "$0.007"
+    },
+    "high_volume": {
+      "moderate": "$0.0015",
+      "categories": "$0.001",
+      "analyze": "$0.0035"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/moderate",
+      "description": "Moderate for violations"
+    },
+    {
+      "method": "POST",
+      "path": "/categories",
+      "description": "Classify categories"
+    },
+    {
+      "method": "POST",
+      "path": "/safe-rewrite",
+      "description": "Safe rewrite"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full moderation",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "entity-extraction",
+    "next": "pii-detection",
+    "optional_next": []
+  }
+}

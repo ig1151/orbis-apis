@@ -1,0 +1,67 @@
+{
+  "name": "Email Parser API",
+  "slug": "email-parser",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "parse": "$0.003",
+      "extract_action_items": "$0.005",
+      "classify": "$0.003",
+      "execution_gate": "$0.001",
+      "analyze": "$0.008"
+    },
+    "high_volume": {
+      "parse": "$0.0015",
+      "extract_action_items": "$0.0025",
+      "analyze": "$0.004"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/parse",
+      "description": "Parse raw email"
+    },
+    {
+      "method": "POST",
+      "path": "/extract-action-items",
+      "description": "Extract action items"
+    },
+    {
+      "method": "POST",
+      "path": "/classify",
+      "description": "Classify email type"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full email intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "pii-detection",
+    "next": "invoice-parser",
+    "optional_next": []
+  }
+}

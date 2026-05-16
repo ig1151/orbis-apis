@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Language Detection API",
+    "shortDescription": "Detect language from text with ISO codes and confidence scores",
+    "description": "Detect language from text with confidence scores, batch-detect multiple strings, and return ISO language codes for multilingual routing and content classification agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/language-detection",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/language-detection/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/language-detection/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["language-detection", "nlp", "multilingual", "iso", "classification"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100 },
+      {
+        "name": "Detection Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.001, "description": "Detect language" },
+          { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.004, "description": "Batch detect languages" },
+          { "method": "POST", "pathPattern": "/confidence", "pricePerCallUsdc": 0.002, "description": "Detect with confidence breakdown" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.003, "description": "ONE-CALL full language analysis" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.0005, "description": "Detect language" },
+          { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.002, "description": "Batch detect languages" },
+          { "method": "POST", "pathPattern": "/confidence", "pricePerCallUsdc": 0.001, "description": "Detect with confidence breakdown" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.0015, "description": "ONE-CALL full language analysis" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/detect", "description": "Detect language" },
+      { "method": "POST", "path": "/batch", "description": "Batch detect languages" },
+      { "method": "POST", "path": "/confidence", "description": "Detect with confidence breakdown" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/analyze", "description": "ONE-CALL full language analysis" }
+    ]
+  }
+]

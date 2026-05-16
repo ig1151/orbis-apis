@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Translation API",
+    "shortDescription": "Translate text between languages with auto-detection and batch support",
+    "description": "Translate text between languages, batch-translate multiple strings, and auto-detect source language before translating for multilingual automation and content localization agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/translation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/translation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/translation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["translation", "multilingual", "localization", "nlp", "languages"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100 },
+      {
+        "name": "Translation Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/translate", "pricePerCallUsdc": 0.002, "description": "Translate text" },
+          { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.008, "description": "Batch translate" },
+          { "method": "POST", "pathPattern": "/detect-and-translate", "pricePerCallUsdc": 0.003, "description": "Auto-detect and translate" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "ONE-CALL detect + translate + quality" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/translate", "pricePerCallUsdc": 0.001, "description": "Translate text" },
+          { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.004, "description": "Batch translate" },
+          { "method": "POST", "pathPattern": "/detect-and-translate", "pricePerCallUsdc": 0.0015, "description": "Auto-detect and translate" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.002, "description": "ONE-CALL detect + translate + quality" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/translate", "description": "Translate text" },
+      { "method": "POST", "path": "/batch", "description": "Batch translate" },
+      { "method": "POST", "path": "/detect-and-translate", "description": "Auto-detect and translate" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL detect + translate + quality" }
+    ]
+  }
+]

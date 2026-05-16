@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Sentiment API",
+    "shortDescription": "Analyze text sentiment, batch-score, and extract aspect-level sentiment",
+    "description": "Analyze text sentiment, batch-score multiple strings, and extract aspect-level sentiment for brand monitoring, customer feedback, and NLP pipeline agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/sentiment",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/sentiment/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/sentiment/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["sentiment", "nlp", "brand-monitoring", "customer-feedback", "nps"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100 },
+      {
+        "name": "Sentiment Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/sentiment", "pricePerCallUsdc": 0.002, "description": "Analyze sentiment" },
+          { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.006, "description": "Batch sentiment" },
+          { "method": "POST", "pathPattern": "/aspect-sentiment", "pricePerCallUsdc": 0.004, "description": "Aspect-level sentiment" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.005, "description": "ONE-CALL full sentiment analysis" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/sentiment", "pricePerCallUsdc": 0.001, "description": "Analyze sentiment" },
+          { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.003, "description": "Batch sentiment" },
+          { "method": "POST", "pathPattern": "/aspect-sentiment", "pricePerCallUsdc": 0.002, "description": "Aspect-level sentiment" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.0025, "description": "ONE-CALL full sentiment analysis" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/sentiment", "description": "Analyze sentiment" },
+      { "method": "POST", "path": "/batch", "description": "Batch sentiment" },
+      { "method": "POST", "path": "/aspect-sentiment", "description": "Aspect-level sentiment" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/analyze", "description": "ONE-CALL full sentiment analysis" }
+    ]
+  }
+]

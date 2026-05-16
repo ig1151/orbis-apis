@@ -1,0 +1,67 @@
+{
+  "name": "Entity Extraction API",
+  "slug": "entity-extraction",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "entities": "$0.003",
+      "keywords": "$0.002",
+      "topics": "$0.003",
+      "execution_gate": "$0.001",
+      "analyze": "$0.006"
+    },
+    "high_volume": {
+      "entities": "$0.0015",
+      "keywords": "$0.001",
+      "analyze": "$0.003"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/entities",
+      "description": "Extract named entities"
+    },
+    {
+      "method": "POST",
+      "path": "/keywords",
+      "description": "Extract keywords"
+    },
+    {
+      "method": "POST",
+      "path": "/topics",
+      "description": "Extract topics"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full NLP extraction",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "sentiment",
+    "next": "content-moderation",
+    "optional_next": []
+  }
+}

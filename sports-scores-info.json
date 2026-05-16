@@ -1,0 +1,67 @@
+{
+  "name": "Sports Scores API",
+  "slug": "sports-scores",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "scores": "$0.002",
+      "schedule": "$0.002",
+      "standings": "$0.002",
+      "execution_gate": "$0.001",
+      "lookup": "$0.004"
+    },
+    "high_volume": {
+      "scores": "$0.001",
+      "schedule": "$0.001",
+      "lookup": "$0.002"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/scores",
+      "description": "Get live or historical scores"
+    },
+    {
+      "method": "POST",
+      "path": "/schedule",
+      "description": "Get team schedule"
+    },
+    {
+      "method": "POST",
+      "path": "/standings",
+      "description": "Get league standings"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full sports intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "event-search",
+    "next": "betting-odds",
+    "optional_next": []
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "name": "Event Search API",
+  "slug": "event-search",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "events": "$0.003",
+      "venue": "$0.002",
+      "ticket_links": "$0.002",
+      "execution_gate": "$0.001",
+      "search": "$0.005"
+    },
+    "high_volume": {
+      "events": "$0.0015",
+      "venue": "$0.001",
+      "search": "$0.0025"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/events",
+      "description": "Search events by location and category"
+    },
+    {
+      "method": "POST",
+      "path": "/venue",
+      "description": "Get venue details"
+    },
+    {
+      "method": "POST",
+      "path": "/ticket-links",
+      "description": "Find ticket links"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/search",
+      "description": "ONE-CALL full event intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "maps-places",
+    "next": "sports-scores",
+    "optional_next": []
+  }
+}

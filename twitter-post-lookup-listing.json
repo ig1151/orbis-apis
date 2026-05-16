@@ -1,0 +1,50 @@
+[
+  {
+    "name": "X/Twitter Post Lookup API",
+    "shortDescription": "Look up posts, analyze profile metrics, and measure engagement on Twitter/X",
+    "description": "Look up Twitter/X posts and threads, analyze profile metrics, and measure engagement signals for social intelligence, brand monitoring, and sentiment agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/twitter-post-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/twitter-post-lookup/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/twitter-post-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["twitter", "x", "social-media", "engagement", "brand-monitoring"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100 },
+      {
+        "name": "Twitter Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/post", "pricePerCallUsdc": 0.002, "description": "Look up a post" },
+          { "method": "POST", "pathPattern": "/profile", "pricePerCallUsdc": 0.003, "description": "Get profile metrics" },
+          { "method": "POST", "pathPattern": "/engagement", "pricePerCallUsdc": 0.003, "description": "Measure engagement" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full Twitter/X intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/post", "pricePerCallUsdc": 0.001, "description": "Look up a post" },
+          { "method": "POST", "pathPattern": "/profile", "pricePerCallUsdc": 0.0015, "description": "Get profile metrics" },
+          { "method": "POST", "pathPattern": "/engagement", "pricePerCallUsdc": 0.0015, "description": "Measure engagement" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.003, "description": "ONE-CALL full Twitter/X intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/post", "description": "Look up a post" },
+      { "method": "POST", "path": "/profile", "description": "Get profile metrics" },
+      { "method": "POST", "path": "/engagement", "description": "Measure engagement" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/analyze", "description": "ONE-CALL full Twitter/X intelligence" }
+    ]
+  }
+]

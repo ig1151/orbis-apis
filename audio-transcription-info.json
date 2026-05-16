@@ -1,0 +1,67 @@
+{
+  "name": "Audio Transcription API",
+  "slug": "audio-transcription",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "transcribe": "$0.008",
+      "timestamps": "$0.006",
+      "summary": "$0.005",
+      "execution_gate": "$0.001",
+      "analyze": "$0.012"
+    },
+    "high_volume": {
+      "transcribe": "$0.004",
+      "timestamps": "$0.003",
+      "analyze": "$0.006"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/transcribe",
+      "description": "Transcribe audio"
+    },
+    {
+      "method": "POST",
+      "path": "/timestamps",
+      "description": "Transcribe with timestamps"
+    },
+    {
+      "method": "POST",
+      "path": "/summary",
+      "description": "Transcribe and summarize"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full audio intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "transcript-extraction",
+    "next": "text-summarizer",
+    "optional_next": []
+  }
+}

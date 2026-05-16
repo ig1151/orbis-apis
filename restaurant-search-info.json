@@ -1,0 +1,67 @@
+{
+  "name": "Restaurant Search API",
+  "slug": "restaurant-search",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "nearby": "$0.003",
+      "details": "$0.002",
+      "reviews_summary": "$0.004",
+      "execution_gate": "$0.001",
+      "search": "$0.006"
+    },
+    "high_volume": {
+      "nearby": "$0.0015",
+      "details": "$0.001",
+      "search": "$0.003"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/nearby",
+      "description": "Search nearby restaurants"
+    },
+    {
+      "method": "POST",
+      "path": "/details",
+      "description": "Get restaurant details"
+    },
+    {
+      "method": "POST",
+      "path": "/reviews-summary",
+      "description": "AI-summarized reviews"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/search",
+      "description": "ONE-CALL full restaurant intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "hotel-price",
+    "next": "maps-places",
+    "optional_next": []
+  }
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "PII Detection API",
+    "shortDescription": "Detect, redact, and classify PII for GDPR, HIPAA, and data governance",
+    "description": "Detect personally identifiable information in text, redact PII for compliance, and classify PII types for GDPR, HIPAA, and data governance automation agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/pii-detection",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/pii-detection/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/pii-detection/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["pii", "gdpr", "hipaa", "compliance", "data-governance"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100 },
+      {
+        "name": "Compliance Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.003, "description": "Detect PII" },
+          { "method": "POST", "pathPattern": "/redact", "pricePerCallUsdc": 0.004, "description": "Redact PII" },
+          { "method": "POST", "pathPattern": "/classify", "pricePerCallUsdc": 0.003, "description": "Classify PII types" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.007, "description": "ONE-CALL detect + redact + classify" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0035,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.0015, "description": "Detect PII" },
+          { "method": "POST", "pathPattern": "/redact", "pricePerCallUsdc": 0.002, "description": "Redact PII" },
+          { "method": "POST", "pathPattern": "/classify", "pricePerCallUsdc": 0.0015, "description": "Classify PII types" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.0035, "description": "ONE-CALL detect + redact + classify" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/detect", "description": "Detect PII" },
+      { "method": "POST", "path": "/redact", "description": "Redact PII" },
+      { "method": "POST", "path": "/classify", "description": "Classify PII types" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/analyze", "description": "ONE-CALL detect + redact + classify" }
+    ]
+  }
+]

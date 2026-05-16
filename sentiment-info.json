@@ -1,0 +1,67 @@
+{
+  "name": "Sentiment API",
+  "slug": "sentiment",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "sentiment": "$0.002",
+      "batch": "$0.006",
+      "aspect_sentiment": "$0.004",
+      "execution_gate": "$0.001",
+      "analyze": "$0.005"
+    },
+    "high_volume": {
+      "sentiment": "$0.001",
+      "batch": "$0.003",
+      "analyze": "$0.0025"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/sentiment",
+      "description": "Analyze sentiment"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch sentiment"
+    },
+    {
+      "method": "POST",
+      "path": "/aspect-sentiment",
+      "description": "Aspect-level sentiment"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full sentiment analysis",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "translation",
+    "next": "entity-extraction",
+    "optional_next": []
+  }
+}

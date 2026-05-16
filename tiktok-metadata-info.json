@@ -1,0 +1,67 @@
+{
+  "name": "TikTok Metadata API",
+  "slug": "tiktok-metadata",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "video": "$0.002",
+      "creator": "$0.003",
+      "trend": "$0.004",
+      "execution_gate": "$0.001",
+      "analyze": "$0.007"
+    },
+    "high_volume": {
+      "video": "$0.001",
+      "creator": "$0.0015",
+      "analyze": "$0.0035"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/video",
+      "description": "Get video metadata"
+    },
+    {
+      "method": "POST",
+      "path": "/creator",
+      "description": "Get creator analytics"
+    },
+    {
+      "method": "POST",
+      "path": "/trend",
+      "description": "Get trending content"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full TikTok intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "youtube-metadata",
+    "next": "podcast-search",
+    "optional_next": []
+  }
+}

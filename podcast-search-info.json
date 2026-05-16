@@ -1,0 +1,67 @@
+{
+  "name": "Podcast Search API",
+  "slug": "podcast-search",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "search": "$0.002",
+      "episode": "$0.002",
+      "transcript": "$0.006",
+      "execution_gate": "$0.001",
+      "lookup": "$0.007"
+    },
+    "high_volume": {
+      "search": "$0.001",
+      "episode": "$0.001",
+      "lookup": "$0.0035"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/search",
+      "description": "Search podcasts"
+    },
+    {
+      "method": "POST",
+      "path": "/episode",
+      "description": "Get episode metadata"
+    },
+    {
+      "method": "POST",
+      "path": "/transcript",
+      "description": "Extract transcript"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full podcast intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "tiktok-metadata",
+    "next": "transcript-extraction",
+    "optional_next": []
+  }
+}

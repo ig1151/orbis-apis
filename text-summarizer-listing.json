@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Text Summarizer API",
+    "shortDescription": "Summarize text into paragraphs, bullets, or TL;DR formats",
+    "description": "Summarize long-form text into concise paragraphs, bullet points, or TL;DR formats for research agents, document intelligence, and content automation workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/text-summarizer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/text-summarizer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/text-summarizer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["summarization", "nlp", "documents", "content", "automation"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100 },
+      {
+        "name": "Summarizer Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/summarize", "pricePerCallUsdc": 0.004, "description": "Summarize as paragraph" },
+          { "method": "POST", "pathPattern": "/bullets", "pricePerCallUsdc": 0.003, "description": "Summarize as bullets" },
+          { "method": "POST", "pathPattern": "/tldr", "pricePerCallUsdc": 0.002, "description": "Generate TL;DR" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full summarization" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/summarize", "pricePerCallUsdc": 0.002, "description": "Summarize as paragraph" },
+          { "method": "POST", "pathPattern": "/bullets", "pricePerCallUsdc": 0.0015, "description": "Summarize as bullets" },
+          { "method": "POST", "pathPattern": "/tldr", "pricePerCallUsdc": 0.001, "description": "Generate TL;DR" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.003, "description": "ONE-CALL full summarization" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/summarize", "description": "Summarize as paragraph" },
+      { "method": "POST", "path": "/bullets", "description": "Summarize as bullets" },
+      { "method": "POST", "path": "/tldr", "description": "Generate TL;DR" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/analyze", "description": "ONE-CALL full summarization" }
+    ]
+  }
+]

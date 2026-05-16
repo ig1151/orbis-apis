@@ -1,0 +1,67 @@
+{
+  "name": "Translation API",
+  "slug": "translation",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "translate": "$0.002",
+      "batch": "$0.008",
+      "detect_and_translate": "$0.003",
+      "execution_gate": "$0.001",
+      "lookup": "$0.004"
+    },
+    "high_volume": {
+      "translate": "$0.001",
+      "batch": "$0.004",
+      "lookup": "$0.002"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/translate",
+      "description": "Translate text"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch translate"
+    },
+    {
+      "method": "POST",
+      "path": "/detect-and-translate",
+      "description": "Auto-detect and translate"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL detect + translate + quality",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "language-detection",
+    "next": "sentiment",
+    "optional_next": []
+  }
+}

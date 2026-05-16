@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Restaurant Search API",
+    "shortDescription": "Search nearby restaurants, get details, and summarize reviews",
+    "description": "Search nearby restaurants, get details and menus, and summarize reviews for travel, expense, and local business intelligence agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/restaurant-search",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/restaurant-search/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/restaurant-search/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["restaurants", "food", "local-search", "reviews", "travel"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100 },
+      {
+        "name": "Restaurant Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/nearby", "pricePerCallUsdc": 0.003, "description": "Search nearby restaurants" },
+          { "method": "POST", "pathPattern": "/details", "pricePerCallUsdc": 0.002, "description": "Get restaurant details" },
+          { "method": "POST", "pathPattern": "/reviews-summary", "pricePerCallUsdc": 0.004, "description": "AI-summarized reviews" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/search", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full restaurant intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/nearby", "pricePerCallUsdc": 0.0015, "description": "Search nearby restaurants" },
+          { "method": "POST", "pathPattern": "/details", "pricePerCallUsdc": 0.001, "description": "Get restaurant details" },
+          { "method": "POST", "pathPattern": "/reviews-summary", "pricePerCallUsdc": 0.002, "description": "AI-summarized reviews" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/search", "pricePerCallUsdc": 0.003, "description": "ONE-CALL full restaurant intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/nearby", "description": "Search nearby restaurants" },
+      { "method": "POST", "path": "/details", "description": "Get restaurant details" },
+      { "method": "POST", "path": "/reviews-summary", "description": "AI-summarized reviews" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/search", "description": "ONE-CALL full restaurant intelligence" }
+    ]
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Social Profile Lookup API",
+    "shortDescription": "Find social profiles across platforms and aggregate cross-platform links",
+    "description": "Find social profiles across platforms by name or email, get profile summaries, and aggregate cross-platform links for lead enrichment and outreach automation.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/social-profile-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/social-profile-lookup/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/social-profile-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["social-media", "profiles", "enrichment", "outreach", "leads"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100 },
+      {
+        "name": "Social Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/find-profiles", "pricePerCallUsdc": 0.004, "description": "Find social profiles" },
+          { "method": "POST", "pathPattern": "/profile-summary", "pricePerCallUsdc": 0.003, "description": "Get profile summary" },
+          { "method": "POST", "pathPattern": "/links", "pricePerCallUsdc": 0.003, "description": "Aggregate cross-platform links" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.007, "description": "ONE-CALL full social profile intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0035,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/find-profiles", "pricePerCallUsdc": 0.002, "description": "Find social profiles" },
+          { "method": "POST", "pathPattern": "/profile-summary", "pricePerCallUsdc": 0.0015, "description": "Get profile summary" },
+          { "method": "POST", "pathPattern": "/links", "pricePerCallUsdc": 0.0015, "description": "Aggregate cross-platform links" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution readiness check" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.0035, "description": "ONE-CALL full social profile intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/find-profiles", "description": "Find social profiles" },
+      { "method": "POST", "path": "/profile-summary", "description": "Get profile summary" },
+      { "method": "POST", "path": "/links", "description": "Aggregate cross-platform links" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL full social profile intelligence" }
+    ]
+  }
+]
