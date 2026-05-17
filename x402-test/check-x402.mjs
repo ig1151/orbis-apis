@@ -206,7 +206,7 @@ const tests = [
   { slug: "reputation-intelligence-api-34db35",                              path: "/score",                          body: { brand: "Tesla", ticker: "TSLA" } },
   { slug: "job-posting-search-api-bff64b",                                   path: "/search",                         body: { title: "Software Engineer", skills: ["Python", "AI", "Machine Learning"], location: "San Francisco" } },
   { slug: "qa-testing-api-9f659f",                                           path: "/generate",                       body: { workflow: "user login flow", spec: "User enters email and password, clicks login, sees dashboard" } },
-  { slug: "openapi-validator-api-427e3e",                                    path: "/validate",                       body: { spec_url: "https://orbis-apis.onrender.com/wallet/openapi.json" } },
+  { slug: "openapi-validator-api-427e3e",                                    path: "/validate",                       body: { spec: { openapi: "3.0.0", info: { title: "Test API", version: "1.0.0" }, paths: { "/health": { get: { summary: "Health check", responses: { "200": { description: "OK" } } } } } } } },
   { slug: "linkedin-profile-api-ddb819",                                     path: "/analyze",                        body: { linkedin_url: "https://www.linkedin.com/in/example" } },
   { slug: "knowledge-graph-api-bd4d52",                                      path: "/extract",                        body: { text: "Elon Musk founded Tesla in 2003 and SpaceX in 2002. Tesla is based in Austin, Texas." } },
   { slug: "github-repo-stats-api-e697c1",                                    path: "/analyze",                        body: { repo: "microsoft/vscode" } },
