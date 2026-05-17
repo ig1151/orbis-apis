@@ -3,7 +3,7 @@
   "info": {
     "title": "SPF/DKIM/DMARC Checker API",
     "version": "1.0.0",
-    "description": "Validate SPF, DKIM, and DMARC DNS records for any domain. Returns pass/fail status, policy details, and actionable fixes for email authentication agents.",
+    "description": "Validate SPF, DKIM, and DMARC DNS records for any domain. Returns pass/fail, policy details, and actionable fixes for email authentication agents.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -35,6 +35,9 @@
       "get": {
         "operationId": "discover",
         "summary": "API discovery \u2014 endpoints, pricing, rate limits",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.0
+        },
         "responses": {
           "200": {
             "description": "API metadata",
@@ -106,13 +109,17 @@
       "get": {
         "operationId": "checkSpf",
         "summary": "Validate SPF record for a domain",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "parameters": [
           {
             "name": "domain",
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
             },
             "example": "company.com"
           }
@@ -133,7 +140,8 @@
                   ],
                   "properties": {
                     "domain": {
-                      "type": "string"
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                     },
                     "spf_record": {
                       "type": "string"
@@ -151,7 +159,8 @@
                       }
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -162,6 +171,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -193,6 +207,19 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "domain": "company.com",
+                  "spf_record": "v=spf1 include:_spf.google.com ~all",
+                  "valid": true,
+                  "mechanism_count": 2,
+                  "issues": [],
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }
@@ -204,13 +231,17 @@
       "get": {
         "operationId": "checkDkim",
         "summary": "Validate DKIM record for a domain and selector",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "parameters": [
           {
             "name": "domain",
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
             },
             "example": "company.com"
           },
@@ -240,7 +271,8 @@
                   ],
                   "properties": {
                     "domain": {
-                      "type": "string"
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                     },
                     "selector": {
                       "type": "string"
@@ -258,7 +290,8 @@
                       "type": "integer"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -269,6 +302,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -300,6 +338,20 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "domain": "company.com",
+                  "selector": "default",
+                  "dkim_record": "v=DKIM1; k=rsa; p=MIGfMA0...",
+                  "valid": true,
+                  "key_type": "rsa",
+                  "key_bits": 2048,
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }
@@ -311,13 +363,17 @@
       "get": {
         "operationId": "checkDmarc",
         "summary": "Validate DMARC policy for a domain",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "parameters": [
           {
             "name": "domain",
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
             },
             "example": "company.com"
           }
@@ -339,7 +395,8 @@
                   ],
                   "properties": {
                     "domain": {
-                      "type": "string"
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                     },
                     "dmarc_record": {
                       "type": "string"
@@ -365,7 +422,8 @@
                       }
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -376,6 +434,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -407,6 +470,20 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "domain": "company.com",
+                  "dmarc_record": "v=DMARC1; p=reject; pct=100",
+                  "policy": "reject",
+                  "pct": 100,
+                  "valid": true,
+                  "issues": [],
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }
@@ -419,6 +496,9 @@
         "operationId": "fullEmailAuthCheck",
         "summary": "ONE-CALL: SPF + DKIM + DMARC full authentication check",
         "x-one-call": true,
+        "x-pricing": {
+          "pricePerCallUsdc": 0.005
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -430,12 +510,17 @@
                 ],
                 "properties": {
                   "domain": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                   },
                   "dkim_selector": {
                     "type": "string"
                   }
                 }
+              },
+              "example": {
+                "domain": "company.com",
+                "dkim_selector": "default"
               }
             }
           }
@@ -457,10 +542,14 @@
                   ],
                   "properties": {
                     "domain": {
-                      "type": "string"
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                     },
                     "spf": {
                       "type": "object",
+                      "required": [
+                        "valid"
+                      ],
                       "properties": {
                         "valid": {
                           "type": "boolean"
@@ -478,6 +567,9 @@
                     },
                     "dkim": {
                       "type": "object",
+                      "required": [
+                        "valid"
+                      ],
                       "properties": {
                         "valid": {
                           "type": "boolean"
@@ -489,6 +581,10 @@
                     },
                     "dmarc": {
                       "type": "object",
+                      "required": [
+                        "valid",
+                        "policy"
+                      ],
                       "properties": {
                         "valid": {
                           "type": "boolean"
@@ -507,7 +603,8 @@
                       "maximum": 100
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -518,6 +615,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -550,15 +652,26 @@
                     },
                     "confidence_per_section": {
                       "type": "object",
+                      "required": [
+                        "spf",
+                        "dkim",
+                        "dmarc"
+                      ],
                       "properties": {
                         "spf": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         },
                         "dkim": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         },
                         "dmarc": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         }
                       }
                     },
@@ -570,6 +683,10 @@
                     },
                     "privacy": {
                       "type": "object",
+                      "required": [
+                        "data_stored",
+                        "retention"
+                      ],
                       "properties": {
                         "data_stored": {
                           "type": "boolean"
@@ -580,6 +697,43 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "domain": "company.com",
+                  "spf": {
+                    "valid": true,
+                    "record": "v=spf1 include:_spf.google.com ~all",
+                    "issues": []
+                  },
+                  "dkim": {
+                    "valid": true,
+                    "selector": "default"
+                  },
+                  "dmarc": {
+                    "valid": true,
+                    "policy": "reject"
+                  },
+                  "overall_pass": true,
+                  "authentication_score": 98,
+                  "confidence_per_section": {
+                    "spf": 0.99,
+                    "dkim": 0.97,
+                    "dmarc": 0.99
+                  },
+                  "recommended_actions_priority_order": [
+                    "proceed",
+                    "monitor_dmarc_reports"
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }
@@ -591,6 +745,9 @@
       "post": {
         "operationId": "executionGate",
         "summary": "Execution readiness check before processing",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -602,12 +759,17 @@
                 ],
                 "properties": {
                   "domain": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                   },
                   "objective": {
                     "type": "string"
                   }
                 }
+              },
+              "example": {
+                "domain": "company.com",
+                "objective": "validate before processing"
               }
             }
           }
@@ -637,7 +799,8 @@
                       "type": "string"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -648,6 +811,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -679,6 +847,16 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "ready": true,
+                  "gate_passed": true,
+                  "automation_safe": true,
+                  "cache_recommended": false,
+                  "cache_ttl_seconds": 0
                 }
               }
             }
@@ -690,6 +868,9 @@
       "post": {
         "operationId": "batchAuthCheck",
         "summary": "Batch email auth check \u2014 up to 20 domains",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.012
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -704,10 +885,17 @@
                     "type": "array",
                     "maxItems": 20,
                     "items": {
-                      "type": "string"
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                     }
                   }
                 }
+              },
+              "example": {
+                "domains": [
+                  "company.com",
+                  "startup.io"
+                ]
               }
             }
           }
@@ -724,19 +912,46 @@
                     "computed_at",
                     "success",
                     "count",
+                    "succeeded",
+                    "failed",
                     "results"
                   ],
                   "properties": {
                     "count": {
                       "type": "integer"
                     },
-                    "results": {
+                    "succeeded": {
+                      "type": "integer"
+                    },
+                    "failed": {
+                      "type": "integer"
+                    },
+                    "errors": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "domain": {
+                          "input": {
                             "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "domain",
+                          "overall_pass"
+                        ],
+                        "properties": {
+                          "domain": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                           },
                           "overall_pass": {
                             "type": "boolean"
@@ -748,7 +963,8 @@
                       }
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -759,6 +975,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -790,6 +1011,30 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "e5f6a7b8-c9d0-1234-efab-345678901234",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "count": 2,
+                  "succeeded": 2,
+                  "failed": 0,
+                  "errors": [],
+                  "results": [
+                    {
+                      "domain": "company.com",
+                      "overall_pass": true,
+                      "authentication_score": 98
+                    },
+                    {
+                      "domain": "startup.io",
+                      "overall_pass": false,
+                      "authentication_score": 42
+                    }
+                  ],
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }

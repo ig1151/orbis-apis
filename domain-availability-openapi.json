@@ -33,6 +33,9 @@
       "get": {
         "operationId": "discover",
         "summary": "API discovery \u2014 endpoints, pricing, rate limits",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.0
+        },
         "responses": {
           "200": {
             "description": "API metadata",
@@ -105,15 +108,19 @@
         "operationId": "checkDomain",
         "summary": "ONE-CALL: Check domain availability with registration signals",
         "x-one-call": true,
+        "x-pricing": {
+          "pricePerCallUsdc": 0.002
+        },
         "parameters": [
           {
             "name": "domain",
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
             },
-            "example": "mynewstartup.com"
+            "example": "mynewstartup.io"
           }
         ],
         "responses": {
@@ -133,7 +140,8 @@
                   ],
                   "properties": {
                     "domain": {
-                      "type": "string"
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                     },
                     "available": {
                       "type": "boolean"
@@ -155,7 +163,8 @@
                       "format": "date-time"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -166,6 +175,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -198,15 +212,26 @@
                     },
                     "confidence_per_section": {
                       "type": "object",
+                      "required": [
+                        "availability",
+                        "registrar",
+                        "expiry"
+                      ],
                       "properties": {
                         "availability": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         },
                         "registrar": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         },
                         "expiry": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         }
                       }
                     },
@@ -218,6 +243,10 @@
                     },
                     "privacy": {
                       "type": "object",
+                      "required": [
+                        "data_stored",
+                        "retention"
+                      ],
                       "properties": {
                         "data_stored": {
                           "type": "boolean"
@@ -228,6 +257,30 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "domain": "mynewstartup.io",
+                  "available": true,
+                  "status": "available",
+                  "confidence_per_section": {
+                    "availability": 0.99,
+                    "registrar": 0.85,
+                    "expiry": 0.0
+                  },
+                  "recommended_actions_priority_order": [
+                    "register_now",
+                    "check_alternatives"
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "automation_safe": true,
+                  "cache_recommended": false,
+                  "cache_ttl_seconds": 300
                 }
               }
             }
@@ -239,6 +292,9 @@
       "get": {
         "operationId": "suggestDomains",
         "summary": "Get alternative domain name suggestions",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.003
+        },
         "parameters": [
           {
             "name": "query",
@@ -281,9 +337,15 @@
                       "type": "array",
                       "items": {
                         "type": "object",
+                        "required": [
+                          "domain",
+                          "available",
+                          "tld"
+                        ],
                         "properties": {
                           "domain": {
-                            "type": "string"
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                           },
                           "available": {
                             "type": "boolean"
@@ -300,7 +362,8 @@
                       }
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -311,6 +374,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -342,6 +410,29 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "query": "mynewstartup",
+                  "suggestions": [
+                    {
+                      "domain": "mynewstartup.io",
+                      "available": true,
+                      "tld": "io",
+                      "relevance_score": 0.95
+                    },
+                    {
+                      "domain": "mynewstartup.co",
+                      "available": true,
+                      "tld": "co",
+                      "relevance_score": 0.88
+                    }
+                  ],
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }
@@ -353,6 +444,9 @@
       "post": {
         "operationId": "executionGate",
         "summary": "Execution readiness check before processing",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -364,12 +458,17 @@
                 ],
                 "properties": {
                   "domain": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                   },
                   "objective": {
                     "type": "string"
                   }
                 }
+              },
+              "example": {
+                "domain": "mynewstartup.io",
+                "objective": "validate before processing"
               }
             }
           }
@@ -399,7 +498,8 @@
                       "type": "string"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -410,6 +510,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -441,6 +546,16 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "ready": true,
+                  "gate_passed": true,
+                  "automation_safe": true,
+                  "cache_recommended": false,
+                  "cache_ttl_seconds": 0
                 }
               }
             }
@@ -452,6 +567,9 @@
       "post": {
         "operationId": "batchCheckDomains",
         "summary": "Batch domain availability check \u2014 up to 20 domains",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.015
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -466,10 +584,17 @@
                     "type": "array",
                     "maxItems": 20,
                     "items": {
-                      "type": "string"
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                     }
                   }
                 }
+              },
+              "example": {
+                "domains": [
+                  "mynewstartup.io",
+                  "mynewstartup.co"
+                ]
               }
             }
           }
@@ -486,19 +611,46 @@
                     "computed_at",
                     "success",
                     "count",
+                    "succeeded",
+                    "failed",
                     "results"
                   ],
                   "properties": {
                     "count": {
                       "type": "integer"
                     },
-                    "results": {
+                    "succeeded": {
+                      "type": "integer"
+                    },
+                    "failed": {
+                      "type": "integer"
+                    },
+                    "errors": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "domain": {
+                          "input": {
                             "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "domain",
+                          "available"
+                        ],
+                        "properties": {
+                          "domain": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                           },
                           "available": {
                             "type": "boolean"
@@ -510,7 +662,8 @@
                       }
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -521,6 +674,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -552,6 +710,30 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "count": 2,
+                  "succeeded": 2,
+                  "failed": 0,
+                  "errors": [],
+                  "results": [
+                    {
+                      "domain": "mynewstartup.io",
+                      "available": true,
+                      "status": "available"
+                    },
+                    {
+                      "domain": "mynewstartup.co",
+                      "available": false,
+                      "status": "registered"
+                    }
+                  ],
+                  "automation_safe": true,
+                  "cache_recommended": false,
+                  "cache_ttl_seconds": 300
                 }
               }
             }

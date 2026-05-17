@@ -3,7 +3,7 @@
   "info": {
     "title": "Email Reputation API",
     "version": "1.0.0",
-    "description": "Score email addresses and domains for reputation, blacklist status, and deliverability risk. Designed for outreach filtering, fraud detection, and CRM hygiene agents.",
+    "description": "Score email addresses and domains for reputation, blacklist status, and deliverability risk. For outreach filtering, fraud detection, and CRM hygiene agents.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -33,6 +33,9 @@
       "get": {
         "operationId": "discover",
         "summary": "API discovery \u2014 endpoints, pricing, rate limits",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.0
+        },
         "responses": {
           "200": {
             "description": "API metadata",
@@ -105,6 +108,9 @@
         "operationId": "scoreEmail",
         "summary": "ONE-CALL: Score email reputation and risk level",
         "x-one-call": true,
+        "x-pricing": {
+          "pricePerCallUsdc": 0.002
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -120,6 +126,9 @@
                     "format": "email"
                   }
                 }
+              },
+              "example": {
+                "email": "contact@company.com"
               }
             }
           }
@@ -171,7 +180,8 @@
                       "type": "boolean"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -182,6 +192,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -214,15 +229,26 @@
                     },
                     "confidence_per_section": {
                       "type": "object",
+                      "required": [
+                        "reputation",
+                        "blacklist",
+                        "syntax"
+                      ],
                       "properties": {
                         "reputation": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         },
                         "blacklist": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         },
                         "syntax": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         }
                       }
                     },
@@ -234,6 +260,10 @@
                     },
                     "privacy": {
                       "type": "object",
+                      "required": [
+                        "data_stored",
+                        "retention"
+                      ],
                       "properties": {
                         "data_stored": {
                           "type": "boolean"
@@ -244,6 +274,34 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "email": "contact@company.com",
+                  "reputation_score": 87,
+                  "risk_level": "low",
+                  "is_disposable": false,
+                  "is_role_account": true,
+                  "domain_age_days": 3650,
+                  "mx_valid": true,
+                  "confidence_per_section": {
+                    "reputation": 0.92,
+                    "blacklist": 0.99,
+                    "syntax": 1.0
+                  },
+                  "recommended_actions_priority_order": [
+                    "allow",
+                    "tag_as_role_account"
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }
@@ -255,6 +313,9 @@
       "post": {
         "operationId": "blacklistCheck",
         "summary": "Check email or domain against known blacklists",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.002
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -270,6 +331,9 @@
                     "format": "email"
                   }
                 }
+              },
+              "example": {
+                "email": "contact@company.com"
               }
             }
           }
@@ -318,7 +382,8 @@
                       ]
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -329,6 +394,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -360,6 +430,24 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "email": "spam@badactor.com",
+                  "domain": "badactor.com",
+                  "blacklisted": true,
+                  "blacklist_count": 3,
+                  "lists_found_on": [
+                    "spamhaus",
+                    "barracuda",
+                    "sorbs"
+                  ],
+                  "recommended_action": "block",
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }
@@ -371,6 +459,9 @@
       "post": {
         "operationId": "executionGate",
         "summary": "Execution readiness check before processing",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -389,6 +480,10 @@
                     "type": "string"
                   }
                 }
+              },
+              "example": {
+                "email": "contact@company.com",
+                "objective": "validate before processing"
               }
             }
           }
@@ -418,7 +513,8 @@
                       "type": "string"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -429,6 +525,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -460,6 +561,16 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "ready": true,
+                  "gate_passed": true,
+                  "automation_safe": true,
+                  "cache_recommended": false,
+                  "cache_ttl_seconds": 0
                 }
               }
             }
@@ -471,6 +582,9 @@
       "post": {
         "operationId": "batchEmailReputation",
         "summary": "Batch email reputation score \u2014 up to 20 emails",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.015
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -490,6 +604,12 @@
                     }
                   }
                 }
+              },
+              "example": {
+                "emails": [
+                  "contact@company.com",
+                  "info@startup.io"
+                ]
               }
             }
           }
@@ -506,16 +626,43 @@
                     "computed_at",
                     "success",
                     "count",
+                    "succeeded",
+                    "failed",
                     "results"
                   ],
                   "properties": {
                     "count": {
                       "type": "integer"
                     },
+                    "succeeded": {
+                      "type": "integer"
+                    },
+                    "failed": {
+                      "type": "integer"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "input": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
                     "results": {
                       "type": "array",
                       "items": {
                         "type": "object",
+                        "required": [
+                          "email",
+                          "reputation_score",
+                          "risk_level"
+                        ],
                         "properties": {
                           "email": {
                             "type": "string",
@@ -534,7 +681,8 @@
                       }
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -545,6 +693,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -576,6 +729,32 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "count": 2,
+                  "succeeded": 2,
+                  "failed": 0,
+                  "errors": [],
+                  "results": [
+                    {
+                      "email": "contact@company.com",
+                      "reputation_score": 87,
+                      "risk_level": "low",
+                      "blacklisted": false
+                    },
+                    {
+                      "email": "info@startup.io",
+                      "reputation_score": 72,
+                      "risk_level": "medium",
+                      "blacklisted": false
+                    }
+                  ],
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }

@@ -33,6 +33,9 @@
       "get": {
         "operationId": "discover",
         "summary": "API discovery \u2014 endpoints, pricing, rate limits",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.0
+        },
         "responses": {
           "200": {
             "description": "API metadata",
@@ -104,13 +107,17 @@
       "get": {
         "operationId": "getMxRecords",
         "summary": "Resolve MX records for a domain",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "parameters": [
           {
             "name": "domain",
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
             },
             "example": "company.com"
           }
@@ -132,12 +139,17 @@
                   ],
                   "properties": {
                     "domain": {
-                      "type": "string"
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                     },
                     "mx_records": {
                       "type": "array",
                       "items": {
                         "type": "object",
+                        "required": [
+                          "host",
+                          "priority"
+                        ],
                         "properties": {
                           "host": {
                             "type": "string"
@@ -158,7 +170,8 @@
                       "type": "integer"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -169,6 +182,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -200,6 +218,29 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "domain": "company.com",
+                  "has_mx": true,
+                  "record_count": 2,
+                  "mx_records": [
+                    {
+                      "host": "aspmx.l.google.com",
+                      "priority": 1,
+                      "ttl": 300
+                    },
+                    {
+                      "host": "alt1.aspmx.l.google.com",
+                      "priority": 5,
+                      "ttl": 300
+                    }
+                  ],
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }
@@ -212,13 +253,17 @@
         "operationId": "checkEmailReady",
         "summary": "ONE-CALL: MX + SPF + DMARC deliverability check",
         "x-one-call": true,
+        "x-pricing": {
+          "pricePerCallUsdc": 0.002
+        },
         "parameters": [
           {
             "name": "domain",
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
             },
             "example": "company.com"
           }
@@ -240,7 +285,8 @@
                   ],
                   "properties": {
                     "domain": {
-                      "type": "string"
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                     },
                     "email_ready": {
                       "type": "boolean"
@@ -266,7 +312,8 @@
                       }
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -277,6 +324,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -309,15 +361,26 @@
                     },
                     "confidence_per_section": {
                       "type": "object",
+                      "required": [
+                        "mx",
+                        "spf",
+                        "dmarc"
+                      ],
                       "properties": {
                         "mx": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         },
                         "spf": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         },
                         "dmarc": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         }
                       }
                     },
@@ -329,6 +392,10 @@
                     },
                     "privacy": {
                       "type": "object",
+                      "required": [
+                        "data_stored",
+                        "retention"
+                      ],
                       "properties": {
                         "data_stored": {
                           "type": "boolean"
@@ -339,6 +406,33 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "domain": "company.com",
+                  "email_ready": true,
+                  "has_mx": true,
+                  "has_spf": true,
+                  "has_dmarc": true,
+                  "deliverability_score": 95,
+                  "issues": [],
+                  "confidence_per_section": {
+                    "mx": 1.0,
+                    "spf": 0.95,
+                    "dmarc": 0.9
+                  },
+                  "recommended_actions_priority_order": [
+                    "proceed_with_outreach"
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }
@@ -350,6 +444,9 @@
       "post": {
         "operationId": "executionGate",
         "summary": "Execution readiness check before processing",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -361,12 +458,17 @@
                 ],
                 "properties": {
                   "domain": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                   },
                   "objective": {
                     "type": "string"
                   }
                 }
+              },
+              "example": {
+                "domain": "company.com",
+                "objective": "validate before processing"
               }
             }
           }
@@ -396,7 +498,8 @@
                       "type": "string"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -407,6 +510,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -438,6 +546,16 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "ready": true,
+                  "gate_passed": true,
+                  "automation_safe": true,
+                  "cache_recommended": false,
+                  "cache_ttl_seconds": 0
                 }
               }
             }
@@ -449,6 +567,9 @@
       "post": {
         "operationId": "batchMxCheck",
         "summary": "Batch MX record check \u2014 up to 20 domains",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.012
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -463,10 +584,17 @@
                     "type": "array",
                     "maxItems": 20,
                     "items": {
-                      "type": "string"
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                     }
                   }
                 }
+              },
+              "example": {
+                "domains": [
+                  "company.com",
+                  "startup.io"
+                ]
               }
             }
           }
@@ -483,19 +611,46 @@
                     "computed_at",
                     "success",
                     "count",
+                    "succeeded",
+                    "failed",
                     "results"
                   ],
                   "properties": {
                     "count": {
                       "type": "integer"
                     },
-                    "results": {
+                    "succeeded": {
+                      "type": "integer"
+                    },
+                    "failed": {
+                      "type": "integer"
+                    },
+                    "errors": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "domain": {
+                          "input": {
                             "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "domain",
+                          "has_mx"
+                        ],
+                        "properties": {
+                          "domain": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
                           },
                           "has_mx": {
                             "type": "boolean"
@@ -507,7 +662,8 @@
                       }
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -518,6 +674,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -549,6 +710,30 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "count": 2,
+                  "succeeded": 2,
+                  "failed": 0,
+                  "errors": [],
+                  "results": [
+                    {
+                      "domain": "company.com",
+                      "has_mx": true,
+                      "mx_count": 2
+                    },
+                    {
+                      "domain": "startup.io",
+                      "has_mx": true,
+                      "mx_count": 1
+                    }
+                  ],
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 3600
                 }
               }
             }

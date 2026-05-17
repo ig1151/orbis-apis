@@ -33,6 +33,9 @@
       "get": {
         "operationId": "discover",
         "summary": "API discovery \u2014 endpoints, pricing, rate limits",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.0
+        },
         "responses": {
           "200": {
             "description": "API metadata",
@@ -105,6 +108,9 @@
         "operationId": "cleanEmail",
         "summary": "ONE-CALL: Clean and validate email syntax",
         "x-one-call": true,
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -119,6 +125,9 @@
                     "type": "string"
                   }
                 }
+              },
+              "example": {
+                "email": "User+alias@Gmial.com"
               }
             }
           }
@@ -162,7 +171,8 @@
                       "type": "boolean"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -173,6 +183,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -205,15 +220,26 @@
                     },
                     "confidence_per_section": {
                       "type": "object",
+                      "required": [
+                        "syntax",
+                        "typo",
+                        "alias"
+                      ],
                       "properties": {
                         "syntax": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         },
                         "typo": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         },
                         "alias": {
-                          "type": "number"
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
                         }
                       }
                     },
@@ -225,6 +251,10 @@
                     },
                     "privacy": {
                       "type": "object",
+                      "required": [
+                        "data_stored",
+                        "retention"
+                      ],
                       "properties": {
                         "data_stored": {
                           "type": "boolean"
@@ -235,6 +265,37 @@
                       }
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "input": "User+alias@Gmial.com",
+                  "cleaned": "user@gmail.com",
+                  "is_valid": true,
+                  "changes_made": [
+                    "lowercased",
+                    "alias_stripped",
+                    "typo_corrected"
+                  ],
+                  "typo_corrected": true,
+                  "alias_removed": true,
+                  "confidence_per_section": {
+                    "syntax": 1.0,
+                    "typo": 0.95,
+                    "alias": 1.0
+                  },
+                  "recommended_actions_priority_order": [
+                    "use_cleaned_email",
+                    "verify_deliverability"
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 86400
                 }
               }
             }
@@ -246,6 +307,9 @@
       "post": {
         "operationId": "normalizeEmail",
         "summary": "Normalize email to canonical form",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -260,6 +324,9 @@
                     "type": "string"
                   }
                 }
+              },
+              "example": {
+                "email": "User+Tag@Gmail.com"
               }
             }
           }
@@ -296,7 +363,8 @@
                       "type": "boolean"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -307,6 +375,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -338,6 +411,19 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "input": "User+Tag@Gmail.com",
+                  "normalized": "user@gmail.com",
+                  "local_part": "user",
+                  "domain": "gmail.com",
+                  "lowercase_applied": true,
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 86400
                 }
               }
             }
@@ -349,6 +435,9 @@
       "post": {
         "operationId": "executionGate",
         "summary": "Execution readiness check before processing",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -366,6 +455,10 @@
                     "type": "string"
                   }
                 }
+              },
+              "example": {
+                "email": "user@example.com",
+                "objective": "validate before processing"
               }
             }
           }
@@ -395,7 +488,8 @@
                       "type": "string"
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -406,6 +500,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -437,6 +536,16 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "ready": true,
+                  "gate_passed": true,
+                  "automation_safe": true,
+                  "cache_recommended": false,
+                  "cache_ttl_seconds": 0
                 }
               }
             }
@@ -448,6 +557,9 @@
       "post": {
         "operationId": "batchCleanEmails",
         "summary": "Batch email syntax clean \u2014 up to 20 emails",
+        "x-pricing": {
+          "pricePerCallUsdc": 0.01
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -466,6 +578,12 @@
                     }
                   }
                 }
+              },
+              "example": {
+                "emails": [
+                  "User+alias@Gmial.com",
+                  "HELLO@Company.COM"
+                ]
               }
             }
           }
@@ -482,16 +600,43 @@
                     "computed_at",
                     "success",
                     "count",
+                    "succeeded",
+                    "failed",
                     "results"
                   ],
                   "properties": {
                     "count": {
                       "type": "integer"
                     },
+                    "succeeded": {
+                      "type": "integer"
+                    },
+                    "failed": {
+                      "type": "integer"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "input": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
                     "results": {
                       "type": "array",
                       "items": {
                         "type": "object",
+                        "required": [
+                          "input",
+                          "cleaned",
+                          "is_valid"
+                        ],
                         "properties": {
                           "input": {
                             "type": "string"
@@ -506,7 +651,8 @@
                       }
                     },
                     "trace_id": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uuid"
                     },
                     "computed_at": {
                       "type": "string",
@@ -517,6 +663,11 @@
                     },
                     "source_provenance": {
                       "type": "object",
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ],
                       "properties": {
                         "provider": {
                           "type": "string"
@@ -548,6 +699,30 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "example": {
+                  "trace_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "computed_at": "2025-01-01T00:00:00Z",
+                  "success": true,
+                  "count": 2,
+                  "succeeded": 2,
+                  "failed": 0,
+                  "errors": [],
+                  "results": [
+                    {
+                      "input": "User+alias@Gmial.com",
+                      "cleaned": "user@gmail.com",
+                      "is_valid": true
+                    },
+                    {
+                      "input": "HELLO@Company.COM",
+                      "cleaned": "hello@company.com",
+                      "is_valid": true
+                    }
+                  ],
+                  "automation_safe": true,
+                  "cache_recommended": true,
+                  "cache_ttl_seconds": 86400
                 }
               }
             }
