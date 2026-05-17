@@ -1,0 +1,1281 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Founder Background API",
+    "version": "1.0.0",
+    "description": "Research founder credibility, track records, and investment signals for due diligence and investor intelligence agents",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 200
+      },
+      "pay_per_call": {
+        "lookup": "$0.004",
+        "score": "$0.003",
+        "timeline": "$0.003",
+        "execution-gate": "$0.001",
+        "founder-intelligence": "$0.010",
+        "track-record": "$0.005",
+        "batch": "$0.020"
+      }
+    },
+    "x-compliance-notice": "Use only public/business data and permitted enrichment workflows. Verify applicable privacy regulations (GDPR, CCPA) before processing personal data."
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/founder-background"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery — endpoints, pricing, rate limits",
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "api_name",
+                    "version",
+                    "base_url",
+                    "endpoints",
+                    "one_call_endpoint"
+                  ],
+                  "properties": {
+                    "api_name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "base_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "one_call_endpoint": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "rate_limits": {
+                      "type": "object",
+                      "properties": {
+                        "free": {
+                          "type": "string"
+                        },
+                        "paid": {
+                          "type": "string"
+                        },
+                        "enterprise": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "mcp_compatible": {
+                      "type": "boolean"
+                    },
+                    "agent_callable": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookupFounder",
+        "summary": "Look up founder background and professional history",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  },
+                  "linkedin_url": {
+                    "type": "string",
+                    "format": "uri"
+                  }
+                }
+              },
+              "example": {
+                "name": "Patrick Collison",
+                "company": "Stripe"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "name",
+                    "current_company",
+                    "background_summary"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "current_company": {
+                      "type": "string"
+                    },
+                    "current_title": {
+                      "type": "string"
+                    },
+                    "education": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "institution": {
+                            "type": "string"
+                          },
+                          "degree": {
+                            "type": "string"
+                          },
+                          "year": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "previous_companies": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "background_summary": {
+                      "type": "string"
+                    },
+                    "years_experience": {
+                      "type": "integer"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "name": "Patrick Collison",
+                  "current_company": "Stripe",
+                  "current_title": "CEO",
+                  "education": [
+                    {
+                      "institution": "MIT",
+                      "degree": "Physics",
+                      "year": 2009
+                    }
+                  ],
+                  "previous_companies": [
+                    "Auctomatic"
+                  ],
+                  "background_summary": "Co-founded Stripe at 22, previously sold Auctomatic for $5M.",
+                  "years_experience": 16,
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.004
+        }
+      }
+    },
+    "/score": {
+      "post": {
+        "operationId": "scoreFounder",
+        "summary": "Score founder credibility and success likelihood",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "name": "Patrick Collison",
+                "company": "Stripe"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "credibility_score",
+                    "success_likelihood",
+                    "investor_signal"
+                  ],
+                  "properties": {
+                    "credibility_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "success_likelihood": {
+                      "type": "string",
+                      "enum": [
+                        "high",
+                        "medium",
+                        "low"
+                      ]
+                    },
+                    "investor_signal": {
+                      "type": "string",
+                      "enum": [
+                        "strong-yes",
+                        "yes",
+                        "neutral",
+                        "no"
+                      ]
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "credibility_score": 98,
+                  "success_likelihood": "high",
+                  "investor_signal": "strong-yes",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.003
+        }
+      }
+    },
+    "/timeline": {
+      "post": {
+        "operationId": "founderTimeline",
+        "summary": "Get career and venture timeline",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "name": "Patrick Collison",
+                "company": "Stripe"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "timeline",
+                    "total_exits"
+                  ],
+                  "properties": {
+                    "timeline": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "year": {
+                            "type": "integer"
+                          },
+                          "event": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "year",
+                          "event"
+                        ]
+                      }
+                    },
+                    "total_exits": {
+                      "type": "integer"
+                    },
+                    "total_years_founding": {
+                      "type": "integer"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "timeline": [
+                    {
+                      "year": 2008,
+                      "event": "Founded Auctomatic",
+                      "company": "Auctomatic",
+                      "type": "founding"
+                    },
+                    {
+                      "year": 2009,
+                      "event": "Acquired by Live Current Media",
+                      "company": "Auctomatic",
+                      "type": "exit"
+                    },
+                    {
+                      "year": 2010,
+                      "event": "Co-founded Stripe",
+                      "company": "Stripe",
+                      "type": "founding"
+                    }
+                  ],
+                  "total_exits": 1,
+                  "total_years_founding": 16,
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.003
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "name": "Patrick Collison",
+                "objective": "diligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "ready",
+                    "gate_passed"
+                  ],
+                  "properties": {
+                    "ready": {
+                      "type": "boolean"
+                    },
+                    "gate_passed": {
+                      "type": "boolean"
+                    },
+                    "blocking_reason": {
+                      "type": "string"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "ready": true,
+                  "gate_passed": true,
+                  "blocking_reason": null,
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        }
+      }
+    },
+    "/founder-intelligence": {
+      "post": {
+        "operationId": "founderIntelligence",
+        "summary": "ONE-CALL: lookup + score + timeline + diligence questions",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "name": "Patrick Collison",
+                "company": "Stripe"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "credibility_score",
+                    "investor_signal",
+                    "diligence_verdict",
+                    "due_diligence_questions"
+                  ],
+                  "properties": {
+                    "credibility_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "investor_signal": {
+                      "type": "string",
+                      "enum": [
+                        "strong-yes",
+                        "yes",
+                        "neutral",
+                        "no"
+                      ]
+                    },
+                    "diligence_verdict": {
+                      "type": "string"
+                    },
+                    "due_diligence_questions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    },
+                    "confidence_per_section": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    },
+                    "recommended_actions_priority_order": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "privacy": {
+                      "type": "object",
+                      "properties": {
+                        "data_stored": {
+                          "type": "boolean"
+                        },
+                        "retention": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "data_stored",
+                        "retention"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "credibility_score": 98,
+                  "investor_signal": "strong-yes",
+                  "diligence_verdict": "Exceptional founder with proven exit and unicorn track record.",
+                  "due_diligence_questions": [
+                    "How does Stripe plan to expand into emerging markets?",
+                    "What is the regulatory strategy for crypto payments?"
+                  ],
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true,
+                  "confidence_per_section": {
+                    "primary": 0.92,
+                    "secondary": 0.87
+                  },
+                  "recommended_actions_priority_order": [
+                    "review-output",
+                    "chain-next-api"
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.01
+        }
+      }
+    },
+    "/track-record": {
+      "post": {
+        "operationId": "trackRecord",
+        "summary": "Analyze founder venture track record and patterns",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "name": "Patrick Collison"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "ventures",
+                    "track_record_score",
+                    "pattern"
+                  ],
+                  "properties": {
+                    "ventures": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "company": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "outcome": {
+                            "type": "string"
+                          },
+                          "years": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "company",
+                          "outcome"
+                        ]
+                      }
+                    },
+                    "track_record_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "pattern": {
+                      "type": "string"
+                    },
+                    "notable_exits": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "ventures": [
+                    {
+                      "company": "Auctomatic",
+                      "role": "Co-Founder",
+                      "outcome": "acquired",
+                      "years": 1
+                    },
+                    {
+                      "company": "Stripe",
+                      "role": "CEO",
+                      "outcome": "active-unicorn",
+                      "years": 15
+                    }
+                  ],
+                  "track_record_score": 97,
+                  "pattern": "Serial founder, fast scaling, enterprise fintech focus",
+                  "notable_exits": [
+                    "Auctomatic (2009)"
+                  ],
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.005
+        }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batchFounders",
+        "summary": "Batch research up to 10 founders",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "founders"
+                ],
+                "properties": {
+                  "founders": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "name"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "company": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "founders": [
+                  {
+                    "name": "Patrick Collison",
+                    "company": "Stripe"
+                  },
+                  {
+                    "name": "Tobi Lütke",
+                    "company": "Shopify"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "count",
+                    "results"
+                  ],
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "credibility_score": {
+                            "type": "number"
+                          },
+                          "investor_signal": {
+                            "type": "string"
+                          },
+                          "diligence_verdict": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "credibility_score",
+                          "investor_signal"
+                        ]
+                      }
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "count": 2,
+                  "results": [
+                    {
+                      "name": "Patrick Collison",
+                      "credibility_score": 98,
+                      "investor_signal": "strong-yes",
+                      "diligence_verdict": "Exceptional"
+                    },
+                    {
+                      "name": "Tobi Lütke",
+                      "credibility_score": 96,
+                      "investor_signal": "strong-yes",
+                      "diligence_verdict": "Top-tier"
+                    }
+                  ],
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.02
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

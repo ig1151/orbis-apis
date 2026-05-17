@@ -1,0 +1,1200 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Markdown Cleaner API",
+    "version": "1.0.0",
+    "description": "Clean, lint, format, and extract structure from Markdown documents for documentation agents, content pipelines, and knowledge base tools",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 500
+      },
+      "pay_per_call": {
+        "clean": "$0.002",
+        "format": "$0.002",
+        "lint": "$0.002",
+        "execution-gate": "$0.001",
+        "markdown-intelligence": "$0.006",
+        "extract-structure": "$0.003",
+        "batch": "$0.015"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/markdown-cleaner"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery — endpoints, pricing, rate limits",
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "api_name",
+                    "version",
+                    "base_url",
+                    "endpoints",
+                    "one_call_endpoint"
+                  ],
+                  "properties": {
+                    "api_name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "base_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "one_call_endpoint": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "rate_limits": {
+                      "type": "object",
+                      "properties": {
+                        "free": {
+                          "type": "string"
+                        },
+                        "paid": {
+                          "type": "string"
+                        },
+                        "enterprise": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "mcp_compatible": {
+                      "type": "boolean"
+                    },
+                    "agent_callable": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clean": {
+      "post": {
+        "operationId": "cleanMarkdown",
+        "summary": "Clean and normalize a Markdown document",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "markdown"
+                ],
+                "properties": {
+                  "markdown": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "markdown": "# Title\n\n\n\nSome text  \n\nAnother paragraph\n\n\n"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "cleaned_markdown",
+                    "changes_made"
+                  ],
+                  "properties": {
+                    "cleaned_markdown": {
+                      "type": "string"
+                    },
+                    "changes_made": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "original_length": {
+                      "type": "integer"
+                    },
+                    "cleaned_length": {
+                      "type": "integer"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "cleaned_markdown": "# Title\n\nSome text\n\nAnother paragraph",
+                  "changes_made": [
+                    "removed extra blank lines",
+                    "stripped trailing whitespace"
+                  ],
+                  "original_length": 52,
+                  "cleaned_length": 38,
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.002
+        }
+      }
+    },
+    "/format": {
+      "post": {
+        "operationId": "formatMarkdown",
+        "summary": "Format Markdown to a style standard",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "markdown"
+                ],
+                "properties": {
+                  "markdown": {
+                    "type": "string"
+                  },
+                  "standard": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "markdown": "# title\n## section\ntext",
+                "standard": "commonmark"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "formatted_markdown",
+                    "standard_applied"
+                  ],
+                  "properties": {
+                    "formatted_markdown": {
+                      "type": "string"
+                    },
+                    "standard_applied": {
+                      "type": "string"
+                    },
+                    "changes_count": {
+                      "type": "integer"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "formatted_markdown": "# Title\n\n## Section\n\ntext",
+                  "standard_applied": "commonmark",
+                  "changes_count": 3,
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.002
+        }
+      }
+    },
+    "/lint": {
+      "post": {
+        "operationId": "lintMarkdown",
+        "summary": "Lint Markdown for errors and warnings",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "markdown"
+                ],
+                "properties": {
+                  "markdown": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "markdown": "# Title\n\nText without trailing newline"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "lint_score",
+                    "issues",
+                    "error_count",
+                    "passed"
+                  ],
+                  "properties": {
+                    "lint_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "line": {
+                            "type": "integer"
+                          },
+                          "rule": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "type": "string",
+                            "enum": [
+                              "error",
+                              "warning",
+                              "info"
+                            ]
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "rule",
+                          "severity",
+                          "message"
+                        ]
+                      }
+                    },
+                    "error_count": {
+                      "type": "integer"
+                    },
+                    "warning_count": {
+                      "type": "integer"
+                    },
+                    "passed": {
+                      "type": "boolean"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "lint_score": 84,
+                  "issues": [
+                    {
+                      "line": 3,
+                      "rule": "MD047",
+                      "severity": "warning",
+                      "message": "Files should end with a single newline character"
+                    }
+                  ],
+                  "error_count": 0,
+                  "warning_count": 1,
+                  "passed": true,
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.002
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "markdown"
+                ],
+                "properties": {
+                  "markdown": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "markdown": "# Hello",
+                "objective": "lint"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "ready",
+                    "gate_passed"
+                  ],
+                  "properties": {
+                    "ready": {
+                      "type": "boolean"
+                    },
+                    "gate_passed": {
+                      "type": "boolean"
+                    },
+                    "blocking_reason": {
+                      "type": "string"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "ready": true,
+                  "gate_passed": true,
+                  "blocking_reason": null,
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        }
+      }
+    },
+    "/markdown-intelligence": {
+      "post": {
+        "operationId": "markdownIntelligence",
+        "summary": "ONE-CALL: clean + lint + format + structure extract",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "markdown"
+                ],
+                "properties": {
+                  "markdown": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "markdown": "# API Reference\n\n## Overview\n\nThis API provides..."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "cleaned_markdown",
+                    "lint_score",
+                    "content_type",
+                    "quality_assessment"
+                  ],
+                  "properties": {
+                    "cleaned_markdown": {
+                      "type": "string"
+                    },
+                    "lint_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "content_type": {
+                      "type": "string",
+                      "enum": [
+                        "documentation",
+                        "article",
+                        "readme",
+                        "notes",
+                        "other"
+                      ]
+                    },
+                    "quality_assessment": {
+                      "type": "string"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    },
+                    "confidence_per_section": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    },
+                    "recommended_actions_priority_order": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "privacy": {
+                      "type": "object",
+                      "properties": {
+                        "data_stored": {
+                          "type": "boolean"
+                        },
+                        "retention": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "data_stored",
+                        "retention"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "cleaned_markdown": "# API Reference\n\n## Overview\n\nThis API provides...",
+                  "lint_score": 97,
+                  "content_type": "documentation",
+                  "quality_assessment": "Well-structured technical documentation with consistent heading hierarchy.",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true,
+                  "confidence_per_section": {
+                    "primary": 0.92,
+                    "secondary": 0.87
+                  },
+                  "recommended_actions_priority_order": [
+                    "review-output",
+                    "chain-next-api"
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.006
+        }
+      }
+    },
+    "/extract-structure": {
+      "post": {
+        "operationId": "extractStructure",
+        "summary": "Extract document structure and table of contents",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "markdown"
+                ],
+                "properties": {
+                  "markdown": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "markdown": "# Guide\n\n## Setup\n\nInstall with npm.\n\n## Usage\n\nCall the API."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "table_of_contents",
+                    "sections",
+                    "heading_count"
+                  ],
+                  "properties": {
+                    "table_of_contents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "sections": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "heading": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "integer"
+                          },
+                          "word_count": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "heading",
+                          "level"
+                        ]
+                      }
+                    },
+                    "heading_count": {
+                      "type": "integer"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "table_of_contents": [
+                    "# Guide",
+                    "## Setup",
+                    "## Usage"
+                  ],
+                  "sections": [
+                    {
+                      "heading": "Setup",
+                      "level": 2,
+                      "word_count": 3
+                    },
+                    {
+                      "heading": "Usage",
+                      "level": 2,
+                      "word_count": 3
+                    }
+                  ],
+                  "heading_count": 3,
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.003
+        }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batchClean",
+        "summary": "Batch clean up to 10 Markdown documents",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "documents"
+                ],
+                "properties": {
+                  "documents": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "markdown"
+                      ],
+                      "properties": {
+                        "markdown": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "documents": [
+                  {
+                    "markdown": "# Doc A\n\n\nContent"
+                  },
+                  {
+                    "markdown": "# Doc B\nContent"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "count",
+                    "results"
+                  ],
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "cleaned_markdown": {
+                            "type": "string"
+                          },
+                          "lint_score": {
+                            "type": "number"
+                          },
+                          "passed": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "cleaned_markdown",
+                          "lint_score",
+                          "passed"
+                        ]
+                      }
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "count": 2,
+                  "results": [
+                    {
+                      "cleaned_markdown": "# Doc A\n\nContent",
+                      "lint_score": 91,
+                      "passed": true
+                    },
+                    {
+                      "cleaned_markdown": "# Doc B\n\nContent",
+                      "lint_score": 88,
+                      "passed": true
+                    }
+                  ],
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.015
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

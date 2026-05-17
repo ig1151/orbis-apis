@@ -1,0 +1,21 @@
+{
+  "name": "Onchain Labeling API",
+  "slug": "onchain-labeling",
+  "version": "1.0.0",
+  "description": "Label wallet addresses, classify entity types, verify known entities and bulk label for AML and compliance agent workflows",
+  "category": "Crypto / Onchain",
+  "tags": ["aml", "compliance", "wallet-labeling", "entity-classification", "sanctions"],
+  "pricing": {
+    "free_tier": { "requests_per_day": 300 },
+    "pay_per_call": { "label": "$0.002", "classify": "$0.003", "verify": "$0.003", "execution-gate": "$0.001", "label-intelligence": "$0.008", "bulk-label": "$0.015", "batch": "$0.015" }
+  },
+  "endpoints": ["/label", "/classify", "/verify", "/execution-gate", "/label-intelligence", "/bulk-label", "/batch"],
+  "one_call_endpoint": "/label-intelligence",
+  "base_url": "https://orbis-apis.onrender.com/onchain-labeling",
+  "openapi_url": "https://orbis-apis.onrender.com/onchain-labeling/openapi.json",
+  "auth": { "type": "apiKey", "header": "X-API-Key" },
+  "grade": "A+",
+  "mcp_compatible": true,
+  "agent_callable": true,
+  "privacy": { "data_stored": false, "retention": "none" }
+}

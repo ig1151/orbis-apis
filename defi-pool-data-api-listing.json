@@ -1,0 +1,21 @@
+{
+  "name": "DeFi Pool Data API",
+  "slug": "defi-pool-data",
+  "version": "1.0.0",
+  "description": "Look up DeFi liquidity pool data, calculate APY, analyze liquidity depth and assess pool risk for yield farming agents",
+  "category": "Crypto / Onchain",
+  "tags": ["defi", "liquidity-pool", "apy", "yield-farming", "uniswap"],
+  "pricing": {
+    "free_tier": { "requests_per_day": 300 },
+    "pay_per_call": { "lookup": "$0.002", "apy": "$0.003", "liquidity": "$0.003", "execution-gate": "$0.001", "pool-intelligence": "$0.008", "risk": "$0.004", "batch": "$0.015" }
+  },
+  "endpoints": ["/lookup", "/apy", "/liquidity", "/execution-gate", "/pool-intelligence", "/risk", "/batch"],
+  "one_call_endpoint": "/pool-intelligence",
+  "base_url": "https://orbis-apis.onrender.com/defi-pool-data",
+  "openapi_url": "https://orbis-apis.onrender.com/defi-pool-data/openapi.json",
+  "auth": { "type": "apiKey", "header": "X-API-Key" },
+  "grade": "A+",
+  "mcp_compatible": true,
+  "agent_callable": true,
+  "privacy": { "data_stored": false, "retention": "none" }
+}

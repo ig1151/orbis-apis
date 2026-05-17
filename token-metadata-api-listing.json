@@ -1,0 +1,21 @@
+{
+  "name": "Token Metadata API",
+  "slug": "token-metadata",
+  "version": "1.0.0",
+  "description": "Look up token metadata, verify contract authenticity, fetch social links and compare tokens for DeFi research and trading agents",
+  "category": "Crypto / Onchain",
+  "tags": ["token", "metadata", "erc20", "defi", "crypto"],
+  "pricing": {
+    "free_tier": { "requests_per_day": 500 },
+    "pay_per_call": { "lookup": "$0.002", "verify": "$0.002", "social": "$0.002", "execution-gate": "$0.001", "token-intelligence": "$0.006", "compare": "$0.003", "batch": "$0.012" }
+  },
+  "endpoints": ["/lookup", "/verify", "/social", "/execution-gate", "/token-intelligence", "/compare", "/batch"],
+  "one_call_endpoint": "/token-intelligence",
+  "base_url": "https://orbis-apis.onrender.com/token-metadata",
+  "openapi_url": "https://orbis-apis.onrender.com/token-metadata/openapi.json",
+  "auth": { "type": "apiKey", "header": "X-API-Key" },
+  "grade": "A+",
+  "mcp_compatible": true,
+  "agent_callable": true,
+  "privacy": { "data_stored": false, "retention": "none" }
+}

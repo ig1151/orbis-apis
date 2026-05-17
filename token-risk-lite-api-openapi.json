@@ -1,0 +1,1272 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Token Risk Lite API",
+    "version": "1.0.0",
+    "description": "Fast, lightweight token safety scoring — detect honeypots, rug pulls, and critical risk flags for high-frequency trading agents and DeFi safety checks",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-financial-disclaimer": "Crypto data for informational purposes only. Not financial advice.",
+    "x-execution-gate-required": true,
+    "x-paper-mode-recommended": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 500
+      },
+      "pay_per_call": {
+        "assess": "$0.002",
+        "score": "$0.002",
+        "flags": "$0.002",
+        "execution-gate": "$0.001",
+        "risk-intelligence": "$0.006",
+        "compare": "$0.003",
+        "batch": "$0.015"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/token-risk-lite"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery — endpoints, pricing, rate limits",
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "api_name",
+                    "version",
+                    "base_url",
+                    "endpoints",
+                    "one_call_endpoint"
+                  ],
+                  "properties": {
+                    "api_name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "base_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "one_call_endpoint": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "rate_limits": {
+                      "type": "object",
+                      "properties": {
+                        "free": {
+                          "type": "string"
+                        },
+                        "paid": {
+                          "type": "string"
+                        },
+                        "enterprise": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "mcp_compatible": {
+                      "type": "boolean"
+                    },
+                    "agent_callable": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assess": {
+      "post": {
+        "operationId": "assessRisk",
+        "summary": "Assess token risk with core safety checks",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contract_address"
+                ],
+                "properties": {
+                  "contract_address": {
+                    "type": "string"
+                  },
+                  "chain": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contract_address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                "chain": "ethereum"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "risk_score",
+                    "risk_level",
+                    "honeypot",
+                    "rug_pull_risk"
+                  ],
+                  "properties": {
+                    "risk_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "risk_level": {
+                      "type": "string",
+                      "enum": [
+                        "safe",
+                        "caution",
+                        "high-risk",
+                        "critical"
+                      ]
+                    },
+                    "honeypot": {
+                      "type": "boolean"
+                    },
+                    "rug_pull_risk": {
+                      "type": "string",
+                      "enum": [
+                        "low",
+                        "moderate",
+                        "high"
+                      ]
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "risk_score": 4,
+                  "risk_level": "safe",
+                  "honeypot": false,
+                  "rug_pull_risk": "low",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.002
+        }
+      }
+    },
+    "/score": {
+      "post": {
+        "operationId": "scoreToken",
+        "summary": "Get detailed token risk score with breakdown",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contract_address"
+                ],
+                "properties": {
+                  "contract_address": {
+                    "type": "string"
+                  },
+                  "chain": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contract_address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                "chain": "ethereum"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "risk_score",
+                    "grade",
+                    "score_breakdown"
+                  ],
+                  "properties": {
+                    "risk_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "grade": {
+                      "type": "string",
+                      "enum": [
+                        "A",
+                        "B",
+                        "C",
+                        "D",
+                        "F"
+                      ]
+                    },
+                    "score_breakdown": {
+                      "type": "object",
+                      "required": [
+                        "contract_safety",
+                        "liquidity"
+                      ],
+                      "properties": {
+                        "contract_safety": {
+                          "type": "number"
+                        },
+                        "liquidity": {
+                          "type": "number"
+                        },
+                        "ownership": {
+                          "type": "number"
+                        },
+                        "trading_pattern": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "risk_score": 4,
+                  "grade": "A",
+                  "score_breakdown": {
+                    "contract_safety": 98,
+                    "liquidity": 100,
+                    "ownership": 99,
+                    "trading_pattern": 97
+                  },
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.002
+        }
+      }
+    },
+    "/flags": {
+      "post": {
+        "operationId": "riskFlags",
+        "summary": "Get specific risk flags for a token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contract_address"
+                ],
+                "properties": {
+                  "contract_address": {
+                    "type": "string"
+                  },
+                  "chain": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contract_address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                "chain": "ethereum"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "flags",
+                    "critical_count",
+                    "overall_verdict"
+                  ],
+                  "properties": {
+                    "flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "flag": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "type": "string",
+                            "enum": [
+                              "critical",
+                              "high",
+                              "medium",
+                              "low"
+                            ]
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "flag",
+                          "severity"
+                        ]
+                      }
+                    },
+                    "critical_count": {
+                      "type": "integer"
+                    },
+                    "overall_verdict": {
+                      "type": "string",
+                      "enum": [
+                        "safe",
+                        "risky",
+                        "dangerous"
+                      ]
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "flags": [],
+                  "critical_count": 0,
+                  "overall_verdict": "safe",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.002
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contract_address"
+                ],
+                "properties": {
+                  "contract_address": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contract_address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                "objective": "pre-trade-check"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "ready",
+                    "gate_passed"
+                  ],
+                  "properties": {
+                    "ready": {
+                      "type": "boolean"
+                    },
+                    "gate_passed": {
+                      "type": "boolean"
+                    },
+                    "blocking_reason": {
+                      "type": "string"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "ready": true,
+                  "gate_passed": true,
+                  "blocking_reason": null,
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        }
+      }
+    },
+    "/risk-intelligence": {
+      "post": {
+        "operationId": "riskIntelligence",
+        "summary": "ONE-CALL: assess + score + flags + explanation",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contract_address"
+                ],
+                "properties": {
+                  "contract_address": {
+                    "type": "string"
+                  },
+                  "chain": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contract_address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                "chain": "ethereum"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "risk_score",
+                    "grade",
+                    "honeypot",
+                    "critical_flags",
+                    "user_verdict",
+                    "explanation"
+                  ],
+                  "properties": {
+                    "risk_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "grade": {
+                      "type": "string",
+                      "enum": [
+                        "A",
+                        "B",
+                        "C",
+                        "D",
+                        "F"
+                      ]
+                    },
+                    "honeypot": {
+                      "type": "boolean"
+                    },
+                    "critical_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "user_verdict": {
+                      "type": "string"
+                    },
+                    "explanation": {
+                      "type": "string"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    },
+                    "confidence_per_section": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    },
+                    "recommended_actions_priority_order": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "privacy": {
+                      "type": "object",
+                      "properties": {
+                        "data_stored": {
+                          "type": "boolean"
+                        },
+                        "retention": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "data_stored",
+                        "retention"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "risk_score": 4,
+                  "grade": "A",
+                  "honeypot": false,
+                  "critical_flags": [],
+                  "user_verdict": "SAFE",
+                  "explanation": "USDC is a regulated, fully-audited stablecoin with no risk factors detected.",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true,
+                  "confidence_per_section": {
+                    "primary": 0.92,
+                    "secondary": 0.87
+                  },
+                  "recommended_actions_priority_order": [
+                    "review-output",
+                    "chain-next-api"
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.006
+        }
+      }
+    },
+    "/compare": {
+      "post": {
+        "operationId": "compareRisk",
+        "summary": "Compare risk between two tokens",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contract_address_a",
+                  "contract_address_b"
+                ],
+                "properties": {
+                  "contract_address_a": {
+                    "type": "string"
+                  },
+                  "contract_address_b": {
+                    "type": "string"
+                  },
+                  "chain": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contract_address_a": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                "contract_address_b": "0xSomeNewToken...",
+                "chain": "ethereum"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "risk_scores",
+                    "grades",
+                    "lower_risk"
+                  ],
+                  "properties": {
+                    "risk_scores": {
+                      "type": "object",
+                      "required": [
+                        "a",
+                        "b"
+                      ],
+                      "properties": {
+                        "a": {
+                          "type": "number"
+                        },
+                        "b": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "grades": {
+                      "type": "object",
+                      "required": [
+                        "a",
+                        "b"
+                      ],
+                      "properties": {
+                        "a": {
+                          "type": "string"
+                        },
+                        "b": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "lower_risk": {
+                      "type": "string",
+                      "enum": [
+                        "a",
+                        "b",
+                        "equal"
+                      ]
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "risk_scores": {
+                    "a": 4,
+                    "b": 78
+                  },
+                  "grades": {
+                    "a": "A",
+                    "b": "D"
+                  },
+                  "lower_risk": "a",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.003
+        }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batchAssess",
+        "summary": "Batch assess up to 20 tokens",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tokens"
+                ],
+                "properties": {
+                  "tokens": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "contract_address"
+                      ],
+                      "properties": {
+                        "contract_address": {
+                          "type": "string"
+                        },
+                        "chain": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "tokens": [
+                  {
+                    "contract_address": "0xA0b86991...",
+                    "chain": "ethereum"
+                  },
+                  {
+                    "contract_address": "0xSomeNewToken...",
+                    "chain": "ethereum"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "count",
+                    "results"
+                  ],
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "contract_address": {
+                            "type": "string"
+                          },
+                          "risk_score": {
+                            "type": "number"
+                          },
+                          "grade": {
+                            "type": "string"
+                          },
+                          "honeypot": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "contract_address",
+                          "risk_score",
+                          "grade"
+                        ]
+                      }
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "count": 2,
+                  "results": [
+                    {
+                      "contract_address": "0xA0b86991...",
+                      "risk_score": 4,
+                      "grade": "A",
+                      "honeypot": false
+                    },
+                    {
+                      "contract_address": "0xSomeNewToken...",
+                      "risk_score": 78,
+                      "grade": "D",
+                      "honeypot": true
+                    }
+                  ],
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.015
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "URL Metadata API",
+  "slug": "url-metadata",
+  "version": "1.0.0",
+  "description": "Fetch URL metadata, extract Open Graph tags, analyze page content and generate link previews for agent-driven web workflows",
+  "category": "Web / Search / Scraping",
+  "tags": ["url", "metadata", "og-tags", "link-preview", "web-scraping"],
+  "pricing": {
+    "free_tier": { "requests_per_day": 500 },
+    "pay_per_call": { "fetch": "$0.002", "og-tags": "$0.002", "analyze": "$0.003", "execution-gate": "$0.001", "url-intelligence": "$0.007", "link-preview": "$0.002", "batch": "$0.015" }
+  },
+  "endpoints": ["/fetch", "/og-tags", "/analyze", "/execution-gate", "/url-intelligence", "/link-preview", "/batch"],
+  "one_call_endpoint": "/url-intelligence",
+  "base_url": "https://orbis-apis.onrender.com/url-metadata",
+  "openapi_url": "https://orbis-apis.onrender.com/url-metadata/openapi.json",
+  "auth": { "type": "apiKey", "header": "X-API-Key" },
+  "grade": "A+",
+  "mcp_compatible": true,
+  "agent_callable": true,
+  "privacy": { "data_stored": false, "retention": "none" }
+}

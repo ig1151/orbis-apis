@@ -1,0 +1,1228 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Decision-Maker Fit API",
+    "version": "1.0.0",
+    "description": "Score decision-maker fit, identify buyer personas, craft outreach angles, and detect buying signals for B2B sales agents",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 200
+      },
+      "pay_per_call": {
+        "score": "$0.003",
+        "persona": "$0.004",
+        "outreach-angle": "$0.004",
+        "execution-gate": "$0.001",
+        "fit-intelligence": "$0.010",
+        "buying-signals": "$0.005",
+        "batch": "$0.020"
+      }
+    },
+    "x-compliance-notice": "Use only public/business data and permitted enrichment workflows. Verify applicable privacy regulations (GDPR, CCPA) before processing personal data."
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/decision-maker-fit"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery — endpoints, pricing, rate limits",
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "api_name",
+                    "version",
+                    "base_url",
+                    "endpoints",
+                    "one_call_endpoint"
+                  ],
+                  "properties": {
+                    "api_name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "base_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "one_call_endpoint": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "rate_limits": {
+                      "type": "object",
+                      "properties": {
+                        "free": {
+                          "type": "string"
+                        },
+                        "paid": {
+                          "type": "string"
+                        },
+                        "enterprise": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "mcp_compatible": {
+                      "type": "boolean"
+                    },
+                    "agent_callable": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/score": {
+      "post": {
+        "operationId": "scoreFit",
+        "summary": "Score decision-maker fit for your ICP",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contact_name",
+                  "company"
+                ],
+                "properties": {
+                  "contact_name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "icp_profile": {
+                    "type": "object"
+                  }
+                }
+              },
+              "example": {
+                "contact_name": "Maria Garcia",
+                "company": "RetailCo",
+                "title": "Chief Digital Officer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "fit_score",
+                    "authority_score",
+                    "role_alignment",
+                    "icp_match"
+                  ],
+                  "properties": {
+                    "fit_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "authority_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "role_alignment": {
+                      "type": "string",
+                      "enum": [
+                        "champion",
+                        "economic-buyer",
+                        "influencer",
+                        "blocker",
+                        "end-user"
+                      ]
+                    },
+                    "icp_match": {
+                      "type": "string",
+                      "enum": [
+                        "strong",
+                        "partial",
+                        "weak"
+                      ]
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "fit_score": 89,
+                  "authority_score": 94,
+                  "role_alignment": "economic-buyer",
+                  "icp_match": "strong",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.003
+        }
+      }
+    },
+    "/persona": {
+      "post": {
+        "operationId": "buyerPersona",
+        "summary": "Identify buyer archetype and behavioral profile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contact_name",
+                  "company"
+                ],
+                "properties": {
+                  "contact_name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contact_name": "Maria Garcia",
+                "company": "RetailCo",
+                "title": "Chief Digital Officer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "archetype",
+                    "primary_goals",
+                    "pain_points"
+                  ],
+                  "properties": {
+                    "archetype": {
+                      "type": "string"
+                    },
+                    "primary_goals": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "pain_points": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "decision_style": {
+                      "type": "string",
+                      "enum": [
+                        "analytical",
+                        "consensus",
+                        "autonomous",
+                        "relationship"
+                      ]
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "archetype": "Visionary Transformer",
+                  "primary_goals": [
+                    "digital transformation",
+                    "omnichannel growth",
+                    "cost reduction"
+                  ],
+                  "pain_points": [
+                    "legacy system debt",
+                    "slow deployment cycles",
+                    "siloed data"
+                  ],
+                  "decision_style": "autonomous",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.004
+        }
+      }
+    },
+    "/outreach-angle": {
+      "post": {
+        "operationId": "outreachAngle",
+        "summary": "Generate personalized outreach angles",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contact_name",
+                  "company"
+                ],
+                "properties": {
+                  "contact_name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "product_context": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contact_name": "Maria Garcia",
+                "company": "RetailCo",
+                "title": "CDO",
+                "product_context": "AI workflow automation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "primary_angle",
+                    "subject_line_ideas",
+                    "value_proposition_framing"
+                  ],
+                  "properties": {
+                    "primary_angle": {
+                      "type": "string"
+                    },
+                    "subject_line_ideas": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "value_proposition_framing": {
+                      "type": "string"
+                    },
+                    "tone_recommendation": {
+                      "type": "string"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "primary_angle": "Speed-to-value — cut integration time from months to days",
+                  "subject_line_ideas": [
+                    "RetailCo → 10× faster deployments?",
+                    "How CDOs at Top 50 retailers cut tech debt in Q1"
+                  ],
+                  "value_proposition_framing": "Focus on autonomous execution and eliminating manual integration overhead",
+                  "tone_recommendation": "bold, peer-to-peer, data-led",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.004
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contact_name"
+                ],
+                "properties": {
+                  "contact_name": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contact_name": "Maria Garcia",
+                "objective": "send-email"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "ready",
+                    "gate_passed"
+                  ],
+                  "properties": {
+                    "ready": {
+                      "type": "boolean"
+                    },
+                    "gate_passed": {
+                      "type": "boolean"
+                    },
+                    "blocking_reason": {
+                      "type": "string"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "ready": true,
+                  "gate_passed": true,
+                  "blocking_reason": null,
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.001
+        }
+      }
+    },
+    "/fit-intelligence": {
+      "post": {
+        "operationId": "fitIntelligence",
+        "summary": "ONE-CALL: fit + persona + outreach + buying signals",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contact_name",
+                  "company"
+                ],
+                "properties": {
+                  "contact_name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contact_name": "Maria Garcia",
+                "company": "RetailCo",
+                "title": "CDO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "fit_score",
+                    "persona",
+                    "outreach_angle",
+                    "recommended_action"
+                  ],
+                  "properties": {
+                    "fit_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "persona": {
+                      "type": "string"
+                    },
+                    "outreach_angle": {
+                      "type": "string"
+                    },
+                    "recommended_action": {
+                      "type": "string"
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    },
+                    "confidence_per_section": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    },
+                    "recommended_actions_priority_order": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "privacy": {
+                      "type": "object",
+                      "properties": {
+                        "data_stored": {
+                          "type": "boolean"
+                        },
+                        "retention": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "data_stored",
+                        "retention"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "fit_score": 89,
+                  "persona": "Visionary Transformer",
+                  "outreach_angle": "Speed-to-value — cut integration time from months to days",
+                  "recommended_action": "outreach-now",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true,
+                  "confidence_per_section": {
+                    "primary": 0.92,
+                    "secondary": 0.87
+                  },
+                  "recommended_actions_priority_order": [
+                    "review-output",
+                    "chain-next-api"
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.01
+        }
+      }
+    },
+    "/buying-signals": {
+      "post": {
+        "operationId": "buyingSignals",
+        "summary": "Detect active buying signals and in-market indicators",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contact_name",
+                  "company"
+                ],
+                "properties": {
+                  "contact_name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "contact_name": "Maria Garcia",
+                "company": "RetailCo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "buying_signal_score",
+                    "in_market",
+                    "urgency"
+                  ],
+                  "properties": {
+                    "buying_signal_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "in_market": {
+                      "type": "boolean"
+                    },
+                    "signals": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "urgency": {
+                      "type": "string",
+                      "enum": [
+                        "immediate",
+                        "near-term",
+                        "long-term",
+                        "none"
+                      ]
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "buying_signal_score": 76,
+                  "in_market": true,
+                  "signals": [
+                    "posted job for AI integration lead",
+                    "attended automation conference",
+                    "competitor recently switched vendors"
+                  ],
+                  "urgency": "near-term",
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.005
+        }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batchScore",
+        "summary": "Batch score up to 20 decision makers",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "contacts"
+                ],
+                "properties": {
+                  "contacts": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "contact_name",
+                        "company"
+                      ],
+                      "properties": {
+                        "contact_name": {
+                          "type": "string"
+                        },
+                        "company": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "contacts": [
+                  {
+                    "contact_name": "Maria Garcia",
+                    "company": "RetailCo",
+                    "title": "CDO"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "count",
+                    "results"
+                  ],
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "contact_name": {
+                            "type": "string"
+                          },
+                          "fit_score": {
+                            "type": "number"
+                          },
+                          "role_alignment": {
+                            "type": "string"
+                          },
+                          "recommended_action": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "contact_name",
+                          "fit_score",
+                          "role_alignment"
+                        ]
+                      }
+                    },
+                    "trace_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "computed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "source_provenance": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string"
+                        },
+                        "retrieved_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "freshness_score": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "retrieved_at",
+                        "freshness_score"
+                      ]
+                    },
+                    "cache_ttl_seconds": {
+                      "type": "integer"
+                    },
+                    "cache_recommended": {
+                      "type": "boolean"
+                    },
+                    "recommended_next_api": {
+                      "type": "string"
+                    },
+                    "recommended_next_endpoint": {
+                      "type": "string"
+                    },
+                    "automation_safe": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "example": {
+                  "count": 1,
+                  "results": [
+                    {
+                      "contact_name": "Maria Garcia",
+                      "fit_score": 89,
+                      "role_alignment": "economic-buyer",
+                      "recommended_action": "outreach-now"
+                    }
+                  ],
+                  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "computed_at": "2026-05-17T12:00:00Z",
+                  "success": true,
+                  "source_provenance": {
+                    "provider": "orbis-intelligence",
+                    "retrieved_at": "2026-05-17T12:00:00Z",
+                    "freshness_score": 0.95
+                  },
+                  "cache_ttl_seconds": 3600,
+                  "cache_recommended": true,
+                  "recommended_next_api": "orbis-apis.onrender.com",
+                  "recommended_next_endpoint": null,
+                  "automation_safe": true
+                }
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "pricePerCallUsdc": 0.02
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

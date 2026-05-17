@@ -1,0 +1,21 @@
+{
+  "name": "Wallet Balance API",
+  "slug": "wallet-balance",
+  "version": "1.0.0",
+  "description": "Look up wallet token balances, analyze portfolio composition, view transaction history and estimate net worth for Web3 and DeFi agents",
+  "category": "Crypto / Onchain",
+  "tags": ["wallet", "balance", "portfolio", "defi", "web3"],
+  "pricing": {
+    "free_tier": { "requests_per_day": 300 },
+    "pay_per_call": { "lookup": "$0.002", "portfolio": "$0.003", "history": "$0.003", "execution-gate": "$0.001", "wallet-intelligence": "$0.008", "net-worth": "$0.004", "batch": "$0.015" }
+  },
+  "endpoints": ["/lookup", "/portfolio", "/history", "/execution-gate", "/wallet-intelligence", "/net-worth", "/batch"],
+  "one_call_endpoint": "/wallet-intelligence",
+  "base_url": "https://orbis-apis.onrender.com/wallet-balance",
+  "openapi_url": "https://orbis-apis.onrender.com/wallet-balance/openapi.json",
+  "auth": { "type": "apiKey", "header": "X-API-Key" },
+  "grade": "A+",
+  "mcp_compatible": true,
+  "agent_callable": true,
+  "privacy": { "data_stored": false, "retention": "none" }
+}

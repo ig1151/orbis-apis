@@ -1,0 +1,2563 @@
+You are reviewing 10 API definitions (openapi.json + info.json) for an API marketplace called Orbis.
+For each API, please provide:
+1. A recommended listing with: name, shortDescription, description, tags, keywords
+2. Corrected tier pricing using this structure:
+   - Free: 100 req/day, 3000 req/month
+   - Pay Per Call: pricePerCall (base), endpointPricing per endpoint
+   - High Volume: ~50% discount on Pay Per Call
+3. Use this pricing guide:
+   - Basic lookup: $0.001–$0.003
+   - Enrichment/analysis: $0.004–$0.008
+   - Batch endpoint: $0.008–$0.020
+   - One-call workflow: $0.006–$0.015
+
+
+=== transcript-extraction ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Transcript Extraction API",
+    "version": "1.0.0",
+    "description": "Extract transcripts from YouTube videos, podcast episodes, and audio URLs with speaker detection and timestamping for research, RAG, and media intelligence agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "youtube": "$0.004",
+        "podcast": "$0.005",
+        "audio-url": "$0.006",
+        "execution-gate": "$0.001",
+        "extract": "$0.008"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/transcript-extraction"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/youtube": {
+      "post": {
+        "operationId": "youtubeTranscript",
+        "summary": "Extract YouTube transcript",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extract YouTube transcript"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/podcast": {
+      "post": {
+        "operationId": "podcastTranscript",
+        "summary": "Extract podcast transcript",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extract podcast transcript"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/audio-url": {
+      "post": {
+        "operationId": "audioUrlTranscript",
+        "summary": "Extract audio URL transcript",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extract audio URL transcript"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/extract": {
+      "post": {
+        "operationId": "extract",
+        "summary": "ONE-CALL extract any source",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL extract any source"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Transcript Extraction API",
+  "slug": "transcript-extraction",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "youtube": "$0.004",
+      "podcast": "$0.005",
+      "audio_url": "$0.006",
+      "execution_gate": "$0.001",
+      "extract": "$0.008"
+    },
+    "high_volume": {
+      "youtube": "$0.002",
+      "podcast": "$0.0025",
+      "extract": "$0.004"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/youtube",
+      "description": "Extract YouTube transcript"
+    },
+    {
+      "method": "POST",
+      "path": "/podcast",
+      "description": "Extract podcast transcript"
+    },
+    {
+      "method": "POST",
+      "path": "/audio-url",
+      "description": "Extract audio URL transcript"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/extract",
+      "description": "ONE-CALL extract any source",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "podcast-search",
+    "next": "audio-transcription",
+    "optional_next": []
+  }
+}
+
+=== audio-transcription ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Audio Transcription API",
+    "version": "1.0.0",
+    "description": "Transcribe audio files with timestamps, speaker labels, and summaries for meeting intelligence, compliance recording, and voice workflow automation agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "transcribe": "$0.008",
+        "timestamps": "$0.006",
+        "summary": "$0.005",
+        "execution-gate": "$0.001",
+        "analyze": "$0.012"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/audio-transcription"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/transcribe": {
+      "post": {
+        "operationId": "transcribe",
+        "summary": "Transcribe audio",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transcribe audio"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/timestamps": {
+      "post": {
+        "operationId": "timestamps",
+        "summary": "Transcribe with timestamps",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transcribe with timestamps"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/summary": {
+      "post": {
+        "operationId": "summary",
+        "summary": "Transcribe and summarize",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transcribe and summarize"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full audio intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full audio intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Audio Transcription API",
+  "slug": "audio-transcription",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "transcribe": "$0.008",
+      "timestamps": "$0.006",
+      "summary": "$0.005",
+      "execution_gate": "$0.001",
+      "analyze": "$0.012"
+    },
+    "high_volume": {
+      "transcribe": "$0.004",
+      "timestamps": "$0.003",
+      "analyze": "$0.006"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/transcribe",
+      "description": "Transcribe audio"
+    },
+    {
+      "method": "POST",
+      "path": "/timestamps",
+      "description": "Transcribe with timestamps"
+    },
+    {
+      "method": "POST",
+      "path": "/summary",
+      "description": "Transcribe and summarize"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full audio intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "transcript-extraction",
+    "next": "text-summarizer",
+    "optional_next": []
+  }
+}
+
+=== text-summarizer ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Text Summarizer API",
+    "version": "1.0.0",
+    "description": "Summarize long-form text into concise paragraphs, bullet points, or TL;DR formats for research agents, document intelligence, and content automation workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "summarize": "$0.004",
+        "bullets": "$0.003",
+        "tldr": "$0.002",
+        "execution-gate": "$0.001",
+        "analyze": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/text-summarizer"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/summarize": {
+      "post": {
+        "operationId": "summarize",
+        "summary": "Summarize as paragraph",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Summarize as paragraph"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/bullets": {
+      "post": {
+        "operationId": "bullets",
+        "summary": "Summarize as bullets",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Summarize as bullets"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/tldr": {
+      "post": {
+        "operationId": "tldr",
+        "summary": "Generate TL;DR",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generate TL;DR"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full summarization",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full summarization"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Text Summarizer API",
+  "slug": "text-summarizer",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "summarize": "$0.004",
+      "bullets": "$0.003",
+      "tldr": "$0.002",
+      "execution_gate": "$0.001",
+      "analyze": "$0.006"
+    },
+    "high_volume": {
+      "summarize": "$0.002",
+      "bullets": "$0.0015",
+      "analyze": "$0.003"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/summarize",
+      "description": "Summarize as paragraph"
+    },
+    {
+      "method": "POST",
+      "path": "/bullets",
+      "description": "Summarize as bullets"
+    },
+    {
+      "method": "POST",
+      "path": "/tldr",
+      "description": "Generate TL;DR"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full summarization",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "audio-transcription",
+    "next": "language-detection",
+    "optional_next": []
+  }
+}
+
+=== language-detection ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Language Detection API",
+    "version": "1.0.0",
+    "description": "Detect language from text with confidence scores, batch-detect multiple strings, and return ISO language codes for multilingual routing and content classification agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "detect": "$0.001",
+        "batch": "$0.004",
+        "confidence": "$0.002",
+        "execution-gate": "$0.001",
+        "analyze": "$0.003"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/language-detection"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/detect": {
+      "post": {
+        "operationId": "detectLanguage",
+        "summary": "Detect language",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Detect language"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batchDetect",
+        "summary": "Batch detect languages",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch detect languages"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/confidence": {
+      "post": {
+        "operationId": "detectWithConfidence",
+        "summary": "Detect with confidence breakdown",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Detect with confidence breakdown"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full language analysis",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full language analysis"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Language Detection API",
+  "slug": "language-detection",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "detect": "$0.001",
+      "batch": "$0.004",
+      "confidence": "$0.002",
+      "execution_gate": "$0.001",
+      "analyze": "$0.003"
+    },
+    "high_volume": {
+      "detect": "$0.0005",
+      "batch": "$0.002",
+      "analyze": "$0.0015"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/detect",
+      "description": "Detect language"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch detect languages"
+    },
+    {
+      "method": "POST",
+      "path": "/confidence",
+      "description": "Detect with confidence breakdown"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full language analysis",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "text-summarizer",
+    "next": "translation",
+    "optional_next": []
+  }
+}
+
+=== translation ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Translation API",
+    "version": "1.0.0",
+    "description": "Translate text between languages, batch-translate multiple strings, and auto-detect source language before translating for multilingual automation and content localization agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "translate": "$0.002",
+        "batch": "$0.008",
+        "detect-and-translate": "$0.003",
+        "execution-gate": "$0.001",
+        "lookup": "$0.004"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/translation"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/translate": {
+      "post": {
+        "operationId": "translate",
+        "summary": "Translate text",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Translate text"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batchTranslate",
+        "summary": "Batch translate",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch translate"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/detect-and-translate": {
+      "post": {
+        "operationId": "detectAndTranslate",
+        "summary": "Auto-detect and translate",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Auto-detect and translate"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL detect + translate + quality",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL detect + translate + quality"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Translation API",
+  "slug": "translation",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "translate": "$0.002",
+      "batch": "$0.008",
+      "detect_and_translate": "$0.003",
+      "execution_gate": "$0.001",
+      "lookup": "$0.004"
+    },
+    "high_volume": {
+      "translate": "$0.001",
+      "batch": "$0.004",
+      "lookup": "$0.002"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/translate",
+      "description": "Translate text"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch translate"
+    },
+    {
+      "method": "POST",
+      "path": "/detect-and-translate",
+      "description": "Auto-detect and translate"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL detect + translate + quality",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "language-detection",
+    "next": "sentiment",
+    "optional_next": []
+  }
+}
+
+=== sentiment ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Sentiment API",
+    "version": "1.0.0",
+    "description": "Analyze text sentiment, batch-score multiple strings, and extract aspect-level sentiment for brand monitoring, customer feedback, and NLP pipeline agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "sentiment": "$0.002",
+        "batch": "$0.006",
+        "aspect-sentiment": "$0.004",
+        "execution-gate": "$0.001",
+        "analyze": "$0.005"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/sentiment"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/sentiment": {
+      "post": {
+        "operationId": "analyzeSentiment",
+        "summary": "Analyze sentiment",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Analyze sentiment"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batchSentiment",
+        "summary": "Batch sentiment",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch sentiment"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/aspect-sentiment": {
+      "post": {
+        "operationId": "aspectSentiment",
+        "summary": "Aspect-level sentiment",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Aspect-level sentiment"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full sentiment analysis",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full sentiment analysis"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Sentiment API",
+  "slug": "sentiment",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "sentiment": "$0.002",
+      "batch": "$0.006",
+      "aspect_sentiment": "$0.004",
+      "execution_gate": "$0.001",
+      "analyze": "$0.005"
+    },
+    "high_volume": {
+      "sentiment": "$0.001",
+      "batch": "$0.003",
+      "analyze": "$0.0025"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/sentiment",
+      "description": "Analyze sentiment"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch sentiment"
+    },
+    {
+      "method": "POST",
+      "path": "/aspect-sentiment",
+      "description": "Aspect-level sentiment"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full sentiment analysis",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "translation",
+    "next": "entity-extraction",
+    "optional_next": []
+  }
+}
+
+=== entity-extraction ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Entity Extraction API",
+    "version": "1.0.0",
+    "description": "Extract named entities, keywords, and topics from text for knowledge graph construction, document tagging, and NLP pipeline automation agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "entities": "$0.003",
+        "keywords": "$0.002",
+        "topics": "$0.003",
+        "execution-gate": "$0.001",
+        "analyze": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/entity-extraction"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/entities": {
+      "post": {
+        "operationId": "extractEntities",
+        "summary": "Extract named entities",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extract named entities"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/keywords": {
+      "post": {
+        "operationId": "extractKeywords",
+        "summary": "Extract keywords",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extract keywords"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/topics": {
+      "post": {
+        "operationId": "extractTopics",
+        "summary": "Extract topics",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extract topics"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full NLP extraction",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full NLP extraction"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Entity Extraction API",
+  "slug": "entity-extraction",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "entities": "$0.003",
+      "keywords": "$0.002",
+      "topics": "$0.003",
+      "execution_gate": "$0.001",
+      "analyze": "$0.006"
+    },
+    "high_volume": {
+      "entities": "$0.0015",
+      "keywords": "$0.001",
+      "analyze": "$0.003"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/entities",
+      "description": "Extract named entities"
+    },
+    {
+      "method": "POST",
+      "path": "/keywords",
+      "description": "Extract keywords"
+    },
+    {
+      "method": "POST",
+      "path": "/topics",
+      "description": "Extract topics"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full NLP extraction",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "sentiment",
+    "next": "content-moderation",
+    "optional_next": []
+  }
+}
+
+=== content-moderation ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Content Moderation API",
+    "version": "1.0.0",
+    "description": "Moderate text for policy violations, classify content categories, and generate safe rewrites for trust-and-safety, UGC platforms, and compliance automation agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "moderate": "$0.003",
+        "categories": "$0.002",
+        "safe-rewrite": "$0.005",
+        "execution-gate": "$0.001",
+        "analyze": "$0.007"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/content-moderation"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/moderate": {
+      "post": {
+        "operationId": "moderate",
+        "summary": "Moderate for violations",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Moderate for violations"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "post": {
+        "operationId": "classifyCategories",
+        "summary": "Classify categories",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Classify categories"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/safe-rewrite": {
+      "post": {
+        "operationId": "safeRewrite",
+        "summary": "Safe rewrite",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Safe rewrite"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full moderation",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full moderation"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Content Moderation API",
+  "slug": "content-moderation",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "moderate": "$0.003",
+      "categories": "$0.002",
+      "safe_rewrite": "$0.005",
+      "execution_gate": "$0.001",
+      "analyze": "$0.007"
+    },
+    "high_volume": {
+      "moderate": "$0.0015",
+      "categories": "$0.001",
+      "analyze": "$0.0035"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/moderate",
+      "description": "Moderate for violations"
+    },
+    {
+      "method": "POST",
+      "path": "/categories",
+      "description": "Classify categories"
+    },
+    {
+      "method": "POST",
+      "path": "/safe-rewrite",
+      "description": "Safe rewrite"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full moderation",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "entity-extraction",
+    "next": "pii-detection",
+    "optional_next": []
+  }
+}
+
+=== pii-detection ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PII Detection API",
+    "version": "1.0.0",
+    "description": "Detect personally identifiable information in text, redact PII for compliance, and classify PII types for GDPR, HIPAA, and data governance automation agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "detect": "$0.003",
+        "redact": "$0.004",
+        "classify": "$0.003",
+        "execution-gate": "$0.001",
+        "analyze": "$0.007"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/pii-detection"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/detect": {
+      "post": {
+        "operationId": "detectPII",
+        "summary": "Detect PII",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Detect PII"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/redact": {
+      "post": {
+        "operationId": "redactPII",
+        "summary": "Redact PII",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Redact PII"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/classify": {
+      "post": {
+        "operationId": "classifyPII",
+        "summary": "Classify PII types",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Classify PII types"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL detect + redact + classify",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL detect + redact + classify"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "PII Detection API",
+  "slug": "pii-detection",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "detect": "$0.003",
+      "redact": "$0.004",
+      "classify": "$0.003",
+      "execution_gate": "$0.001",
+      "analyze": "$0.007"
+    },
+    "high_volume": {
+      "detect": "$0.0015",
+      "redact": "$0.002",
+      "analyze": "$0.0035"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/detect",
+      "description": "Detect PII"
+    },
+    {
+      "method": "POST",
+      "path": "/redact",
+      "description": "Redact PII"
+    },
+    {
+      "method": "POST",
+      "path": "/classify",
+      "description": "Classify PII types"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL detect + redact + classify",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "content-moderation",
+    "next": "email-parser",
+    "optional_next": []
+  }
+}
+
+=== email-parser ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Email Parser API",
+    "version": "1.0.0",
+    "description": "Parse raw email content, extract action items and commitments, and classify emails by type for CRM automation, inbox intelligence, and workflow trigger agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "parse": "$0.003",
+        "extract-action-items": "$0.005",
+        "classify": "$0.003",
+        "execution-gate": "$0.001",
+        "analyze": "$0.008"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/email-parser"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/parse": {
+      "post": {
+        "operationId": "parseEmail",
+        "summary": "Parse raw email",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Parse raw email"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/extract-action-items": {
+      "post": {
+        "operationId": "extractActionItems",
+        "summary": "Extract action items",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extract action items"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/classify": {
+      "post": {
+        "operationId": "classifyEmail",
+        "summary": "Classify email type",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Classify email type"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full email intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full email intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Email Parser API",
+  "slug": "email-parser",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "parse": "$0.003",
+      "extract_action_items": "$0.005",
+      "classify": "$0.003",
+      "execution_gate": "$0.001",
+      "analyze": "$0.008"
+    },
+    "high_volume": {
+      "parse": "$0.0015",
+      "extract_action_items": "$0.0025",
+      "analyze": "$0.004"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/parse",
+      "description": "Parse raw email"
+    },
+    {
+      "method": "POST",
+      "path": "/extract-action-items",
+      "description": "Extract action items"
+    },
+    {
+      "method": "POST",
+      "path": "/classify",
+      "description": "Classify email type"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full email intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "pii-detection",
+    "next": "invoice-parser",
+    "optional_next": []
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "MX Record Checker API",
+  "slug": "mx-record-checker",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 300
+    },
+    "pay_per_call": {
+      "mx": "$0.001",
+      "email-ready": "$0.002",
+      "execution-gate": "$0.001",
+      "batch": "$0.012"
+    }
+  },
+  "rate_limits": {
+    "free": "300/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "/mx",
+    "/email-ready",
+    "/execution-gate",
+    "/batch"
+  ],
+  "execution_chain": {
+    "recommended_start": "/email-ready",
+    "fallback": "/mx",
+    "batch_endpoint": "/batch"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Insider Trades API",
+  "slug": "insider-trades",
+  "version": "1.0.0",
+  "description": "Look up SEC insider trading filings, extract buy/sell signals, summarize insider activity and detect trend patterns for investment research agents",
+  "category": "Finance / Market",
+  "tags": ["insider-trading", "sec-filings", "stocks", "investment", "compliance"],
+  "pricing": {
+    "free_tier": { "requests_per_day": 300 },
+    "pay_per_call": { "lookup": "$0.003", "signals": "$0.003", "summary": "$0.003", "execution-gate": "$0.001", "insider-intelligence": "$0.008", "trend": "$0.003", "batch": "$0.015" }
+  },
+  "endpoints": ["/lookup", "/signals", "/summary", "/execution-gate", "/insider-intelligence", "/trend", "/batch"],
+  "one_call_endpoint": "/insider-intelligence",
+  "base_url": "https://orbis-apis.onrender.com/insider-trades",
+  "openapi_url": "https://orbis-apis.onrender.com/insider-trades/openapi.json",
+  "auth": { "type": "apiKey", "header": "X-API-Key" },
+  "grade": "A+",
+  "mcp_compatible": true,
+  "agent_callable": true,
+  "privacy": { "data_stored": false, "retention": "none" }
+}

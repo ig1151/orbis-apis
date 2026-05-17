@@ -1,0 +1,15 @@
+{
+  "name": "Gas Fee API",
+  "slug": "gas-fee",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 500 },
+    "pay_per_call": { "current": "$0.001", "estimate": "$0.002", "history": "$0.003", "execution-gate": "$0.001", "gas-intelligence": "$0.005", "optimize": "$0.003", "batch": "$0.010" }
+  },
+  "rate_limits": { "free": "500/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": ["/current", "/estimate", "/history", "/execution-gate", "/gas-intelligence", "/optimize", "/batch"],
+  "execution_chain": { "recommended_start": "/gas-intelligence", "fallback": "/current", "batch_endpoint": "/batch" }
+}

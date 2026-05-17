@@ -1,0 +1,15 @@
+{
+  "name": "Founder Background API",
+  "slug": "founder-background",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 200 },
+    "pay_per_call": { "lookup": "$0.004", "score": "$0.003", "timeline": "$0.003", "execution-gate": "$0.001", "founder-intelligence": "$0.010", "track-record": "$0.005", "batch": "$0.020" }
+  },
+  "rate_limits": { "free": "200/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": ["/lookup", "/score", "/timeline", "/execution-gate", "/founder-intelligence", "/track-record", "/batch"],
+  "execution_chain": { "recommended_start": "/founder-intelligence", "fallback": "/lookup", "batch_endpoint": "/batch" }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "Email Reputation API",
+  "slug": "email-reputation",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 200
+    },
+    "pay_per_call": {
+      "score": "$0.002",
+      "blacklist-check": "$0.002",
+      "execution-gate": "$0.001",
+      "batch": "$0.015"
+    }
+  },
+  "rate_limits": {
+    "free": "200/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "/score",
+    "/blacklist-check",
+    "/execution-gate",
+    "/batch"
+  ],
+  "execution_chain": {
+    "recommended_start": "/score",
+    "fallback": "/score",
+    "batch_endpoint": "/batch"
+  }
+}

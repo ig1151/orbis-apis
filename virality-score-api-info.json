@@ -1,0 +1,15 @@
+{
+  "name": "Virality Score API",
+  "slug": "virality-score",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 300 },
+    "pay_per_call": { "score": "$0.003", "predict": "$0.004", "analyze": "$0.003", "execution-gate": "$0.001", "virality-intelligence": "$0.009", "optimize": "$0.004", "batch": "$0.020" }
+  },
+  "rate_limits": { "free": "300/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": ["/score", "/predict", "/analyze", "/execution-gate", "/virality-intelligence", "/optimize", "/batch"],
+  "execution_chain": { "recommended_start": "/virality-intelligence", "fallback": "/score", "batch_endpoint": "/batch" }
+}

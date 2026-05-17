@@ -1,0 +1,21 @@
+{
+  "name": "ETF Holdings API",
+  "slug": "etf-holdings",
+  "version": "1.0.0",
+  "description": "Look up ETF holdings, analyze top positions, break down sector allocations and compare ETFs for portfolio management agents",
+  "category": "Finance / Market",
+  "tags": ["etf", "holdings", "portfolio", "sector-analysis", "investment"],
+  "pricing": {
+    "free_tier": { "requests_per_day": 300 },
+    "pay_per_call": { "lookup": "$0.003", "top-holdings": "$0.003", "sector-breakdown": "$0.003", "execution-gate": "$0.001", "etf-intelligence": "$0.008", "compare": "$0.004", "batch": "$0.015" }
+  },
+  "endpoints": ["/lookup", "/top-holdings", "/sector-breakdown", "/execution-gate", "/etf-intelligence", "/compare", "/batch"],
+  "one_call_endpoint": "/etf-intelligence",
+  "base_url": "https://orbis-apis.onrender.com/etf-holdings",
+  "openapi_url": "https://orbis-apis.onrender.com/etf-holdings/openapi.json",
+  "auth": { "type": "apiKey", "header": "X-API-Key" },
+  "grade": "A+",
+  "mcp_compatible": true,
+  "agent_callable": true,
+  "privacy": { "data_stored": false, "retention": "none" }
+}

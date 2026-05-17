@@ -12,14 +12,31 @@ if [ -z "$API_KEY" ]; then
 fi
 
 LISTINGS=(
-  "crm-update-listing.json"
-  "calendar-scheduling-listing.json"
-  "workflow-orchestrator-listing.json"
-  "deep-research-listing.json"
+  # ── Re-listing: 404 failures from x402 test runs ──────────────────────────
+  # Batch 1 failures
+  "maps-places-listing.json"
+  "sports-scores-listing.json"
+  "twitter-post-lookup-listing.json"
+  "sentiment-listing.json"
+  "entity-extraction-listing.json"
+  # Batch 3 failures
+  "legal-contract-risk-listing.json"
+  "portfolio-risk-listing.json"
+  "financial-news-monitor-listing.json"
+  "vendor-ranking-listing.json"
+  "reddit-intelligence-listing.json"
+  "autonomous-negotiation-listing.json"
+  "address-risk-listing.json"
+  "reputation-intelligence-listing.json"
+  "qa-testing-listing.json"
+  "linkedin-profile-listing.json"
+  "economic-calendar-listing.json"
+  "due-diligence-listing.json"
+  "sales-intelligence-listing.json"
 )
 
 for FILE in "${LISTINGS[@]}"; do
-  NAME=$(python3 -c "import json,sys; d=json.load(open('$FILE')); print(d['name'])")
+  NAME=$(python3 -c "import json,sys; d=json.load(open('$FILE')); print((d[0] if isinstance(d,list) else d)['name'])")
   echo "Uploading: $NAME ($FILE)..."
 
   RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \

@@ -1,0 +1,21 @@
+{
+  "name": "Smart Contract Decoder API",
+  "slug": "smart-contract-decoder",
+  "version": "1.0.0",
+  "description": "Decode contract ABIs, analyze logic, run quick security audits and list public functions for DeFi and Web3 agent workflows",
+  "category": "Crypto / Onchain",
+  "tags": ["smart-contract", "abi", "security-audit", "defi", "web3"],
+  "pricing": {
+    "free_tier": { "requests_per_day": 200 },
+    "pay_per_call": { "decode": "$0.004", "analyze": "$0.005", "audit": "$0.006", "execution-gate": "$0.001", "contract-intelligence": "$0.012", "functions": "$0.003", "batch": "$0.025" }
+  },
+  "endpoints": ["/decode", "/analyze", "/audit", "/execution-gate", "/contract-intelligence", "/functions", "/batch"],
+  "one_call_endpoint": "/contract-intelligence",
+  "base_url": "https://orbis-apis.onrender.com/smart-contract-decoder",
+  "openapi_url": "https://orbis-apis.onrender.com/smart-contract-decoder/openapi.json",
+  "auth": { "type": "apiKey", "header": "X-API-Key" },
+  "grade": "A+",
+  "mcp_compatible": true,
+  "agent_callable": true,
+  "privacy": { "data_stored": false, "retention": "none" }
+}

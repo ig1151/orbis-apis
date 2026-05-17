@@ -1,0 +1,21 @@
+{
+  "name": "Blockchain Transaction Lookup API",
+  "slug": "blockchain-tx-lookup",
+  "version": "1.0.0",
+  "description": "Look up blockchain transactions, decode calldata, trace internal calls and assess transaction risk for onchain compliance agents",
+  "category": "Crypto / Onchain",
+  "tags": ["blockchain", "transactions", "defi", "compliance", "trace"],
+  "pricing": {
+    "free_tier": { "requests_per_day": 300 },
+    "pay_per_call": { "lookup": "$0.002", "decode": "$0.003", "trace": "$0.004", "execution-gate": "$0.001", "tx-intelligence": "$0.008", "risk": "$0.004", "batch": "$0.015" }
+  },
+  "endpoints": ["/lookup", "/decode", "/trace", "/execution-gate", "/tx-intelligence", "/risk", "/batch"],
+  "one_call_endpoint": "/tx-intelligence",
+  "base_url": "https://orbis-apis.onrender.com/blockchain-tx-lookup",
+  "openapi_url": "https://orbis-apis.onrender.com/blockchain-tx-lookup/openapi.json",
+  "auth": { "type": "apiKey", "header": "X-API-Key" },
+  "grade": "A+",
+  "mcp_compatible": true,
+  "agent_callable": true,
+  "privacy": { "data_stored": false, "retention": "none" }
+}

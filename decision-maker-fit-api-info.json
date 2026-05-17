@@ -1,0 +1,15 @@
+{
+  "name": "Decision Maker Fit API",
+  "slug": "decision-maker-fit",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 200 },
+    "pay_per_call": { "score": "$0.003", "persona": "$0.004", "outreach-angle": "$0.004", "execution-gate": "$0.001", "fit-intelligence": "$0.010", "buying-signals": "$0.005", "batch": "$0.020" }
+  },
+  "rate_limits": { "free": "200/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": ["/score", "/persona", "/outreach-angle", "/execution-gate", "/fit-intelligence", "/buying-signals", "/batch"],
+  "execution_chain": { "recommended_start": "/fit-intelligence", "fallback": "/score", "batch_endpoint": "/batch" }
+}

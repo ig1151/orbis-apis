@@ -1,0 +1,15 @@
+{
+  "name": "Smart Contract Decoder API",
+  "slug": "smart-contract-decoder",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 200 },
+    "pay_per_call": { "decode": "$0.004", "analyze": "$0.005", "audit": "$0.006", "execution-gate": "$0.001", "contract-intelligence": "$0.012", "functions": "$0.003", "batch": "$0.025" }
+  },
+  "rate_limits": { "free": "200/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": ["/decode", "/analyze", "/audit", "/execution-gate", "/contract-intelligence", "/functions", "/batch"],
+  "execution_chain": { "recommended_start": "/contract-intelligence", "fallback": "/decode", "batch_endpoint": "/batch" }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "HTML to Markdown API",
+  "slug": "html-to-markdown",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 500 },
+    "pay_per_call": { "convert": "$0.002", "clean": "$0.002", "extract": "$0.003", "execution-gate": "$0.001", "html-intelligence": "$0.006", "simplify": "$0.002", "batch": "$0.015" }
+  },
+  "rate_limits": { "free": "500/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": ["/convert", "/clean", "/extract", "/execution-gate", "/html-intelligence", "/simplify", "/batch"],
+  "execution_chain": { "recommended_start": "/html-intelligence", "fallback": "/convert", "batch_endpoint": "/batch" }
+}

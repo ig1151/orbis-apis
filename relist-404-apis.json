@@ -1,0 +1,3093 @@
+[
+  {
+    "name": "Maps Places API",
+    "shortDescription": "Search places, get details, and find nearby points of interest",
+    "description": "Search places by query or category, get detailed place info, and find nearby points of interest for location-aware agents and logistics workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/maps-places",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/maps-places/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/maps-places/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "maps",
+      "places",
+      "location",
+      "poi",
+      "logistics"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/search-place",
+            "pricePerCallUsdc": 0.002,
+            "description": "Search places by query"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/place-details",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get place details"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/nearby",
+            "pricePerCallUsdc": 0.003,
+            "description": "Find nearby POIs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/travel-time",
+            "pricePerCallUsdc": 0.003,
+            "description": "Calculate travel time between two points"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL full place intelligence"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.009,
+            "description": "Batch place search for multiple queries"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0025,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/search-place",
+            "pricePerCallUsdc": 0.001,
+            "description": "Search places by query"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/place-details",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get place details"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/nearby",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Find nearby POIs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/travel-time",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Calculate travel time"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.0025,
+            "description": "ONE-CALL full place intelligence"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.0045,
+            "description": "Batch place search for multiple queries"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/search-place",
+        "description": "Search places by query"
+      },
+      {
+        "method": "POST",
+        "path": "/place-details",
+        "description": "Get place details"
+      },
+      {
+        "method": "POST",
+        "path": "/nearby",
+        "description": "Find nearby POIs"
+      },
+      {
+        "method": "POST",
+        "path": "/travel-time",
+        "description": "Calculate travel time between two points"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full place intelligence"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch place search for multiple queries"
+      }
+    ],
+    "keywords": [
+      "search nearby places",
+      "google maps places api",
+      "find businesses near location",
+      "place details lookup",
+      "local business search"
+    ]
+  },
+  {
+    "name": "Sports Scores API",
+    "shortDescription": "Live and historical sports scores, schedules, and standings",
+    "description": "Get live and historical sports scores, team schedules, and league standings for sports intelligence, betting analysis, and fan engagement automation.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/sports-scores",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/sports-scores/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/sports-scores/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "sports",
+      "scores",
+      "schedule",
+      "standings",
+      "analytics"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Sports Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scores",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get live or historical scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schedule",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get team schedule"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/standings",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get league standings"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL full sports intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scores",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get live or historical scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schedule",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get team schedule"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/standings",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get league standings"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.002,
+            "description": "ONE-CALL full sports intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/scores",
+        "description": "Get live or historical scores"
+      },
+      {
+        "method": "POST",
+        "path": "/schedule",
+        "description": "Get team schedule"
+      },
+      {
+        "method": "POST",
+        "path": "/standings",
+        "description": "Get league standings"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full sports intelligence"
+      }
+    ],
+    "keywords": [
+      "get live sports scores",
+      "game score api",
+      "sports results today",
+      "live match updates",
+      "sports score by team"
+    ]
+  },
+  {
+    "name": "X/Twitter Post Lookup API",
+    "shortDescription": "Look up posts, analyze profile metrics, and measure engagement on Twitter/X",
+    "description": "Look up Twitter/X posts and threads, analyze profile metrics, and measure engagement signals for social intelligence, brand monitoring, and sentiment agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/twitter-post-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/twitter-post-lookup/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/twitter-post-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "twitter",
+      "x",
+      "social-media",
+      "engagement",
+      "brand-monitoring"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Twitter Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/post",
+            "pricePerCallUsdc": 0.002,
+            "description": "Look up a post"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/profile",
+            "pricePerCallUsdc": 0.003,
+            "description": "Get profile metrics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/engagement",
+            "pricePerCallUsdc": 0.003,
+            "description": "Measure engagement"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full Twitter/X intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/post",
+            "pricePerCallUsdc": 0.001,
+            "description": "Look up a post"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/profile",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Get profile metrics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/engagement",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Measure engagement"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL full Twitter/X intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/post",
+        "description": "Look up a post"
+      },
+      {
+        "method": "POST",
+        "path": "/profile",
+        "description": "Get profile metrics"
+      },
+      {
+        "method": "POST",
+        "path": "/engagement",
+        "description": "Measure engagement"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full Twitter/X intelligence"
+      }
+    ],
+    "keywords": [
+      "search twitter posts",
+      "get tweet data api",
+      "twitter mention lookup",
+      "tweet engagement stats",
+      "twitter content search"
+    ]
+  },
+  {
+    "name": "Sentiment API",
+    "shortDescription": "Analyze text sentiment, batch-score, and extract aspect-level sentiment",
+    "description": "Analyze text sentiment, batch-score multiple strings, and extract aspect-level sentiment for brand monitoring, customer feedback, and NLP pipeline agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/sentiment",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/sentiment/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/sentiment/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "sentiment",
+      "nlp",
+      "brand-monitoring",
+      "customer-feedback",
+      "nps"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "Sentiment Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/sentiment",
+            "pricePerCallUsdc": 0.002,
+            "description": "Analyze sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.006,
+            "description": "Batch sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/aspect-sentiment",
+            "pricePerCallUsdc": 0.004,
+            "description": "Aspect-level sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL full sentiment analysis"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/sentiment",
+            "pricePerCallUsdc": 0.001,
+            "description": "Analyze sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.003,
+            "description": "Batch sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/aspect-sentiment",
+            "pricePerCallUsdc": 0.002,
+            "description": "Aspect-level sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0025,
+            "description": "ONE-CALL full sentiment analysis"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/sentiment",
+        "description": "Analyze sentiment"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch sentiment"
+      },
+      {
+        "method": "POST",
+        "path": "/aspect-sentiment",
+        "description": "Aspect-level sentiment"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full sentiment analysis"
+      }
+    ],
+    "keywords": [
+      "sentiment analysis api",
+      "positive negative text classifier",
+      "opinion mining api",
+      "customer review sentiment",
+      "emotion detection text"
+    ]
+  },
+  {
+    "name": "Entity Extraction API",
+    "shortDescription": "Extract named entities, keywords, and topics from text",
+    "description": "Extract named entities, keywords, and topics from text for knowledge graph construction, document tagging, and NLP pipeline automation agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/entity-extraction",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/entity-extraction/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/entity-extraction/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "nlp",
+      "ner",
+      "entities",
+      "knowledge-graph",
+      "tagging"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100
+      },
+      {
+        "name": "NLP Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/entities",
+            "pricePerCallUsdc": 0.003,
+            "description": "Extract named entities"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/keywords",
+            "pricePerCallUsdc": 0.002,
+            "description": "Extract keywords"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/topics",
+            "pricePerCallUsdc": 0.003,
+            "description": "Extract topics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full NLP extraction"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/entities",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Extract named entities"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/keywords",
+            "pricePerCallUsdc": 0.001,
+            "description": "Extract keywords"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/topics",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Extract topics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL full NLP extraction"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/entities",
+        "description": "Extract named entities"
+      },
+      {
+        "method": "POST",
+        "path": "/keywords",
+        "description": "Extract keywords"
+      },
+      {
+        "method": "POST",
+        "path": "/topics",
+        "description": "Extract topics"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full NLP extraction"
+      }
+    ],
+    "keywords": [
+      "extract named entities",
+      "ner api",
+      "extract people places organizations",
+      "entity recognition nlp",
+      "structured data from text"
+    ]
+  },
+  {
+    "name": "Legal Contract Risk API",
+    "shortDescription": "Contract risk scoring, clause extraction and negotiation intelligence",
+    "description": "Analyze contracts, extract clauses, score legal risk, identify dangerous terms, surface missing protections, compare agreements, and generate negotiation strategies for legal and procurement workflows.",
+    "category": "business",
+    "baseUrl": "https://orbis-apis.onrender.com/legal-contract-risk",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/legal-contract-risk/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/legal-contract-risk/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "legal",
+      "contracts",
+      "risk-analysis",
+      "negotiation",
+      "procurement",
+      "compliance",
+      "clause-extraction",
+      "agentic"
+    ],
+    "keywords": [
+      "analyze contracts",
+      "contract risk scoring",
+      "extract clauses",
+      "compare contracts",
+      "contract negotiation strategy",
+      "legal contract analysis",
+      "flag risky clauses"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract-clauses",
+            "pricePerCallUsdc": 0.006,
+            "description": "Extract clauses and classify importance"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/risk-score",
+            "pricePerCallUsdc": 0.007,
+            "description": "Score overall contract risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/flag-risks",
+            "pricePerCallUsdc": 0.007,
+            "description": "Flag dangerous clauses and risks"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/missing-clauses",
+            "pricePerCallUsdc": 0.006,
+            "description": "Identify missing protections"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-contracts",
+            "pricePerCallUsdc": 0.008,
+            "description": "Compare contracts and negotiation gaps"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/summarize-contract",
+            "pricePerCallUsdc": 0.005,
+            "description": "Executive summary of contract"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/negotiation-points",
+            "pricePerCallUsdc": 0.007,
+            "description": "Generate negotiation strategies"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Pre-signing execution readiness"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-contract",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL full contract analysis workflow"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract-clauses",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/risk-score",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/flag-risks",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/missing-clauses",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-contracts",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/summarize-contract",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/negotiation-points",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-contract",
+            "pricePerCallUsdc": 0.01
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract-clauses",
+        "description": "Extract contract clauses"
+      },
+      {
+        "method": "POST",
+        "path": "/risk-score",
+        "description": "Score contract risk"
+      },
+      {
+        "method": "POST",
+        "path": "/flag-risks",
+        "description": "Flag risky clauses"
+      },
+      {
+        "method": "POST",
+        "path": "/missing-clauses",
+        "description": "Identify missing protections"
+      },
+      {
+        "method": "POST",
+        "path": "/compare-contracts",
+        "description": "Compare contracts"
+      },
+      {
+        "method": "POST",
+        "path": "/summarize-contract",
+        "description": "Summarize contract"
+      },
+      {
+        "method": "POST",
+        "path": "/negotiation-points",
+        "description": "Generate negotiation points"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze-contract",
+        "description": "ONE-CALL contract analysis"
+      }
+    ]
+  },
+  {
+    "name": "Portfolio Risk API",
+    "shortDescription": "Score portfolio risk, run stress tests, and generate rebalancing action plans",
+    "description": "Score portfolio risk by category, analyze concentration and sector exposure, estimate correlations, run historical stress scenarios, calculate drawdown and VaR, and generate specific rebalancing trades \u2014 built for investment agents and autonomous portfolio management workflows.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/portfolio-risk",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/portfolio-risk/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/portfolio-risk/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "portfolio-risk",
+      "investment",
+      "stress-testing",
+      "rebalancing",
+      "drawdown",
+      "concentration-risk",
+      "agentic",
+      "finance"
+    ],
+    "keywords": [
+      "portfolio risk score",
+      "stress test portfolio",
+      "concentration risk analysis",
+      "portfolio rebalancing suggestions",
+      "drawdown analysis",
+      "sector exposure analysis",
+      "correlation matrix portfolio"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score-risk",
+            "pricePerCallUsdc": 0.007,
+            "description": "Overall portfolio risk score"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/concentration-analysis",
+            "pricePerCallUsdc": 0.006,
+            "description": "Concentration risk analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/correlation-matrix",
+            "pricePerCallUsdc": 0.007,
+            "description": "Correlation matrix and clustering"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/stress-test",
+            "pricePerCallUsdc": 0.009,
+            "description": "Historical stress scenarios"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sector-exposure",
+            "pricePerCallUsdc": 0.006,
+            "description": "Sector exposure vs benchmark"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/drawdown-analysis",
+            "pricePerCallUsdc": 0.007,
+            "description": "Drawdown and VaR estimates"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/rebalance-suggestions",
+            "pricePerCallUsdc": 0.008,
+            "description": "Rebalancing trade plan"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness validation"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-portfolio",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL full portfolio analysis"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score-risk",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/concentration-analysis",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/correlation-matrix",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/stress-test",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sector-exposure",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/drawdown-analysis",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/rebalance-suggestions",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-portfolio",
+            "pricePerCallUsdc": 0.01
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score-risk",
+        "description": "Overall portfolio risk score"
+      },
+      {
+        "method": "POST",
+        "path": "/concentration-analysis",
+        "description": "Concentration risk analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/correlation-matrix",
+        "description": "Correlation matrix between holdings"
+      },
+      {
+        "method": "POST",
+        "path": "/stress-test",
+        "description": "Historical stress test scenarios"
+      },
+      {
+        "method": "POST",
+        "path": "/sector-exposure",
+        "description": "Sector exposure vs benchmark"
+      },
+      {
+        "method": "POST",
+        "path": "/drawdown-analysis",
+        "description": "Drawdown and VaR estimates"
+      },
+      {
+        "method": "POST",
+        "path": "/rebalance-suggestions",
+        "description": "Rebalancing trade plan"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze-portfolio",
+        "description": "ONE-CALL full portfolio analysis"
+      }
+    ]
+  },
+  {
+    "name": "Financial News Monitor API",
+    "shortDescription": "Analyze financial news sentiment, detect events, and generate trading signals",
+    "description": "Score financial news sentiment by ticker and sector, extract stock mentions, detect breaking events and M&A, identify trending themes, compare source coverage, and generate trading signals \u2014 built for financial agents and autonomous investment monitoring workflows.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/financial-news-monitor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/financial-news-monitor/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/financial-news-monitor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "financial-news",
+      "sentiment-analysis",
+      "market-intelligence",
+      "trading-signals",
+      "event-detection",
+      "ticker-extraction",
+      "agentic",
+      "finance"
+    ],
+    "keywords": [
+      "financial news sentiment",
+      "detect market events",
+      "extract stock tickers from news",
+      "score news market impact",
+      "trending financial topics",
+      "trading signal from news",
+      "compare financial news sources"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-sentiment",
+            "pricePerCallUsdc": 0.006,
+            "description": "Sentiment analysis by ticker/sector"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-tickers",
+            "pricePerCallUsdc": 0.004,
+            "description": "Extract tickers and entities"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-impact",
+            "pricePerCallUsdc": 0.007,
+            "description": "Score market impact of news"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-events",
+            "pricePerCallUsdc": 0.006,
+            "description": "Detect breaking financial events"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending-topics",
+            "pricePerCallUsdc": 0.005,
+            "description": "Identify trending themes"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-sources",
+            "pricePerCallUsdc": 0.005,
+            "description": "Compare coverage across sources"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness validation"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL full news intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-sentiment",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract-tickers",
+            "pricePerCallUsdc": 0.002
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-impact",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-events",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending-topics",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-sources",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.008
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze-sentiment",
+        "description": "Sentiment analysis by ticker and sector"
+      },
+      {
+        "method": "POST",
+        "path": "/extract-tickers",
+        "description": "Extract tickers and financial entities"
+      },
+      {
+        "method": "POST",
+        "path": "/score-impact",
+        "description": "Score market impact of a news article"
+      },
+      {
+        "method": "POST",
+        "path": "/detect-events",
+        "description": "Detect breaking financial events"
+      },
+      {
+        "method": "POST",
+        "path": "/trending-topics",
+        "description": "Identify trending financial themes"
+      },
+      {
+        "method": "POST",
+        "path": "/compare-sources",
+        "description": "Compare coverage across news sources"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "ONE-CALL full news intelligence"
+      }
+    ]
+  },
+  {
+    "name": "Vendor Ranking API",
+    "shortDescription": "Rank, score, and evaluate vendors for procurement and due diligence decisions",
+    "description": "AI-powered vendor evaluation \u2014 rank vendors, score individual vendors, head-to-head comparisons, review analysis, risk assessment, requirements matching, and full due diligence. ONE-CALL evaluate endpoint for complete procurement intelligence.",
+    "category": "business",
+    "baseUrl": "https://orbis-apis.onrender.com/vendor-ranking",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/vendor-ranking/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/vendor-ranking/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "vendor-ranking",
+      "procurement",
+      "due-diligence",
+      "vendor-risk",
+      "vendor-comparison",
+      "supplier-intelligence",
+      "vendor-scoring",
+      "requirements-matching"
+    ],
+    "keywords": [
+      "rank vendors ai",
+      "vendor due diligence api",
+      "compare vendors api",
+      "vendor risk assessment",
+      "vendor scoring api",
+      "procurement intelligence",
+      "vendor requirements matching",
+      "vendor review analysis"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rank-vendors",
+            "pricePerCallUsdc": 0.008,
+            "description": "Rank multiple vendors across weighted criteria"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-vendor",
+            "pricePerCallUsdc": 0.006,
+            "description": "Score a single vendor with grade and strengths/weaknesses"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-vendors",
+            "pricePerCallUsdc": 0.007,
+            "description": "Head-to-head vendor comparison with per-criterion scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check-reviews",
+            "pricePerCallUsdc": 0.006,
+            "description": "Analyze vendor reviews for trust score and fake review risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/assess-risk",
+            "pricePerCallUsdc": 0.007,
+            "description": "Assess vendor risk across financial, legal, and compliance dimensions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/match-requirements",
+            "pricePerCallUsdc": 0.007,
+            "description": "Match vendors against requirements and score fit"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/due-diligence",
+            "pricePerCallUsdc": 0.009,
+            "description": "Comprehensive vendor due diligence report"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate vendor input and recommend best evaluation endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/evaluate",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL full vendor evaluation workflow"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rank-vendors",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-vendor",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-vendors",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check-reviews",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/assess-risk",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/match-requirements",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/due-diligence",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/evaluate",
+            "pricePerCallUsdc": 0.01
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/rank-vendors",
+        "description": "Rank multiple vendors across weighted criteria"
+      },
+      {
+        "method": "POST",
+        "path": "/score-vendor",
+        "description": "Score a single vendor with grade and strengths/weaknesses"
+      },
+      {
+        "method": "POST",
+        "path": "/compare-vendors",
+        "description": "Head-to-head vendor comparison with per-criterion scores"
+      },
+      {
+        "method": "POST",
+        "path": "/check-reviews",
+        "description": "Analyze vendor reviews for trust score and fake review risk"
+      },
+      {
+        "method": "POST",
+        "path": "/assess-risk",
+        "description": "Assess vendor risk across financial, legal, and compliance dimensions"
+      },
+      {
+        "method": "POST",
+        "path": "/match-requirements",
+        "description": "Match vendors against requirements and score fit"
+      },
+      {
+        "method": "POST",
+        "path": "/due-diligence",
+        "description": "Comprehensive vendor due diligence report"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Validate vendor input and recommend best evaluation endpoint"
+      },
+      {
+        "method": "POST",
+        "path": "/evaluate",
+        "description": "ONE-CALL full vendor evaluation workflow"
+      }
+    ]
+  },
+  {
+    "name": "Reddit Intelligence API",
+    "shortDescription": "Analyze Reddit for sentiment, complaints, buying intent, and competitor mentions",
+    "description": "AI-powered Reddit analysis \u2014 subreddit sentiment, keyword tracking, complaint detection, virality scoring, buying intent, topic clustering, and competitor mentions. ONE-CALL monitor endpoint for full community intelligence.",
+    "category": "business",
+    "baseUrl": "https://orbis-apis.onrender.com/reddit-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/reddit-intelligence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/reddit-intelligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "reddit",
+      "social-intelligence",
+      "sentiment-analysis",
+      "community-analysis",
+      "buying-intent",
+      "complaint-detection",
+      "virality-scoring",
+      "competitor-monitoring"
+    ],
+    "keywords": [
+      "analyze reddit sentiment",
+      "detect buying intent reddit",
+      "reddit complaint detection",
+      "track keywords reddit",
+      "subreddit analysis api",
+      "reddit competitor mentions",
+      "virality score reddit post",
+      "reddit topic clustering"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-subreddit",
+            "pricePerCallUsdc": 0.007,
+            "description": "Analyze a subreddit for sentiment, top topics, pain points, and community health"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/track-keywords",
+            "pricePerCallUsdc": 0.005,
+            "description": "Track keyword mentions, velocity, and sentiment across Reddit"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-complaints",
+            "pricePerCallUsdc": 0.006,
+            "description": "Detect recurring complaints and pain points with NPS estimate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-virality",
+            "pricePerCallUsdc": 0.005,
+            "description": "Score virality potential of a Reddit post"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/buying-intent",
+            "pricePerCallUsdc": 0.007,
+            "description": "Detect buying intent signals with purchase stage and decision triggers"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/topic-clusters",
+            "pricePerCallUsdc": 0.006,
+            "description": "Cluster Reddit posts into semantic topic groups"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/competitor-mentions",
+            "pricePerCallUsdc": 0.006,
+            "description": "Analyze competitor mentions and brand comparisons"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate Reddit input and recommend best analysis endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL full Reddit intelligence workflow"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-subreddit",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/track-keywords",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-complaints",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-virality",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/buying-intent",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/topic-clusters",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/competitor-mentions",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.008
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze-subreddit",
+        "description": "Analyze a subreddit for sentiment, top topics, pain points, and community health"
+      },
+      {
+        "method": "POST",
+        "path": "/track-keywords",
+        "description": "Track keyword mentions, velocity, and sentiment across Reddit"
+      },
+      {
+        "method": "POST",
+        "path": "/detect-complaints",
+        "description": "Detect recurring complaints and pain points with NPS estimate"
+      },
+      {
+        "method": "POST",
+        "path": "/score-virality",
+        "description": "Score virality potential of a Reddit post"
+      },
+      {
+        "method": "POST",
+        "path": "/buying-intent",
+        "description": "Detect buying intent signals with purchase stage and decision triggers"
+      },
+      {
+        "method": "POST",
+        "path": "/topic-clusters",
+        "description": "Cluster Reddit posts into semantic topic groups"
+      },
+      {
+        "method": "POST",
+        "path": "/competitor-mentions",
+        "description": "Analyze competitor mentions and brand comparisons"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Validate Reddit input and recommend best analysis endpoint"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "ONE-CALL full Reddit intelligence workflow"
+      }
+    ]
+  },
+  {
+    "name": "Autonomous Negotiation API",
+    "shortDescription": "Generate counteroffers, score BATNA strength, and build negotiation strategies for agents",
+    "description": "Equip autonomous agents with professional negotiation capabilities. Generate strategic counteroffers, score BATNA strength, plan concession sequences, identify deal breakers, and assess negotiation risk. Designed for procurement automation, contract negotiation agents, and deal intelligence platforms.",
+    "category": "other",
+    "baseUrl": "https://orbis-apis.onrender.com/autonomous-negotiation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/autonomous-negotiation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/autonomous-negotiation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "negotiation-ai",
+      "batna-analysis",
+      "counteroffer-generation",
+      "deal-strategy",
+      "concession-planning",
+      "negotiation-risk",
+      "autonomous-negotiation",
+      "contract-negotiation"
+    ],
+    "keywords": [
+      "ai counteroffer generation",
+      "BATNA score api",
+      "negotiation strategy api",
+      "deal breakers analysis",
+      "concession planning api",
+      "autonomous negotiation api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.009,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate-counteroffer",
+            "pricePerCallUsdc": 0.009,
+            "description": "Generate strategic counteroffers for negotiations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/negotiation-strategy",
+            "pricePerCallUsdc": 0.008,
+            "description": "Build multi-step negotiation strategies"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/concession-analysis",
+            "pricePerCallUsdc": 0.007,
+            "description": "Plan concession sequences and timing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batna-score",
+            "pricePerCallUsdc": 0.007,
+            "description": "Score BATNA strength and alternatives"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/negotiation-risk",
+            "pricePerCallUsdc": 0.007,
+            "description": "Assess negotiation risk and failure probability"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/deal-breakers",
+            "pricePerCallUsdc": 0.006,
+            "description": "Identify non-negotiable deal breakers"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Negotiation execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/negotiate",
+            "pricePerCallUsdc": 0.014,
+            "description": "ONE-CALL full autonomous negotiation workflow"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate-counteroffer",
+            "pricePerCallUsdc": 0.006
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/negotiation-strategy",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/concession-analysis",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batna-score",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/negotiation-risk",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/deal-breakers",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/negotiate",
+            "pricePerCallUsdc": 0.009
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/generate-counteroffer",
+        "description": "Generate strategic counteroffers for negotiations"
+      },
+      {
+        "method": "POST",
+        "path": "/negotiation-strategy",
+        "description": "Build multi-step negotiation strategies"
+      },
+      {
+        "method": "POST",
+        "path": "/concession-analysis",
+        "description": "Plan concession sequences and timing"
+      },
+      {
+        "method": "POST",
+        "path": "/batna-score",
+        "description": "Score BATNA strength and alternatives"
+      },
+      {
+        "method": "POST",
+        "path": "/negotiation-risk",
+        "description": "Assess negotiation risk and failure probability"
+      },
+      {
+        "method": "POST",
+        "path": "/deal-breakers",
+        "description": "Identify non-negotiable deal breakers"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Negotiation execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/negotiate",
+        "description": "ONE-CALL full autonomous negotiation workflow"
+      }
+    ]
+  },
+  {
+    "name": "Address Risk API",
+    "shortDescription": "Blockchain address risk scoring, sanctions checks, and entity labeling",
+    "description": "Score blockchain address risk, check sanctions exposure, identify known entity labels, cluster related wallets, and generate compliance-ready allow/review/block recommendations for autonomous wallet, DeFi, and compliance workflows.",
+    "category": "blockchain-web3",
+    "baseUrl": "https://orbis-apis.onrender.com/address-risk",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/address-risk/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/address-risk/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "blockchain",
+      "wallet-risk",
+      "sanctions",
+      "compliance",
+      "crypto",
+      "address-labeling",
+      "defi",
+      "risk-scoring"
+    ],
+    "keywords": [
+      "blockchain address risk",
+      "wallet risk score",
+      "crypto sanctions check",
+      "OFAC wallet screening",
+      "address labels",
+      "wallet clustering",
+      "crypto compliance API",
+      "DeFi risk screening"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/address-risk",
+            "pricePerCallUsdc": 0.004,
+            "description": "Score blockchain address risk with risk factors and entity type"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sanctions",
+            "pricePerCallUsdc": 0.005,
+            "description": "Check address against OFAC, EU, UN and related sanctions lists"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/labels",
+            "pricePerCallUsdc": 0.004,
+            "description": "Get known labels such as exchange, mixer, darknet, DeFi protocol or whale"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cluster",
+            "pricePerCallUsdc": 0.008,
+            "description": "Cluster related addresses by likely entity and common counterparties"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/assess",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL full address risk assessment with sanctions, labels and recommendations"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/address-risk",
+            "pricePerCallUsdc": 0.002,
+            "description": "High-volume address risk scoring"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sanctions",
+            "pricePerCallUsdc": 0.003,
+            "description": "High-volume sanctions screening"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/assess",
+            "pricePerCallUsdc": 0.008,
+            "description": "High-volume full address risk workflow"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/address-risk",
+        "description": "Score blockchain address risk"
+      },
+      {
+        "method": "POST",
+        "path": "/sanctions",
+        "description": "Check sanctions exposure"
+      },
+      {
+        "method": "POST",
+        "path": "/labels",
+        "description": "Get known address labels"
+      },
+      {
+        "method": "POST",
+        "path": "/cluster",
+        "description": "Cluster related addresses"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/assess",
+        "description": "ONE-CALL full address risk assessment"
+      }
+    ]
+  },
+  {
+    "name": "Reputation Intelligence API",
+    "shortDescription": "Score brand reputation, detect PR crises, and analyze executive and narrative risks",
+    "description": "Monitor and score brand reputation in real time, detect emerging PR crises before they escalate, and analyze executive reputation and narrative risk signals. Built for autonomous agents, brand intelligence platforms, and investor due diligence workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/reputation-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/reputation-intelligence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/reputation-intelligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "reputation-intelligence",
+      "brand-monitoring",
+      "crisis-detection",
+      "executive-reputation",
+      "pr-risk",
+      "narrative-analysis",
+      "controversy-tracking",
+      "brand-risk"
+    ],
+    "keywords": [
+      "reputation score api",
+      "brand crisis detection",
+      "executive reputation analysis",
+      "pr risk api",
+      "narrative analysis api",
+      "brand monitoring api",
+      "controversy tracking api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/reputation-score",
+            "pricePerCallUsdc": 0.007,
+            "description": "Score brand or entity reputation"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/crisis-detection",
+            "pricePerCallUsdc": 0.007,
+            "description": "Detect emerging PR crises from signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/narrative-analysis",
+            "pricePerCallUsdc": 0.006,
+            "description": "Analyze dominant narratives and framing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/brand-risk",
+            "pricePerCallUsdc": 0.007,
+            "description": "Assess brand risk factors and exposure"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/executive-analysis",
+            "pricePerCallUsdc": 0.006,
+            "description": "Analyze executive reputation and risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/controversy-tracking",
+            "pricePerCallUsdc": 0.005,
+            "description": "Track active controversies and sentiment trends"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Reputation intelligence execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL full reputation intelligence workflow"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/reputation-score",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/crisis-detection",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/narrative-analysis",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/brand-risk",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/executive-analysis",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/controversy-tracking",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.008
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/reputation-score",
+        "description": "Score brand or entity reputation"
+      },
+      {
+        "method": "POST",
+        "path": "/crisis-detection",
+        "description": "Detect emerging PR crises from signals"
+      },
+      {
+        "method": "POST",
+        "path": "/narrative-analysis",
+        "description": "Analyze dominant narratives and framing"
+      },
+      {
+        "method": "POST",
+        "path": "/brand-risk",
+        "description": "Assess brand risk factors and exposure"
+      },
+      {
+        "method": "POST",
+        "path": "/executive-analysis",
+        "description": "Analyze executive reputation and risk"
+      },
+      {
+        "method": "POST",
+        "path": "/controversy-tracking",
+        "description": "Track active controversies and sentiment trends"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Reputation intelligence execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "ONE-CALL full reputation intelligence workflow"
+      }
+    ]
+  },
+  {
+    "name": "QA Testing API",
+    "shortDescription": "Generate test cases, detect regressions, validate AI outputs, and run test suites for agents",
+    "description": "Equip autonomous agents with intelligent QA capabilities. Generate test cases from workflow specs, detect regressions between baseline and current outputs, validate AI output against schemas, check API chain integrity, and run full test suites with graded results. Built for CI/CD automation, agent evaluation pipelines, and AI output validation workflows.",
+    "category": "other",
+    "baseUrl": "https://orbis-apis.onrender.com/qa-testing",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/qa-testing/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/qa-testing/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "qa-testing",
+      "regression-detection",
+      "test-generation",
+      "output-validation",
+      "api-chain-testing",
+      "ai-evaluation",
+      "test-automation",
+      "hallucination-detection"
+    ],
+    "keywords": [
+      "qa testing api",
+      "regression detection api",
+      "AI output validation api",
+      "test case generation api",
+      "API chain validation",
+      "agent output grading api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/test-workflow",
+            "pricePerCallUsdc": 0.007,
+            "description": "Generate test cases for a workflow with coverage assessment and missing test areas"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-regression",
+            "pricePerCallUsdc": 0.007,
+            "description": "Detect regressions between baseline and current output with diff analysis and root cause"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/test-api-chain",
+            "pricePerCallUsdc": 0.008,
+            "description": "Validate an API chain for broken links, data flow issues, and contract violations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate-output",
+            "pricePerCallUsdc": 0.006,
+            "description": "Validate AI or API output against schema/expectations with hallucination and completeness scoring"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-test-cases",
+            "pricePerCallUsdc": 0.007,
+            "description": "Generate unit, integration, edge case, load, or security test cases from a spec"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/run-suite",
+            "pricePerCallUsdc": 0.008,
+            "description": "Run a test suite and return pass rate, failures, critical issues, and QA grade"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate QA input and recommend best testing endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/test",
+            "pricePerCallUsdc": 0.014,
+            "description": "ONE-CALL full QA \u2014 test cases, regression risks, validation, coverage, and QA grade"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/test-workflow",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-regression",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/test-api-chain",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate-output",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-test-cases",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/run-suite",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/test",
+            "pricePerCallUsdc": 0.009
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/test-workflow",
+        "description": "Generate test cases for a workflow with coverage assessment and missing test areas"
+      },
+      {
+        "method": "POST",
+        "path": "/detect-regression",
+        "description": "Detect regressions between baseline and current output with diff analysis and root cause"
+      },
+      {
+        "method": "POST",
+        "path": "/test-api-chain",
+        "description": "Validate an API chain for broken links, data flow issues, and contract violations"
+      },
+      {
+        "method": "POST",
+        "path": "/validate-output",
+        "description": "Validate AI or API output against schema/expectations with hallucination and completeness scoring"
+      },
+      {
+        "method": "POST",
+        "path": "/generate-test-cases",
+        "description": "Generate unit, integration, edge case, load, or security test cases from a spec"
+      },
+      {
+        "method": "POST",
+        "path": "/run-suite",
+        "description": "Run a test suite and return pass rate, failures, critical issues, and QA grade"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Validate QA input and recommend best testing endpoint"
+      },
+      {
+        "method": "POST",
+        "path": "/test",
+        "description": "ONE-CALL full QA \u2014 test cases, regression risks, validation, coverage, and QA grade"
+      }
+    ]
+  },
+  {
+    "name": "LinkedIn Profile API",
+    "shortDescription": "LinkedIn profile analysis, company intelligence, and person enrichment for autonomous agents",
+    "description": "Analyze LinkedIn profiles, enrich people and companies, extract experience and skills, estimate engagement signals, identify hiring trends, and prepare outreach-ready intelligence for sales, recruiting, and due diligence workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/linkedin-profile",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/linkedin-profile/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/linkedin-profile/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "linkedin",
+      "profile-enrichment",
+      "company-intelligence",
+      "lead-generation",
+      "recruiting",
+      "sales-intelligence",
+      "agentic",
+      "business"
+    ],
+    "keywords": [
+      "linkedin profile api",
+      "linkedin enrichment",
+      "company intelligence",
+      "lead enrichment",
+      "person enrichment",
+      "sales prospecting",
+      "recruiting intelligence",
+      "linkedin company analysis"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/profile",
+            "pricePerCallUsdc": 0.004,
+            "description": "Analyze LinkedIn profile from URL or name"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/company",
+            "pricePerCallUsdc": 0.004,
+            "description": "LinkedIn company intelligence and hiring signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enrich",
+            "pricePerCallUsdc": 0.006,
+            "description": "Enrich a person with LinkedIn profile data and contact signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check with next API chaining"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL: enrich person and company in one shot"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/profile",
+            "pricePerCallUsdc": 0.002,
+            "description": "High-volume profile analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enrich",
+            "pricePerCallUsdc": 0.004,
+            "description": "High-volume person enrichment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "High-volume full enrichment workflow"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/profile",
+        "description": "Analyze LinkedIn profile from URL or name"
+      },
+      {
+        "method": "POST",
+        "path": "/company",
+        "description": "LinkedIn company intelligence and hiring analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/enrich",
+        "description": "Enrich a person with LinkedIn profile and contact signals"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: enrich person and company in one shot"
+      }
+    ]
+  },
+  {
+    "name": "Economic Calendar API",
+    "shortDescription": "Track macro events, score economic impact, and model market scenarios for agent positioning",
+    "description": "Stay ahead of market-moving macro events including Fed decisions, CPI releases, jobs reports, and earnings. Score event impact, model volatility scenarios, and generate positioning signals for autonomous trading and economic analysis agents.",
+    "category": "finance-payments",
+    "baseUrl": "https://orbis-apis.onrender.com/economic-calendar",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/economic-calendar/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/economic-calendar/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "economic-calendar",
+      "macro-intelligence",
+      "fed-events",
+      "cpi-analysis",
+      "market-volatility",
+      "event-driven",
+      "macro-scenario",
+      "interest-rates"
+    ],
+    "keywords": [
+      "economic calendar api",
+      "fed event impact api",
+      "CPI market impact",
+      "macro scenario modeling",
+      "volatility estimate api",
+      "economic event signals"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/upcoming-events",
+            "pricePerCallUsdc": 0.005,
+            "description": "Retrieve upcoming macro economic events"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/impact-score",
+            "pricePerCallUsdc": 0.006,
+            "description": "Score market impact of economic events"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/macro-scenario",
+            "pricePerCallUsdc": 0.008,
+            "description": "Model macro scenarios from event outcomes"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/volatility-estimate",
+            "pricePerCallUsdc": 0.007,
+            "description": "Estimate volatility around economic events"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/event-signals",
+            "pricePerCallUsdc": 0.006,
+            "description": "Generate trading signals from macro events"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Economic calendar execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL full economic calendar analysis workflow"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/upcoming-events",
+            "pricePerCallUsdc": 0.003
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/impact-score",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/macro-scenario",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/volatility-estimate",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/event-signals",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.007
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/upcoming-events",
+        "description": "Retrieve upcoming macro economic events"
+      },
+      {
+        "method": "POST",
+        "path": "/impact-score",
+        "description": "Score market impact of economic events"
+      },
+      {
+        "method": "POST",
+        "path": "/macro-scenario",
+        "description": "Model macro scenarios from event outcomes"
+      },
+      {
+        "method": "POST",
+        "path": "/volatility-estimate",
+        "description": "Estimate volatility around economic events"
+      },
+      {
+        "method": "POST",
+        "path": "/event-signals",
+        "description": "Generate trading signals from macro events"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Economic calendar execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "ONE-CALL full economic calendar analysis workflow"
+      }
+    ]
+  },
+  {
+    "name": "Due Diligence API",
+    "shortDescription": "Assess company risk, founders, financials, legal exposure, and compliance in one call",
+    "description": "Run comprehensive due diligence on any company \u2014 score risk across financial, legal, operational, reputational, and regulatory dimensions. Analyze founder track records, check GDPR/SOX/AML compliance, assess litigation exposure, and generate a full recommendation. Designed for autonomous investment agents, M&A research workflows, and procurement intelligence platforms.",
+    "category": "finance-payments",
+    "baseUrl": "https://orbis-apis.onrender.com/due-diligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/due-diligence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/due-diligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "due-diligence",
+      "company-risk",
+      "founder-analysis",
+      "compliance-check",
+      "legal-risk",
+      "financial-health",
+      "m-and-a-intelligence",
+      "investment-research"
+    ],
+    "keywords": [
+      "due diligence api",
+      "company risk score api",
+      "founder background check api",
+      "compliance gap analysis api",
+      "legal risk assessment api",
+      "financial health check api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/company-risk",
+            "pricePerCallUsdc": 0.007,
+            "description": "Score company risk across financial, legal, operational, reputational, and regulatory dimensions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/founder-analysis",
+            "pricePerCallUsdc": 0.008,
+            "description": "Analyze founder/team track record, domain expertise, red flags, and execution risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compliance-check",
+            "pricePerCallUsdc": 0.008,
+            "description": "Check GDPR, SOX, AML, KYC, ISO27001, HIPAA, PCI compliance status with gap analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reputation-analysis",
+            "pricePerCallUsdc": 0.007,
+            "description": "Score company reputation with controversies, media sentiment, and brand health trend"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/financial-health",
+            "pricePerCallUsdc": 0.007,
+            "description": "Assess revenue trend, profitability, burn rate, runway, and unit economics signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/legal-risk",
+            "pricePerCallUsdc": 0.008,
+            "description": "Identify active litigation, IP issues, regulatory investigations, and legal risk score"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate due diligence input and recommend best analysis endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/due-diligence",
+            "pricePerCallUsdc": 0.018,
+            "description": "ONE-CALL full due diligence \u2014 risk, financials, legal, compliance, founders, and recommendation"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/company-risk",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/founder-analysis",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compliance-check",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reputation-analysis",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/financial-health",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/legal-risk",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/due-diligence",
+            "pricePerCallUsdc": 0.012
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/company-risk",
+        "description": "Score company risk across financial, legal, operational, reputational, and regulatory dimensions"
+      },
+      {
+        "method": "POST",
+        "path": "/founder-analysis",
+        "description": "Analyze founder/team track record, domain expertise, red flags, and execution risk"
+      },
+      {
+        "method": "POST",
+        "path": "/compliance-check",
+        "description": "Check GDPR, SOX, AML, KYC, ISO27001, HIPAA, PCI compliance status with gap analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/reputation-analysis",
+        "description": "Score company reputation with controversies, media sentiment, and brand health trend"
+      },
+      {
+        "method": "POST",
+        "path": "/financial-health",
+        "description": "Assess revenue trend, profitability, burn rate, runway, and unit economics signals"
+      },
+      {
+        "method": "POST",
+        "path": "/legal-risk",
+        "description": "Identify active litigation, IP issues, regulatory investigations, and legal risk score"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Validate due diligence input and recommend best analysis endpoint"
+      },
+      {
+        "method": "POST",
+        "path": "/due-diligence",
+        "description": "ONE-CALL full due diligence \u2014 risk, financials, legal, compliance, founders, and recommendation"
+      }
+    ]
+  },
+  {
+    "name": "Sales Intelligence API",
+    "shortDescription": "Qualify leads, enrich prospects, prioritize pipeline, generate outreach, and forecast sales",
+    "description": "Power autonomous sales agents with full-cycle intelligence. Qualify leads using BANT and ICP fit signals, enrich prospects with tech stack and buying triggers, rank pipeline by close probability, generate personalized outreach, analyze deal health, run win/loss analysis, and forecast revenue. Built for AI SDR agents, CRM automation workflows, and revenue intelligence platforms.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/sales-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/sales-intelligence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/sales-intelligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "sales-intelligence",
+      "lead-qualification",
+      "prospect-enrichment",
+      "pipeline-prioritization",
+      "outreach-generation",
+      "deal-analysis",
+      "win-loss-analysis",
+      "sales-forecasting"
+    ],
+    "keywords": [
+      "lead qualification api",
+      "prospect enrichment api",
+      "sales pipeline prioritization api",
+      "personalized outreach generation api",
+      "deal health analysis api",
+      "sales forecast api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.007,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/qualify-lead",
+            "pricePerCallUsdc": 0.006,
+            "description": "Score and qualify leads with ICP fit, BANT signals, and recommended action"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enrich-prospect",
+            "pricePerCallUsdc": 0.007,
+            "description": "Enrich prospect with company data, tech stack, buying triggers, and decision makers"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/prioritize-pipeline",
+            "pricePerCallUsdc": 0.008,
+            "description": "Rank pipeline deals by priority score, close probability, and at-risk flags"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-outreach",
+            "pricePerCallUsdc": 0.007,
+            "description": "Generate personalized outreach with subject, value prop, CTA, and A/B variant"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-deal",
+            "pricePerCallUsdc": 0.007,
+            "description": "Score deal health with blockers, champions, detractors, and close probability"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/win-loss-analysis",
+            "pricePerCallUsdc": 0.006,
+            "description": "Analyze win/loss patterns with decision criteria, competitor factors, and adjustments"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sales-forecast",
+            "pricePerCallUsdc": 0.008,
+            "description": "Forecast pipeline value with confidence range and likely-to-close breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate sales input and recommend best analysis endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execute",
+            "pricePerCallUsdc": 0.014,
+            "description": "ONE-CALL full sales intelligence \u2014 qualify, enrich, outreach, deal signals, and recommendations"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/qualify-lead",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enrich-prospect",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/prioritize-pipeline",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-outreach",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-deal",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/win-loss-analysis",
+            "pricePerCallUsdc": 0.004
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sales-forecast",
+            "pricePerCallUsdc": 0.005
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execute",
+            "pricePerCallUsdc": 0.009
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/qualify-lead",
+        "description": "Score and qualify leads with ICP fit, BANT signals, and recommended action"
+      },
+      {
+        "method": "POST",
+        "path": "/enrich-prospect",
+        "description": "Enrich prospect with company data, tech stack, buying triggers, and decision makers"
+      },
+      {
+        "method": "POST",
+        "path": "/prioritize-pipeline",
+        "description": "Rank pipeline deals by priority score, close probability, and at-risk flags"
+      },
+      {
+        "method": "POST",
+        "path": "/generate-outreach",
+        "description": "Generate personalized outreach with subject, value prop, CTA, and A/B variant"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze-deal",
+        "description": "Score deal health with blockers, champions, detractors, and close probability"
+      },
+      {
+        "method": "POST",
+        "path": "/win-loss-analysis",
+        "description": "Analyze win/loss patterns with decision criteria, competitor factors, and adjustments"
+      },
+      {
+        "method": "POST",
+        "path": "/sales-forecast",
+        "description": "Forecast pipeline value with confidence range and likely-to-close breakdown"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Validate sales input and recommend best analysis endpoint"
+      },
+      {
+        "method": "POST",
+        "path": "/execute",
+        "description": "ONE-CALL full sales intelligence \u2014 qualify, enrich, outreach, deal signals, and recommendations"
+      }
+    ]
+  }
+]

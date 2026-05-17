@@ -1,0 +1,30 @@
+import { Router, Request, Response } from 'express';
+const router = Router();
+
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
+const traceFields = { trace_id: { type: 'string' }, computed_at: { type: 'string', format: 'date-time' }, success: { type: 'boolean' } };
+const provenance = { type: 'object', properties: { provider: { type: 'string' }, retrieved_at: { type: 'string', format: 'date-time' }, freshness_score: { type: 'number', minimum: 0, maximum: 1 } } };
+const chainFields = { source_provenance: provenance, cache_ttl_seconds: { type: 'integer' }, cache_recommended: { type: 'boolean' }, recommended_next_api: { type: 'string' }, recommended_next_endpoint: { type: 'string' }, automation_safe: { type: 'boolean' } };
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: { title: 'Wallet Balance API', version: '1.0.0', description: 'Look up crypto wallet balances, token portfolios, balance history and net worth estimates across EVM and other chains', 'x-agent-callable': true, 'x-mcp-compatible': true, 'x-pricing': { free_tier: { requests_per_day: 300 }, pay_per_call: { lookup: '$0.002', portfolio: '$0.003', history: '$0.003', 'execution-gate': '$0.001', 'wallet-intelligence': '$0.008', 'net-worth': '$0.005', batch: '$0.015' } } },
+    servers: [{ url: 'https://orbis-apis.onrender.com/wallet-balance' }],
+    security: [{ ApiKeyAuth: [] }],
+    paths: {
+      '/lookup': { post: { operationId: 'lookupBalance', summary: 'Look up native token balance for wallet', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address'], properties: { address: { type: 'string' }, chain: { type: 'string' } } } } } }, responses: { '200': { description: 'Wallet balance', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, address: { type: 'string' }, native_balance: { type: 'string' }, native_balance_usd: { type: 'number' }, ...chainFields, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } } } } },
+      '/portfolio': { post: { operationId: 'getPortfolio', summary: 'Get full token portfolio with USD values', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address'], properties: { address: { type: 'string' }, chain: { type: 'string' } } } } } }, responses: { '200': { description: 'Token portfolio', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, tokens: { type: 'array', items: { type: 'object' } }, total_value_usd: { type: 'number' }, ...chainFields, privacy } } } } } } } },
+      '/history': { post: { operationId: 'getBalanceHistory', summary: 'Get historical balance data', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address'], properties: { address: { type: 'string' }, chain: { type: 'string' }, limit: { type: 'integer' } } } } } }, responses: { '200': { description: 'Balance history', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, history: { type: 'array', items: { type: 'object' } }, peak_value_usd: { type: 'number' }, ...chainFields, privacy } } } } } } } },
+      '/execution-gate': { post: { operationId: 'executionGate', summary: 'Execution readiness check', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address'], properties: { address: { type: 'string' }, objective: { type: 'string' } } } } } }, responses: { '200': { description: 'Gate result', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, execution_ready: { type: 'boolean' }, ...chainFields, privacy } } } } } } } },
+      '/wallet-intelligence': { post: { operationId: 'walletIntelligence', summary: 'ONE-CALL: balance + portfolio + classification + risk profile', 'x-one-call': true, requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address'], properties: { address: { type: 'string' }, chain: { type: 'string' } } } } } }, responses: { '200': { description: 'Full wallet intelligence', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, total_value_usd: { type: 'number' }, wallet_type: { type: 'string' }, risk_profile: { type: 'string' }, notable_holdings: { type: 'array', items: { type: 'string' } }, ...chainFields, confidence_per_section: confidence, privacy } } } } } } } },
+      '/net-worth': { post: { operationId: 'estimateNetWorth', summary: 'Estimate total crypto net worth including DeFi and NFTs', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['address'], properties: { address: { type: 'string' }, include_defi: { type: 'boolean' }, include_nfts: { type: 'boolean' } } } } } }, responses: { '200': { description: 'Net worth estimate', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, net_worth_usd: { type: 'number' }, breakdown: { type: 'object' }, largest_position: { type: 'object' }, ...chainFields, privacy } } } } } } } },
+      '/batch': { post: { operationId: 'batchWallets', summary: 'Batch lookup up to 5 wallets', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['addresses'], properties: { addresses: { type: 'array', items: { type: 'object' }, maxItems: 5 } } } } } }, responses: { '200': { description: 'Batch results', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, batch_count: { type: 'integer' }, results: { type: 'array', items: { type: 'object' } }, ...chainFields } } } } } } } },
+    },
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
+  });
+});
+
+export default router;

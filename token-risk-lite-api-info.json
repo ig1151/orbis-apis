@@ -1,0 +1,15 @@
+{
+  "name": "Token Risk Lite API",
+  "slug": "token-risk-lite",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 500 },
+    "pay_per_call": { "assess": "$0.002", "score": "$0.002", "flags": "$0.002", "execution-gate": "$0.001", "risk-intelligence": "$0.006", "compare": "$0.003", "batch": "$0.015" }
+  },
+  "rate_limits": { "free": "500/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": ["/assess", "/score", "/flags", "/execution-gate", "/risk-intelligence", "/compare", "/batch"],
+  "execution_chain": { "recommended_start": "/risk-intelligence", "fallback": "/assess", "batch_endpoint": "/batch" }
+}

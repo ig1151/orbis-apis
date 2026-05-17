@@ -1,0 +1,21 @@
+{
+  "name": "Gas Fee API",
+  "slug": "gas-fee",
+  "version": "1.0.0",
+  "description": "Get current gas prices, estimate transaction costs, analyze historical gas trends and optimize timing for DeFi and Web3 automation agents",
+  "category": "Crypto / Onchain",
+  "tags": ["gas", "fees", "ethereum", "transaction-cost", "defi"],
+  "pricing": {
+    "free_tier": { "requests_per_day": 500 },
+    "pay_per_call": { "current": "$0.001", "estimate": "$0.002", "history": "$0.003", "execution-gate": "$0.001", "gas-intelligence": "$0.005", "optimize": "$0.003", "batch": "$0.010" }
+  },
+  "endpoints": ["/current", "/estimate", "/history", "/execution-gate", "/gas-intelligence", "/optimize", "/batch"],
+  "one_call_endpoint": "/gas-intelligence",
+  "base_url": "https://orbis-apis.onrender.com/gas-fee",
+  "openapi_url": "https://orbis-apis.onrender.com/gas-fee/openapi.json",
+  "auth": { "type": "apiKey", "header": "X-API-Key" },
+  "grade": "A+",
+  "mcp_compatible": true,
+  "agent_callable": true,
+  "privacy": { "data_stored": false, "retention": "none" }
+}

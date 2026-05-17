@@ -1,0 +1,30 @@
+import { Router, Request, Response } from 'express';
+const router = Router();
+
+const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
+const confidence = { type: 'object', additionalProperties: { type: 'number' } };
+const actions = { type: 'array', items: { type: 'string' } };
+const traceFields = { trace_id: { type: 'string' }, computed_at: { type: 'string', format: 'date-time' }, success: { type: 'boolean' } };
+const provenance = { type: 'object', properties: { provider: { type: 'string' }, retrieved_at: { type: 'string', format: 'date-time' }, freshness_score: { type: 'number', minimum: 0, maximum: 1 } } };
+const chainFields = { source_provenance: provenance, cache_ttl_seconds: { type: 'integer' }, cache_recommended: { type: 'boolean' }, recommended_next_api: { type: 'string' }, recommended_next_endpoint: { type: 'string' }, automation_safe: { type: 'boolean' } };
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.1.0',
+    info: { title: 'Gas Fee API', version: '1.0.0', description: 'Get real-time gas fees, estimate transaction costs, analyze historical gas trends and optimize gas strategy across EVM chains', 'x-agent-callable': true, 'x-mcp-compatible': true, 'x-pricing': { free_tier: { requests_per_day: 500 }, pay_per_call: { current: '$0.001', estimate: '$0.002', history: '$0.002', 'execution-gate': '$0.001', 'gas-intelligence': '$0.005', optimize: '$0.003', batch: '$0.008' } } },
+    servers: [{ url: 'https://orbis-apis.onrender.com/gas-fee' }],
+    security: [{ ApiKeyAuth: [] }],
+    paths: {
+      '/current': { post: { operationId: 'getCurrentGas', summary: 'Get current gas fees (slow/standard/fast/instant)', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { chain: { type: 'string' } } } } } }, responses: { '200': { description: 'Current gas fees', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, chain: { type: 'string' }, base_fee_gwei: { type: 'number' }, priority_fee_gwei: { type: 'object' }, network_congestion: { type: 'string' }, ...chainFields, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } } } } },
+      '/estimate': { post: { operationId: 'estimateGas', summary: 'Estimate gas cost for a specific transaction type', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { chain: { type: 'string' }, transaction_type: { type: 'string' }, gas_limit: { type: 'integer' } } } } } }, responses: { '200': { description: 'Gas estimate', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, estimates: { type: 'object' }, recommended_speed: { type: 'string' }, eth_price_usd: { type: 'number' }, ...chainFields, privacy } } } } } } } },
+      '/history': { post: { operationId: 'getGasHistory', summary: 'Get historical gas fee trends', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { chain: { type: 'string' }, period: { type: 'string' } } } } } }, responses: { '200': { description: 'Gas history', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, average_gwei: { type: 'number' }, cheapest_time: { type: 'string' }, trend: { type: 'string' }, ...chainFields, privacy } } } } } } } },
+      '/execution-gate': { post: { operationId: 'executionGate', summary: 'Execution readiness check', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { chain: { type: 'string' }, objective: { type: 'string' } } } } } }, responses: { '200': { description: 'Gate result', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, execution_ready: { type: 'boolean' }, ...chainFields, privacy } } } } } } } },
+      '/gas-intelligence': { post: { operationId: 'gasIntelligence', summary: 'ONE-CALL: current fees + recommendation + optimal timing', 'x-one-call': true, requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { chain: { type: 'string' }, transaction_type: { type: 'string' }, urgency: { type: 'string' } } } } } }, responses: { '200': { description: 'Full gas intelligence', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, recommended_fee_gwei: { type: 'number' }, recommended_fee_usd: { type: 'number' }, congestion: { type: 'string' }, best_time_to_transact: { type: 'string' }, ...chainFields, confidence_per_section: confidence, privacy } } } } } } } },
+      '/optimize': { post: { operationId: 'optimizeGas', summary: 'Suggest optimal gas strategy', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { chain: { type: 'string' }, transaction_type: { type: 'string' }, max_wait_minutes: { type: 'integer' } } } } } }, responses: { '200': { description: 'Gas strategy', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, strategy: { type: 'string' }, optimal_fee_usd: { type: 'number' }, potential_savings_usd: { type: 'number' }, ...chainFields, privacy } } } } } } } },
+      '/batch': { post: { operationId: 'batchChains', summary: 'Get gas snapshot for up to 8 chains', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['chains'], properties: { chains: { type: 'array', items: { type: 'string' }, maxItems: 8 } } } } } }, responses: { '200': { description: 'Batch results', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, batch_count: { type: 'integer' }, results: { type: 'array', items: { type: 'object' } }, ...chainFields } } } } } } } },
+    },
+    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
+  });
+});
+
+export default router;

@@ -1,0 +1,38 @@
+{
+  "name": "Company Domain Finder API",
+  "slug": "company-domain-finder",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 200
+    },
+    "pay_per_call": {
+      "find-domain": "$0.003",
+      "verify-domain": "$0.002",
+      "execution-gate": "$0.001",
+      "batch": "$0.018"
+    }
+  },
+  "rate_limits": {
+    "free": "200/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "/find-domain",
+    "/verify-domain",
+    "/execution-gate",
+    "/batch"
+  ],
+  "execution_chain": {
+    "recommended_start": "/find-domain",
+    "fallback": "/find-domain",
+    "batch_endpoint": "/batch"
+  }
+}

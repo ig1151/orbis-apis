@@ -1,0 +1,15 @@
+{
+  "name": "Onchain Labeling API",
+  "slug": "onchain-labeling",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 300 },
+    "pay_per_call": { "label": "$0.002", "classify": "$0.003", "verify": "$0.003", "execution-gate": "$0.001", "label-intelligence": "$0.008", "bulk-label": "$0.015", "batch": "$0.015" }
+  },
+  "rate_limits": { "free": "300/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": ["/label", "/classify", "/verify", "/execution-gate", "/label-intelligence", "/bulk-label", "/batch"],
+  "execution_chain": { "recommended_start": "/label-intelligence", "fallback": "/label", "batch_endpoint": "/batch" }
+}

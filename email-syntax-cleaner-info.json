@@ -1,0 +1,38 @@
+{
+  "name": "Email Syntax Cleaner API",
+  "slug": "email-syntax-cleaner",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "clean": "$0.001",
+      "normalize": "$0.001",
+      "execution-gate": "$0.001",
+      "batch": "$0.010"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "/clean",
+    "/normalize",
+    "/execution-gate",
+    "/batch"
+  ],
+  "execution_chain": {
+    "recommended_start": "/clean",
+    "fallback": "/clean",
+    "batch_endpoint": "/batch"
+  }
+}

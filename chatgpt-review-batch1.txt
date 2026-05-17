@@ -1,0 +1,2563 @@
+You are reviewing 10 API definitions (openapi.json + info.json) for an API marketplace called Orbis.
+For each API, please provide:
+1. A recommended listing with: name, shortDescription, description, tags, keywords
+2. Corrected tier pricing using this structure:
+   - Free: 100 req/day, 3000 req/month
+   - Pay Per Call: pricePerCall (base), endpointPricing per endpoint
+   - High Volume: ~50% discount on Pay Per Call
+3. Use this pricing guide:
+   - Basic lookup: $0.001–$0.003
+   - Enrichment/analysis: $0.004–$0.008
+   - Batch endpoint: $0.008–$0.020
+   - One-call workflow: $0.006–$0.015
+
+
+=== restaurant-search ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Restaurant Search API",
+    "version": "1.0.0",
+    "description": "Search nearby restaurants, get details and menus, and summarize reviews for travel, expense, and local business intelligence agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "nearby": "$0.003",
+        "details": "$0.002",
+        "reviews-summary": "$0.004",
+        "execution-gate": "$0.001",
+        "search": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/restaurant-search"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/nearby": {
+      "post": {
+        "operationId": "searchNearby",
+        "summary": "Search nearby restaurants",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search nearby restaurants"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/details": {
+      "post": {
+        "operationId": "getDetails",
+        "summary": "Get restaurant details",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get restaurant details"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/reviews-summary": {
+      "post": {
+        "operationId": "reviewsSummary",
+        "summary": "AI-summarized reviews",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI-summarized reviews"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/search": {
+      "post": {
+        "operationId": "search",
+        "summary": "ONE-CALL full restaurant intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full restaurant intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Restaurant Search API",
+  "slug": "restaurant-search",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "nearby": "$0.003",
+      "details": "$0.002",
+      "reviews_summary": "$0.004",
+      "execution_gate": "$0.001",
+      "search": "$0.006"
+    },
+    "high_volume": {
+      "nearby": "$0.0015",
+      "details": "$0.001",
+      "search": "$0.003"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/nearby",
+      "description": "Search nearby restaurants"
+    },
+    {
+      "method": "POST",
+      "path": "/details",
+      "description": "Get restaurant details"
+    },
+    {
+      "method": "POST",
+      "path": "/reviews-summary",
+      "description": "AI-summarized reviews"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/search",
+      "description": "ONE-CALL full restaurant intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "hotel-price",
+    "next": "maps-places",
+    "optional_next": []
+  }
+}
+
+=== maps-places ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Maps Places API",
+    "version": "1.0.0",
+    "description": "Search places by query or category, get detailed place info, and find nearby points of interest for location-aware agents and logistics workflows.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "search-place": "$0.002",
+        "place-details": "$0.002",
+        "nearby": "$0.003",
+        "execution-gate": "$0.001",
+        "lookup": "$0.005"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/maps-places"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/search-place": {
+      "post": {
+        "operationId": "searchPlace",
+        "summary": "Search places by text query",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search places by text query"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/place-details": {
+      "post": {
+        "operationId": "placeDetails",
+        "summary": "Get full details for a place",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get full details for a place"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/nearby": {
+      "post": {
+        "operationId": "nearbyPlaces",
+        "summary": "Find nearby points of interest",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Find nearby points of interest"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL full place intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full place intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Maps Places API",
+  "slug": "maps-places",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "search_place": "$0.002",
+      "place_details": "$0.002",
+      "nearby": "$0.003",
+      "execution_gate": "$0.001",
+      "lookup": "$0.005"
+    },
+    "high_volume": {
+      "search_place": "$0.001",
+      "nearby": "$0.0015",
+      "lookup": "$0.0025"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/search-place",
+      "description": "Search places by text query"
+    },
+    {
+      "method": "POST",
+      "path": "/place-details",
+      "description": "Get full details for a place"
+    },
+    {
+      "method": "POST",
+      "path": "/nearby",
+      "description": "Find nearby points of interest"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full place intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "restaurant-search",
+    "next": "event-search",
+    "optional_next": []
+  }
+}
+
+=== event-search ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Event Search API",
+    "version": "1.0.0",
+    "description": "Search local and virtual events, get venue details, and find ticket links for travel planning, sales prospecting, and community intelligence agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "events": "$0.003",
+        "venue": "$0.002",
+        "ticket-links": "$0.002",
+        "execution-gate": "$0.001",
+        "search": "$0.005"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/event-search"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/events": {
+      "post": {
+        "operationId": "searchEvents",
+        "summary": "Search events by location and category",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search events by location and category"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/venue": {
+      "post": {
+        "operationId": "getVenue",
+        "summary": "Get venue details",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get venue details"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/ticket-links": {
+      "post": {
+        "operationId": "ticketLinks",
+        "summary": "Find ticket links",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Find ticket links"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/search": {
+      "post": {
+        "operationId": "search",
+        "summary": "ONE-CALL full event intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full event intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Event Search API",
+  "slug": "event-search",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "events": "$0.003",
+      "venue": "$0.002",
+      "ticket_links": "$0.002",
+      "execution_gate": "$0.001",
+      "search": "$0.005"
+    },
+    "high_volume": {
+      "events": "$0.0015",
+      "venue": "$0.001",
+      "search": "$0.0025"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/events",
+      "description": "Search events by location and category"
+    },
+    {
+      "method": "POST",
+      "path": "/venue",
+      "description": "Get venue details"
+    },
+    {
+      "method": "POST",
+      "path": "/ticket-links",
+      "description": "Find ticket links"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/search",
+      "description": "ONE-CALL full event intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "maps-places",
+    "next": "sports-scores",
+    "optional_next": []
+  }
+}
+
+=== sports-scores ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Sports Scores API",
+    "version": "1.0.0",
+    "description": "Get live and historical sports scores, team schedules, and league standings for sports intelligence, betting analysis, and fan engagement automation.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "scores": "$0.002",
+        "schedule": "$0.002",
+        "standings": "$0.002",
+        "execution-gate": "$0.001",
+        "lookup": "$0.004"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/sports-scores"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/scores": {
+      "post": {
+        "operationId": "getScores",
+        "summary": "Get live or historical scores",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get live or historical scores"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/schedule": {
+      "post": {
+        "operationId": "getSchedule",
+        "summary": "Get team schedule",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get team schedule"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/standings": {
+      "post": {
+        "operationId": "getStandings",
+        "summary": "Get league standings",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get league standings"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL full sports intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full sports intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Sports Scores API",
+  "slug": "sports-scores",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "scores": "$0.002",
+      "schedule": "$0.002",
+      "standings": "$0.002",
+      "execution_gate": "$0.001",
+      "lookup": "$0.004"
+    },
+    "high_volume": {
+      "scores": "$0.001",
+      "schedule": "$0.001",
+      "lookup": "$0.002"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/scores",
+      "description": "Get live or historical scores"
+    },
+    {
+      "method": "POST",
+      "path": "/schedule",
+      "description": "Get team schedule"
+    },
+    {
+      "method": "POST",
+      "path": "/standings",
+      "description": "Get league standings"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full sports intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "event-search",
+    "next": "betting-odds",
+    "optional_next": []
+  }
+}
+
+=== betting-odds ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Betting Odds API",
+    "version": "1.0.0",
+    "description": "Get real-time betting odds, track line movements, and find the best price across bookmakers for sports analytics, arbitrage detection, and odds intelligence agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "odds": "$0.003",
+        "line-movement": "$0.004",
+        "best-price": "$0.003",
+        "execution-gate": "$0.001",
+        "analyze": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/betting-odds"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/odds": {
+      "post": {
+        "operationId": "getOdds",
+        "summary": "Get betting odds",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get betting odds"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/line-movement": {
+      "post": {
+        "operationId": "lineMovement",
+        "summary": "Track line movement",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Track line movement"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/best-price": {
+      "post": {
+        "operationId": "bestPrice",
+        "summary": "Find best price",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Find best price"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full odds analysis",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full odds analysis"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Betting Odds API",
+  "slug": "betting-odds",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "odds": "$0.003",
+      "line_movement": "$0.004",
+      "best_price": "$0.003",
+      "execution_gate": "$0.001",
+      "analyze": "$0.006"
+    },
+    "high_volume": {
+      "odds": "$0.0015",
+      "line_movement": "$0.002",
+      "analyze": "$0.003"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/odds",
+      "description": "Get betting odds"
+    },
+    {
+      "method": "POST",
+      "path": "/line-movement",
+      "description": "Track line movement"
+    },
+    {
+      "method": "POST",
+      "path": "/best-price",
+      "description": "Find best price"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full odds analysis",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "sports-scores",
+    "next": "social-profile-lookup",
+    "optional_next": []
+  }
+}
+
+=== social-profile-lookup ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Social Profile Lookup API",
+    "version": "1.0.0",
+    "description": "Find social profiles across platforms by name or email, get profile summaries, and aggregate cross-platform links for lead enrichment and outreach automation.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "find-profiles": "$0.004",
+        "profile-summary": "$0.003",
+        "links": "$0.003",
+        "execution-gate": "$0.001",
+        "lookup": "$0.007"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/social-profile-lookup"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/find-profiles": {
+      "post": {
+        "operationId": "findProfiles",
+        "summary": "Find social profiles",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Find social profiles"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/profile-summary": {
+      "post": {
+        "operationId": "profileSummary",
+        "summary": "Get profile summary",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get profile summary"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/links": {
+      "post": {
+        "operationId": "getLinks",
+        "summary": "Aggregate cross-platform links",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Aggregate cross-platform links"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL full social profile intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full social profile intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Social Profile Lookup API",
+  "slug": "social-profile-lookup",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "find_profiles": "$0.004",
+      "profile_summary": "$0.003",
+      "links": "$0.003",
+      "execution_gate": "$0.001",
+      "lookup": "$0.007"
+    },
+    "high_volume": {
+      "find_profiles": "$0.002",
+      "profile_summary": "$0.0015",
+      "lookup": "$0.0035"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/find-profiles",
+      "description": "Find social profiles"
+    },
+    {
+      "method": "POST",
+      "path": "/profile-summary",
+      "description": "Get profile summary"
+    },
+    {
+      "method": "POST",
+      "path": "/links",
+      "description": "Aggregate cross-platform links"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full social profile intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "betting-odds",
+    "next": "twitter-post-lookup",
+    "optional_next": []
+  }
+}
+
+=== twitter-post-lookup ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "X/Twitter Post Lookup API",
+    "version": "1.0.0",
+    "description": "Look up Twitter/X posts and threads, analyze profile metrics, and measure engagement signals for social intelligence, brand monitoring, and sentiment agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "post": "$0.002",
+        "profile": "$0.003",
+        "engagement": "$0.003",
+        "execution-gate": "$0.001",
+        "analyze": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/twitter-post-lookup"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/post": {
+      "post": {
+        "operationId": "getPost",
+        "summary": "Look up a post",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Look up a post"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/profile": {
+      "post": {
+        "operationId": "getProfile",
+        "summary": "Get profile metrics",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get profile metrics"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/engagement": {
+      "post": {
+        "operationId": "getEngagement",
+        "summary": "Measure engagement",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Measure engagement"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full Twitter/X intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full Twitter/X intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "X/Twitter Post Lookup API",
+  "slug": "twitter-post-lookup",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "post": "$0.002",
+      "profile": "$0.003",
+      "engagement": "$0.003",
+      "execution_gate": "$0.001",
+      "analyze": "$0.006"
+    },
+    "high_volume": {
+      "post": "$0.001",
+      "profile": "$0.0015",
+      "analyze": "$0.003"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/post",
+      "description": "Look up a post"
+    },
+    {
+      "method": "POST",
+      "path": "/profile",
+      "description": "Get profile metrics"
+    },
+    {
+      "method": "POST",
+      "path": "/engagement",
+      "description": "Measure engagement"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full Twitter/X intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "social-profile-lookup",
+    "next": "youtube-metadata",
+    "optional_next": []
+  }
+}
+
+=== youtube-metadata ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "YouTube Metadata API",
+    "version": "1.0.0",
+    "description": "Extract YouTube video metadata, channel analytics, and transcripts for content intelligence, competitive research, and media monitoring agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "video": "$0.002",
+        "channel": "$0.003",
+        "transcript": "$0.005",
+        "execution-gate": "$0.001",
+        "analyze": "$0.008"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/youtube-metadata"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/video": {
+      "post": {
+        "operationId": "getVideo",
+        "summary": "Get video metadata",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get video metadata"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/channel": {
+      "post": {
+        "operationId": "getChannel",
+        "summary": "Get channel analytics",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get channel analytics"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/transcript": {
+      "post": {
+        "operationId": "getTranscript",
+        "summary": "Extract transcript",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extract transcript"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full YouTube intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full YouTube intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "YouTube Metadata API",
+  "slug": "youtube-metadata",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "video": "$0.002",
+      "channel": "$0.003",
+      "transcript": "$0.005",
+      "execution_gate": "$0.001",
+      "analyze": "$0.008"
+    },
+    "high_volume": {
+      "video": "$0.001",
+      "channel": "$0.0015",
+      "analyze": "$0.004"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/video",
+      "description": "Get video metadata"
+    },
+    {
+      "method": "POST",
+      "path": "/channel",
+      "description": "Get channel analytics"
+    },
+    {
+      "method": "POST",
+      "path": "/transcript",
+      "description": "Extract transcript"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full YouTube intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "twitter-post-lookup",
+    "next": "tiktok-metadata",
+    "optional_next": []
+  }
+}
+
+=== tiktok-metadata ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TikTok Metadata API",
+    "version": "1.0.0",
+    "description": "Extract TikTok video metadata, creator analytics, and trending content signals for social intelligence, influencer discovery, and content strategy agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "video": "$0.002",
+        "creator": "$0.003",
+        "trend": "$0.004",
+        "execution-gate": "$0.001",
+        "analyze": "$0.007"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/tiktok-metadata"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/video": {
+      "post": {
+        "operationId": "getVideo",
+        "summary": "Get video metadata",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get video metadata"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/creator": {
+      "post": {
+        "operationId": "getCreator",
+        "summary": "Get creator analytics",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get creator analytics"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/trend": {
+      "post": {
+        "operationId": "getTrend",
+        "summary": "Get trending content",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get trending content"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "ONE-CALL full TikTok intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full TikTok intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "TikTok Metadata API",
+  "slug": "tiktok-metadata",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "video": "$0.002",
+      "creator": "$0.003",
+      "trend": "$0.004",
+      "execution_gate": "$0.001",
+      "analyze": "$0.007"
+    },
+    "high_volume": {
+      "video": "$0.001",
+      "creator": "$0.0015",
+      "analyze": "$0.0035"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/video",
+      "description": "Get video metadata"
+    },
+    {
+      "method": "POST",
+      "path": "/creator",
+      "description": "Get creator analytics"
+    },
+    {
+      "method": "POST",
+      "path": "/trend",
+      "description": "Get trending content"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "ONE-CALL full TikTok intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "youtube-metadata",
+    "next": "podcast-search",
+    "optional_next": []
+  }
+}
+
+=== podcast-search ===
+--- openapi.json ---
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Podcast Search API",
+    "version": "1.0.0",
+    "description": "Search podcasts and episodes, retrieve episode metadata, and extract transcripts for content intelligence, research, and media monitoring agents.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 100,
+        "requests_per_month": 3000
+      },
+      "pay_per_call": {
+        "search": "$0.002",
+        "episode": "$0.002",
+        "transcript": "$0.006",
+        "execution-gate": "$0.001",
+        "lookup": "$0.007"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/podcast-search"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/search": {
+      "post": {
+        "operationId": "searchPodcasts",
+        "summary": "Search podcasts",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search podcasts"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/episode": {
+      "post": {
+        "operationId": "getEpisode",
+        "summary": "Get episode metadata",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get episode metadata"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/transcript": {
+      "post": {
+        "operationId": "getTranscript",
+        "summary": "Extract transcript",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extract transcript"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "x-one-call": false,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution readiness check"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL full podcast intelligence",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL full podcast intelligence"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}
+--- info.json ---
+{
+  "name": "Podcast Search API",
+  "slug": "podcast-search",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 100,
+      "requests_per_month": 3000
+    },
+    "pay_per_call": {
+      "search": "$0.002",
+      "episode": "$0.002",
+      "transcript": "$0.006",
+      "execution_gate": "$0.001",
+      "lookup": "$0.007"
+    },
+    "high_volume": {
+      "search": "$0.001",
+      "episode": "$0.001",
+      "lookup": "$0.0035"
+    }
+  },
+  "rate_limits": {
+    "free": "100/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/search",
+      "description": "Search podcasts"
+    },
+    {
+      "method": "POST",
+      "path": "/episode",
+      "description": "Get episode metadata"
+    },
+    {
+      "method": "POST",
+      "path": "/transcript",
+      "description": "Extract transcript"
+    },
+    {
+      "method": "POST",
+      "path": "/execution-gate",
+      "description": "Execution readiness check"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full podcast intelligence",
+      "x_one_call": true
+    }
+  ],
+  "execution_chain": {
+    "previous": "tiktok-metadata",
+    "next": "transcript-extraction",
+    "optional_next": []
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "Trend Velocity API",
+  "slug": "trend-velocity",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 300 },
+    "pay_per_call": { "measure": "$0.003", "forecast": "$0.004", "signals": "$0.003", "execution-gate": "$0.001", "trend-intelligence": "$0.009", "breakout": "$0.004", "batch": "$0.020" }
+  },
+  "rate_limits": { "free": "300/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": ["/measure", "/forecast", "/signals", "/execution-gate", "/trend-intelligence", "/breakout", "/batch"],
+  "execution_chain": { "recommended_start": "/trend-intelligence", "fallback": "/measure", "batch_endpoint": "/batch" }
+}
