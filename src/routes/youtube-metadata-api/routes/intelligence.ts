@@ -32,20 +32,29 @@ router.post('/video', async (req: Request, res: Response) => {
   const { video_url, video_id } = req.body;
   if (!video_url && !video_id) return res.status(400).json({ error: 'video_url or video_id is required' });
   try {
-    const raw = await callClaude(`You are a JSON API. Respond ONLY with a valid JSON object, no text before or after. Escape all special characters in string values. Get YouTube video metadata for: "${video_url || video_id}". Return JSON:
+    const vid = (video_id || video_url || '').replace(/[^a-zA-Z0-9_-]/g, '');
+    const raw = await callClaude(`You are a JSON API. Respond ONLY with a raw JSON object. No markdown, no explanation, no text outside the JSON. Use only simple ASCII strings with no quotes, apostrophes, backslashes, or special characters inside any string value. Generate simulated YouTube video metadata for video ID: ${vid}. Return exactly this JSON shape:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
   "success": true,
-  "video_id": "${video_id || ''}",
+  "video_id": "${vid}",
   "video": {
-    "title": "string", "description": "string", "channel": "string",
-    "channel_id": "string", "published_at": "ISO8601",
-    "duration_seconds": 600, "view_count": 100000,
-    "like_count": 5000, "comment_count": 350,
-    "category": "string", "language": "string",
-    "tags": ["string"], "thumbnail_url": "string",
-    "is_live": false, "is_short": false
+    "title": "Example Video Title Here",
+    "description": "A short description of the video content without special characters",
+    "channel": "Example Channel Name",
+    "channel_id": "UCexampleChannelId",
+    "published_at": "${new Date().toISOString()}",
+    "duration_seconds": 212,
+    "view_count": 1400000000,
+    "like_count": 14000000,
+    "comment_count": 2200000,
+    "category": "Music",
+    "language": "en",
+    "tags": ["music", "pop", "official"],
+    "thumbnail_url": "https://img.youtube.com/vi/${vid}/maxresdefault.jpg",
+    "is_live": false,
+    "is_short": false
   },
   "source_provenance": {"provider": "youtube-metadata-ai", "retrieved_at": "${new Date().toISOString()}", "freshness_score": 0.9},
   "cache_ttl_seconds": 3600,

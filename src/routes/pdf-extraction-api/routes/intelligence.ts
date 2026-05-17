@@ -15,7 +15,11 @@ async function callClaude(prompt: string): Promise<string> {
 }
 
 function parseJSON(raw: string) {
-  return JSON.parse(raw.replace(/```json|```/g, '').trim());
+  let s = raw.replace(/```json|```/g, '').trim();
+  const start = s.indexOf('{'); const end = s.lastIndexOf('}');
+  if (start !== -1 && end !== -1) s = s.slice(start, end + 1);
+  s = s.replace(/:\s*\+(\d)/g, ': $1');
+  return JSON.parse(s);
 }
 
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
@@ -145,7 +149,7 @@ router.post('/extract', async (req: Request, res: Response) => {
   const { pdf_url, pages } = req.body;
   if (!pdf_url) return res.status(400).json({ error: 'pdf_url is required' });
   try {
-    const raw = await callClaude(`Full PDF extraction for URL: "${pdf_url}" pages: "${pages || 'all'}". Return JSON:
+    const raw = await callClaude(`You are a JSON API. Respond ONLY with a raw JSON object, no text before or after. Full PDF extraction for URL: "${pdf_url}" pages: "${pages || 'all'}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
