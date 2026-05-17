@@ -14,7 +14,13 @@ async function callClaude(prompt: string): Promise<string> {
   return res.data.choices[0].message.content;
 }
 
-function parseJSON(raw: string) { return JSON.parse(raw.replace(/```json|```/g, '').trim()); }
+function parseJSON(raw: string) {
+  let s = raw.replace(/```json|```/g, '').trim();
+  const start = s.indexOf('{'); const end = s.lastIndexOf('}');
+  if (start !== -1 && end !== -1) s = s.slice(start, end + 1);
+  s = s.replace(/:\s*\+(\d)/g, ': $1');
+  return JSON.parse(s);
+}
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
 
 async function getNpmInfo(pkg: string, version?: string): Promise<any> {
