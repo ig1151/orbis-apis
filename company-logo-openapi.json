@@ -59,7 +59,8 @@
                       "type": "string"
                     },
                     "base_url": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uri"
                     },
                     "endpoints": {
                       "type": "array",
@@ -241,7 +242,9 @@
                   "format": "png",
                   "automation_safe": true,
                   "cache_recommended": true,
-                  "cache_ttl_seconds": 86400
+                  "cache_ttl_seconds": 86400,
+                  "recommended_next_api": "brand-color-extractor",
+                  "recommended_next_endpoint": "/colors"
                 }
               }
             }
@@ -357,7 +360,9 @@
                   "format": "ico",
                   "automation_safe": true,
                   "cache_recommended": true,
-                  "cache_ttl_seconds": 86400
+                  "cache_ttl_seconds": 86400,
+                  "recommended_next_api": "brand-color-extractor",
+                  "recommended_next_endpoint": "/colors"
                 }
               }
             }
@@ -543,7 +548,9 @@
                   },
                   "automation_safe": true,
                   "cache_recommended": true,
-                  "cache_ttl_seconds": 86400
+                  "cache_ttl_seconds": 86400,
+                  "recommended_next_api": "brand-color-extractor",
+                  "recommended_next_endpoint": "/colors"
                 }
               }
             }
@@ -666,7 +673,9 @@
                   "gate_passed": true,
                   "automation_safe": true,
                   "cache_recommended": false,
-                  "cache_ttl_seconds": 0
+                  "cache_ttl_seconds": 0,
+                  "recommended_next_api": "brand-color-extractor",
+                  "recommended_next_endpoint": "/colors"
                 }
               }
             }
@@ -747,7 +756,11 @@
                           "error": {
                             "type": "string"
                           }
-                        }
+                        },
+                        "required": [
+                          "input",
+                          "error"
+                        ]
                       }
                     },
                     "results": {
@@ -846,7 +859,9 @@
                   ],
                   "automation_safe": true,
                   "cache_recommended": true,
-                  "cache_ttl_seconds": 86400
+                  "cache_ttl_seconds": 86400,
+                  "recommended_next_api": "brand-color-extractor",
+                  "recommended_next_endpoint": "/colors"
                 }
               }
             }

@@ -58,7 +58,8 @@
                       "type": "string"
                     },
                     "base_url": {
-                      "type": "string"
+                      "type": "string",
+                      "format": "uri"
                     },
                     "endpoints": {
                       "type": "array",
@@ -305,7 +306,9 @@
                   },
                   "automation_safe": true,
                   "cache_recommended": true,
-                  "cache_ttl_seconds": 86400
+                  "cache_ttl_seconds": 86400,
+                  "recommended_next_api": "email-syntax-cleaner",
+                  "recommended_next_endpoint": "/clean"
                 }
               }
             }
@@ -420,7 +423,9 @@
                   "mx_valid": true,
                   "automation_safe": true,
                   "cache_recommended": true,
-                  "cache_ttl_seconds": 86400
+                  "cache_ttl_seconds": 86400,
+                  "recommended_next_api": "email-syntax-cleaner",
+                  "recommended_next_endpoint": "/clean"
                 }
               }
             }
@@ -543,7 +548,9 @@
                   "gate_passed": true,
                   "automation_safe": true,
                   "cache_recommended": false,
-                  "cache_ttl_seconds": 0
+                  "cache_ttl_seconds": 0,
+                  "recommended_next_api": "email-syntax-cleaner",
+                  "recommended_next_endpoint": "/clean"
                 }
               }
             }
@@ -624,7 +631,11 @@
                           "error": {
                             "type": "string"
                           }
-                        }
+                        },
+                        "required": [
+                          "input",
+                          "error"
+                        ]
                       }
                     },
                     "results": {
@@ -721,7 +732,9 @@
                   ],
                   "automation_safe": true,
                   "cache_recommended": true,
-                  "cache_ttl_seconds": 86400
+                  "cache_ttl_seconds": 86400,
+                  "recommended_next_api": "email-syntax-cleaner",
+                  "recommended_next_endpoint": "/clean"
                 }
               }
             }
