@@ -15,7 +15,11 @@ async function callClaude(prompt: string): Promise<string> {
 }
 
 function parseJSON(raw: string) {
-  return JSON.parse(raw.replace(/```json|```/g, '').trim());
+  let s = raw.replace(/```json|```/g, '').trim();
+  const start = s.indexOf('{'); const end = s.lastIndexOf('}');
+  if (start !== -1 && end !== -1) s = s.slice(start, end + 1);
+  s = s.replace(/:\s*\+(\d)/g, ': $1');
+  return JSON.parse(s);
 }
 
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
@@ -164,7 +168,7 @@ router.post('/extract', async (req: Request, res: Response) => {
   const { url, type } = req.body;
   if (!url || !type) return res.status(400).json({ error: 'url and type are required' });
   try {
-    const raw = await callClaude(`Full transcript extraction for ${type} URL: "${url}" with speaker detection, timestamps, and summary. Return JSON:
+    const raw = await callClaude(`You are a JSON API. Respond ONLY with a valid JSON object, no text before or after it. Full transcript extraction for ${type} URL: "${url}" with speaker detection, timestamps, and summary. Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",

@@ -32,7 +32,7 @@ router.post('/video', async (req: Request, res: Response) => {
   const { video_url, video_id } = req.body;
   if (!video_url && !video_id) return res.status(400).json({ error: 'video_url or video_id is required' });
   try {
-    const raw = await callClaude(`Get YouTube video metadata for: "${video_url || video_id}". Return JSON:
+    const raw = await callClaude(`You are a JSON API. Respond ONLY with a valid JSON object, no text before or after. Escape all special characters in string values. Get YouTube video metadata for: "${video_url || video_id}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
