@@ -1,12 +1,874 @@
 import { Router, Request, Response } from 'express';
 const router = Router();
-const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
-const confidence = { type: 'object', additionalProperties: { type: 'number' } };
-const actions = { type: 'array', items: { type: 'string' } };
-const traceFields = { trace_id: { type: 'string' }, computed_at: { type: 'string', format: 'date-time' }, success: { type: 'boolean' } };
-const provenance = { type: 'object', properties: { provider: { type: 'string' }, retrieved_at: { type: 'string', format: 'date-time' }, freshness_score: { type: 'number' } } };
-const chainFields = { source_provenance: provenance, cache_ttl_seconds: { type: 'integer' }, cache_recommended: { type: 'boolean' }, recommended_next_api: { type: 'string' }, recommended_next_endpoint: { type: 'string' }, automation_safe: { type: 'boolean' } };
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ openapi: '3.1.0', info: { title: 'DNS Propagation API', version: '2.0.0', description: 'Check DNS propagation status across global nameservers, track record updates, and verify propagation completion after DNS changes.', 'x-agent-callable': true, 'x-mcp-compatible': true, 'x-pricing': {"check": "$0.002", "status": "$0.002", "trace": "$0.003", "execution-gate": "$0.001", "propagation-intelligence": "$0.006"} }, servers: [{ url: 'https://orbis-apis.onrender.com/dns-propagation' }], security: [{ ApiKeyAuth: [] }], paths: { '/check': { post: { operationId: 'check', summary: 'Check DNS propagation status across global nodes', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { input: { type: 'string' }, options: { type: 'object' } }, required: ['input'] } } } }, responses: { '200': { description: 'Check DNS propagation status across global nodes', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, result: { type: 'object' }, ...chainFields, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing input' }, '500': { description: 'Failed' } } } }, '/status': { post: { operationId: 'status', summary: 'Get propagation percentage and regional breakdown', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { input: { type: 'string' }, options: { type: 'object' } }, required: ['input'] } } } }, responses: { '200': { description: 'Get propagation percentage and regional breakdown', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, result: { type: 'object' }, ...chainFields, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing input' }, '500': { description: 'Failed' } } } }, '/trace': { post: { operationId: 'trace', summary: 'Trace DNS resolution path', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { input: { type: 'string' }, options: { type: 'object' } }, required: ['input'] } } } }, responses: { '200': { description: 'Trace DNS resolution path', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, result: { type: 'object' }, ...chainFields, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing input' }, '500': { description: 'Failed' } } } }, '/execution-gate': { post: { operationId: 'executionGate', summary: 'Execution readiness check', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['input'], properties: { input: { type: 'string' }, objective: { type: 'string' } } } } } }, responses: { '200': { description: 'Gate result', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, execution_ready: { type: 'boolean' }, ...chainFields, confidence_per_section: confidence, privacy } } } } } } } }, '/propagation-intelligence': { post: { operationId: 'propagationIntelligence', summary: 'ONE-CALL: propagation check + status + resolution trace', 'x-one-call': true, requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['input'], properties: { input: { type: 'string' }, options: { type: 'object' } } } } } }, responses: { '200': { description: 'Full intelligence', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, overall_score: { type: 'number' }, key_findings: { type: 'array', items: { type: 'string' } }, recommendations: { type: 'array', items: { type: 'string' } }, ...chainFields, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing input' }, '500': { description: 'Failed' } } } } }, components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } } });
+  res.json({
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DNS Propagation API",
+    "version": "2.0.0",
+    "description": "Check DNS propagation status across global nameservers and track record update completion.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 500
+      },
+      "pay_per_call": {
+        "check": "$0.002",
+        "status": "$0.002",
+        "trace": "$0.003",
+        "execution-gate": "$0.001",
+        "propagation-intelligence": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/dns-propagation"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/check": {
+      "post": {
+        "operationId": "check",
+        "summary": "Check \u2014 PropagationCheckData",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Check \u2014 PropagationCheckData",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PropagationCheckData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status": {
+      "post": {
+        "operationId": "status",
+        "summary": "Status \u2014 PropagationStatusData",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status \u2014 PropagationStatusData",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PropagationStatusData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trace": {
+      "post": {
+        "operationId": "trace",
+        "summary": "Trace \u2014 PropagationTraceData",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trace \u2014 PropagationTraceData",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PropagationTraceData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/propagation-intelligence": {
+      "post": {
+        "operationId": "propagation_intelligence",
+        "summary": "ONE-CALL: full DNS Propagation intelligence",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL: full DNS Propagation intelligence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PropagationIntelligenceData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-one-call": true
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "Confidence": {
+        "type": "object",
+        "required": [
+          "score"
+        ],
+        "properties": {
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "reason": {
+            "type": "string"
+          },
+          "per_section": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "required": [
+          "provider",
+          "retrieved_at"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "live_scan",
+              "cached",
+              "ai_generated",
+              "api_call"
+            ]
+          }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": {
+            "type": "integer"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "cache_recommended": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "properties": {
+            "api": {
+              "type": "string"
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "priority",
+            "action"
+          ],
+          "properties": {
+            "priority": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "action": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error",
+          "code"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "details": {
+            "type": "string"
+          }
+        }
+      },
+      "PropagationCheckData": {
+        "type": "object",
+        "required": [
+          "domain",
+          "record_type",
+          "propagation_percentage",
+          "propagation_status"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "record_type": {
+            "type": "string",
+            "enum": [
+              "A",
+              "AAAA",
+              "CNAME",
+              "MX",
+              "TXT",
+              "NS",
+              "SOA",
+              "PTR"
+            ]
+          },
+          "propagation_percentage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "propagation_status": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "partial",
+              "not_started",
+              "failed"
+            ]
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "region",
+                "status"
+              ],
+              "properties": {
+                "region": {
+                  "type": "string"
+                },
+                "nameserver": {
+                  "type": "string"
+                },
+                "ip": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "propagated",
+                    "pending",
+                    "failed"
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer"
+                },
+                "resolved_value": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "estimated_completion_minutes": {
+            "type": "integer"
+          }
+        }
+      },
+      "PropagationStatusData": {
+        "type": "object",
+        "required": [
+          "domain",
+          "is_propagated"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "record_type": {
+            "type": "string",
+            "enum": [
+              "A",
+              "AAAA",
+              "CNAME",
+              "MX",
+              "TXT",
+              "NS",
+              "SOA",
+              "PTR"
+            ]
+          },
+          "is_propagated": {
+            "type": "boolean"
+          },
+          "propagation_percentage": {
+            "type": "number"
+          },
+          "regions_summary": {
+            "type": "object",
+            "properties": {
+              "propagated": {
+                "type": "integer"
+              },
+              "pending": {
+                "type": "integer"
+              },
+              "failed": {
+                "type": "integer"
+              }
+            }
+          },
+          "fully_propagated_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "PropagationTraceData": {
+        "type": "object",
+        "required": [
+          "domain",
+          "resolution_path"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "resolution_path": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "step": {
+                  "type": "integer"
+                },
+                "server": {
+                  "type": "string"
+                },
+                "response": {
+                  "type": "string"
+                },
+                "latency_ms": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "authoritative_ns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "final_value": {
+            "type": "string"
+          },
+          "ttl_seconds": {
+            "type": "integer"
+          }
+        }
+      },
+      "PropagationIntelligenceData": {
+        "type": "object",
+        "required": [
+          "domain",
+          "propagation_status",
+          "propagation_percentage"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "propagation_status": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "partial",
+              "not_started",
+              "failed"
+            ]
+          },
+          "propagation_percentage": {
+            "type": "number"
+          },
+          "check": {
+            "$ref": "#/components/schemas/PropagationCheckData"
+          },
+          "trace": {
+            "$ref": "#/components/schemas/PropagationTraceData"
+          },
+          "health_assessment": {
+            "type": "string",
+            "enum": [
+              "healthy",
+              "in_progress",
+              "stalled",
+              "failed"
+            ]
+          },
+          "estimated_completion_minutes": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+});
 });
 export default router;

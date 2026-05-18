@@ -1,12 +1,860 @@
 import { Router, Request, Response } from 'express';
 const router = Router();
-const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
-const confidence = { type: 'object', additionalProperties: { type: 'number' } };
-const actions = { type: 'array', items: { type: 'string' } };
-const traceFields = { trace_id: { type: 'string' }, computed_at: { type: 'string', format: 'date-time' }, success: { type: 'boolean' } };
-const provenance = { type: 'object', properties: { provider: { type: 'string' }, retrieved_at: { type: 'string', format: 'date-time' }, freshness_score: { type: 'number' } } };
-const chainFields = { source_provenance: provenance, cache_ttl_seconds: { type: 'integer' }, cache_recommended: { type: 'boolean' }, recommended_next_api: { type: 'string' }, recommended_next_endpoint: { type: 'string' }, automation_safe: { type: 'boolean' } };
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ openapi: '3.1.0', info: { title: 'App Store Lookup API', version: '2.0.0', description: 'Look up iOS and Android app metadata, ratings, reviews, and competitor analysis. Supports Apple App Store and Google Play Store.', 'x-agent-callable': true, 'x-mcp-compatible': true, 'x-pricing': {"lookup": "$0.003", "reviews": "$0.005", "similar": "$0.004", "execution-gate": "$0.001", "app-intelligence": "$0.010"} }, servers: [{ url: 'https://orbis-apis.onrender.com/app-store-lookup' }], security: [{ ApiKeyAuth: [] }], paths: { '/lookup': { post: { operationId: 'lookup', summary: 'Look up app details by ID or name', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { input: { type: 'string' }, options: { type: 'object' } }, required: ['input'] } } } }, responses: { '200': { description: 'Look up app details by ID or name', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, result: { type: 'object' }, ...chainFields, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing input' }, '500': { description: 'Failed' } } } }, '/reviews': { post: { operationId: 'reviews', summary: 'Fetch recent app reviews and sentiment', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { input: { type: 'string' }, options: { type: 'object' } }, required: ['input'] } } } }, responses: { '200': { description: 'Fetch recent app reviews and sentiment', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, result: { type: 'object' }, ...chainFields, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing input' }, '500': { description: 'Failed' } } } }, '/similar': { post: { operationId: 'similar', summary: 'Find similar apps for competitive analysis', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { input: { type: 'string' }, options: { type: 'object' } }, required: ['input'] } } } }, responses: { '200': { description: 'Find similar apps for competitive analysis', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, result: { type: 'object' }, ...chainFields, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing input' }, '500': { description: 'Failed' } } } }, '/execution-gate': { post: { operationId: 'executionGate', summary: 'Execution readiness check', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['input'], properties: { input: { type: 'string' }, objective: { type: 'string' } } } } } }, responses: { '200': { description: 'Gate result', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, execution_ready: { type: 'boolean' }, ...chainFields, confidence_per_section: confidence, privacy } } } } } } } }, '/app-intelligence': { post: { operationId: 'appIntelligence', summary: 'ONE-CALL: lookup + reviews + competitive landscape', 'x-one-call': true, requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['input'], properties: { input: { type: 'string' }, options: { type: 'object' } } } } } }, responses: { '200': { description: 'Full intelligence', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, overall_score: { type: 'number' }, key_findings: { type: 'array', items: { type: 'string' } }, recommendations: { type: 'array', items: { type: 'string' } }, ...chainFields, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing input' }, '500': { description: 'Failed' } } } } }, components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } } });
+  res.json({
+  "openapi": "3.1.0",
+  "info": {
+    "title": "App Store Lookup API",
+    "version": "2.0.0",
+    "description": "Look up iOS and Android app metadata, ratings, reviews, and competitor analysis.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 200
+      },
+      "pay_per_call": {
+        "lookup": "$0.003",
+        "reviews": "$0.005",
+        "similar": "$0.004",
+        "execution-gate": "$0.001",
+        "app-intelligence": "$0.010"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/app-store-lookup"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "Lookup \u2014 AppLookupData",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lookup \u2014 AppLookupData",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AppLookupData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reviews": {
+      "post": {
+        "operationId": "reviews",
+        "summary": "Reviews \u2014 AppReviewsData",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reviews \u2014 AppReviewsData",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AppReviewsData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/similar": {
+      "post": {
+        "operationId": "similar",
+        "summary": "Similar \u2014 AppSimilarData",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Similar \u2014 AppSimilarData",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AppSimilarData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app-intelligence": {
+      "post": {
+        "operationId": "app_intelligence",
+        "summary": "ONE-CALL: full App Store Lookup intelligence",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ONE-CALL: full App Store Lookup intelligence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AppIntelligenceData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-one-call": true
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "Confidence": {
+        "type": "object",
+        "required": [
+          "score"
+        ],
+        "properties": {
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "reason": {
+            "type": "string"
+          },
+          "per_section": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "required": [
+          "provider",
+          "retrieved_at"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "live_scan",
+              "cached",
+              "ai_generated",
+              "api_call"
+            ]
+          }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": {
+            "type": "integer"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "cache_recommended": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "properties": {
+            "api": {
+              "type": "string"
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "priority",
+            "action"
+          ],
+          "properties": {
+            "priority": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "action": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error",
+          "code"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "details": {
+            "type": "string"
+          }
+        }
+      },
+      "AppLookupData": {
+        "type": "object",
+        "required": [
+          "app_id",
+          "name",
+          "platform"
+        ],
+        "properties": {
+          "app_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "developer": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "ios",
+              "android",
+              "both"
+            ]
+          },
+          "rating": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "reviews_count": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "number"
+          },
+          "category": {
+            "type": "string"
+          },
+          "last_updated": {
+            "type": "string",
+            "format": "date"
+          },
+          "version": {
+            "type": "string"
+          },
+          "size_mb": {
+            "type": "number"
+          },
+          "age_rating": {
+            "type": "string"
+          },
+          "downloads": {
+            "type": "string"
+          }
+        }
+      },
+      "AppReviewsData": {
+        "type": "object",
+        "required": [
+          "app_id",
+          "reviews"
+        ],
+        "properties": {
+          "app_id": {
+            "type": "string"
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "rating": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                },
+                "title": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "version": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "sentiment_summary": {
+            "type": "object",
+            "properties": {
+              "positive": {
+                "type": "number"
+              },
+              "neutral": {
+                "type": "number"
+              },
+              "negative": {
+                "type": "number"
+              }
+            }
+          },
+          "avg_rating": {
+            "type": "number"
+          },
+          "total_reviews": {
+            "type": "integer"
+          }
+        }
+      },
+      "AppSimilarData": {
+        "type": "object",
+        "required": [
+          "app_id",
+          "similar_apps"
+        ],
+        "properties": {
+          "app_id": {
+            "type": "string"
+          },
+          "similar_apps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "developer": {
+                  "type": "string"
+                },
+                "rating": {
+                  "type": "number"
+                },
+                "downloads": {
+                  "type": "string"
+                },
+                "overlap_score": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AppIntelligenceData": {
+        "type": "object",
+        "required": [
+          "app_id",
+          "market_position"
+        ],
+        "properties": {
+          "app_id": {
+            "type": "string"
+          },
+          "market_position": {
+            "type": "string",
+            "enum": [
+              "market_leader",
+              "strong_competitor",
+              "niche",
+              "declining"
+            ]
+          },
+          "app_details": {
+            "$ref": "#/components/schemas/AppLookupData"
+          },
+          "sentiment_summary": {
+            "type": "object",
+            "properties": {
+              "positive": {
+                "type": "number"
+              },
+              "neutral": {
+                "type": "number"
+              },
+              "negative": {
+                "type": "number"
+              }
+            }
+          },
+          "competitive_threats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "growth_trend": {
+            "type": "string",
+            "enum": [
+              "growing",
+              "stable",
+              "declining"
+            ]
+          }
+        }
+      }
+    }
+  }
+});
 });
 export default router;

@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Website Carbon Footprint API",
-    "version": "1.0.0",
-    "description": "Estimate the carbon footprint of any webpage, benchmark against industry averages, and get actionable optimization recommendations.",
+    "version": "2.0.0",
+    "description": "Estimate the carbon footprint of any webpage and get optimization recommendations.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -33,7 +33,7 @@
     "/estimate": {
       "post": {
         "operationId": "estimate",
-        "summary": "Estimate carbon footprint for a URL",
+        "summary": "estimate",
         "requestBody": {
           "required": true,
           "content": {
@@ -57,13 +57,71 @@
         },
         "responses": {
           "200": {
-            "description": "Estimate carbon footprint for a URL"
+            "description": "estimate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CarbonEstimateData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Missing input"
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Failed"
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -71,7 +129,7 @@
     "/benchmark": {
       "post": {
         "operationId": "benchmark",
-        "summary": "Benchmark against industry and category averages",
+        "summary": "benchmark",
         "requestBody": {
           "required": true,
           "content": {
@@ -95,13 +153,71 @@
         },
         "responses": {
           "200": {
-            "description": "Benchmark against industry and category averages"
+            "description": "benchmark",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CarbonBenchmarkData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Missing input"
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Failed"
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -109,7 +225,7 @@
     "/optimize": {
       "post": {
         "operationId": "optimize",
-        "summary": "Get page weight and carbon reduction recommendations",
+        "summary": "optimize",
         "requestBody": {
           "required": true,
           "content": {
@@ -133,54 +249,79 @@
         },
         "responses": {
           "200": {
-            "description": "Get page weight and carbon reduction recommendations"
-          },
-          "400": {
-            "description": "Missing input"
-          },
-          "500": {
-            "description": "Failed"
-          }
-        }
-      }
-    },
-    "/execution-gate": {
-      "post": {
-        "operationId": "executionGate",
-        "summary": "Execution readiness check",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "input"
-                ],
-                "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "objective": {
-                    "type": "string"
+            "description": "optimize",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CarbonOptimizeData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
                   }
                 }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Gate result"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
     "/carbon-intelligence": {
       "post": {
-        "operationId": "carbonIntelligence",
-        "summary": "ONE-CALL: carbon estimate + benchmark + optimization roadmap",
-        "x-one-call": true,
+        "operationId": "carbon_intelligence",
+        "summary": "carbon-intelligence",
         "requestBody": {
           "required": true,
           "content": {
@@ -204,15 +345,74 @@
         },
         "responses": {
           "200": {
-            "description": "Full intelligence"
+            "description": "carbon-intelligence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CarbonIntelligenceData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Missing input"
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Failed"
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "x-one-call": true
       }
     }
   },
@@ -222,6 +422,337 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "Confidence": {
+        "type": "object",
+        "required": [
+          "score"
+        ],
+        "properties": {
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "reason": {
+            "type": "string"
+          },
+          "per_section": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "required": [
+          "provider",
+          "retrieved_at"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "live_scan",
+              "cached",
+              "ai_generated",
+              "api_call"
+            ]
+          }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": {
+            "type": "integer"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "cache_recommended": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "properties": {
+            "api": {
+              "type": "string"
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "priority",
+            "action"
+          ],
+          "properties": {
+            "priority": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "action": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error",
+          "code"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "details": {
+            "type": "string"
+          }
+        }
+      },
+      "CarbonEstimateData": {
+        "type": "object",
+        "required": [
+          "url",
+          "co2_grams",
+          "rating"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "co2_grams": {
+            "type": "number"
+          },
+          "co2_grams_per_view": {
+            "type": "number"
+          },
+          "page_size_kb": {
+            "type": "number"
+          },
+          "energy_kwh": {
+            "type": "number"
+          },
+          "rating": {
+            "type": "string",
+            "enum": [
+              "A+",
+              "A",
+              "B",
+              "C",
+              "D",
+              "E",
+              "F"
+            ]
+          },
+          "cleaner_than_percent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "annual_co2_kg_per_10k_views": {
+            "type": "number"
+          },
+          "renewable_energy_used": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CarbonBenchmarkData": {
+        "type": "object",
+        "required": [
+          "url",
+          "co2_grams",
+          "industry_average_grams"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "co2_grams": {
+            "type": "number"
+          },
+          "industry_average_grams": {
+            "type": "number"
+          },
+          "industry_category": {
+            "type": "string"
+          },
+          "percentile": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "vs_industry": {
+            "type": "string",
+            "enum": [
+              "above_average",
+              "average",
+              "below_average"
+            ]
+          },
+          "vs_global_median": {
+            "type": "string",
+            "enum": [
+              "cleaner",
+              "average",
+              "dirtier"
+            ]
+          }
+        }
+      },
+      "CarbonOptimizeData": {
+        "type": "object",
+        "required": [
+          "url",
+          "optimizations"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "current_co2_grams": {
+            "type": "number"
+          },
+          "optimizations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "action",
+                "co2_savings_grams"
+              ],
+              "properties": {
+                "action": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "images",
+                    "scripts",
+                    "fonts",
+                    "server",
+                    "caching",
+                    "rendering"
+                  ]
+                },
+                "co2_savings_grams": {
+                  "type": "number"
+                },
+                "difficulty": {
+                  "type": "string",
+                  "enum": [
+                    "easy",
+                    "medium",
+                    "hard"
+                  ]
+                }
+              }
+            }
+          },
+          "potential_savings_percent": {
+            "type": "number"
+          },
+          "estimated_optimized_co2_grams": {
+            "type": "number"
+          }
+        }
+      },
+      "CarbonIntelligenceData": {
+        "type": "object",
+        "required": [
+          "url",
+          "co2_grams",
+          "rating"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "co2_grams": {
+            "type": "number"
+          },
+          "rating": {
+            "type": "string",
+            "enum": [
+              "A+",
+              "A",
+              "B",
+              "C",
+              "D",
+              "E",
+              "F"
+            ]
+          },
+          "estimate": {
+            "$ref": "#/components/schemas/CarbonEstimateData"
+          },
+          "benchmark": {
+            "$ref": "#/components/schemas/CarbonBenchmarkData"
+          },
+          "top_optimizations": {
+            "$ref": "#/components/schemas/CarbonOptimizeData"
+          }
+        }
       }
     }
   }

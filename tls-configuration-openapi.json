@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "TLS Configuration API",
-    "version": "1.0.0",
-    "description": "Analyze TLS/SSL configuration for cipher suites, protocol versions, vulnerabilities, and compliance. Grade server security posture.",
+    "version": "2.0.0",
+    "description": "Analyze TLS/SSL configuration for cipher suites, protocol versions, vulnerabilities, and compliance.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -33,7 +33,7 @@
     "/analyze": {
       "post": {
         "operationId": "analyze",
-        "summary": "Analyze TLS configuration and cipher suites",
+        "summary": "analyze",
         "requestBody": {
           "required": true,
           "content": {
@@ -57,13 +57,71 @@
         },
         "responses": {
           "200": {
-            "description": "Analyze TLS configuration and cipher suites"
+            "description": "analyze",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/TLSAnalyzeData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Missing input"
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Failed"
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -71,7 +129,7 @@
     "/grade": {
       "post": {
         "operationId": "grade",
-        "summary": "Grade server TLS security (A+ to F)",
+        "summary": "grade",
         "requestBody": {
           "required": true,
           "content": {
@@ -95,13 +153,71 @@
         },
         "responses": {
           "200": {
-            "description": "Grade server TLS security (A+ to F)"
+            "description": "grade",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/TLSGradeData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Missing input"
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Failed"
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -109,7 +225,7 @@
     "/recommendations": {
       "post": {
         "operationId": "recommendations",
-        "summary": "Get hardening recommendations",
+        "summary": "recommendations",
         "requestBody": {
           "required": true,
           "content": {
@@ -133,54 +249,79 @@
         },
         "responses": {
           "200": {
-            "description": "Get hardening recommendations"
-          },
-          "400": {
-            "description": "Missing input"
-          },
-          "500": {
-            "description": "Failed"
-          }
-        }
-      }
-    },
-    "/execution-gate": {
-      "post": {
-        "operationId": "executionGate",
-        "summary": "Execution readiness check",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "input"
-                ],
-                "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "objective": {
-                    "type": "string"
+            "description": "recommendations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/TLSRecommendationsData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
                   }
                 }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Gate result"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
     "/tls-intelligence": {
       "post": {
-        "operationId": "tlsIntelligence",
-        "summary": "ONE-CALL: full TLS audit \u2014 config + grade + remediation plan",
-        "x-one-call": true,
+        "operationId": "tls_intelligence",
+        "summary": "tls-intelligence",
         "requestBody": {
           "required": true,
           "content": {
@@ -204,15 +345,74 @@
         },
         "responses": {
           "200": {
-            "description": "Full intelligence"
+            "description": "tls-intelligence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/TLSIntelligenceData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Missing input"
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Failed"
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "x-one-call": true
       }
     }
   },
@@ -222,6 +422,420 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "Confidence": {
+        "type": "object",
+        "required": [
+          "score"
+        ],
+        "properties": {
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "reason": {
+            "type": "string"
+          },
+          "per_section": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "required": [
+          "provider",
+          "retrieved_at"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "live_scan",
+              "cached",
+              "ai_generated",
+              "api_call"
+            ]
+          }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": {
+            "type": "integer"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "cache_recommended": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "properties": {
+            "api": {
+              "type": "string"
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "priority",
+            "action"
+          ],
+          "properties": {
+            "priority": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "action": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error",
+          "code"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "details": {
+            "type": "string"
+          }
+        }
+      },
+      "TLSAnalyzeData": {
+        "type": "object",
+        "required": [
+          "domain",
+          "tls_versions",
+          "cipher_suites"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "tls_versions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "version",
+                "enabled"
+              ],
+              "properties": {
+                "version": {
+                  "type": "string",
+                  "enum": [
+                    "TLS 1.0",
+                    "TLS 1.1",
+                    "TLS 1.2",
+                    "TLS 1.3"
+                  ]
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "recommended": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "cipher_suites": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "strength"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "strength": {
+                  "type": "string",
+                  "enum": [
+                    "strong",
+                    "adequate",
+                    "weak",
+                    "insecure"
+                  ]
+                },
+                "pfs": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "vulnerabilities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "cve_id": {
+                  "type": "string"
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": [
+                    "critical",
+                    "high",
+                    "medium",
+                    "low"
+                  ]
+                }
+              }
+            }
+          },
+          "certificate_info": {
+            "type": "object",
+            "properties": {
+              "issuer": {
+                "type": "string"
+              },
+              "valid_until": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "key_bits": {
+                "type": "integer"
+              },
+              "signature_algorithm": {
+                "type": "string"
+              }
+            }
+          },
+          "hsts_enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TLSGradeData": {
+        "type": "object",
+        "required": [
+          "domain",
+          "grade",
+          "score"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "string",
+            "enum": [
+              "A+",
+              "A",
+              "B",
+              "C",
+              "D",
+              "F"
+            ]
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "breakdown": {
+            "type": "object",
+            "properties": {
+              "protocol_support": {
+                "type": "integer"
+              },
+              "key_exchange": {
+                "type": "integer"
+              },
+              "cipher_strength": {
+                "type": "integer"
+              },
+              "certificate": {
+                "type": "integer"
+              }
+            }
+          },
+          "vulnerabilities_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "TLSRecommendationsData": {
+        "type": "object",
+        "required": [
+          "domain",
+          "hardening_recommendations"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "hardening_recommendations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "priority",
+                "action"
+              ],
+              "properties": {
+                "priority": {
+                  "type": "string",
+                  "enum": [
+                    "critical",
+                    "high",
+                    "medium",
+                    "low"
+                  ]
+                },
+                "action": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "cve_reference": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "compliance_gaps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "framework": {
+                  "type": "string",
+                  "enum": [
+                    "PCI-DSS",
+                    "NIST",
+                    "SOC2",
+                    "HIPAA",
+                    "GDPR"
+                  ]
+                },
+                "requirement": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pass",
+                    "fail",
+                    "partial"
+                  ]
+                }
+              }
+            }
+          },
+          "estimated_fix_hours": {
+            "type": "number"
+          }
+        }
+      },
+      "TLSIntelligenceData": {
+        "type": "object",
+        "required": [
+          "domain",
+          "grade"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "string",
+            "enum": [
+              "A+",
+              "A",
+              "B",
+              "C",
+              "D",
+              "F"
+            ]
+          },
+          "analyze": {
+            "$ref": "#/components/schemas/TLSAnalyzeData"
+          },
+          "grade_detail": {
+            "$ref": "#/components/schemas/TLSGradeData"
+          },
+          "remediation": {
+            "$ref": "#/components/schemas/TLSRecommendationsData"
+          },
+          "critical_vulnerabilities": {
+            "type": "integer"
+          }
+        }
       }
     }
   }

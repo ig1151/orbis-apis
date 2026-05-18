@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Slug Generator API",
-    "version": "1.0.0",
-    "description": "Generate SEO-friendly URL slugs from titles and text. Handle transliteration, stop-word removal, deduplication, and batch generation.",
+    "version": "2.0.0",
+    "description": "Generate SEO-friendly URL slugs from titles. Handle transliteration, stop words, and batch generation.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -33,7 +33,7 @@
     "/generate": {
       "post": {
         "operationId": "generate",
-        "summary": "Generate a URL slug from a title or phrase",
+        "summary": "generate",
         "requestBody": {
           "required": true,
           "content": {
@@ -57,13 +57,71 @@
         },
         "responses": {
           "200": {
-            "description": "Generate a URL slug from a title or phrase"
+            "description": "generate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/SlugGenerateData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Missing input"
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Failed"
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -71,7 +129,7 @@
     "/validate": {
       "post": {
         "operationId": "validate",
-        "summary": "Validate and clean an existing slug",
+        "summary": "validate",
         "requestBody": {
           "required": true,
           "content": {
@@ -95,13 +153,71 @@
         },
         "responses": {
           "200": {
-            "description": "Validate and clean an existing slug"
+            "description": "validate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/SlugValidateData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Missing input"
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Failed"
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -109,7 +225,7 @@
     "/batch": {
       "post": {
         "operationId": "batch",
-        "summary": "Batch generate slugs for up to 50 titles",
+        "summary": "batch",
         "requestBody": {
           "required": true,
           "content": {
@@ -133,54 +249,79 @@
         },
         "responses": {
           "200": {
-            "description": "Batch generate slugs for up to 50 titles"
-          },
-          "400": {
-            "description": "Missing input"
-          },
-          "500": {
-            "description": "Failed"
-          }
-        }
-      }
-    },
-    "/execution-gate": {
-      "post": {
-        "operationId": "executionGate",
-        "summary": "Execution readiness check",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "input"
-                ],
-                "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "objective": {
-                    "type": "string"
+            "description": "batch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/SlugBatchData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
                   }
                 }
               }
             }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Gate result"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
     "/slug-intelligence": {
       "post": {
-        "operationId": "slugIntelligence",
-        "summary": "ONE-CALL: generate + validate + SEO score + alternatives",
-        "x-one-call": true,
+        "operationId": "slug_intelligence",
+        "summary": "slug-intelligence",
         "requestBody": {
           "required": true,
           "content": {
@@ -204,15 +345,74 @@
         },
         "responses": {
           "200": {
-            "description": "Full intelligence"
+            "description": "slug-intelligence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "data",
+                    "confidence",
+                    "provenance"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/SlugIntelligenceData"
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "cache": {
+                      "$ref": "#/components/schemas/Cache"
+                    },
+                    "recommended_next_api": {
+                      "$ref": "#/components/schemas/NextApi"
+                    },
+                    "recommended_actions_priority_order": {
+                      "$ref": "#/components/schemas/Recommendation"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "Missing input"
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Failed"
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "x-one-call": true
       }
     }
   },
@@ -222,6 +422,299 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "Confidence": {
+        "type": "object",
+        "required": [
+          "score"
+        ],
+        "properties": {
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "reason": {
+            "type": "string"
+          },
+          "per_section": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "required": [
+          "provider",
+          "retrieved_at"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "live_scan",
+              "cached",
+              "ai_generated",
+              "api_call"
+            ]
+          }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": {
+            "type": "integer"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "cache_recommended": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "properties": {
+            "api": {
+              "type": "string"
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "priority",
+            "action"
+          ],
+          "properties": {
+            "priority": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "action": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error",
+          "code"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "details": {
+            "type": "string"
+          }
+        }
+      },
+      "SlugGenerateData": {
+        "type": "object",
+        "required": [
+          "input",
+          "slug"
+        ],
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "slug_length": {
+            "type": "integer"
+          },
+          "url_safe": {
+            "type": "boolean"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "alternatives": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stop_words_removed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SlugValidateData": {
+        "type": "object",
+        "required": [
+          "slug",
+          "is_valid"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "is_valid": {
+            "type": "boolean"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "invalid_chars",
+                    "too_long",
+                    "too_short",
+                    "reserved_word",
+                    "starts_with_number"
+                  ]
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "cleaned_slug": {
+            "type": "string"
+          },
+          "seo_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          }
+        }
+      },
+      "SlugBatchData": {
+        "type": "object",
+        "required": [
+          "results"
+        ],
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "input",
+                "slug"
+              ],
+              "properties": {
+                "input": {
+                  "type": "string"
+                },
+                "slug": {
+                  "type": "string"
+                },
+                "url_safe": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "SlugIntelligenceData": {
+        "type": "object",
+        "required": [
+          "input",
+          "slug",
+          "seo_score"
+        ],
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "seo_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "alternatives": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "validation": {
+            "$ref": "#/components/schemas/SlugValidateData"
+          },
+          "character_count": {
+            "type": "integer"
+          },
+          "keyword_rich": {
+            "type": "boolean"
+          }
+        }
       }
     }
   }

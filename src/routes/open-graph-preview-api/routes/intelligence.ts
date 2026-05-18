@@ -14,64 +14,82 @@ async function callClaude(prompt: string): Promise<string> {
   return res.data.choices[0].message.content;
 }
 
-function parseJSON(raw: string) { return JSON.parse(raw.replace(/```json|```/g, '').trim()); }
-function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
+function parseJSON(raw: string) {
+  try { return JSON.parse(raw.replace(/```json|```/g, '').trim()); }
+  catch { return { success: false, error: 'parse_error', raw: raw.slice(0, 200) }; }
+}
 
 router.get('/', (_req: Request, res: Response) => {
   res.json({ name: 'Open Graph Preview API', info: '/open-graph-preview/info', openapi: '/open-graph-preview/openapi.json', health: 'ok' });
 });
 
 router.post('/preview', async (req: Request, res: Response) => {
-  const { url, options } = req.body;
-  if (!url) return res.status(400).json({ error: 'url is required' });
+  const { input, options } = req.body;
+  if (!input) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
   try {
-    const raw = await callClaude(`You are an expert Open Graph Preview API engine. Task: Render social share preview for a URL. Input: "${url}". Options: ${JSON.stringify(options || {})}. Return ONLY valid JSON with these fields: trace_id, computed_at, success:true, url, result (object with relevant structured data), confidence_per_section (object), recommended_actions_priority_order (array), source_provenance (provider, retrieved_at, freshness_score), cache_ttl_seconds, cache_recommended, recommended_next_api, recommended_next_endpoint, automation_safe, privacy (data_stored:false, retention:none). Trace ID: ${traceId()}. Time: ${new Date().toISOString()}. Return only the JSON object.`);
+    const raw = await callClaude(`You are an expert Open Graph Preview API engine performing: preview.
+Input: "${input}"
+Options: ${JSON.stringify(options || {})}
+Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object with typed API-specific fields), confidence (object: score 0-1 number, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Use enums strictly. Return only the JSON object.
+The data object must include all typed fields relevant to preview for this API. Be specific and deterministic.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
 });
 
 router.post('/validate', async (req: Request, res: Response) => {
   const { input, options } = req.body;
-  if (!input) return res.status(400).json({ error: 'input is required' });
+  if (!input) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
   try {
-    const raw = await callClaude(`You are an expert Open Graph Preview API engine. Task: Validate OG tags completeness and quality. Input: "${input}". Options: ${JSON.stringify(options || {})}. Return ONLY valid JSON with these fields: trace_id, computed_at, success:true, input, result (object with relevant structured data), confidence_per_section (object), recommended_actions_priority_order (array), source_provenance (provider, retrieved_at, freshness_score), cache_ttl_seconds, cache_recommended, recommended_next_api, recommended_next_endpoint, automation_safe, privacy (data_stored:false, retention:none). Trace ID: ${traceId()}. Time: ${new Date().toISOString()}. Return only the JSON object.`);
+    const raw = await callClaude(`You are an expert Open Graph Preview API engine performing: validate.
+Input: "${input}"
+Options: ${JSON.stringify(options || {})}
+Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object with typed API-specific fields), confidence (object: score 0-1 number, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Use enums strictly. Return only the JSON object.
+The data object must include all typed fields relevant to validate for this API. Use enums where applicable. Be specific and deterministic.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
 });
 
 router.post('/generate', async (req: Request, res: Response) => {
   const { input, options } = req.body;
-  if (!input) return res.status(400).json({ error: 'input is required' });
+  if (!input) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
   try {
-    const raw = await callClaude(`You are an expert Open Graph Preview API engine. Task: Generate missing OG tags for a URL. Input: "${input}". Options: ${JSON.stringify(options || {})}. Return ONLY valid JSON with these fields: trace_id, computed_at, success:true, input, result (object with relevant structured data), confidence_per_section (object), recommended_actions_priority_order (array), source_provenance (provider, retrieved_at, freshness_score), cache_ttl_seconds, cache_recommended, recommended_next_api, recommended_next_endpoint, automation_safe, privacy (data_stored:false, retention:none). Trace ID: ${traceId()}. Time: ${new Date().toISOString()}. Return only the JSON object.`);
+    const raw = await callClaude(`You are an expert Open Graph Preview API engine performing: generate.
+Input: "${input}"
+Options: ${JSON.stringify(options || {})}
+Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object with typed API-specific fields), confidence (object: score 0-1 number, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Use enums strictly. Return only the JSON object.
+The data object must include all typed fields relevant to generate for this API. Use enums where applicable. Be specific and deterministic.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
 });
 
 router.post('/execution-gate', async (req: Request, res: Response) => {
   const { input, objective } = req.body;
-  if (!input) return res.status(400).json({ error: 'input is required' });
+  if (!input) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
+  const rid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); });
   res.json({
-    trace_id: traceId(), computed_at: new Date().toISOString(), success: true,
+    success: true, request_id: rid(),
     execution_ready: true, input, objective: objective || 'preview',
-    next_api: 'open-graph-preview', next_endpoint: '/preview',
-    blocking_flags: [], flag_definitions: { NO_INPUT: 'input is required' },
-    source_provenance: { provider: 'system', retrieved_at: new Date().toISOString(), freshness_score: 1.0 },
-    cache_ttl_seconds: 0, cache_recommended: false,
-    recommended_next_api: 'open-graph-preview', recommended_next_endpoint: '/og-intelligence',
-    automation_safe: true, confidence_per_section: { execution_ready: 0.95 },
-    recommended_actions_priority_order: ['Render social share preview for a URL', 'Validate OG tags completeness and quality', 'Generate missing OG tags for a URL'],
-    privacy: { data_stored: false, retention: 'none' },
+    next_api: 'open-graph-preview', next_endpoint: '/og-intelligence',
+    blocking_flags: [],
+    confidence: { score: 0.98, reason: 'Input present and valid', per_section: { execution_ready: 0.98 } },
+    provenance: { provider: 'system', retrieved_at: new Date().toISOString(), source_type: 'api_call' },
+    recommended_next_api: [{ api: 'open-graph-preview', endpoint: '/og-intelligence', reason: 'One-call endpoint for full Open Graph Preview API intelligence' }, { api: 'app-store-lookup', endpoint: '/app-store-lookup', reason: 'Next step in the pipeline' }],
+    recommended_actions_priority_order: [{ priority: 'high', action: 'Call /og-intelligence for full intelligence', reason: 'One-call delivers all outputs in a single request' }],
+    execution_metadata: { latency_ms: 1, model: 'system', automation_safe: true },
   });
 });
 
 router.post('/og-intelligence', async (req: Request, res: Response) => {
   const { input, options } = req.body;
-  if (!input) return res.status(400).json({ error: 'input is required' });
+  if (!input) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
   try {
-    const raw = await callClaude(`You are a complete Open Graph Preview API intelligence engine. Task: ONE-CALL: preview + validate + optimize OG tags. Input: "${input}". Options: ${JSON.stringify(options || {})}. Return ONLY valid JSON combining all available intelligence including: trace_id, computed_at, success:true, input, preview_result (object), validate_result (object), generate_result (object), overall_score (number 0-1), key_findings (array), recommendations (array), confidence_per_section (object), recommended_actions_priority_order (array), source_provenance (provider, retrieved_at, freshness_score), cache_ttl_seconds, cache_recommended, recommended_next_api, recommended_next_endpoint, automation_safe, privacy (data_stored:false, retention:none). Trace ID: ${traceId()}. Time: ${new Date().toISOString()}. Return only the JSON object.`);
+    const raw = await callClaude(`You are a complete Open Graph Preview API intelligence engine. Perform full analysis combining preview, validate, and generate in a single response.
+Input: "${input}"
+Options: ${JSON.stringify(options || {})}
+Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object with typed API-specific fields), confidence (object: score 0-1 number, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Use enums strictly. Return only the JSON object.
+The data object MUST include: all fields from preview, validate, and generate sub-analyses, plus an overall_score (0-100 number), key_findings (array of strings), and summary (string). Use enums where applicable. Recommended_next_api should point to relevant downstream APIs with specific reasons based on what was found.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
 });
 
 export default router;
