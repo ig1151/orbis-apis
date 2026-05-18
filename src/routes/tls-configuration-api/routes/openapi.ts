@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "TLS Configuration API",
     "version": "2.0.0",
-    "description": "Analyze TLS/SSL configuration for cipher suites, protocol versions, vulnerabilities, and compliance.",
+    "description": "Analyze TLS/SSL configuration for cipher suites, protocol versions, vulnerabilities, and compliance. Grade server security posture.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/tls-configuration"
+      "url": "https://orbis-apis.onrender.com/tls-configuration",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "TLS Configuration API",
+                  "version": "2.0.0",
+                  "description": "Analyze TLS/SSL configuration for cipher suites, protocol versions, vulnerabilities, and compliance. Grade server security posture.",
+                  "base_url": "https://orbis-apis.onrender.com/tls-configuration",
+                  "docs_url": "https://orbis-apis.onrender.com/tls-configuration/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 300
+                    },
+                    "pay_per_call": {
+                      "analyze": "$0.003",
+                      "grade": "$0.003",
+                      "recommendations": "$0.004",
+                      "execution-gate": "$0.001",
+                      "tls-intelligence": "$0.008"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/analyze",
+                      "summary": "Analyze",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/grade",
+                      "summary": "Grade",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/recommendations",
+                      "summary": "Recommendations",
+                      "price_usd": 0.004
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/tls-intelligence",
+                      "summary": "Tls Intelligence",
+                      "price_usd": 0.008
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/analyze": {
       "post": {
         "operationId": "analyze",
-        "summary": "Analyze \u2014 TLSAnalyzeData",
+        "summary": "Analyze",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,14 +123,20 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "domain": {
+                    "type": "string",
+                    "example": "example.com"
                   },
-                  "options": {
-                    "type": "object"
+                  "port": {
+                    "type": "integer",
+                    "default": 443
+                  },
+                  "include_cert_chain": {
+                    "type": "boolean",
+                    "default": true
                   }
                 }
               }
@@ -60,7 +145,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Analyze \u2014 TLSAnalyzeData",
+            "description": "Analyze",
             "content": {
               "application/json": {
                 "schema": {
@@ -112,6 +197,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +232,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +247,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/grade": {
       "post": {
         "operationId": "grade",
-        "summary": "Grade \u2014 TLSGradeData",
+        "summary": "Grade",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,23 +258,28 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain"
                 ],
                 "properties": {
-                  "input": {
+                  "domain": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "port": {
+                    "type": "integer",
+                    "default": 443
                   }
                 }
+              },
+              "example": {
+                "domain": "example.com",
+                "port": 443
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Grade \u2014 TLSGradeData",
+            "description": "Grade",
             "content": {
               "application/json": {
                 "schema": {
@@ -218,6 +321,60 @@ router.get('/', (_req: Request, res: Response) => {
                       "$ref": "#/components/schemas/ExecMeta"
                     }
                   }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-f6a7-4890-bcde-f12345678901",
+                  "data": {
+                    "domain": "example.com",
+                    "grade": "B",
+                    "score": 72,
+                    "breakdown": {
+                      "protocol_support": 80,
+                      "key_exchange": 70,
+                      "cipher_strength": 75,
+                      "certificate": 63
+                    },
+                    "vulnerabilities_count": 2
+                  },
+                  "confidence": {
+                    "score": 0.96,
+                    "reason": "Direct TLS handshake scan"
+                  },
+                  "provenance": {
+                    "provider": "tls-scanner",
+                    "retrieved_at": "2026-05-18T12:00:00Z",
+                    "source_type": "live_scan"
+                  },
+                  "cache": {
+                    "recommended_ttl_seconds": 86400,
+                    "retryable": false,
+                    "cache_recommended": true
+                  },
+                  "recommended_next_api": [
+                    {
+                      "api": "tls-configuration",
+                      "endpoint": "/recommendations",
+                      "reason": "Get specific hardening steps to reach A+"
+                    }
+                  ],
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": "high",
+                      "action": "Disable TLS 1.0 and 1.1",
+                      "reason": "Deprecated protocols detected \u2014 PCI-DSS non-compliant"
+                    },
+                    {
+                      "priority": "medium",
+                      "action": "Enable TLS 1.3",
+                      "reason": "TLS 1.3 not enabled \u2014 required for A grade"
+                    }
+                  ],
+                  "execution_metadata": {
+                    "latency_ms": 412,
+                    "model": "claude-sonnet-4-5",
+                    "automation_safe": true
+                  }
                 }
               }
             }
@@ -228,6 +385,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +420,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +435,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/recommendations": {
       "post": {
         "operationId": "recommendations",
-        "summary": "Recommendations \u2014 TLSRecommendationsData",
+        "summary": "Recommendations",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +446,24 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain"
                 ],
                 "properties": {
-                  "input": {
+                  "domain": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "compliance_frameworks": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "PCI-DSS",
+                        "NIST",
+                        "SOC2",
+                        "HIPAA",
+                        "GDPR"
+                      ]
+                    }
                   }
                 }
               }
@@ -292,7 +472,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Recommendations \u2014 TLSRecommendationsData",
+            "description": "Recommendations",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +524,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +559,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +574,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/tls-intelligence": {
       "post": {
         "operationId": "tls_intelligence",
-        "summary": "ONE-CALL: full TLS Configuration intelligence",
+        "summary": "ONE-CALL: TLS Configuration \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +585,21 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain"
                 ],
                 "properties": {
-                  "input": {
+                  "domain": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "port": {
+                    "type": "integer",
+                    "default": 443
+                  },
+                  "compliance_frameworks": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -408,7 +608,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full TLS Configuration intelligence",
+            "description": "ONE-CALL: TLS Configuration \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +660,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +695,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "domain"
+                ],
+                "properties": {
+                  "domain": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "domain": "example.com",
+                "objective": "run tls-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "tls-configuration",
+                  "next_endpoint": "/tls-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/open-graph-preview"
+      "url": "https://orbis-apis.onrender.com/open-graph-preview",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/preview": {
       "post": {
         "operationId": "preview",
@@ -41,14 +61,23 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "facebook",
+                      "twitter",
+                      "linkedin",
+                      "whatsapp",
+                      "generic"
+                    ],
+                    "default": "generic"
                   }
                 }
               }
@@ -137,14 +166,18 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "required_tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -233,14 +266,22 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "title": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "description": {
+                    "type": "string"
+                  },
+                  "image_url": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 }
               }
@@ -329,14 +370,21 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_platform": {
+                    "type": "string",
+                    "enum": [
+                      "facebook",
+                      "twitter",
+                      "linkedin",
+                      "generic"
+                    ]
                   }
                 }
               }
@@ -413,6 +461,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

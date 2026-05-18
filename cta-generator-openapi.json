@@ -3,7 +3,7 @@
   "info": {
     "title": "CTA Generator API",
     "version": "2.0.0",
-    "description": "Generate high-converting call-to-action copy, score CTAs, and generate A/B test variants.",
+    "description": "Generate high-converting call-to-action copy for landing pages, emails, and ads. Score CTAs and generate A/B test variants.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/cta-generator"
+      "url": "https://orbis-apis.onrender.com/cta-generator",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/generate": {
       "post": {
         "operationId": "generate",
@@ -41,14 +61,42 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "use_case",
+                  "goal"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "use_case": {
+                    "type": "string",
+                    "example": "SaaS landing page"
                   },
-                  "options": {
-                    "type": "object"
+                  "goal": {
+                    "type": "string",
+                    "enum": [
+                      "sign_up",
+                      "purchase",
+                      "download",
+                      "contact",
+                      "learn_more",
+                      "subscribe"
+                    ]
+                  },
+                  "placement": {
+                    "type": "string",
+                    "enum": [
+                      "above_fold",
+                      "inline",
+                      "footer",
+                      "popup",
+                      "email"
+                    ]
+                  },
+                  "urgency": {
+                    "type": "string",
+                    "enum": [
+                      "high",
+                      "medium",
+                      "low"
+                    ]
                   }
                 }
               }
@@ -137,14 +185,24 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "cta",
+                  "goal"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "cta": {
+                    "type": "string",
+                    "example": "Start Free Trial"
                   },
-                  "options": {
-                    "type": "object"
+                  "goal": {
+                    "type": "string",
+                    "enum": [
+                      "sign_up",
+                      "purchase",
+                      "download",
+                      "contact",
+                      "learn_more",
+                      "subscribe"
+                    ]
                   }
                 }
               }
@@ -233,14 +291,28 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "cta",
+                  "goal"
                 ],
                 "properties": {
-                  "input": {
+                  "cta": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "goal": {
+                    "type": "string",
+                    "enum": [
+                      "sign_up",
+                      "purchase",
+                      "download",
+                      "contact",
+                      "learn_more",
+                      "subscribe"
+                    ]
+                  },
+                  "count": {
+                    "type": "integer",
+                    "default": 3,
+                    "maximum": 5
                   }
                 }
               }
@@ -329,14 +401,27 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "use_case",
+                  "goal"
                 ],
                 "properties": {
-                  "input": {
+                  "use_case": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "goal": {
+                    "type": "string",
+                    "enum": [
+                      "sign_up",
+                      "purchase",
+                      "download",
+                      "contact",
+                      "learn_more",
+                      "subscribe"
+                    ]
+                  },
+                  "landing_page_url": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 }
               }
@@ -413,6 +498,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "use_case"
+                ],
+                "properties": {
+                  "use_case": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

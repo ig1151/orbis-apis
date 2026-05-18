@@ -3,7 +3,7 @@
   "info": {
     "title": "Chrome Extension Lookup API",
     "version": "2.0.0",
-    "description": "Retrieve Chrome Web Store extension metadata, permissions, and security analysis.",
+    "description": "Retrieve Chrome Web Store extension metadata, permissions, and security risk analysis.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/chrome-extension-lookup"
+      "url": "https://orbis-apis.onrender.com/chrome-extension-lookup",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/lookup": {
       "post": {
         "operationId": "lookup",
@@ -41,14 +61,12 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "extension_id_or_name"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
+                  "extension_id_or_name": {
+                    "type": "string",
+                    "example": "uBlock Origin"
                   }
                 }
               }
@@ -137,14 +155,16 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "extension_id"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "extension_id": {
+                    "type": "string",
+                    "example": "cjpalhdlnbpafiamejdnhcphjbkeiagm"
                   },
-                  "options": {
-                    "type": "object"
+                  "deep_scan": {
+                    "type": "boolean",
+                    "default": false
                   }
                 }
               }
@@ -233,14 +253,15 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "extension_id"
                 ],
                 "properties": {
-                  "input": {
+                  "extension_id": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "limit": {
+                    "type": "integer",
+                    "default": 5
                   }
                 }
               }
@@ -329,14 +350,11 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "extension_id_or_name"
                 ],
                 "properties": {
-                  "input": {
+                  "extension_id_or_name": {
                     "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
                   }
                 }
               }
@@ -413,6 +431,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "extension_id_or_name"
+                ],
+                "properties": {
+                  "extension_id_or_name": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "Chrome Extension Lookup API",
     "version": "2.0.0",
-    "description": "Retrieve Chrome Web Store extension metadata, permissions, and security analysis.",
+    "description": "Retrieve Chrome Web Store extension metadata, permissions, and security risk analysis.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/chrome-extension-lookup"
+      "url": "https://orbis-apis.onrender.com/chrome-extension-lookup",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Chrome Extension Lookup API",
+                  "version": "2.0.0",
+                  "description": "Retrieve Chrome Web Store extension metadata, permissions, and security risk analysis.",
+                  "base_url": "https://orbis-apis.onrender.com/chrome-extension-lookup",
+                  "docs_url": "https://orbis-apis.onrender.com/chrome-extension-lookup/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 300
+                    },
+                    "pay_per_call": {
+                      "lookup": "$0.002",
+                      "analyze": "$0.004",
+                      "similar": "$0.003",
+                      "execution-gate": "$0.001",
+                      "extension-intelligence": "$0.008"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/lookup",
+                      "summary": "Lookup",
+                      "price_usd": 0.002
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/analyze",
+                      "summary": "Analyze",
+                      "price_usd": 0.004
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/similar",
+                      "summary": "Similar",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/extension-intelligence",
+                      "summary": "Extension Intelligence",
+                      "price_usd": 0.008
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/lookup": {
       "post": {
         "operationId": "lookup",
-        "summary": "Lookup \u2014 ExtensionLookupData",
+        "summary": "Lookup",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,14 +123,12 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "extension_id_or_name"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
+                  "extension_id_or_name": {
+                    "type": "string",
+                    "example": "uBlock Origin"
                   }
                 }
               }
@@ -60,7 +137,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Lookup \u2014 ExtensionLookupData",
+            "description": "Lookup",
             "content": {
               "application/json": {
                 "schema": {
@@ -112,6 +189,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +224,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +239,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/analyze": {
       "post": {
         "operationId": "analyze",
-        "summary": "Analyze \u2014 ExtensionAnalyzeData",
+        "summary": "Analyze",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +250,16 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "extension_id"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "extension_id": {
+                    "type": "string",
+                    "example": "cjpalhdlnbpafiamejdnhcphjbkeiagm"
                   },
-                  "options": {
-                    "type": "object"
+                  "deep_scan": {
+                    "type": "boolean",
+                    "default": false
                   }
                 }
               }
@@ -176,7 +268,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Analyze \u2014 ExtensionAnalyzeData",
+            "description": "Analyze",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +320,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +355,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +370,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/similar": {
       "post": {
         "operationId": "similar",
-        "summary": "Similar \u2014 ExtensionSimilarData",
+        "summary": "Similar",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +381,15 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "extension_id"
                 ],
                 "properties": {
-                  "input": {
+                  "extension_id": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "limit": {
+                    "type": "integer",
+                    "default": 5
                   }
                 }
               }
@@ -292,7 +398,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Similar \u2014 ExtensionSimilarData",
+            "description": "Similar",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +450,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +485,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +500,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/extension-intelligence": {
       "post": {
         "operationId": "extension_intelligence",
-        "summary": "ONE-CALL: full Chrome Extension Lookup intelligence",
+        "summary": "ONE-CALL: Chrome Extension Lookup \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +511,11 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "extension_id_or_name"
                 ],
                 "properties": {
-                  "input": {
+                  "extension_id_or_name": {
                     "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
                   }
                 }
               }
@@ -408,7 +524,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full Chrome Extension Lookup intelligence",
+            "description": "ONE-CALL: Chrome Extension Lookup \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +576,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +611,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "extension_id_or_name"
+                ],
+                "properties": {
+                  "extension_id_or_name": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "extension_id_or_name": "example.com",
+                "objective": "run extension-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "chrome-extension-lookup",
+                  "next_endpoint": "/extension-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

@@ -3,7 +3,7 @@
   "info": {
     "title": "Keyword Density API",
     "version": "2.0.0",
-    "description": "Analyze keyword frequency, density, and distribution in text or web pages with SEO recommendations.",
+    "description": "Analyze keyword frequency, density, and distribution. Compare against competitor pages and get SEO optimization recommendations.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/keyword-density"
+      "url": "https://orbis-apis.onrender.com/keyword-density",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/analyze": {
       "post": {
         "operationId": "analyze",
@@ -41,14 +61,20 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "text": {
+                    "type": "string",
+                    "example": "Your article text goes here..."
                   },
-                  "options": {
-                    "type": "object"
+                  "language": {
+                    "type": "string",
+                    "default": "en"
+                  },
+                  "min_word_length": {
+                    "type": "integer",
+                    "default": 3
                   }
                 }
               }
@@ -137,14 +163,26 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text",
+                  "target_keywords"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "seo",
+                      "optimization"
+                    ]
+                  },
+                  "target_density": {
+                    "type": "number",
+                    "default": 0.02
                   }
                 }
               }
@@ -233,14 +271,17 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url1",
+                  "url2"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url1": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "url2": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 }
               }
@@ -329,14 +370,21 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "language": {
+                    "type": "string",
+                    "default": "en"
                   }
                 }
               }
@@ -413,6 +461,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

@@ -3,7 +3,7 @@
   "info": {
     "title": "Hashtag Generator API",
     "version": "2.0.0",
-    "description": "Generate high-performing hashtags, analyze trending hashtags, and estimate reach for social media.",
+    "description": "Generate high-performing hashtags for social media. Analyze trending hashtags, estimate reach, and optimize per platform.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/hashtag-generator"
+      "url": "https://orbis-apis.onrender.com/hashtag-generator",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/generate": {
       "post": {
         "operationId": "generate",
@@ -41,14 +61,27 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "topic"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "topic": {
+                    "type": "string",
+                    "example": "sustainable fashion"
                   },
-                  "options": {
-                    "type": "object"
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "instagram",
+                      "twitter",
+                      "linkedin",
+                      "tiktok",
+                      "generic"
+                    ],
+                    "default": "instagram"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "default": 30
                   }
                 }
               }
@@ -137,14 +170,21 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "hashtag"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "hashtag": {
+                    "type": "string",
+                    "example": "#sustainablefashion"
                   },
-                  "options": {
-                    "type": "object"
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "instagram",
+                      "twitter",
+                      "linkedin",
+                      "tiktok"
+                    ]
                   }
                 }
               }
@@ -232,15 +272,25 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "input"
-                ],
+                "required": [],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "category": {
+                    "type": "string",
+                    "example": "technology"
                   },
-                  "options": {
-                    "type": "object"
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "instagram",
+                      "twitter",
+                      "linkedin",
+                      "tiktok"
+                    ],
+                    "default": "instagram"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "default": 20
                   }
                 }
               }
@@ -329,14 +379,24 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "topic"
                 ],
                 "properties": {
-                  "input": {
+                  "topic": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "instagram",
+                      "twitter",
+                      "linkedin",
+                      "tiktok",
+                      "generic"
+                    ]
+                  },
+                  "brand": {
+                    "type": "string"
                   }
                 }
               }
@@ -413,6 +473,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "topic"
+                ],
+                "properties": {
+                  "topic": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

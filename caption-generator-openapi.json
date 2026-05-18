@@ -3,7 +3,7 @@
   "info": {
     "title": "Caption Generator API",
     "version": "2.0.0",
-    "description": "Generate engaging social media captions optimized for Instagram, LinkedIn, Twitter, and TikTok.",
+    "description": "Generate engaging social media captions for posts, images, and videos. Optimize for Instagram, LinkedIn, Twitter, and TikTok.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/caption-generator"
+      "url": "https://orbis-apis.onrender.com/caption-generator",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/generate": {
       "post": {
         "operationId": "generate",
@@ -41,14 +61,39 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "topic"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "topic": {
+                    "type": "string",
+                    "example": "new product launch"
                   },
-                  "options": {
-                    "type": "object"
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "instagram",
+                      "linkedin",
+                      "twitter",
+                      "tiktok",
+                      "facebook",
+                      "generic"
+                    ],
+                    "default": "instagram"
+                  },
+                  "tone": {
+                    "type": "string",
+                    "enum": [
+                      "professional",
+                      "casual",
+                      "humorous",
+                      "inspirational",
+                      "educational"
+                    ],
+                    "default": "casual"
+                  },
+                  "include_cta": {
+                    "type": "boolean",
+                    "default": true
                   }
                 }
               }
@@ -137,14 +182,32 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "caption"
                 ],
                 "properties": {
-                  "input": {
+                  "caption": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "instagram",
+                      "linkedin",
+                      "twitter",
+                      "tiktok",
+                      "facebook",
+                      "generic"
+                    ]
+                  },
+                  "target_engagement": {
+                    "type": "string",
+                    "enum": [
+                      "likes",
+                      "shares",
+                      "comments",
+                      "clicks"
+                    ],
+                    "default": "likes"
                   }
                 }
               }
@@ -233,14 +296,29 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "items"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "topic"
+                      ],
+                      "properties": {
+                        "topic": {
+                          "type": "string"
+                        },
+                        "platform": {
+                          "type": "string"
+                        },
+                        "tone": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "maxItems": 10
                   }
                 }
               }
@@ -329,14 +407,25 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "topic"
                 ],
                 "properties": {
-                  "input": {
+                  "topic": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "instagram",
+                      "linkedin",
+                      "twitter",
+                      "tiktok",
+                      "generic"
+                    ]
+                  },
+                  "brand_voice": {
+                    "type": "string",
+                    "example": "friendly and approachable"
                   }
                 }
               }
@@ -413,6 +502,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "topic"
+                ],
+                "properties": {
+                  "topic": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

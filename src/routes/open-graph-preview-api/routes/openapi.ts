@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/open-graph-preview"
+      "url": "https://orbis-apis.onrender.com/open-graph-preview",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Open Graph Preview API",
+                  "version": "2.0.0",
+                  "description": "Preview, validate, and optimize Open Graph and Twitter Card tags to maximize click-through rates on social media shares.",
+                  "base_url": "https://orbis-apis.onrender.com/open-graph-preview",
+                  "docs_url": "https://orbis-apis.onrender.com/open-graph-preview/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 300
+                    },
+                    "pay_per_call": {
+                      "preview": "$0.003",
+                      "validate": "$0.002",
+                      "generate": "$0.004",
+                      "execution-gate": "$0.001",
+                      "og-intelligence": "$0.008"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/preview",
+                      "summary": "Preview",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/validate",
+                      "summary": "Validate",
+                      "price_usd": 0.002
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/generate",
+                      "summary": "Generate",
+                      "price_usd": 0.004
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/og-intelligence",
+                      "summary": "Og Intelligence",
+                      "price_usd": 0.008
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/preview": {
       "post": {
         "operationId": "preview",
-        "summary": "Preview \u2014 OGPreviewData",
+        "summary": "Preview",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,14 +123,23 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "facebook",
+                      "twitter",
+                      "linkedin",
+                      "whatsapp",
+                      "generic"
+                    ],
+                    "default": "generic"
                   }
                 }
               }
@@ -60,7 +148,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Preview \u2014 OGPreviewData",
+            "description": "Preview",
             "content": {
               "application/json": {
                 "schema": {
@@ -112,6 +200,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +235,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +250,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/validate": {
       "post": {
         "operationId": "validate",
-        "summary": "Validate \u2014 OGValidateData",
+        "summary": "Validate",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +261,18 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "required_tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -176,7 +281,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Validate \u2014 OGValidateData",
+            "description": "Validate",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +333,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +368,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +383,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/generate": {
       "post": {
         "operationId": "generate",
-        "summary": "Generate \u2014 OGGenerateData",
+        "summary": "Generate",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +394,22 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "title": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "description": {
+                    "type": "string"
+                  },
+                  "image_url": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 }
               }
@@ -292,7 +418,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Generate \u2014 OGGenerateData",
+            "description": "Generate",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +470,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +505,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +520,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/og-intelligence": {
       "post": {
         "operationId": "og_intelligence",
-        "summary": "ONE-CALL: full Open Graph Preview intelligence",
+        "summary": "ONE-CALL: Open Graph Preview \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +531,21 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_platform": {
+                    "type": "string",
+                    "enum": [
+                      "facebook",
+                      "twitter",
+                      "linkedin",
+                      "generic"
+                    ]
                   }
                 }
               }
@@ -408,7 +554,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full Open Graph Preview intelligence",
+            "description": "ONE-CALL: Open Graph Preview \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +606,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +641,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "url": "example.com",
+                "objective": "run og-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "open-graph-preview",
+                  "next_endpoint": "/og-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

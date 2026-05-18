@@ -3,7 +3,7 @@
   "info": {
     "title": "Slug Generator API",
     "version": "2.0.0",
-    "description": "Generate SEO-friendly URL slugs from titles. Handle transliteration, stop words, and batch generation.",
+    "description": "Generate SEO-friendly URL slugs from titles. Handle transliteration, stop-word removal, validation, and batch generation.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/slug-generator"
+      "url": "https://orbis-apis.onrender.com/slug-generator",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/generate": {
       "post": {
         "operationId": "generate",
@@ -41,14 +61,28 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "title"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "title": {
+                    "type": "string",
+                    "example": "How to Build a REST API with Node.js"
                   },
-                  "options": {
-                    "type": "object"
+                  "locale": {
+                    "type": "string",
+                    "default": "en"
+                  },
+                  "max_length": {
+                    "type": "integer",
+                    "default": 60
+                  },
+                  "separator": {
+                    "type": "string",
+                    "enum": [
+                      "hyphen",
+                      "underscore"
+                    ],
+                    "default": "hyphen"
                   }
                 }
               }
@@ -137,14 +171,12 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "slug"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
+                  "slug": {
+                    "type": "string",
+                    "example": "how-to-build-a-rest-api"
                   }
                 }
               }
@@ -233,14 +265,19 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "titles"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "titles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 50
                   },
-                  "options": {
-                    "type": "object"
+                  "locale": {
+                    "type": "string",
+                    "default": "en"
                   }
                 }
               }
@@ -329,14 +366,19 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "title"
                 ],
                 "properties": {
-                  "input": {
+                  "title": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "locale": {
+                    "type": "string",
+                    "default": "en"
+                  },
+                  "max_length": {
+                    "type": "integer",
+                    "default": 60
                   }
                 }
               }
@@ -413,6 +455,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

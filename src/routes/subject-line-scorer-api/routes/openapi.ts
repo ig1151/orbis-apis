@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "Subject Line Scorer API",
     "version": "2.0.0",
-    "description": "Score email subject lines for open rate potential with spam detection and optimization.",
+    "description": "Score email subject lines for open rate potential using sentiment, urgency, personalization, and spam trigger analysis.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/subject-line-scorer"
+      "url": "https://orbis-apis.onrender.com/subject-line-scorer",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Subject Line Scorer API",
+                  "version": "2.0.0",
+                  "description": "Score email subject lines for open rate potential using sentiment, urgency, personalization, and spam trigger analysis.",
+                  "base_url": "https://orbis-apis.onrender.com/subject-line-scorer",
+                  "docs_url": "https://orbis-apis.onrender.com/subject-line-scorer/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 500
+                    },
+                    "pay_per_call": {
+                      "score": "$0.001",
+                      "optimize": "$0.003",
+                      "generate": "$0.003",
+                      "execution-gate": "$0.001",
+                      "subject-intelligence": "$0.006"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/score",
+                      "summary": "Score",
+                      "price_usd": 0.001
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/optimize",
+                      "summary": "Optimize",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/generate",
+                      "summary": "Generate",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/subject-intelligence",
+                      "summary": "Subject Intelligence",
+                      "price_usd": 0.006
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/score": {
       "post": {
         "operationId": "score",
-        "summary": "Score \u2014 SubjectScoreData",
+        "summary": "Score",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,23 +123,29 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "subject"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "subject": {
+                    "type": "string",
+                    "example": "Your exclusive offer expires tonight \ud83d\udd25"
                   },
-                  "options": {
-                    "type": "object"
+                  "audience": {
+                    "type": "string",
+                    "example": "B2B SaaS decision makers"
                   }
                 }
+              },
+              "example": {
+                "subject": "Your exclusive offer expires tonight \ud83d\udd25",
+                "audience": "B2B SaaS decision makers"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Score \u2014 SubjectScoreData",
+            "description": "Score",
             "content": {
               "application/json": {
                 "schema": {
@@ -102,6 +187,69 @@ router.get('/', (_req: Request, res: Response) => {
                       "$ref": "#/components/schemas/ExecMeta"
                     }
                   }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-a7b8-4901-cdef-123456789012",
+                  "data": {
+                    "subject": "Your exclusive offer expires tonight \ud83d\udd25",
+                    "open_rate_score": 82,
+                    "spam_score": 18,
+                    "sentiment": "urgent",
+                    "urgency_level": "high",
+                    "personalization_score": 20,
+                    "length_score": 90,
+                    "word_count": 6,
+                    "char_count": 40,
+                    "spam_triggers": [
+                      "exclusive",
+                      "tonight"
+                    ],
+                    "power_words": [
+                      "exclusive",
+                      "expires"
+                    ],
+                    "emoji_used": true,
+                    "overall_grade": "B"
+                  },
+                  "confidence": {
+                    "score": 0.91,
+                    "reason": "Subject line pattern analysis"
+                  },
+                  "provenance": {
+                    "provider": "subject-line-ai",
+                    "retrieved_at": "2026-05-18T12:00:00Z",
+                    "source_type": "ai_generated"
+                  },
+                  "cache": {
+                    "recommended_ttl_seconds": 3600,
+                    "retryable": false,
+                    "cache_recommended": true
+                  },
+                  "recommended_next_api": [
+                    {
+                      "api": "subject-line-scorer",
+                      "endpoint": "/optimize",
+                      "reason": "Optimize to reduce spam triggers and add personalization"
+                    }
+                  ],
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": "high",
+                      "action": "Replace \"exclusive\" with specific benefit",
+                      "reason": "\"exclusive\" is a common spam trigger"
+                    },
+                    {
+                      "priority": "medium",
+                      "action": "Add personalization token e.g. first name",
+                      "reason": "Personalization score is low at 20/100"
+                    }
+                  ],
+                  "execution_metadata": {
+                    "latency_ms": 187,
+                    "model": "claude-sonnet-4-5",
+                    "automation_safe": true
+                  }
                 }
               }
             }
@@ -112,6 +260,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +295,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +310,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/optimize": {
       "post": {
         "operationId": "optimize",
-        "summary": "Optimize \u2014 SubjectOptimizeData",
+        "summary": "Optimize",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +321,20 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "subject"
                 ],
                 "properties": {
-                  "input": {
+                  "subject": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "goal": {
+                    "type": "string",
+                    "enum": [
+                      "maximize_opens",
+                      "avoid_spam",
+                      "increase_urgency",
+                      "increase_personalization"
+                    ]
                   }
                 }
               }
@@ -176,7 +343,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Optimize \u2014 SubjectOptimizeData",
+            "description": "Optimize",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +395,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +430,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +445,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/generate": {
       "post": {
         "operationId": "generate",
-        "summary": "Generate \u2014 SubjectGenerateData",
+        "summary": "Generate",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +456,28 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "topic"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "topic": {
+                    "type": "string",
+                    "example": "weekly newsletter"
                   },
-                  "options": {
-                    "type": "object"
+                  "tone": {
+                    "type": "string",
+                    "enum": [
+                      "curious",
+                      "urgent",
+                      "benefit_driven",
+                      "personalized",
+                      "direct",
+                      "question"
+                    ],
+                    "default": "benefit_driven"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "default": 5
                   }
                 }
               }
@@ -292,7 +486,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Generate \u2014 SubjectGenerateData",
+            "description": "Generate",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +538,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +573,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +588,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/subject-intelligence": {
       "post": {
         "operationId": "subject_intelligence",
-        "summary": "ONE-CALL: full Subject Line Scorer intelligence",
+        "summary": "ONE-CALL: Subject Line Scorer \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +599,17 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "topic"
                 ],
                 "properties": {
-                  "input": {
+                  "topic": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "audience": {
+                    "type": "string"
+                  },
+                  "brand": {
+                    "type": "string"
                   }
                 }
               }
@@ -408,7 +618,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full Subject Line Scorer intelligence",
+            "description": "ONE-CALL: Subject Line Scorer \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +670,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +705,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "subject"
+                ],
+                "properties": {
+                  "subject": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "subject": "example.com",
+                "objective": "run subject-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "subject-line-scorer",
+                  "next_endpoint": "/subject-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

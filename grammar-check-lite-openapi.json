@@ -3,7 +3,7 @@
   "info": {
     "title": "Grammar Check Lite API",
     "version": "2.0.0",
-    "description": "Lightweight grammar, spelling, and style checking for text with error scoring.",
+    "description": "Lightweight grammar, spelling, and style checking. Detect errors, auto-fix, and score writing quality.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/grammar-check-lite"
+      "url": "https://orbis-apis.onrender.com/grammar-check-lite",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/check": {
       "post": {
         "operationId": "check",
@@ -41,14 +61,20 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "text": {
+                    "type": "string",
+                    "example": "Their going to the store tommorow."
                   },
-                  "options": {
-                    "type": "object"
+                  "language": {
+                    "type": "string",
+                    "default": "en-US"
+                  },
+                  "check_style": {
+                    "type": "boolean",
+                    "default": true
                   }
                 }
               }
@@ -137,14 +163,15 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "language": {
+                    "type": "string",
+                    "default": "en-US"
                   }
                 }
               }
@@ -233,14 +260,15 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "language": {
+                    "type": "string",
+                    "default": "en-US"
                   }
                 }
               }
@@ -329,14 +357,24 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "language": {
+                    "type": "string",
+                    "default": "en-US"
+                  },
+                  "formality": {
+                    "type": "string",
+                    "enum": [
+                      "formal",
+                      "neutral",
+                      "casual"
+                    ],
+                    "default": "neutral"
                   }
                 }
               }
@@ -413,6 +451,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

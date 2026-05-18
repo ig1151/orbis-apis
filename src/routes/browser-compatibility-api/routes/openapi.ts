@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "Browser Compatibility API",
     "version": "2.0.0",
-    "description": "Check CSS, JavaScript, and HTML feature compatibility across browsers. Get polyfill recommendations.",
+    "description": "Check CSS, JavaScript, and HTML feature compatibility across browsers using Can I Use data. Get polyfill recommendations.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/browser-compatibility"
+      "url": "https://orbis-apis.onrender.com/browser-compatibility",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Browser Compatibility API",
+                  "version": "2.0.0",
+                  "description": "Check CSS, JavaScript, and HTML feature compatibility across browsers using Can I Use data. Get polyfill recommendations.",
+                  "base_url": "https://orbis-apis.onrender.com/browser-compatibility",
+                  "docs_url": "https://orbis-apis.onrender.com/browser-compatibility/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 1000
+                    },
+                    "pay_per_call": {
+                      "check": "$0.001",
+                      "polyfills": "$0.003",
+                      "report": "$0.005",
+                      "execution-gate": "$0.001",
+                      "compat-intelligence": "$0.006"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/check",
+                      "summary": "Check",
+                      "price_usd": 0.001
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/polyfills",
+                      "summary": "Polyfills",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/report",
+                      "summary": "Report",
+                      "price_usd": 0.005
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/compat-intelligence",
+                      "summary": "Compat Intelligence",
+                      "price_usd": 0.006
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/check": {
       "post": {
         "operationId": "check",
-        "summary": "Check \u2014 CompatCheckData",
+        "summary": "Check",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,14 +123,28 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "feature"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "feature": {
+                    "type": "string",
+                    "example": "css-grid"
                   },
-                  "options": {
-                    "type": "object"
+                  "browsers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "chrome",
+                      "firefox",
+                      "safari",
+                      "edge"
+                    ]
+                  },
+                  "min_global_usage_percent": {
+                    "type": "number",
+                    "default": 0.5
                   }
                 }
               }
@@ -60,7 +153,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Check \u2014 CompatCheckData",
+            "description": "Check",
             "content": {
               "application/json": {
                 "schema": {
@@ -112,6 +205,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +240,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +255,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/polyfills": {
       "post": {
         "operationId": "polyfills",
-        "summary": "Polyfills \u2014 PolyfillData",
+        "summary": "Polyfills",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +266,25 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "features"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "features": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "css-grid",
+                      "fetch",
+                      "promise"
+                    ]
                   },
-                  "options": {
-                    "type": "object"
+                  "target_browsers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -176,7 +293,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Polyfills \u2014 PolyfillData",
+            "description": "Polyfills",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +345,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +380,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +395,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/report": {
       "post": {
         "operationId": "report",
-        "summary": "Report \u2014 CompatReportData",
+        "summary": "Report",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +406,23 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_browsers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "chrome >= 80",
+                      "firefox >= 75",
+                      "safari >= 13"
+                    ]
                   }
                 }
               }
@@ -292,7 +431,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Report \u2014 CompatReportData",
+            "description": "Report",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +483,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +518,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +533,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/compat-intelligence": {
       "post": {
         "operationId": "compat_intelligence",
-        "summary": "ONE-CALL: full Browser Compatibility intelligence",
+        "summary": "ONE-CALL: Browser Compatibility \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +544,17 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "feature_or_url"
                 ],
                 "properties": {
-                  "input": {
+                  "feature_or_url": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_browsers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -408,7 +563,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full Browser Compatibility intelligence",
+            "description": "ONE-CALL: Browser Compatibility \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +615,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +650,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "feature"
+                ],
+                "properties": {
+                  "feature": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "feature": "example.com",
+                "objective": "run compat-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "browser-compatibility",
+                  "next_endpoint": "/compat-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "Meta Tags Extractor API",
     "version": "2.0.0",
-    "description": "Extract, validate, and analyze HTML meta tags including title, description, keywords, Open Graph, Twitter Card, and canonical tags from any URL.",
+    "description": "Extract, validate, and analyze HTML meta tags including title, description, Open Graph, Twitter Card, and canonical tags from any URL.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/meta-tags-extractor"
+      "url": "https://orbis-apis.onrender.com/meta-tags-extractor",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Meta Tags Extractor API",
+                  "version": "2.0.0",
+                  "description": "Extract, validate, and analyze HTML meta tags including title, description, Open Graph, Twitter Card, and canonical tags from any URL.",
+                  "base_url": "https://orbis-apis.onrender.com/meta-tags-extractor",
+                  "docs_url": "https://orbis-apis.onrender.com/meta-tags-extractor/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 500
+                    },
+                    "pay_per_call": {
+                      "extract": "$0.002",
+                      "validate": "$0.002",
+                      "batch": "$0.015",
+                      "execution-gate": "$0.001",
+                      "meta-intelligence": "$0.006"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/extract",
+                      "summary": "Extract",
+                      "price_usd": 0.002
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/validate",
+                      "summary": "Validate",
+                      "price_usd": 0.002
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/batch",
+                      "summary": "Batch",
+                      "price_usd": 0.015
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/meta-intelligence",
+                      "summary": "Meta Intelligence",
+                      "price_usd": 0.006
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/extract": {
       "post": {
         "operationId": "extract",
-        "summary": "Extract \u2014 ExtractData",
+        "summary": "Extract",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,14 +123,21 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com"
                   },
-                  "options": {
-                    "type": "object"
+                  "include_og": {
+                    "type": "boolean",
+                    "default": true
+                  },
+                  "include_twitter": {
+                    "type": "boolean",
+                    "default": true
                   }
                 }
               }
@@ -60,7 +146,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Extract \u2014 ExtractData",
+            "description": "Extract",
             "content": {
               "application/json": {
                 "schema": {
@@ -112,6 +198,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +233,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +248,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/validate": {
       "post": {
         "operationId": "validate",
-        "summary": "Validate \u2014 ValidateData",
+        "summary": "Validate",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +259,23 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "seo_rules": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "title_length",
+                      "description_length",
+                      "og_required"
+                    ]
                   }
                 }
               }
@@ -176,7 +284,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Validate \u2014 ValidateData",
+            "description": "Validate",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +336,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +371,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +386,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/batch": {
       "post": {
         "operationId": "batch",
-        "summary": "Batch \u2014 MetaBatchData",
+        "summary": "Batch",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +397,20 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "urls"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
+                  "urls": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "maxItems": 20,
+                    "example": [
+                      "https://example.com",
+                      "https://another.com"
+                    ]
                   }
                 }
               }
@@ -292,7 +419,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Batch \u2014 MetaBatchData",
+            "description": "Batch",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +471,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +506,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +521,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/meta-intelligence": {
       "post": {
         "operationId": "meta_intelligence",
-        "summary": "ONE-CALL: full Meta Tags Extractor intelligence",
+        "summary": "ONE-CALL: Meta Tags Extractor \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +532,20 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "competitor_urls": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "maxItems": 5
                   }
                 }
               }
@@ -408,7 +554,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full Meta Tags Extractor intelligence",
+            "description": "ONE-CALL: Meta Tags Extractor \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +606,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +641,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "url": "example.com",
+                "objective": "run meta-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "meta-tags-extractor",
+                  "next_endpoint": "/meta-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

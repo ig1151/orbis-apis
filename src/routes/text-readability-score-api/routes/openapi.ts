@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "Text Readability Score API",
     "version": "2.0.0",
-    "description": "Score text readability with Flesch-Kincaid, Gunning Fog, SMOG, and Coleman-Liau indices.",
+    "description": "Score text readability using Flesch-Kincaid, Gunning Fog, SMOG, and Coleman-Liau indices. Identify complex sentences and suggest simplifications.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/text-readability-score"
+      "url": "https://orbis-apis.onrender.com/text-readability-score",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Text Readability Score API",
+                  "version": "2.0.0",
+                  "description": "Score text readability using Flesch-Kincaid, Gunning Fog, SMOG, and Coleman-Liau indices. Identify complex sentences and suggest simplifications.",
+                  "base_url": "https://orbis-apis.onrender.com/text-readability-score",
+                  "docs_url": "https://orbis-apis.onrender.com/text-readability-score/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 1000
+                    },
+                    "pay_per_call": {
+                      "score": "$0.001",
+                      "analyze": "$0.003",
+                      "simplify": "$0.004",
+                      "execution-gate": "$0.001",
+                      "readability-intelligence": "$0.006"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/score",
+                      "summary": "Score",
+                      "price_usd": 0.001
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/analyze",
+                      "summary": "Analyze",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/simplify",
+                      "summary": "Simplify",
+                      "price_usd": 0.004
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/readability-intelligence",
+                      "summary": "Readability Intelligence",
+                      "price_usd": 0.006
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/score": {
       "post": {
         "operationId": "score",
-        "summary": "Score \u2014 ReadabilityScoreData",
+        "summary": "Score",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,14 +123,12 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
+                  "text": {
+                    "type": "string",
+                    "example": "Your text to analyze for readability."
                   }
                 }
               }
@@ -60,7 +137,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Score \u2014 ReadabilityScoreData",
+            "description": "Score",
             "content": {
               "application/json": {
                 "schema": {
@@ -112,6 +189,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +224,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +239,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/analyze": {
       "post": {
         "operationId": "analyze",
-        "summary": "Analyze \u2014 ReadabilityAnalyzeData",
+        "summary": "Analyze",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +250,15 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "highlight_complex": {
+                    "type": "boolean",
+                    "default": true
                   }
                 }
               }
@@ -176,7 +267,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Analyze \u2014 ReadabilityAnalyzeData",
+            "description": "Analyze",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +319,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +354,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +369,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/simplify": {
       "post": {
         "operationId": "simplify",
-        "summary": "Simplify \u2014 ReadabilitySimplifyData",
+        "summary": "Simplify",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +380,16 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_grade": {
+                    "type": "number",
+                    "default": 8,
+                    "description": "Target US grade level"
                   }
                 }
               }
@@ -292,7 +398,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Simplify \u2014 ReadabilitySimplifyData",
+            "description": "Simplify",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +450,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +485,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +500,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/readability-intelligence": {
       "post": {
         "operationId": "readability_intelligence",
-        "summary": "ONE-CALL: full Text Readability Score intelligence",
+        "summary": "ONE-CALL: Text Readability Score \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +511,21 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_audience": {
+                    "type": "string",
+                    "enum": [
+                      "general",
+                      "academic",
+                      "children",
+                      "professional"
+                    ],
+                    "default": "general"
                   }
                 }
               }
@@ -408,7 +534,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full Text Readability Score intelligence",
+            "description": "ONE-CALL: Text Readability Score \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +586,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +621,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "text": "example.com",
+                "objective": "run readability-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "text-readability-score",
+                  "next_endpoint": "/readability-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

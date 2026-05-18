@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "CTA Generator API",
     "version": "2.0.0",
-    "description": "Generate high-converting call-to-action copy, score CTAs, and generate A/B test variants.",
+    "description": "Generate high-converting call-to-action copy for landing pages, emails, and ads. Score CTAs and generate A/B test variants.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/cta-generator"
+      "url": "https://orbis-apis.onrender.com/cta-generator",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "CTA Generator API",
+                  "version": "2.0.0",
+                  "description": "Generate high-converting call-to-action copy for landing pages, emails, and ads. Score CTAs and generate A/B test variants.",
+                  "base_url": "https://orbis-apis.onrender.com/cta-generator",
+                  "docs_url": "https://orbis-apis.onrender.com/cta-generator/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 300
+                    },
+                    "pay_per_call": {
+                      "generate": "$0.003",
+                      "score": "$0.002",
+                      "ab-variants": "$0.005",
+                      "execution-gate": "$0.001",
+                      "cta-intelligence": "$0.008"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/generate",
+                      "summary": "Generate",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/score",
+                      "summary": "Score",
+                      "price_usd": 0.002
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/ab-variants",
+                      "summary": "Ab Variants",
+                      "price_usd": 0.005
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/cta-intelligence",
+                      "summary": "Cta Intelligence",
+                      "price_usd": 0.008
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/generate": {
       "post": {
         "operationId": "generate",
-        "summary": "Generate \u2014 CTAGenerateData",
+        "summary": "Generate",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,14 +123,42 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "use_case",
+                  "goal"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "use_case": {
+                    "type": "string",
+                    "example": "SaaS landing page"
                   },
-                  "options": {
-                    "type": "object"
+                  "goal": {
+                    "type": "string",
+                    "enum": [
+                      "sign_up",
+                      "purchase",
+                      "download",
+                      "contact",
+                      "learn_more",
+                      "subscribe"
+                    ]
+                  },
+                  "placement": {
+                    "type": "string",
+                    "enum": [
+                      "above_fold",
+                      "inline",
+                      "footer",
+                      "popup",
+                      "email"
+                    ]
+                  },
+                  "urgency": {
+                    "type": "string",
+                    "enum": [
+                      "high",
+                      "medium",
+                      "low"
+                    ]
                   }
                 }
               }
@@ -60,7 +167,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Generate \u2014 CTAGenerateData",
+            "description": "Generate",
             "content": {
               "application/json": {
                 "schema": {
@@ -112,6 +219,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +254,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +269,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/score": {
       "post": {
         "operationId": "score",
-        "summary": "Score \u2014 CTAScoreData",
+        "summary": "Score",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +280,24 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "cta",
+                  "goal"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "cta": {
+                    "type": "string",
+                    "example": "Start Free Trial"
                   },
-                  "options": {
-                    "type": "object"
+                  "goal": {
+                    "type": "string",
+                    "enum": [
+                      "sign_up",
+                      "purchase",
+                      "download",
+                      "contact",
+                      "learn_more",
+                      "subscribe"
+                    ]
                   }
                 }
               }
@@ -176,7 +306,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Score \u2014 CTAScoreData",
+            "description": "Score",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +358,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +393,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +408,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/ab-variants": {
       "post": {
         "operationId": "ab_variants",
-        "summary": "Ab Variants \u2014 CTAVariantsData",
+        "summary": "Ab Variants",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +419,28 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "cta",
+                  "goal"
                 ],
                 "properties": {
-                  "input": {
+                  "cta": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "goal": {
+                    "type": "string",
+                    "enum": [
+                      "sign_up",
+                      "purchase",
+                      "download",
+                      "contact",
+                      "learn_more",
+                      "subscribe"
+                    ]
+                  },
+                  "count": {
+                    "type": "integer",
+                    "default": 3,
+                    "maximum": 5
                   }
                 }
               }
@@ -292,7 +449,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Ab Variants \u2014 CTAVariantsData",
+            "description": "Ab Variants",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +501,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +536,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +551,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/cta-intelligence": {
       "post": {
         "operationId": "cta_intelligence",
-        "summary": "ONE-CALL: full CTA Generator intelligence",
+        "summary": "ONE-CALL: CTA Generator \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +562,27 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "use_case",
+                  "goal"
                 ],
                 "properties": {
-                  "input": {
+                  "use_case": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "goal": {
+                    "type": "string",
+                    "enum": [
+                      "sign_up",
+                      "purchase",
+                      "download",
+                      "contact",
+                      "learn_more",
+                      "subscribe"
+                    ]
+                  },
+                  "landing_page_url": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 }
               }
@@ -408,7 +591,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full CTA Generator intelligence",
+            "description": "ONE-CALL: CTA Generator \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +643,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +678,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "use_case"
+                ],
+                "properties": {
+                  "use_case": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "use_case": "example.com",
+                "objective": "run cta-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "cta-generator",
+                  "next_endpoint": "/cta-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

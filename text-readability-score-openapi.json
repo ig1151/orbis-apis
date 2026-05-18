@@ -3,7 +3,7 @@
   "info": {
     "title": "Text Readability Score API",
     "version": "2.0.0",
-    "description": "Score text readability with Flesch-Kincaid, Gunning Fog, SMOG, and Coleman-Liau indices.",
+    "description": "Score text readability using Flesch-Kincaid, Gunning Fog, SMOG, and Coleman-Liau indices. Identify complex sentences and suggest simplifications.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/text-readability-score"
+      "url": "https://orbis-apis.onrender.com/text-readability-score",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/score": {
       "post": {
         "operationId": "score",
@@ -41,14 +61,12 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
+                  "text": {
+                    "type": "string",
+                    "example": "Your text to analyze for readability."
                   }
                 }
               }
@@ -137,14 +155,15 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "highlight_complex": {
+                    "type": "boolean",
+                    "default": true
                   }
                 }
               }
@@ -233,14 +252,16 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_grade": {
+                    "type": "number",
+                    "default": 8,
+                    "description": "Target US grade level"
                   }
                 }
               }
@@ -329,14 +350,21 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_audience": {
+                    "type": "string",
+                    "enum": [
+                      "general",
+                      "academic",
+                      "children",
+                      "professional"
+                    ],
+                    "default": "general"
                   }
                 }
               }
@@ -413,6 +441,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

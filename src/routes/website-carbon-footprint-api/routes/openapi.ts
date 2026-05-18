@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "Website Carbon Footprint API",
     "version": "2.0.0",
-    "description": "Estimate the carbon footprint of any webpage and get optimization recommendations.",
+    "description": "Estimate the carbon footprint of any webpage, benchmark against industry averages, and get actionable optimization recommendations.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/website-carbon-footprint"
+      "url": "https://orbis-apis.onrender.com/website-carbon-footprint",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Website Carbon Footprint API",
+                  "version": "2.0.0",
+                  "description": "Estimate the carbon footprint of any webpage, benchmark against industry averages, and get actionable optimization recommendations.",
+                  "base_url": "https://orbis-apis.onrender.com/website-carbon-footprint",
+                  "docs_url": "https://orbis-apis.onrender.com/website-carbon-footprint/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 300
+                    },
+                    "pay_per_call": {
+                      "estimate": "$0.002",
+                      "benchmark": "$0.003",
+                      "optimize": "$0.004",
+                      "execution-gate": "$0.001",
+                      "carbon-intelligence": "$0.007"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/estimate",
+                      "summary": "Estimate",
+                      "price_usd": 0.002
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/benchmark",
+                      "summary": "Benchmark",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/optimize",
+                      "summary": "Optimize",
+                      "price_usd": 0.004
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/carbon-intelligence",
+                      "summary": "Carbon Intelligence",
+                      "price_usd": 0.007
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/estimate": {
       "post": {
         "operationId": "estimate",
-        "summary": "Estimate \u2014 CarbonEstimateData",
+        "summary": "Estimate",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,14 +123,17 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com"
                   },
-                  "options": {
-                    "type": "object"
+                  "include_third_party": {
+                    "type": "boolean",
+                    "default": true
                   }
                 }
               }
@@ -60,7 +142,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Estimate \u2014 CarbonEstimateData",
+            "description": "Estimate",
             "content": {
               "application/json": {
                 "schema": {
@@ -112,6 +194,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +229,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +244,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/benchmark": {
       "post": {
         "operationId": "benchmark",
-        "summary": "Benchmark \u2014 CarbonBenchmarkData",
+        "summary": "Benchmark",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +255,16 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "industry": {
+                    "type": "string",
+                    "example": "technology"
                   }
                 }
               }
@@ -176,7 +273,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Benchmark \u2014 CarbonBenchmarkData",
+            "description": "Benchmark",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +325,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +360,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +375,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/optimize": {
       "post": {
         "operationId": "optimize",
-        "summary": "Optimize \u2014 CarbonOptimizeData",
+        "summary": "Optimize",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +386,16 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "max_suggestions": {
+                    "type": "integer",
+                    "default": 10
                   }
                 }
               }
@@ -292,7 +404,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Optimize \u2014 CarbonOptimizeData",
+            "description": "Optimize",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +456,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +491,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +506,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/carbon-intelligence": {
       "post": {
         "operationId": "carbon_intelligence",
-        "summary": "ONE-CALL: full Website Carbon Footprint intelligence",
+        "summary": "ONE-CALL: Website Carbon Footprint \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +517,15 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "industry": {
+                    "type": "string"
                   }
                 }
               }
@@ -408,7 +534,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full Website Carbon Footprint intelligence",
+            "description": "ONE-CALL: Website Carbon Footprint \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +586,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +621,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "url": "example.com",
+                "objective": "run carbon-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "website-carbon-footprint",
+                  "next_endpoint": "/carbon-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

@@ -3,7 +3,7 @@
   "info": {
     "title": "SSL Expiry Monitor API",
     "version": "2.0.0",
-    "description": "Monitor SSL certificate expiry, get renewal alerts, and track certificate health across domains.",
+    "description": "Monitor SSL certificate expiry, receive actionable renewal alerts, and track health across multiple domains.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/ssl-expiry-monitor"
+      "url": "https://orbis-apis.onrender.com/ssl-expiry-monitor",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/check": {
       "post": {
         "operationId": "check",
@@ -41,14 +61,16 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "domain": {
+                    "type": "string",
+                    "example": "example.com"
                   },
-                  "options": {
-                    "type": "object"
+                  "port": {
+                    "type": "integer",
+                    "default": 443
                   }
                 }
               }
@@ -137,14 +159,23 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domains"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "domains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 50,
+                    "example": [
+                      "example.com",
+                      "api.example.com"
+                    ]
                   },
-                  "options": {
-                    "type": "object"
+                  "alert_days_threshold": {
+                    "type": "integer",
+                    "default": 30
                   }
                 }
               }
@@ -233,14 +264,15 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain"
                 ],
                 "properties": {
-                  "input": {
+                  "domain": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "days_threshold": {
+                    "type": "integer",
+                    "default": 30
                   }
                 }
               }
@@ -329,14 +361,11 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain"
                 ],
                 "properties": {
-                  "input": {
+                  "domain": {
                     "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
                   }
                 }
               }
@@ -413,6 +442,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "domain"
+                ],
+                "properties": {
+                  "domain": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

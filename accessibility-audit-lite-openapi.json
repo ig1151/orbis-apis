@@ -3,7 +3,7 @@
   "info": {
     "title": "Accessibility Audit Lite API",
     "version": "2.0.0",
-    "description": "Run WCAG 2.1 accessibility checks on any URL. Identify issues, score compliance, and get fix suggestions.",
+    "description": "Run WCAG 2.1 accessibility checks on any URL. Identify violations, score compliance level, and get fix suggestions.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/accessibility-audit-lite"
+      "url": "https://orbis-apis.onrender.com/accessibility-audit-lite",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/audit": {
       "post": {
         "operationId": "audit",
@@ -41,16 +61,28 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com"
                   },
-                  "options": {
-                    "type": "object"
+                  "wcag_level": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "AA",
+                      "AAA"
+                    ],
+                    "default": "AA"
                   }
                 }
+              },
+              "example": {
+                "url": "https://example.com",
+                "wcag_level": "AA"
               }
             }
           }
@@ -99,6 +131,63 @@
                       "$ref": "#/components/schemas/ExecMeta"
                     }
                   }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-b8c9-4012-defa-234567890123",
+                  "data": {
+                    "url": "https://example.com",
+                    "violations": [
+                      {
+                        "id": "color-contrast",
+                        "impact": "serious",
+                        "wcag_criterion": "1.4.3",
+                        "description": "Elements must have sufficient color contrast",
+                        "affected_elements": [
+                          "button.cta",
+                          "p.footer-text"
+                        ],
+                        "fix": "Increase contrast ratio to at least 4.5:1"
+                      }
+                    ],
+                    "passes": 47,
+                    "violations_count": 3,
+                    "warnings": 5,
+                    "wcag_level": "AA"
+                  },
+                  "confidence": {
+                    "score": 0.89,
+                    "reason": "Static analysis of page DOM"
+                  },
+                  "provenance": {
+                    "provider": "wcag-scanner",
+                    "retrieved_at": "2026-05-18T12:00:00Z",
+                    "source_type": "live_scan"
+                  },
+                  "cache": {
+                    "recommended_ttl_seconds": 86400,
+                    "retryable": false,
+                    "cache_recommended": true
+                  },
+                  "recommended_next_api": [
+                    {
+                      "api": "accessibility-audit-lite",
+                      "endpoint": "/fix-suggestions",
+                      "reason": "Get prioritized fix list for 3 violations found"
+                    }
+                  ],
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": "high",
+                      "action": "Fix color contrast on .cta and .footer-text",
+                      "reason": "WCAG 1.4.3 violation \u2014 serious impact, affects all users"
+                    }
+                  ],
+                  "execution_metadata": {
+                    "latency_ms": 521,
+                    "model": "claude-sonnet-4-5",
+                    "automation_safe": true
+                  }
                 }
               }
             }
@@ -137,14 +226,12 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 }
               }
@@ -233,14 +320,16 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "max_suggestions": {
+                    "type": "integer",
+                    "default": 20
                   }
                 }
               }
@@ -329,14 +418,20 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "wcag_level": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "AA",
+                      "AAA"
+                    ]
                   }
                 }
               }
@@ -413,6 +508,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

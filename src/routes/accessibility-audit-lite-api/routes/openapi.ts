@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "Accessibility Audit Lite API",
     "version": "2.0.0",
-    "description": "Run WCAG 2.1 accessibility checks on any URL. Identify issues, score compliance, and get fix suggestions.",
+    "description": "Run WCAG 2.1 accessibility checks on any URL. Identify violations, score compliance level, and get fix suggestions.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/accessibility-audit-lite"
+      "url": "https://orbis-apis.onrender.com/accessibility-audit-lite",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Accessibility Audit Lite API",
+                  "version": "2.0.0",
+                  "description": "Run WCAG 2.1 accessibility checks on any URL. Identify violations, score compliance level, and get fix suggestions.",
+                  "base_url": "https://orbis-apis.onrender.com/accessibility-audit-lite",
+                  "docs_url": "https://orbis-apis.onrender.com/accessibility-audit-lite/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 200
+                    },
+                    "pay_per_call": {
+                      "audit": "$0.005",
+                      "score": "$0.002",
+                      "fix-suggestions": "$0.004",
+                      "execution-gate": "$0.001",
+                      "accessibility-intelligence": "$0.010"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/audit",
+                      "summary": "Audit",
+                      "price_usd": 0.005
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/score",
+                      "summary": "Score",
+                      "price_usd": 0.002
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/fix-suggestions",
+                      "summary": "Fix Suggestions",
+                      "price_usd": 0.004
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/accessibility-intelligence",
+                      "summary": "Accessibility Intelligence",
+                      "price_usd": 0.01
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/audit": {
       "post": {
         "operationId": "audit",
-        "summary": "Audit \u2014 A11yAuditData",
+        "summary": "Audit",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,23 +123,35 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com"
                   },
-                  "options": {
-                    "type": "object"
+                  "wcag_level": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "AA",
+                      "AAA"
+                    ],
+                    "default": "AA"
                   }
                 }
+              },
+              "example": {
+                "url": "https://example.com",
+                "wcag_level": "AA"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Audit \u2014 A11yAuditData",
+            "description": "Audit",
             "content": {
               "application/json": {
                 "schema": {
@@ -102,6 +193,63 @@ router.get('/', (_req: Request, res: Response) => {
                       "$ref": "#/components/schemas/ExecMeta"
                     }
                   }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-b8c9-4012-defa-234567890123",
+                  "data": {
+                    "url": "https://example.com",
+                    "violations": [
+                      {
+                        "id": "color-contrast",
+                        "impact": "serious",
+                        "wcag_criterion": "1.4.3",
+                        "description": "Elements must have sufficient color contrast",
+                        "affected_elements": [
+                          "button.cta",
+                          "p.footer-text"
+                        ],
+                        "fix": "Increase contrast ratio to at least 4.5:1"
+                      }
+                    ],
+                    "passes": 47,
+                    "violations_count": 3,
+                    "warnings": 5,
+                    "wcag_level": "AA"
+                  },
+                  "confidence": {
+                    "score": 0.89,
+                    "reason": "Static analysis of page DOM"
+                  },
+                  "provenance": {
+                    "provider": "wcag-scanner",
+                    "retrieved_at": "2026-05-18T12:00:00Z",
+                    "source_type": "live_scan"
+                  },
+                  "cache": {
+                    "recommended_ttl_seconds": 86400,
+                    "retryable": false,
+                    "cache_recommended": true
+                  },
+                  "recommended_next_api": [
+                    {
+                      "api": "accessibility-audit-lite",
+                      "endpoint": "/fix-suggestions",
+                      "reason": "Get prioritized fix list for 3 violations found"
+                    }
+                  ],
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": "high",
+                      "action": "Fix color contrast on .cta and .footer-text",
+                      "reason": "WCAG 1.4.3 violation \u2014 serious impact, affects all users"
+                    }
+                  ],
+                  "execution_metadata": {
+                    "latency_ms": 521,
+                    "model": "claude-sonnet-4-5",
+                    "automation_safe": true
+                  }
                 }
               }
             }
@@ -112,6 +260,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +295,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +310,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/score": {
       "post": {
         "operationId": "score",
-        "summary": "Score \u2014 A11yScoreData",
+        "summary": "Score",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +321,12 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 }
               }
@@ -176,7 +335,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Score \u2014 A11yScoreData",
+            "description": "Score",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +387,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +422,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +437,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/fix-suggestions": {
       "post": {
         "operationId": "fix_suggestions",
-        "summary": "Fix Suggestions \u2014 A11yFixData",
+        "summary": "Fix Suggestions",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +448,16 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "max_suggestions": {
+                    "type": "integer",
+                    "default": 20
                   }
                 }
               }
@@ -292,7 +466,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Fix Suggestions \u2014 A11yFixData",
+            "description": "Fix Suggestions",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +518,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +553,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +568,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/accessibility-intelligence": {
       "post": {
         "operationId": "accessibility_intelligence",
-        "summary": "ONE-CALL: full Accessibility Audit Lite intelligence",
+        "summary": "ONE-CALL: Accessibility Audit Lite \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +579,20 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "wcag_level": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "AA",
+                      "AAA"
+                    ]
                   }
                 }
               }
@@ -408,7 +601,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full Accessibility Audit Lite intelligence",
+            "description": "ONE-CALL: Accessibility Audit Lite \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +653,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +688,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "url": "example.com",
+                "objective": "run accessibility-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "accessibility-audit-lite",
+                  "next_endpoint": "/accessibility-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

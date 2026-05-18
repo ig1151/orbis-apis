@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "Keyword Density API",
     "version": "2.0.0",
-    "description": "Analyze keyword frequency, density, and distribution in text or web pages with SEO recommendations.",
+    "description": "Analyze keyword frequency, density, and distribution. Compare against competitor pages and get SEO optimization recommendations.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/keyword-density"
+      "url": "https://orbis-apis.onrender.com/keyword-density",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Keyword Density API",
+                  "version": "2.0.0",
+                  "description": "Analyze keyword frequency, density, and distribution. Compare against competitor pages and get SEO optimization recommendations.",
+                  "base_url": "https://orbis-apis.onrender.com/keyword-density",
+                  "docs_url": "https://orbis-apis.onrender.com/keyword-density/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 500
+                    },
+                    "pay_per_call": {
+                      "analyze": "$0.002",
+                      "optimize": "$0.003",
+                      "compare": "$0.005",
+                      "execution-gate": "$0.001",
+                      "keyword-intelligence": "$0.007"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/analyze",
+                      "summary": "Analyze",
+                      "price_usd": 0.002
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/optimize",
+                      "summary": "Optimize",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/compare",
+                      "summary": "Compare",
+                      "price_usd": 0.005
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/keyword-intelligence",
+                      "summary": "Keyword Intelligence",
+                      "price_usd": 0.007
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/analyze": {
       "post": {
         "operationId": "analyze",
-        "summary": "Analyze \u2014 KeywordAnalyzeData",
+        "summary": "Analyze",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,14 +123,20 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "text": {
+                    "type": "string",
+                    "example": "Your article text goes here..."
                   },
-                  "options": {
-                    "type": "object"
+                  "language": {
+                    "type": "string",
+                    "default": "en"
+                  },
+                  "min_word_length": {
+                    "type": "integer",
+                    "default": 3
                   }
                 }
               }
@@ -60,7 +145,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Analyze \u2014 KeywordAnalyzeData",
+            "description": "Analyze",
             "content": {
               "application/json": {
                 "schema": {
@@ -112,6 +197,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +232,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +247,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/optimize": {
       "post": {
         "operationId": "optimize",
-        "summary": "Optimize \u2014 KeywordOptimizeData",
+        "summary": "Optimize",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +258,26 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text",
+                  "target_keywords"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "seo",
+                      "optimization"
+                    ]
+                  },
+                  "target_density": {
+                    "type": "number",
+                    "default": 0.02
                   }
                 }
               }
@@ -176,7 +286,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Optimize \u2014 KeywordOptimizeData",
+            "description": "Optimize",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +338,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +373,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +388,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/compare": {
       "post": {
         "operationId": "compare",
-        "summary": "Compare \u2014 KeywordCompareData",
+        "summary": "Compare",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +399,17 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "url1",
+                  "url2"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "url1": {
+                    "type": "string",
+                    "format": "uri"
                   },
-                  "options": {
-                    "type": "object"
+                  "url2": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 }
               }
@@ -292,7 +418,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Compare \u2014 KeywordCompareData",
+            "description": "Compare",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +470,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +505,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +520,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/keyword-intelligence": {
       "post": {
         "operationId": "keyword_intelligence",
-        "summary": "ONE-CALL: full Keyword Density intelligence",
+        "summary": "ONE-CALL: Keyword Density \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +531,21 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "text"
                 ],
                 "properties": {
-                  "input": {
+                  "text": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "target_keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "language": {
+                    "type": "string",
+                    "default": "en"
                   }
                 }
               }
@@ -408,7 +554,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full Keyword Density intelligence",
+            "description": "ONE-CALL: Keyword Density \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +606,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +641,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "text": "example.com",
+                "objective": "run keyword-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "keyword-density",
+                  "next_endpoint": "/keyword-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

@@ -3,7 +3,7 @@
   "info": {
     "title": "Subject Line Scorer API",
     "version": "2.0.0",
-    "description": "Score email subject lines for open rate potential with spam detection and optimization.",
+    "description": "Score email subject lines for open rate potential using sentiment, urgency, personalization, and spam trigger analysis.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/subject-line-scorer"
+      "url": "https://orbis-apis.onrender.com/subject-line-scorer",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/score": {
       "post": {
         "operationId": "score",
@@ -41,16 +61,22 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "subject"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "subject": {
+                    "type": "string",
+                    "example": "Your exclusive offer expires tonight \ud83d\udd25"
                   },
-                  "options": {
-                    "type": "object"
+                  "audience": {
+                    "type": "string",
+                    "example": "B2B SaaS decision makers"
                   }
                 }
+              },
+              "example": {
+                "subject": "Your exclusive offer expires tonight \ud83d\udd25",
+                "audience": "B2B SaaS decision makers"
               }
             }
           }
@@ -99,6 +125,69 @@
                       "$ref": "#/components/schemas/ExecMeta"
                     }
                   }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-a7b8-4901-cdef-123456789012",
+                  "data": {
+                    "subject": "Your exclusive offer expires tonight \ud83d\udd25",
+                    "open_rate_score": 82,
+                    "spam_score": 18,
+                    "sentiment": "urgent",
+                    "urgency_level": "high",
+                    "personalization_score": 20,
+                    "length_score": 90,
+                    "word_count": 6,
+                    "char_count": 40,
+                    "spam_triggers": [
+                      "exclusive",
+                      "tonight"
+                    ],
+                    "power_words": [
+                      "exclusive",
+                      "expires"
+                    ],
+                    "emoji_used": true,
+                    "overall_grade": "B"
+                  },
+                  "confidence": {
+                    "score": 0.91,
+                    "reason": "Subject line pattern analysis"
+                  },
+                  "provenance": {
+                    "provider": "subject-line-ai",
+                    "retrieved_at": "2026-05-18T12:00:00Z",
+                    "source_type": "ai_generated"
+                  },
+                  "cache": {
+                    "recommended_ttl_seconds": 3600,
+                    "retryable": false,
+                    "cache_recommended": true
+                  },
+                  "recommended_next_api": [
+                    {
+                      "api": "subject-line-scorer",
+                      "endpoint": "/optimize",
+                      "reason": "Optimize to reduce spam triggers and add personalization"
+                    }
+                  ],
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": "high",
+                      "action": "Replace \"exclusive\" with specific benefit",
+                      "reason": "\"exclusive\" is a common spam trigger"
+                    },
+                    {
+                      "priority": "medium",
+                      "action": "Add personalization token e.g. first name",
+                      "reason": "Personalization score is low at 20/100"
+                    }
+                  ],
+                  "execution_metadata": {
+                    "latency_ms": 187,
+                    "model": "claude-sonnet-4-5",
+                    "automation_safe": true
+                  }
                 }
               }
             }
@@ -137,14 +226,20 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "subject"
                 ],
                 "properties": {
-                  "input": {
+                  "subject": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "goal": {
+                    "type": "string",
+                    "enum": [
+                      "maximize_opens",
+                      "avoid_spam",
+                      "increase_urgency",
+                      "increase_personalization"
+                    ]
                   }
                 }
               }
@@ -233,14 +328,28 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "topic"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "topic": {
+                    "type": "string",
+                    "example": "weekly newsletter"
                   },
-                  "options": {
-                    "type": "object"
+                  "tone": {
+                    "type": "string",
+                    "enum": [
+                      "curious",
+                      "urgent",
+                      "benefit_driven",
+                      "personalized",
+                      "direct",
+                      "question"
+                    ],
+                    "default": "benefit_driven"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "default": 5
                   }
                 }
               }
@@ -329,14 +438,17 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "topic"
                 ],
                 "properties": {
-                  "input": {
+                  "topic": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "audience": {
+                    "type": "string"
+                  },
+                  "brand": {
+                    "type": "string"
                   }
                 }
               }
@@ -413,6 +525,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "subject"
+                ],
+                "properties": {
+                  "subject": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

@@ -6,7 +6,7 @@ router.get('/', (_req: Request, res: Response) => {
   "info": {
     "title": "Slug Generator API",
     "version": "2.0.0",
-    "description": "Generate SEO-friendly URL slugs from titles. Handle transliteration, stop words, and batch generation.",
+    "description": "Generate SEO-friendly URL slugs from titles. Handle transliteration, stop-word removal, validation, and batch generation.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -24,7 +24,8 @@ router.get('/', (_req: Request, res: Response) => {
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/slug-generator"
+      "url": "https://orbis-apis.onrender.com/slug-generator",
+      "description": "Production"
     }
   ],
   "security": [
@@ -33,10 +34,88 @@ router.get('/', (_req: Request, res: Response) => {
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Discovery \u2014 endpoints, pricing, rate limits",
+        "tags": [
+          "Discovery"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Slug Generator API",
+                  "version": "2.0.0",
+                  "description": "Generate SEO-friendly URL slugs from titles. Handle transliteration, stop-word removal, validation, and batch generation.",
+                  "base_url": "https://orbis-apis.onrender.com/slug-generator",
+                  "docs_url": "https://orbis-apis.onrender.com/slug-generator/openapi.json",
+                  "mcp_compatible": true,
+                  "agent_callable": true,
+                  "pricing": {
+                    "free_tier": {
+                      "requests_per_day": 2000
+                    },
+                    "pay_per_call": {
+                      "generate": "$0.001",
+                      "validate": "$0.001",
+                      "batch": "$0.005",
+                      "execution-gate": "$0.001",
+                      "slug-intelligence": "$0.003"
+                    }
+                  },
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/generate",
+                      "summary": "Generate",
+                      "price_usd": 0.001
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/validate",
+                      "summary": "Validate",
+                      "price_usd": 0.001
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/batch",
+                      "summary": "Batch",
+                      "price_usd": 0.005
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/slug-intelligence",
+                      "summary": "Slug Intelligence",
+                      "price_usd": 0.003
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/execution-gate",
+                      "summary": "Execution Gate",
+                      "price_usd": 0.001
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/generate": {
       "post": {
         "operationId": "generate",
-        "summary": "Generate \u2014 SlugGenerateData",
+        "summary": "Generate",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -44,14 +123,28 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "title"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "title": {
+                    "type": "string",
+                    "example": "How to Build a REST API with Node.js"
                   },
-                  "options": {
-                    "type": "object"
+                  "locale": {
+                    "type": "string",
+                    "default": "en"
+                  },
+                  "max_length": {
+                    "type": "integer",
+                    "default": 60
+                  },
+                  "separator": {
+                    "type": "string",
+                    "enum": [
+                      "hyphen",
+                      "underscore"
+                    ],
+                    "default": "hyphen"
                   }
                 }
               }
@@ -60,7 +153,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Generate \u2014 SlugGenerateData",
+            "description": "Generate",
             "content": {
               "application/json": {
                 "schema": {
@@ -112,6 +205,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -142,6 +240,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -152,7 +255,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/validate": {
       "post": {
         "operationId": "validate",
-        "summary": "Validate \u2014 SlugValidateData",
+        "summary": "Validate",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -160,14 +266,12 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "slug"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
-                  },
-                  "options": {
-                    "type": "object"
+                  "slug": {
+                    "type": "string",
+                    "example": "how-to-build-a-rest-api"
                   }
                 }
               }
@@ -176,7 +280,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Validate \u2014 SlugValidateData",
+            "description": "Validate",
             "content": {
               "application/json": {
                 "schema": {
@@ -228,6 +332,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -258,6 +367,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -268,7 +382,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/batch": {
       "post": {
         "operationId": "batch",
-        "summary": "Batch \u2014 SlugBatchData",
+        "summary": "Batch",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -276,14 +393,19 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "titles"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "titles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 50
                   },
-                  "options": {
-                    "type": "object"
+                  "locale": {
+                    "type": "string",
+                    "default": "en"
                   }
                 }
               }
@@ -292,7 +414,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "Batch \u2014 SlugBatchData",
+            "description": "Batch",
             "content": {
               "application/json": {
                 "schema": {
@@ -344,6 +466,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -374,6 +501,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
@@ -384,7 +516,10 @@ router.get('/', (_req: Request, res: Response) => {
     "/slug-intelligence": {
       "post": {
         "operationId": "slug_intelligence",
-        "summary": "ONE-CALL: full Slug Generator intelligence",
+        "summary": "ONE-CALL: Slug Generator \u2014 full intelligence in one request",
+        "tags": [
+          "Intelligence"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,14 +527,19 @@ router.get('/', (_req: Request, res: Response) => {
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "title"
                 ],
                 "properties": {
-                  "input": {
+                  "title": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "locale": {
+                    "type": "string",
+                    "default": "en"
+                  },
+                  "max_length": {
+                    "type": "integer",
+                    "default": 60
                   }
                 }
               }
@@ -408,7 +548,7 @@ router.get('/', (_req: Request, res: Response) => {
         },
         "responses": {
           "200": {
-            "description": "ONE-CALL: full Slug Generator intelligence",
+            "description": "ONE-CALL: Slug Generator \u2014 full intelligence in one request",
             "content": {
               "application/json": {
                 "schema": {
@@ -460,6 +600,11 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "domain is required",
+                  "code": "MISSING_INPUT",
+                  "retryable": false
                 }
               }
             }
@@ -490,12 +635,124 @@ router.get('/', (_req: Request, res: Response) => {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Upstream model error",
+                  "code": "UPSTREAM_ERROR",
+                  "retryable": true
                 }
               }
             }
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check \u2014 validate input and get next-step routing",
+        "tags": [
+          "Execution"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              },
+              "example": {
+                "title": "example.com",
+                "objective": "run slug-intelligence"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "execution_ready": true,
+                  "next_api": "slug-generator",
+                  "next_endpoint": "/slug-intelligence",
+                  "blocking_flags": [],
+                  "confidence": {
+                    "score": 0.98,
+                    "reason": "Input valid"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

@@ -3,7 +3,7 @@
   "info": {
     "title": "DNS Propagation API",
     "version": "2.0.0",
-    "description": "Check DNS propagation status across global nameservers and track record update completion.",
+    "description": "Check DNS propagation status across global nameservers, trace resolution paths, and verify completion after DNS changes.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-pricing": {
@@ -21,7 +21,8 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/dns-propagation"
+      "url": "https://orbis-apis.onrender.com/dns-propagation",
+      "description": "Production"
     }
   ],
   "security": [
@@ -30,6 +31,25 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "API discovery",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/check": {
       "post": {
         "operationId": "check",
@@ -41,16 +61,51 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain",
+                  "record_type"
                 ],
                 "properties": {
-                  "input": {
-                    "type": "string"
+                  "domain": {
+                    "type": "string",
+                    "example": "example.com"
                   },
-                  "options": {
-                    "type": "object"
+                  "record_type": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "AAAA",
+                      "CNAME",
+                      "MX",
+                      "TXT",
+                      "NS",
+                      "SOA",
+                      "PTR"
+                    ]
+                  },
+                  "regions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "us-east",
+                        "us-west",
+                        "eu-west",
+                        "eu-central",
+                        "ap-southeast",
+                        "ap-northeast",
+                        "sa-east"
+                      ]
+                    }
                   }
                 }
+              },
+              "example": {
+                "domain": "example.com",
+                "record_type": "A",
+                "regions": [
+                  "us-east",
+                  "eu-west"
+                ]
               }
             }
           }
@@ -99,6 +154,71 @@
                       "$ref": "#/components/schemas/ExecMeta"
                     }
                   }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
+                  "data": {
+                    "domain": "example.com",
+                    "record_type": "A",
+                    "propagation_percentage": 87.5,
+                    "propagation_status": "partial",
+                    "nodes": [
+                      {
+                        "region": "us-east",
+                        "nameserver": "8.8.8.8",
+                        "ip": "93.184.216.34",
+                        "status": "propagated",
+                        "latency_ms": 12,
+                        "resolved_value": "93.184.216.34"
+                      },
+                      {
+                        "region": "eu-west",
+                        "nameserver": "1.1.1.1",
+                        "ip": null,
+                        "status": "pending",
+                        "latency_ms": 0,
+                        "resolved_value": null
+                      }
+                    ],
+                    "estimated_completion_minutes": 15
+                  },
+                  "confidence": {
+                    "score": 0.94,
+                    "reason": "Live DNS resolver responses",
+                    "per_section": {
+                      "nodes": 0.94
+                    }
+                  },
+                  "provenance": {
+                    "provider": "dns-resolver-network",
+                    "retrieved_at": "2026-05-18T12:00:00Z",
+                    "source_type": "live_scan"
+                  },
+                  "cache": {
+                    "recommended_ttl_seconds": 300,
+                    "retryable": true,
+                    "cache_recommended": false
+                  },
+                  "recommended_next_api": [
+                    {
+                      "api": "ssl-expiry-monitor",
+                      "endpoint": "/check",
+                      "reason": "Verify SSL certificate after DNS propagation completes"
+                    }
+                  ],
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": "high",
+                      "action": "Wait 15 minutes and recheck propagation",
+                      "reason": "87.5% propagated \u2014 eu-west node still pending"
+                    }
+                  ],
+                  "execution_metadata": {
+                    "latency_ms": 234,
+                    "model": "claude-sonnet-4-5",
+                    "automation_safe": true
+                  }
                 }
               }
             }
@@ -137,14 +257,28 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain"
                 ],
                 "properties": {
-                  "input": {
+                  "domain": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "record_type": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "AAAA",
+                      "CNAME",
+                      "MX",
+                      "TXT",
+                      "NS",
+                      "SOA",
+                      "PTR"
+                    ]
+                  },
+                  "expected_value": {
+                    "type": "string",
+                    "example": "93.184.216.34"
                   }
                 }
               }
@@ -233,14 +367,25 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain"
                 ],
                 "properties": {
-                  "input": {
+                  "domain": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "record_type": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "AAAA",
+                      "CNAME",
+                      "MX",
+                      "TXT",
+                      "NS",
+                      "SOA",
+                      "PTR"
+                    ],
+                    "default": "A"
                   }
                 }
               }
@@ -329,14 +474,24 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "input"
+                  "domain"
                 ],
                 "properties": {
-                  "input": {
+                  "domain": {
                     "type": "string"
                   },
-                  "options": {
-                    "type": "object"
+                  "record_type": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "AAAA",
+                      "CNAME",
+                      "MX",
+                      "TXT",
+                      "NS",
+                      "SOA",
+                      "PTR"
+                    ]
                   }
                 }
               }
@@ -413,6 +568,94 @@
           }
         },
         "x-one-call": true
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "domain"
+                ],
+                "properties": {
+                  "domain": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string",
+                    "description": "What the agent is trying to accomplish"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "request_id",
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "request_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "execution_ready": {
+                      "type": "boolean"
+                    },
+                    "next_api": {
+                      "type": "string"
+                    },
+                    "next_endpoint": {
+                      "type": "string"
+                    },
+                    "blocking_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "$ref": "#/components/schemas/Confidence"
+                    },
+                    "provenance": {
+                      "$ref": "#/components/schemas/Provenance"
+                    },
+                    "execution_metadata": {
+                      "$ref": "#/components/schemas/ExecMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
