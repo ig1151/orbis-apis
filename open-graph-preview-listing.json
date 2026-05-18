@@ -1,99 +1,148 @@
 [
   {
     "name": "Open Graph Preview API",
-    "shortDescription": "Preview, validate, and optimize Open Graph and Twitter Card tags to maximize click-through rates on ",
-    "description": "Preview, validate, and optimize Open Graph and Twitter Card tags to maximize click-through rates on social media shares.",
-    "category": "web-seo",
+    "shortDescription": "Preview and optimize social share cards",
+    "description": "Preview, validate, and generate Open Graph and Twitter Card metadata for social sharing. Supports platform-aware previews, missing tag detection, generated markup, CTR-oriented scoring, provenance metadata, and execution readiness checks for social, SEO, and content agents.",
+    "category": "data-analytics",
     "baseUrl": "https://orbis-apis.onrender.com/open-graph-preview",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/open-graph-preview/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/open-graph-preview/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/open-graph-preview/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/open-graph-preview/logo.png",
     "tags": [
       "open-graph",
-      "twitter-card",
       "social-preview",
+      "twitter-card",
       "seo",
-      "metadata"
+      "content-optimization"
+    ],
+    "keywords": [
+      "open graph preview",
+      "social share preview",
+      "twitter card generator",
+      "og tag validator",
+      "linkedin preview",
+      "facebook preview"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 300
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
       },
       {
-        "name": "Open Graph Preview Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.008,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/preview",
             "pricePerCallUsdc": 0.003,
-            "description": "Render social share preview for a URL"
+            "description": "Preview endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/validate",
             "pricePerCallUsdc": 0.002,
-            "description": "Validate OG tags completeness and quality"
+            "description": "Validate endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/generate",
             "pricePerCallUsdc": 0.004,
-            "description": "Generate missing OG tags for a URL"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Generate endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/og-intelligence",
             "pricePerCallUsdc": 0.008,
-            "description": "ONE-CALL: preview + validate + optimize OG tags"
+            "description": "One-call Open Graph preview, validation, and optimization"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/preview",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Preview endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Generate endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/og-intelligence",
+            "pricePerCallUsdc": 0.004,
+            "description": "One-call Open Graph preview, validation, and optimization"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/preview",
-        "description": "Render social share preview for a URL"
+        "description": "Preview endpoint"
       },
       {
         "method": "POST",
         "path": "/validate",
-        "description": "Validate OG tags completeness and quality"
+        "description": "Validate endpoint"
       },
       {
         "method": "POST",
         "path": "/generate",
-        "description": "Generate missing OG tags for a URL"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Generate endpoint"
       },
       {
         "method": "POST",
         "path": "/og-intelligence",
-        "description": "ONE-CALL: preview + validate + optimize OG tags"
+        "description": "One-call Open Graph preview, validation, and optimization"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "open graph preview",
-      "og tag validator",
-      "social share preview",
-      "twitter card checker",
-      "link preview generator"
     ]
   }
 ]

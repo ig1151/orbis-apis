@@ -1,99 +1,147 @@
 [
   {
     "name": "Website Carbon Footprint API",
-    "shortDescription": "Estimate the carbon footprint of any webpage, benchmark against industry averages, and get actionabl",
-    "description": "Estimate the carbon footprint of any webpage, benchmark against industry averages, and get actionable optimization recommendations.",
-    "category": "sustainability",
+    "shortDescription": "Estimate website carbon footprint",
+    "description": "Estimate webpage carbon footprint, benchmark against category averages, and generate optimization recommendations. Built for sustainability agents, web performance workflows, digital ESG reporting, and page-weight optimization.",
+    "category": "data-analytics",
     "baseUrl": "https://orbis-apis.onrender.com/website-carbon-footprint",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/website-carbon-footprint/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/website-carbon-footprint/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/website-carbon-footprint/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/website-carbon-footprint/logo.png",
     "tags": [
-      "carbon-footprint",
+      "carbon",
       "sustainability",
+      "web-performance",
       "green-web",
-      "performance",
-      "environment"
+      "analytics"
+    ],
+    "keywords": [
+      "website carbon footprint",
+      "web sustainability api",
+      "page carbon estimate",
+      "green website score",
+      "carbon optimization recommendations"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 300
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
       },
       {
-        "name": "Website Carbon Footprint Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.007,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/estimate",
             "pricePerCallUsdc": 0.002,
-            "description": "Estimate carbon footprint for a URL"
+            "description": "Estimate endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/benchmark",
             "pricePerCallUsdc": 0.003,
-            "description": "Benchmark against industry and category averages"
+            "description": "Benchmark endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/optimize",
             "pricePerCallUsdc": 0.004,
-            "description": "Get page weight and carbon reduction recommendations"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Optimize endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/carbon-intelligence",
             "pricePerCallUsdc": 0.007,
-            "description": "ONE-CALL: carbon estimate + benchmark + optimization roadmap"
+            "description": "One-call carbon estimate, benchmark, and optimization roadmap"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/estimate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Estimate endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/benchmark",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Benchmark endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.002,
+            "description": "Optimize endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/carbon-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "One-call carbon estimate, benchmark, and optimization roadmap"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/estimate",
-        "description": "Estimate carbon footprint for a URL"
+        "description": "Estimate endpoint"
       },
       {
         "method": "POST",
         "path": "/benchmark",
-        "description": "Benchmark against industry and category averages"
+        "description": "Benchmark endpoint"
       },
       {
         "method": "POST",
         "path": "/optimize",
-        "description": "Get page weight and carbon reduction recommendations"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Optimize endpoint"
       },
       {
         "method": "POST",
         "path": "/carbon-intelligence",
-        "description": "ONE-CALL: carbon estimate + benchmark + optimization roadmap"
+        "description": "One-call carbon estimate, benchmark, and optimization roadmap"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "website carbon footprint",
-      "web page emissions",
-      "green web check",
-      "carbon footprint calculator",
-      "sustainable website audit"
     ]
   }
 ]

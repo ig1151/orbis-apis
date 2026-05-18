@@ -1,99 +1,148 @@
 [
   {
     "name": "Accessibility Audit Lite API",
-    "shortDescription": "Run WCAG 2.1 accessibility checks on any URL or HTML snippet. Identify issues, score compliance leve",
-    "description": "Run WCAG 2.1 accessibility checks on any URL or HTML snippet. Identify issues, score compliance level, and get fix suggestions.",
-    "category": "web-seo",
+    "shortDescription": "Run lightweight WCAG accessibility audits",
+    "description": "Run WCAG accessibility checks on URLs or HTML, score compliance, and produce prioritized fix suggestions. Built for QA agents, frontend CI/CD checks, compliance workflows, and automated website accessibility monitoring.",
+    "category": "developer-tools",
     "baseUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite/logo.png",
     "tags": [
       "accessibility",
       "wcag",
       "a11y",
-      "compliance",
-      "web-audit"
+      "website-audit",
+      "frontend",
+      "compliance"
+    ],
+    "keywords": [
+      "accessibility audit api",
+      "wcag checker",
+      "a11y score",
+      "website accessibility scan",
+      "accessibility fix suggestions"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 200
+        "requestsPerDay": 200,
+        "requestsPerMonth": 6000
       },
       {
-        "name": "Accessibility Audit Lite Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.01,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/audit",
             "pricePerCallUsdc": 0.005,
-            "description": "Run WCAG 2.1 accessibility audit on a URL"
+            "description": "Audit endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/score",
             "pricePerCallUsdc": 0.002,
-            "description": "Get accessibility compliance score (A, AA, AAA)"
+            "description": "Score endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/fix-suggestions",
             "pricePerCallUsdc": 0.004,
-            "description": "Get prioritized fix recommendations for issues"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Get prioritized remediation suggestions"
           },
           {
             "method": "POST",
             "pathPattern": "/accessibility-intelligence",
             "pricePerCallUsdc": 0.01,
-            "description": "ONE-CALL: full audit + score + remediation checklist"
+            "description": "One-call accessibility audit, score, and remediation checklist"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/audit",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Audit endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Score endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/fix-suggestions",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get prioritized remediation suggestions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/accessibility-intelligence",
+            "pricePerCallUsdc": 0.005,
+            "description": "One-call accessibility audit, score, and remediation checklist"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/audit",
-        "description": "Run WCAG 2.1 accessibility audit on a URL"
+        "description": "Audit endpoint"
       },
       {
         "method": "POST",
         "path": "/score",
-        "description": "Get accessibility compliance score (A, AA, AAA)"
+        "description": "Score endpoint"
       },
       {
         "method": "POST",
         "path": "/fix-suggestions",
-        "description": "Get prioritized fix recommendations for issues"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Get prioritized remediation suggestions"
       },
       {
         "method": "POST",
         "path": "/accessibility-intelligence",
-        "description": "ONE-CALL: full audit + score + remediation checklist"
+        "description": "One-call accessibility audit, score, and remediation checklist"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "wcag accessibility check",
-      "a11y audit api",
-      "website accessibility score",
-      "accessibility compliance test",
-      "aria checker"
     ]
   }
 ]

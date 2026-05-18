@@ -1,0 +1,782 @@
+[
+  {
+    "slug": "meta-tags-extractor",
+    "name": "Meta Tags Extractor API",
+    "shortDescription": "Extract and audit webpage meta tags",
+    "description": "Extract, validate, and analyze HTML meta tags from any URL, including title, description, canonical, robots, Open Graph, and Twitter Card metadata. Built for SEO agents, website auditors, content pipelines, and orchestration workflows that need deterministic page metadata with confidence, provenance, cache hints, and execution-gate support.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/meta-tags-extractor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/meta-tags-extractor/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/meta-tags-extractor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/meta-tags-extractor/logo.png",
+    "tags": ["seo","metadata","html","open-graph","twitter-card","web-audit"],
+    "keywords": ["extract meta tags","seo metadata api","open graph tags","twitter card metadata","canonical tag checker","webpage metadata extraction"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 500,"requestsPerMonth": 15000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/extract","pricePerCallUsdc": 0.002,"description": "Extract endpoint"},
+        {"method": "POST","pathPattern": "/validate","pricePerCallUsdc": 0.002,"description": "Validate endpoint"},
+        {"method": "POST","pathPattern": "/batch","pricePerCallUsdc": 0.015,"description": "Batch endpoint"},
+        {"method": "POST","pathPattern": "/meta-intelligence","pricePerCallUsdc": 0.006,"description": "One-call meta tag extraction, validation, and SEO audit"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/extract","pricePerCallUsdc": 0.001,"description": "Extract endpoint"},
+        {"method": "POST","pathPattern": "/validate","pricePerCallUsdc": 0.001,"description": "Validate endpoint"},
+        {"method": "POST","pathPattern": "/batch","pricePerCallUsdc": 0.0075,"description": "Batch endpoint"},
+        {"method": "POST","pathPattern": "/meta-intelligence","pricePerCallUsdc": 0.003,"description": "One-call meta tag extraction, validation, and SEO audit"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/extract","description": "Extract endpoint"},
+      {"method": "POST","path": "/validate","description": "Validate endpoint"},
+      {"method": "POST","path": "/batch","description": "Batch endpoint"},
+      {"method": "POST","path": "/meta-intelligence","description": "One-call meta tag extraction, validation, and SEO audit"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "open-graph-preview",
+    "name": "Open Graph Preview API",
+    "shortDescription": "Preview and optimize social share cards",
+    "description": "Preview, validate, and generate Open Graph and Twitter Card metadata for social sharing. Supports platform-aware previews, missing tag detection, generated markup, CTR-oriented scoring, provenance metadata, and execution readiness checks for social, SEO, and content agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/open-graph-preview",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/open-graph-preview/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/open-graph-preview/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/open-graph-preview/logo.png",
+    "tags": ["open-graph","social-preview","twitter-card","seo","content-optimization"],
+    "keywords": ["open graph preview","social share preview","twitter card generator","og tag validator","linkedin preview","facebook preview"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 300,"requestsPerMonth": 9000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/preview","pricePerCallUsdc": 0.003,"description": "Preview endpoint"},
+        {"method": "POST","pathPattern": "/validate","pricePerCallUsdc": 0.002,"description": "Validate endpoint"},
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.004,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/og-intelligence","pricePerCallUsdc": 0.008,"description": "One-call Open Graph preview, validation, and optimization"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/preview","pricePerCallUsdc": 0.0015,"description": "Preview endpoint"},
+        {"method": "POST","pathPattern": "/validate","pricePerCallUsdc": 0.001,"description": "Validate endpoint"},
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.002,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/og-intelligence","pricePerCallUsdc": 0.004,"description": "One-call Open Graph preview, validation, and optimization"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/preview","description": "Preview endpoint"},
+      {"method": "POST","path": "/validate","description": "Validate endpoint"},
+      {"method": "POST","path": "/generate","description": "Generate endpoint"},
+      {"method": "POST","path": "/og-intelligence","description": "One-call Open Graph preview, validation, and optimization"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "app-store-lookup",
+    "name": "App Store Lookup API",
+    "shortDescription": "Lookup app store metadata and reviews",
+    "description": "Retrieve app metadata, ratings, reviews, sentiment summaries, and similar app intelligence across iOS and Android app stores. Designed for competitive research agents, app intelligence workflows, product monitoring, and marketplace discovery with typed schemas and provenance.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/app-store-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/app-store-lookup/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/app-store-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/app-store-lookup/logo.png",
+    "tags": ["app-store","mobile-apps","reviews","competitive-intelligence","ios","android"],
+    "keywords": ["app store lookup","google play app metadata","ios app reviews","mobile app competitor analysis","app rating api","app sentiment"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 200,"requestsPerMonth": 6000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/lookup","pricePerCallUsdc": 0.003,"description": "Lookup endpoint"},
+        {"method": "POST","pathPattern": "/reviews","pricePerCallUsdc": 0.005,"description": "Reviews endpoint"},
+        {"method": "POST","pathPattern": "/similar","pricePerCallUsdc": 0.004,"description": "Similar endpoint"},
+        {"method": "POST","pathPattern": "/app-intelligence","pricePerCallUsdc": 0.01,"description": "One-call app metadata, reviews, sentiment, and competitive landscape"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/lookup","pricePerCallUsdc": 0.0015,"description": "Lookup endpoint"},
+        {"method": "POST","pathPattern": "/reviews","pricePerCallUsdc": 0.0025,"description": "Reviews endpoint"},
+        {"method": "POST","pathPattern": "/similar","pricePerCallUsdc": 0.002,"description": "Similar endpoint"},
+        {"method": "POST","pathPattern": "/app-intelligence","pricePerCallUsdc": 0.005,"description": "One-call app metadata, reviews, sentiment, and competitive landscape"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/lookup","description": "Lookup endpoint"},
+      {"method": "POST","path": "/reviews","description": "Reviews endpoint"},
+      {"method": "POST","path": "/similar","description": "Similar endpoint"},
+      {"method": "POST","path": "/app-intelligence","description": "One-call app metadata, reviews, sentiment, and competitive landscape"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "chrome-extension-lookup",
+    "name": "Chrome Extension Lookup API",
+    "shortDescription": "Lookup and risk-score Chrome extensions",
+    "description": "Retrieve Chrome extension metadata, permissions, ratings, usage counts, security flags, and safer alternatives. Built for browser security agents, enterprise extension review workflows, procurement checks, and automated extension risk analysis.",
+    "category": "security",
+    "baseUrl": "https://orbis-apis.onrender.com/chrome-extension-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/chrome-extension-lookup/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/chrome-extension-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/chrome-extension-lookup/logo.png",
+    "tags": ["chrome-extension","browser-security","permissions","risk-analysis","web-store"],
+    "keywords": ["chrome extension lookup","browser extension risk","extension permissions api","chrome web store metadata","extension security analysis"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 300,"requestsPerMonth": 9000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/lookup","pricePerCallUsdc": 0.002,"description": "Lookup endpoint"},
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.004,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/similar","pricePerCallUsdc": 0.003,"description": "Similar endpoint"},
+        {"method": "POST","pathPattern": "/extension-intelligence","pricePerCallUsdc": 0.008,"description": "One-call extension metadata, permission risk, and safer alternatives"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/lookup","pricePerCallUsdc": 0.001,"description": "Lookup endpoint"},
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.002,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/similar","pricePerCallUsdc": 0.0015,"description": "Similar endpoint"},
+        {"method": "POST","pathPattern": "/extension-intelligence","pricePerCallUsdc": 0.004,"description": "One-call extension metadata, permission risk, and safer alternatives"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/lookup","description": "Lookup endpoint"},
+      {"method": "POST","path": "/analyze","description": "Analyze endpoint"},
+      {"method": "POST","path": "/similar","description": "Similar endpoint"},
+      {"method": "POST","path": "/extension-intelligence","description": "One-call extension metadata, permission risk, and safer alternatives"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "browser-compatibility",
+    "name": "Browser Compatibility API",
+    "shortDescription": "Check browser feature compatibility",
+    "description": "Check CSS, JavaScript, and HTML feature compatibility across browsers, generate support reports, and recommend polyfills. Built for frontend agents, CI/CD QA workflows, developer tooling, and web compatibility automation.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/browser-compatibility",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/browser-compatibility/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/browser-compatibility/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/browser-compatibility/logo.png",
+    "tags": ["browser-compatibility","frontend","polyfills","javascript","css","developer-tools"],
+    "keywords": ["browser compatibility check","can i use api","css feature support","javascript polyfill recommendation","frontend compatibility report"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 1000,"requestsPerMonth": 30000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/check","pricePerCallUsdc": 0.001,"description": "Check endpoint"},
+        {"method": "POST","pathPattern": "/polyfills","pricePerCallUsdc": 0.003,"description": "Polyfills endpoint"},
+        {"method": "POST","pathPattern": "/report","pricePerCallUsdc": 0.005,"description": "Report endpoint"},
+        {"method": "POST","pathPattern": "/compat-intelligence","pricePerCallUsdc": 0.006,"description": "One-call compatibility analysis, support matrix, and polyfill plan"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/check","pricePerCallUsdc": 0.0005,"description": "Check endpoint"},
+        {"method": "POST","pathPattern": "/polyfills","pricePerCallUsdc": 0.0015,"description": "Polyfills endpoint"},
+        {"method": "POST","pathPattern": "/report","pricePerCallUsdc": 0.0025,"description": "Report endpoint"},
+        {"method": "POST","pathPattern": "/compat-intelligence","pricePerCallUsdc": 0.003,"description": "One-call compatibility analysis, support matrix, and polyfill plan"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/check","description": "Check endpoint"},
+      {"method": "POST","path": "/polyfills","description": "Polyfills endpoint"},
+      {"method": "POST","path": "/report","description": "Report endpoint"},
+      {"method": "POST","path": "/compat-intelligence","description": "One-call compatibility analysis, support matrix, and polyfill plan"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "dns-propagation",
+    "name": "DNS Propagation API",
+    "shortDescription": "Check DNS propagation globally",
+    "description": "Check DNS propagation across global resolver nodes, get status percentages, trace resolution paths, and verify DNS change completion. Designed for deployment agents, DevOps workflows, domain migration checks, and infrastructure monitoring with typed confidence and provenance.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/dns-propagation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/dns-propagation/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/dns-propagation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/dns-propagation/logo.png",
+    "tags": ["dns","devops","propagation","domain","infrastructure","monitoring"],
+    "keywords": ["dns propagation checker","global dns lookup","dns trace api","domain propagation status","dns record verification","nameserver propagation"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 500,"requestsPerMonth": 15000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/check","pricePerCallUsdc": 0.002,"description": "Check endpoint"},
+        {"method": "POST","pathPattern": "/status","pricePerCallUsdc": 0.002,"description": "Status endpoint"},
+        {"method": "POST","pathPattern": "/trace","pricePerCallUsdc": 0.003,"description": "Trace endpoint"},
+        {"method": "POST","pathPattern": "/propagation-intelligence","pricePerCallUsdc": 0.006,"description": "One-call DNS propagation check, status, and trace"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/check","pricePerCallUsdc": 0.001,"description": "Check endpoint"},
+        {"method": "POST","pathPattern": "/status","pricePerCallUsdc": 0.001,"description": "Status endpoint"},
+        {"method": "POST","pathPattern": "/trace","pricePerCallUsdc": 0.0015,"description": "Trace endpoint"},
+        {"method": "POST","pathPattern": "/propagation-intelligence","pricePerCallUsdc": 0.003,"description": "One-call DNS propagation check, status, and trace"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/check","description": "Check endpoint"},
+      {"method": "POST","path": "/status","description": "Status endpoint"},
+      {"method": "POST","path": "/trace","description": "Trace endpoint"},
+      {"method": "POST","path": "/propagation-intelligence","description": "One-call DNS propagation check, status, and trace"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "ssl-expiry-monitor",
+    "name": "SSL Expiry Monitor API",
+    "shortDescription": "Monitor SSL certificate expiry",
+    "description": "Check SSL certificate expiry, monitor multiple domains, generate renewal alerts, and assess downtime risk. Built for security agents, DevOps monitors, uptime systems, and certificate renewal workflows.",
+    "category": "security",
+    "baseUrl": "https://orbis-apis.onrender.com/ssl-expiry-monitor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ssl-expiry-monitor/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ssl-expiry-monitor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/ssl-expiry-monitor/logo.png",
+    "tags": ["ssl","tls","certificate","security","monitoring","devops"],
+    "keywords": ["ssl expiry monitor","certificate expiration api","tls certificate checker","ssl renewal alert","domain certificate status"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 500,"requestsPerMonth": 15000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/check","pricePerCallUsdc": 0.001,"description": "Check endpoint"},
+        {"method": "POST","pathPattern": "/monitor","pricePerCallUsdc": 0.005,"description": "Monitor endpoint"},
+        {"method": "POST","pathPattern": "/alert","pricePerCallUsdc": 0.003,"description": "Alert endpoint"},
+        {"method": "POST","pathPattern": "/ssl-expiry-intelligence","pricePerCallUsdc": 0.005,"description": "One-call SSL expiry check, urgency assessment, and renewal action plan"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/check","pricePerCallUsdc": 0.0005,"description": "Check endpoint"},
+        {"method": "POST","pathPattern": "/monitor","pricePerCallUsdc": 0.0025,"description": "Monitor endpoint"},
+        {"method": "POST","pathPattern": "/alert","pricePerCallUsdc": 0.0015,"description": "Alert endpoint"},
+        {"method": "POST","pathPattern": "/ssl-expiry-intelligence","pricePerCallUsdc": 0.0025,"description": "One-call SSL expiry check, urgency assessment, and renewal action plan"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/check","description": "Check endpoint"},
+      {"method": "POST","path": "/monitor","description": "Monitor endpoint"},
+      {"method": "POST","path": "/alert","description": "Alert endpoint"},
+      {"method": "POST","path": "/ssl-expiry-intelligence","description": "One-call SSL expiry check, urgency assessment, and renewal action plan"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "tls-configuration",
+    "name": "TLS Configuration API",
+    "shortDescription": "Audit TLS configuration and security",
+    "description": "Analyze TLS protocol versions, cipher suites, certificate posture, vulnerabilities, compliance posture, and hardening recommendations. Designed for security agents, compliance workflows, infrastructure audits, and automated remediation planning.",
+    "category": "security",
+    "baseUrl": "https://orbis-apis.onrender.com/tls-configuration",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/tls-configuration/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/tls-configuration/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/tls-configuration/logo.png",
+    "tags": ["tls","ssl","security","cipher-suites","compliance","vulnerability"],
+    "keywords": ["tls configuration audit","ssl security grade","cipher suite analysis","tls vulnerability checker","https compliance scan"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 300,"requestsPerMonth": 9000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.003,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/grade","pricePerCallUsdc": 0.003,"description": "Grade endpoint"},
+        {"method": "POST","pathPattern": "/recommendations","pricePerCallUsdc": 0.004,"description": "Recommendations endpoint"},
+        {"method": "POST","pathPattern": "/tls-intelligence","pricePerCallUsdc": 0.008,"description": "One-call TLS audit, grade, and remediation plan"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.0015,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/grade","pricePerCallUsdc": 0.0015,"description": "Grade endpoint"},
+        {"method": "POST","pathPattern": "/recommendations","pricePerCallUsdc": 0.002,"description": "Recommendations endpoint"},
+        {"method": "POST","pathPattern": "/tls-intelligence","pricePerCallUsdc": 0.004,"description": "One-call TLS audit, grade, and remediation plan"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/analyze","description": "Analyze endpoint"},
+      {"method": "POST","path": "/grade","description": "Grade endpoint"},
+      {"method": "POST","path": "/recommendations","description": "Recommendations endpoint"},
+      {"method": "POST","path": "/tls-intelligence","description": "One-call TLS audit, grade, and remediation plan"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "website-carbon-footprint",
+    "name": "Website Carbon Footprint API",
+    "shortDescription": "Estimate website carbon footprint",
+    "description": "Estimate webpage carbon footprint, benchmark against category averages, and generate optimization recommendations. Built for sustainability agents, web performance workflows, digital ESG reporting, and page-weight optimization.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/website-carbon-footprint",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/website-carbon-footprint/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/website-carbon-footprint/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/website-carbon-footprint/logo.png",
+    "tags": ["carbon","sustainability","web-performance","green-web","analytics"],
+    "keywords": ["website carbon footprint","web sustainability api","page carbon estimate","green website score","carbon optimization recommendations"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 300,"requestsPerMonth": 9000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/estimate","pricePerCallUsdc": 0.002,"description": "Estimate endpoint"},
+        {"method": "POST","pathPattern": "/benchmark","pricePerCallUsdc": 0.003,"description": "Benchmark endpoint"},
+        {"method": "POST","pathPattern": "/optimize","pricePerCallUsdc": 0.004,"description": "Optimize endpoint"},
+        {"method": "POST","pathPattern": "/carbon-intelligence","pricePerCallUsdc": 0.007,"description": "One-call carbon estimate, benchmark, and optimization roadmap"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/estimate","pricePerCallUsdc": 0.001,"description": "Estimate endpoint"},
+        {"method": "POST","pathPattern": "/benchmark","pricePerCallUsdc": 0.0015,"description": "Benchmark endpoint"},
+        {"method": "POST","pathPattern": "/optimize","pricePerCallUsdc": 0.002,"description": "Optimize endpoint"},
+        {"method": "POST","pathPattern": "/carbon-intelligence","pricePerCallUsdc": 0.0035,"description": "One-call carbon estimate, benchmark, and optimization roadmap"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/estimate","description": "Estimate endpoint"},
+      {"method": "POST","path": "/benchmark","description": "Benchmark endpoint"},
+      {"method": "POST","path": "/optimize","description": "Optimize endpoint"},
+      {"method": "POST","path": "/carbon-intelligence","description": "One-call carbon estimate, benchmark, and optimization roadmap"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "accessibility-audit-lite",
+    "name": "Accessibility Audit Lite API",
+    "shortDescription": "Run lightweight WCAG accessibility audits",
+    "description": "Run WCAG accessibility checks on URLs or HTML, score compliance, and produce prioritized fix suggestions. Built for QA agents, frontend CI/CD checks, compliance workflows, and automated website accessibility monitoring.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite/logo.png",
+    "tags": ["accessibility","wcag","a11y","website-audit","frontend","compliance"],
+    "keywords": ["accessibility audit api","wcag checker","a11y score","website accessibility scan","accessibility fix suggestions"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 200,"requestsPerMonth": 6000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/audit","pricePerCallUsdc": 0.005,"description": "Audit endpoint"},
+        {"method": "POST","pathPattern": "/score","pricePerCallUsdc": 0.002,"description": "Score endpoint"},
+        {"method": "POST","pathPattern": "/fix-suggestions","pricePerCallUsdc": 0.004,"description": "Get prioritized remediation suggestions"},
+        {"method": "POST","pathPattern": "/accessibility-intelligence","pricePerCallUsdc": 0.01,"description": "One-call accessibility audit, score, and remediation checklist"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/audit","pricePerCallUsdc": 0.0025,"description": "Audit endpoint"},
+        {"method": "POST","pathPattern": "/score","pricePerCallUsdc": 0.001,"description": "Score endpoint"},
+        {"method": "POST","pathPattern": "/fix-suggestions","pricePerCallUsdc": 0.002,"description": "Get prioritized remediation suggestions"},
+        {"method": "POST","pathPattern": "/accessibility-intelligence","pricePerCallUsdc": 0.005,"description": "One-call accessibility audit, score, and remediation checklist"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/audit","description": "Audit endpoint"},
+      {"method": "POST","path": "/score","description": "Score endpoint"},
+      {"method": "POST","path": "/fix-suggestions","description": "Get prioritized remediation suggestions"},
+      {"method": "POST","path": "/accessibility-intelligence","description": "One-call accessibility audit, score, and remediation checklist"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "keyword-density",
+    "name": "Keyword Density API",
+    "shortDescription": "Analyze keyword density and SEO gaps",
+    "description": "Analyze keyword frequency, density, distribution, and competitor gaps in text or web pages. Built for SEO agents, content optimization workflows, publishing pipelines, and search visibility audits.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/keyword-density",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/keyword-density/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/keyword-density/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/keyword-density/logo.png",
+    "tags": ["seo","keywords","content-analysis","search","optimization"],
+    "keywords": ["keyword density api","seo keyword analysis","content optimization","keyword frequency checker","competitor keyword gap"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 500,"requestsPerMonth": 15000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.002,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/optimize","pricePerCallUsdc": 0.003,"description": "Optimize endpoint"},
+        {"method": "POST","pathPattern": "/compare","pricePerCallUsdc": 0.005,"description": "Compare endpoint"},
+        {"method": "POST","pathPattern": "/keyword-intelligence","pricePerCallUsdc": 0.007,"description": "One-call keyword density, optimization plan, and competitor gap analysis"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.001,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/optimize","pricePerCallUsdc": 0.0015,"description": "Optimize endpoint"},
+        {"method": "POST","pathPattern": "/compare","pricePerCallUsdc": 0.0025,"description": "Compare endpoint"},
+        {"method": "POST","pathPattern": "/keyword-intelligence","pricePerCallUsdc": 0.0035,"description": "One-call keyword density, optimization plan, and competitor gap analysis"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/analyze","description": "Analyze endpoint"},
+      {"method": "POST","path": "/optimize","description": "Optimize endpoint"},
+      {"method": "POST","path": "/compare","description": "Compare endpoint"},
+      {"method": "POST","path": "/keyword-intelligence","description": "One-call keyword density, optimization plan, and competitor gap analysis"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "serp-snippet-preview",
+    "name": "SERP Snippet Preview API",
+    "shortDescription": "Preview and optimize SERP snippets",
+    "description": "Preview how a page appears in search results, check title and meta description truncation, score snippet quality, and generate optimization recommendations. Built for SEO agents, publishing workflows, and content QA systems.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/serp-snippet-preview",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/serp-snippet-preview/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/serp-snippet-preview/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/serp-snippet-preview/logo.png",
+    "tags": ["serp","seo","snippet","search-preview","metadata"],
+    "keywords": ["serp snippet preview","google search preview","title tag length checker","meta description preview","seo ctr score"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 500,"requestsPerMonth": 15000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/preview","pricePerCallUsdc": 0.002,"description": "Preview endpoint"},
+        {"method": "POST","pathPattern": "/optimize","pricePerCallUsdc": 0.004,"description": "Optimize endpoint"},
+        {"method": "POST","pathPattern": "/score","pricePerCallUsdc": 0.002,"description": "Score endpoint"},
+        {"method": "POST","pathPattern": "/serp-intelligence","pricePerCallUsdc": 0.007,"description": "One-call SERP preview, CTR score, and title/description optimization"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/preview","pricePerCallUsdc": 0.001,"description": "Preview endpoint"},
+        {"method": "POST","pathPattern": "/optimize","pricePerCallUsdc": 0.002,"description": "Optimize endpoint"},
+        {"method": "POST","pathPattern": "/score","pricePerCallUsdc": 0.001,"description": "Score endpoint"},
+        {"method": "POST","pathPattern": "/serp-intelligence","pricePerCallUsdc": 0.0035,"description": "One-call SERP preview, CTR score, and title/description optimization"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/preview","description": "Preview endpoint"},
+      {"method": "POST","path": "/optimize","description": "Optimize endpoint"},
+      {"method": "POST","path": "/score","description": "Score endpoint"},
+      {"method": "POST","path": "/serp-intelligence","description": "One-call SERP preview, CTR score, and title/description optimization"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "slug-generator",
+    "name": "Slug Generator API",
+    "shortDescription": "Generate and validate SEO-friendly slugs",
+    "description": "Generate, clean, validate, and batch-produce SEO-friendly URL slugs from titles or phrases. Supports transliteration, stop-word handling, deterministic validation, and lightweight orchestration workflows.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/slug-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/slug-generator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/slug-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/slug-generator/logo.png",
+    "tags": ["slug","seo","url","content","developer-tools"],
+    "keywords": ["slug generator api","seo url slug","validate url slug","batch slug generation","title to slug"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 2000,"requestsPerMonth": 60000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.001,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/validate","pricePerCallUsdc": 0.001,"description": "Validate endpoint"},
+        {"method": "POST","pathPattern": "/batch","pricePerCallUsdc": 0.005,"description": "Batch endpoint"},
+        {"method": "POST","pathPattern": "/slug-intelligence","pricePerCallUsdc": 0.003,"description": "One-call slug generation, validation, SEO score, and alternatives"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.0005,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/validate","pricePerCallUsdc": 0.0005,"description": "Validate endpoint"},
+        {"method": "POST","pathPattern": "/batch","pricePerCallUsdc": 0.0025,"description": "Batch endpoint"},
+        {"method": "POST","pathPattern": "/slug-intelligence","pricePerCallUsdc": 0.0015,"description": "One-call slug generation, validation, SEO score, and alternatives"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/generate","description": "Generate endpoint"},
+      {"method": "POST","path": "/validate","description": "Validate endpoint"},
+      {"method": "POST","path": "/batch","description": "Batch endpoint"},
+      {"method": "POST","path": "/slug-intelligence","description": "One-call slug generation, validation, SEO score, and alternatives"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "text-readability-score",
+    "name": "Text Readability Score API",
+    "shortDescription": "Score and simplify text readability",
+    "description": "Score text readability using multiple readability indices, analyze complex sentences, and generate simplification suggestions. Built for content agents, education tools, documentation workflows, and marketing QA systems.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/text-readability-score",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/text-readability-score/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/text-readability-score/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/text-readability-score/logo.png",
+    "tags": ["readability","text-analysis","content","writing","nlp"],
+    "keywords": ["readability score api","flesch kincaid score","text simplification","reading grade level","content readability checker"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 1000,"requestsPerMonth": 30000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/score","pricePerCallUsdc": 0.001,"description": "Score endpoint"},
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.003,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/simplify","pricePerCallUsdc": 0.004,"description": "Simplify endpoint"},
+        {"method": "POST","pathPattern": "/readability-intelligence","pricePerCallUsdc": 0.006,"description": "One-call readability score, sentence analysis, and simplification plan"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/score","pricePerCallUsdc": 0.0005,"description": "Score endpoint"},
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.0015,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/simplify","pricePerCallUsdc": 0.002,"description": "Simplify endpoint"},
+        {"method": "POST","pathPattern": "/readability-intelligence","pricePerCallUsdc": 0.003,"description": "One-call readability score, sentence analysis, and simplification plan"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/score","description": "Score endpoint"},
+      {"method": "POST","path": "/analyze","description": "Analyze endpoint"},
+      {"method": "POST","path": "/simplify","description": "Simplify endpoint"},
+      {"method": "POST","path": "/readability-intelligence","description": "One-call readability score, sentence analysis, and simplification plan"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "grammar-check-lite",
+    "name": "Grammar Check Lite API",
+    "shortDescription": "Lightweight grammar and style checking",
+    "description": "Check grammar, spelling, and writing style, return structured corrections, and generate improved text. Built for content agents, email workflows, publishing pipelines, and lightweight writing QA automation.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/grammar-check-lite",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/grammar-check-lite/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/grammar-check-lite/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/grammar-check-lite/logo.png",
+    "tags": ["grammar","spelling","writing","style","nlp","content"],
+    "keywords": ["grammar check api","spelling correction","writing style analysis","auto fix grammar","proofreading api"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 500,"requestsPerMonth": 15000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/check","pricePerCallUsdc": 0.002,"description": "Check endpoint"},
+        {"method": "POST","pathPattern": "/fix","pricePerCallUsdc": 0.003,"description": "Fix endpoint"},
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.003,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/grammar-intelligence","pricePerCallUsdc": 0.007,"description": "One-call grammar check, corrections, style score, and recommendations"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/check","pricePerCallUsdc": 0.001,"description": "Check endpoint"},
+        {"method": "POST","pathPattern": "/fix","pricePerCallUsdc": 0.0015,"description": "Fix endpoint"},
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.0015,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/grammar-intelligence","pricePerCallUsdc": 0.0035,"description": "One-call grammar check, corrections, style score, and recommendations"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/check","description": "Check endpoint"},
+      {"method": "POST","path": "/fix","description": "Fix endpoint"},
+      {"method": "POST","path": "/analyze","description": "Analyze endpoint"},
+      {"method": "POST","path": "/grammar-intelligence","description": "One-call grammar check, corrections, style score, and recommendations"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "emoji-sentiment",
+    "name": "Emoji Sentiment API",
+    "shortDescription": "Analyze emoji sentiment and meaning",
+    "description": "Analyze emoji sentiment, decode emoji meaning, and suggest context-appropriate emojis for social and messaging content. Built for social media agents, brand tone workflows, content generation, and engagement optimization.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/emoji-sentiment",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/emoji-sentiment/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/emoji-sentiment/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/emoji-sentiment/logo.png",
+    "tags": ["emoji","sentiment","social-media","content","nlp"],
+    "keywords": ["emoji sentiment api","decode emoji meaning","emoji suggestions","social sentiment emoji","emoji tone analysis"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 1000,"requestsPerMonth": 30000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.002,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/suggest","pricePerCallUsdc": 0.002,"description": "Suggest endpoint"},
+        {"method": "POST","pathPattern": "/decode","pricePerCallUsdc": 0.001,"description": "Decode endpoint"},
+        {"method": "POST","pathPattern": "/emoji-intelligence","pricePerCallUsdc": 0.005,"description": "One-call emoji sentiment analysis, decoding, and suggestions"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.001,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/suggest","pricePerCallUsdc": 0.001,"description": "Suggest endpoint"},
+        {"method": "POST","pathPattern": "/decode","pricePerCallUsdc": 0.0005,"description": "Decode endpoint"},
+        {"method": "POST","pathPattern": "/emoji-intelligence","pricePerCallUsdc": 0.0025,"description": "One-call emoji sentiment analysis, decoding, and suggestions"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/analyze","description": "Analyze endpoint"},
+      {"method": "POST","path": "/suggest","description": "Suggest endpoint"},
+      {"method": "POST","path": "/decode","description": "Decode endpoint"},
+      {"method": "POST","path": "/emoji-intelligence","description": "One-call emoji sentiment analysis, decoding, and suggestions"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "hashtag-generator",
+    "name": "Hashtag Generator API",
+    "shortDescription": "Generate and analyze social hashtags",
+    "description": "Generate relevant hashtags, analyze reach potential, identify trending overlap, and produce platform-aware hashtag strategies. Built for social media agents, campaign workflows, creator tools, and marketing automation.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/hashtag-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/hashtag-generator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/hashtag-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/hashtag-generator/logo.png",
+    "tags": ["hashtags","social-media","marketing","content","trends"],
+    "keywords": ["hashtag generator api","trending hashtags","social media hashtags","hashtag reach estimate","instagram hashtag strategy"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 500,"requestsPerMonth": 15000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.002,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.003,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/trending","pricePerCallUsdc": 0.003,"description": "Trending endpoint"},
+        {"method": "POST","pathPattern": "/hashtag-intelligence","pricePerCallUsdc": 0.007,"description": "One-call hashtag generation, trend overlap, reach estimate, and strategy"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.001,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/analyze","pricePerCallUsdc": 0.0015,"description": "Analyze endpoint"},
+        {"method": "POST","pathPattern": "/trending","pricePerCallUsdc": 0.0015,"description": "Trending endpoint"},
+        {"method": "POST","pathPattern": "/hashtag-intelligence","pricePerCallUsdc": 0.0035,"description": "One-call hashtag generation, trend overlap, reach estimate, and strategy"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/generate","description": "Generate endpoint"},
+      {"method": "POST","path": "/analyze","description": "Analyze endpoint"},
+      {"method": "POST","path": "/trending","description": "Trending endpoint"},
+      {"method": "POST","path": "/hashtag-intelligence","description": "One-call hashtag generation, trend overlap, reach estimate, and strategy"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "caption-generator",
+    "name": "Caption Generator API",
+    "shortDescription": "Generate platform-ready social captions",
+    "description": "Generate and optimize social media captions for posts, images, and videos with platform variants, hashtags, CTAs, and engagement-oriented recommendations. Built for social agents, content calendars, and campaign automation.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/caption-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/caption-generator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/caption-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/caption-generator/logo.png",
+    "tags": ["captions","social-media","content-generation","marketing","copywriting"],
+    "keywords": ["caption generator api","social media captions","instagram caption generator","linkedin post caption","tiktok caption ideas"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 300,"requestsPerMonth": 9000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.003,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/optimize","pricePerCallUsdc": 0.003,"description": "Optimize endpoint"},
+        {"method": "POST","pathPattern": "/batch","pricePerCallUsdc": 0.02,"description": "Batch endpoint"},
+        {"method": "POST","pathPattern": "/caption-intelligence","pricePerCallUsdc": 0.008,"description": "One-call caption generation, hashtags, CTAs, and platform variants"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.0015,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/optimize","pricePerCallUsdc": 0.0015,"description": "Optimize endpoint"},
+        {"method": "POST","pathPattern": "/batch","pricePerCallUsdc": 0.01,"description": "Batch endpoint"},
+        {"method": "POST","pathPattern": "/caption-intelligence","pricePerCallUsdc": 0.004,"description": "One-call caption generation, hashtags, CTAs, and platform variants"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/generate","description": "Generate endpoint"},
+      {"method": "POST","path": "/optimize","description": "Optimize endpoint"},
+      {"method": "POST","path": "/batch","description": "Batch endpoint"},
+      {"method": "POST","path": "/caption-intelligence","description": "One-call caption generation, hashtags, CTAs, and platform variants"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "cta-generator",
+    "name": "CTA Generator API",
+    "shortDescription": "Generate and score call-to-action copy",
+    "description": "Generate call-to-action copy, score conversion potential, and produce A/B test variants for landing pages, ads, emails, and buttons. Built for marketing agents, CRO workflows, and campaign optimization.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/cta-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/cta-generator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/cta-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/cta-generator/logo.png",
+    "tags": ["cta","copywriting","conversion","marketing","ab-testing"],
+    "keywords": ["cta generator api","call to action copy","button copy variants","ab test cta","conversion copy scoring"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 300,"requestsPerMonth": 9000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.003,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/score","pricePerCallUsdc": 0.002,"description": "Score endpoint"},
+        {"method": "POST","pathPattern": "/ab-variants","pricePerCallUsdc": 0.005,"description": "Generate A/B test variants"},
+        {"method": "POST","pathPattern": "/cta-intelligence","pricePerCallUsdc": 0.008,"description": "One-call CTA generation, score, A/B variants, and placement guide"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.0015,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/score","pricePerCallUsdc": 0.001,"description": "Score endpoint"},
+        {"method": "POST","pathPattern": "/ab-variants","pricePerCallUsdc": 0.0025,"description": "Generate A/B test variants"},
+        {"method": "POST","pathPattern": "/cta-intelligence","pricePerCallUsdc": 0.004,"description": "One-call CTA generation, score, A/B variants, and placement guide"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/generate","description": "Generate endpoint"},
+      {"method": "POST","path": "/score","description": "Score endpoint"},
+      {"method": "POST","path": "/ab-variants","description": "Generate A/B test variants"},
+      {"method": "POST","path": "/cta-intelligence","description": "One-call CTA generation, score, A/B variants, and placement guide"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  },
+  {
+    "slug": "subject-line-scorer",
+    "name": "Subject Line Scorer API",
+    "shortDescription": "Score and optimize email subject lines",
+    "description": "Score email subject lines for open-rate potential, detect spam triggers, optimize copy, and generate subject line variants. Built for email marketing agents, campaign QA, and lifecycle automation.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/subject-line-scorer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/subject-line-scorer/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/subject-line-scorer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/subject-line-scorer/logo.png",
+    "tags": ["email","subject-line","marketing","copywriting","deliverability"],
+    "keywords": ["subject line scorer","email subject optimizer","open rate score","spam trigger check","email subject generator"],
+    "tiers": [
+      {"name": "Free","isFree": true,"requestsPerDay": 500,"requestsPerMonth": 15000},
+      {"name": "Pay Per Call","isFree": false,"pricingType": "per_call","pricePerCall": 0.001,"requestsPerDay": 50000,"requestsPerMonth": 1500000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/score","pricePerCallUsdc": 0.001,"description": "Score endpoint"},
+        {"method": "POST","pathPattern": "/optimize","pricePerCallUsdc": 0.003,"description": "Optimize endpoint"},
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.003,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/subject-intelligence","pricePerCallUsdc": 0.006,"description": "One-call subject-line score, optimization, variants, and spam check"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.001,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]},
+      {"name": "High Volume","isFree": false,"pricingType": "per_call","pricePerCall": 0.0005,"requestsPerDay": 500000,"requestsPerMonth": 15000000,"endpointPricing": [
+        {"method": "POST","pathPattern": "/score","pricePerCallUsdc": 0.0005,"description": "Score endpoint"},
+        {"method": "POST","pathPattern": "/optimize","pricePerCallUsdc": 0.0015,"description": "Optimize endpoint"},
+        {"method": "POST","pathPattern": "/generate","pricePerCallUsdc": 0.0015,"description": "Generate endpoint"},
+        {"method": "POST","pathPattern": "/subject-intelligence","pricePerCallUsdc": 0.003,"description": "One-call subject-line score, optimization, variants, and spam check"},
+        {"method": "POST","pathPattern": "/execution-gate","pricePerCallUsdc": 0.0005,"description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]}
+    ],
+    "endpoints": [
+      {"method": "GET","path": "/","description": "API discovery and capability metadata"},
+      {"method": "POST","path": "/score","description": "Score endpoint"},
+      {"method": "POST","path": "/optimize","description": "Optimize endpoint"},
+      {"method": "POST","path": "/generate","description": "Generate endpoint"},
+      {"method": "POST","path": "/subject-intelligence","description": "One-call subject-line score, optimization, variants, and spam check"},
+      {"method": "POST","path": "/execution-gate","description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+    ]
+  }
+]

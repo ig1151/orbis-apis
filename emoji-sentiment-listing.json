@@ -1,99 +1,147 @@
 [
   {
     "name": "Emoji Sentiment API",
-    "shortDescription": "Analyze the emotional sentiment of emoji usage in text, decode emoji meaning, and suggest contextual",
-    "description": "Analyze the emotional sentiment of emoji usage in text, decode emoji meaning, and suggest contextually appropriate emojis for content.",
-    "category": "content-intelligence",
+    "shortDescription": "Analyze emoji sentiment and meaning",
+    "description": "Analyze emoji sentiment, decode emoji meaning, and suggest context-appropriate emojis for social and messaging content. Built for social media agents, brand tone workflows, content generation, and engagement optimization.",
+    "category": "ai-ml",
     "baseUrl": "https://orbis-apis.onrender.com/emoji-sentiment",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/emoji-sentiment/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/emoji-sentiment/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/emoji-sentiment/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/emoji-sentiment/logo.png",
     "tags": [
       "emoji",
       "sentiment",
-      "emotion",
-      "text-analysis",
-      "social-media"
+      "social-media",
+      "content",
+      "nlp"
+    ],
+    "keywords": [
+      "emoji sentiment api",
+      "decode emoji meaning",
+      "emoji suggestions",
+      "social sentiment emoji",
+      "emoji tone analysis"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 1000
+        "requestsPerDay": 1000,
+        "requestsPerMonth": 30000
       },
       {
-        "name": "Emoji Sentiment Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.005,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/analyze",
             "pricePerCallUsdc": 0.002,
-            "description": "Analyze emoji sentiment and emotional tone in text"
+            "description": "Analyze endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/suggest",
             "pricePerCallUsdc": 0.002,
-            "description": "Suggest relevant emojis for a given text or topic"
+            "description": "Suggest endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/decode",
             "pricePerCallUsdc": 0.001,
-            "description": "Decode emoji meanings and cultural context"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Decode endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/emoji-intelligence",
             "pricePerCallUsdc": 0.005,
-            "description": "ONE-CALL: sentiment analysis + suggestions + emotional profile"
+            "description": "One-call emoji sentiment analysis, decoding, and suggestions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.001,
+            "description": "Analyze endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/suggest",
+            "pricePerCallUsdc": 0.001,
+            "description": "Suggest endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/decode",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Decode endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/emoji-intelligence",
+            "pricePerCallUsdc": 0.0025,
+            "description": "One-call emoji sentiment analysis, decoding, and suggestions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/analyze",
-        "description": "Analyze emoji sentiment and emotional tone in text"
+        "description": "Analyze endpoint"
       },
       {
         "method": "POST",
         "path": "/suggest",
-        "description": "Suggest relevant emojis for a given text or topic"
+        "description": "Suggest endpoint"
       },
       {
         "method": "POST",
         "path": "/decode",
-        "description": "Decode emoji meanings and cultural context"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Decode endpoint"
       },
       {
         "method": "POST",
         "path": "/emoji-intelligence",
-        "description": "ONE-CALL: sentiment analysis + suggestions + emotional profile"
+        "description": "One-call emoji sentiment analysis, decoding, and suggestions"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "emoji sentiment analysis",
-      "emoji meaning decoder",
-      "emoji suggestion api",
-      "text emoji analyzer",
-      "emotional tone emoji"
     ]
   }
 ]

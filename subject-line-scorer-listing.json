@@ -1,99 +1,147 @@
 [
   {
     "name": "Subject Line Scorer API",
-    "shortDescription": "Score email subject lines for open rate potential using sentiment, urgency, personalization, and spa",
-    "description": "Score email subject lines for open rate potential using sentiment, urgency, personalization, and spam trigger analysis. Generate optimized alternatives.",
-    "category": "marketing-copy",
+    "shortDescription": "Score and optimize email subject lines",
+    "description": "Score email subject lines for open-rate potential, detect spam triggers, optimize copy, and generate subject line variants. Built for email marketing agents, campaign QA, and lifecycle automation.",
+    "category": "ai-ml",
     "baseUrl": "https://orbis-apis.onrender.com/subject-line-scorer",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/subject-line-scorer/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/subject-line-scorer/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/subject-line-scorer/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/subject-line-scorer/logo.png",
     "tags": [
       "email",
       "subject-line",
-      "open-rate",
       "marketing",
-      "copywriting"
+      "copywriting",
+      "deliverability"
+    ],
+    "keywords": [
+      "subject line scorer",
+      "email subject optimizer",
+      "open rate score",
+      "spam trigger check",
+      "email subject generator"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 500
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
       },
       {
-        "name": "Subject Line Scorer Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.006,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/score",
             "pricePerCallUsdc": 0.001,
-            "description": "Score an email subject line for open rate potential"
+            "description": "Score endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/optimize",
             "pricePerCallUsdc": 0.003,
-            "description": "Get an optimized version of a subject line"
+            "description": "Optimize endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/generate",
             "pricePerCallUsdc": 0.003,
-            "description": "Generate high-performing subject line variants"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Generate endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/subject-intelligence",
             "pricePerCallUsdc": 0.006,
-            "description": "ONE-CALL: score + optimize + generate variants + spam check"
+            "description": "One-call subject-line score, optimization, variants, and spam check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Score endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Optimize endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Generate endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/subject-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call subject-line score, optimization, variants, and spam check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/score",
-        "description": "Score an email subject line for open rate potential"
+        "description": "Score endpoint"
       },
       {
         "method": "POST",
         "path": "/optimize",
-        "description": "Get an optimized version of a subject line"
+        "description": "Optimize endpoint"
       },
       {
         "method": "POST",
         "path": "/generate",
-        "description": "Generate high-performing subject line variants"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Generate endpoint"
       },
       {
         "method": "POST",
         "path": "/subject-intelligence",
-        "description": "ONE-CALL: score + optimize + generate variants + spam check"
+        "description": "One-call subject-line score, optimization, variants, and spam check"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "email subject line scorer",
-      "subject line optimizer",
-      "email open rate predictor",
-      "subject line generator",
-      "email copywriting api"
     ]
   }
 ]

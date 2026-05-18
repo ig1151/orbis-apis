@@ -1,99 +1,148 @@
 [
   {
     "name": "SSL Expiry Monitor API",
-    "shortDescription": "Monitor SSL certificate expiry dates, receive alerts before certificates expire, and track certifica",
-    "description": "Monitor SSL certificate expiry dates, receive alerts before certificates expire, and track certificate health across multiple domains.",
-    "category": "network-infrastructure",
+    "shortDescription": "Monitor SSL certificate expiry",
+    "description": "Check SSL certificate expiry, monitor multiple domains, generate renewal alerts, and assess downtime risk. Built for security agents, DevOps monitors, uptime systems, and certificate renewal workflows.",
+    "category": "security",
     "baseUrl": "https://orbis-apis.onrender.com/ssl-expiry-monitor",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/ssl-expiry-monitor/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/ssl-expiry-monitor/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/ssl-expiry-monitor/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/ssl-expiry-monitor/logo.png",
     "tags": [
       "ssl",
+      "tls",
       "certificate",
-      "expiry",
+      "security",
       "monitoring",
-      "https"
+      "devops"
+    ],
+    "keywords": [
+      "ssl expiry monitor",
+      "certificate expiration api",
+      "tls certificate checker",
+      "ssl renewal alert",
+      "domain certificate status"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 500
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
       },
       {
-        "name": "SSL Expiry Monitor Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.005,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/check",
             "pricePerCallUsdc": 0.001,
-            "description": "Check SSL certificate expiry for a domain"
+            "description": "Check endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/monitor",
             "pricePerCallUsdc": 0.005,
-            "description": "Monitor multiple domains for upcoming expirations"
+            "description": "Monitor endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/alert",
             "pricePerCallUsdc": 0.003,
-            "description": "Generate expiry alert with days remaining and renewal steps"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Alert endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/ssl-expiry-intelligence",
             "pricePerCallUsdc": 0.005,
-            "description": "ONE-CALL: expiry check + renewal urgency + action plan"
+            "description": "One-call SSL expiry check, urgency assessment, and renewal action plan"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Monitor endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/alert",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Alert endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ssl-expiry-intelligence",
+            "pricePerCallUsdc": 0.0025,
+            "description": "One-call SSL expiry check, urgency assessment, and renewal action plan"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/check",
-        "description": "Check SSL certificate expiry for a domain"
+        "description": "Check endpoint"
       },
       {
         "method": "POST",
         "path": "/monitor",
-        "description": "Monitor multiple domains for upcoming expirations"
+        "description": "Monitor endpoint"
       },
       {
         "method": "POST",
         "path": "/alert",
-        "description": "Generate expiry alert with days remaining and renewal steps"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Alert endpoint"
       },
       {
         "method": "POST",
         "path": "/ssl-expiry-intelligence",
-        "description": "ONE-CALL: expiry check + renewal urgency + action plan"
+        "description": "One-call SSL expiry check, urgency assessment, and renewal action plan"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "ssl expiry checker",
-      "certificate monitor",
-      "ssl renewal alert",
-      "https certificate check",
-      "domain ssl status"
     ]
   }
 ]

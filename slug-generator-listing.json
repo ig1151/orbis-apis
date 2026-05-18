@@ -1,99 +1,147 @@
 [
   {
     "name": "Slug Generator API",
-    "shortDescription": "Generate SEO-friendly URL slugs from titles and text. Handle transliteration, stop-word removal, ded",
-    "description": "Generate SEO-friendly URL slugs from titles and text. Handle transliteration, stop-word removal, deduplication, and batch generation.",
-    "category": "content-intelligence",
+    "shortDescription": "Generate and validate SEO-friendly slugs",
+    "description": "Generate, clean, validate, and batch-produce SEO-friendly URL slugs from titles or phrases. Supports transliteration, stop-word handling, deterministic validation, and lightweight orchestration workflows.",
+    "category": "developer-tools",
     "baseUrl": "https://orbis-apis.onrender.com/slug-generator",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/slug-generator/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/slug-generator/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/slug-generator/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/slug-generator/logo.png",
     "tags": [
       "slug",
-      "url",
       "seo",
+      "url",
       "content",
-      "permalink"
+      "developer-tools"
+    ],
+    "keywords": [
+      "slug generator api",
+      "seo url slug",
+      "validate url slug",
+      "batch slug generation",
+      "title to slug"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 2000
+        "requestsPerDay": 2000,
+        "requestsPerMonth": 60000
       },
       {
-        "name": "Slug Generator Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.003,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/generate",
             "pricePerCallUsdc": 0.001,
-            "description": "Generate a URL slug from a title or phrase"
+            "description": "Generate endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/validate",
             "pricePerCallUsdc": 0.001,
-            "description": "Validate and clean an existing slug"
+            "description": "Validate endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/batch",
             "pricePerCallUsdc": 0.005,
-            "description": "Batch generate slugs for up to 50 titles"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Batch endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/slug-intelligence",
             "pricePerCallUsdc": 0.003,
-            "description": "ONE-CALL: generate + validate + SEO score + alternatives"
+            "description": "One-call slug generation, validation, SEO score, and alternatives"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Generate endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Validate endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Batch endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/slug-intelligence",
+            "pricePerCallUsdc": 0.0015,
+            "description": "One-call slug generation, validation, SEO score, and alternatives"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/generate",
-        "description": "Generate a URL slug from a title or phrase"
+        "description": "Generate endpoint"
       },
       {
         "method": "POST",
         "path": "/validate",
-        "description": "Validate and clean an existing slug"
+        "description": "Validate endpoint"
       },
       {
         "method": "POST",
         "path": "/batch",
-        "description": "Batch generate slugs for up to 50 titles"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Batch endpoint"
       },
       {
         "method": "POST",
         "path": "/slug-intelligence",
-        "description": "ONE-CALL: generate + validate + SEO score + alternatives"
+        "description": "One-call slug generation, validation, SEO score, and alternatives"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "url slug generator",
-      "seo slug maker",
-      "permalink generator",
-      "slug from title",
-      "url friendly text"
     ]
   }
 ]

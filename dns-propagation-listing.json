@@ -1,99 +1,149 @@
 [
   {
     "name": "DNS Propagation API",
-    "shortDescription": "Check DNS propagation status across global nameservers, track record updates, and verify propagation",
-    "description": "Check DNS propagation status across global nameservers, track record updates, and verify propagation completion after DNS changes.",
-    "category": "network-infrastructure",
+    "shortDescription": "Check DNS propagation globally",
+    "description": "Check DNS propagation across global resolver nodes, get status percentages, trace resolution paths, and verify DNS change completion. Designed for deployment agents, DevOps workflows, domain migration checks, and infrastructure monitoring with typed confidence and provenance.",
+    "category": "developer-tools",
     "baseUrl": "https://orbis-apis.onrender.com/dns-propagation",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/dns-propagation/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/dns-propagation/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/dns-propagation/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/dns-propagation/logo.png",
     "tags": [
       "dns",
+      "devops",
       "propagation",
-      "nameserver",
-      "network",
-      "infrastructure"
+      "domain",
+      "infrastructure",
+      "monitoring"
+    ],
+    "keywords": [
+      "dns propagation checker",
+      "global dns lookup",
+      "dns trace api",
+      "domain propagation status",
+      "dns record verification",
+      "nameserver propagation"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 500
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
       },
       {
-        "name": "DNS Propagation Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.006,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/check",
             "pricePerCallUsdc": 0.002,
-            "description": "Check DNS propagation status across global nodes"
+            "description": "Check endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/status",
             "pricePerCallUsdc": 0.002,
-            "description": "Get propagation percentage and regional breakdown"
+            "description": "Status endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/trace",
             "pricePerCallUsdc": 0.003,
-            "description": "Trace DNS resolution path"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Trace endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/propagation-intelligence",
             "pricePerCallUsdc": 0.006,
-            "description": "ONE-CALL: propagation check + status + resolution trace"
+            "description": "One-call DNS propagation check, status, and trace"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/status",
+            "pricePerCallUsdc": 0.001,
+            "description": "Status endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trace",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Trace endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/propagation-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call DNS propagation check, status, and trace"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/check",
-        "description": "Check DNS propagation status across global nodes"
+        "description": "Check endpoint"
       },
       {
         "method": "POST",
         "path": "/status",
-        "description": "Get propagation percentage and regional breakdown"
+        "description": "Status endpoint"
       },
       {
         "method": "POST",
         "path": "/trace",
-        "description": "Trace DNS resolution path"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Trace endpoint"
       },
       {
         "method": "POST",
         "path": "/propagation-intelligence",
-        "description": "ONE-CALL: propagation check + status + resolution trace"
+        "description": "One-call DNS propagation check, status, and trace"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "dns propagation checker",
-      "dns status check",
-      "nameserver propagation",
-      "dns update tracker",
-      "global dns check"
     ]
   }
 ]

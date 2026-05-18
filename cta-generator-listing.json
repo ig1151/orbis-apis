@@ -1,99 +1,147 @@
 [
   {
     "name": "CTA Generator API",
-    "shortDescription": "Generate high-converting call-to-action copy for landing pages, emails, ads, and buttons. Score CTAs",
-    "description": "Generate high-converting call-to-action copy for landing pages, emails, ads, and buttons. Score CTAs and generate A/B test variants.",
-    "category": "marketing-copy",
+    "shortDescription": "Generate and score call-to-action copy",
+    "description": "Generate call-to-action copy, score conversion potential, and produce A/B test variants for landing pages, ads, emails, and buttons. Built for marketing agents, CRO workflows, and campaign optimization.",
+    "category": "ai-ml",
     "baseUrl": "https://orbis-apis.onrender.com/cta-generator",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/cta-generator/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/cta-generator/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/cta-generator/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/cta-generator/logo.png",
     "tags": [
       "cta",
       "copywriting",
       "conversion",
       "marketing",
-      "landing-page"
+      "ab-testing"
+    ],
+    "keywords": [
+      "cta generator api",
+      "call to action copy",
+      "button copy variants",
+      "ab test cta",
+      "conversion copy scoring"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 300
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
       },
       {
-        "name": "CTA Generator Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.008,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/generate",
             "pricePerCallUsdc": 0.003,
-            "description": "Generate CTA copy for a use case and goal"
+            "description": "Generate endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/score",
             "pricePerCallUsdc": 0.002,
-            "description": "Score existing CTA conversion potential"
+            "description": "Score endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/ab-variants",
             "pricePerCallUsdc": 0.005,
-            "description": "Generate A/B test variants for a CTA"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Generate A/B test variants"
           },
           {
             "method": "POST",
             "pathPattern": "/cta-intelligence",
             "pricePerCallUsdc": 0.008,
-            "description": "ONE-CALL: generate + score + A/B variants + placement guide"
+            "description": "One-call CTA generation, score, A/B variants, and placement guide"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Generate endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Score endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ab-variants",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Generate A/B test variants"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cta-intelligence",
+            "pricePerCallUsdc": 0.004,
+            "description": "One-call CTA generation, score, A/B variants, and placement guide"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/generate",
-        "description": "Generate CTA copy for a use case and goal"
+        "description": "Generate endpoint"
       },
       {
         "method": "POST",
         "path": "/score",
-        "description": "Score existing CTA conversion potential"
+        "description": "Score endpoint"
       },
       {
         "method": "POST",
         "path": "/ab-variants",
-        "description": "Generate A/B test variants for a CTA"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Generate A/B test variants"
       },
       {
         "method": "POST",
         "path": "/cta-intelligence",
-        "description": "ONE-CALL: generate + score + A/B variants + placement guide"
+        "description": "One-call CTA generation, score, A/B variants, and placement guide"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "cta generator api",
-      "call to action writer",
-      "conversion copy generator",
-      "button text generator",
-      "cta a/b testing"
     ]
   }
 ]

@@ -1,99 +1,147 @@
 [
   {
     "name": "Caption Generator API",
-    "shortDescription": "Generate engaging social media captions for posts, images, and videos. Optimize tone, length, and CT",
-    "description": "Generate engaging social media captions for posts, images, and videos. Optimize tone, length, and CTAs for Instagram, LinkedIn, Twitter, and TikTok.",
-    "category": "social-media",
+    "shortDescription": "Generate platform-ready social captions",
+    "description": "Generate and optimize social media captions for posts, images, and videos with platform variants, hashtags, CTAs, and engagement-oriented recommendations. Built for social agents, content calendars, and campaign automation.",
+    "category": "ai-ml",
     "baseUrl": "https://orbis-apis.onrender.com/caption-generator",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/caption-generator/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/caption-generator/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/caption-generator/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/caption-generator/logo.png",
     "tags": [
-      "caption",
+      "captions",
       "social-media",
-      "instagram",
-      "content-creation",
+      "content-generation",
+      "marketing",
       "copywriting"
+    ],
+    "keywords": [
+      "caption generator api",
+      "social media captions",
+      "instagram caption generator",
+      "linkedin post caption",
+      "tiktok caption ideas"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 300
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
       },
       {
-        "name": "Caption Generator Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.008,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/generate",
             "pricePerCallUsdc": 0.003,
-            "description": "Generate captions for a topic, image, or context"
+            "description": "Generate endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/optimize",
             "pricePerCallUsdc": 0.003,
-            "description": "Optimize an existing caption for engagement"
+            "description": "Optimize endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/batch",
             "pricePerCallUsdc": 0.02,
-            "description": "Batch generate captions for up to 10 pieces of content"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Batch endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/caption-intelligence",
             "pricePerCallUsdc": 0.008,
-            "description": "ONE-CALL: generate + hashtags + CTAs + platform variants"
+            "description": "One-call caption generation, hashtags, CTAs, and platform variants"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Generate endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Optimize endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.01,
+            "description": "Batch endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/caption-intelligence",
+            "pricePerCallUsdc": 0.004,
+            "description": "One-call caption generation, hashtags, CTAs, and platform variants"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/generate",
-        "description": "Generate captions for a topic, image, or context"
+        "description": "Generate endpoint"
       },
       {
         "method": "POST",
         "path": "/optimize",
-        "description": "Optimize an existing caption for engagement"
+        "description": "Optimize endpoint"
       },
       {
         "method": "POST",
         "path": "/batch",
-        "description": "Batch generate captions for up to 10 pieces of content"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Batch endpoint"
       },
       {
         "method": "POST",
         "path": "/caption-intelligence",
-        "description": "ONE-CALL: generate + hashtags + CTAs + platform variants"
+        "description": "One-call caption generation, hashtags, CTAs, and platform variants"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "social media caption generator",
-      "instagram caption api",
-      "post caption creator",
-      "ai caption writer",
-      "content caption tool"
     ]
   }
 ]

@@ -1,99 +1,147 @@
 [
   {
     "name": "Hashtag Generator API",
-    "shortDescription": "Generate high-performing hashtags for social media posts. Analyze trending hashtags, estimate reach,",
-    "description": "Generate high-performing hashtags for social media posts. Analyze trending hashtags, estimate reach, and optimize for platform-specific algorithms.",
-    "category": "social-media",
+    "shortDescription": "Generate and analyze social hashtags",
+    "description": "Generate relevant hashtags, analyze reach potential, identify trending overlap, and produce platform-aware hashtag strategies. Built for social media agents, campaign workflows, creator tools, and marketing automation.",
+    "category": "ai-ml",
     "baseUrl": "https://orbis-apis.onrender.com/hashtag-generator",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/hashtag-generator/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/hashtag-generator/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/hashtag-generator/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/hashtag-generator/logo.png",
     "tags": [
-      "hashtag",
+      "hashtags",
       "social-media",
-      "instagram",
-      "twitter",
-      "content-strategy"
+      "marketing",
+      "content",
+      "trends"
+    ],
+    "keywords": [
+      "hashtag generator api",
+      "trending hashtags",
+      "social media hashtags",
+      "hashtag reach estimate",
+      "instagram hashtag strategy"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 500
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
       },
       {
-        "name": "Hashtag Generator Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.007,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/generate",
             "pricePerCallUsdc": 0.002,
-            "description": "Generate relevant hashtags for a topic or post"
+            "description": "Generate endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/analyze",
             "pricePerCallUsdc": 0.003,
-            "description": "Analyze hashtag performance and reach"
+            "description": "Analyze endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/trending",
             "pricePerCallUsdc": 0.003,
-            "description": "Get currently trending hashtags by category"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Trending endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/hashtag-intelligence",
             "pricePerCallUsdc": 0.007,
-            "description": "ONE-CALL: generate + trending overlap + reach estimate + strategy"
+            "description": "One-call hashtag generation, trend overlap, reach estimate, and strategy"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Generate endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Trending endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/hashtag-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "One-call hashtag generation, trend overlap, reach estimate, and strategy"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/generate",
-        "description": "Generate relevant hashtags for a topic or post"
+        "description": "Generate endpoint"
       },
       {
         "method": "POST",
         "path": "/analyze",
-        "description": "Analyze hashtag performance and reach"
+        "description": "Analyze endpoint"
       },
       {
         "method": "POST",
         "path": "/trending",
-        "description": "Get currently trending hashtags by category"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Trending endpoint"
       },
       {
         "method": "POST",
         "path": "/hashtag-intelligence",
-        "description": "ONE-CALL: generate + trending overlap + reach estimate + strategy"
+        "description": "One-call hashtag generation, trend overlap, reach estimate, and strategy"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "hashtag generator api",
-      "trending hashtags",
-      "instagram hashtags api",
-      "social media hashtags",
-      "hashtag reach analyzer"
     ]
   }
 ]

@@ -1,99 +1,148 @@
 [
   {
     "name": "Browser Compatibility API",
-    "shortDescription": "Check CSS, JavaScript, and HTML feature compatibility across browsers and versions using Can I Use d",
-    "description": "Check CSS, JavaScript, and HTML feature compatibility across browsers and versions using Can I Use data. Get polyfill recommendations.",
+    "shortDescription": "Check browser feature compatibility",
+    "description": "Check CSS, JavaScript, and HTML feature compatibility across browsers, generate support reports, and recommend polyfills. Built for frontend agents, CI/CD QA workflows, developer tooling, and web compatibility automation.",
     "category": "developer-tools",
     "baseUrl": "https://orbis-apis.onrender.com/browser-compatibility",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/browser-compatibility/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/browser-compatibility/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/browser-compatibility/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/browser-compatibility/logo.png",
     "tags": [
       "browser-compatibility",
-      "can-i-use",
-      "polyfill",
+      "frontend",
+      "polyfills",
+      "javascript",
       "css",
-      "javascript"
+      "developer-tools"
+    ],
+    "keywords": [
+      "browser compatibility check",
+      "can i use api",
+      "css feature support",
+      "javascript polyfill recommendation",
+      "frontend compatibility report"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 1000
+        "requestsPerDay": 1000,
+        "requestsPerMonth": 30000
       },
       {
-        "name": "Browser Compatibility Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.006,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/check",
             "pricePerCallUsdc": 0.001,
-            "description": "Check feature compatibility across browsers"
+            "description": "Check endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/polyfills",
             "pricePerCallUsdc": 0.003,
-            "description": "Get polyfill recommendations for unsupported features"
+            "description": "Polyfills endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/report",
             "pricePerCallUsdc": 0.005,
-            "description": "Generate full browser support report for a URL"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Report endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/compat-intelligence",
             "pricePerCallUsdc": 0.006,
-            "description": "ONE-CALL: compatibility check + polyfill plan + support matrix"
+            "description": "One-call compatibility analysis, support matrix, and polyfill plan"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/polyfills",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Polyfills endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/report",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Report endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compat-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call compatibility analysis, support matrix, and polyfill plan"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/check",
-        "description": "Check feature compatibility across browsers"
+        "description": "Check endpoint"
       },
       {
         "method": "POST",
         "path": "/polyfills",
-        "description": "Get polyfill recommendations for unsupported features"
+        "description": "Polyfills endpoint"
       },
       {
         "method": "POST",
         "path": "/report",
-        "description": "Generate full browser support report for a URL"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Report endpoint"
       },
       {
         "method": "POST",
         "path": "/compat-intelligence",
-        "description": "ONE-CALL: compatibility check + polyfill plan + support matrix"
+        "description": "One-call compatibility analysis, support matrix, and polyfill plan"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "browser compatibility check",
-      "can i use api",
-      "polyfill generator",
-      "css support checker",
-      "js feature compatibility"
     ]
   }
 ]

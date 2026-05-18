@@ -1,99 +1,149 @@
 [
   {
     "name": "Meta Tags Extractor API",
-    "shortDescription": "Extract, validate, and analyze HTML meta tags including title, description, keywords, Open Graph, Tw",
-    "description": "Extract, validate, and analyze HTML meta tags including title, description, keywords, Open Graph, Twitter Card, and canonical tags from any URL.",
-    "category": "web-seo",
+    "shortDescription": "Extract and audit webpage meta tags",
+    "description": "Extract, validate, and analyze HTML meta tags from any URL, including title, description, canonical, robots, Open Graph, and Twitter Card metadata. Built for SEO agents, website auditors, content pipelines, and orchestration workflows that need deterministic page metadata with confidence, provenance, cache hints, and execution-gate support.",
+    "category": "data-analytics",
     "baseUrl": "https://orbis-apis.onrender.com/meta-tags-extractor",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/meta-tags-extractor/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/meta-tags-extractor/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/meta-tags-extractor/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/meta-tags-extractor/logo.png",
     "tags": [
-      "meta-tags",
       "seo",
+      "metadata",
       "html",
       "open-graph",
-      "web-scraping"
+      "twitter-card",
+      "web-audit"
+    ],
+    "keywords": [
+      "extract meta tags",
+      "seo metadata api",
+      "open graph tags",
+      "twitter card metadata",
+      "canonical tag checker",
+      "webpage metadata extraction"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 500
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
       },
       {
-        "name": "Meta Tags Extractor Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.006,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/extract",
             "pricePerCallUsdc": 0.002,
-            "description": "Extract all meta tags from a URL"
+            "description": "Extract endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/validate",
             "pricePerCallUsdc": 0.002,
-            "description": "Validate meta tags for SEO best practices"
+            "description": "Validate endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/batch",
             "pricePerCallUsdc": 0.015,
-            "description": "Batch extract meta tags from up to 20 URLs"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Batch endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/meta-intelligence",
             "pricePerCallUsdc": 0.006,
-            "description": "ONE-CALL: full meta tag audit \u2014 extract + validate + SEO score"
+            "description": "One-call meta tag extraction, validation, and SEO audit"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.001,
+            "description": "Extract endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.0075,
+            "description": "Batch endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/meta-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call meta tag extraction, validation, and SEO audit"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/extract",
-        "description": "Extract all meta tags from a URL"
+        "description": "Extract endpoint"
       },
       {
         "method": "POST",
         "path": "/validate",
-        "description": "Validate meta tags for SEO best practices"
+        "description": "Validate endpoint"
       },
       {
         "method": "POST",
         "path": "/batch",
-        "description": "Batch extract meta tags from up to 20 URLs"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Batch endpoint"
       },
       {
         "method": "POST",
         "path": "/meta-intelligence",
-        "description": "ONE-CALL: full meta tag audit \u2014 extract + validate + SEO score"
+        "description": "One-call meta tag extraction, validation, and SEO audit"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "extract meta tags",
-      "html meta scraper",
-      "seo meta analyzer",
-      "og tags extractor",
-      "page metadata"
     ]
   }
 ]

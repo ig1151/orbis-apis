@@ -1,99 +1,147 @@
 [
   {
     "name": "Text Readability Score API",
-    "shortDescription": "Score text readability using Flesch-Kincaid, Gunning Fog, SMOG, and Coleman-Liau indices. Identify c",
-    "description": "Score text readability using Flesch-Kincaid, Gunning Fog, SMOG, and Coleman-Liau indices. Identify complex sentences and suggest simplifications.",
-    "category": "content-intelligence",
+    "shortDescription": "Score and simplify text readability",
+    "description": "Score text readability using multiple readability indices, analyze complex sentences, and generate simplification suggestions. Built for content agents, education tools, documentation workflows, and marketing QA systems.",
+    "category": "data-analytics",
     "baseUrl": "https://orbis-apis.onrender.com/text-readability-score",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/text-readability-score/openapi.json",
+    "docsUrl": "https://orbis-apis.onrender.com/text-readability-score/docs",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/text-readability-score/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/text-readability-score/logo.png",
     "tags": [
       "readability",
-      "flesch-kincaid",
       "text-analysis",
       "content",
-      "writing"
+      "writing",
+      "nlp"
+    ],
+    "keywords": [
+      "readability score api",
+      "flesch kincaid score",
+      "text simplification",
+      "reading grade level",
+      "content readability checker"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 1000
+        "requestsPerDay": 1000,
+        "requestsPerMonth": 30000
       },
       {
-        "name": "Text Readability Score Pro",
+        "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.006,
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/score",
             "pricePerCallUsdc": 0.001,
-            "description": "Score text readability across multiple indices"
+            "description": "Score endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/analyze",
             "pricePerCallUsdc": 0.003,
-            "description": "Analyze complex sentences and vocabulary"
+            "description": "Analyze endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/simplify",
             "pricePerCallUsdc": 0.004,
-            "description": "Get simplification suggestions for complex passages"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check"
+            "description": "Simplify endpoint"
           },
           {
             "method": "POST",
             "pathPattern": "/readability-intelligence",
             "pricePerCallUsdc": 0.006,
-            "description": "ONE-CALL: score + sentence analysis + simplification plan"
+            "description": "One-call readability score, sentence analysis, and simplification plan"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Score endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/simplify",
+            "pricePerCallUsdc": 0.002,
+            "description": "Simplify endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/readability-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call readability score, sentence analysis, and simplification plan"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
           }
         ]
       }
     ],
     "endpoints": [
       {
+        "method": "GET",
+        "path": "/",
+        "description": "API discovery and capability metadata"
+      },
+      {
         "method": "POST",
         "path": "/score",
-        "description": "Score text readability across multiple indices"
+        "description": "Score endpoint"
       },
       {
         "method": "POST",
         "path": "/analyze",
-        "description": "Analyze complex sentences and vocabulary"
+        "description": "Analyze endpoint"
       },
       {
         "method": "POST",
         "path": "/simplify",
-        "description": "Get simplification suggestions for complex passages"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check"
+        "description": "Simplify endpoint"
       },
       {
         "method": "POST",
         "path": "/readability-intelligence",
-        "description": "ONE-CALL: score + sentence analysis + simplification plan"
+        "description": "One-call readability score, sentence analysis, and simplification plan"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
       }
-    ],
-    "keywords": [
-      "text readability score",
-      "flesch kincaid api",
-      "reading level checker",
-      "content readability analyzer",
-      "text complexity score"
     ]
   }
 ]
