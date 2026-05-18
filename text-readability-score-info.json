@@ -1,0 +1,40 @@
+{
+  "name": "Text Readability Score API",
+  "slug": "text-readability-score",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 1000
+    },
+    "pay_per_call": {
+      "score": "$0.001",
+      "analyze": "$0.003",
+      "simplify": "$0.004",
+      "execution-gate": "$0.001",
+      "readability-intelligence": "$0.006"
+    }
+  },
+  "rate_limits": {
+    "free": "1000/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "score",
+    "analyze",
+    "simplify",
+    "execution-gate",
+    "readability-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/readability-intelligence",
+    "fallback": "/score",
+    "batch_endpoint": "/score"
+  }
+}

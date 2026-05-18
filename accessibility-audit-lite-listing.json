@@ -1,0 +1,99 @@
+[
+  {
+    "name": "Accessibility Audit Lite API",
+    "shortDescription": "Run WCAG 2.1 accessibility checks on any URL or HTML snippet. Identify issues, score compliance leve",
+    "description": "Run WCAG 2.1 accessibility checks on any URL or HTML snippet. Identify issues, score compliance level, and get fix suggestions.",
+    "category": "web-seo",
+    "baseUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/accessibility-audit-lite/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "accessibility",
+      "wcag",
+      "a11y",
+      "compliance",
+      "web-audit"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200
+      },
+      {
+        "name": "Accessibility Audit Lite Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/audit",
+            "pricePerCallUsdc": 0.005,
+            "description": "Run WCAG 2.1 accessibility audit on a URL"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get accessibility compliance score (A, AA, AAA)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/fix-suggestions",
+            "pricePerCallUsdc": 0.004,
+            "description": "Get prioritized fix recommendations for issues"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/accessibility-intelligence",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL: full audit + score + remediation checklist"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/audit",
+        "description": "Run WCAG 2.1 accessibility audit on a URL"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Get accessibility compliance score (A, AA, AAA)"
+      },
+      {
+        "method": "POST",
+        "path": "/fix-suggestions",
+        "description": "Get prioritized fix recommendations for issues"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/accessibility-intelligence",
+        "description": "ONE-CALL: full audit + score + remediation checklist"
+      }
+    ],
+    "keywords": [
+      "wcag accessibility check",
+      "a11y audit api",
+      "website accessibility score",
+      "accessibility compliance test",
+      "aria checker"
+    ]
+  }
+]

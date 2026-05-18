@@ -1,0 +1,228 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CTA Generator API",
+    "version": "1.0.0",
+    "description": "Generate high-converting call-to-action copy for landing pages, emails, ads, and buttons. Score CTAs and generate A/B test variants.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 300
+      },
+      "pay_per_call": {
+        "generate": "$0.003",
+        "score": "$0.002",
+        "ab-variants": "$0.005",
+        "execution-gate": "$0.001",
+        "cta-intelligence": "$0.008"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/cta-generator"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/generate": {
+      "post": {
+        "operationId": "generate",
+        "summary": "Generate CTA copy for a use case and goal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generate CTA copy for a use case and goal"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/score": {
+      "post": {
+        "operationId": "score",
+        "summary": "Score existing CTA conversion potential",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Score existing CTA conversion potential"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/ab-variants": {
+      "post": {
+        "operationId": "abVariants",
+        "summary": "Generate A/B test variants for a CTA",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generate A/B test variants for a CTA"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result"
+          }
+        }
+      }
+    },
+    "/cta-intelligence": {
+      "post": {
+        "operationId": "ctaIntelligence",
+        "summary": "ONE-CALL: generate + score + A/B variants + placement guide",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full intelligence"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

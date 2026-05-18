@@ -1,0 +1,40 @@
+{
+  "name": "Website Carbon Footprint API",
+  "slug": "website-carbon-footprint",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 300
+    },
+    "pay_per_call": {
+      "estimate": "$0.002",
+      "benchmark": "$0.003",
+      "optimize": "$0.004",
+      "execution-gate": "$0.001",
+      "carbon-intelligence": "$0.007"
+    }
+  },
+  "rate_limits": {
+    "free": "300/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "estimate",
+    "benchmark",
+    "optimize",
+    "execution-gate",
+    "carbon-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/carbon-intelligence",
+    "fallback": "/estimate",
+    "batch_endpoint": "/estimate"
+  }
+}

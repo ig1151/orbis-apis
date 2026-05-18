@@ -1,0 +1,99 @@
+[
+  {
+    "name": "App Store Lookup API",
+    "shortDescription": "Look up iOS and Android app metadata, ratings, reviews, and competitor analysis. Supports Apple App ",
+    "description": "Look up iOS and Android app metadata, ratings, reviews, and competitor analysis. Supports Apple App Store and Google Play Store.",
+    "category": "market-intelligence",
+    "baseUrl": "https://orbis-apis.onrender.com/app-store-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/app-store-lookup/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/app-store-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "app-store",
+      "google-play",
+      "mobile-apps",
+      "reviews",
+      "market-research"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200
+      },
+      {
+        "name": "App Store Lookup Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.003,
+            "description": "Look up app details by ID or name"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/reviews",
+            "pricePerCallUsdc": 0.005,
+            "description": "Fetch recent app reviews and sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/similar",
+            "pricePerCallUsdc": 0.004,
+            "description": "Find similar apps for competitive analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/app-intelligence",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL: lookup + reviews + competitive landscape"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Look up app details by ID or name"
+      },
+      {
+        "method": "POST",
+        "path": "/reviews",
+        "description": "Fetch recent app reviews and sentiment"
+      },
+      {
+        "method": "POST",
+        "path": "/similar",
+        "description": "Find similar apps for competitive analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/app-intelligence",
+        "description": "ONE-CALL: lookup + reviews + competitive landscape"
+      }
+    ],
+    "keywords": [
+      "app store lookup",
+      "google play api",
+      "mobile app metadata",
+      "app reviews api",
+      "competitor app analysis"
+    ]
+  }
+]

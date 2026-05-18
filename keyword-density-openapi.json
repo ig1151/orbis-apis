@@ -1,0 +1,228 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Keyword Density API",
+    "version": "1.0.0",
+    "description": "Analyze keyword frequency, density, and distribution in text or web pages. Compare against SEO best practices and competitor pages.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 500
+      },
+      "pay_per_call": {
+        "analyze": "$0.002",
+        "optimize": "$0.003",
+        "compare": "$0.005",
+        "execution-gate": "$0.001",
+        "keyword-intelligence": "$0.007"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/keyword-density"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "Analyze keyword density and frequency in text",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Analyze keyword density and frequency in text"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/optimize": {
+      "post": {
+        "operationId": "optimize",
+        "summary": "Get keyword optimization recommendations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get keyword optimization recommendations"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/compare": {
+      "post": {
+        "operationId": "compare",
+        "summary": "Compare keyword density against a competitor URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Compare keyword density against a competitor URL"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result"
+          }
+        }
+      }
+    },
+    "/keyword-intelligence": {
+      "post": {
+        "operationId": "keywordIntelligence",
+        "summary": "ONE-CALL: density analysis + optimization plan + competitor gap",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full intelligence"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

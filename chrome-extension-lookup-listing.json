@@ -1,0 +1,99 @@
+[
+  {
+    "name": "Chrome Extension Lookup API",
+    "shortDescription": "Retrieve Chrome Web Store extension metadata, user counts, ratings, permissions, and security analys",
+    "description": "Retrieve Chrome Web Store extension metadata, user counts, ratings, permissions, and security analysis for browser extension intelligence.",
+    "category": "market-intelligence",
+    "baseUrl": "https://orbis-apis.onrender.com/chrome-extension-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/chrome-extension-lookup/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/chrome-extension-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "chrome-extension",
+      "browser-extension",
+      "web-store",
+      "security",
+      "permissions"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300
+      },
+      {
+        "name": "Chrome Extension Lookup Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.002,
+            "description": "Look up extension by ID or name"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.004,
+            "description": "Analyze extension permissions and security risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/similar",
+            "pricePerCallUsdc": 0.003,
+            "description": "Find similar extensions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extension-intelligence",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: lookup + security analysis + alternatives"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Look up extension by ID or name"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze extension permissions and security risk"
+      },
+      {
+        "method": "POST",
+        "path": "/similar",
+        "description": "Find similar extensions"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/extension-intelligence",
+        "description": "ONE-CALL: lookup + security analysis + alternatives"
+      }
+    ],
+    "keywords": [
+      "chrome extension lookup",
+      "web store api",
+      "extension permissions check",
+      "browser plugin analysis",
+      "extension security scan"
+    ]
+  }
+]

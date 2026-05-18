@@ -1,0 +1,228 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Hashtag Generator API",
+    "version": "1.0.0",
+    "description": "Generate high-performing hashtags for social media posts. Analyze trending hashtags, estimate reach, and optimize for platform-specific algorithms.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 500
+      },
+      "pay_per_call": {
+        "generate": "$0.002",
+        "analyze": "$0.003",
+        "trending": "$0.003",
+        "execution-gate": "$0.001",
+        "hashtag-intelligence": "$0.007"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/hashtag-generator"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/generate": {
+      "post": {
+        "operationId": "generate",
+        "summary": "Generate relevant hashtags for a topic or post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generate relevant hashtags for a topic or post"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "Analyze hashtag performance and reach",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Analyze hashtag performance and reach"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/trending": {
+      "post": {
+        "operationId": "trending",
+        "summary": "Get currently trending hashtags by category",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Get currently trending hashtags by category"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result"
+          }
+        }
+      }
+    },
+    "/hashtag-intelligence": {
+      "post": {
+        "operationId": "hashtagIntelligence",
+        "summary": "ONE-CALL: generate + trending overlap + reach estimate + strategy",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full intelligence"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

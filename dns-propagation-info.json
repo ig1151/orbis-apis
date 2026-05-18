@@ -1,0 +1,40 @@
+{
+  "name": "DNS Propagation API",
+  "slug": "dns-propagation",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "check": "$0.002",
+      "status": "$0.002",
+      "trace": "$0.003",
+      "execution-gate": "$0.001",
+      "propagation-intelligence": "$0.006"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "check",
+    "status",
+    "trace",
+    "execution-gate",
+    "propagation-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/propagation-intelligence",
+    "fallback": "/check",
+    "batch_endpoint": "/check"
+  }
+}

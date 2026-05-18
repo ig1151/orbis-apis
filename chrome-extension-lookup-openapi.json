@@ -1,0 +1,228 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Chrome Extension Lookup API",
+    "version": "1.0.0",
+    "description": "Retrieve Chrome Web Store extension metadata, user counts, ratings, permissions, and security analysis for browser extension intelligence.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": {
+        "requests_per_day": 300
+      },
+      "pay_per_call": {
+        "lookup": "$0.002",
+        "analyze": "$0.004",
+        "similar": "$0.003",
+        "execution-gate": "$0.001",
+        "extension-intelligence": "$0.008"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/chrome-extension-lookup"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "Look up extension by ID or name",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Look up extension by ID or name"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "Analyze extension permissions and security risk",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Analyze extension permissions and security risk"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/similar": {
+      "post": {
+        "operationId": "similar",
+        "summary": "Find similar extensions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Find similar extensions"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result"
+          }
+        }
+      }
+    },
+    "/extension-intelligence": {
+      "post": {
+        "operationId": "extensionIntelligence",
+        "summary": "ONE-CALL: lookup + security analysis + alternatives",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "input"
+                ],
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full intelligence"
+          },
+          "400": {
+            "description": "Missing input"
+          },
+          "500": {
+            "description": "Failed"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

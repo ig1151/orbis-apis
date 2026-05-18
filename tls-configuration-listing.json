@@ -1,0 +1,99 @@
+[
+  {
+    "name": "TLS Configuration API",
+    "shortDescription": "Analyze TLS/SSL configuration for cipher suites, protocol versions, vulnerabilities, and compliance.",
+    "description": "Analyze TLS/SSL configuration for cipher suites, protocol versions, vulnerabilities, and compliance. Grade server security posture.",
+    "category": "network-infrastructure",
+    "baseUrl": "https://orbis-apis.onrender.com/tls-configuration",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/tls-configuration/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/tls-configuration/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "tls",
+      "ssl",
+      "cipher-suites",
+      "security",
+      "https"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300
+      },
+      {
+        "name": "TLS Configuration Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze TLS configuration and cipher suites"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/grade",
+            "pricePerCallUsdc": 0.003,
+            "description": "Grade server TLS security (A+ to F)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/recommendations",
+            "pricePerCallUsdc": 0.004,
+            "description": "Get hardening recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/tls-intelligence",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: full TLS audit \u2014 config + grade + remediation plan"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze TLS configuration and cipher suites"
+      },
+      {
+        "method": "POST",
+        "path": "/grade",
+        "description": "Grade server TLS security (A+ to F)"
+      },
+      {
+        "method": "POST",
+        "path": "/recommendations",
+        "description": "Get hardening recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/tls-intelligence",
+        "description": "ONE-CALL: full TLS audit \u2014 config + grade + remediation plan"
+      }
+    ],
+    "keywords": [
+      "tls configuration check",
+      "ssl grade api",
+      "cipher suite analyzer",
+      "tls vulnerability scan",
+      "https security audit"
+    ]
+  }
+]

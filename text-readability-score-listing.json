@@ -1,0 +1,99 @@
+[
+  {
+    "name": "Text Readability Score API",
+    "shortDescription": "Score text readability using Flesch-Kincaid, Gunning Fog, SMOG, and Coleman-Liau indices. Identify c",
+    "description": "Score text readability using Flesch-Kincaid, Gunning Fog, SMOG, and Coleman-Liau indices. Identify complex sentences and suggest simplifications.",
+    "category": "content-intelligence",
+    "baseUrl": "https://orbis-apis.onrender.com/text-readability-score",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/text-readability-score/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/text-readability-score/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "readability",
+      "flesch-kincaid",
+      "text-analysis",
+      "content",
+      "writing"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 1000
+      },
+      {
+        "name": "Text Readability Score Pro",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Score text readability across multiple indices"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze complex sentences and vocabulary"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/simplify",
+            "pricePerCallUsdc": 0.004,
+            "description": "Get simplification suggestions for complex passages"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/readability-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: score + sentence analysis + simplification plan"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score text readability across multiple indices"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze complex sentences and vocabulary"
+      },
+      {
+        "method": "POST",
+        "path": "/simplify",
+        "description": "Get simplification suggestions for complex passages"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/readability-intelligence",
+        "description": "ONE-CALL: score + sentence analysis + simplification plan"
+      }
+    ],
+    "keywords": [
+      "text readability score",
+      "flesch kincaid api",
+      "reading level checker",
+      "content readability analyzer",
+      "text complexity score"
+    ]
+  }
+]

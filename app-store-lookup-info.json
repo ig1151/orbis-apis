@@ -1,0 +1,40 @@
+{
+  "name": "App Store Lookup API",
+  "slug": "app-store-lookup",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 200
+    },
+    "pay_per_call": {
+      "lookup": "$0.003",
+      "reviews": "$0.005",
+      "similar": "$0.004",
+      "execution-gate": "$0.001",
+      "app-intelligence": "$0.010"
+    }
+  },
+  "rate_limits": {
+    "free": "200/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "lookup",
+    "reviews",
+    "similar",
+    "execution-gate",
+    "app-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/app-intelligence",
+    "fallback": "/lookup",
+    "batch_endpoint": "/lookup"
+  }
+}

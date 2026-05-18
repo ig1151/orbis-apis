@@ -1,0 +1,40 @@
+{
+  "name": "TLS Configuration API",
+  "slug": "tls-configuration",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 300
+    },
+    "pay_per_call": {
+      "analyze": "$0.003",
+      "grade": "$0.003",
+      "recommendations": "$0.004",
+      "execution-gate": "$0.001",
+      "tls-intelligence": "$0.008"
+    }
+  },
+  "rate_limits": {
+    "free": "300/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "analyze",
+    "grade",
+    "recommendations",
+    "execution-gate",
+    "tls-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/tls-intelligence",
+    "fallback": "/analyze",
+    "batch_endpoint": "/analyze"
+  }
+}

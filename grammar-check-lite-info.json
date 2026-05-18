@@ -1,0 +1,40 @@
+{
+  "name": "Grammar Check Lite API",
+  "slug": "grammar-check-lite",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "check": "$0.002",
+      "fix": "$0.003",
+      "analyze": "$0.003",
+      "execution-gate": "$0.001",
+      "grammar-intelligence": "$0.007"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "check",
+    "fix",
+    "analyze",
+    "execution-gate",
+    "grammar-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/grammar-intelligence",
+    "fallback": "/check",
+    "batch_endpoint": "/check"
+  }
+}

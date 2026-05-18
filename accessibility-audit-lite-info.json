@@ -1,0 +1,40 @@
+{
+  "name": "Accessibility Audit Lite API",
+  "slug": "accessibility-audit-lite",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 200
+    },
+    "pay_per_call": {
+      "audit": "$0.005",
+      "score": "$0.002",
+      "fix-suggestions": "$0.004",
+      "execution-gate": "$0.001",
+      "accessibility-intelligence": "$0.010"
+    }
+  },
+  "rate_limits": {
+    "free": "200/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "audit",
+    "score",
+    "fix-suggestions",
+    "execution-gate",
+    "accessibility-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/accessibility-intelligence",
+    "fallback": "/audit",
+    "batch_endpoint": "/audit"
+  }
+}

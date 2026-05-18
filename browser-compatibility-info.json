@@ -1,0 +1,40 @@
+{
+  "name": "Browser Compatibility API",
+  "slug": "browser-compatibility",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 1000
+    },
+    "pay_per_call": {
+      "check": "$0.001",
+      "polyfills": "$0.003",
+      "report": "$0.005",
+      "execution-gate": "$0.001",
+      "compat-intelligence": "$0.006"
+    }
+  },
+  "rate_limits": {
+    "free": "1000/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "check",
+    "polyfills",
+    "report",
+    "execution-gate",
+    "compat-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/compat-intelligence",
+    "fallback": "/check",
+    "batch_endpoint": "/check"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "Hashtag Generator API",
+  "slug": "hashtag-generator",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "generate": "$0.002",
+      "analyze": "$0.003",
+      "trending": "$0.003",
+      "execution-gate": "$0.001",
+      "hashtag-intelligence": "$0.007"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "generate",
+    "analyze",
+    "trending",
+    "execution-gate",
+    "hashtag-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/hashtag-intelligence",
+    "fallback": "/generate",
+    "batch_endpoint": "/generate"
+  }
+}

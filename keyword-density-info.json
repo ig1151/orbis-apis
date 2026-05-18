@@ -1,0 +1,40 @@
+{
+  "name": "Keyword Density API",
+  "slug": "keyword-density",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "analyze": "$0.002",
+      "optimize": "$0.003",
+      "compare": "$0.005",
+      "execution-gate": "$0.001",
+      "keyword-intelligence": "$0.007"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "analyze",
+    "optimize",
+    "compare",
+    "execution-gate",
+    "keyword-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/keyword-intelligence",
+    "fallback": "/analyze",
+    "batch_endpoint": "/analyze"
+  }
+}

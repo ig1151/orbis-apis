@@ -1,0 +1,40 @@
+{
+  "name": "SERP Snippet Preview API",
+  "slug": "serp-snippet-preview",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "preview": "$0.002",
+      "optimize": "$0.004",
+      "score": "$0.002",
+      "execution-gate": "$0.001",
+      "serp-intelligence": "$0.007"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "preview",
+    "optimize",
+    "score",
+    "execution-gate",
+    "serp-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/serp-intelligence",
+    "fallback": "/preview",
+    "batch_endpoint": "/preview"
+  }
+}

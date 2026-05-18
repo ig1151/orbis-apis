@@ -1,0 +1,40 @@
+{
+  "name": "Emoji Sentiment API",
+  "slug": "emoji-sentiment",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 1000
+    },
+    "pay_per_call": {
+      "analyze": "$0.002",
+      "suggest": "$0.002",
+      "decode": "$0.001",
+      "execution-gate": "$0.001",
+      "emoji-intelligence": "$0.005"
+    }
+  },
+  "rate_limits": {
+    "free": "1000/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "analyze",
+    "suggest",
+    "decode",
+    "execution-gate",
+    "emoji-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/emoji-intelligence",
+    "fallback": "/analyze",
+    "batch_endpoint": "/analyze"
+  }
+}

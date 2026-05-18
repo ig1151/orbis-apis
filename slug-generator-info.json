@@ -1,0 +1,40 @@
+{
+  "name": "Slug Generator API",
+  "slug": "slug-generator",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 2000
+    },
+    "pay_per_call": {
+      "generate": "$0.001",
+      "validate": "$0.001",
+      "batch": "$0.005",
+      "execution-gate": "$0.001",
+      "slug-intelligence": "$0.003"
+    }
+  },
+  "rate_limits": {
+    "free": "2000/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "generate",
+    "validate",
+    "batch",
+    "execution-gate",
+    "slug-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/slug-intelligence",
+    "fallback": "/generate",
+    "batch_endpoint": "/batch"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "SSL Expiry Monitor API",
+  "slug": "ssl-expiry-monitor",
+  "version": "1.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "check": "$0.001",
+      "monitor": "$0.005",
+      "alert": "$0.003",
+      "execution-gate": "$0.001",
+      "ssl-expiry-intelligence": "$0.005"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "check",
+    "monitor",
+    "alert",
+    "execution-gate",
+    "ssl-expiry-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/ssl-expiry-intelligence",
+    "fallback": "/check",
+    "batch_endpoint": "/check"
+  }
+}
