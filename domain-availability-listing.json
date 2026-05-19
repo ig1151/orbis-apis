@@ -1,55 +1,127 @@
-[{
-  "name": "Domain Availability Checker API",
-  "shortDescription": "Check if a domain name is available for registration across multiple TLDs.",
-  "description": "Check if a domain name is available for registration across multiple TLDs. Built for brand protection agents, startup name tools, and orchestration workflows needing real-time availability data with confidence and provenance. Supports single availability checks, AI-ranked alternative domain suggestions, batch processing of up to 20 domains, and an execution-gate for agent flow control.",
-  "category": "developer-tools",
-  "baseUrl": "https://orbis-apis.onrender.com/domain-availability",
-  "websiteUrl": "https://orbis-apis.onrender.com",
-  "docsUrl": "https://orbis-apis.onrender.com/domain-availability/docs",
-  "openApiSpecUrl": "https://orbis-apis.onrender.com/domain-availability/openapi.json",
-  "logoUrl": "https://orbis-apis.onrender.com/domain-availability/logo.png",
-  "tags": ["domain", "availability", "registration", "tld", "whois", "brand"],
-  "keywords": ["domain availability checker", "domain name search", "check domain available", "domain registration api", "domain suggestion api", "tld availability check"],
-  "tiers": [
-    {
-      "name": "Free",
-      "isFree": true,
-      "requestsPerDay": 300,
-      "requestsPerMonth": 9000
-    },
-    {
-      "name": "Pay Per Call",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.002,
-      "requestsPerDay": 50000,
-      "requestsPerMonth": 1500000,
-      "endpointPricing": [
-        {"method": "GET", "pathPattern": "/check", "pricePerCallUsdc": 0.002, "description": "ONE-CALL: Check domain availability with registration signals"},
-        {"method": "GET", "pathPattern": "/suggest", "pricePerCallUsdc": 0.003, "description": "Get alternative domain name suggestions across TLDs"},
-        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.015, "description": "Batch domain availability check — up to 20 domains"},
-        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
-      ]
-    },
-    {
-      "name": "High Volume",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.001,
-      "requestsPerDay": 500000,
-      "requestsPerMonth": 15000000,
-      "endpointPricing": [
-        {"method": "GET", "pathPattern": "/check", "pricePerCallUsdc": 0.001, "description": "ONE-CALL: Check domain availability with registration signals"},
-        {"method": "GET", "pathPattern": "/suggest", "pricePerCallUsdc": 0.0015, "description": "Get alternative domain name suggestions across TLDs"},
-        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.0075, "description": "Batch domain availability check — up to 20 domains"},
-        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
-      ]
-    }
-  ],
-  "endpoints": [
-    {"method": "GET", "path": "/check", "description": "ONE-CALL: Check domain availability with registration signals"},
-    {"method": "GET", "path": "/suggest", "description": "Get alternative domain name suggestions across TLDs"},
-    {"method": "POST", "path": "/batch", "description": "Batch domain availability check — up to 20 domains"},
-    {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check before processing"}
-  ]
-}]
+[
+  {
+    "name": "Domain Availability Checker API",
+    "shortDescription": "Check if a domain name is available for registration across multiple TLDs.",
+    "description": "Check if a domain name is available for registration across multiple TLDs. Built for brand protection agents, startup name tools, and orchestration workflows needing real-time availability data with confidence and provenance. Supports single availability checks, AI-ranked alternative domain suggestions, batch processing of up to 20 domains, and an execution-gate for agent flow control.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/domain-availability",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/domain-availability/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/domain-availability/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/domain-availability/logo.png",
+    "tags": [
+      "domain",
+      "availability",
+      "registration",
+      "tld",
+      "whois",
+      "brand"
+    ],
+    "keywords": [
+      "domain availability checker",
+      "domain name search",
+      "check domain available",
+      "domain registration api",
+      "domain suggestion api",
+      "tld availability check"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.002,
+            "description": "ONE-CALL: Check domain availability with registration signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/suggest",
+            "pricePerCallUsdc": 0.003,
+            "description": "Get alternative domain name suggestions across TLDs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.008,
+            "description": "Batch domain availability check \u2014 up to 20 domains"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check before processing"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.001,
+            "description": "ONE-CALL: Check domain availability with registration signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/suggest",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Get alternative domain name suggestions across TLDs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.004,
+            "description": "Batch domain availability check \u2014 up to 20 domains"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check before processing"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "ONE-CALL: Check domain availability with registration signals"
+      },
+      {
+        "method": "POST",
+        "path": "/suggest",
+        "description": "Get alternative domain name suggestions across TLDs"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch domain availability check \u2014 up to 20 domains"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check before processing"
+      }
+    ]
+  }
+]

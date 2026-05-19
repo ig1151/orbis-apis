@@ -1,42 +1,126 @@
-[{
-  "name": "Broken Link Checker API",
-  "shortDescription": "Check individual or batches of URLs for broken links and redirects",
-  "description": "Check any URL or batch of up to 50 URLs for broken links: detect 404s, server errors, timeouts, redirects, and classify links as internal or external. Returns status codes, response times, and redirect destinations. Built for SEO agents, content auditors, and site maintenance workflows with typed confidence scores, provenance, cache hints, and execution-gate support.",
-  "category": "developer-tools",
-  "baseUrl": "https://orbis-apis.onrender.com/broken-link-checker",
-  "websiteUrl": "https://orbis-apis.onrender.com",
-  "docsUrl": "https://orbis-apis.onrender.com/broken-link-checker/docs",
-  "openApiSpecUrl": "https://orbis-apis.onrender.com/broken-link-checker/openapi.json",
-  "logoUrl": "https://orbis-apis.onrender.com/broken-link-checker/logo.png",
-  "tags": ["broken-links", "seo", "url-check", "404", "web-audit"],
-  "keywords": ["broken link checker", "404 checker", "dead link detector", "url validator", "batch link check", "seo link audit"],
-  "tiers": [
-    { "name": "Free", "isFree": true, "requestsPerDay": 500, "requestsPerMonth": 15000 },
-    {
-      "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.001,
-      "requestsPerDay": 50000, "requestsPerMonth": 1500000,
-      "endpointPricing": [
-        { "method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.002, "description": "Check a single URL for broken link status" },
-        { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.005, "description": "Batch check up to 50 URLs" },
-        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed based on link health" },
-        { "method": "POST", "pathPattern": "/link-intelligence", "pricePerCallUsdc": 0.006, "description": "One-call link check, batch analysis, and recommendations" }
-      ]
-    },
-    {
-      "name": "High Volume", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.0005,
-      "requestsPerDay": 500000, "requestsPerMonth": 15000000,
-      "endpointPricing": [
-        { "method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.001, "description": "Check single URL" },
-        { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.0025, "description": "Batch check URLs" },
-        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution gate" },
-        { "method": "POST", "pathPattern": "/link-intelligence", "pricePerCallUsdc": 0.003, "description": "Combined intelligence endpoint" }
-      ]
-    }
-  ],
-  "endpoints": [
-    { "method": "POST", "path": "/check", "description": "Check a single URL for broken link status" },
-    { "method": "POST", "path": "/batch", "description": "Batch check up to 50 URLs" },
-    { "method": "POST", "path": "/execution-gate", "description": "Execution gate check" },
-    { "method": "POST", "path": "/link-intelligence", "description": "One-call combined intelligence" }
-  ]
-}]
+[
+  {
+    "name": "Broken Link Checker API",
+    "shortDescription": "Check individual or batches of URLs for broken links and redirects",
+    "description": "Check any URL or batch of up to 50 URLs for broken links: detect 404s, server errors, timeouts, redirects, and classify links as internal or external. Returns status codes, response times, and redirect destinations. Built for SEO agents, content auditors, and site maintenance workflows with typed confidence scores, provenance, cache hints, and execution-gate support.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/broken-link-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/broken-link-checker/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/broken-link-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/broken-link-checker/logo.png",
+    "tags": [
+      "broken-links",
+      "seo",
+      "url-check",
+      "404",
+      "web-audit"
+    ],
+    "keywords": [
+      "broken link checker",
+      "404 checker",
+      "dead link detector",
+      "url validator",
+      "batch link check",
+      "seo link audit"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.005,
+            "description": "Check a single URL for broken link status"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.015,
+            "description": "Batch check up to 50 URLs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution gate check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/link-intelligence",
+            "pricePerCallUsdc": 0.008,
+            "description": "One-call combined intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Check a single URL for broken link status"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.0075,
+            "description": "Batch check up to 50 URLs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution gate check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/link-intelligence",
+            "pricePerCallUsdc": 0.004,
+            "description": "One-call combined intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Check a single URL for broken link status"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch check up to 50 URLs"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution gate check"
+      },
+      {
+        "method": "POST",
+        "path": "/link-intelligence",
+        "description": "One-call combined intelligence"
+      }
+    ]
+  }
+]

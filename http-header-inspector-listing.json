@@ -1,42 +1,126 @@
-[{
-  "name": "HTTP Header Inspector API",
-  "shortDescription": "Inspect and audit HTTP response headers for security compliance",
-  "description": "Inspect HTTP response headers from any URL: detect security headers, missing CSP/HSTS/X-Frame-Options, identify vulnerabilities, and score header compliance. Built for security agents, DevOps pipelines, and website auditing workflows with typed confidence scores, provenance, cache hints, and execution-gate support.",
-  "category": "developer-tools",
-  "baseUrl": "https://orbis-apis.onrender.com/http-header-inspector",
-  "websiteUrl": "https://orbis-apis.onrender.com",
-  "docsUrl": "https://orbis-apis.onrender.com/http-header-inspector/docs",
-  "openApiSpecUrl": "https://orbis-apis.onrender.com/http-header-inspector/openapi.json",
-  "logoUrl": "https://orbis-apis.onrender.com/http-header-inspector/logo.png",
-  "tags": ["http", "headers", "security", "web-audit", "devops"],
-  "keywords": ["http header inspector", "security headers check", "hsts checker", "csp header analyzer", "x-frame-options", "missing headers audit"],
-  "tiers": [
-    { "name": "Free", "isFree": true, "requestsPerDay": 500, "requestsPerMonth": 15000 },
-    {
-      "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.001,
-      "requestsPerDay": 50000, "requestsPerMonth": 1500000,
-      "endpointPricing": [
-        { "method": "POST", "pathPattern": "/inspect", "pricePerCallUsdc": 0.002, "description": "Inspect HTTP headers from a URL" },
-        { "method": "POST", "pathPattern": "/security-audit", "pricePerCallUsdc": 0.003, "description": "Full security header audit" },
-        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed, pause, or call a recommended next API" },
-        { "method": "POST", "pathPattern": "/header-intelligence", "pricePerCallUsdc": 0.006, "description": "One-call header inspection, security audit, and recommendations" }
-      ]
-    },
-    {
-      "name": "High Volume", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.0005,
-      "requestsPerDay": 500000, "requestsPerMonth": 15000000,
-      "endpointPricing": [
-        { "method": "POST", "pathPattern": "/inspect", "pricePerCallUsdc": 0.001, "description": "Inspect HTTP headers from a URL" },
-        { "method": "POST", "pathPattern": "/security-audit", "pricePerCallUsdc": 0.0015, "description": "Full security header audit" },
-        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution gate" },
-        { "method": "POST", "pathPattern": "/header-intelligence", "pricePerCallUsdc": 0.003, "description": "Combined intelligence endpoint" }
-      ]
-    }
-  ],
-  "endpoints": [
-    { "method": "POST", "path": "/inspect", "description": "Inspect HTTP headers from a URL" },
-    { "method": "POST", "path": "/security-audit", "description": "Full security header audit" },
-    { "method": "POST", "path": "/execution-gate", "description": "Execution gate check" },
-    { "method": "POST", "path": "/header-intelligence", "description": "One-call combined intelligence" }
-  ]
-}]
+[
+  {
+    "name": "HTTP Header Inspector API",
+    "shortDescription": "Inspect and audit HTTP response headers for security compliance",
+    "description": "Inspect HTTP response headers from any URL: detect security headers, missing CSP/HSTS/X-Frame-Options, identify vulnerabilities, and score header compliance. Built for security agents, DevOps pipelines, and website auditing workflows with typed confidence scores, provenance, cache hints, and execution-gate support.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/http-header-inspector",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/http-header-inspector/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/http-header-inspector/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/http-header-inspector/logo.png",
+    "tags": [
+      "http",
+      "headers",
+      "security",
+      "web-audit",
+      "devops"
+    ],
+    "keywords": [
+      "http header inspector",
+      "security headers check",
+      "hsts checker",
+      "csp header analyzer",
+      "x-frame-options",
+      "missing headers audit"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/inspect",
+            "pricePerCallUsdc": 0.002,
+            "description": "Inspect HTTP headers from a URL"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/security-audit",
+            "pricePerCallUsdc": 0.004,
+            "description": "Full security header audit"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution gate check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/header-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call combined intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/inspect",
+            "pricePerCallUsdc": 0.001,
+            "description": "Inspect HTTP headers from a URL"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/security-audit",
+            "pricePerCallUsdc": 0.002,
+            "description": "Full security header audit"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution gate check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/header-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call combined intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/inspect",
+        "description": "Inspect HTTP headers from a URL"
+      },
+      {
+        "method": "POST",
+        "path": "/security-audit",
+        "description": "Full security header audit"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution gate check"
+      },
+      {
+        "method": "POST",
+        "path": "/header-intelligence",
+        "description": "One-call combined intelligence"
+      }
+    ]
+  }
+]

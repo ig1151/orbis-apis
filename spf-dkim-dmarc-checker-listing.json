@@ -1,61 +1,161 @@
-[{
-  "name": "SPF/DKIM/DMARC Validator API",
-  "shortDescription": "Validate SPF, DKIM, and DMARC DNS records for any domain.",
-  "description": "Validate SPF, DKIM, and DMARC DNS records for any domain: policy parsing, alignment checking, and email authentication health scoring. Essential for email security agents and deliverability pipelines. Supports individual SPF, DKIM, and DMARC record checks, a one-call full authentication check with typed confidence and provenance, batch processing of up to 20 domains, and an execution-gate for agent flow control.",
-  "category": "developer-tools",
-  "baseUrl": "https://orbis-apis.onrender.com/spf-dkim-dmarc-checker",
-  "websiteUrl": "https://orbis-apis.onrender.com",
-  "docsUrl": "https://orbis-apis.onrender.com/spf-dkim-dmarc-checker/docs",
-  "openApiSpecUrl": "https://orbis-apis.onrender.com/spf-dkim-dmarc-checker/openapi.json",
-  "logoUrl": "https://orbis-apis.onrender.com/spf-dkim-dmarc-checker/logo.png",
-  "tags": ["spf", "dkim", "dmarc", "email-security", "dns", "deliverability"],
-  "keywords": ["spf record checker", "dkim validator", "dmarc policy check", "email authentication api", "dns email security", "email deliverability validation"],
-  "tiers": [
-    {
-      "name": "Free",
-      "isFree": true,
-      "requestsPerDay": 300,
-      "requestsPerMonth": 9000
-    },
-    {
-      "name": "Pay Per Call",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.001,
-      "requestsPerDay": 50000,
-      "requestsPerMonth": 1500000,
-      "endpointPricing": [
-        {"method": "GET", "pathPattern": "/spf", "pricePerCallUsdc": 0.001, "description": "Validate SPF record for a domain"},
-        {"method": "GET", "pathPattern": "/dkim", "pricePerCallUsdc": 0.001, "description": "Validate DKIM record for a domain and selector"},
-        {"method": "GET", "pathPattern": "/dmarc", "pricePerCallUsdc": 0.001, "description": "Validate DMARC policy for a domain"},
-        {"method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.005, "description": "ONE-CALL: SPF + DKIM + DMARC full authentication check"},
-        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.012, "description": "Batch email auth check — up to 20 domains"},
-        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
-      ]
-    },
-    {
-      "name": "High Volume",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.0005,
-      "requestsPerDay": 500000,
-      "requestsPerMonth": 15000000,
-      "endpointPricing": [
-        {"method": "GET", "pathPattern": "/spf", "pricePerCallUsdc": 0.0005, "description": "Validate SPF record for a domain"},
-        {"method": "GET", "pathPattern": "/dkim", "pricePerCallUsdc": 0.0005, "description": "Validate DKIM record for a domain and selector"},
-        {"method": "GET", "pathPattern": "/dmarc", "pricePerCallUsdc": 0.0005, "description": "Validate DMARC policy for a domain"},
-        {"method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.0025, "description": "ONE-CALL: SPF + DKIM + DMARC full authentication check"},
-        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.006, "description": "Batch email auth check — up to 20 domains"},
-        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
-      ]
-    }
-  ],
-  "endpoints": [
-    {"method": "GET", "path": "/spf", "description": "Validate SPF record for a domain"},
-    {"method": "GET", "path": "/dkim", "description": "Validate DKIM record for a domain and selector"},
-    {"method": "GET", "path": "/dmarc", "description": "Validate DMARC policy for a domain"},
-    {"method": "POST", "path": "/check", "description": "ONE-CALL: SPF + DKIM + DMARC full authentication check"},
-    {"method": "POST", "path": "/batch", "description": "Batch email auth check — up to 20 domains"},
-    {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check before processing"}
-  ]
-}]
+[
+  {
+    "name": "SPF/DKIM/DMARC Validator API",
+    "shortDescription": "Validate SPF, DKIM, and DMARC DNS records for any domain.",
+    "description": "Validate SPF, DKIM, and DMARC DNS records for any domain: policy parsing, alignment checking, and email authentication health scoring. Essential for email security agents and deliverability pipelines. Supports individual SPF, DKIM, and DMARC record checks, a one-call full authentication check with typed confidence and provenance, batch processing of up to 20 domains, and an execution-gate for agent flow control.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/spf-dkim-dmarc-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/spf-dkim-dmarc-checker/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/spf-dkim-dmarc-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/spf-dkim-dmarc-checker/logo.png",
+    "tags": [
+      "spf",
+      "dkim",
+      "dmarc",
+      "email-security",
+      "dns",
+      "deliverability"
+    ],
+    "keywords": [
+      "spf record checker",
+      "dkim validator",
+      "dmarc policy check",
+      "email authentication api",
+      "dns email security",
+      "email deliverability validation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/spf",
+            "pricePerCallUsdc": 0.002,
+            "description": "Validate SPF record for a domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/dkim",
+            "pricePerCallUsdc": 0.002,
+            "description": "Validate DKIM record for a domain and selector"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/dmarc",
+            "pricePerCallUsdc": 0.002,
+            "description": "Validate DMARC policy for a domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL: SPF + DKIM + DMARC full authentication check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.01,
+            "description": "Batch email auth check \u2014 up to 20 domains"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check before processing"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/spf",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate SPF record for a domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/dkim",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate DKIM record for a domain and selector"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/dmarc",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate DMARC policy for a domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.002,
+            "description": "ONE-CALL: SPF + DKIM + DMARC full authentication check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.005,
+            "description": "Batch email auth check \u2014 up to 20 domains"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check before processing"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/spf",
+        "description": "Validate SPF record for a domain"
+      },
+      {
+        "method": "POST",
+        "path": "/dkim",
+        "description": "Validate DKIM record for a domain and selector"
+      },
+      {
+        "method": "POST",
+        "path": "/dmarc",
+        "description": "Validate DMARC policy for a domain"
+      },
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "ONE-CALL: SPF + DKIM + DMARC full authentication check"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch email auth check \u2014 up to 20 domains"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check before processing"
+      }
+    ]
+  }
+]

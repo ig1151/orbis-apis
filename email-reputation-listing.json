@@ -1,55 +1,127 @@
-[{
-  "name": "Email Reputation Checker API",
-  "shortDescription": "Check email address and domain reputation, blacklist status, and deliverability score.",
-  "description": "Check email address and domain reputation: spam history, blacklist status, deliverability score, and sender reputation signals. Built for email marketing agents, fraud prevention pipelines, and lead qualification workflows. Returns risk levels, blacklist membership, and typed confidence with provenance. Supports one-call reputation scoring, dedicated blacklist checks, batch processing of up to 20 emails, and an execution-gate for agent flow control.",
-  "category": "developer-tools",
-  "baseUrl": "https://orbis-apis.onrender.com/email-reputation",
-  "websiteUrl": "https://orbis-apis.onrender.com",
-  "docsUrl": "https://orbis-apis.onrender.com/email-reputation/docs",
-  "openApiSpecUrl": "https://orbis-apis.onrender.com/email-reputation/openapi.json",
-  "logoUrl": "https://orbis-apis.onrender.com/email-reputation/logo.png",
-  "tags": ["email", "reputation", "deliverability", "spam", "blacklist", "security"],
-  "keywords": ["email reputation api", "email blacklist check", "sender reputation score", "email deliverability checker", "spam score api", "email fraud detection"],
-  "tiers": [
-    {
-      "name": "Free",
-      "isFree": true,
-      "requestsPerDay": 200,
-      "requestsPerMonth": 6000
-    },
-    {
-      "name": "Pay Per Call",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.002,
-      "requestsPerDay": 50000,
-      "requestsPerMonth": 1500000,
-      "endpointPricing": [
-        {"method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.002, "description": "ONE-CALL: Score email reputation and risk level"},
-        {"method": "POST", "pathPattern": "/blacklist-check", "pricePerCallUsdc": 0.002, "description": "Check email or domain against known blacklists"},
-        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.015, "description": "Batch email reputation score — up to 20 emails"},
-        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
-      ]
-    },
-    {
-      "name": "High Volume",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.001,
-      "requestsPerDay": 500000,
-      "requestsPerMonth": 15000000,
-      "endpointPricing": [
-        {"method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.001, "description": "ONE-CALL: Score email reputation and risk level"},
-        {"method": "POST", "pathPattern": "/blacklist-check", "pricePerCallUsdc": 0.001, "description": "Check email or domain against known blacklists"},
-        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.0075, "description": "Batch email reputation score — up to 20 emails"},
-        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
-      ]
-    }
-  ],
-  "endpoints": [
-    {"method": "POST", "path": "/score", "description": "ONE-CALL: Score email reputation and risk level"},
-    {"method": "POST", "path": "/blacklist-check", "description": "Check email or domain against known blacklists"},
-    {"method": "POST", "path": "/batch", "description": "Batch email reputation score — up to 20 emails"},
-    {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check before processing"}
-  ]
-}]
+[
+  {
+    "name": "Email Reputation Checker API",
+    "shortDescription": "Check email address and domain reputation, blacklist status, and deliverability score.",
+    "description": "Check email address and domain reputation: spam history, blacklist status, deliverability score, and sender reputation signals. Built for email marketing agents, fraud prevention pipelines, and lead qualification workflows. Returns risk levels, blacklist membership, and typed confidence with provenance. Supports one-call reputation scoring, dedicated blacklist checks, batch processing of up to 20 emails, and an execution-gate for agent flow control.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/email-reputation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/email-reputation/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/email-reputation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/email-reputation/logo.png",
+    "tags": [
+      "email",
+      "reputation",
+      "deliverability",
+      "spam",
+      "blacklist",
+      "security"
+    ],
+    "keywords": [
+      "email reputation api",
+      "email blacklist check",
+      "sender reputation score",
+      "email deliverability checker",
+      "spam score api",
+      "email fraud detection"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200,
+        "requestsPerMonth": 6000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "ONE-CALL: Score email reputation and risk level"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/blacklist-check",
+            "pricePerCallUsdc": 0.002,
+            "description": "Check email or domain against known blacklists"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.008,
+            "description": "Batch email reputation score \u2014 up to 20 emails"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check before processing"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "ONE-CALL: Score email reputation and risk level"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/blacklist-check",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check email or domain against known blacklists"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.004,
+            "description": "Batch email reputation score \u2014 up to 20 emails"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check before processing"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "ONE-CALL: Score email reputation and risk level"
+      },
+      {
+        "method": "POST",
+        "path": "/blacklist-check",
+        "description": "Check email or domain against known blacklists"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch email reputation score \u2014 up to 20 emails"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check before processing"
+      }
+    ]
+  }
+]

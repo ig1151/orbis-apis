@@ -1,58 +1,127 @@
-[{
-  "name": "Domain Age Lookup API",
-  "shortDescription": "Look up domain registration age, historical WHOIS data, and trust signals.",
-  "description": "Look up domain registration age, historical data, and trust signals. Built for security agents, risk assessment pipelines, and orchestration workflows that need domain age as a trust signal with typed confidence and provenance. Supports single lookups, lightweight WHOIS summaries, a combined one-call intelligence endpoint, batch processing of up to 20 domains, and an execution-gate for agent flow control.",
-  "category": "developer-tools",
-  "baseUrl": "https://orbis-apis.onrender.com/domain-age",
-  "websiteUrl": "https://orbis-apis.onrender.com",
-  "docsUrl": "https://orbis-apis.onrender.com/domain-age/docs",
-  "openApiSpecUrl": "https://orbis-apis.onrender.com/domain-age/openapi.json",
-  "logoUrl": "https://orbis-apis.onrender.com/domain-age/logo.png",
-  "tags": ["domain", "age", "whois", "registration", "trust", "security"],
-  "keywords": ["domain age checker", "how old is domain", "domain registration date", "domain trust score", "domain history api", "whois age lookup"],
-  "tiers": [
-    {
-      "name": "Free",
-      "isFree": true,
-      "requestsPerDay": 300,
-      "requestsPerMonth": 9000
-    },
-    {
-      "name": "Pay Per Call",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.001,
-      "requestsPerDay": 50000,
-      "requestsPerMonth": 1500000,
-      "endpointPricing": [
-        {"method": "GET", "pathPattern": "/age", "pricePerCallUsdc": 0.001, "description": "Get domain age and registration date"},
-        {"method": "GET", "pathPattern": "/whois-lite", "pricePerCallUsdc": 0.001, "description": "Get lightweight WHOIS summary for a domain"},
-        {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.005, "description": "ONE-CALL: age + WHOIS + trust signals combined intelligence endpoint"},
-        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.015, "description": "Batch domain age lookup — up to 20 domains"},
-        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
-      ]
-    },
-    {
-      "name": "High Volume",
-      "isFree": false,
-      "pricingType": "per_call",
-      "pricePerCall": 0.0005,
-      "requestsPerDay": 500000,
-      "requestsPerMonth": 15000000,
-      "endpointPricing": [
-        {"method": "GET", "pathPattern": "/age", "pricePerCallUsdc": 0.0005, "description": "Get domain age and registration date"},
-        {"method": "GET", "pathPattern": "/whois-lite", "pricePerCallUsdc": 0.0005, "description": "Get lightweight WHOIS summary for a domain"},
-        {"method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.0025, "description": "ONE-CALL: age + WHOIS + trust signals combined intelligence endpoint"},
-        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.0075, "description": "Batch domain age lookup — up to 20 domains"},
-        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
-      ]
-    }
-  ],
-  "endpoints": [
-    {"method": "GET", "path": "/age", "description": "Get domain age and registration date"},
-    {"method": "GET", "path": "/whois-lite", "description": "Get lightweight WHOIS summary for a domain"},
-    {"method": "POST", "path": "/lookup", "description": "ONE-CALL: age + WHOIS + trust signals combined intelligence endpoint"},
-    {"method": "POST", "path": "/batch", "description": "Batch domain age lookup — up to 20 domains"},
-    {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check before processing"}
-  ]
-}]
+[
+  {
+    "name": "Domain Age Lookup API",
+    "shortDescription": "Look up domain registration age, historical WHOIS data, and trust signals.",
+    "description": "Look up domain registration age, historical data, and trust signals. Built for security agents, risk assessment pipelines, and orchestration workflows that need domain age as a trust signal with typed confidence and provenance. Supports single lookups, lightweight WHOIS summaries, a combined one-call intelligence endpoint, batch processing of up to 20 domains, and an execution-gate for agent flow control.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/domain-age",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/domain-age/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/domain-age/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/domain-age/logo.png",
+    "tags": [
+      "domain",
+      "age",
+      "whois",
+      "registration",
+      "trust",
+      "security"
+    ],
+    "keywords": [
+      "domain age checker",
+      "how old is domain",
+      "domain registration date",
+      "domain trust score",
+      "domain history api",
+      "whois age lookup"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/age",
+            "pricePerCallUsdc": 0.002,
+            "description": "Get domain age and registration date"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.002,
+            "description": "ONE-CALL: age + WHOIS + trust signals combined intelligence endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.008,
+            "description": "Batch domain age lookup \u2014 up to 20 domains"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check before processing"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/age",
+            "pricePerCallUsdc": 0.001,
+            "description": "Get domain age and registration date"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.001,
+            "description": "ONE-CALL: age + WHOIS + trust signals combined intelligence endpoint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.004,
+            "description": "Batch domain age lookup \u2014 up to 20 domains"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check before processing"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/age",
+        "description": "Get domain age and registration date"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: age + WHOIS + trust signals combined intelligence endpoint"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch domain age lookup \u2014 up to 20 domains"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check before processing"
+      }
+    ]
+  }
+]
