@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Hook Generator API",
+    "shortDescription": "Generate high-converting hooks for video, articles, emails, and social content",
+    "description": "Generate attention-grabbing hooks tailored to format and tone. Supports video, article, email, social, and podcast formats with tone options including curiosity, urgency, controversy, value, and story. Each hook is scored for curiosity, specificity, and emotional resonance. Built for content creators, marketers, and agent pipelines that need to maximize engagement from the first line.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/hook-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/hook-generator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/hook-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/hook-generator/logo.png",
+    "tags": [
+      "hooks",
+      "copywriting",
+      "content",
+      "engagement",
+      "social-media",
+      "video"
+    ],
+    "keywords": [
+      "hook generator api",
+      "content hooks",
+      "video hook writer",
+      "email subject lines",
+      "engagement copywriting",
+      "curiosity hooks"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Generate hooks for a given topic, format, and tone"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "Score the quality of an existing hook"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/hook-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call hook generation, scoring, and format recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Generate hooks for a given topic, format, and tone"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Score the quality of an existing hook"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/hook-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call hook generation, scoring, and format recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate hooks for a given topic, format, and tone"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score the quality of an existing hook"
+      },
+      {
+        "method": "POST",
+        "path": "/hook-intelligence",
+        "description": "One-call hook generation, scoring, and format recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

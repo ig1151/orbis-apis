@@ -1,0 +1,124 @@
+[
+  {
+    "name": "Rate Limit Estimator API",
+    "shortDescription": "Estimate safe API call rate limits based on observed patterns and headers",
+    "description": "Estimate safe API rate limits from response headers, observed call patterns, and API tier metadata. Detect violations, recommend throttle strategies, and optimize concurrency for agent pipelines. Returns confidence scores and provenance.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/rate-limit-estimator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/rate-limit-estimator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/rate-limit-estimator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/rate-limit-estimator/logo.png",
+    "tags": [
+      "rate-limit",
+      "api",
+      "throttling",
+      "devops"
+    ],
+    "keywords": [
+      "rate limit estimator",
+      "api throttling",
+      "rate limit headers",
+      "api concurrency",
+      "throttle strategy"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/estimate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Estimate rate limits"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze rate limit violations and efficiency"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/rate-limit-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: full rate limit intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/estimate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Estimate rate limits"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze rate limit violations and efficiency"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/rate-limit-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: full rate limit intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/estimate",
+        "description": "Estimate rate limits"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze rate limit violations and efficiency"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/rate-limit-intelligence",
+        "description": "ONE-CALL: full rate limit intelligence"
+      }
+    ]
+  }
+]

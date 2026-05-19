@@ -1,0 +1,125 @@
+[
+  {
+    "name": "APK Risk Lite API",
+    "shortDescription": "Analyze Android APK metadata for risk signals and permission abuse.",
+    "description": "Analyze Android APK packages for security risk signals including dangerous permission combinations, tracker SDKs, obfuscation, certificate issues, and permission abuse scores. Built for enterprise mobile security teams, MDM platforms, and app vetting pipelines. Returns risk scores, permission breakdowns, tracker lists, and install verdicts. Supports full APK analysis, component-level risk scoring, and an execution-gate for agent flow control.",
+    "category": "security",
+    "baseUrl": "https://orbis-apis.onrender.com/apk-risk-lite",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/apk-risk-lite/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/apk-risk-lite/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/apk-risk-lite/logo.png",
+    "tags": [
+      "android",
+      "apk",
+      "security",
+      "risk-analysis"
+    ],
+    "keywords": [
+      "apk risk scanner",
+      "android app security api",
+      "apk permission checker",
+      "mobile app risk api",
+      "android malware detection",
+      "apk analyzer api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.004,
+            "description": "Full APK analysis for risk signals and permissions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "Risk score breakdown for APK"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/apk-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: full APK risk intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.002,
+            "description": "Full APK analysis for risk signals and permissions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Risk score breakdown for APK"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/apk-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: full APK risk intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Full APK analysis for risk signals and permissions"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Risk score breakdown for APK"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/apk-intelligence",
+        "description": "ONE-CALL: full APK risk intelligence"
+      }
+    ]
+  }
+]

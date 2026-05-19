@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Mailbox Provider Detector API",
+    "shortDescription": "Detect email provider, type, and features from an email address or domain",
+    "description": "Detect the mailbox provider (Google, Microsoft, Yahoo, Proton, Zoho, and more) from an email address or domain. Returns the provider type, MX records, business email flag, and feature list. Useful for routing logic, compliance checks, and email personalization in sales and marketing automation agents.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/mailbox-provider-detector",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/mailbox-provider-detector/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/mailbox-provider-detector/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/mailbox-provider-detector/logo.png",
+    "tags": [
+      "email",
+      "mx-records",
+      "provider",
+      "gmail",
+      "outlook",
+      "developer-tools"
+    ],
+    "keywords": [
+      "mailbox provider detector api",
+      "email provider lookup",
+      "gmail or outlook detector",
+      "mx record provider check",
+      "business email checker",
+      "email routing api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.002,
+            "description": "Detect mailbox provider from an email or domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.002,
+            "description": "Lookup MX records and provider details for a domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/mailbox-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call mailbox provider detection with features and routing guidance"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.001,
+            "description": "Detect mailbox provider from an email or domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.001,
+            "description": "Lookup MX records and provider details for a domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/mailbox-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call mailbox provider detection with features and routing guidance"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/detect",
+        "description": "Detect mailbox provider from an email or domain"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Lookup MX records and provider details for a domain"
+      },
+      {
+        "method": "POST",
+        "path": "/mailbox-intelligence",
+        "description": "One-call mailbox provider detection with features and routing guidance"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

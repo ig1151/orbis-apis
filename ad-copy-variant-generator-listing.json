@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Ad Copy Variant Generator API",
+    "shortDescription": "Generate platform-optimized ad copy variants with scoring and compliance checks",
+    "description": "Generate multiple ad copy variants for Google, Facebook, LinkedIn, Twitter, and Instagram. Each variant includes a headline, description, CTA, character counts, compliance flag, and a quality score. Designed for marketers, growth agents, and ad automation pipelines that need to produce and evaluate platform-conformant copy at scale.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/ad-copy-variant-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ad-copy-variant-generator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ad-copy-variant-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/ad-copy-variant-generator/logo.png",
+    "tags": [
+      "ad-copy",
+      "copywriting",
+      "a-b-testing",
+      "google-ads",
+      "facebook-ads",
+      "marketing"
+    ],
+    "keywords": [
+      "ad copy generator api",
+      "facebook ad variants",
+      "google ads copywriting",
+      "platform-optimized ad copy",
+      "linkedin ad generator",
+      "automated copywriting"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Generate ad copy variants for a given platform and tone"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "Score an existing ad copy variant"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ad-copy-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call ad copy generation, scoring, and recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Generate ad copy variants for a given platform and tone"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Score an existing ad copy variant"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ad-copy-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call ad copy generation, scoring, and recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate ad copy variants for a given platform and tone"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score an existing ad copy variant"
+      },
+      {
+        "method": "POST",
+        "path": "/ad-copy-intelligence",
+        "description": "One-call ad copy generation, scoring, and recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

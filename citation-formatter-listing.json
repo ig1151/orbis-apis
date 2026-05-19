@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Citation Formatter API",
+    "shortDescription": "Format and convert citations across APA, MLA, Chicago, Harvard, and IEEE styles",
+    "description": "Generate properly formatted citations from structured metadata or convert between citation styles with per-field confidence scores and provenance tracking. Built for academic writing agents, research pipelines, and bibliography automation. Supports APA, MLA, Chicago, Harvard, and IEEE. Returns formatted strings, missing field warnings, and agent-ready recommended next actions for downstream orchestration.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/citation-formatter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/citation-formatter/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/citation-formatter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/citation-formatter/logo.png",
+    "tags": [
+      "citations",
+      "apa",
+      "mla",
+      "chicago",
+      "academic",
+      "formatting"
+    ],
+    "keywords": [
+      "citation formatter api",
+      "apa citation generator",
+      "mla citation api",
+      "citation style converter",
+      "bibliography formatter",
+      "chicago citation api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/format",
+            "pricePerCallUsdc": 0.002,
+            "description": "Format citation metadata into a specified style"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/convert",
+            "pricePerCallUsdc": 0.002,
+            "description": "Convert a citation string from one style to another"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/formatter-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call format, convert, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/format",
+            "pricePerCallUsdc": 0.001,
+            "description": "Format citation metadata into a specified style"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/convert",
+            "pricePerCallUsdc": 0.001,
+            "description": "Convert a citation string from one style to another"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/formatter-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call format, convert, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/format",
+        "description": "Format citation metadata into a specified style"
+      },
+      {
+        "method": "POST",
+        "path": "/convert",
+        "description": "Convert a citation string from one style to another"
+      },
+      {
+        "method": "POST",
+        "path": "/formatter-intelligence",
+        "description": "One-call format, convert, and agent routing"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

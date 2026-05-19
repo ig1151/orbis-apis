@@ -1,0 +1,124 @@
+[
+  {
+    "name": "Agent Workflow Validator API",
+    "shortDescription": "Validate agent workflow definitions for correctness, loops, and safety constraints",
+    "description": "Validate agent workflow definitions (LangGraph, AutoGen, CrewAI, custom) for structural correctness, infinite loop detection, unreachable steps, safety constraints, human-in-the-loop gates, and resource bounds. Returns confidence scores and provenance for agent pipelines.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/agent-workflow-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/agent-workflow-validator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/agent-workflow-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/agent-workflow-validator/logo.png",
+    "tags": [
+      "agent",
+      "workflow",
+      "validation",
+      "safety"
+    ],
+    "keywords": [
+      "agent workflow validator",
+      "langgraph validator",
+      "workflow safety",
+      "agent loop detection",
+      "ai agent validation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Validate agent workflow definition"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze workflow for safety and optimization"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/workflow-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: full workflow validator intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Validate agent workflow definition"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze workflow for safety and optimization"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/workflow-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: full workflow validator intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate agent workflow definition"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze workflow for safety and optimization"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/workflow-intelligence",
+        "description": "ONE-CALL: full workflow validator intelligence"
+      }
+    ]
+  }
+]

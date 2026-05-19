@@ -1,0 +1,124 @@
+[
+  {
+    "name": "Smart Contract Metadata API",
+    "shortDescription": "Fetch and analyze smart contract metadata from blockchain networks",
+    "description": "Fetch and analyze smart contract metadata including ABI, bytecode, compiler info, ownership, proxy patterns, and risk flags from EVM-compatible blockchains. Returns confidence scores and provenance for agent pipelines.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/smart-contract-metadata",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/smart-contract-metadata/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/smart-contract-metadata/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/smart-contract-metadata/logo.png",
+    "tags": [
+      "blockchain",
+      "smart-contract",
+      "metadata",
+      "defi"
+    ],
+    "keywords": [
+      "smart contract metadata",
+      "contract analyzer",
+      "blockchain metadata",
+      "solidity contract",
+      "evm contract"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/fetch",
+            "pricePerCallUsdc": 0.003,
+            "description": "Fetch contract metadata"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze contract for risk flags"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/contract-metadata-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: full smart contract metadata intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/fetch",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Fetch contract metadata"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze contract for risk flags"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/contract-metadata-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: full smart contract metadata intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/fetch",
+        "description": "Fetch contract metadata"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze contract for risk flags"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/contract-metadata-intelligence",
+        "description": "ONE-CALL: full smart contract metadata intelligence"
+      }
+    ]
+  }
+]

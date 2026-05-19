@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Page Title Optimizer API",
+    "shortDescription": "Analyze and optimize page titles for length, keyword placement, emotional impact, and CTR potential.",
+    "description": "The Page Title Optimizer API enables autonomous orchestration of title tag quality across any content pipeline. Every response includes confidence scores and provenance metadata so agents can make reliable, traceable decisions. The /analyze endpoint scores any title for character length, pixel width, keyword presence and position, emotional impact, and estimated CTR. The /optimize endpoint generates multiple improved title variants ranked by improvement score with specific changes documented. The /execution-gate endpoint signals whether title quality meets the bar required for automated publishing. The /title-intelligence endpoint delivers a full SEO intelligence summary with provenance-backed scoring and priority-ordered recommendations for content teams and search automation systems.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/page-title-optimizer",
+    "websiteUrl": "https://orbis-apis.onrender.com/page-title-optimizer",
+    "docsUrl": "https://orbis-apis.onrender.com/page-title-optimizer/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/page-title-optimizer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/page-title-optimizer.png",
+    "tags": [
+      "seo",
+      "title",
+      "serp",
+      "optimization",
+      "meta",
+      "content"
+    ],
+    "keywords": [
+      "page title",
+      "title tag",
+      "meta title",
+      "keyword placement",
+      "CTR",
+      "SERP"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 400,
+        "requestsPerMonth": 12000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.002,
+            "description": "Analyze page title for SEO quality"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.003,
+            "description": "Get optimized title suggestions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/title-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: analyze + optimize + CTR prediction"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.001,
+            "description": "Analyze page title for SEO quality"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Get optimized title suggestions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/title-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL: analyze + optimize + CTR prediction"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze page title for SEO quality"
+      },
+      {
+        "method": "POST",
+        "path": "/optimize",
+        "description": "Get optimized title suggestions"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/title-intelligence",
+        "description": "ONE-CALL: analyze + optimize + CTR prediction"
+      }
+    ]
+  }
+]

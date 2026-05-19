@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Contact Card Extractor API",
+    "shortDescription": "Extract contact details from unstructured text or parse vCard strings",
+    "description": "Extract structured contact cards from any unstructured text, including names, emails, phones, job titles, companies, websites, and social handles. Also parses vCard (VCF) formatted strings into structured fields. Designed for CRM enrichment, lead capture, and agent pipelines that process business card images, email signatures, or directory text.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/contact-card-extractor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/contact-card-extractor/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/contact-card-extractor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/contact-card-extractor/logo.png",
+    "tags": [
+      "contact",
+      "vcard",
+      "extraction",
+      "nlp",
+      "lead-generation",
+      "crm"
+    ],
+    "keywords": [
+      "contact card extractor api",
+      "vcard parser api",
+      "email signature extractor",
+      "business card nlp api",
+      "contact details extraction",
+      "crm lead enrichment"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.003,
+            "description": "Extract contact cards from unstructured text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.002,
+            "description": "Parse a vCard string into structured contact fields"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/contact-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call contact extraction with enrichment recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Extract contact cards from unstructured text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.001,
+            "description": "Parse a vCard string into structured contact fields"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/contact-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call contact extraction with enrichment recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract contact cards from unstructured text"
+      },
+      {
+        "method": "POST",
+        "path": "/parse",
+        "description": "Parse a vCard string into structured contact fields"
+      },
+      {
+        "method": "POST",
+        "path": "/contact-intelligence",
+        "description": "One-call contact extraction with enrichment recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

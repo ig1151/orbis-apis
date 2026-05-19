@@ -1,0 +1,125 @@
+[
+  {
+    "name": "Chrome Extension Risk API",
+    "shortDescription": "Analyze Chrome extension permissions and security risk signals.",
+    "description": "Analyze Chrome extensions for security risk signals including dangerous permission combinations, host access scope, content script injection, data exfiltration risk, CSP violations, and manifest anomalies. Built for enterprise IT security teams, browser policy enforcement, and extension vetting pipelines. Returns risk scores, permission sensitivity breakdowns, safer alternatives, and install recommendations. Supports full extension analysis, component scoring, and an execution-gate for agent flow control.",
+    "category": "security",
+    "baseUrl": "https://orbis-apis.onrender.com/chrome-extension-risk",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/chrome-extension-risk/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/chrome-extension-risk/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/chrome-extension-risk/logo.png",
+    "tags": [
+      "chrome",
+      "extension",
+      "security",
+      "permissions"
+    ],
+    "keywords": [
+      "chrome extension risk api",
+      "browser extension security",
+      "chrome extension scanner",
+      "extension permission checker",
+      "browser security api",
+      "chrome extension analyzer"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.004,
+            "description": "Full Chrome extension risk analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "Risk score breakdown for Chrome extension"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extension-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: full Chrome extension risk intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.002,
+            "description": "Full Chrome extension risk analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Risk score breakdown for Chrome extension"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extension-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: full Chrome extension risk intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Full Chrome extension risk analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Risk score breakdown for Chrome extension"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/extension-intelligence",
+        "description": "ONE-CALL: full Chrome extension risk intelligence"
+      }
+    ]
+  }
+]

@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Schema.org Extractor API",
+    "shortDescription": "Extract and validate all Schema.org structured data from any URL including JSON-LD, Microdata, and RDFa.",
+    "description": "The Schema.org Extractor API provides full orchestration of structured data discovery and validation pipelines. Every response returns confidence scores, provenance metadata, and agent-ready next-API recommendations. The /extract endpoint parses all Schema.org markup from any URL across JSON-LD, Microdata, and RDFa formats, returning raw schema objects, resolved properties, and rich result eligibility signals. The /validate endpoint checks schema correctness and Google rich result compliance for a specific schema type. The /execution-gate endpoint determines whether the structured data profile is ready for downstream automation. The /schema-intelligence endpoint aggregates full schema coverage into a single intelligence report with priority-ordered remediation actions.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/schema-org-extractor",
+    "websiteUrl": "https://orbis-apis.onrender.com/schema-org-extractor",
+    "docsUrl": "https://orbis-apis.onrender.com/schema-org-extractor/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/schema-org-extractor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/schema-org-extractor.png",
+    "tags": [
+      "schema-org",
+      "structured-data",
+      "json-ld",
+      "rich-snippets",
+      "seo",
+      "microdata"
+    ],
+    "keywords": [
+      "schema.org",
+      "structured data",
+      "JSON-LD",
+      "rich results",
+      "microdata",
+      "RDFa"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 400,
+        "requestsPerMonth": 12000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.003,
+            "description": "Extract schema.org structured data from a URL"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Validate schema markup against schema.org spec"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schema-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: extract + validate + rich result eligibility"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Extract schema.org structured data from a URL"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Validate schema markup against schema.org spec"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schema-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: extract + validate + rich result eligibility"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract schema.org structured data from a URL"
+      },
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate schema markup against schema.org spec"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/schema-intelligence",
+        "description": "ONE-CALL: extract + validate + rich result eligibility"
+      }
+    ]
+  }
+]

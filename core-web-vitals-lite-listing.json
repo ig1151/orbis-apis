@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Core Web Vitals Lite API",
+    "shortDescription": "Estimate Core Web Vitals (LCP, FID, CLS) scores for a URL",
+    "description": "Estimate Largest Contentful Paint (LCP), First Input Delay (FID), and Cumulative Layout Shift (CLS) scores for any URL. Returns good/needs-improvement/poor ratings per metric, an overall CWV pass/fail determination, performance opportunities, and an aggregate performance grade.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/core-web-vitals-lite",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/core-web-vitals-lite/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/core-web-vitals-lite/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/core-web-vitals-lite/logo.png",
+    "tags": [
+      "seo",
+      "performance",
+      "cwv",
+      "lighthouse"
+    ],
+    "keywords": [
+      "core web vitals",
+      "LCP",
+      "FID",
+      "CLS",
+      "lighthouse",
+      "page speed",
+      "performance score",
+      "cwv"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/measure",
+            "pricePerCallUsdc": 0.003,
+            "description": "Measure Core Web Vitals for a URL"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "Score overall performance and CWV pass/fail"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/vitals-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: full Core Web Vitals intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/measure",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Measure Core Web Vitals for a URL"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Score overall performance and CWV pass/fail"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/vitals-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL: full Core Web Vitals intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/measure",
+        "description": "Measure Core Web Vitals for a URL"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score overall performance and CWV pass/fail"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/vitals-intelligence",
+        "description": "ONE-CALL: full Core Web Vitals intelligence"
+      }
+    ]
+  }
+]

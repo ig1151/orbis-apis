@@ -1,0 +1,124 @@
+[
+  {
+    "name": "Smart Contract ABI Lookup API",
+    "shortDescription": "Look up and decode smart contract ABI from blockchain networks",
+    "description": "Look up verified and inferred smart contract ABIs from EVM-compatible blockchains, decode function calldata and event logs with full parameter names and types. Returns confidence scores and provenance for agent pipelines.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/smart-contract-abi-lookup",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/smart-contract-abi-lookup/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/smart-contract-abi-lookup/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/smart-contract-abi-lookup/logo.png",
+    "tags": [
+      "blockchain",
+      "abi",
+      "smart-contract",
+      "evm"
+    ],
+    "keywords": [
+      "smart contract abi",
+      "abi lookup",
+      "decode calldata",
+      "function selector",
+      "evm abi"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.003,
+            "description": "Look up contract ABI"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/decode",
+            "pricePerCallUsdc": 0.003,
+            "description": "Decode ABI function call or event log"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/abi-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: full ABI lookup intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Look up contract ABI"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/decode",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Decode ABI function call or event log"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/abi-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: full ABI lookup intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Look up contract ABI"
+      },
+      {
+        "method": "POST",
+        "path": "/decode",
+        "description": "Decode ABI function call or event log"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/abi-intelligence",
+        "description": "ONE-CALL: full ABI lookup intelligence"
+      }
+    ]
+  }
+]

@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Text Simplifier API",
+    "shortDescription": "Simplify complex text to a target reading grade level",
+    "description": "Transform dense, jargon-heavy content into clear, readable prose. Powered by AI with confidence scores and provenance tracking, this API is built for orchestration pipelines, content QA agents, accessibility workflows, and automated editorial systems. Each response includes readability improvement metrics, change-by-change provenance, and recommended next actions for downstream agent routing.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/text-simplifier",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/text-simplifier/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/text-simplifier/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/text-simplifier/logo.png",
+    "tags": [
+      "text",
+      "readability",
+      "simplification",
+      "nlp",
+      "content",
+      "accessibility"
+    ],
+    "keywords": [
+      "text simplifier api",
+      "readability grade level",
+      "plain language api",
+      "jargon remover",
+      "content simplification",
+      "passive voice converter"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/simplify",
+            "pricePerCallUsdc": 0.002,
+            "description": "Simplify text to a target grade level"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.001,
+            "description": "Analyze text complexity and flag improvement areas"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/simplifier-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call analysis, simplification, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/simplify",
+            "pricePerCallUsdc": 0.001,
+            "description": "Simplify text to a target grade level"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Analyze text complexity and flag improvement areas"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/simplifier-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call analysis, simplification, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/simplify",
+        "description": "Simplify text to a target grade level"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze text complexity and flag improvement areas"
+      },
+      {
+        "method": "POST",
+        "path": "/simplifier-intelligence",
+        "description": "One-call analysis, simplification, and agent routing"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

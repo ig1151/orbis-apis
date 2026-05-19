@@ -1,0 +1,55 @@
+[{
+  "name": "Company Domain Finder API",
+  "shortDescription": "Find the primary domain for any company by name with confidence scoring.",
+  "description": "Find the primary domain for any company by name: matches company names to official domains, validates corporate email patterns, and enriches lead data. Built for B2B outreach agents, sales intelligence pipelines, and contact enrichment workflows. Returns canonical domain, confidence score, alternate domain matches, and typed provenance. Supports one-call domain discovery, domain verification against a company name, batch processing of up to 20 companies, and an execution-gate for agent flow control.",
+  "category": "data-analytics",
+  "baseUrl": "https://orbis-apis.onrender.com/company-domain-finder",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/company-domain-finder/docs",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/company-domain-finder/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/company-domain-finder/logo.png",
+  "tags": ["company", "domain", "b2b", "lead-generation", "email", "enrichment"],
+  "keywords": ["company domain finder", "find company website", "b2b domain lookup", "company email domain api", "lead enrichment api", "corporate domain search"],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 200,
+      "requestsPerMonth": 6000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.003,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {"method": "POST", "pathPattern": "/find-domain", "pricePerCallUsdc": 0.003, "description": "ONE-CALL: Find primary domain for a company name"},
+        {"method": "POST", "pathPattern": "/verify-domain", "pricePerCallUsdc": 0.002, "description": "Verify a domain belongs to a given company"},
+        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.018, "description": "Batch company domain lookup — up to 20 companies"},
+        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.0015,
+      "requestsPerDay": 500000,
+      "requestsPerMonth": 15000000,
+      "endpointPricing": [
+        {"method": "POST", "pathPattern": "/find-domain", "pricePerCallUsdc": 0.0015, "description": "ONE-CALL: Find primary domain for a company name"},
+        {"method": "POST", "pathPattern": "/verify-domain", "pricePerCallUsdc": 0.001, "description": "Verify a domain belongs to a given company"},
+        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.009, "description": "Batch company domain lookup — up to 20 companies"},
+        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]
+    }
+  ],
+  "endpoints": [
+    {"method": "POST", "path": "/find-domain", "description": "ONE-CALL: Find primary domain for a company name"},
+    {"method": "POST", "path": "/verify-domain", "description": "Verify a domain belongs to a given company"},
+    {"method": "POST", "path": "/batch", "description": "Batch company domain lookup — up to 20 companies"},
+    {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check before processing"}
+  ]
+}]

@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Toxicity Detection API",
+    "shortDescription": "Detect toxic, hateful, and unsafe content in text",
+    "description": "Classify user-generated content for toxicity, hate speech, threats, and harassment with per-category confidence scores and provenance tracking. Designed for content moderation agents, community platform pipelines, and automated safety workflows. Supports single-text detection and batch processing up to 20 items. Returns severity ratings, flagged phrases, and agent-ready recommended next actions.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/toxicity-detection",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/toxicity-detection/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/toxicity-detection/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/toxicity-detection/logo.png",
+    "tags": [
+      "toxicity",
+      "moderation",
+      "safety",
+      "hate-speech",
+      "content",
+      "ai-ml"
+    ],
+    "keywords": [
+      "toxicity detection api",
+      "content moderation api",
+      "hate speech detector",
+      "safe to display check",
+      "harassment classifier",
+      "bulk content moderation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.002,
+            "description": "Detect toxicity in a single text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.001,
+            "description": "Batch toxicity detection for up to 20 texts"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/toxicity-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call toxicity analysis with agent routing and provenance"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.001,
+            "description": "Detect toxicity in a single text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Batch toxicity detection for up to 20 texts"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/toxicity-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call toxicity analysis with agent routing and provenance"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/detect",
+        "description": "Detect toxicity in a single text"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch toxicity detection for up to 20 texts"
+      },
+      {
+        "method": "POST",
+        "path": "/toxicity-intelligence",
+        "description": "One-call toxicity analysis with agent routing and provenance"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

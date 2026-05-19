@@ -1,0 +1,125 @@
+[
+  {
+    "name": "Hosting Provider Detector API",
+    "shortDescription": "Detect hosting provider, server, and infrastructure from a domain",
+    "description": "Detect the hosting provider, server software, IP address, ASN, datacenter region, and infrastructure tier for any domain. Identifies AWS, GCP, Azure, DigitalOcean, Vercel, Netlify, WP Engine, and 20+ more providers. Returns structured results for agent pipelines.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/hosting-provider-detector",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/hosting-provider-detector/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/hosting-provider-detector/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/hosting-provider-detector/logo.png",
+    "tags": [
+      "hosting",
+      "infrastructure",
+      "web-intelligence",
+      "server",
+      "networking"
+    ],
+    "keywords": [
+      "hosting detector",
+      "web host lookup",
+      "server detector",
+      "infrastructure intelligence",
+      "aws detector"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.002,
+            "description": "Detect hosting provider"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze hosting infrastructure"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/hosting-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: detect + analyze + insights"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.001,
+            "description": "Detect hosting provider"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze hosting infrastructure"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/hosting-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL: detect + analyze + insights"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/detect",
+        "description": "Detect hosting provider"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze hosting infrastructure"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/hosting-intelligence",
+        "description": "ONE-CALL: detect + analyze + insights"
+      }
+    ]
+  }
+]

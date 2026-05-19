@@ -1,0 +1,125 @@
+[
+  {
+    "name": "WHOIS Lite API",
+    "shortDescription": "Lightweight WHOIS lookup with registrar, dates, and nameservers",
+    "description": "Perform WHOIS lookups for any domain to retrieve registrar, registration date, expiration date, nameservers, domain status, and privacy protection. Supports batch lookups and includes domain health scoring. Returns structured data for agent pipelines.",
+    "category": "domain-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/whois-lite",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/whois-lite/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/whois-lite/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/whois-lite/logo.png",
+    "tags": [
+      "whois",
+      "domain",
+      "registrar",
+      "dns",
+      "web-intelligence"
+    ],
+    "keywords": [
+      "whois lookup",
+      "domain registrar",
+      "domain age",
+      "domain expiry",
+      "nameservers"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.002,
+            "description": "Single domain WHOIS lookup"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.004,
+            "description": "Batch WHOIS lookup"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/whois-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: lookup + health + risk score"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.001,
+            "description": "Single domain WHOIS lookup"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.002,
+            "description": "Batch WHOIS lookup"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/whois-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL: lookup + health + risk score"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Single domain WHOIS lookup"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch WHOIS lookup"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/whois-intelligence",
+        "description": "ONE-CALL: lookup + health + risk score"
+      }
+    ]
+  }
+]

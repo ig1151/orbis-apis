@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Executive Email Pattern Finder API",
+    "shortDescription": "Find likely email addresses for executives using domain-based pattern inference",
+    "description": "Infer likely email addresses for any executive given a first name, last name, and domain. Returns multiple pattern candidates (first.last, f.last, firstlast, etc.) with confidence scores, the most likely candidate, and a verification endpoint for MX and SMTP-level checks. Built for sales agents, outreach automation, and lead enrichment pipelines.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/executive-email-pattern-finder",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/executive-email-pattern-finder/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/executive-email-pattern-finder/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/executive-email-pattern-finder/logo.png",
+    "tags": [
+      "email-finder",
+      "outreach",
+      "sales",
+      "email-pattern",
+      "lead-generation",
+      "prospecting"
+    ],
+    "keywords": [
+      "executive email finder api",
+      "email pattern inference",
+      "sales prospecting email",
+      "email format guesser",
+      "domain email patterns",
+      "lead enrichment email api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/find",
+            "pricePerCallUsdc": 0.003,
+            "description": "Find likely email patterns for a given name and domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/verify",
+            "pricePerCallUsdc": 0.002,
+            "description": "Verify an email address via MX and SMTP checks"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/email-pattern-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call email pattern discovery, scoring, and verification"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/find",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Find likely email patterns for a given name and domain"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/verify",
+            "pricePerCallUsdc": 0.001,
+            "description": "Verify an email address via MX and SMTP checks"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/email-pattern-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call email pattern discovery, scoring, and verification"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/find",
+        "description": "Find likely email patterns for a given name and domain"
+      },
+      {
+        "method": "POST",
+        "path": "/verify",
+        "description": "Verify an email address via MX and SMTP checks"
+      },
+      {
+        "method": "POST",
+        "path": "/email-pattern-intelligence",
+        "description": "One-call email pattern discovery, scoring, and verification"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

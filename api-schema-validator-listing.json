@@ -1,0 +1,124 @@
+[
+  {
+    "name": "API Schema Validator",
+    "shortDescription": "Validate OpenAPI 3.x and JSON Schema documents for correctness",
+    "description": "Validate OpenAPI 3.0/3.1 and JSON Schema Draft 7/2020 documents for correctness, lint for best practices, security issues, and missing documentation. Returns confidence scores and provenance for agent pipelines.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/api-schema-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/api-schema-validator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/api-schema-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/api-schema-validator/logo.png",
+    "tags": [
+      "openapi",
+      "schema",
+      "validation",
+      "devops"
+    ],
+    "keywords": [
+      "openapi validator",
+      "json schema validator",
+      "api schema lint",
+      "schema validation",
+      "openapi lint"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Validate schema document"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lint",
+            "pricePerCallUsdc": 0.003,
+            "description": "Lint schema for style and best practices"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schema-validator-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: full schema validator intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Validate schema document"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lint",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Lint schema for style and best practices"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/schema-validator-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: full schema validator intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate schema document"
+      },
+      {
+        "method": "POST",
+        "path": "/lint",
+        "description": "Lint schema for style and best practices"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/schema-validator-intelligence",
+        "description": "ONE-CALL: full schema validator intelligence"
+      }
+    ]
+  }
+]

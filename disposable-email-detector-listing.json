@@ -1,0 +1,55 @@
+[{
+  "name": "Disposable Email Detector API",
+  "shortDescription": "Detect disposable and temporary email addresses in real time.",
+  "description": "Detect disposable/temporary email addresses: identifies throwaway email domains, burner services, and single-use providers. Built for registration fraud prevention, lead quality scoring, and email list hygiene workflows. Returns risk labels, recommended actions, and typed confidence with provenance. Supports per-email detection, domain-level disposable checks, batch processing of up to 20 emails, and an execution-gate for agent flow control.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/disposable-email-detector",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/disposable-email-detector/docs",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/disposable-email-detector/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/disposable-email-detector/logo.png",
+  "tags": ["email", "disposable", "validation", "fraud", "security", "spam"],
+  "keywords": ["disposable email checker", "throwaway email detection", "burner email api", "temporary email validator", "email fraud prevention", "fake email detector"],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 500,
+      "requestsPerMonth": 15000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.001,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {"method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.001, "description": "ONE-CALL: Detect if an email is disposable or throwaway"},
+        {"method": "GET", "pathPattern": "/domain", "pricePerCallUsdc": 0.001, "description": "Check if a domain is a known disposable provider"},
+        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.010, "description": "Batch disposable email detection — up to 20 emails"},
+        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.0005,
+      "requestsPerDay": 500000,
+      "requestsPerMonth": 15000000,
+      "endpointPricing": [
+        {"method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.0005, "description": "ONE-CALL: Detect if an email is disposable or throwaway"},
+        {"method": "GET", "pathPattern": "/domain", "pricePerCallUsdc": 0.0005, "description": "Check if a domain is a known disposable provider"},
+        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.005, "description": "Batch disposable email detection — up to 20 emails"},
+        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]
+    }
+  ],
+  "endpoints": [
+    {"method": "POST", "path": "/detect", "description": "ONE-CALL: Detect if an email is disposable or throwaway"},
+    {"method": "GET", "path": "/domain", "description": "Check if a domain is a known disposable provider"},
+    {"method": "POST", "path": "/batch", "description": "Batch disposable email detection — up to 20 emails"},
+    {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check before processing"}
+  ]
+}]

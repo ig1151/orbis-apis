@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Prompt Injection Detector API",
+    "shortDescription": "Detect prompt injection, jailbreak, and LLM attack patterns in user input",
+    "description": "Protect AI pipelines from prompt injection, role confusion, jailbreak attempts, and system prompt extraction attacks. Built for LLM security agents, orchestration safety layers, and automated input validation. Returns per-attack-type confidence scores, sanitized safe text, provenance metadata, and agent-ready blocking flags for execution gate integration.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/prompt-injection-detector",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/prompt-injection-detector/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/prompt-injection-detector/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/prompt-injection-detector/logo.png",
+    "tags": [
+      "prompt-injection",
+      "llm-safety",
+      "security",
+      "jailbreak",
+      "ai-safety",
+      "ai-ml"
+    ],
+    "keywords": [
+      "prompt injection detector api",
+      "jailbreak detection",
+      "llm security api",
+      "instruction override detector",
+      "ai input validation",
+      "system prompt protection"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.002,
+            "description": "Detect prompt injection and attack types in user input"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.001,
+            "description": "Analyze risk breakdown and attack vectors"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/injection-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call detection, analysis, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.001,
+            "description": "Detect prompt injection and attack types in user input"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Analyze risk breakdown and attack vectors"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/injection-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call detection, analysis, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/detect",
+        "description": "Detect prompt injection and attack types in user input"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze risk breakdown and attack vectors"
+      },
+      {
+        "method": "POST",
+        "path": "/injection-intelligence",
+        "description": "One-call detection, analysis, and agent routing"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

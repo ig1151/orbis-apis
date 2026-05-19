@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Brand Voice Consistency Checker API",
+    "shortDescription": "Check content against a brand voice profile and detect tone or vocabulary deviations",
+    "description": "Check any text against a defined brand voice profile to detect tone mismatches, formality deviations, and off-brand vocabulary. Also derives a voice profile from sample texts. Returns a consistency score, deviating phrases with severity and suggestions, and actionable recommendations. Built for content teams, editorial agents, and brand governance workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/brand-voice-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/brand-voice-checker/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/brand-voice-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/brand-voice-checker/logo.png",
+    "tags": [
+      "brand-voice",
+      "content",
+      "tone",
+      "consistency",
+      "copywriting",
+      "editorial"
+    ],
+    "keywords": [
+      "brand voice checker api",
+      "tone consistency checker",
+      "brand writing style api",
+      "content brand compliance",
+      "editorial voice analysis",
+      "vocabulary brand match"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.003,
+            "description": "Check text against a brand voice profile for consistency"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Derive a brand voice profile from sample texts"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/brand-voice-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call brand voice check, analysis, and improvement recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Check text against a brand voice profile for consistency"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Derive a brand voice profile from sample texts"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/brand-voice-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call brand voice check, analysis, and improvement recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Check text against a brand voice profile for consistency"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Derive a brand voice profile from sample texts"
+      },
+      {
+        "method": "POST",
+        "path": "/brand-voice-intelligence",
+        "description": "One-call brand voice check, analysis, and improvement recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

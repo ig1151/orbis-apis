@@ -1,0 +1,127 @@
+[
+  {
+    "name": "YouTube Title Optimizer API",
+    "shortDescription": "Score, grade, and optimize YouTube titles for CTR and discoverability",
+    "description": "Analyze and optimize YouTube video titles for click-through rate, keyword density, emotional triggers, and algorithmic discoverability. Returns a score, grade, CTR estimate, optimized variants, and a list of issues with severity and fixes. Ideal for content creators, SEO agents, and YouTube channel management automation.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/youtube-title-optimizer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/youtube-title-optimizer/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/youtube-title-optimizer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/youtube-title-optimizer/logo.png",
+    "tags": [
+      "youtube",
+      "title",
+      "seo",
+      "video",
+      "optimization",
+      "ctr"
+    ],
+    "keywords": [
+      "youtube title optimizer api",
+      "video title seo",
+      "ctr title score",
+      "youtube keyword density",
+      "title grade checker",
+      "youtube discoverability"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.003,
+            "description": "Optimize a YouTube title and return variants with scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "Score a YouTube title with a detailed breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/youtube-title-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call title optimization, scoring, and SEO recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Optimize a YouTube title and return variants with scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Score a YouTube title with a detailed breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/youtube-title-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call title optimization, scoring, and SEO recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/optimize",
+        "description": "Optimize a YouTube title and return variants with scores"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score a YouTube title with a detailed breakdown"
+      },
+      {
+        "method": "POST",
+        "path": "/youtube-title-intelligence",
+        "description": "One-call title optimization, scoring, and SEO recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

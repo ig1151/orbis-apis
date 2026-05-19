@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Title Generator API",
+    "shortDescription": "Generate and score SEO, blog, email, and social media titles",
+    "description": "Generate high-converting titles and headlines for blogs, emails, social posts, and YouTube content with SEO scores, click-through scores, and keyword inclusion tracking. Built for content marketing agents, editorial pipelines, and automated copywriting workflows. Returns per-title rationale, character counts, provenance metadata, and agent-ready recommendations for downstream orchestration.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/title-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/title-generator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/title-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/title-generator/logo.png",
+    "tags": [
+      "title",
+      "headline",
+      "seo",
+      "content-generation",
+      "copywriting",
+      "ai-ml"
+    ],
+    "keywords": [
+      "title generator api",
+      "seo headline api",
+      "blog title generator",
+      "email subject line api",
+      "youtube title generator",
+      "click through title scorer"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Generate multiple titles with SEO and click scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Score an existing title with breakdown metrics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/title-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call title generation, scoring, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Generate multiple titles with SEO and click scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Score an existing title with breakdown metrics"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/title-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call title generation, scoring, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate multiple titles with SEO and click scores"
+      },
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score an existing title with breakdown metrics"
+      },
+      {
+        "method": "POST",
+        "path": "/title-intelligence",
+        "description": "One-call title generation, scoring, and agent routing"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

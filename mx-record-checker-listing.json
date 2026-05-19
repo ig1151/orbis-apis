@@ -1,0 +1,55 @@
+[{
+  "name": "MX Record Checker API",
+  "shortDescription": "Retrieve and validate MX records for any domain with email readiness assessment.",
+  "description": "Retrieve and validate MX records for any domain: mail server hostnames, priority ordering, TTL, and email readiness assessment. Built for email deliverability agents and infrastructure monitoring workflows. Supports raw MX record resolution, a one-call email-readiness check combining MX, SPF, and DMARC signals with typed confidence and provenance, batch processing of up to 20 domains, and an execution-gate for agent flow control.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/mx-record-checker",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/mx-record-checker/docs",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/mx-record-checker/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/mx-record-checker/logo.png",
+  "tags": ["mx", "email", "dns", "records", "deliverability", "infrastructure"],
+  "keywords": ["mx record lookup", "email dns check", "mail server validation", "email deliverability api", "dns mx records", "check mx records"],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 300,
+      "requestsPerMonth": 9000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.001,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {"method": "GET", "pathPattern": "/mx", "pricePerCallUsdc": 0.001, "description": "Resolve MX records for a domain"},
+        {"method": "GET", "pathPattern": "/email-ready", "pricePerCallUsdc": 0.002, "description": "ONE-CALL: MX + SPF + DMARC deliverability check"},
+        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.012, "description": "Batch MX record check — up to 20 domains"},
+        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]
+    },
+    {
+      "name": "High Volume",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.0005,
+      "requestsPerDay": 500000,
+      "requestsPerMonth": 15000000,
+      "endpointPricing": [
+        {"method": "GET", "pathPattern": "/mx", "pricePerCallUsdc": 0.0005, "description": "Resolve MX records for a domain"},
+        {"method": "GET", "pathPattern": "/email-ready", "pricePerCallUsdc": 0.001, "description": "ONE-CALL: MX + SPF + DMARC deliverability check"},
+        {"method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.006, "description": "Batch MX record check — up to 20 domains"},
+        {"method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Check whether an agent should proceed, pause, or call a recommended next API"}
+      ]
+    }
+  ],
+  "endpoints": [
+    {"method": "GET", "path": "/mx", "description": "Resolve MX records for a domain"},
+    {"method": "GET", "path": "/email-ready", "description": "ONE-CALL: MX + SPF + DMARC deliverability check"},
+    {"method": "POST", "path": "/batch", "description": "Batch MX record check — up to 20 domains"},
+    {"method": "POST", "path": "/execution-gate", "description": "Execution readiness check before processing"}
+  ]
+}]

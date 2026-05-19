@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Bullet Point Extractor API",
+    "shortDescription": "Extract key takeaways, actions, and summaries as bullet points from any text",
+    "description": "Distill long-form content into structured bullet points categorized as takeaways, actions, facts, or summaries with importance scores and coverage metrics. Built for summarization agents, executive briefing pipelines, and content orchestration workflows. Returns importance-ranked bullets, coverage score, provenance metadata, and agent-ready recommendations for downstream chaining.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/bullet-point-extractor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/bullet-point-extractor/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/bullet-point-extractor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/bullet-point-extractor/logo.png",
+    "tags": [
+      "bullets",
+      "summarization",
+      "extraction",
+      "nlp",
+      "content",
+      "ai-ml"
+    ],
+    "keywords": [
+      "bullet point extractor api",
+      "text summarization api",
+      "key takeaways api",
+      "action items extractor",
+      "executive summary api",
+      "content extraction api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.002,
+            "description": "Extract typed bullet points from text with importance scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Generate styled bullet points from text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/bullet-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call extraction, generation, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.001,
+            "description": "Extract typed bullet points from text with importance scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Generate styled bullet points from text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/bullet-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call extraction, generation, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract typed bullet points from text with importance scores"
+      },
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate styled bullet points from text"
+      },
+      {
+        "method": "POST",
+        "path": "/bullet-intelligence",
+        "description": "One-call extraction, generation, and agent routing"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

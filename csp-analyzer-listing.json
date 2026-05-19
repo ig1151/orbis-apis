@@ -1,0 +1,42 @@
+[{
+  "name": "CSP Analyzer API",
+  "shortDescription": "Analyze and validate Content Security Policies for XSS protection",
+  "description": "Analyze Content Security Policy headers from any URL or raw CSP string: detect unsafe-inline, unsafe-eval, wildcard sources, missing directives, and score overall CSP strength. Validate custom CSP policies, identify XSS exposure, and get prioritized recommendations for hardening. Built for security agents, DevSecOps pipelines, and compliance workflows.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/csp-analyzer",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/csp-analyzer/docs",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/csp-analyzer/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/csp-analyzer/logo.png",
+  "tags": ["csp", "security", "xss", "content-security-policy", "web-security"],
+  "keywords": ["csp analyzer", "content security policy check", "csp validator", "xss protection", "unsafe-inline csp", "csp strength score"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 500, "requestsPerMonth": 15000 },
+    {
+      "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.001,
+      "requestsPerDay": 50000, "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.002, "description": "Analyze CSP header from URL or raw string" },
+        { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.002, "description": "Validate a CSP policy string" },
+        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed based on CSP posture" },
+        { "method": "POST", "pathPattern": "/csp-intelligence", "pricePerCallUsdc": 0.006, "description": "One-call CSP analysis, validation, and recommendations" }
+      ]
+    },
+    {
+      "name": "High Volume", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.0005,
+      "requestsPerDay": 500000, "requestsPerMonth": 15000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.001, "description": "Analyze CSP header" },
+        { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.001, "description": "Validate CSP policy" },
+        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution gate" },
+        { "method": "POST", "pathPattern": "/csp-intelligence", "pricePerCallUsdc": 0.003, "description": "Combined intelligence endpoint" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/analyze", "description": "Analyze CSP header from URL or raw string" },
+    { "method": "POST", "path": "/validate", "description": "Validate a CSP policy string" },
+    { "method": "POST", "path": "/execution-gate", "description": "Execution gate check" },
+    { "method": "POST", "path": "/csp-intelligence", "description": "One-call combined intelligence" }
+  ]
+}]

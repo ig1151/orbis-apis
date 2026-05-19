@@ -1,0 +1,125 @@
+[
+  {
+    "name": "Signature Block Parser API",
+    "shortDescription": "Parse email signature blocks to extract structured contact information.",
+    "description": "Parse raw email signature blocks into structured contact data: name, title, company, email, phone, address, social profiles, and disclaimer text. Built for CRM enrichment agents, inbox automation pipelines, and contact database sync workflows. Returns fully typed contact objects with confidence scores and vCard output. Supports signature extraction from full email bodies, field-level parsing, and an execution-gate for agent flow control.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/signature-block-parser",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/signature-block-parser/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/signature-block-parser/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/signature-block-parser/logo.png",
+    "tags": [
+      "email",
+      "signature",
+      "contact-extraction",
+      "nlp"
+    ],
+    "keywords": [
+      "email signature parser",
+      "signature block extractor",
+      "contact extraction api",
+      "email footer parser",
+      "signature to contact",
+      "nlp contact api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.003,
+            "description": "Parse email signature block to structured contact"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.002,
+            "description": "Extract signature block from full email body"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/signature-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: full signature parsing intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Parse email signature block to structured contact"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.001,
+            "description": "Extract signature block from full email body"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/signature-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL: full signature parsing intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/parse",
+        "description": "Parse email signature block to structured contact"
+      },
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract signature block from full email body"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/signature-intelligence",
+        "description": "ONE-CALL: full signature parsing intelligence"
+      }
+    ]
+  }
+]

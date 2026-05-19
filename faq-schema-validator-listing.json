@@ -1,0 +1,127 @@
+[
+  {
+    "name": "FAQ Schema Validator API",
+    "shortDescription": "Validate FAQ schema markup for Google rich result eligibility with per-question scoring and character limit checks.",
+    "description": "The FAQ Schema Validator API enables autonomous orchestration of FAQ structured data quality across content pipelines. Every response includes confidence scores, provenance metadata, and recommended next-API routing for agent-driven workflows. The /validate endpoint accepts either a URL or raw schema JSON and returns per-question validity, character limit compliance, Google eligibility status, and specific error messages. The /check endpoint performs a rapid FAQ schema presence check on any URL. The /execution-gate endpoint signals whether FAQ schema quality meets the bar for automated rich result optimization. The /faq-schema-intelligence endpoint provides a comprehensive intelligence summary with provenance-backed findings and priority-ordered remediation recommendations.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/faq-schema-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com/faq-schema-validator",
+    "docsUrl": "https://orbis-apis.onrender.com/faq-schema-validator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/faq-schema-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/faq-schema-validator.png",
+    "tags": [
+      "faq",
+      "schema",
+      "structured-data",
+      "rich-snippets",
+      "seo",
+      "google"
+    ],
+    "keywords": [
+      "FAQ schema",
+      "structured data",
+      "rich results",
+      "FAQPage",
+      "JSON-LD",
+      "Google eligibility"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Validate FAQ schema markup"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.002,
+            "description": "Check FAQ schema for Google rich result eligibility"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/faq-schema-intelligence",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL: validate + eligibility check + fix recommendations"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate FAQ schema markup"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check FAQ schema for Google rich result eligibility"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/faq-schema-intelligence",
+            "pricePerCallUsdc": 0.0025,
+            "description": "ONE-CALL: validate + eligibility check + fix recommendations"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate FAQ schema markup"
+      },
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Check FAQ schema for Google rich result eligibility"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/faq-schema-intelligence",
+        "description": "ONE-CALL: validate + eligibility check + fix recommendations"
+      }
+    ]
+  }
+]

@@ -1,0 +1,124 @@
+[
+  {
+    "name": "Transaction Decoder API",
+    "shortDescription": "Decode blockchain transaction data and function calls",
+    "description": "Decode blockchain transaction calldata, event logs, token transfers, and analyze MEV, flash loans, and protocol interactions on EVM-compatible networks. Returns confidence scores and provenance for agent pipelines.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/transaction-decoder",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/transaction-decoder/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/transaction-decoder/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/transaction-decoder/logo.png",
+    "tags": [
+      "blockchain",
+      "transaction",
+      "decoder",
+      "evm"
+    ],
+    "keywords": [
+      "transaction decoder",
+      "decode calldata",
+      "blockchain transaction",
+      "evm transaction",
+      "mev detection"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/decode",
+            "pricePerCallUsdc": 0.003,
+            "description": "Decode transaction data"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze transaction for risk and MEV"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/transaction-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: full transaction decoder intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/decode",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Decode transaction data"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze transaction for risk and MEV"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/transaction-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: full transaction decoder intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/decode",
+        "description": "Decode transaction data"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze transaction for risk and MEV"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/transaction-intelligence",
+        "description": "ONE-CALL: full transaction decoder intelligence"
+      }
+    ]
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "URL Risk Lite API",
+    "shortDescription": "Real-time URL risk scoring, malicious link detection, and phishing analysis for security automation",
+    "description": "Scan any URL for malicious indicators, phishing patterns, suspicious redirects, blacklist status, and domain age risk. Returns structured risk scores, risk factors, and actionable allow/warn/block recommendations purpose-built for security orchestration, automated threat response, and MCP agent pipelines. Automation-safe: no data stored, deterministic outputs, suitable for inline security gates.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/url-risk-lite",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/url-risk-lite/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/url-risk-lite/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["url", "security", "malware", "phishing", "risk", "threat-intelligence"],
+    "keywords": ["url risk score", "malicious url detection", "phishing url check", "url safety api", "link scanner", "blacklist check url"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.003, "description": "Quick URL risk check with risk score and recommended action" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.004, "description": "Deep URL breakdown by domain, path, parameter, and redirect risk" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness gate for agent chaining" },
+          { "method": "POST", "pathPattern": "/url-risk-intelligence", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full URL risk intelligence with mitigations" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.0015, "description": "High-volume URL risk check" },
+          { "method": "POST", "pathPattern": "/url-risk-intelligence", "pricePerCallUsdc": 0.003, "description": "High-volume full URL risk intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/check", "description": "Quick URL risk check" },
+      { "method": "POST", "path": "/analyze", "description": "Deep URL risk analysis" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/url-risk-intelligence", "description": "ONE-CALL full URL risk intelligence" }
+    ]
+  }
+]

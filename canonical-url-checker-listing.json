@@ -1,0 +1,42 @@
+[{
+  "name": "Canonical URL Checker API",
+  "shortDescription": "Check and validate canonical tags for SEO duplicate content prevention",
+  "description": "Check canonical URL tags on any webpage: detect missing, self-referencing, cross-domain, and conflicting canonical tags, score SEO impact, and validate that canonical tags match expected values. Built for SEO agents, site auditors, and content deduplication workflows with typed confidence scores, provenance, and execution-gate support.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/canonical-url-checker",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/canonical-url-checker/docs",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/canonical-url-checker/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/canonical-url-checker/logo.png",
+  "tags": ["canonical", "seo", "url", "duplicate-content", "web-audit"],
+  "keywords": ["canonical url checker", "canonical tag validator", "seo canonical audit", "duplicate content check", "self referencing canonical", "cross domain canonical"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 500, "requestsPerMonth": 15000 },
+    {
+      "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.001,
+      "requestsPerDay": 50000, "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.002, "description": "Check canonical tag on a URL" },
+        { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.002, "description": "Validate canonical tag against expected value" },
+        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Check whether an agent should proceed based on canonical posture" },
+        { "method": "POST", "pathPattern": "/canonical-intelligence", "pricePerCallUsdc": 0.006, "description": "One-call canonical check, validation, and recommendations" }
+      ]
+    },
+    {
+      "name": "High Volume", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.0005,
+      "requestsPerDay": 500000, "requestsPerMonth": 15000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.001, "description": "Check canonical tag" },
+        { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.001, "description": "Validate canonical" },
+        { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.0005, "description": "Execution gate" },
+        { "method": "POST", "pathPattern": "/canonical-intelligence", "pricePerCallUsdc": 0.003, "description": "Combined intelligence endpoint" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/check", "description": "Check canonical tag on a URL" },
+    { "method": "POST", "path": "/validate", "description": "Validate canonical tag against expected value" },
+    { "method": "POST", "path": "/execution-gate", "description": "Execution gate check" },
+    { "method": "POST", "path": "/canonical-intelligence", "description": "One-call combined intelligence" }
+  ]
+}]

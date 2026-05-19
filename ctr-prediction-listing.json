@@ -1,0 +1,126 @@
+[
+  {
+    "name": "CTR Prediction API",
+    "shortDescription": "Predict and optimize click-through rate for search result snippets",
+    "description": "Predict the expected click-through rate of a title and meta description in search results based on power words, emotional triggers, length optimization, and SERP position context. The optimize endpoint rewrites titles and descriptions to maximize CTR with A/B variant suggestions.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/ctr-prediction",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ctr-prediction/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ctr-prediction/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/ctr-prediction/logo.png",
+    "tags": [
+      "seo",
+      "ctr",
+      "serp",
+      "optimization"
+    ],
+    "keywords": [
+      "ctr prediction",
+      "click through rate",
+      "meta title",
+      "meta description",
+      "serp optimization",
+      "title optimization",
+      "seo copywriting"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/predict",
+            "pricePerCallUsdc": 0.003,
+            "description": "Predict CTR for title and description"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.004,
+            "description": "Optimize title and description for higher CTR"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ctr-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: full CTR intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/predict",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Predict CTR for title and description"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.002,
+            "description": "Optimize title and description for higher CTR"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ctr-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL: full CTR intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/predict",
+        "description": "Predict CTR for title and description"
+      },
+      {
+        "method": "POST",
+        "path": "/optimize",
+        "description": "Optimize title and description for higher CTR"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/ctr-intelligence",
+        "description": "ONE-CALL: full CTR intelligence"
+      }
+    ]
+  }
+]

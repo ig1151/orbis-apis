@@ -1,0 +1,127 @@
+[
+  {
+    "name": "FAQ Generator API",
+    "shortDescription": "Generate SEO-ready FAQ sections with JSON-LD schema from text or URL",
+    "description": "Automatically generate structured FAQ sections from text content or URLs, with ready-to-embed JSON-LD schema markup, topic grouping, and per-question confidence scores. Built for SEO agents, CMS content pipelines, and structured data automation workflows. Returns schema_ready FAQs, topic coverage, provenance metadata, and agent-ready next-step recommendations for downstream orchestration.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/faq-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/faq-generator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/faq-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/faq-generator/logo.png",
+    "tags": [
+      "faq",
+      "content-generation",
+      "schema",
+      "structured-data",
+      "seo",
+      "ai-ml"
+    ],
+    "keywords": [
+      "faq generator api",
+      "json-ld faq schema",
+      "seo faq api",
+      "structured data generator",
+      "content faq automation",
+      "question answer generator"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Generate FAQ questions and answers with JSON-LD schema"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/expand",
+            "pricePerCallUsdc": 0.002,
+            "description": "Expand a single question into a full answer with follow-ups"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/faq-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call FAQ generation, expansion, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Generate FAQ questions and answers with JSON-LD schema"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/expand",
+            "pricePerCallUsdc": 0.001,
+            "description": "Expand a single question into a full answer with follow-ups"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/faq-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call FAQ generation, expansion, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate FAQ questions and answers with JSON-LD schema"
+      },
+      {
+        "method": "POST",
+        "path": "/expand",
+        "description": "Expand a single question into a full answer with follow-ups"
+      },
+      {
+        "method": "POST",
+        "path": "/faq-intelligence",
+        "description": "One-call FAQ generation, expansion, and agent routing"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

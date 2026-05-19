@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Indexability Checker API",
+    "shortDescription": "Check if a URL is indexable by Google and other search engines",
+    "description": "Verify whether a URL can be indexed by search engines by inspecting noindex tags, robots.txt directives, canonical mismatches, redirect chains, and HTTP status codes. Returns a detailed indexability report with blocking reasons and actionable fixes.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/indexability-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/indexability-checker/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/indexability-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/indexability-checker/logo.png",
+    "tags": [
+      "seo",
+      "indexability",
+      "crawl",
+      "noindex"
+    ],
+    "keywords": [
+      "indexability",
+      "noindex",
+      "robots.txt",
+      "canonical",
+      "crawl",
+      "seo",
+      "google index",
+      "meta robots"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.003,
+            "description": "Check URL indexability status"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze crawl directives and indexability signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/indexability-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: full indexability intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Check URL indexability status"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze crawl directives and indexability signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/indexability-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL: full indexability intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Check URL indexability status"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze crawl directives and indexability signals"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/indexability-intelligence",
+        "description": "ONE-CALL: full indexability intelligence"
+      }
+    ]
+  }
+]

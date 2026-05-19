@@ -1,0 +1,126 @@
+[
+  {
+    "name": "Sitemap Health Score API",
+    "shortDescription": "Score sitemap health, URL coverage, indexability, and freshness",
+    "description": "Analyze and score XML sitemaps for health, coverage completeness, URL indexability signals, and content freshness. Identifies stale URLs, missing lastmod dates, poor changefreq settings, and structural issues that impact crawl efficiency and SEO performance.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/sitemap-health-score",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/sitemap-health-score/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/sitemap-health-score/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/sitemap-health-score/logo.png",
+    "tags": [
+      "seo",
+      "sitemap",
+      "health",
+      "indexability"
+    ],
+    "keywords": [
+      "sitemap health",
+      "xml sitemap",
+      "url coverage",
+      "sitemap score",
+      "indexability",
+      "seo audit",
+      "crawl budget"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.003,
+            "description": "Score sitemap health with dimensional breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze sitemap structure, freshness, and coverage"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sitemap-health-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: full sitemap health intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Score sitemap health with dimensional breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze sitemap structure, freshness, and coverage"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/sitemap-health-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL: full sitemap health intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score sitemap health with dimensional breakdown"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze sitemap structure, freshness, and coverage"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/sitemap-health-intelligence",
+        "description": "ONE-CALL: full sitemap health intelligence"
+      }
+    ]
+  }
+]

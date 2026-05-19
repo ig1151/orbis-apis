@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Citation Extractor API",
+    "shortDescription": "Extract and parse citations from academic and web text",
+    "description": "Identify and parse academic citations, DOIs, URLs, ISBN references, and footnotes from any text block. Built for research agents, document processing pipelines, and automated bibliography management. Returns structured citation objects with author, title, year, DOI, and journal fields, along with per-citation confidence scores, provenance metadata, and agent-ready next-step recommendations.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/citation-extractor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/citation-extractor/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/citation-extractor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/citation-extractor/logo.png",
+    "tags": [
+      "citations",
+      "references",
+      "academic",
+      "doi",
+      "research",
+      "nlp"
+    ],
+    "keywords": [
+      "citation extractor api",
+      "reference parser api",
+      "doi extractor",
+      "bibliography parser",
+      "academic citation api",
+      "reference validation"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.002,
+            "description": "Extract and parse all citations from text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate a citation string against a citation style"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/citation-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call extraction, validation, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.001,
+            "description": "Extract and parse all citations from text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Validate a citation string against a citation style"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/citation-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call extraction, validation, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract and parse all citations from text"
+      },
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate a citation string against a citation style"
+      },
+      {
+        "method": "POST",
+        "path": "/citation-intelligence",
+        "description": "One-call extraction, validation, and agent routing"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

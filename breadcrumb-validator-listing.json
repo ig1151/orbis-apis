@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Breadcrumb Validator API",
+    "shortDescription": "Validate breadcrumb schema markup and HTML breadcrumbs for Google rich result eligibility and navigation correctness.",
+    "description": "The Breadcrumb Validator API powers automated orchestration of breadcrumb schema quality in any SEO or CMS pipeline. Every response includes confidence scores and provenance metadata so agents can make reliable, traceable routing decisions. The /validate endpoint inspects both HTML breadcrumb markup and Schema.org BreadcrumbList structured data, returning per-item position, name, URL, and validity with full error reporting. The /check endpoint performs a fast breadcrumb presence detection on any URL. The /execution-gate endpoint assesses whether breadcrumb quality is sufficient for downstream automation. The /breadcrumb-intelligence endpoint delivers a full intelligence summary with provenance-backed findings and priority-ordered remediation actions for SEO teams and content bots.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/breadcrumb-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com/breadcrumb-validator",
+    "docsUrl": "https://orbis-apis.onrender.com/breadcrumb-validator/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/breadcrumb-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/breadcrumb-validator.png",
+    "tags": [
+      "breadcrumbs",
+      "schema",
+      "structured-data",
+      "navigation",
+      "seo",
+      "rich-results"
+    ],
+    "keywords": [
+      "breadcrumb schema",
+      "BreadcrumbList",
+      "structured data",
+      "navigation",
+      "rich results",
+      "JSON-LD"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Validate breadcrumb schema markup"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.002,
+            "description": "Check breadcrumb for rich result eligibility"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/breadcrumb-intelligence",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL: validate + eligibility + fix list"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate breadcrumb schema markup"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check breadcrumb for rich result eligibility"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/breadcrumb-intelligence",
+            "pricePerCallUsdc": 0.0025,
+            "description": "ONE-CALL: validate + eligibility + fix list"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate breadcrumb schema markup"
+      },
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Check breadcrumb for rich result eligibility"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check"
+      },
+      {
+        "method": "POST",
+        "path": "/breadcrumb-intelligence",
+        "description": "ONE-CALL: validate + eligibility + fix list"
+      }
+    ]
+  }
+]

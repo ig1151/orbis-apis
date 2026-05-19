@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Thumbnail Text Scorer API",
+    "shortDescription": "Score thumbnail text for readability, emotional impact, and click-worthiness",
+    "description": "Analyze thumbnail text for word count, readability, emotional impact, click-worthiness, and estimated contrast. Returns a score, grade, and issue list with severity and fixes. Also generates recommended thumbnail text variants for any topic and style. Built for YouTube creators, course publishers, and design automation agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/thumbnail-text-scorer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/thumbnail-text-scorer/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/thumbnail-text-scorer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/thumbnail-text-scorer/logo.png",
+    "tags": [
+      "thumbnail",
+      "video",
+      "youtube",
+      "design",
+      "ctr",
+      "visual-content"
+    ],
+    "keywords": [
+      "thumbnail text scorer api",
+      "youtube thumbnail checker",
+      "click-through rate score",
+      "thumbnail readability",
+      "emotional impact score",
+      "thumbnail design api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "Score thumbnail text for readability, emotional impact, and click-worthiness"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/recommend",
+            "pricePerCallUsdc": 0.003,
+            "description": "Generate recommended thumbnail text variants for a topic and style"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/thumbnail-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call thumbnail text scoring, grading, and recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Score thumbnail text for readability, emotional impact, and click-worthiness"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/recommend",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Generate recommended thumbnail text variants for a topic and style"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/thumbnail-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call thumbnail text scoring, grading, and recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score thumbnail text for readability, emotional impact, and click-worthiness"
+      },
+      {
+        "method": "POST",
+        "path": "/recommend",
+        "description": "Generate recommended thumbnail text variants for a topic and style"
+      },
+      {
+        "method": "POST",
+        "path": "/thumbnail-intelligence",
+        "description": "One-call thumbnail text scoring, grading, and recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

@@ -1,0 +1,124 @@
+[
+  {
+    "name": "Cache TTL Recommender API",
+    "shortDescription": "Recommend optimal cache TTL values for API responses based on content type and volatility",
+    "description": "Recommend optimal cache TTL values for API responses, static assets, and dynamic content based on volatility, update frequency, and usage patterns. Provides CDN, browser, and edge cache configurations with Cache-Control header values. Returns confidence scores and provenance for agent pipelines.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/cache-ttl-recommender",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/cache-ttl-recommender/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/cache-ttl-recommender/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/cache-ttl-recommender/logo.png",
+    "tags": [
+      "cache",
+      "ttl",
+      "caching",
+      "performance"
+    ],
+    "keywords": [
+      "cache ttl",
+      "cache strategy",
+      "cdn cache",
+      "cache control",
+      "api caching"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/recommend",
+            "pricePerCallUsdc": 0.003,
+            "description": "Recommend cache TTL"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze cache efficiency"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cache-ttl-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: full cache TTL intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/recommend",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Recommend cache TTL"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze cache efficiency"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cache-ttl-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: full cache TTL intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/recommend",
+        "description": "Recommend cache TTL"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze cache efficiency"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/cache-ttl-intelligence",
+        "description": "ONE-CALL: full cache TTL intelligence"
+      }
+    ]
+  }
+]

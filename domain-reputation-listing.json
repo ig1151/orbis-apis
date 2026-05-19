@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Domain Reputation API",
+    "shortDescription": "Domain reputation scoring, blacklist checking, spam score, and email/web reputation analysis",
+    "description": "Assess any domain's reputation across blacklists, spam databases, and trust signals. Returns a 0-100 reputation score, letter grade, blacklist hits, spam score, age-trust score, and separate email and web reputation ratings. Designed for security orchestration, email filtering pipelines, threat triage automation, and MCP agent workflows. Automation-safe with no data retention.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/domain-reputation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/domain-reputation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/domain-reputation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["domain", "reputation", "spam", "blacklist", "security", "email-security"],
+    "keywords": ["domain reputation score", "blacklist check domain", "spam domain detection", "email domain reputation", "domain trust score", "domain age analysis"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.003, "description": "Full domain reputation score with grade and blacklist breakdown" },
+          { "method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.002, "description": "Quick domain clean/dirty check with primary issues" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness gate for agent chaining" },
+          { "method": "POST", "pathPattern": "/reputation-intelligence", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full domain reputation intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/check", "pricePerCallUsdc": 0.001, "description": "High-volume domain quick check" },
+          { "method": "POST", "pathPattern": "/reputation-intelligence", "pricePerCallUsdc": 0.003, "description": "High-volume full domain reputation intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/score", "description": "Full domain reputation score" },
+      { "method": "POST", "path": "/check", "description": "Quick domain reputation check" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/reputation-intelligence", "description": "ONE-CALL full domain reputation intelligence" }
+    ]
+  }
+]

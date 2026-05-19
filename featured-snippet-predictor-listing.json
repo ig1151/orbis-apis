@@ -1,0 +1,126 @@
+[
+  {
+    "name": "Featured Snippet Predictor API",
+    "shortDescription": "Predict and optimize content for Google featured snippet eligibility",
+    "description": "Predict the likelihood of content appearing as a Google featured snippet and identify the expected snippet type (paragraph, list, table, code). The optimize endpoint rewrites content to maximize featured snippet eligibility, returning the optimized text with a side-by-side comparison and improvement score.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/featured-snippet-predictor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/featured-snippet-predictor/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/featured-snippet-predictor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/featured-snippet-predictor/logo.png",
+    "tags": [
+      "seo",
+      "featured-snippet",
+      "serp",
+      "content"
+    ],
+    "keywords": [
+      "featured snippet",
+      "position zero",
+      "serp features",
+      "snippet optimization",
+      "seo content",
+      "answer box",
+      "google snippet"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/predict",
+            "pricePerCallUsdc": 0.003,
+            "description": "Predict featured snippet eligibility and type"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.004,
+            "description": "Rewrite content to maximize snippet eligibility"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/snippet-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: full featured snippet intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/predict",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Predict featured snippet eligibility and type"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.002,
+            "description": "Rewrite content to maximize snippet eligibility"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/snippet-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "ONE-CALL: full featured snippet intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/predict",
+        "description": "Predict featured snippet eligibility and type"
+      },
+      {
+        "method": "POST",
+        "path": "/optimize",
+        "description": "Rewrite content to maximize snippet eligibility"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/snippet-intelligence",
+        "description": "ONE-CALL: full featured snippet intelligence"
+      }
+    ]
+  }
+]

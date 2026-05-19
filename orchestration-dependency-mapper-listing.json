@@ -1,0 +1,124 @@
+[
+  {
+    "name": "Orchestration Dependency Mapper API",
+    "shortDescription": "Map API orchestration dependencies and execution chains for agent pipelines",
+    "description": "Map and analyze API orchestration dependencies, execution chains, critical paths, bottlenecks, single points of failure, and circular dependencies in agent pipeline definitions. Provides resilience and optimization scores. Returns confidence scores and provenance for agent pipelines.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/orchestration-dependency-mapper",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/orchestration-dependency-mapper/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/orchestration-dependency-mapper/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/orchestration-dependency-mapper/logo.png",
+    "tags": [
+      "orchestration",
+      "dependencies",
+      "agent",
+      "pipeline"
+    ],
+    "keywords": [
+      "dependency mapper",
+      "orchestration dependencies",
+      "pipeline analysis",
+      "execution chain",
+      "agent pipeline"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/map",
+            "pricePerCallUsdc": 0.003,
+            "description": "Map orchestration dependencies"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Analyze dependencies for bottlenecks and failure points"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/orchestration-intelligence",
+            "pricePerCallUsdc": 0.007,
+            "description": "ONE-CALL: full orchestration dependency intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/map",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Map orchestration dependencies"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze dependencies for bottlenecks and failure points"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/orchestration-intelligence",
+            "pricePerCallUsdc": 0.0035,
+            "description": "ONE-CALL: full orchestration dependency intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/map",
+        "description": "Map orchestration dependencies"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Analyze dependencies for bottlenecks and failure points"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/orchestration-intelligence",
+        "description": "ONE-CALL: full orchestration dependency intelligence"
+      }
+    ]
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Phishing Keyword Detector API",
+    "shortDescription": "Phishing signal detection in URLs, email subjects, and domain names with brand impersonation analysis",
+    "description": "Detect phishing signals in any text input — URLs, email subject lines, or domain names. Identifies lookalike domains, urgency keywords, credential harvesting patterns, brand impersonation, and fear triggers. Returns structured phishing scores, signal breakdowns, and allow/review/block recommendations for email security pipelines, security orchestration, and MCP agent threat-triage workflows. Zero data retention, automation-safe.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/phishing-keyword-detector",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/phishing-keyword-detector/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/phishing-keyword-detector/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["phishing", "security", "email-security", "fraud", "keywords", "brand-protection"],
+    "keywords": ["phishing detection api", "email subject analysis", "brand impersonation detection", "lookalike domain check", "urgency keyword detector", "credential harvesting detection"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.003, "description": "Phishing signal detection with score and brand impersonation check" },
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.004, "description": "Deep phishing analysis with attack vectors and lookalike distance" },
+          { "method": "POST", "pathPattern": "/execution-gate", "pricePerCallUsdc": 0.001, "description": "Execution readiness gate for agent chaining" },
+          { "method": "POST", "pathPattern": "/phishing-intelligence", "pricePerCallUsdc": 0.006, "description": "ONE-CALL full phishing intelligence" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.0015, "description": "High-volume phishing detection" },
+          { "method": "POST", "pathPattern": "/phishing-intelligence", "pricePerCallUsdc": 0.003, "description": "High-volume full phishing intelligence" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/detect", "description": "Phishing signal detection" },
+      { "method": "POST", "path": "/analyze", "description": "Deep phishing analysis" },
+      { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check" },
+      { "method": "POST", "path": "/phishing-intelligence", "description": "ONE-CALL full phishing intelligence" }
+    ]
+  }
+]

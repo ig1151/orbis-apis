@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Meeting Invite Parser API",
+    "shortDescription": "Parse meeting invites from unstructured text into structured calendar fields",
+    "description": "Parse meeting invite text into structured fields including title, start/end datetime, timezone, duration, location, video link, video platform, organizer, attendees, agenda items, and recurrence rule. Also supports targeted field extraction (datetime, attendees, agenda, location, video_link). Built for calendar agents, scheduling automation, and productivity tools.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/meeting-invite-parser",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/meeting-invite-parser/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/meeting-invite-parser/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/meeting-invite-parser/logo.png",
+    "tags": [
+      "meetings",
+      "calendar",
+      "parsing",
+      "nlp",
+      "scheduling",
+      "automation"
+    ],
+    "keywords": [
+      "meeting invite parser api",
+      "calendar nlp api",
+      "meeting text extractor",
+      "zoom invite parser",
+      "scheduling automation api",
+      "calendar event extractor"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.003,
+            "description": "Parse a meeting invite into full structured calendar fields"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.002,
+            "description": "Extract a specific field from meeting invite text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/meeting-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call meeting parse with scheduling recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Parse a meeting invite into full structured calendar fields"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.001,
+            "description": "Extract a specific field from meeting invite text"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/meeting-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call meeting parse with scheduling recommendations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/parse",
+        "description": "Parse a meeting invite into full structured calendar fields"
+      },
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract a specific field from meeting invite text"
+      },
+      {
+        "method": "POST",
+        "path": "/meeting-intelligence",
+        "description": "One-call meeting parse with scheduling recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

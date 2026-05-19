@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Key Phrase Extractor API",
+    "shortDescription": "Extract and rank key phrases, named entities, and topic clusters from text",
+    "description": "Identify high-value noun phrases, named entities, and topic terms from any text with frequency counts, relevance scores, and topic cluster groupings. Built for SEO agents, content tagging pipelines, and knowledge graph construction workflows. Returns language detection, topic clusters, and per-phrase provenance metadata with agent-ready recommendations for downstream orchestration.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/key-phrase-extractor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/key-phrase-extractor/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/key-phrase-extractor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/key-phrase-extractor/logo.png",
+    "tags": [
+      "key-phrases",
+      "nlp",
+      "extraction",
+      "keywords",
+      "text-analysis",
+      "ai-ml"
+    ],
+    "keywords": [
+      "key phrase extractor api",
+      "keyword extraction api",
+      "named entity recognition api",
+      "topic cluster api",
+      "text keywords api",
+      "nlp phrase ranking"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.002,
+            "description": "Extract key phrases with scores, frequency, and topic clusters"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/rank",
+            "pricePerCallUsdc": 0.001,
+            "description": "Rank candidate or extracted phrases by relevance"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/keyphrase-intelligence",
+            "pricePerCallUsdc": 0.006,
+            "description": "One-call extraction, ranking, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.001,
+            "description": "Extract key phrases with scores, frequency, and topic clusters"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/rank",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Rank candidate or extracted phrases by relevance"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/keyphrase-intelligence",
+            "pricePerCallUsdc": 0.003,
+            "description": "One-call extraction, ranking, and agent routing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Extract key phrases with scores, frequency, and topic clusters"
+      },
+      {
+        "method": "POST",
+        "path": "/rank",
+        "description": "Rank candidate or extracted phrases by relevance"
+      },
+      {
+        "method": "POST",
+        "path": "/keyphrase-intelligence",
+        "description": "One-call extraction, ranking, and agent routing"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Check whether an agent should proceed, pause, or call a recommended next API"
+      }
+    ]
+  }
+]

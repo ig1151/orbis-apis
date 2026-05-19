@@ -1,0 +1,126 @@
+[
+  {
+    "name": "Wallet Address Risk API",
+    "shortDescription": "Check blockchain wallet address risk and exposure to illicit activity.",
+    "description": "Check blockchain wallet addresses for AML risk signals including sanctions list hits, mixer exposure, illicit counterparty exposure, and transaction cluster analysis. Supports Bitcoin, Ethereum, Tron, Solana, BNB, and Polygon. Built for crypto compliance teams, exchange onboarding pipelines, and financial crime detection agents. Returns risk scores, sanctions status, exposure percentages, and counterparty categories. Supports quick risk check, deep cluster analysis, and an execution-gate for agent flow control.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/wallet-address-risk",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/wallet-address-risk/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/wallet-address-risk/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/wallet-address-risk/logo.png",
+    "tags": [
+      "crypto",
+      "wallet",
+      "risk",
+      "blockchain",
+      "aml"
+    ],
+    "keywords": [
+      "wallet address risk api",
+      "crypto aml api",
+      "blockchain risk scorer",
+      "wallet sanctions check",
+      "crypto compliance api",
+      "wallet address checker"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.003,
+            "description": "Quick risk check for a wallet address"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.005,
+            "description": "Deep wallet analysis with cluster and exposure"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/wallet-risk-intelligence",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: full wallet risk intelligence"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Quick risk check for a wallet address"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Deep wallet analysis with cluster and exposure"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Execution readiness gate"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/wallet-risk-intelligence",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL: full wallet risk intelligence"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Quick risk check for a wallet address"
+      },
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Deep wallet analysis with cluster and exposure"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness gate"
+      },
+      {
+        "method": "POST",
+        "path": "/wallet-risk-intelligence",
+        "description": "ONE-CALL: full wallet risk intelligence"
+      }
+    ]
+  }
+]
