@@ -217,6 +217,8 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
   };
 
   if (cacheKey) cacheSet(cacheKey, result);
+  res.setHeader('X-RateLimit-Remaining', String(PRICING.freeTierDailyCallLimit - usage.calls));
+  res.setHeader('X-RateLimit-Reset', String(Math.floor(usage.resetAt / 1000)));
   return res.json(result);
 });
 

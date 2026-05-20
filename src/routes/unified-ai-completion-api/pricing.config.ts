@@ -7,20 +7,33 @@ export const PRICING = {
     premium: { maxTokens: 128000, priceUsd: 0.150 },
   },
   providerCostPer1kTokens: {
-    'google/gemini-2.5-flash':          { input: 0.00015, output: 0.0006 },
-    'google/gemini-2.5-pro':            { input: 0.00125, output: 0.00375 },
-    'google/gemini-2.0-flash-001':      { input: 0.0001,  output: 0.0004 },
-    'openai/gpt-4.1':                   { input: 0.002,   output: 0.008  },
-    'openai/gpt-4o-mini':               { input: 0.00015, output: 0.0006 },
-    'anthropic/claude-sonnet-4-5':      { input: 0.003,   output: 0.015  },
-    'mistralai/mistral-large':          { input: 0.002,   output: 0.006  },
-    'deepseek/deepseek-chat':           { input: 0.00014, output: 0.00028 },
-    'x-ai/grok-3':                      { input: 0.003,   output: 0.015  },
-    'perplexity/sonar-pro':             { input: 0.003,   output: 0.015  },
+    'google/gemini-2.5-flash':     { input: 0.00015, output: 0.0006  },
+    'google/gemini-2.5-pro':       { input: 0.00125, output: 0.00375 },
+    'google/gemini-2.0-flash-001': { input: 0.0001,  output: 0.0004  },
+    'openai/gpt-4.1':              { input: 0.002,   output: 0.008   },
+    'openai/gpt-4o-mini':          { input: 0.00015, output: 0.0006  },
+    'anthropic/claude-sonnet-4-5': { input: 0.003,   output: 0.015   },
+    'mistralai/mistral-large':     { input: 0.002,   output: 0.006   },
+    'deepseek/deepseek-chat':      { input: 0.00014, output: 0.00028 },
+    'x-ai/grok-3':                 { input: 0.003,   output: 0.015   },
+    'perplexity/sonar-pro':        { input: 0.003,   output: 0.015   },
   },
   marginMultiplier: 2.5,
   freeTierDailyCallLimit: 50,
   dailySpendCapUsd: 100,
+  failoverPolicy: {
+    maxProviderAttempts: 3,
+    fallbackOrder: [
+      'google/gemini-2.5-flash',
+      'google/gemini-2.0-flash-001',
+      'anthropic/claude-sonnet-4-5',
+      'openai/gpt-4o-mini',
+    ],
+  },
+  confidenceMethodology: {
+    factors: ['provider_reliability', 'routing_confidence', 'cache_freshness', 'token_density'],
+    description: 'Composite score 0-1. >0.85=low risk, 0.6-0.85=medium, <0.6=high risk.',
+  },
 };
 
 export type RoutingStrategy = 'cheapest' | 'fastest' | 'highest_quality' | 'balanced' | 'auto';
@@ -45,4 +58,14 @@ export const MODEL_ALIAS_MAP: Record<string, string> = {
   'deepseek':      'deepseek/deepseek-chat',
   'grok-3':        'x-ai/grok-3',
   'perplexity':    'perplexity/sonar-pro',
+};
+
+export const PROVIDER_STATUS: Record<string, string> = {
+  'google':    'healthy',
+  'openai':    'healthy',
+  'anthropic': 'healthy',
+  'mistralai': 'healthy',
+  'deepseek':  'healthy',
+  'x-ai':      'healthy',
+  'perplexity':'healthy',
 };

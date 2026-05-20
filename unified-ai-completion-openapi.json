@@ -3,17 +3,48 @@
   "info": {
     "title": "Unified Multi-Provider Agent Completion API",
     "version": "1.0.0",
-    "description": "Route AI completions across Gemini, OpenAI, Claude, Grok, Mistral, DeepSeek, and more. Orbis A+ compliant, x402 enabled, agent-native.",
+    "description": "Route AI completions across Gemini, OpenAI, Claude, Grok, Mistral, DeepSeek, and more. Orbis A+ compliant, x402 enabled, agent-native with failover, structured chain routing, and declarative pricing.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x-orbis-compliance": "A+",
-    "x-x402-enabled": true
+    "x-x402-enabled": true,
+    "x-pricing": {
+      "currency": "USD",
+      "unit": "request",
+      "tiers": [
+        { "name": "free",    "price": 0.000, "limit": "50/day",  "maxTokens": 1000   },
+        { "name": "small",   "price": 0.010, "maxTokens": 2000   },
+        { "name": "medium",  "price": 0.025, "maxTokens": 8000   },
+        { "name": "large",   "price": 0.070, "maxTokens": 32000  },
+        { "name": "premium", "price": 0.150, "maxTokens": 128000 }
+      ]
+    },
+    "x-failover-policy": {
+      "maxProviderAttempts": 3,
+      "fallbackOrder": ["google/gemini-2.5-flash", "google/gemini-2.0-flash-001", "anthropic/claude-sonnet-4-5"]
+    },
+    "x-confidence-methodology": {
+      "factors": ["provider_reliability", "routing_confidence", "cache_freshness", "token_density"],
+      "description": "Composite 0-1 score. >0.85 low risk, 0.6-0.85 medium, <0.6 high risk."
+    },
+    "x-privacy": {
+      "data_retained": false,
+      "retention_policy": "none",
+      "training_use": false,
+      "third_party_processors": ["Google Gemini", "OpenAI", "Anthropic", "Mistral", "DeepSeek"],
+      "compliance": "GDPR-aligned"
+    }
   },
   "servers": [{ "url": "https://orbis-apis.onrender.com", "description": "Production" }],
   "security": [{ "ApiKeyAuth": [] }],
   "components": {
     "securitySchemes": {
       "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "x-api-key" }
+    },
+    "headers": {
+      "X-RateLimit-Remaining": { "schema": { "type": "integer" }, "description": "Remaining calls in current window" },
+      "X-RateLimit-Reset":     { "schema": { "type": "integer" }, "description": "Unix timestamp when limit resets" },
+      "Retry-After":           { "schema": { "type": "integer" }, "description": "Seconds to wait before retrying" }
     },
     "schemas": {
       "Message": {
@@ -24,36 +55,65 @@
           "content": { "type": "string" }
         }
       },
+      "ChainToItem": {
+        "type": "object",
+        "properties": {
+          "api":      { "type": "string" },
+          "endpoint": { "type": "string" },
+          "reason":   { "type": "string" },
+          "priority": { "type": "integer" }
+        }
+      },
+      "RecommendedAction": {
+        "type": "object",
+        "properties": {
+          "priority":    { "type": "integer" },
+          "action":      { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "PrivacyBlock": {
+        "type": "object",
+        "properties": {
+          "data_retained":            { "type": "boolean" },
+          "retention_hours":          { "type": "integer" },
+          "training_use":             { "type": "boolean" },
+          "pii_scrubbed":             { "type": "boolean" },
+          "third_party_processors":   { "type": "array", "items": { "type": "string" } }
+        }
+      },
       "CompletionRequest": {
         "type": "object",
         "required": ["messages"],
         "properties": {
-          "model":            { "type": "string", "default": "auto", "description": "Model alias: auto, gemini-pro, gemini-flash, gpt-4.1, claude-sonnet, etc." },
+          "model":            { "type": "string", "default": "auto", "description": "Alias: auto, gemini-pro, gemini-flash, gpt-4.1, claude-sonnet, mistral-large, deepseek, grok-3, perplexity" },
           "messages":         { "type": "array", "items": { "$ref": "#/components/schemas/Message" } },
           "temperature":      { "type": "number", "minimum": 0, "maximum": 2, "default": 0.7 },
           "max_tokens":       { "type": "integer", "minimum": 1, "maximum": 128000, "default": 1000 },
           "json_mode":        { "type": "boolean", "default": false },
           "tools":            { "type": "array", "items": { "type": "object" } },
           "routing_strategy": { "type": "string", "enum": ["auto", "cheapest", "fastest", "highest_quality", "balanced"], "default": "auto" },
-          "user_id":          { "type": "string", "description": "User identifier for metering and rate limiting" },
+          "user_id":          { "type": "string", "description": "For metering and rate limiting" },
           "cache_policy":     { "type": "string", "enum": ["standard", "no-cache", "aggressive"], "default": "standard" }
         }
       },
       "CompletionResponse": {
         "type": "object",
-        "required": ["id", "output", "provider_used", "model_used", "confidence", "token_usage", "pricing", "latency_ms"],
+        "required": ["id", "output", "provider_used", "model_used", "confidence", "token_usage", "pricing", "latency_ms", "execution_risk", "privacy", "recommended_actions_priority_order", "chain_to"],
         "properties": {
-          "id":                        { "type": "string" },
-          "object":                    { "type": "string" },
-          "output":                    { "type": "string", "description": "The completion text" },
-          "structured_output":         { "description": "Parsed JSON if json_mode=true", "oneOf": [{ "type": "object" }, { "type": "null" }] },
-          "provider_used":             { "type": "string" },
-          "model_used":                { "type": "string" },
-          "routing_strategy_applied":  { "type": "string" },
-          "confidence":                { "type": "number", "minimum": 0, "maximum": 1 },
-          "execution_risk":            { "type": "string", "enum": ["low", "medium", "high"] },
+          "id":                                   { "type": "string" },
+          "object":                               { "type": "string" },
+          "output":                               { "type": "string" },
+          "structured_output":                    { "oneOf": [{ "type": "object" }, { "type": "null" }] },
+          "provider_used":                        { "type": "string" },
+          "model_used":                           { "type": "string" },
+          "routing_strategy_applied":             { "type": "string" },
+          "confidence":                           { "type": "number", "minimum": 0, "maximum": 1 },
+          "execution_risk":                       { "type": "string", "enum": ["low", "medium", "high"] },
+          "execution_gate_required":              { "type": "boolean" },
           "token_usage": {
             "type": "object",
+            "required": ["input_tokens", "output_tokens", "total_tokens"],
             "properties": {
               "input_tokens":  { "type": "integer" },
               "output_tokens": { "type": "integer" },
@@ -62,44 +122,50 @@
           },
           "pricing": {
             "type": "object",
+            "required": ["estimated_provider_cost_usd", "user_price_usd", "profit_margin_usd", "tier"],
             "properties": {
               "estimated_provider_cost_usd": { "type": "number" },
               "user_price_usd":              { "type": "number" },
               "profit_margin_usd":           { "type": "number" },
-              "tier":                        { "type": "string" }
+              "tier":                        { "type": "string" },
+              "currency":                    { "type": "string", "default": "USD" }
             }
           },
-          "latency_ms":   { "type": "integer" },
-          "cache_hit":    { "type": "boolean" },
-          "privacy": {
-            "type": "object",
-            "properties": {
-              "data_retained":   { "type": "boolean" },
-              "retention_hours": { "type": "integer" },
-              "training_use":    { "type": "boolean" },
-              "pii_scrubbed":    { "type": "boolean" }
-            }
-          },
-          "recommended_actions_priority_order": { "type": "array", "items": { "type": "object" } },
-          "chain_to":   { "type": "array", "items": { "type": "string" } },
-          "cost_estimate": { "type": "object" }
+          "latency_ms":                           { "type": "integer" },
+          "cache_hit":                            { "type": "boolean" },
+          "privacy":                              { "$ref": "#/components/schemas/PrivacyBlock" },
+          "recommended_actions_priority_order":   { "type": "array", "items": { "$ref": "#/components/schemas/RecommendedAction" } },
+          "chain_to":                             { "type": "array", "items": { "$ref": "#/components/schemas/ChainToItem" } },
+          "cost_estimate":                        { "type": "object" }
         }
       },
       "DiscoveryResponse": {
         "type": "object",
         "properties": {
-          "api_name":        { "type": "string" },
-          "version":         { "type": "string" },
-          "description":     { "type": "string" },
-          "status":          { "type": "string" },
-          "available_models":{ "type": "array", "items": { "type": "object" } },
-          "capabilities":    { "type": "array", "items": { "type": "string" } },
-          "pricing":         { "type": "object" },
-          "auth_requirements":{ "type": "object" },
-          "privacy_summary": { "type": "string" },
+          "api_name":                           { "type": "string" },
+          "version":                            { "type": "string" },
+          "description":                        { "type": "string" },
+          "status":                             { "type": "string" },
+          "available_models":                   { "type": "array", "items": { "type": "object" } },
+          "capabilities":                       { "type": "array", "items": { "type": "string" } },
+          "pricing":                            { "type": "object" },
+          "auth_requirements":                  { "type": "object" },
+          "privacy":                            { "$ref": "#/components/schemas/PrivacyBlock" },
+          "confidence_methodology":             { "type": "object" },
+          "failover_policy":                    { "type": "object" },
+          "execution_gate":                     { "type": "object" },
+          "provider_status":                    { "type": "object" },
           "recommended_actions_priority_order": { "type": "array" },
-          "chain_to":        { "type": "array", "items": { "type": "string" } },
-          "endpoints":       { "type": "array", "items": { "type": "object" } }
+          "chain_to":                           { "type": "array", "items": { "$ref": "#/components/schemas/ChainToItem" } },
+          "endpoints":                          { "type": "array", "items": { "type": "object" } }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error":  { "type": "string" },
+          "detail": { "type": "string" }
         }
       }
     }
@@ -109,15 +175,25 @@
       "get": {
         "operationId": "getDiscovery",
         "summary": "API Discovery",
-        "description": "Returns full API metadata: models, capabilities, pricing, auth, and agent chain routing.",
+        "description": "Full manifest: models, pricing, capabilities, provider status, failover policy, privacy, and agent chain routing.",
+        "security": [],
+        "x-agent-callable": true,
+        "x-execution-gate-required": false,
+        "tags": ["Discovery"],
+        "responses": {
+          "200": { "description": "Full discovery manifest", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DiscoveryResponse" } } } }
+        }
+      }
+    },
+    "/api/unified-ai/manifest": {
+      "get": {
+        "operationId": "getManifest",
+        "summary": "API Manifest (alias for discovery)",
         "security": [],
         "x-agent-callable": true,
         "tags": ["Discovery"],
         "responses": {
-          "200": {
-            "description": "Discovery manifest",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DiscoveryResponse" } } }
-          }
+          "200": { "description": "Full discovery manifest", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DiscoveryResponse" } } } }
         }
       }
     },
@@ -125,9 +201,11 @@
       "post": {
         "operationId": "createCompletion",
         "summary": "Unified Chat Completion",
-        "description": "Route a chat completion to the optimal provider based on model alias or routing strategy.",
+        "description": "Route a chat completion to the optimal provider. Returns output, cost breakdown, confidence, provider metadata, rate limit headers, and agent chain fields.",
         "x-agent-callable": true,
         "x-mcp-compatible": true,
+        "x-execution-gate-required": false,
+        "x-pricing": { "currency": "USD", "unit": "request", "min": 0.000, "max": 0.150 },
         "tags": ["Completions"],
         "requestBody": {
           "required": true,
@@ -135,12 +213,20 @@
         },
         "responses": {
           "200": {
-            "description": "Completion result with full cost, confidence, and agent metadata",
+            "description": "Completion with cost, confidence, provider, and agent metadata",
+            "headers": {
+              "X-RateLimit-Remaining": { "$ref": "#/components/headers/X-RateLimit-Remaining" },
+              "X-RateLimit-Reset":     { "$ref": "#/components/headers/X-RateLimit-Reset" }
+            },
             "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CompletionResponse" } } }
           },
-          "400": { "description": "Invalid request — missing or malformed messages array" },
-          "429": { "description": "Rate limit or daily spend cap reached" },
-          "502": { "description": "All upstream provider attempts failed" }
+          "400": { "description": "Invalid request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+          "429": {
+            "description": "Rate limit or spend cap reached",
+            "headers": { "Retry-After": { "$ref": "#/components/headers/Retry-After" } },
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "502": { "description": "All provider attempts failed after failover", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
         }
       }
     },
@@ -148,20 +234,23 @@
       "get": {
         "operationId": "getHealth",
         "summary": "Health Check",
+        "description": "Returns per-provider health status and failover policy.",
         "security": [],
+        "x-execution-gate-required": false,
         "tags": ["Health"],
         "responses": {
           "200": {
-            "description": "Service health status",
+            "description": "Provider health and uptime",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status":               { "type": "string" },
-                    "timestamp":            { "type": "string" },
-                    "providers_available":  { "type": "array", "items": { "type": "string" } },
-                    "uptime_seconds":       { "type": "number" }
+                    "status":          { "type": "string" },
+                    "timestamp":       { "type": "string" },
+                    "provider_status": { "type": "object" },
+                    "uptime_seconds":  { "type": "number" },
+                    "failover_policy": { "type": "object" }
                   }
                 }
               }
