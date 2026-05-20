@@ -1,0 +1,174 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Unified Multi-Provider Agent Completion API",
+    "version": "1.0.0",
+    "description": "Route AI completions across Gemini, OpenAI, Claude, Grok, Mistral, DeepSeek, and more. Orbis A+ compliant, x402 enabled, agent-native.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-orbis-compliance": "A+",
+    "x-x402-enabled": true
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com", "description": "Production" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "x-api-key" }
+    },
+    "schemas": {
+      "Message": {
+        "type": "object",
+        "required": ["role", "content"],
+        "properties": {
+          "role":    { "type": "string", "enum": ["user", "assistant", "system"] },
+          "content": { "type": "string" }
+        }
+      },
+      "CompletionRequest": {
+        "type": "object",
+        "required": ["messages"],
+        "properties": {
+          "model":            { "type": "string", "default": "auto", "description": "Model alias: auto, gemini-pro, gemini-flash, gpt-4.1, claude-sonnet, etc." },
+          "messages":         { "type": "array", "items": { "$ref": "#/components/schemas/Message" } },
+          "temperature":      { "type": "number", "minimum": 0, "maximum": 2, "default": 0.7 },
+          "max_tokens":       { "type": "integer", "minimum": 1, "maximum": 128000, "default": 1000 },
+          "json_mode":        { "type": "boolean", "default": false },
+          "tools":            { "type": "array", "items": { "type": "object" } },
+          "routing_strategy": { "type": "string", "enum": ["auto", "cheapest", "fastest", "highest_quality", "balanced"], "default": "auto" },
+          "user_id":          { "type": "string", "description": "User identifier for metering and rate limiting" },
+          "cache_policy":     { "type": "string", "enum": ["standard", "no-cache", "aggressive"], "default": "standard" }
+        }
+      },
+      "CompletionResponse": {
+        "type": "object",
+        "required": ["id", "output", "provider_used", "model_used", "confidence", "token_usage", "pricing", "latency_ms"],
+        "properties": {
+          "id":                        { "type": "string" },
+          "object":                    { "type": "string" },
+          "output":                    { "type": "string", "description": "The completion text" },
+          "structured_output":         { "description": "Parsed JSON if json_mode=true", "oneOf": [{ "type": "object" }, { "type": "null" }] },
+          "provider_used":             { "type": "string" },
+          "model_used":                { "type": "string" },
+          "routing_strategy_applied":  { "type": "string" },
+          "confidence":                { "type": "number", "minimum": 0, "maximum": 1 },
+          "execution_risk":            { "type": "string", "enum": ["low", "medium", "high"] },
+          "token_usage": {
+            "type": "object",
+            "properties": {
+              "input_tokens":  { "type": "integer" },
+              "output_tokens": { "type": "integer" },
+              "total_tokens":  { "type": "integer" }
+            }
+          },
+          "pricing": {
+            "type": "object",
+            "properties": {
+              "estimated_provider_cost_usd": { "type": "number" },
+              "user_price_usd":              { "type": "number" },
+              "profit_margin_usd":           { "type": "number" },
+              "tier":                        { "type": "string" }
+            }
+          },
+          "latency_ms":   { "type": "integer" },
+          "cache_hit":    { "type": "boolean" },
+          "privacy": {
+            "type": "object",
+            "properties": {
+              "data_retained":   { "type": "boolean" },
+              "retention_hours": { "type": "integer" },
+              "training_use":    { "type": "boolean" },
+              "pii_scrubbed":    { "type": "boolean" }
+            }
+          },
+          "recommended_actions_priority_order": { "type": "array", "items": { "type": "object" } },
+          "chain_to":   { "type": "array", "items": { "type": "string" } },
+          "cost_estimate": { "type": "object" }
+        }
+      },
+      "DiscoveryResponse": {
+        "type": "object",
+        "properties": {
+          "api_name":        { "type": "string" },
+          "version":         { "type": "string" },
+          "description":     { "type": "string" },
+          "status":          { "type": "string" },
+          "available_models":{ "type": "array", "items": { "type": "object" } },
+          "capabilities":    { "type": "array", "items": { "type": "string" } },
+          "pricing":         { "type": "object" },
+          "auth_requirements":{ "type": "object" },
+          "privacy_summary": { "type": "string" },
+          "recommended_actions_priority_order": { "type": "array" },
+          "chain_to":        { "type": "array", "items": { "type": "string" } },
+          "endpoints":       { "type": "array", "items": { "type": "object" } }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/unified-ai/": {
+      "get": {
+        "operationId": "getDiscovery",
+        "summary": "API Discovery",
+        "description": "Returns full API metadata: models, capabilities, pricing, auth, and agent chain routing.",
+        "security": [],
+        "x-agent-callable": true,
+        "tags": ["Discovery"],
+        "responses": {
+          "200": {
+            "description": "Discovery manifest",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DiscoveryResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/unified-ai/v1/chat/completions": {
+      "post": {
+        "operationId": "createCompletion",
+        "summary": "Unified Chat Completion",
+        "description": "Route a chat completion to the optimal provider based on model alias or routing strategy.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "tags": ["Completions"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CompletionRequest" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "Completion result with full cost, confidence, and agent metadata",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CompletionResponse" } } }
+          },
+          "400": { "description": "Invalid request — missing or malformed messages array" },
+          "429": { "description": "Rate limit or daily spend cap reached" },
+          "502": { "description": "All upstream provider attempts failed" }
+        }
+      }
+    },
+    "/api/unified-ai/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Health Check",
+        "security": [],
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "Service health status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status":               { "type": "string" },
+                    "timestamp":            { "type": "string" },
+                    "providers_available":  { "type": "array", "items": { "type": "string" } },
+                    "uptime_seconds":       { "type": "number" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

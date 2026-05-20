@@ -1,0 +1,56 @@
+{
+  "name": "Unified Multi-Provider Agent Completion API",
+  "slug": "unified-ai-completion-api",
+  "version": "1.0.0",
+  "description": "Route AI completions across Gemini, OpenAI, Claude, Grok, Mistral, DeepSeek and more. Single endpoint, unified schema, cost-transparent, agent-native with confidence scoring and chain routing.",
+  "category": "AI / LLM Infrastructure",
+  "tags": ["ai", "llm", "gemini", "openai", "claude", "routing", "completions", "agent"],
+  "baseRoute": "/api/unified-ai",
+  "orbisCompliance": "A+",
+  "agentCallable": true,
+  "mcpCompatible": true,
+  "x402Enabled": true,
+  "executionGateRequired": false,
+  "confidence": 0.97,
+  "endpointPricing": {
+    "POST /v1/chat/completions": {
+      "model": "per-call",
+      "tiers": {
+        "free":    { "price": 0.00,  "limit": "50 calls/day" },
+        "small":   { "price": 0.010, "maxTokens": 2000 },
+        "medium":  { "price": 0.025, "maxTokens": 8000 },
+        "large":   { "price": 0.070, "maxTokens": 32000 },
+        "premium": { "price": 0.150, "maxTokens": 128000 }
+      }
+    }
+  },
+  "authentication": { "type": "api_key", "header": "x-api-key" },
+  "privacy": {
+    "dataRetained": false,
+    "retentionHours": 0,
+    "trainingUse": false,
+    "piiScrubbed": true,
+    "policy": "No input/output stored. No training use. PII scrubbed on all requests."
+  },
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "call_completion",   "endpoint": "POST /api/unified-ai/v1/chat/completions" },
+    { "priority": 2, "action": "discover_models",   "endpoint": "GET /api/unified-ai/" },
+    { "priority": 3, "action": "health_check",      "endpoint": "GET /api/unified-ai/health" }
+  ],
+  "chain_to": [
+    "POST /api/sentiment",
+    "POST /api/entity-extraction",
+    "POST /api/fact-verification",
+    "POST /api/unified-ai/v1/chat/completions"
+  ],
+  "x402": {
+    "enabled": true,
+    "acceptedTokens": ["USDC", "ETH"],
+    "walletEnvVar": "X402_RECEIVING_WALLET"
+  },
+  "capabilities": [
+    "multi_provider_routing", "cost_optimization", "json_mode",
+    "tool_calling", "response_caching", "retry_with_backoff",
+    "usage_metering", "confidence_scoring", "agent_chain_routing"
+  ]
+}
