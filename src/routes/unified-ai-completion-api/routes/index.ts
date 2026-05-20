@@ -1,13 +1,14 @@
 // @ts-nocheck
-// @ts-nocheck
-import { Router, Request, Response } from "express";
-import axios from 'axios';
-import { PRICING, ROUTING_MAP, MODEL_ALIAS_MAP, RoutingStrategy } from '../pricing.config';
+import { Router } from 'express';
+import { PRICING, calcCost, getPricingTier, PROVIDER_STATUS } from '../pricing.config';
+import { MODELS, resolveAlias } from '../config/models';
+import { callProvider } from '../providers/index';
 
 const router = Router();
 
-const usageStore = new Map<string, { calls: number; spend: number; resetAt: number }>();
-function getUserUsage(userId: string) {
+// ── In-memory rate limiting ───────────────────────────────────────────────────
+const usageStore = new Map();
+function getUserUsage(userId) {
   const now = Date.now();
   let rec = usageStore.get(userId);
   if (!rec || now > rec.resetAt) {
@@ -17,45 +18,28 @@ function getUserUsage(userId: string) {
   return rec;
 }
 
-const completionCache = new Map<string, { value: unknown; expiresAt: number }>();
-function cacheGet(key: string) {
-  const entry = completionCache.get(key);
-  if (!entry || Date.now() > entry.expiresAt) return null;
-  return entry.value;
+// ── Cache ─────────────────────────────────────────────────────────────────────
+const completionCache = new Map();
+function cacheGet(key) {
+  const e = completionCache.get(key);
+  if (!e || Date.now() > e.expiresAt) return null;
+  return e.value;
 }
-function cacheSet(key: string, value: unknown, ttlMs = 300_000) {
+function cacheSet(key, value, ttlMs = 300_000) {
   completionCache.set(key, { value, expiresAt: Date.now() + ttlMs });
 }
 
-function calcCost(model: string, inputTokens: number, outputTokens: number) {
-  const rates = PRICING.providerCostPer1kTokens[model as keyof typeof PRICING.providerCostPer1kTokens]
-    ?? { input: 0.002, output: 0.008 };
-  const providerCost = (inputTokens / 1000) * rates.input + (outputTokens / 1000) * rates.output;
-  const userPrice = parseFloat((providerCost * PRICING.marginMultiplier).toFixed(6));
-  const margin = parseFloat((userPrice - providerCost).toFixed(6));
-  return { providerCost: parseFloat(providerCost.toFixed(6)), userPrice, margin };
-}
-
-function getPricingTier(maxTokens: number) {
-  if (maxTokens <= 1000)  return 'small';
-  if (maxTokens <= 8000)  return 'medium';
-  if (maxTokens <= 32000) return 'large';
-  return 'premium';
-}
-
-function resolveModel(model: string, strategy: RoutingStrategy): string {
-  if (strategy && strategy !== 'auto') return ROUTING_MAP[strategy];
-  return MODEL_ALIAS_MAP[model] ?? model;
-}
-
-function agentMeta(confidence: number, providerCost: number, maxTokens: number) {
+// ── Agent metadata ────────────────────────────────────────────────────────────
+function agentMeta(confidence, providerCost, maxTokens, jsonMode) {
   return {
     execution_risk: confidence > 0.85 ? 'low' : confidence > 0.6 ? 'medium' : 'high',
+    execution_gate_required: false,
     privacy: {
       data_retained: false,
       retention_hours: 0,
       training_use: false,
       pii_scrubbed: true,
+      note: 'No persistent storage by this API. Requests processed by upstream providers under their API terms.',
     },
     recommended_actions_priority_order: [
       { priority: 1, action: 'use_output',              description: 'Use the completion output directly' },
@@ -63,19 +47,20 @@ function agentMeta(confidence: number, providerCost: number, maxTokens: number) 
       { priority: 3, action: 'chain_to_tool',           description: 'Pass output to a downstream tool or agent' },
     ],
     chain_to: [
-      'POST /api/unified-ai/v1/chat/completions',
-      'POST /api/sentiment',
-      'POST /api/entity-extraction',
-      'POST /api/fact-verification',
+      { api: 'sentiment',         endpoint: 'POST /api/sentiment',         reason: 'Analyze tone of output',      priority: 1 },
+      { api: 'entity-extraction', endpoint: 'POST /api/entity-extraction', reason: 'Extract entities from output', priority: 2 },
+      { api: 'fact-verification', endpoint: 'POST /api/fact-verification', reason: 'Verify factual claims',        priority: 3 },
+      { api: 'unified-ai',        endpoint: 'POST /api/unified-ai/v1/chat/completions', reason: 'Chain for multi-step reasoning', priority: 4 },
     ],
     cost_estimate: {
-      tier: getPricingTier(maxTokens),
+      tier: getPricingTier(maxTokens, jsonMode),
       provider_cost_usd: providerCost,
     },
   };
 }
 
-router.post('/v1/chat/completions', async (req: Request, res: Response) => {
+// ── POST /v1/chat/completions ─────────────────────────────────────────────────
+router.post('/v1/chat/completions', async (req, res) => {
   const startMs = Date.now();
   const {
     model = 'auto',
@@ -84,25 +69,16 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
     max_tokens = 1000,
     json_mode = false,
     tools,
-    routing_strategy = 'auto' as RoutingStrategy,
+    routing_strategy = 'auto',
     user_id = 'anonymous',
     cache_policy = 'standard',
-  } = req.body as {
-    model?: string;
-    messages: { role: string; content: string }[];
-    temperature?: number;
-    max_tokens?: number;
-    json_mode?: boolean;
-    tools?: unknown[];
-    routing_strategy?: RoutingStrategy;
-    user_id?: string;
-    cache_policy?: string;
-  };
+  } = req.body;
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: 'messages array is required' });
   }
 
+  // Rate limiting
   const usage = getUserUsage(user_id);
   if (usage.calls >= PRICING.freeTierDailyCallLimit) {
     return res.status(429).json({ error: 'Daily call limit reached', limit: PRICING.freeTierDailyCallLimit, reset_at: new Date(usage.resetAt).toISOString() });
@@ -111,74 +87,47 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
     return res.status(429).json({ error: 'Daily spend cap reached', cap_usd: PRICING.dailySpendCapUsd });
   }
 
-  const resolvedModel = resolveModel(model, routing_strategy as RoutingStrategy);
-  const cacheKey = cache_policy !== 'no-cache'
-    ? JSON.stringify({ resolvedModel, messages, temperature, max_tokens, json_mode })
-    : null;
+  // Resolve model
+  const requestedModel = model;
+  const resolved = resolveAlias(routing_strategy !== 'auto' ? routing_strategy : model);
+  const modelSlug = resolved.modelSlug;
 
+  // Cap tokens
+  const cappedTokens = Math.min(max_tokens, resolved.maxOutputTokens);
+
+  // Cache
+  const cacheKey = cache_policy !== 'no-cache'
+    ? JSON.stringify({ modelSlug, messages, temperature, cappedTokens, json_mode })
+    : null;
   if (cacheKey) {
     const hit = cacheGet(cacheKey);
-    if (hit) {
-      const cached = hit as Record<string, unknown>;
-      return res.json({ ...cached, cache_hit: true, latency_ms: Date.now() - startMs });
-    }
+    if (hit) return res.json({ ...hit, cache_hit: true, latency_ms: Date.now() - startMs });
   }
 
-  const systemMessages = json_mode
-    ? [{ role: 'system', content: 'Respond only with valid JSON. No markdown, no explanation.' }]
-    : [];
-
-  const bodyPayload: Record<string, unknown> = {
-    model: resolvedModel,
-    max_tokens,
-    temperature,
-    messages: [...systemMessages, ...messages],
-  };
-  if (tools?.length) bodyPayload.tools = tools;
-
-  let lastError: unknown;
-  let rawResponse: unknown;
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const response = await axios.post(
-        'https://openrouter.ai/api/v1/chat/completions',
-        bodyPayload,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': 'https://orbis-apis.onrender.com',
-            'X-Title': 'Orbis Unified AI API',
-          },
-          timeout: 30_000,
-        }
-      );
-      rawResponse = response.data;
-      break;
-    } catch (err) {
-      lastError = err;
-      if (attempt < 2) await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
-    }
+  // Call provider
+  let providerResult;
+  try {
+    providerResult = await callProvider({
+      modelSlug,
+      messages,
+      temperature,
+      max_tokens: cappedTokens,
+      jsonMode: json_mode,
+      tools,
+    });
+  } catch (err) {
+    return res.status(502).json({ error: 'All upstream provider attempts failed', detail: String(err) });
   }
 
-  if (!rawResponse) {
-    return res.status(502).json({ error: 'All upstream provider attempts failed', detail: String(lastError) });
-  }
-
-  const data = rawResponse as {
-    choices: { message: { content: string } }[];
-    usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
-  };
-
-  const content = data.choices?.[0]?.message?.content ?? '';
-  const usage_tokens = data.usage ?? { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
-  const costs = calcCost(resolvedModel, usage_tokens.prompt_tokens, usage_tokens.completion_tokens);
-  const confidence = Math.min(0.99, 0.75 + (usage_tokens.completion_tokens > 50 ? 0.1 : 0) + (temperature < 0.5 ? 0.1 : 0));
+  const { content, inputTokens, outputTokens, totalTokens } = providerResult;
+  const costs      = calcCost(modelSlug, inputTokens, outputTokens);
+  const confidence = Math.min(0.99, 0.75 + (outputTokens > 50 ? 0.1 : 0) + (temperature < 0.5 ? 0.1 : 0));
 
   usage.calls++;
   usage.spend += costs.userPrice;
 
-  let structured_output: unknown = null;
+  // Parse structured output
+  let structured_output = null;
   if (json_mode) {
     try {
       const stripped = content.replace(/```json\s*|```\s*/g, '').trim();
@@ -187,38 +136,34 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
     } catch { structured_output = null; }
   }
 
-  const providerShort = resolvedModel.split('/')[0];
-  const modelShort    = resolvedModel.split('/')[1] ?? resolvedModel;
-  const latency_ms    = Date.now() - startMs;
-
   const result = {
-    id: `uai-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    object: 'chat.completion',
-    output: content,
+    id:                      `uai-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    object:                  'chat.completion',
+    output:                  content,
     structured_output,
-    provider_used: providerShort,
-    model_used: modelShort,
+    provider_used:           resolved.provider,
+    model_used:              resolved.displayName,
+    requested_model:         requestedModel,
+    resolved_model_slug:     modelSlug,
     routing_strategy_applied: routing_strategy,
     confidence,
-    token_usage: {
-      input_tokens:  usage_tokens.prompt_tokens,
-      output_tokens: usage_tokens.completion_tokens,
-      total_tokens:  usage_tokens.total_tokens,
-    },
+    token_usage: { input_tokens: inputTokens, output_tokens: outputTokens, total_tokens: totalTokens },
     pricing: {
       estimated_provider_cost_usd: costs.providerCost,
       user_price_usd:              costs.userPrice,
       profit_margin_usd:           costs.margin,
-      tier:                        getPricingTier(max_tokens),
+      tier:                        getPricingTier(cappedTokens, json_mode),
+      currency:                    'USD',
     },
-    latency_ms,
-    cache_hit: false,
-    ...agentMeta(confidence, costs.providerCost, max_tokens),
+    latency_ms:  Date.now() - startMs,
+    cache_hit:   false,
+    ...agentMeta(confidence, costs.providerCost, cappedTokens, json_mode),
   };
 
   if (cacheKey) cacheSet(cacheKey, result);
+
   res.setHeader('X-RateLimit-Remaining', String(PRICING.freeTierDailyCallLimit - usage.calls));
-  res.setHeader('X-RateLimit-Reset', String(Math.floor(usage.resetAt / 1000)));
+  res.setHeader('X-RateLimit-Reset',     String(Math.floor(usage.resetAt / 1000)));
   return res.json(result);
 });
 
