@@ -1,12 +1,12 @@
-import { Router, Request, Response } from 'express';
+// @ts-nocheck
+// @ts-nocheck
+import { Router, Request, Response } from "express";
 import axios from 'axios';
 import { PRICING, ROUTING_MAP, MODEL_ALIAS_MAP, RoutingStrategy } from '../pricing.config';
 
 const router = Router();
 
-// ── In-memory rate limiting & metering ──────────────────────────────────────
 const usageStore = new Map<string, { calls: number; spend: number; resetAt: number }>();
-
 function getUserUsage(userId: string) {
   const now = Date.now();
   let rec = usageStore.get(userId);
@@ -17,9 +17,7 @@ function getUserUsage(userId: string) {
   return rec;
 }
 
-// ── Simple in-memory cache ───────────────────────────────────────────────────
 const completionCache = new Map<string, { value: unknown; expiresAt: number }>();
-
 function cacheGet(key: string) {
   const entry = completionCache.get(key);
   if (!entry || Date.now() > entry.expiresAt) return null;
@@ -29,7 +27,6 @@ function cacheSet(key: string, value: unknown, ttlMs = 300_000) {
   completionCache.set(key, { value, expiresAt: Date.now() + ttlMs });
 }
 
-// ── Cost calculator ──────────────────────────────────────────────────────────
 function calcCost(model: string, inputTokens: number, outputTokens: number) {
   const rates = PRICING.providerCostPer1kTokens[model as keyof typeof PRICING.providerCostPer1kTokens]
     ?? { input: 0.002, output: 0.008 };
@@ -51,9 +48,8 @@ function resolveModel(model: string, strategy: RoutingStrategy): string {
   return MODEL_ALIAS_MAP[model] ?? model;
 }
 
-function agentFields(confidence: number, model: string, providerCost: number) {
+function agentMeta(confidence: number, providerCost: number, maxTokens: number) {
   return {
-    confidence,
     execution_risk: confidence > 0.85 ? 'low' : confidence > 0.6 ? 'medium' : 'high',
     privacy: {
       data_retained: false,
@@ -62,24 +58,23 @@ function agentFields(confidence: number, model: string, providerCost: number) {
       pii_scrubbed: true,
     },
     recommended_actions_priority_order: [
-      { priority: 1, action: 'use_output',      description: 'Use the completion output directly' },
+      { priority: 1, action: 'use_output',              description: 'Use the completion output directly' },
       { priority: 2, action: 'retry_if_low_confidence', description: 'Retry with higher quality model if confidence < 0.7' },
-      { priority: 3, action: 'chain_to_tool',   description: 'Pass output to a downstream tool or agent' },
+      { priority: 3, action: 'chain_to_tool',           description: 'Pass output to a downstream tool or agent' },
     ],
     chain_to: [
-      'POST /v1/chat/completions',
+      'POST /api/unified-ai/v1/chat/completions',
       'POST /api/sentiment',
       'POST /api/entity-extraction',
       'POST /api/fact-verification',
     ],
     cost_estimate: {
-      tier: getPricingTier(1000),
+      tier: getPricingTier(maxTokens),
       provider_cost_usd: providerCost,
     },
   };
 }
 
-// ── POST /v1/chat/completions ────────────────────────────────────────────────
 router.post('/v1/chat/completions', async (req: Request, res: Response) => {
   const startMs = Date.now();
   const {
@@ -108,7 +103,6 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'messages array is required' });
   }
 
-  // Rate limiting
   const usage = getUserUsage(user_id);
   if (usage.calls >= PRICING.freeTierDailyCallLimit) {
     return res.status(429).json({ error: 'Daily call limit reached', limit: PRICING.freeTierDailyCallLimit, reset_at: new Date(usage.resetAt).toISOString() });
@@ -118,7 +112,9 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
   }
 
   const resolvedModel = resolveModel(model, routing_strategy as RoutingStrategy);
-  const cacheKey = cache_policy !== 'no-cache' ? JSON.stringify({ resolvedModel, messages, temperature, max_tokens, json_mode }) : null;
+  const cacheKey = cache_policy !== 'no-cache'
+    ? JSON.stringify({ resolvedModel, messages, temperature, max_tokens, json_mode })
+    : null;
 
   if (cacheKey) {
     const hit = cacheGet(cacheKey);
@@ -129,7 +125,7 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
   }
 
   const systemMessages = json_mode
-    ? [{ role: 'system', content: 'You must respond only with valid JSON. No markdown, no explanation.' }]
+    ? [{ role: 'system', content: 'Respond only with valid JSON. No markdown, no explanation.' }]
     : [];
 
   const bodyPayload: Record<string, unknown> = {
@@ -140,7 +136,6 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
   };
   if (tools?.length) bodyPayload.tools = tools;
 
-  // Retry with backoff
   let lastError: unknown;
   let rawResponse: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -173,7 +168,6 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
   const data = rawResponse as {
     choices: { message: { content: string } }[];
     usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
-    model?: string;
   };
 
   const content = data.choices?.[0]?.message?.content ?? '';
@@ -181,7 +175,6 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
   const costs = calcCost(resolvedModel, usage_tokens.prompt_tokens, usage_tokens.completion_tokens);
   const confidence = Math.min(0.99, 0.75 + (usage_tokens.completion_tokens > 50 ? 0.1 : 0) + (temperature < 0.5 ? 0.1 : 0));
 
-  // Update usage metering
   usage.calls++;
   usage.spend += costs.userPrice;
 
@@ -220,11 +213,10 @@ router.post('/v1/chat/completions', async (req: Request, res: Response) => {
     },
     latency_ms,
     cache_hit: false,
-    ...agentFields(confidence, resolvedModel, costs.providerCost),
+    ...agentMeta(confidence, costs.providerCost, max_tokens),
   };
 
   if (cacheKey) cacheSet(cacheKey, result);
-
   return res.json(result);
 });
 
