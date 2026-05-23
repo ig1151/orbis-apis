@@ -22,3 +22,5 @@ analyzeRouter.post('/batch', async (req: Request, res: Response, next: NextFunct
     res.status(200).json({ batch_id: `batch_${Date.now()}`, total: value.leads.length, results: out, latency_ms: Date.now() - t0 });
   } catch (err) { next(err); }
 });
+
+analyzeRouter.get('/', (_req: any, res: any) => res.json({ name: 'identity-intelligence-api', health: 'ok' }));

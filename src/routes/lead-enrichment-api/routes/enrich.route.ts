@@ -39,3 +39,5 @@ enrichRouter.get('/jobs/:jobId', (req: Request, res: Response) => {
   if (!job) { res.status(404).json({ error: { code: 'JOB_NOT_FOUND', message: `No job found: ${req.params.jobId}` } }); return; }
   res.status(200).json(job);
 });
+
+enrichRouter.get('/', (_req: any, res: any) => res.json({ name: 'lead-enrichment-api', health: 'ok' }));

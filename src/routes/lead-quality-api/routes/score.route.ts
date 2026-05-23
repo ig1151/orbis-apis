@@ -23,3 +23,5 @@ scoreRouter.post('/score/batch', async (req: Request, res: Response, next: NextF
     res.status(200).json({ batch_id: `batch_${Date.now()}`, total: (value as BatchRequest).leads.length, results: out, latency_ms: Date.now() - t0 });
   } catch (err) { next(err); }
 });
+
+scoreRouter.get('/', (_req: any, res: any) => res.json({ name: 'lead-quality-api', health: 'ok' }));
