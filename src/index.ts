@@ -1,3 +1,17 @@
+import { app as document_intelligence_app } from './routes/document-intelligence-api/app';
+import { app as user_risk_app } from './routes/user-risk-api/app';
+import { app as lead_quality_app } from './routes/lead-quality-api/app';
+import { app as search_extract_app } from './routes/search-extract-api/app';
+import { app as wallet_intelligence_app } from './routes/wallet-intelligence-api/app';
+import { app as ip_intelligence_app } from './routes/ip-intelligence-api/app';
+import { app as ai_output_safety_app } from './routes/ai-output-safety-api/app';
+import { app as phone_validation_app } from './routes/phone-validation-api/app';
+import { app as email_validation_app } from './routes/email-validation-api/app';
+import { app as image_to_content_app } from './routes/image-to-content-api/app';
+import { app as token_trust_app } from './routes/token-trust-api/app';
+import { app as lead_enrichment_app } from './routes/lead-enrichment-api/app';
+import { app as trust_app } from './routes/trust-api/app';
+import { app as identity_intelligence_app } from './routes/identity-intelligence-api/app';
 import { extractRouter as docIntelligenceRouter } from './routes/document-intelligence-api/routes/extract.route';
 import { analyzeRouter as identityIntelligenceRouteRouter } from './routes/identity-intelligence-api/routes/analyze.route';
 import { analyzeRouter as imageToContentRouteRouter } from './routes/image-to-content-api/routes/analyze.route';
@@ -833,28 +847,28 @@ const routerMap: Record<string, import("express").Router> = {
   'alpha-signal': alphaSignalDocsRouter,
   'wallet': walletBalanceRouter,
   'agent-memory': agentMemoryInfoRouter,
-  'ai-output-safety': aiOutputSafetyInfoRouter,
+  'ai-output-safety': ai_output_safety_app as any,
   'autopilot': autopilotInfoRouter,
   'browser-task': browserTaskInfoRouter,
   'company-research': companyResearchInfoRouter,
   'crypto-news-impact': newsImpactRouter,
   'dev-utilities': urlMetadataRouter,
-  'document-intelligence': docIntelligenceRouter,
-  'email-validation': emailValidationInfoRouter,
-  'phone-validation': phoneValidationInfoRouter,
-  'search-extract': searchExtractInfoRouter,
-  'token-trust': tokenTrustInfoRouter,
-  'trust': trustInfoRouter,
-  'user-risk': userRiskInfoRouter,
-  'wallet-intelligence': walletIntelligenceInfoRouter,
+  'document-intelligence': document_intelligence_app as any,
+  'email-validation': email_validation_app as any,
+  'phone-validation': phone_validation_app as any,
+  'search-extract': search_extract_app as any,
+  'token-trust': token_trust_app as any,
+  'trust': trust_app as any,
+  'user-risk': user_risk_app as any,
+  'wallet-intelligence': wallet_intelligence_app as any,
   'extraction': extractionIntelligenceRouter,
   'resume': resumeRouter,
-  'identity-intelligence': identityIntelligenceRouteRouter,
-  'image-to-content': imageToContentRouteRouter,
-  'ip-intelligence': ipIntelligenceInfoRouter,
+  'identity-intelligence': identity_intelligence_app as any,
+  'image-to-content': image_to_content_app as any,
+  'ip-intelligence': ip_intelligence_app as any,
   'lead-discovery': leadsRouter,
-  'lead-enrichment': leadEnrichmentRouteRouter,
-  'lead-quality': leadQualityRouteRouter,
+  'lead-enrichment': lead_enrichment_app as any,
+  'lead-quality': lead_quality_app as any,
   'market-intelligence': marketIntelligenceRouter,
   'market-signal-v2': marketSignalV2Router,
   'market-signal': marketSignalRouter,
