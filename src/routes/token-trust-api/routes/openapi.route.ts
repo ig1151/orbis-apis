@@ -10,7 +10,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
       description: 'Trust scoring for crypto tokens based on on-chain metrics, contract analysis and community signals.',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
-      'x-pricing': { '/score': 0.005, '/check': 0.005, '/check/batch': 0.015 },
+      'x-pricing': { '/v1/score': 0.005, '/v1/check': 0.005, '/check/batch': 0.015 },
       disclaimer: 'For informational purposes only. Not financial advice.',
       privacy: { data_stored: false, retention: 'none' },
     
@@ -19,8 +19,8 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
     paths: {
-      '/': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
-      '/score': { post: { operationId: 'scoreToken', summary: 'Score token trustworthiness (alias for /check)', 'x-agent-callable': true,
+      '/v1': { get: { summary: 'API discovery', operationId: 'discovery', responses: { '200': { description: 'API info' } } } },
+      '/v1/score': { post: { operationId: 'scoreToken', summary: 'Score token trustworthiness (alias for /check)', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['contract'], properties: {
           privacy: { type: 'object', description: 'Privacy metadata for this response' },
           contract: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$', description: 'Token contract address' },
@@ -46,7 +46,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           chain_to: { type: 'array', items: { type: 'string' } },
           disclaimer: { type: 'string' },
         }}}}}}}},
-      '/check': { post: { operationId: 'checkToken', summary: 'Check token trust score', 'x-agent-callable': true,
+      '/v1/check': { post: { operationId: 'checkToken', summary: 'Check token trust score', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['contract'], properties: {
           privacy: { type: 'object', description: 'Privacy metadata for this response' },
           contract: { type: 'string', pattern: '^0x[a-fA-F0-9]{40}$', description: 'Token contract address' },
@@ -70,7 +70,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } }, disclaimer: { type: 'string' },
         }}}}}}}},
-      '/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate token interaction based on trust score', 'x-agent-callable': true,
+      '/v1/execution-gate': { post: { operationId: 'executionGate', summary: 'Gate token interaction based on trust score', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['contract', 'action'], properties: {
           privacy: { type: 'object', description: 'Privacy metadata for this response' },
           confidence_per_section: { type: 'object', description: 'Per-section confidence scores (0-1)' },

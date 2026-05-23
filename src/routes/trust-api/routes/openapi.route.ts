@@ -100,7 +100,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
     servers: [{ url: 'https://trust-api.onrender.com', description: 'Production' }, { url: `http://localhost:${config.server.port}`, description: 'Local' }],
     paths: {
       '/v1/health': { get: { summary: 'Health check', operationId: 'getHealth', responses: { '200': { description: 'OK' } } } },
-      '/v1/assess': {
+      '/v1/score': {
         post: { summary: 'Assess trust', operationId: 'assessPost', requestBody: { required: true, content: { 'application/json': { schema: { $ref: '#/components/schemas/TrustRequest' }, examples: { web2_only: { summary: 'Web2 only', value: { email: 'user@gmail.com', phone: '+14155552671', ip: '8.8.8.8' } }, web3_only: { summary: 'Web3 only', value: { wallet_address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e' } }, combined: { summary: 'Combined Web2 + Web3', value: { email: 'user@company.com', ip: '8.8.8.8', wallet_address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e' } } } } } }, responses: { '200': { description: 'Trust assessment' }, '422': { description: 'Validation error' } } },
         get: { summary: 'Assess trust via GET', operationId: 'assessGet', parameters: [{ name: 'email', in: 'query', schema: { type: 'string' } }, { name: 'ip', in: 'query', schema: { type: 'string' } }, { name: 'wallet_address', in: 'query', schema: { type: 'string' } }], responses: { '200': { description: 'Trust assessment' } } },
       },

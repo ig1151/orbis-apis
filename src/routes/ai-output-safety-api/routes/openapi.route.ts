@@ -165,8 +165,8 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
     },
     security: [{ ApiKeyAuth: [] }],
     paths: {
-      '/': { get: { operationId: 'aiOutputSafetyDiscovery', summary: 'API discovery — returns name, version, endpoints and capabilities', responses: { '200': { description: 'API discovery info' } } } },
-      '/check': {
+      '/v1': { get: { operationId: 'aiOutputSafetyDiscovery', summary: 'API discovery — returns name, version, endpoints and capabilities', responses: { '200': { description: 'API discovery info' } } } },
+      '/v1/check': {
         post: {
           operationId: 'checkSafety',
           summary: 'Evaluate a single AI output for safety risks — returns flags, categories, risk level, score and suggested action',
@@ -178,7 +178,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           }
         }
       },
-      '/batch': {
+      '/v1/batch': {
         post: {
           operationId: 'checkBatch',
           summary: 'Validate multiple AI outputs efficiently in a single request — up to 20 outputs',
@@ -190,7 +190,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           }
         }
       },
-      '/redact': {
+      '/v1/redact': {
         post: {
           operationId: 'redactOutput',
           summary: 'Remove or mask unsafe content from AI output — returns cleaned output with redacted segments',
@@ -202,7 +202,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           }
         }
       },
-      '/score': {
+      '/v1/score': {
         post: {
           operationId: 'scoreOutput',
           summary: 'Return a numeric safety score 0-1 with threshold comparison for agent decision-making',
@@ -214,7 +214,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           }
         }
       },
-      '/execution-gate': {
+      '/v1/execution-gate': {
         post: {
           operationId: 'safetyExecutionGate',
           summary: 'Gate AI output usage based on safety score, risk level and configurable thresholds',
