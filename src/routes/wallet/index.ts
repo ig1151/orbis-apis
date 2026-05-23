@@ -230,4 +230,5 @@ router.get('/transactions/:address', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/', (_req, res) => res.json({ name: 'wallet', health: 'ok' }));
 export default router;

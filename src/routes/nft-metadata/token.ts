@@ -37,3 +37,5 @@ nftTokenRouter.post('/token', async (req: Request, res: Response) => {
     return res.json({ success: true, data: { tokenId: nft.identifier, name: nft.name, description: nft.description, imageUrl: nft.image_url, contractAddress: nft.contract, chain, traits: (nft.traits || []).map((t: any) => ({ type: t.trait_type, value: t.value })) } });
   } catch (err: any) { return res.status(err.response?.status || 500).json({ error: 'Failed to fetch NFT metadata', details: err.message }); }
 });
+
+nftTokenRouter.get('/', (_req, res) => res.json({ name: 'nft-metadata', health: 'ok' }));

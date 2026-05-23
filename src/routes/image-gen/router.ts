@@ -407,6 +407,7 @@ router.post("/session/:id/revise", requireApiKey, async (req: Request, res: Resp
   }
 });
 
+router.get('/', (_req, res) => res.json({ name: 'image-gen', health: 'ok' }));
 export default router;
 
 router.get("/openapi.json", (_req, res) => {

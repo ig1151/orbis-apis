@@ -141,4 +141,5 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
 router.get('/docs', (_req: Request, res: Response) => {
   res.send("<h1>Stablecoin Yield API Docs</h1><p><a href='/stablecoin-yield/openapi.json'>OpenAPI Spec</a></p>");
 });
+router.get('/', (_req, res) => res.json({ name: 'stablecoin-yield', health: 'ok' }));
 export default router;

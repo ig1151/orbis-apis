@@ -81,4 +81,5 @@ router.post('/sentiment', async (req, res) => {
 });
 
 
+router.get('/', (_req, res) => res.json({ name: 'social-sentiment', health: 'ok' }));
 export default router;

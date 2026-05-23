@@ -234,4 +234,5 @@ router.get('/workflow/:id/state', (req: any, res: any) => {
     computed_at: new Date().toISOString() });
 });
 
+router.get('/', (_req, res) => res.json({ name: 'strategy-execution', health: 'ok' }));
 export default router;

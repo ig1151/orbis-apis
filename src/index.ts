@@ -14,7 +14,7 @@ import intelligenceExtractionIndexRouter from './routes/intelligence-extraction-
 import liquidationFeedIndexRouter from './routes/liquidation-feed-api/routes/index';
 import marketCorrelationIndexRouter from './routes/market-correlation-api/routes/index';
 import marketStressIndexRouter from './routes/market-stress-api/routes/index';
-import { nftTokenRouter as nftMetadataIndexRouter } from './routes/nft-metadata/index';
+import { nftTokenRouter as nftMetadataIndexRouter } from './routes/nft-metadata/token';
 import onchainNewsNewsRouter from './routes/onchain-news/routes/news';
 import smartContractRiskIndexRouter from './routes/smart-contract-risk-api/routes/index';
 import strategySignalIndexRouter from './routes/strategy-signal-api/routes/index';

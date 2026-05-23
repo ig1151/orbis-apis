@@ -74,4 +74,5 @@ router.post('/url-metadata', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/', (_req, res) => res.json({ name: 'dev-utilities', health: 'ok' }));
 export default router;

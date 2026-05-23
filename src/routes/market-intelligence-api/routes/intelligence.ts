@@ -33,4 +33,5 @@ router.post('/', validate(schema, 'body'), async (req: Request, res: Response): 
   }
 });
 
+router.get('/', (_req, res) => res.json({ name: 'market-intelligence', health: 'ok' }));
 export default router;
