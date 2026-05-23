@@ -1,0 +1,342 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tone Analyzer API",
+    "version": "2.0.0",
+    "description": "Detect and compare tone, sentiment, formality, and brand voice alignment in any text. Returns per-dimension tone scores with confidence and provenance for agent orchestration.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 500 },
+      "pay_per_call": {
+        "analyze": "$0.002",
+        "compare": "$0.002",
+        "execution-gate": "$0.001",
+        "tone-intelligence": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    { "url": "https://orbis-apis.onrender.com/tone-analyzer", "description": "Production" }
+  ],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/analyze": {
+      "post": {
+        "operationId": "analyze_tone",
+        "summary": "Analyze tone, sentiment, and formality of text",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string", "example": "We are pleased to inform you that your application has been approved." },
+                  "target_tone": { "type": "string", "example": "professional" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tone analysis result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/ToneData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+                  "data": {
+                    "primary_tone": "professional",
+                    "tone_scores": { "professional": 0.88, "casual": 0.05, "friendly": 0.42, "assertive": 0.31, "empathetic": 0.28, "formal": 0.78, "informal": 0.04 },
+                    "formality_score": 0.78,
+                    "sentiment_score": 0.62,
+                    "confidence_score": 0.91,
+                    "emotional_indicators": ["pleased", "approved"],
+                    "brand_voice_match": true
+                  },
+                  "confidence": { "score": 0.91, "reason": "Clear professional register with positive sentiment" },
+                  "provenance": { "provider": "tone-analyzer", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "ai_generated" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": false, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "text-simplifier", "endpoint": "/simplify", "reason": "High formality score may reduce accessibility" }],
+                  "recommended_actions_priority_order": [{ "priority": "medium", "action": "Review formality for target audience", "reason": "Formality score 0.78 may be too formal for casual channels" }],
+                  "execution_metadata": { "latency_ms": 287, "model": "claude-sonnet-4-6", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/compare": {
+      "post": {
+        "operationId": "compare_tone",
+        "summary": "Compare tone profile of two texts side by side",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text_a", "text_b"],
+                "properties": {
+                  "text_a": { "type": "string" },
+                  "text_b": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tone comparison result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/ToneCompareData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/tone-intelligence": {
+      "post": {
+        "operationId": "tone_intelligence",
+        "summary": "One-call tone analysis with agent routing and provenance",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string" },
+                  "target_tone": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full tone intelligence response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/ToneData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string" },
+                  "objective": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "execution_ready"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "execution_ready": { "type": "boolean" },
+                    "next_api": { "type": "string" },
+                    "next_endpoint": { "type": "string" },
+                    "blocking_flags": { "type": "array", "items": { "type": "string" } },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "Confidence": {
+        "type": "object",
+        "required": ["score"],
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "required": ["provider", "retrieved_at"],
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["api", "reason"],
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["priority", "action"],
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error", "code"],
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "ToneData": {
+        "type": "object",
+        "required": ["primary_tone", "tone_scores", "formality_score", "sentiment_score"],
+        "properties": {
+          "primary_tone": { "type": "string" },
+          "tone_scores": {
+            "type": "object",
+            "properties": {
+              "professional": { "type": "number" },
+              "casual": { "type": "number" },
+              "friendly": { "type": "number" },
+              "assertive": { "type": "number" },
+              "empathetic": { "type": "number" },
+              "formal": { "type": "number" },
+              "informal": { "type": "number" }
+            }
+          },
+          "formality_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "sentiment_score": { "type": "number", "minimum": -1, "maximum": 1 },
+          "confidence_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "emotional_indicators": { "type": "array", "items": { "type": "string" } },
+          "brand_voice_match": { "type": ["boolean", "null"] }
+        }
+      },
+      "ToneCompareData": {
+        "type": "object",
+        "required": ["primary_tone_a", "primary_tone_b", "similarity_score"],
+        "properties": {
+          "tone_a": { "type": "object", "additionalProperties": { "type": "number" } },
+          "tone_b": { "type": "object", "additionalProperties": { "type": "number" } },
+          "primary_tone_a": { "type": "string" },
+          "primary_tone_b": { "type": "string" },
+          "similarity_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "differences": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "Domain Reputation API",
+  "slug": "domain-reputation",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 500 },
+    "pay_per_call": {
+      "score": "$0.003",
+      "check": "$0.002",
+      "execution-gate": "$0.001",
+      "reputation-intelligence": "$0.006"
+    }
+  },
+  "rate_limits": { "free": "500/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": [
+    { "method": "POST", "path": "/score", "description": "Full domain reputation score — grade, blacklist status, spam score, email and web reputation, overall risk" },
+    { "method": "POST", "path": "/check", "description": "Quick domain reputation check — is_clean, primary_issues, blacklisted flag" },
+    { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+    { "method": "POST", "path": "/reputation-intelligence", "description": "ONE-CALL: full domain reputation intelligence — score + check + recommendations" }
+  ],
+  "execution_chain": {
+    "recommended_start": "/reputation-intelligence",
+    "fallback": "/check",
+    "batch_endpoint": "/check"
+  }
+}

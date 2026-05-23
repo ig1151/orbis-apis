@@ -1,0 +1,38 @@
+{
+  "name": "Thumbnail Text Scorer API",
+  "slug": "thumbnail-text-scorer",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "score": "$0.002",
+      "recommend": "$0.003",
+      "execution-gate": "$0.001",
+      "thumbnail-intelligence": "$0.006"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "score",
+    "recommend",
+    "execution-gate",
+    "thumbnail-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/thumbnail-intelligence",
+    "fallback": "/score",
+    "batch_endpoint": "/score"
+  }
+}

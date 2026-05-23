@@ -1,0 +1,382 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Broken Link Checker API",
+    "version": "2.0.0",
+    "description": "Check any URL or batch of URLs for broken links: detect 404s, server errors, timeouts, redirects, and classify links as internal or external.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "check": "$0.002",
+      "batch": "$0.005",
+      "execution-gate": "$0.001",
+      "link-intelligence": "$0.006"
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/broken-link-checker" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/check": {
+      "post": {
+        "operationId": "checkLink",
+        "summary": "Check a single URL for broken link status",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Link check result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CheckResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-1111-aaaa-2222-bbbb33334444",
+                  "data": {
+                    "url": "https://example.com/missing-page",
+                    "status_code": 404,
+                    "is_broken": true,
+                    "redirect_url": null,
+                    "response_time_ms": 185,
+                    "error": "Not Found",
+                    "link_type": "external"
+                  },
+                  "confidence": { "score": 0.99, "reason": "Live HTTP status check", "per_section": { "status": 1.0 } },
+                  "provenance": { "provider": "broken-link-checker", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 1800, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Remove or update broken link", "reason": "404 responses harm SEO and user experience" }
+                  ],
+                  "execution_metadata": { "latency_ms": 185, "model": "link-checker-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batchCheckLinks",
+        "summary": "Batch check up to 50 URLs for broken link status",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["urls"],
+                "properties": {
+                  "urls": { "type": "array", "items": { "type": "string", "format": "uri" }, "maxItems": 50 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch link check result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BatchResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-2222-bbbb-3333-cccc44445555",
+                  "data": {
+                    "results": [
+                      { "url": "https://example.com/page1", "status_code": 200, "is_broken": false, "redirect_url": null, "response_time_ms": 145, "error": null, "link_type": "internal" },
+                      { "url": "https://example.com/missing", "status_code": 404, "is_broken": true, "redirect_url": null, "response_time_ms": 190, "error": "Not Found", "link_type": "internal" },
+                      { "url": "https://external-site.com/article", "status_code": 301, "is_broken": false, "redirect_url": "https://external-site.com/new-article", "response_time_ms": 210, "error": null, "link_type": "external" }
+                    ],
+                    "broken_count": 1,
+                    "total_count": 3,
+                    "broken_urls": ["https://example.com/missing"]
+                  },
+                  "confidence": { "score": 0.98, "reason": "All URLs checked via live HTTP requests", "per_section": { "status": 0.99 } },
+                  "provenance": { "provider": "broken-link-checker", "retrieved_at": "2026-05-18T12:05:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 1800, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Fix broken link https://example.com/missing", "reason": "404 link found in batch" }
+                  ],
+                  "execution_metadata": { "latency_ms": 680, "model": "link-checker-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "linkExecutionGate",
+        "summary": "Check whether an agent should proceed based on link health",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExecutionGateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-3333-cccc-4444-dddd55556666",
+                  "execution_ready": false,
+                  "next_api": "redirect-chain-analyzer",
+                  "next_endpoint": "/analyze",
+                  "blocking_flags": ["link_is_broken_404"],
+                  "confidence": { "score": 0.99, "reason": "Link returns 404", "per_section": {} },
+                  "provenance": { "provider": "broken-link-checker", "retrieved_at": "2026-05-18T12:06:00Z", "source_type": "live_scan" },
+                  "execution_metadata": { "latency_ms": 190, "model": "link-checker-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/link-intelligence": {
+      "post": {
+        "operationId": "linkIntelligence",
+        "summary": "One-call link check, analysis, and recommendations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Combined link intelligence result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LinkIntelligenceResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-4444-dddd-5555-eeee66667777",
+                  "data": {
+                    "url": "https://example.com/page",
+                    "status_code": 200,
+                    "is_broken": false,
+                    "redirect_url": null,
+                    "response_time_ms": 142,
+                    "error": null,
+                    "link_type": "internal"
+                  },
+                  "confidence": { "score": 0.99, "reason": "Live link check performed", "per_section": { "status": 1.0 } },
+                  "provenance": { "provider": "broken-link-checker", "retrieved_at": "2026-05-18T12:07:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 1800, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [],
+                  "execution_metadata": { "latency_ms": 310, "model": "link-checker-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "LinkCheckData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "status_code": { "type": "integer" },
+          "is_broken": { "type": "boolean" },
+          "redirect_url": { "type": ["string", "null"] },
+          "response_time_ms": { "type": "integer" },
+          "error": { "type": ["string", "null"] },
+          "link_type": { "type": "string", "enum": ["internal", "external"] }
+        }
+      },
+      "BatchLinkData": {
+        "type": "object",
+        "properties": {
+          "results": { "type": "array", "items": { "$ref": "#/components/schemas/LinkCheckData" } },
+          "broken_count": { "type": "integer" },
+          "total_count": { "type": "integer" },
+          "broken_urls": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "CheckResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/LinkCheckData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "BatchResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/BatchLinkData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExecutionGateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "execution_ready": { "type": "boolean" },
+          "next_api": { "type": "string" },
+          "next_endpoint": { "type": "string" },
+          "blocking_flags": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "LinkIntelligenceResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/LinkCheckData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "RateLimited": {
+        "description": "Rate limit exceeded",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

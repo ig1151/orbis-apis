@@ -1,0 +1,457 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "HTTP Header Inspector API",
+    "version": "2.0.0",
+    "description": "Inspect HTTP response headers from any URL: detect security headers, missing CSP/HSTS/X-Frame-Options, identify vulnerabilities, and score header compliance.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "inspect": "$0.002",
+      "security-audit": "$0.003",
+      "execution-gate": "$0.001",
+      "header-intelligence": "$0.006"
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/http-header-inspector" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/inspect": {
+      "post": {
+        "operationId": "inspectHeaders",
+        "summary": "Inspect HTTP headers from a URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri", "description": "The URL to inspect headers from" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Header inspection result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InspectResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "data": {
+                    "url": "https://example.com",
+                    "headers": {
+                      "content-type": "text/html; charset=utf-8",
+                      "x-frame-options": "DENY",
+                      "strict-transport-security": "max-age=31536000; includeSubDomains",
+                      "server": "nginx/1.18.0"
+                    },
+                    "security_headers": {
+                      "content-security-policy": { "present": false, "value": null, "risk_level": "high" },
+                      "strict-transport-security": { "present": true, "value": "max-age=31536000; includeSubDomains", "risk_level": "none" },
+                      "x-frame-options": { "present": true, "value": "DENY", "risk_level": "none" },
+                      "x-content-type-options": { "present": false, "value": null, "risk_level": "medium" },
+                      "referrer-policy": { "present": false, "value": null, "risk_level": "low" }
+                    },
+                    "missing_critical": ["content-security-policy", "x-content-type-options"],
+                    "security_score": 72,
+                    "grade": "B"
+                  },
+                  "confidence": { "score": 0.97, "reason": "Live HTTP scan with full response", "per_section": { "headers": 0.99, "security_analysis": 0.95 } },
+                  "provenance": { "provider": "http-header-inspector", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 900, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "csp-analyzer", "endpoint": "/analyze", "reason": "CSP header missing — analyze or generate a policy" }],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Add Content-Security-Policy header", "reason": "Missing CSP exposes site to XSS attacks" },
+                    { "priority": "medium", "action": "Add X-Content-Type-Options: nosniff", "reason": "Prevents MIME-type sniffing" }
+                  ],
+                  "execution_metadata": { "latency_ms": 312, "model": "header-inspector-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/security-audit": {
+      "post": {
+        "operationId": "securityAuditHeaders",
+        "summary": "Full security header audit for a URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" },
+                  "check_cors": { "type": "boolean", "default": false }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Security audit result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SecurityAuditResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "data": {
+                    "url": "https://example.com",
+                    "issues": [
+                      { "severity": "high", "header": "content-security-policy", "description": "CSP header is missing", "recommendation": "Add a strict Content-Security-Policy header" },
+                      { "severity": "medium", "header": "x-content-type-options", "description": "X-Content-Type-Options not set", "recommendation": "Add 'X-Content-Type-Options: nosniff'" }
+                    ],
+                    "score": 72,
+                    "grade": "B",
+                    "cors_policy": { "allow_origin": null, "allow_credentials": null, "misconfigured": false }
+                  },
+                  "confidence": { "score": 0.95, "reason": "Live security audit", "per_section": { "headers": 0.99, "cors": 0.88 } },
+                  "provenance": { "provider": "http-header-inspector", "retrieved_at": "2026-05-18T12:01:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 1800, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Add Content-Security-Policy header", "reason": "Critical XSS protection missing" }
+                  ],
+                  "execution_metadata": { "latency_ms": 445, "model": "header-inspector-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "headerExecutionGate",
+        "summary": "Check whether an agent should proceed based on header security posture",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExecutionGateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "execution_ready": true,
+                  "next_api": "csp-analyzer",
+                  "next_endpoint": "/analyze",
+                  "blocking_flags": [],
+                  "confidence": { "score": 0.96, "reason": "Header posture evaluated", "per_section": {} },
+                  "provenance": { "provider": "http-header-inspector", "retrieved_at": "2026-05-18T12:02:00Z", "source_type": "live_scan" },
+                  "execution_metadata": { "latency_ms": 198, "model": "header-inspector-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/header-intelligence": {
+      "post": {
+        "operationId": "headerIntelligence",
+        "summary": "One-call combined header inspection, security audit, and recommendations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Combined header intelligence result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HeaderIntelligenceResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+                  "data": {
+                    "url": "https://example.com",
+                    "headers": {
+                      "content-type": "text/html; charset=utf-8",
+                      "strict-transport-security": "max-age=31536000; includeSubDomains",
+                      "x-frame-options": "DENY"
+                    },
+                    "security_headers": {
+                      "content-security-policy": { "present": false, "value": null, "risk_level": "high" },
+                      "strict-transport-security": { "present": true, "value": "max-age=31536000; includeSubDomains", "risk_level": "none" }
+                    },
+                    "missing_critical": ["content-security-policy"],
+                    "security_score": 72,
+                    "grade": "B",
+                    "issues": [
+                      { "severity": "high", "header": "content-security-policy", "description": "CSP missing", "recommendation": "Add Content-Security-Policy header" }
+                    ]
+                  },
+                  "confidence": { "score": 0.97, "reason": "Full combined scan", "per_section": { "headers": 0.99, "security": 0.95 } },
+                  "provenance": { "provider": "http-header-inspector", "retrieved_at": "2026-05-18T12:03:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 900, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "csp-analyzer", "endpoint": "/analyze", "reason": "CSP missing — generate a policy" }],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Add Content-Security-Policy header", "reason": "XSS protection missing" }
+                  ],
+                  "execution_metadata": { "latency_ms": 520, "model": "header-inspector-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "HeaderInspectData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "headers": { "type": "object", "additionalProperties": { "type": "string" } },
+          "security_headers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "present": { "type": "boolean" },
+                "value": { "type": ["string", "null"] },
+                "risk_level": { "type": "string", "enum": ["none", "low", "medium", "high", "critical"] }
+              }
+            }
+          },
+          "missing_critical": { "type": "array", "items": { "type": "string" } },
+          "security_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "grade": { "type": "string", "enum": ["A", "B", "C", "D", "F"] }
+        }
+      },
+      "SecurityAuditData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+                "header": { "type": "string" },
+                "description": { "type": "string" },
+                "recommendation": { "type": "string" }
+              }
+            }
+          },
+          "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "grade": { "type": "string", "enum": ["A", "B", "C", "D", "F"] },
+          "cors_policy": {
+            "type": ["object", "null"],
+            "properties": {
+              "allow_origin": { "type": ["string", "null"] },
+              "allow_credentials": { "type": ["string", "null"] },
+              "misconfigured": { "type": "boolean" }
+            }
+          }
+        }
+      },
+      "HeaderIntelligenceData": {
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/HeaderInspectData" },
+          {
+            "type": "object",
+            "properties": {
+              "issues": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+                    "header": { "type": "string" },
+                    "description": { "type": "string" },
+                    "recommendation": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "InspectResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/HeaderInspectData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "SecurityAuditResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/SecurityAuditData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExecutionGateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "execution_ready": { "type": "boolean" },
+          "next_api": { "type": "string" },
+          "next_endpoint": { "type": "string" },
+          "blocking_flags": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "HeaderIntelligenceResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/HeaderIntelligenceData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "RateLimited": {
+        "description": "Rate limit exceeded",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

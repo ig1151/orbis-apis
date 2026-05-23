@@ -1,219 +1,91 @@
 {
   "name": "Unified Multi-Provider Agent Completion API",
-  "slug": "unified-ai-completion-api",
-  "version": "1.0.0",
-  "description": "Route AI completions across Gemini, OpenAI, Claude, Grok, Mistral, DeepSeek and more. Single endpoint, unified schema, cost-transparent, agent-native with confidence scoring and structured chain routing.",
-  "category": "AI / LLM Infrastructure",
+  "shortDescription": "Single endpoint to route AI completions across Claude, GPT-4, Gemini, Grok and more",
+  "description": "A unified chat completions endpoint that routes requests across multiple AI providers — Anthropic Claude, OpenAI GPT-4, Google Gemini, xAI Grok, Mistral and DeepSeek — through a single OpenAI-compatible interface. Features automatic failover, cost-optimised routing, confidence scoring, JSON mode, tool calling, and provider health monitoring. Agent-native with x402 micropayment support and MCP compatibility. Drop-in replacement for any OpenAI-compatible client.",
+  "category": "ai-ml",
+  "baseUrl": "https://orbis-apis.onrender.com/api/unified-ai",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/api/unified-ai/",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/api/unified-ai/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
   "tags": [
     "ai",
     "llm",
-    "gemini",
-    "openai",
-    "claude",
-    "routing",
     "completions",
+    "claude",
+    "openai",
+    "gemini",
+    "grok",
+    "routing",
     "agent",
-    "orbis",
-    "x402"
+    "x402",
+    "mcp",
+    "failover"
   ],
-  "baseRoute": "/api/unified-ai",
-  "orbisCompliance": "A+",
-  "agentCallable": true,
-  "mcpCompatible": true,
-  "x402Enabled": true,
-  "executionGateRequired": false,
-  "confidence": 0.97,
-  "confidence_methodology": {
-    "factors": [
-      "provider_reliability",
-      "routing_confidence",
-      "cache_freshness",
-      "token_density"
-    ],
-    "description": "Composite score 0-1. >0.85=low risk, 0.6-0.85=medium, <0.6=high risk."
-  },
-  "endpointPricing": {
-    "POST /v1/chat/completions": {
-      "currency": "USD",
-      "unit": "request",
-      "model": "per-call",
-      "tiers": {
-        "free": {
-          "price": 0,
-          "limit": "50 calls/day",
-          "maxTokens": 1000
+  "keywords": [
+    "multi provider llm",
+    "ai completion api",
+    "openai compatible",
+    "claude api",
+    "gemini api",
+    "gpt4 alternative",
+    "llm router",
+    "agent completion"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 50
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.01,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/v1/chat/completions",
+          "pricePerCallUsdc": 0.01,
+          "description": "Chat completion (small model)"
         },
-        "small": {
-          "price": 0.01,
-          "maxTokens": 2000
+        {
+          "method": "POST",
+          "pathPattern": "/v1/chat/completions",
+          "pricePerCallUsdc": 0.025,
+          "description": "Chat completion (standard model)"
         },
-        "medium": {
-          "price": 0.025,
-          "maxTokens": 8000
+        {
+          "method": "POST",
+          "pathPattern": "/v1/chat/completions",
+          "pricePerCallUsdc": 0.07,
+          "description": "Chat completion (large model)"
         },
-        "large": {
-          "price": 0.07,
-          "maxTokens": 32000
-        },
-        "premium": {
-          "price": 0.15,
-          "maxTokens": 128000
+        {
+          "method": "POST",
+          "pathPattern": "/v1/chat/completions",
+          "pricePerCallUsdc": 0.15,
+          "description": "Chat completion (premium/reasoning model)"
         }
-      }
+      ]
     }
-  },
-  "authentication": {
-    "type": "api_key",
-    "header": "x-api-key"
-  },
-  "privacy": {
-    "dataRetained": false,
-    "retentionPolicy": "none by this API — upstream provider terms apply",
-    "trainingUse": false,
-    "piiScrubbed": true,
-    "thirdPartyProcessors": [
-      "Google Gemini",
-      "OpenAI",
-      "Anthropic",
-      "Mistral",
-      "DeepSeek"
-    ],
-    "compliance": "GDPR-aligned, no persistent storage",
-    "policy": "No persistent storage by this API. Requests are processed by selected upstream providers under their own API terms and data policies."
-  },
-  "failover_policy": {
-    "maxProviderAttempts": 3,
-    "fallbackOrder": [
-      "google/gemini-2.5-flash",
-      "google/gemini-2.0-flash-001",
-      "anthropic/claude-4.5-sonnet-20250929",
-      "openai/gpt-4o-mini"
-    ]
-  },
-  "provider_status": {
-    "google": "healthy",
-    "openai": "healthy",
-    "anthropic": "healthy",
-    "mistralai": "healthy",
-    "deepseek": "healthy"
-  },
-  "rate_limits": {
-    "free": "50/day",
-    "paid": "10000/day",
-    "enterprise": "unlimited",
-    "headers": [
-      "X-RateLimit-Remaining",
-      "X-RateLimit-Reset",
-      "Retry-After"
-    ]
-  },
-  "sla": {
-    "uptime": "99.5%",
-    "p95_latency_ms": 2000,
-    "support": "community"
-  },
-  "support": {
-    "email": "hello@orbisapis.com",
-    "docs": "https://orbis-apis.onrender.com/api/unified-ai/"
-  },
-  "recommended_actions_priority_order": [
-    {
-      "priority": 1,
-      "action": "call_completion",
-      "endpoint": "POST /api/unified-ai/v1/chat/completions",
-      "reason": "Primary use case"
-    },
-    {
-      "priority": 2,
-      "action": "discover_models",
-      "endpoint": "GET /api/unified-ai/",
-      "reason": "Check models and pricing"
-    },
-    {
-      "priority": 3,
-      "action": "health_check",
-      "endpoint": "GET /api/unified-ai/health",
-      "reason": "Verify provider availability"
-    }
-  ],
-  "chain_to": [
-    {
-      "api": "sentiment",
-      "endpoint": "POST /api/sentiment",
-      "reason": "Analyze tone of output",
-      "priority": 1
-    },
-    {
-      "api": "entity-extraction",
-      "endpoint": "POST /api/entity-extraction",
-      "reason": "Extract entities from output",
-      "priority": 2
-    },
-    {
-      "api": "fact-verification",
-      "endpoint": "POST /api/fact-verification",
-      "reason": "Verify factual claims",
-      "priority": 3
-    },
-    {
-      "api": "unified-ai",
-      "endpoint": "POST /api/unified-ai/v1/chat/completions",
-      "reason": "Multi-step chaining",
-      "priority": 4
-    }
-  ],
-  "x402": {
-    "enabled": true,
-    "acceptedTokens": [
-      "USDC",
-      "ETH"
-    ],
-    "walletEnvVar": "X402_RECEIVING_WALLET"
-  },
-  "capabilities": [
-    "multi_provider_routing",
-    "cost_optimization",
-    "json_mode",
-    "tool_calling",
-    "response_caching",
-    "retry_with_backoff",
-    "usage_metering",
-    "confidence_scoring",
-    "agent_chain_routing",
-    "provider_failover",
-    "execution_gating_ready"
   ],
   "endpoints": [
     {
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "description": "Unified chat completion — route to any provider via the model field"
+    },
+    {
       "method": "GET",
       "path": "/",
-      "description": "Canonical root discovery",
-      "execution_gate_required": false
+      "description": "Discovery manifest — lists all available models and pricing"
     },
     {
       "method": "GET",
-      "path": "/api/unified-ai/",
-      "description": "Discovery manifest",
-      "execution_gate_required": false
-    },
-    {
-      "method": "GET",
-      "path": "/api/unified-ai/manifest",
-      "description": "Manifest alias",
-      "execution_gate_required": false
-    },
-    {
-      "method": "POST",
-      "path": "/api/unified-ai/v1/chat/completions",
-      "description": "Unified completion",
-      "execution_gate_required": false
-    },
-    {
-      "method": "GET",
-      "path": "/api/unified-ai/health",
-      "description": "Provider health",
-      "execution_gate_required": false
+      "path": "/health",
+      "description": "Provider health check — real-time status of all upstream providers"
     }
-  ],
-  "executionGateNote": "Execution gating is supported for future action endpoints. Not required for current read/completion endpoints."
+  ]
 }

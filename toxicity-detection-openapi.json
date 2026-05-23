@@ -1,0 +1,347 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Toxicity Detection API",
+    "version": "2.0.0",
+    "description": "Detect toxic, hateful, and unsafe content in text with per-category severity scores. Supports single-text detection and batch processing. Built for content moderation agents and safety pipelines.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 500 },
+      "pay_per_call": {
+        "detect": "$0.002",
+        "batch": "$0.001",
+        "execution-gate": "$0.001",
+        "toxicity-intelligence": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    { "url": "https://orbis-apis.onrender.com/toxicity-detection", "description": "Production" }
+  ],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/detect": {
+      "post": {
+        "operationId": "detect_toxicity",
+        "summary": "Detect toxicity in a single text",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string", "example": "You are a complete waste of space and should disappear." },
+                  "language": { "type": "string", "default": "en", "example": "en" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Toxicity detection result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/ToxicityData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+                  "data": {
+                    "is_toxic": true,
+                    "toxicity_score": 0.87,
+                    "severity": "high",
+                    "categories": { "hate_speech": 0.9, "threat": 0.3, "insult": 0.82, "profanity": 0.1, "harassment": 0.75, "identity_attack": 0.2, "sexual": 0.01 },
+                    "flagged_phrases": ["complete waste of space", "should disappear"],
+                    "safe_to_display": false
+                  },
+                  "confidence": { "score": 0.93, "reason": "High-confidence multi-category toxicity signal" },
+                  "provenance": { "provider": "toxicity-detection", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "ai_generated" },
+                  "cache": { "recommended_ttl_seconds": 1800, "retryable": false, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "toxicity-detection", "endpoint": "/batch", "reason": "Run batch check if processing multiple comments" }],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "Block content from display", "reason": "safe_to_display=false, severity=high" }],
+                  "execution_metadata": { "latency_ms": 198, "model": "claude-sonnet-4-6", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/batch": {
+      "post": {
+        "operationId": "batch_toxicity",
+        "summary": "Batch toxicity detection for up to 20 texts",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["texts"],
+                "properties": {
+                  "texts": { "type": "array", "items": { "type": "string" }, "maxItems": 20 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch toxicity result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/BatchToxicityData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/toxicity-intelligence": {
+      "post": {
+        "operationId": "toxicity_intelligence",
+        "summary": "One-call toxicity analysis with agent routing and provenance",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string" },
+                  "language": { "type": "string", "default": "en" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full toxicity intelligence response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/ToxicityData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string" },
+                  "objective": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "execution_ready"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "execution_ready": { "type": "boolean" },
+                    "next_api": { "type": "string" },
+                    "next_endpoint": { "type": "string" },
+                    "blocking_flags": { "type": "array", "items": { "type": "string" } },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "Confidence": {
+        "type": "object",
+        "required": ["score"],
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "required": ["provider", "retrieved_at"],
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["api", "reason"],
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["priority", "action"],
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error", "code"],
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "ToxicityData": {
+        "type": "object",
+        "required": ["is_toxic", "toxicity_score", "severity", "safe_to_display"],
+        "properties": {
+          "is_toxic": { "type": "boolean" },
+          "toxicity_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "severity": { "type": "string", "enum": ["none", "low", "medium", "high", "critical"] },
+          "categories": {
+            "type": "object",
+            "properties": {
+              "hate_speech": { "type": "number" },
+              "threat": { "type": "number" },
+              "insult": { "type": "number" },
+              "profanity": { "type": "number" },
+              "harassment": { "type": "number" },
+              "identity_attack": { "type": "number" },
+              "sexual": { "type": "number" }
+            }
+          },
+          "flagged_phrases": { "type": "array", "items": { "type": "string" } },
+          "safe_to_display": { "type": "boolean" }
+        }
+      },
+      "BatchToxicityData": {
+        "type": "object",
+        "required": ["results", "toxic_count", "total_count"],
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": { "type": "string" },
+                "is_toxic": { "type": "boolean" },
+                "toxicity_score": { "type": "number" },
+                "severity": { "type": "string" }
+              }
+            }
+          },
+          "toxic_count": { "type": "integer" },
+          "total_count": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

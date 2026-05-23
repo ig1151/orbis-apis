@@ -1,0 +1,38 @@
+{
+  "name": "Ad Copy Variant Generator API",
+  "slug": "ad-copy-variant-generator",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "generate": "$0.003",
+      "score": "$0.002",
+      "execution-gate": "$0.001",
+      "ad-copy-intelligence": "$0.006"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "generate",
+    "score",
+    "execution-gate",
+    "ad-copy-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/ad-copy-intelligence",
+    "fallback": "/generate",
+    "batch_endpoint": "/generate"
+  }
+}

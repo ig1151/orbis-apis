@@ -1,0 +1,431 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Cookie Scanner API",
+    "version": "2.0.0",
+    "description": "Scan any website's cookies to detect tracking cookies, third-party cookies, and compliance risks under GDPR and CCPA.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "scan": "$0.002",
+      "compliance-check": "$0.003",
+      "execution-gate": "$0.001",
+      "cookie-intelligence": "$0.006"
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/cookie-scanner" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/scan": {
+      "post": {
+        "operationId": "scanCookies",
+        "summary": "Scan cookies from a URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cookie scan result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ScanResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-1111-2222-3333-444455556666",
+                  "data": {
+                    "url": "https://example.com",
+                    "cookies": [
+                      { "name": "_ga", "value": "GA1.2.123456789.1620000000", "domain": ".example.com", "path": "/", "expires": "2027-05-18T00:00:00Z", "httponly": false, "secure": false, "samesite": "None", "is_third_party": false, "risk_level": "high" },
+                      { "name": "session_id", "value": "abc123xyz", "domain": "example.com", "path": "/", "expires": null, "httponly": true, "secure": true, "samesite": "Strict", "is_third_party": false, "risk_level": "low" },
+                      { "name": "_fbp", "value": "fb.1.1620000000.987654321", "domain": ".example.com", "path": "/", "expires": "2026-08-18T00:00:00Z", "httponly": false, "secure": false, "samesite": "None", "is_third_party": true, "risk_level": "high" }
+                    ],
+                    "total_count": 3,
+                    "first_party_count": 2,
+                    "third_party_count": 1,
+                    "tracking_cookies": ["_ga", "_fbp"]
+                  },
+                  "confidence": { "score": 0.95, "reason": "Live cookie scan via headless request", "per_section": { "detection": 0.97, "classification": 0.93 } },
+                  "provenance": { "provider": "cookie-scanner", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "cookie-scanner", "endpoint": "/compliance-check", "reason": "Tracking cookies detected — run GDPR/CCPA compliance check" }],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Implement cookie consent mechanism", "reason": "Tracking cookies present without evidence of consent" },
+                    { "priority": "medium", "action": "Add Secure flag to _ga cookie", "reason": "Analytics cookie transmitted over HTTP" }
+                  ],
+                  "execution_metadata": { "latency_ms": 620, "model": "cookie-scanner-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/compliance-check": {
+      "post": {
+        "operationId": "complianceCheck",
+        "summary": "GDPR/CCPA compliance check for a URL's cookies",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url", "framework"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" },
+                  "framework": { "type": "string", "enum": ["gdpr", "ccpa", "both"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Compliance check result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ComplianceCheckResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-2222-3333-4444-555566667777",
+                  "data": {
+                    "url": "https://example.com",
+                    "framework": "gdpr",
+                    "compliant": false,
+                    "issues": [
+                      { "cookie_name": "_ga", "issue": "Analytics cookie set without prior consent", "severity": "high", "fix": "Gate _ga cookie behind consent banner acceptance" },
+                      { "cookie_name": "_fbp", "issue": "Third-party tracking cookie without consent", "severity": "critical", "fix": "Require explicit opt-in before loading Facebook Pixel" }
+                    ],
+                    "consent_mechanism_detected": false,
+                    "recommendations": ["Implement a GDPR-compliant cookie consent banner", "Block non-essential cookies until user consents", "Add cookie policy page"]
+                  },
+                  "confidence": { "score": 0.92, "reason": "Compliance rules applied to live scan", "per_section": { "consent": 0.95, "classification": 0.90 } },
+                  "provenance": { "provider": "cookie-scanner", "retrieved_at": "2026-05-18T12:05:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Add GDPR cookie consent banner", "reason": "No consent mechanism detected" }
+                  ],
+                  "execution_metadata": { "latency_ms": 780, "model": "cookie-scanner-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "cookieExecutionGate",
+        "summary": "Check whether an agent should proceed based on cookie compliance posture",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExecutionGateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-3333-4444-5555-666677778888",
+                  "execution_ready": false,
+                  "next_api": "cookie-scanner",
+                  "next_endpoint": "/compliance-check",
+                  "blocking_flags": ["tracking_cookies_without_consent", "no_consent_mechanism"],
+                  "confidence": { "score": 0.94, "reason": "Compliance risk detected", "per_section": {} },
+                  "provenance": { "provider": "cookie-scanner", "retrieved_at": "2026-05-18T12:06:00Z", "source_type": "live_scan" },
+                  "execution_metadata": { "latency_ms": 310, "model": "cookie-scanner-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/cookie-intelligence": {
+      "post": {
+        "operationId": "cookieIntelligence",
+        "summary": "One-call combined cookie scan, compliance check, and recommendations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Combined cookie intelligence result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CookieIntelligenceResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-4444-5555-6666-777788889999",
+                  "data": {
+                    "url": "https://example.com",
+                    "cookies": [
+                      { "name": "_ga", "value": "GA1.2.123456789.1620000000", "domain": ".example.com", "path": "/", "expires": "2027-05-18T00:00:00Z", "httponly": false, "secure": false, "samesite": "None", "is_third_party": false, "risk_level": "high" }
+                    ],
+                    "total_count": 3,
+                    "first_party_count": 2,
+                    "third_party_count": 1,
+                    "tracking_cookies": ["_ga", "_fbp"],
+                    "compliant": false,
+                    "consent_mechanism_detected": false
+                  },
+                  "confidence": { "score": 0.94, "reason": "Full combined cookie intelligence scan", "per_section": { "detection": 0.97, "compliance": 0.91 } },
+                  "provenance": { "provider": "cookie-scanner", "retrieved_at": "2026-05-18T12:07:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Add GDPR consent banner", "reason": "Tracking cookies without consent violate GDPR" }
+                  ],
+                  "execution_metadata": { "latency_ms": 890, "model": "cookie-scanner-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "CookieItem": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": "string" },
+          "domain": { "type": "string" },
+          "path": { "type": "string" },
+          "expires": { "type": ["string", "null"], "format": "date-time" },
+          "httponly": { "type": "boolean" },
+          "secure": { "type": "boolean" },
+          "samesite": { "type": "string", "enum": ["Strict", "Lax", "None", "absent"] },
+          "is_third_party": { "type": "boolean" },
+          "risk_level": { "type": "string", "enum": ["low", "medium", "high"] }
+        }
+      },
+      "CookieScanData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "cookies": { "type": "array", "items": { "$ref": "#/components/schemas/CookieItem" } },
+          "total_count": { "type": "integer" },
+          "first_party_count": { "type": "integer" },
+          "third_party_count": { "type": "integer" },
+          "tracking_cookies": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "ComplianceIssue": {
+        "type": "object",
+        "properties": {
+          "cookie_name": { "type": "string" },
+          "issue": { "type": "string" },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+          "fix": { "type": "string" }
+        }
+      },
+      "ComplianceCheckData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "framework": { "type": "string", "enum": ["gdpr", "ccpa", "both"] },
+          "compliant": { "type": "boolean" },
+          "issues": { "type": "array", "items": { "$ref": "#/components/schemas/ComplianceIssue" } },
+          "consent_mechanism_detected": { "type": "boolean" },
+          "recommendations": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "CookieIntelligenceData": {
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/CookieScanData" },
+          {
+            "type": "object",
+            "properties": {
+              "compliant": { "type": "boolean" },
+              "consent_mechanism_detected": { "type": "boolean" }
+            }
+          }
+        ]
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "ScanResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/CookieScanData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ComplianceCheckResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/ComplianceCheckData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExecutionGateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "execution_ready": { "type": "boolean" },
+          "next_api": { "type": "string" },
+          "next_endpoint": { "type": "string" },
+          "blocking_flags": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "CookieIntelligenceResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/CookieIntelligenceData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "RateLimited": {
+        "description": "Rate limit exceeded",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

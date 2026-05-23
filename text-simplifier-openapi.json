@@ -1,0 +1,355 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Text Simplifier API",
+    "version": "2.0.0",
+    "description": "Transform complex, jargon-heavy text into clear, readable prose at a target grade level. Returns readability metrics, change provenance, and agent-routing recommendations.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 500 },
+      "pay_per_call": {
+        "simplify": "$0.002",
+        "analyze": "$0.001",
+        "execution-gate": "$0.001",
+        "simplifier-intelligence": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    { "url": "https://orbis-apis.onrender.com/text-simplifier", "description": "Production" }
+  ],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/simplify": {
+      "post": {
+        "operationId": "simplify",
+        "summary": "Simplify text to a target grade level",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string", "example": "The utilization of advanced methodologies facilitates the amelioration of outcomes." },
+                  "target_grade_level": { "type": "number", "default": 8, "example": 8 },
+                  "preserve_meaning": { "type": "boolean", "default": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Simplified text with readability metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/SimplifyData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "data": {
+                    "original_text": "The utilization of advanced methodologies facilitates the amelioration of outcomes.",
+                    "simplified_text": "Using better methods helps improve results.",
+                    "grade_level_before": 14.2,
+                    "grade_level_after": 7.8,
+                    "changes_made": [
+                      { "original_phrase": "utilization of", "simplified_phrase": "using", "change_type": "word_simplified" },
+                      { "original_phrase": "advanced methodologies", "simplified_phrase": "better methods", "change_type": "jargon_replaced" },
+                      { "original_phrase": "facilitates the amelioration of", "simplified_phrase": "helps improve", "change_type": "word_simplified" }
+                    ],
+                    "readability_improvement": 0.72,
+                    "word_count_change": -6
+                  },
+                  "confidence": { "score": 0.94, "reason": "High-confidence simplification with preserved semantic meaning" },
+                  "provenance": { "provider": "text-simplifier", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "ai_generated" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": false, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "tone-analyzer", "endpoint": "/analyze", "reason": "Verify tone is preserved after simplification" }],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "Review simplified output for domain accuracy", "reason": "Jargon replacement may alter technical precision" }],
+                  "execution_metadata": { "latency_ms": 312, "model": "claude-sonnet-4-6", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze_complexity",
+        "summary": "Analyze text complexity and flag improvement areas",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Text complexity analysis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/SimplifyAnalysisData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/simplifier-intelligence": {
+      "post": {
+        "operationId": "simplifier_intelligence",
+        "summary": "One-call text analysis, simplification, and agent routing",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string" },
+                  "target_grade_level": { "type": "number", "default": 8 },
+                  "preserve_meaning": { "type": "boolean", "default": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full simplification intelligence response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/SimplifyData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string" },
+                  "objective": { "type": "string", "description": "What the agent is trying to accomplish" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "execution_ready"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "execution_ready": { "type": "boolean" },
+                    "next_api": { "type": "string" },
+                    "next_endpoint": { "type": "string" },
+                    "blocking_flags": { "type": "array", "items": { "type": "string" } },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "Confidence": {
+        "type": "object",
+        "required": ["score"],
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "required": ["provider", "retrieved_at"],
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["api", "reason"],
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["priority", "action"],
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error", "code"],
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "SimplifyData": {
+        "type": "object",
+        "required": ["original_text", "simplified_text", "grade_level_before", "grade_level_after"],
+        "properties": {
+          "original_text": { "type": "string" },
+          "simplified_text": { "type": "string" },
+          "grade_level_before": { "type": "number" },
+          "grade_level_after": { "type": "number" },
+          "changes_made": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["original_phrase", "simplified_phrase", "change_type"],
+              "properties": {
+                "original_phrase": { "type": "string" },
+                "simplified_phrase": { "type": "string" },
+                "change_type": { "type": "string", "enum": ["passive_to_active", "jargon_replaced", "sentence_split", "word_simplified"] }
+              }
+            }
+          },
+          "readability_improvement": { "type": "number", "minimum": -1, "maximum": 1 },
+          "word_count_change": { "type": "integer" }
+        }
+      },
+      "SimplifyAnalysisData": {
+        "type": "object",
+        "required": ["grade_level"],
+        "properties": {
+          "grade_level": { "type": "number" },
+          "complex_phrases": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "phrase": { "type": "string" },
+                "suggestion": { "type": "string" }
+              }
+            }
+          },
+          "passive_voice_count": { "type": "integer" },
+          "avg_sentence_length": { "type": "number" },
+          "jargon_terms": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

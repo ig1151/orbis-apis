@@ -1,0 +1,437 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CSP Analyzer API",
+    "version": "2.0.0",
+    "description": "Analyze Content Security Policy headers from any URL or raw CSP string. Detect unsafe-inline, unsafe-eval, wildcard sources, and score overall CSP strength.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "analyze": "$0.002",
+      "validate": "$0.002",
+      "execution-gate": "$0.001",
+      "csp-intelligence": "$0.006"
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/csp-analyzer" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/analyze": {
+      "post": {
+        "operationId": "analyzeCSP",
+        "summary": "Analyze CSP header from a URL or raw CSP string",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": { "type": "string", "format": "uri", "description": "URL to fetch and analyze CSP from" },
+                  "csp_header": { "type": "string", "description": "Raw CSP header string to analyze" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CSP analysis result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyzeResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-aaaa-bbbb-cccc-ddddeeee0001",
+                  "data": {
+                    "csp_present": true,
+                    "directives": {
+                      "default-src": "'self'",
+                      "script-src": "'self' 'unsafe-inline' https://cdn.example.com",
+                      "style-src": "'self' 'unsafe-inline'",
+                      "img-src": "* data:",
+                      "connect-src": "'self'"
+                    },
+                    "unsafe_inline": true,
+                    "unsafe_eval": false,
+                    "wildcard_sources": ["img-src"],
+                    "strength_score": 45,
+                    "grade": "C",
+                    "issues": [
+                      { "directive": "script-src", "issue": "'unsafe-inline' allows inline scripts", "severity": "high", "recommendation": "Remove 'unsafe-inline' and use nonces or hashes" },
+                      { "directive": "img-src", "issue": "Wildcard source allows images from any origin", "severity": "medium", "recommendation": "Restrict img-src to known domains" }
+                    ]
+                  },
+                  "confidence": { "score": 0.98, "reason": "Full CSP directive parse and rule analysis", "per_section": { "parse": 1.0, "analysis": 0.96 } },
+                  "provenance": { "provider": "csp-analyzer", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Remove 'unsafe-inline' from script-src", "reason": "Exposes site to XSS attacks" },
+                    { "priority": "medium", "action": "Restrict img-src wildcard", "reason": "Data exfiltration risk via image URLs" }
+                  ],
+                  "execution_metadata": { "latency_ms": 280, "model": "csp-analyzer-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/validate": {
+      "post": {
+        "operationId": "validateCSP",
+        "summary": "Validate a CSP policy string for syntax and effectiveness",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["csp_policy"],
+                "properties": {
+                  "csp_policy": { "type": "string", "description": "CSP policy string to validate" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "CSP validation result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ValidateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-bbbb-cccc-dddd-eeeeffff0002",
+                  "data": {
+                    "is_valid": true,
+                    "errors": [],
+                    "warnings": [
+                      { "directive": "script-src", "message": "'unsafe-inline' weakens XSS protection significantly" }
+                    ],
+                    "effective_directives": ["default-src", "script-src", "style-src", "img-src"],
+                    "blocks_xss": false
+                  },
+                  "confidence": { "score": 0.99, "reason": "Deterministic syntax validation", "per_section": { "syntax": 1.0, "semantics": 0.98 } },
+                  "provenance": { "provider": "csp-analyzer", "retrieved_at": "2026-05-18T12:05:00Z", "source_type": "ai_generated" },
+                  "cache": { "recommended_ttl_seconds": 86400, "retryable": false, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Replace 'unsafe-inline' with nonces", "reason": "Current policy does not block XSS" }
+                  ],
+                  "execution_metadata": { "latency_ms": 95, "model": "csp-analyzer-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "cspExecutionGate",
+        "summary": "Check whether an agent should proceed based on CSP posture",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExecutionGateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-cccc-dddd-eeee-ffff00010002",
+                  "execution_ready": true,
+                  "next_api": "http-header-inspector",
+                  "next_endpoint": "/security-audit",
+                  "blocking_flags": ["weak_csp_unsafe_inline"],
+                  "confidence": { "score": 0.96, "reason": "CSP posture assessed", "per_section": {} },
+                  "provenance": { "provider": "csp-analyzer", "retrieved_at": "2026-05-18T12:06:00Z", "source_type": "live_scan" },
+                  "execution_metadata": { "latency_ms": 205, "model": "csp-analyzer-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/csp-intelligence": {
+      "post": {
+        "operationId": "cspIntelligence",
+        "summary": "One-call CSP analysis, validation, and recommendations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": { "type": "string", "format": "uri" },
+                  "csp_header": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Combined CSP intelligence result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CspIntelligenceResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-dddd-eeee-ffff-000011110003",
+                  "data": {
+                    "csp_present": true,
+                    "directives": { "default-src": "'self'", "script-src": "'self' 'unsafe-inline'" },
+                    "unsafe_inline": true,
+                    "unsafe_eval": false,
+                    "wildcard_sources": [],
+                    "strength_score": 45,
+                    "grade": "C",
+                    "issues": [{ "directive": "script-src", "issue": "'unsafe-inline' present", "severity": "high", "recommendation": "Use nonces instead" }],
+                    "is_valid": true,
+                    "blocks_xss": false
+                  },
+                  "confidence": { "score": 0.97, "reason": "Full CSP intelligence analysis", "per_section": { "parse": 1.0, "analysis": 0.94 } },
+                  "provenance": { "provider": "csp-analyzer", "retrieved_at": "2026-05-18T12:07:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Replace 'unsafe-inline' with nonces or hashes", "reason": "CSP does not protect against XSS" }
+                  ],
+                  "execution_metadata": { "latency_ms": 340, "model": "csp-analyzer-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "CspIssue": {
+        "type": "object",
+        "properties": {
+          "directive": { "type": "string" },
+          "issue": { "type": "string" },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+          "recommendation": { "type": "string" }
+        }
+      },
+      "CspAnalysisData": {
+        "type": "object",
+        "properties": {
+          "csp_present": { "type": "boolean" },
+          "directives": { "type": "object", "additionalProperties": { "type": "string" } },
+          "unsafe_inline": { "type": "boolean" },
+          "unsafe_eval": { "type": "boolean" },
+          "wildcard_sources": { "type": "array", "items": { "type": "string" } },
+          "strength_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "grade": { "type": "string", "enum": ["A", "B", "C", "D", "F"] },
+          "issues": { "type": "array", "items": { "$ref": "#/components/schemas/CspIssue" } }
+        }
+      },
+      "CspValidationWarning": {
+        "type": "object",
+        "properties": {
+          "directive": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      },
+      "CspValidationData": {
+        "type": "object",
+        "properties": {
+          "is_valid": { "type": "boolean" },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "directive": { "type": "string" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "warnings": { "type": "array", "items": { "$ref": "#/components/schemas/CspValidationWarning" } },
+          "effective_directives": { "type": "array", "items": { "type": "string" } },
+          "blocks_xss": { "type": "boolean" }
+        }
+      },
+      "CspIntelligenceData": {
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/CspAnalysisData" },
+          {
+            "type": "object",
+            "properties": {
+              "is_valid": { "type": "boolean" },
+              "blocks_xss": { "type": "boolean" }
+            }
+          }
+        ]
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "AnalyzeResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/CspAnalysisData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ValidateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/CspValidationData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExecutionGateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "execution_ready": { "type": "boolean" },
+          "next_api": { "type": "string" },
+          "next_endpoint": { "type": "string" },
+          "blocking_flags": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "CspIntelligenceResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/CspIntelligenceData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "RateLimited": {
+        "description": "Rate limit exceeded",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

@@ -1,0 +1,357 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "External Link Auditor API",
+    "version": "2.0.0",
+    "description": "Audit outbound external links for spam risk, follow status, sponsorship signals, and domain quality with confidence scoring and provenance metadata."
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/external-link-auditor" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/audit": {
+      "post": {
+        "operationId": "auditExternalLinks",
+        "summary": "Scan all external links on a page",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/blog/resources" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "External link audit result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExternalLinkAuditResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "data": {
+                    "url": "https://example.com/blog/resources",
+                    "external_links": [
+                      { "href": "https://trusted.com/article", "domain": "trusted.com", "anchor_text": "Read more", "is_follow": true, "is_sponsored": false, "status_code": 200, "spam_risk": "none" },
+                      { "href": "https://spammy-site.biz/promo", "domain": "spammy-site.biz", "anchor_text": "Click here", "is_follow": false, "is_sponsored": false, "status_code": 200, "spam_risk": "high" }
+                    ],
+                    "total_count": 2,
+                    "follow_count": 1,
+                    "nofollow_count": 1,
+                    "sponsored_count": 0,
+                    "high_risk_count": 1
+                  },
+                  "confidence": { "score": 0.91, "reason": "Live link resolution with spam heuristics", "per_section": { "spam_risk": 0.88, "follow_status": 0.97 } },
+                  "provenance": { "provider": "external-link-auditor", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "indexability-checker", "endpoint": "/check", "reason": "Verify high-risk linked domains do not affect your trust signals" }],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "Add rel=nofollow to spammy-site.biz link", "reason": "High spam risk domain can pass negative signals" }],
+                  "execution_metadata": { "latency_ms": 760, "model": "ext-link-audit-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/check": {
+      "post": {
+        "operationId": "checkExternalLink",
+        "summary": "Verify whether a specific target domain is linked from a URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ExternalLinkCheckInput" },
+              "example": { "url": "https://example.com/resources", "target_domain": "wikipedia.org" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "External link check result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExternalLinkCheckResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "data": {
+                    "url": "https://example.com/resources",
+                    "target_domain": "wikipedia.org",
+                    "links_found": [{ "href": "https://wikipedia.org/wiki/SEO", "anchor_text": "SEO", "is_follow": true, "is_sponsored": false, "status_code": 200, "spam_risk": "none" }],
+                    "found": true
+                  },
+                  "confidence": { "score": 0.97, "reason": "Direct DOM scan", "per_section": {} },
+                  "provenance": { "provider": "external-link-auditor", "retrieved_at": "2026-05-18T12:01:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [],
+                  "execution_metadata": { "latency_ms": 410, "model": "ext-link-check-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGateExternalLinks",
+        "summary": "Assess whether the external link profile is safe for downstream automation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/blog/resources" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExecutionGateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "execution_ready": false,
+                  "next_api": "external-link-auditor",
+                  "next_endpoint": "/audit",
+                  "blocking_flags": ["high_risk_external_links_detected"],
+                  "confidence": { "score": 0.93, "reason": "Spam risk signals detected", "per_section": {} },
+                  "provenance": { "provider": "external-link-auditor", "retrieved_at": "2026-05-18T12:02:00Z", "source_type": "live_scan" },
+                  "execution_metadata": { "latency_ms": 290, "model": "gate-v2", "automation_safe": false }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/external-link-intelligence": {
+      "post": {
+        "operationId": "externalLinkIntelligence",
+        "summary": "Full intelligence summary of external links with provenance and priority actions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/blog/resources" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "External link intelligence report",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExternalLinkAuditResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+                  "data": {
+                    "url": "https://example.com/blog/resources",
+                    "external_links": [],
+                    "total_count": 14,
+                    "follow_count": 10,
+                    "nofollow_count": 4,
+                    "sponsored_count": 1,
+                    "high_risk_count": 0
+                  },
+                  "confidence": { "score": 0.95, "reason": "Comprehensive outbound scan", "per_section": { "spam_risk": 0.93, "follow_status": 0.98 } },
+                  "provenance": { "provider": "external-link-auditor", "retrieved_at": "2026-05-18T12:03:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 86400, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "internal-link-analyzer", "endpoint": "/audit", "reason": "Balance internal vs external link ratio" }],
+                  "recommended_actions_priority_order": [{ "priority": "low", "action": "Review sponsored link disclosure", "reason": "Ensure all sponsored links are properly tagged" }],
+                  "execution_metadata": { "latency_ms": 1100, "model": "intelligence-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "UrlInput": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": { "type": "string", "format": "uri" }
+        }
+      },
+      "ExternalLinkCheckInput": {
+        "type": "object",
+        "required": ["url", "target_domain"],
+        "properties": {
+          "url": { "type": "string", "format": "uri" },
+          "target_domain": { "type": "string" }
+        }
+      },
+      "ExternalLink": {
+        "type": "object",
+        "properties": {
+          "href": { "type": "string" },
+          "domain": { "type": "string" },
+          "anchor_text": { "type": "string" },
+          "is_follow": { "type": "boolean" },
+          "is_sponsored": { "type": "boolean" },
+          "status_code": { "type": "integer" },
+          "spam_risk": { "type": "string", "enum": ["none", "low", "medium", "high"] }
+        }
+      },
+      "ExternalLinkAuditData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "external_links": { "type": "array", "items": { "$ref": "#/components/schemas/ExternalLink" } },
+          "total_count": { "type": "integer" },
+          "follow_count": { "type": "integer" },
+          "nofollow_count": { "type": "integer" },
+          "sponsored_count": { "type": "integer" },
+          "high_risk_count": { "type": "integer" }
+        }
+      },
+      "ExternalLinkCheckData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "target_domain": { "type": "string" },
+          "links_found": { "type": "array", "items": { "$ref": "#/components/schemas/ExternalLink" } },
+          "found": { "type": "boolean" }
+        }
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "ExternalLinkAuditResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/ExternalLinkAuditData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExternalLinkCheckResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/ExternalLinkCheckData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExecutionGateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "execution_ready": { "type": "boolean" },
+          "next_api": { "type": "string" },
+          "next_endpoint": { "type": "string" },
+          "blocking_flags": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid API key",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

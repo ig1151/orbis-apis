@@ -1,3 +1,7 @@
+import websiteSpeedLiteRouter from './routes/website-speed-lite-api/routes/intelligence';
+import websiteSpeedLiteOpenapiRouter from './routes/website-speed-lite-api/routes/openapi';
+import companyLogoRouter from './routes/company-logo-api/routes/intelligence';
+import companyLogoOpenapiRouter from './routes/company-logo-api/routes/openapi';
 import unified_ai_docs   from './routes/unified-ai-completion-api/routes/docs';
 import unified_ai_info   from './routes/unified-ai-completion-api/routes/info';
 import unified_ai_router from './routes/unified-ai-completion-api/routes/index';
@@ -134,6 +138,7 @@ import { openapiRouter as imageToContentOpenapiRouter } from './routes/image-to-
 import marketTriggerOpenapiRouter from './routes/market-trigger-api/routes/openapi';
 import { openapiRouter as tokenTrustOpenapiRouter } from './routes/token-trust-api/routes/openapi.route';
 import onchainSignalDocsRouter from './routes/onchain-signal-api/routes/docs';
+import onchainSignalWhaleRouter from './routes/onchain-signal-api/routes/whale';
 import marketWebhookOpenapiRouter from './routes/market-webhook-api/routes/openapi';
 import stablecoinYieldDocsRouter from './routes/stablecoin-yield-api/routes/docs';
 import alphaSignalDocsRouter from './routes/alpha-signal/docs';
@@ -189,6 +194,7 @@ import whoToContactRouter from './routes/dev-utilities-api/routes/whoToContact';
 import { extractRouter } from './routes/document-intelligence-api/routes/extract.route';
 import { validateRouter } from './routes/email-validation-api/routes/validate.route';
 import extractionRouter from './routes/extraction-api/routes/extract';
+import extractionIntelligenceRouter from './routes/extraction-api/routes/intelligence';
 import intelligenceRouter from './routes/extraction-api/routes/intelligence';
 import resumeRouter from './routes/resume-api/routes/resume';
 import resumeOpenapiRouter from './routes/resume-api/routes/openapi';
@@ -786,7 +792,7 @@ const routerMap: Record<string, import("express").Router> = {
   'tokenomics': tokenomics_info,
   'derivatives': derivatives_info,
   'derivatives-intelligence': derivatives_intelligence_info,
-  'onchain-signal': onchainSignalDocsRouter,
+  'onchain-signal': onchainSignalWhaleRouter,
   'stablecoin-yield': stablecoinYieldDocsRouter,
   'alpha-signal': alphaSignalDocsRouter,
   'wallet': walletBalanceRouter,
@@ -805,7 +811,7 @@ const routerMap: Record<string, import("express").Router> = {
   'trust': trustInfoRouter,
   'user-risk': userRiskInfoRouter,
   'wallet-intelligence': walletIntelligenceInfoRouter,
-  'extraction': extractionRouter,
+  'extraction': extractionIntelligenceRouter,
   'resume': resumeRouter,
   'identity-intelligence': analyzeRouter,
   'image-to-content': imageAnalyzeRouter,
@@ -1013,6 +1019,7 @@ const routerMap: Record<string, import("express").Router> = {
   'sitemap-parser': sitemapParserRouter,
   'hreflang-validator': hreflangValidatorRouter,
   'website-tech-stack-detector': websiteTechStackDetectorRouter,
+  'website-tech-stack': websiteTechStackDetectorRouter,
   'cdn-detector': cdnDetectorRouter,
   'hosting-provider-detector': hostingProviderDetectorRouter,
   'whois-lite': whoisLiteRouter,
@@ -1308,6 +1315,7 @@ const openapiMap: Record<string, import("express").Router> = {
   'sitemap-parser': sitemapParserOpenapiRouter,
   'hreflang-validator': hreflangValidatorOpenapiRouter,
   'website-tech-stack-detector': websiteTechStackDetectorOpenapiRouter,
+  'website-tech-stack': websiteTechStackDetectorOpenapiRouter,
   'cdn-detector': cdnDetectorOpenapiRouter,
   'hosting-provider-detector': hostingProviderDetectorOpenapiRouter,
   'whois-lite': whoisLiteOpenapiRouter,

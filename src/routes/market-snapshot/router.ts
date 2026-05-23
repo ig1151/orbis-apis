@@ -160,3 +160,8 @@ router.get('/health', (_req: Request, res: Response) => {
 });
 
 export default router;
+
+// Health check  
+router.get('/', (_req, res) => {
+  res.json({ name: 'Market Snapshot API', slug: 'market-snapshot', health: 'ok' });
+});

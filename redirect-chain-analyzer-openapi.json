@@ -1,0 +1,414 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Redirect Chain Analyzer API",
+    "version": "2.0.0",
+    "description": "Trace and analyze full redirect chains for any URL: detect loops, count hops, identify status codes, measure latency, flag mixed content, and score SEO impact.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "analyze": "$0.002",
+      "trace": "$0.002",
+      "execution-gate": "$0.001",
+      "redirect-intelligence": "$0.006"
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/redirect-chain-analyzer" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/analyze": {
+      "post": {
+        "operationId": "analyzeRedirects",
+        "summary": "Analyze redirect chain for a URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" },
+                  "follow_limit": { "type": "integer", "default": 10, "minimum": 1, "maximum": 20 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Redirect chain analysis result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AnalyzeResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-1234-5678-9abc-def012345678",
+                  "data": {
+                    "original_url": "http://example.com/old-page",
+                    "final_url": "https://example.com/new-page",
+                    "chain": [
+                      { "url": "http://example.com/old-page", "status_code": 301, "redirect_type": "301", "latency_ms": 45 },
+                      { "url": "https://example.com/old-page", "status_code": 302, "redirect_type": "302", "latency_ms": 38 },
+                      { "url": "https://example.com/new-page", "status_code": 200, "redirect_type": null, "latency_ms": 120 }
+                    ],
+                    "chain_length": 2,
+                    "has_loop": false,
+                    "seo_impact": "minor",
+                    "mixed_content": true
+                  },
+                  "confidence": { "score": 0.98, "reason": "Full redirect chain traced live", "per_section": { "chain": 1.0, "seo": 0.95 } },
+                  "provenance": { "provider": "redirect-chain-analyzer", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "canonical-url-checker", "endpoint": "/check", "reason": "Verify canonical tag on final URL after redirect" }],
+                  "recommended_actions_priority_order": [
+                    { "priority": "medium", "action": "Consolidate redirect chain to single 301", "reason": "Multiple hops lose PageRank and add latency" },
+                    { "priority": "high", "action": "Fix mixed content — HTTP redirects to HTTPS", "reason": "Mixed content causes browser security warnings" }
+                  ],
+                  "execution_metadata": { "latency_ms": 410, "model": "redirect-analyzer-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/trace": {
+      "post": {
+        "operationId": "traceRedirects",
+        "summary": "Trace full redirect chain with detailed timing breakdown",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Redirect trace result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TraceResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-2345-6789-abcd-ef0123456789",
+                  "data": {
+                    "original_url": "http://example.com/old-page",
+                    "final_url": "https://example.com/new-page",
+                    "chain": [
+                      { "url": "http://example.com/old-page", "status_code": 301, "redirect_type": "301", "latency_ms": 45 },
+                      { "url": "https://example.com/new-page", "status_code": 200, "redirect_type": null, "latency_ms": 120 }
+                    ],
+                    "chain_length": 1,
+                    "has_loop": false,
+                    "seo_impact": "none",
+                    "mixed_content": false,
+                    "timing_breakdown": { "dns_ms": 12, "connect_ms": 28, "ttfb_ms": 95, "total_ms": 165 }
+                  },
+                  "confidence": { "score": 0.98, "reason": "Full trace with timing data", "per_section": { "chain": 1.0, "timing": 0.97 } },
+                  "provenance": { "provider": "redirect-chain-analyzer", "retrieved_at": "2026-05-18T12:05:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [],
+                  "execution_metadata": { "latency_ms": 165, "model": "redirect-analyzer-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "redirectExecutionGate",
+        "summary": "Check whether an agent should proceed based on redirect posture",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExecutionGateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-3456-789a-bcde-f01234567890",
+                  "execution_ready": true,
+                  "next_api": "canonical-url-checker",
+                  "next_endpoint": "/check",
+                  "blocking_flags": [],
+                  "confidence": { "score": 0.97, "reason": "Redirect chain clear, no loops detected", "per_section": {} },
+                  "provenance": { "provider": "redirect-chain-analyzer", "retrieved_at": "2026-05-18T12:06:00Z", "source_type": "live_scan" },
+                  "execution_metadata": { "latency_ms": 195, "model": "redirect-analyzer-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/redirect-intelligence": {
+      "post": {
+        "operationId": "redirectIntelligence",
+        "summary": "One-call redirect analysis, trace, and recommendations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" },
+                  "follow_limit": { "type": "integer", "default": 10 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Combined redirect intelligence result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RedirectIntelligenceResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-4567-89ab-cdef-012345678901",
+                  "data": {
+                    "original_url": "http://example.com/old-page",
+                    "final_url": "https://example.com/new-page",
+                    "chain": [
+                      { "url": "http://example.com/old-page", "status_code": 301, "redirect_type": "301", "latency_ms": 45 }
+                    ],
+                    "chain_length": 1,
+                    "has_loop": false,
+                    "seo_impact": "none",
+                    "mixed_content": false,
+                    "timing_breakdown": { "dns_ms": 12, "connect_ms": 28, "ttfb_ms": 95, "total_ms": 165 }
+                  },
+                  "confidence": { "score": 0.98, "reason": "Full combined redirect intelligence", "per_section": { "chain": 1.0, "seo": 0.96 } },
+                  "provenance": { "provider": "redirect-chain-analyzer", "retrieved_at": "2026-05-18T12:07:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "canonical-url-checker", "endpoint": "/check", "reason": "Check canonical on final destination" }],
+                  "recommended_actions_priority_order": [],
+                  "execution_metadata": { "latency_ms": 480, "model": "redirect-analyzer-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "RedirectHop": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "status_code": { "type": "integer" },
+          "redirect_type": { "type": ["string", "null"], "enum": ["301", "302", "307", "308", null] },
+          "latency_ms": { "type": "integer" }
+        }
+      },
+      "RedirectChainData": {
+        "type": "object",
+        "properties": {
+          "original_url": { "type": "string" },
+          "final_url": { "type": "string" },
+          "chain": { "type": "array", "items": { "$ref": "#/components/schemas/RedirectHop" } },
+          "chain_length": { "type": "integer" },
+          "has_loop": { "type": "boolean" },
+          "seo_impact": { "type": "string", "enum": ["none", "minor", "major", "critical"] },
+          "mixed_content": { "type": "boolean" }
+        }
+      },
+      "TimingBreakdown": {
+        "type": "object",
+        "properties": {
+          "dns_ms": { "type": "integer" },
+          "connect_ms": { "type": "integer" },
+          "ttfb_ms": { "type": "integer" },
+          "total_ms": { "type": "integer" }
+        }
+      },
+      "RedirectTraceData": {
+        "type": "object",
+        "allOf": [
+          { "$ref": "#/components/schemas/RedirectChainData" },
+          {
+            "type": "object",
+            "properties": {
+              "timing_breakdown": { "$ref": "#/components/schemas/TimingBreakdown" }
+            }
+          }
+        ]
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "AnalyzeResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/RedirectChainData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "TraceResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/RedirectTraceData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExecutionGateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "execution_ready": { "type": "boolean" },
+          "next_api": { "type": "string" },
+          "next_endpoint": { "type": "string" },
+          "blocking_flags": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "RedirectIntelligenceResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/RedirectTraceData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "RateLimited": {
+        "description": "Rate limit exceeded",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

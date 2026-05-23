@@ -1,0 +1,359 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Schema.org Extractor API",
+    "version": "2.0.0",
+    "description": "Extract and validate all Schema.org structured data from any URL with confidence scoring and provenance metadata."
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/schema-org-extractor" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/extract": {
+      "post": {
+        "operationId": "extractSchema",
+        "summary": "Parse all Schema.org markup from a URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/product/widget" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Schema extraction result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SchemaOrgResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "data": {
+                    "url": "https://example.com/product/widget",
+                    "schemas_found": true,
+                    "items": [
+                      {
+                        "type": "Product",
+                        "format": "json-ld",
+                        "raw": { "@type": "Product", "name": "Widget Pro", "offers": { "@type": "Offer", "price": "29.99" } },
+                        "properties": { "name": "Widget Pro", "price": "29.99" },
+                        "errors": []
+                      }
+                    ],
+                    "schema_types": ["Product", "Offer"],
+                    "rich_result_eligible": true,
+                    "eligible_types": ["Product"]
+                  },
+                  "confidence": { "score": 0.97, "reason": "Full DOM parse with JSON-LD extraction", "per_section": { "extraction": 0.98, "eligibility": 0.95 } },
+                  "provenance": { "provider": "schema-org-extractor", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 86400, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "faq-schema-validator", "endpoint": "/check", "reason": "Check for FAQ schema opportunities on this page" }],
+                  "recommended_actions_priority_order": [{ "priority": "low", "action": "Add Review schema to increase rich result coverage", "reason": "Product pages with reviews have higher CTR" }],
+                  "execution_metadata": { "latency_ms": 620, "model": "schema-extract-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/validate": {
+      "post": {
+        "operationId": "validateSchema",
+        "summary": "Validate schema correctness and Google rich result eligibility",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SchemaValidateInput" },
+              "example": { "url": "https://example.com/product/widget", "schema_type": "Product" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Schema validation result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SchemaValidateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "data": {
+                    "url": "https://example.com/product/widget",
+                    "is_valid": true,
+                    "schema_type": "Product",
+                    "errors": [],
+                    "warnings": ["Missing 'brand' property recommended by Google"],
+                    "google_eligible": true
+                  },
+                  "confidence": { "score": 0.95, "reason": "Schema.org spec validation applied", "per_section": { "validity": 0.97, "google": 0.93 } },
+                  "provenance": { "provider": "schema-org-extractor", "retrieved_at": "2026-05-18T12:01:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 86400, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [{ "priority": "low", "action": "Add 'brand' property to Product schema", "reason": "Recommended by Google for rich results" }],
+                  "execution_metadata": { "latency_ms": 490, "model": "schema-validate-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGateSchema",
+        "summary": "Determine whether structured data is ready for downstream automation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/product/widget" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExecutionGateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "execution_ready": true,
+                  "next_api": "faq-schema-validator",
+                  "next_endpoint": "/check",
+                  "blocking_flags": [],
+                  "confidence": { "score": 0.96, "reason": "Valid schema detected, no blocking errors", "per_section": {} },
+                  "provenance": { "provider": "schema-org-extractor", "retrieved_at": "2026-05-18T12:02:00Z", "source_type": "live_scan" },
+                  "execution_metadata": { "latency_ms": 240, "model": "gate-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/schema-intelligence": {
+      "post": {
+        "operationId": "schemaIntelligence",
+        "summary": "Full intelligence report on schema coverage with provenance and priority actions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/article/top-tips" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Schema intelligence report",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SchemaOrgResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+                  "data": {
+                    "url": "https://example.com/article/top-tips",
+                    "schemas_found": true,
+                    "items": [],
+                    "schema_types": ["Article", "BreadcrumbList"],
+                    "rich_result_eligible": true,
+                    "eligible_types": ["Article"]
+                  },
+                  "confidence": { "score": 0.94, "reason": "Comprehensive schema intelligence scan", "per_section": { "extraction": 0.96, "eligibility": 0.92 } },
+                  "provenance": { "provider": "schema-org-extractor", "retrieved_at": "2026-05-18T12:03:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 86400, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "breadcrumb-validator", "endpoint": "/validate", "reason": "Validate BreadcrumbList schema detected" }],
+                  "recommended_actions_priority_order": [{ "priority": "medium", "action": "Add FAQ schema to article page", "reason": "FAQ rich results increase SERP real estate" }],
+                  "execution_metadata": { "latency_ms": 870, "model": "intelligence-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "UrlInput": {
+        "type": "object",
+        "required": ["url"],
+        "properties": { "url": { "type": "string", "format": "uri" } }
+      },
+      "SchemaValidateInput": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": { "type": "string", "format": "uri" },
+          "schema_type": { "type": "string" }
+        }
+      },
+      "SchemaItem": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "format": { "type": "string", "enum": ["json-ld", "microdata", "rdfa"] },
+          "raw": { "type": "object" },
+          "properties": { "type": "object" },
+          "errors": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "SchemaOrgData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "schemas_found": { "type": "boolean" },
+          "items": { "type": "array", "items": { "$ref": "#/components/schemas/SchemaItem" } },
+          "schema_types": { "type": "array", "items": { "type": "string" } },
+          "rich_result_eligible": { "type": "boolean" },
+          "eligible_types": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "SchemaValidateData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "is_valid": { "type": "boolean" },
+          "schema_type": { "type": "string" },
+          "errors": { "type": "array", "items": { "type": "string" } },
+          "warnings": { "type": "array", "items": { "type": "string" } },
+          "google_eligible": { "type": "boolean" }
+        }
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "SchemaOrgResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/SchemaOrgData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "SchemaValidateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/SchemaValidateData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExecutionGateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "execution_ready": { "type": "boolean" },
+          "next_api": { "type": "string" },
+          "next_endpoint": { "type": "string" },
+          "blocking_flags": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid API key",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

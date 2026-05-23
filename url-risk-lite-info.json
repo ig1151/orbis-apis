@@ -1,0 +1,29 @@
+{
+  "name": "URL Risk Lite API",
+  "slug": "url-risk-lite",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 500 },
+    "pay_per_call": {
+      "check": "$0.003",
+      "analyze": "$0.004",
+      "execution-gate": "$0.001",
+      "url-risk-intelligence": "$0.006"
+    }
+  },
+  "rate_limits": { "free": "500/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": [
+    { "method": "POST", "path": "/check", "description": "Quick URL risk check — risk score, risk level, is_malicious, safe_to_open, recommended_action" },
+    { "method": "POST", "path": "/analyze", "description": "Deep URL analysis — breakdown by domain/path/parameter/redirect risk, threat categories, mitigations" },
+    { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+    { "method": "POST", "path": "/url-risk-intelligence", "description": "ONE-CALL: full URL risk intelligence — check + analysis + mitigations + recommendations" }
+  ],
+  "execution_chain": {
+    "recommended_start": "/url-risk-intelligence",
+    "fallback": "/check",
+    "batch_endpoint": "/check"
+  }
+}

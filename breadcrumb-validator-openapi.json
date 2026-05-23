@@ -1,0 +1,344 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Breadcrumb Validator API",
+    "version": "2.0.0",
+    "description": "Validate breadcrumb schema markup and HTML breadcrumbs for Google rich result eligibility with confidence scoring and provenance metadata."
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/breadcrumb-validator" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/validate": {
+      "post": {
+        "operationId": "validateBreadcrumb",
+        "summary": "Validate HTML and Schema.org BreadcrumbList markup with per-item scoring",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/blog/category/article" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Breadcrumb validation result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BreadcrumbValidateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "data": {
+                    "url": "https://example.com/blog/category/article",
+                    "breadcrumb_found": true,
+                    "schema_present": true,
+                    "html_breadcrumb_present": true,
+                    "schema_format": "json-ld",
+                    "items": [
+                      { "position": 1, "name": "Home", "url": "https://example.com", "valid": true },
+                      { "position": 2, "name": "Blog", "url": "https://example.com/blog", "valid": true },
+                      { "position": 3, "name": "Category", "url": "https://example.com/blog/category", "valid": true },
+                      { "position": 4, "name": "Article", "url": "https://example.com/blog/category/article", "valid": true }
+                    ],
+                    "errors": [],
+                    "google_eligible": true
+                  },
+                  "confidence": { "score": 0.97, "reason": "Full BreadcrumbList schema parse", "per_section": { "schema": 0.98, "html": 0.96 } },
+                  "provenance": { "provider": "breadcrumb-validator", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 86400, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "schema-org-extractor", "endpoint": "/extract", "reason": "Check for other schema types on this page" }],
+                  "recommended_actions_priority_order": [{ "priority": "low", "action": "Ensure breadcrumb aligns with URL structure", "reason": "Consistent breadcrumb improves user navigation and SERP display" }],
+                  "execution_metadata": { "latency_ms": 440, "model": "breadcrumb-validate-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/check": {
+      "post": {
+        "operationId": "checkBreadcrumb",
+        "summary": "Fast breadcrumb presence detection on any URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/products/shoes" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Breadcrumb check result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BreadcrumbCheckResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "data": {
+                    "url": "https://example.com/products/shoes",
+                    "breadcrumb_found": true,
+                    "schema_present": false,
+                    "html_breadcrumb_present": true,
+                    "schema_format": "none",
+                    "items": [],
+                    "errors": ["No BreadcrumbList schema markup found"],
+                    "google_eligible": false
+                  },
+                  "confidence": { "score": 0.98, "reason": "DOM scan confirmed HTML breadcrumb without schema", "per_section": {} },
+                  "provenance": { "provider": "breadcrumb-validator", "retrieved_at": "2026-05-18T12:01:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 86400, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "Add BreadcrumbList JSON-LD schema", "reason": "HTML-only breadcrumbs are not Google rich result eligible" }],
+                  "execution_metadata": { "latency_ms": 310, "model": "breadcrumb-check-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGateBreadcrumb",
+        "summary": "Assess whether breadcrumb quality meets automated optimization standards",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/blog/category/article" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExecutionGateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "execution_ready": true,
+                  "next_api": "sitemap-health-score",
+                  "next_endpoint": "/score",
+                  "blocking_flags": [],
+                  "confidence": { "score": 0.96, "reason": "Valid BreadcrumbList schema present", "per_section": {} },
+                  "provenance": { "provider": "breadcrumb-validator", "retrieved_at": "2026-05-18T12:02:00Z", "source_type": "live_scan" },
+                  "execution_metadata": { "latency_ms": 210, "model": "gate-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/breadcrumb-intelligence": {
+      "post": {
+        "operationId": "breadcrumbIntelligence",
+        "summary": "Full intelligence report on breadcrumbs with provenance and priority actions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/blog/category/article" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Breadcrumb intelligence report",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BreadcrumbValidateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+                  "data": {
+                    "url": "https://example.com/blog/category/article",
+                    "breadcrumb_found": true,
+                    "schema_present": true,
+                    "html_breadcrumb_present": true,
+                    "schema_format": "json-ld",
+                    "items": [],
+                    "errors": [],
+                    "google_eligible": true
+                  },
+                  "confidence": { "score": 0.96, "reason": "Comprehensive breadcrumb intelligence scan", "per_section": { "schema": 0.97, "html": 0.95 } },
+                  "provenance": { "provider": "breadcrumb-validator", "retrieved_at": "2026-05-18T12:03:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 86400, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "internal-link-analyzer", "endpoint": "/audit", "reason": "Verify breadcrumb links are part of site link graph" }],
+                  "recommended_actions_priority_order": [{ "priority": "low", "action": "Keep breadcrumb depth under 5 levels", "reason": "Deep breadcrumbs can reduce SERP display clarity" }],
+                  "execution_metadata": { "latency_ms": 590, "model": "intelligence-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "UrlInput": {
+        "type": "object",
+        "required": ["url"],
+        "properties": { "url": { "type": "string", "format": "uri" } }
+      },
+      "BreadcrumbItem": {
+        "type": "object",
+        "properties": {
+          "position": { "type": "integer" },
+          "name": { "type": "string" },
+          "url": { "type": "string" },
+          "valid": { "type": "boolean" }
+        }
+      },
+      "BreadcrumbValidateData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "breadcrumb_found": { "type": "boolean" },
+          "schema_present": { "type": "boolean" },
+          "html_breadcrumb_present": { "type": "boolean" },
+          "schema_format": { "type": "string", "enum": ["json-ld", "microdata", "rdfa", "none"] },
+          "items": { "type": "array", "items": { "$ref": "#/components/schemas/BreadcrumbItem" } },
+          "errors": { "type": "array", "items": { "type": "string" } },
+          "google_eligible": { "type": "boolean" }
+        }
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "BreadcrumbValidateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/BreadcrumbValidateData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "BreadcrumbCheckResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/BreadcrumbValidateData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExecutionGateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "execution_ready": { "type": "boolean" },
+          "next_api": { "type": "string" },
+          "next_endpoint": { "type": "string" },
+          "blocking_flags": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid API key",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

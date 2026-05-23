@@ -1,0 +1,353 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "URL Risk Lite API",
+    "version": "2.0.0",
+    "description": "Real-time URL risk scoring, malicious link detection, phishing pattern analysis, and blacklist checking for security automation and MCP agent pipelines",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/url-risk-lite" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/check": {
+      "post": {
+        "operationId": "urlRiskCheck",
+        "summary": "Quick URL risk check — risk score, risk level, is_malicious, safe_to_open, recommended action",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": { "url": { "type": "string", "example": "http://paypa1-login.xyz/verify" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "URL risk check result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/UrlRiskData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "data": {
+                    "url": "http://paypa1-login.xyz/verify",
+                    "risk_score": 0.94,
+                    "risk_level": "critical",
+                    "is_malicious": true,
+                    "risk_factors": [
+                      { "type": "phishing_indicator", "description": "Domain mimics PayPal with character substitution (paypa1 vs paypal)", "severity": "critical" },
+                      { "type": "suspicious_tld", "description": ".xyz TLD commonly used in phishing campaigns", "severity": "high" },
+                      { "type": "malicious_pattern", "description": "Path /verify is a credential harvesting pattern", "severity": "high" },
+                      { "type": "domain_age_risk", "description": "Domain registered 3 days ago", "severity": "medium" }
+                    ],
+                    "safe_to_open": false,
+                    "recommended_action": "block",
+                    "domain_age_days": 3,
+                    "uses_url_shortener": false
+                  },
+                  "confidence": { "score": 0.97, "reason": "Multiple high-confidence phishing indicators detected", "per_section": { "risk_score": 0.97, "risk_factors": 0.95 } },
+                  "provenance": { "provider": "url-risk-lite", "retrieved_at": "2026-05-18T10:23:45Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": false, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "phishing-keyword-detector", "endpoint": "/detect", "reason": "Confirm phishing signals in URL text" }],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "Block URL immediately", "reason": "Critical phishing risk detected" }, { "priority": "medium", "action": "Report to threat intelligence feed", "reason": "New domain with critical indicators" }],
+                  "execution_metadata": { "latency_ms": 87, "model": "url-risk-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "urlRiskAnalyze",
+        "summary": "Deep URL analysis — breakdown by domain/path/parameter/redirect risk, threat categories, mitigations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": { "url": { "type": "string", "example": "http://paypa1-login.xyz/verify?token=abc123" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deep URL analysis result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/UrlRiskAnalysisData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "data": {
+                    "url": "http://paypa1-login.xyz/verify?token=abc123",
+                    "breakdown": { "domain_risk": 0.95, "path_risk": 0.82, "parameter_risk": 0.61, "redirect_risk": 0.3 },
+                    "threat_categories": ["phishing", "credential_harvesting", "brand_impersonation"],
+                    "mitigations": ["Block at DNS level", "Add to organizational blacklist", "Alert users who may have visited", "Report to Google Safe Browsing"]
+                  },
+                  "confidence": { "score": 0.93, "reason": "High-confidence domain and path analysis", "per_section": { "breakdown": 0.95, "threat_categories": 0.91 } },
+                  "provenance": { "provider": "url-risk-lite", "retrieved_at": "2026-05-18T10:24:10Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 1800, "retryable": false, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "domain-reputation", "endpoint": "/score", "reason": "Get full domain reputation history" }],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "Block domain at network perimeter", "reason": "All risk vectors indicate active phishing site" }],
+                  "execution_metadata": { "latency_ms": 142, "model": "url-risk-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "urlRiskExecutionGate",
+        "summary": "Execution readiness check — confirms inputs valid and safe to proceed in agent chain",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": { "url": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "execution_ready": { "type": "boolean" },
+                    "next_api": { "type": "string" },
+                    "next_endpoint": { "type": "string" },
+                    "blocking_flags": { "type": "array", "items": { "type": "string" } },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "execution_ready": true,
+                  "next_api": "url-risk-lite",
+                  "next_endpoint": "/check",
+                  "blocking_flags": [],
+                  "confidence": { "score": 1.0, "reason": "Valid URL input provided", "per_section": {} },
+                  "provenance": { "provider": "url-risk-lite", "retrieved_at": "2026-05-18T10:24:30Z", "source_type": "api_call" },
+                  "execution_metadata": { "latency_ms": 12, "model": "gate-v1", "automation_safe": true }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/url-risk-intelligence": {
+      "post": {
+        "operationId": "urlRiskIntelligence",
+        "summary": "ONE-CALL: full URL risk intelligence — check + analysis + threat categories + mitigations + recommendations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": { "url": { "type": "string", "example": "http://paypa1-login.xyz/verify" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full URL risk intelligence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "check": { "$ref": "#/components/schemas/UrlRiskData" },
+                        "analysis": { "$ref": "#/components/schemas/UrlRiskAnalysisData" }
+                      }
+                    },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "UrlRiskData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "risk_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "risk_level": { "type": "string", "enum": ["safe", "low", "medium", "high", "critical"] },
+          "is_malicious": { "type": "boolean" },
+          "risk_factors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["malicious_pattern", "suspicious_tld", "redirect_chain", "domain_age_risk", "phishing_indicator", "blacklisted"] },
+                "description": { "type": "string" },
+                "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] }
+              }
+            }
+          },
+          "safe_to_open": { "type": "boolean" },
+          "recommended_action": { "type": "string", "enum": ["allow", "warn", "block"] },
+          "domain_age_days": { "type": ["integer", "null"] },
+          "uses_url_shortener": { "type": "boolean" }
+        }
+      },
+      "UrlRiskAnalysisData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "breakdown": {
+            "type": "object",
+            "properties": {
+              "domain_risk": { "type": "number", "minimum": 0, "maximum": 1 },
+              "path_risk": { "type": "number", "minimum": 0, "maximum": 1 },
+              "parameter_risk": { "type": "number", "minimum": 0, "maximum": 1 },
+              "redirect_risk": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          },
+          "threat_categories": { "type": "array", "items": { "type": "string" } },
+          "mitigations": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

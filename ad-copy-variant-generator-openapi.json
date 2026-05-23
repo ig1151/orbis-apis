@@ -1,0 +1,392 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Ad Copy Variant Generator API",
+    "version": "2.0.0",
+    "description": "Generate platform-optimized ad copy variants for Google, Facebook, LinkedIn, Twitter, and Instagram. Each variant is scored and checked for platform character limit compliance.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 500 },
+      "pay_per_call": {
+        "generate": "$0.003",
+        "score": "$0.002",
+        "execution-gate": "$0.001",
+        "ad-copy-intelligence": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    { "url": "https://orbis-apis.onrender.com/ad-copy-variant-generator", "description": "Production" }
+  ],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/generate": {
+      "post": {
+        "operationId": "generate_ad_copy",
+        "summary": "Generate ad copy variants",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["description", "platform"],
+                "properties": {
+                  "description": { "type": "string", "example": "AI-powered email tool that saves 2 hours per day" },
+                  "platform": { "type": "string", "enum": ["google", "facebook", "linkedin", "twitter", "instagram"] },
+                  "tone": { "type": "string", "enum": ["professional", "casual", "urgency", "friendly"] },
+                  "max_variants": { "type": "integer", "default": 3, "minimum": 1, "maximum": 10 }
+                }
+              },
+              "example": {
+                "description": "AI-powered email tool that saves 2 hours per day",
+                "platform": "google",
+                "tone": "urgency",
+                "max_variants": 3
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ad copy variants generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/AdCopyData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "data": {
+                    "platform": "google",
+                    "variants": [
+                      {
+                        "headline": "Save 2 Hours Daily — Try Now",
+                        "description": "AI email tool trusted by 10,000+ teams. Start free today.",
+                        "cta": "Start Free Trial",
+                        "character_counts": { "headline": 30, "description": 55 },
+                        "score": 0.91,
+                        "compliance_ok": true
+                      }
+                    ],
+                    "best_variant": {
+                      "headline": "Save 2 Hours Daily — Try Now",
+                      "description": "AI email tool trusted by 10,000+ teams. Start free today.",
+                      "cta": "Start Free Trial",
+                      "character_counts": { "headline": 30, "description": 55 },
+                      "score": 0.91,
+                      "compliance_ok": true
+                    },
+                    "platform_limits": { "headline_chars": 30, "description_chars": 90 }
+                  },
+                  "confidence": { "score": 0.92, "reason": "Platform limits applied, variants scored by CTR model" },
+                  "provenance": { "provider": "ad-copy-generator", "retrieved_at": "2026-05-18T10:00:00Z", "source_type": "ai_generated" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": false, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "ad-copy-variant-generator", "endpoint": "/score", "reason": "Score all variants before selecting" }],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "A/B test top 2 variants", "reason": "Both score above 0.85" }],
+                  "execution_metadata": { "latency_ms": 340, "model": "claude-sonnet-4-6", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/score": {
+      "post": {
+        "operationId": "score_ad_copy",
+        "summary": "Score an ad copy variant",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["headline", "description", "platform"],
+                "properties": {
+                  "headline": { "type": "string" },
+                  "description": { "type": "string" },
+                  "platform": { "type": "string", "enum": ["google", "facebook", "linkedin", "twitter", "instagram"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ad copy scored",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/AdCopyScoreData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/ad-copy-intelligence": {
+      "post": {
+        "operationId": "ad_copy_intelligence",
+        "summary": "One-call ad copy generation, scoring, and recommendations",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["description", "platform"],
+                "properties": {
+                  "description": { "type": "string" },
+                  "platform": { "type": "string", "enum": ["google", "facebook", "linkedin", "twitter", "instagram"] },
+                  "tone": { "type": "string", "enum": ["professional", "casual", "urgency", "friendly"] },
+                  "max_variants": { "type": "integer", "default": 3 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full ad copy intelligence result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/AdCopyData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["description"],
+                "properties": {
+                  "description": { "type": "string" },
+                  "objective": { "type": "string", "description": "What the agent is trying to accomplish" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "execution_ready"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "execution_ready": { "type": "boolean" },
+                    "next_api": { "type": "string" },
+                    "next_endpoint": { "type": "string" },
+                    "blocking_flags": { "type": "array", "items": { "type": "string" } },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "Confidence": {
+        "type": "object",
+        "required": ["score"],
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "required": ["provider", "retrieved_at"],
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["api", "reason"],
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["priority", "action"],
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error", "code"],
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" },
+          "details": { "type": "string" }
+        }
+      },
+      "AdCopyVariant": {
+        "type": "object",
+        "required": ["headline", "description", "cta", "character_counts", "score", "compliance_ok"],
+        "properties": {
+          "headline": { "type": "string" },
+          "description": { "type": "string" },
+          "cta": { "type": "string" },
+          "character_counts": {
+            "type": "object",
+            "properties": {
+              "headline": { "type": "integer" },
+              "description": { "type": "integer" }
+            }
+          },
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "compliance_ok": { "type": "boolean" }
+        }
+      },
+      "AdCopyData": {
+        "type": "object",
+        "required": ["platform", "variants", "best_variant", "platform_limits"],
+        "properties": {
+          "platform": { "type": "string", "enum": ["google", "facebook", "linkedin", "twitter", "instagram"] },
+          "variants": { "type": "array", "items": { "$ref": "#/components/schemas/AdCopyVariant" } },
+          "best_variant": { "$ref": "#/components/schemas/AdCopyVariant" },
+          "platform_limits": {
+            "type": "object",
+            "properties": {
+              "headline_chars": { "type": "integer" },
+              "description_chars": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "AdCopyScoreData": {
+        "type": "object",
+        "required": ["headline", "description", "platform", "score", "compliance_ok"],
+        "properties": {
+          "headline": { "type": "string" },
+          "description": { "type": "string" },
+          "platform": { "type": "string" },
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "compliance_ok": { "type": "boolean" },
+          "character_counts": {
+            "type": "object",
+            "properties": {
+              "headline": { "type": "integer" },
+              "description": { "type": "integer" }
+            }
+          },
+          "breakdown": {
+            "type": "object",
+            "properties": {
+              "clarity": { "type": "number" },
+              "urgency": { "type": "number" },
+              "cta_strength": { "type": "number" },
+              "relevance": { "type": "number" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

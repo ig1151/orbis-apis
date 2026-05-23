@@ -1,0 +1,387 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Canonical URL Checker API",
+    "version": "2.0.0",
+    "description": "Check canonical URL tags on any webpage: detect missing, self-referencing, cross-domain, and conflicting canonical tags, score SEO impact, and validate against expected values.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "check": "$0.002",
+      "validate": "$0.002",
+      "execution-gate": "$0.001",
+      "canonical-intelligence": "$0.006"
+    }
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/canonical-url-checker" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/check": {
+      "post": {
+        "operationId": "checkCanonical",
+        "summary": "Check canonical tag on a URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Canonical check result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CheckResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-aaaa-1111-bbbb-cccc22223333",
+                  "data": {
+                    "url": "https://example.com/page",
+                    "canonical_present": true,
+                    "canonical_url": "https://example.com/page",
+                    "is_self_referencing": true,
+                    "is_cross_domain": false,
+                    "conflicts": [],
+                    "seo_impact": "none",
+                    "recommendations": []
+                  },
+                  "confidence": { "score": 0.99, "reason": "Canonical tag parsed from HTML head", "per_section": { "detection": 1.0, "analysis": 0.98 } },
+                  "provenance": { "provider": "canonical-url-checker", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 7200, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [],
+                  "execution_metadata": { "latency_ms": 220, "model": "canonical-checker-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/validate": {
+      "post": {
+        "operationId": "validateCanonical",
+        "summary": "Validate canonical tag against an expected canonical URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url", "expected_canonical"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" },
+                  "expected_canonical": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Canonical validation result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ValidateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-bbbb-2222-cccc-dddd33334444",
+                  "data": {
+                    "matches_expected": false,
+                    "actual_canonical": "https://example.com/old-page",
+                    "expected_canonical": "https://example.com/new-page",
+                    "status": "incorrect"
+                  },
+                  "confidence": { "score": 0.99, "reason": "Deterministic canonical comparison", "per_section": { "detection": 1.0 } },
+                  "provenance": { "provider": "canonical-url-checker", "retrieved_at": "2026-05-18T12:05:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 7200, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [
+                    { "priority": "high", "action": "Update canonical tag to match expected URL", "reason": "Incorrect canonical may split PageRank" }
+                  ],
+                  "execution_metadata": { "latency_ms": 195, "model": "canonical-checker-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "canonicalExecutionGate",
+        "summary": "Check whether an agent should proceed based on canonical posture",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExecutionGateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-cccc-3333-dddd-eeee44445555",
+                  "execution_ready": false,
+                  "next_api": "redirect-chain-analyzer",
+                  "next_endpoint": "/analyze",
+                  "blocking_flags": ["canonical_missing"],
+                  "confidence": { "score": 0.97, "reason": "No canonical tag detected", "per_section": {} },
+                  "provenance": { "provider": "canonical-url-checker", "retrieved_at": "2026-05-18T12:06:00Z", "source_type": "live_scan" },
+                  "execution_metadata": { "latency_ms": 180, "model": "canonical-checker-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/canonical-intelligence": {
+      "post": {
+        "operationId": "canonicalIntelligence",
+        "summary": "One-call canonical check, validation, and recommendations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Combined canonical intelligence result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CanonicalIntelligenceResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-dddd-4444-eeee-ffff55556666",
+                  "data": {
+                    "url": "https://example.com/page",
+                    "canonical_present": true,
+                    "canonical_url": "https://example.com/page",
+                    "is_self_referencing": true,
+                    "is_cross_domain": false,
+                    "conflicts": [],
+                    "seo_impact": "none",
+                    "recommendations": []
+                  },
+                  "confidence": { "score": 0.99, "reason": "Full canonical intelligence scan", "per_section": { "detection": 1.0, "analysis": 0.98 } },
+                  "provenance": { "provider": "canonical-url-checker", "retrieved_at": "2026-05-18T12:07:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 7200, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [],
+                  "recommended_actions_priority_order": [],
+                  "execution_metadata": { "latency_ms": 310, "model": "canonical-checker-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "CanonicalConflict": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      },
+      "CanonicalCheckData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "canonical_present": { "type": "boolean" },
+          "canonical_url": { "type": ["string", "null"] },
+          "is_self_referencing": { "type": "boolean" },
+          "is_cross_domain": { "type": "boolean" },
+          "conflicts": { "type": "array", "items": { "$ref": "#/components/schemas/CanonicalConflict" } },
+          "seo_impact": { "type": "string", "enum": ["none", "minor", "major", "critical"] },
+          "recommendations": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "CanonicalValidationData": {
+        "type": "object",
+        "properties": {
+          "matches_expected": { "type": "boolean" },
+          "actual_canonical": { "type": ["string", "null"] },
+          "expected_canonical": { "type": "string" },
+          "status": { "type": "string", "enum": ["correct", "missing", "incorrect", "conflict"] }
+        }
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "CheckResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/CanonicalCheckData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ValidateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/CanonicalValidationData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExecutionGateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "execution_ready": { "type": "boolean" },
+          "next_api": { "type": "string" },
+          "next_endpoint": { "type": "string" },
+          "blocking_flags": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "CanonicalIntelligenceResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/CanonicalCheckData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "RateLimited": {
+        "description": "Rate limit exceeded",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

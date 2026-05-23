@@ -1,0 +1,326 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Domain Reputation API",
+    "version": "2.0.0",
+    "description": "Domain reputation scoring, blacklist checking, spam analysis, and email/web reputation ratings for security automation and MCP agent pipelines",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/domain-reputation" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/score": {
+      "post": {
+        "operationId": "domainReputationScore",
+        "summary": "Full domain reputation score — grade, blacklist status, spam score, email and web reputation, overall risk",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["domain"],
+                "properties": { "domain": { "type": "string", "example": "spamhaus-test-domain.biz" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Domain reputation score",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/DomainReputationData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+                  "data": {
+                    "domain": "spamhaus-test-domain.biz",
+                    "reputation_score": 42,
+                    "grade": "D",
+                    "blacklist_status": [
+                      { "list_name": "Spamhaus DBL", "listed": true, "category": "phishing" },
+                      { "list_name": "SURBL", "listed": true, "category": "spam" },
+                      { "list_name": "Barracuda", "listed": false, "category": "spam" }
+                    ],
+                    "spam_score": 0.78,
+                    "age_trust_score": 0.22,
+                    "domain_age_days": 14,
+                    "email_reputation": "poor",
+                    "web_reputation": "poor",
+                    "overall_risk": "high",
+                    "recommendations": [
+                      "Block all email from this domain",
+                      "Add to organizational URL blacklist",
+                      "Do not process inbound webhooks from this domain"
+                    ]
+                  },
+                  "confidence": { "score": 0.91, "reason": "Multiple blacklist hits with consistent spam signals", "per_section": { "blacklist_status": 0.95, "spam_score": 0.88 } },
+                  "provenance": { "provider": "domain-reputation", "retrieved_at": "2026-05-18T10:25:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 7200, "retryable": false, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "url-risk-lite", "endpoint": "/check", "reason": "Check specific URLs hosted on this domain" }],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "Block domain at email gateway", "reason": "Listed on Spamhaus DBL as phishing domain" }],
+                  "execution_metadata": { "latency_ms": 104, "model": "domain-rep-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/check": {
+      "post": {
+        "operationId": "domainRepCheck",
+        "summary": "Quick domain reputation check — is_clean, primary_issues, blacklisted flag",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["domain"],
+                "properties": { "domain": { "type": "string", "example": "example.com" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Domain check result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/DomainRepCheckData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "domainRepExecutionGate",
+        "summary": "Execution readiness check — confirms inputs valid and safe to proceed in agent chain",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["domain"],
+                "properties": { "domain": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "execution_ready": { "type": "boolean" },
+                    "next_api": { "type": "string" },
+                    "next_endpoint": { "type": "string" },
+                    "blocking_flags": { "type": "array", "items": { "type": "string" } },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reputation-intelligence": {
+      "post": {
+        "operationId": "domainReputationIntelligence",
+        "summary": "ONE-CALL: full domain reputation intelligence — score + check + recommendations",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["domain"],
+                "properties": { "domain": { "type": "string", "example": "spamhaus-test-domain.biz" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full domain reputation intelligence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "score": { "$ref": "#/components/schemas/DomainReputationData" },
+                        "check": { "$ref": "#/components/schemas/DomainRepCheckData" }
+                      }
+                    },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Internal server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "DomainReputationData": {
+        "type": "object",
+        "properties": {
+          "domain": { "type": "string" },
+          "reputation_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "grade": { "type": "string", "enum": ["A", "B", "C", "D", "F"] },
+          "blacklist_status": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "list_name": { "type": "string" },
+                "listed": { "type": "boolean" },
+                "category": { "type": "string" }
+              }
+            }
+          },
+          "spam_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "age_trust_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "domain_age_days": { "type": ["integer", "null"] },
+          "email_reputation": { "type": "string", "enum": ["excellent", "good", "fair", "poor", "unknown"] },
+          "web_reputation": { "type": "string", "enum": ["excellent", "good", "fair", "poor", "unknown"] },
+          "overall_risk": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+          "recommendations": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "DomainRepCheckData": {
+        "type": "object",
+        "properties": {
+          "domain": { "type": "string" },
+          "is_clean": { "type": "boolean" },
+          "reputation_score": { "type": "integer" },
+          "primary_issues": { "type": "array", "items": { "type": "string" } },
+          "blacklisted": { "type": "boolean" }
+        }
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

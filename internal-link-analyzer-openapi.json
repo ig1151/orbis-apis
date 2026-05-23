@@ -1,0 +1,378 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Internal Link Analyzer API",
+    "version": "2.0.0",
+    "description": "Analyze and audit internal link structure with confidence scoring, provenance metadata, and execution-gate support for autonomous pipelines."
+  },
+  "servers": [{ "url": "https://orbis-apis.onrender.com/internal-link-analyzer" }],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/analyze": {
+      "post": {
+        "operationId": "analyzeInternalLinks",
+        "summary": "Extract and analyze all internal links from a URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/blog/seo-guide" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Internal link analysis result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InternalLinkResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                  "data": {
+                    "url": "https://example.com/blog/seo-guide",
+                    "internal_links": [
+                      { "href": "/about", "anchor_text": "About Us", "is_follow": true, "depth": 1, "status_code": 200 },
+                      { "href": "/services", "anchor_text": "Services", "is_follow": true, "depth": 1, "status_code": 200 },
+                      { "href": "/old-page", "anchor_text": "Old Article", "is_follow": false, "depth": 3, "status_code": 404 }
+                    ],
+                    "total_count": 3,
+                    "follow_count": 2,
+                    "nofollow_count": 1,
+                    "broken_count": 1,
+                    "average_depth": 1.67,
+                    "orphaned_risk_score": 0.32
+                  },
+                  "confidence": { "score": 0.92, "reason": "Full HTML parse with status resolution", "per_section": { "links": 0.95, "depth": 0.88 } },
+                  "provenance": { "provider": "internal-link-analyzer", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "indexability-checker", "endpoint": "/check", "reason": "Verify broken links are not blocking indexation" }],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "Fix broken internal link to /old-page", "reason": "404 links harm crawl budget and UX" }],
+                  "execution_metadata": { "latency_ms": 840, "model": "link-parse-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/audit": {
+      "post": {
+        "operationId": "auditInternalLinks",
+        "summary": "Score internal link structure and surface prioritized issues",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/blog/seo-guide" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Internal link audit result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InternalLinkAuditResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                  "data": {
+                    "url": "https://example.com/blog/seo-guide",
+                    "score": 74,
+                    "grade": "C",
+                    "issues": [
+                      { "type": "broken_link", "url": "/old-page", "severity": "high", "description": "Internal link returns 404", "fix": "Update or remove the link to /old-page" },
+                      { "type": "orphaned_risk", "url": "/hidden-page", "severity": "medium", "description": "Page has no inbound internal links", "fix": "Add internal links from related content" }
+                    ],
+                    "top_linked_pages": [
+                      { "url": "/about", "inbound_count": 12 },
+                      { "url": "/services", "inbound_count": 8 }
+                    ],
+                    "recommendations": ["Increase internal links to pillar pages", "Fix broken link on /old-page"]
+                  },
+                  "confidence": { "score": 0.89, "reason": "Audit based on full crawl snapshot", "per_section": { "issues": 0.91, "score": 0.87 } },
+                  "provenance": { "provider": "internal-link-analyzer", "retrieved_at": "2026-05-18T12:01:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 7200, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "url-structure-scorer", "endpoint": "/score", "reason": "Evaluate URL quality for top linked pages" }],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "Fix broken internal link", "reason": "404s degrade crawl budget" }],
+                  "execution_metadata": { "latency_ms": 1120, "model": "link-audit-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "executionGateInternalLinks",
+        "summary": "Evaluate whether the page's link structure is safe for downstream automation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com/blog/seo-guide" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution gate result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ExecutionGateResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                  "execution_ready": true,
+                  "next_api": "indexability-checker",
+                  "next_endpoint": "/check",
+                  "blocking_flags": [],
+                  "confidence": { "score": 0.95, "reason": "No critical blocking conditions detected", "per_section": {} },
+                  "provenance": { "provider": "internal-link-analyzer", "retrieved_at": "2026-05-18T12:02:00Z", "source_type": "live_scan" },
+                  "execution_metadata": { "latency_ms": 320, "model": "gate-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/link-intelligence": {
+      "post": {
+        "operationId": "linkIntelligence",
+        "summary": "Full intelligence report on internal linking with confidence, provenance, and recommended actions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UrlInput" },
+              "example": { "url": "https://example.com" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Link intelligence report",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/InternalLinkResponse" },
+                "example": {
+                  "success": true,
+                  "request_id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+                  "data": {
+                    "url": "https://example.com",
+                    "internal_links": [],
+                    "total_count": 48,
+                    "follow_count": 45,
+                    "nofollow_count": 3,
+                    "broken_count": 2,
+                    "average_depth": 2.1,
+                    "orphaned_risk_score": 0.18
+                  },
+                  "confidence": { "score": 0.94, "reason": "High-confidence full site scan", "per_section": { "links": 0.96, "depth": 0.92 } },
+                  "provenance": { "provider": "internal-link-analyzer", "retrieved_at": "2026-05-18T12:03:00Z", "source_type": "live_scan" },
+                  "cache": { "recommended_ttl_seconds": 86400, "retryable": true, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "sitemap-health-score", "endpoint": "/score", "reason": "Cross-check link graph against sitemap coverage" }],
+                  "recommended_actions_priority_order": [{ "priority": "medium", "action": "Reduce orphaned page risk", "reason": "Score of 0.18 indicates some pages have insufficient inbound links" }],
+                  "execution_metadata": { "latency_ms": 1540, "model": "intelligence-v2", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "UrlInput": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": { "type": "string", "format": "uri", "description": "The URL to analyze" }
+        }
+      },
+      "InternalLink": {
+        "type": "object",
+        "properties": {
+          "href": { "type": "string" },
+          "anchor_text": { "type": "string" },
+          "is_follow": { "type": "boolean" },
+          "depth": { "type": "integer" },
+          "status_code": { "type": "integer" }
+        }
+      },
+      "InternalLinkData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "internal_links": { "type": "array", "items": { "$ref": "#/components/schemas/InternalLink" } },
+          "total_count": { "type": "integer" },
+          "follow_count": { "type": "integer" },
+          "nofollow_count": { "type": "integer" },
+          "broken_count": { "type": "integer" },
+          "average_depth": { "type": "number" },
+          "orphaned_risk_score": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      },
+      "LinkIssue": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "url": { "type": "string" },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+          "description": { "type": "string" },
+          "fix": { "type": "string" }
+        }
+      },
+      "TopLinkedPage": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "inbound_count": { "type": "integer" }
+        }
+      },
+      "InternalLinkAuditData": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" },
+          "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "grade": { "type": "string" },
+          "issues": { "type": "array", "items": { "$ref": "#/components/schemas/LinkIssue" } },
+          "top_linked_pages": { "type": "array", "items": { "$ref": "#/components/schemas/TopLinkedPage" } },
+          "recommendations": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "InternalLinkResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/InternalLinkData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "InternalLinkAuditResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "data": { "$ref": "#/components/schemas/InternalLinkAuditData" },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "cache": { "$ref": "#/components/schemas/Cache" },
+          "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+          "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      },
+      "ExecutionGateResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "request_id": { "type": "string", "format": "uuid" },
+          "execution_ready": { "type": "boolean" },
+          "next_api": { "type": "string" },
+          "next_endpoint": { "type": "string" },
+          "blocking_flags": { "type": "array", "items": { "type": "string" } },
+          "confidence": { "$ref": "#/components/schemas/Confidence" },
+          "provenance": { "$ref": "#/components/schemas/Provenance" },
+          "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid request",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid API key",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

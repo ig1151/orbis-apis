@@ -1,0 +1,38 @@
+{
+  "name": "Text Simplifier API",
+  "slug": "text-simplifier",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "simplify": "$0.002",
+      "analyze": "$0.001",
+      "execution-gate": "$0.001",
+      "simplifier-intelligence": "$0.006"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "simplify",
+    "analyze",
+    "execution-gate",
+    "simplifier-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/simplifier-intelligence",
+    "fallback": "/simplify",
+    "batch_endpoint": "/analyze"
+  }
+}

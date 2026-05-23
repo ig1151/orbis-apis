@@ -1,0 +1,15 @@
+{
+  "name": "CSP Analyzer API",
+  "slug": "csp-analyzer",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 500 },
+    "pay_per_call": { "analyze": "$0.002", "execution-gate": "$0.001", "csp-intelligence": "$0.006" }
+  },
+  "rate_limits": { "free": "500/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": ["analyze", "validate", "execution-gate", "csp-intelligence"],
+  "execution_chain": { "recommended_start": "/csp-intelligence", "fallback": "/analyze", "batch_endpoint": "/analyze" }
+}

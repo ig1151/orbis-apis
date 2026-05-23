@@ -1,0 +1,345 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Hallucination Risk Lite API",
+    "version": "2.0.0",
+    "description": "Score AI-generated or unverified text for hallucination risk with claim-level breakdowns, hedging detection, and overconfidence signals. Built for LLM output validation agents and editorial QA pipelines.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x-pricing": {
+      "free_tier": { "requests_per_day": 500 },
+      "pay_per_call": {
+        "score": "$0.002",
+        "analyze": "$0.001",
+        "execution-gate": "$0.001",
+        "hallucination-intelligence": "$0.006"
+      }
+    }
+  },
+  "servers": [
+    { "url": "https://orbis-apis.onrender.com/hallucination-risk-lite", "description": "Production" }
+  ],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+    "/score": {
+      "post": {
+        "operationId": "score_hallucination",
+        "summary": "Score text for hallucination risk with claim-level breakdown",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string", "example": "Studies definitively prove that coffee cures all forms of cancer with 100% effectiveness." },
+                  "context": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Hallucination risk score",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/HallucinationData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "request_id": "e5f6a7b8-c9d0-1234-efab-567890123456",
+                  "data": {
+                    "hallucination_risk_score": 0.62,
+                    "risk_level": "medium",
+                    "claim_count": 3,
+                    "hedging_score": 0.08,
+                    "specificity_score": 0.71,
+                    "verifiability_score": 0.34,
+                    "unsupported_claims": [
+                      { "claim": "coffee cures all forms of cancer", "reason": "No scientific consensus exists for this claim", "risk_score": 0.92 },
+                      { "claim": "100% effectiveness", "reason": "Absolute effectiveness claims are statistically implausible", "risk_score": 0.88 }
+                    ],
+                    "overconfidence_signals": ["definitively prove", "100% effectiveness", "all forms"],
+                    "recommendations": ["Add hedging language", "Cite peer-reviewed sources", "Remove absolute quantifiers"]
+                  },
+                  "confidence": { "score": 0.88, "reason": "Clear overconfidence markers detected in claims" },
+                  "provenance": { "provider": "hallucination-risk-lite", "retrieved_at": "2026-05-18T12:00:00Z", "source_type": "ai_generated" },
+                  "cache": { "recommended_ttl_seconds": 3600, "retryable": false, "cache_recommended": true },
+                  "recommended_next_api": [{ "api": "citation-extractor", "endpoint": "/extract", "reason": "Check if text contains supporting citations" }],
+                  "recommended_actions_priority_order": [{ "priority": "high", "action": "Review unsupported claims before publication", "reason": "2 high-risk claims detected with risk_score > 0.85" }],
+                  "execution_metadata": { "latency_ms": 341, "model": "claude-sonnet-4-6", "automation_safe": true }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze_hallucination",
+        "summary": "Analyze fact density, vague qualifiers, and unverifiable claims",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Hallucination analysis result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/HallucinationAnalysisData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/hallucination-intelligence": {
+      "post": {
+        "operationId": "hallucination_intelligence",
+        "summary": "One-call hallucination risk scoring with agent routing and provenance",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string" },
+                  "context": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full hallucination intelligence response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "data", "confidence", "provenance"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "data": { "$ref": "#/components/schemas/HallucinationData" },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "cache": { "$ref": "#/components/schemas/Cache" },
+                    "recommended_next_api": { "$ref": "#/components/schemas/NextApi" },
+                    "recommended_actions_priority_order": { "$ref": "#/components/schemas/Recommendation" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "500": { "description": "Server error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/execution-gate": {
+      "post": {
+        "operationId": "execution_gate",
+        "summary": "Execution readiness check",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": { "type": "string" },
+                  "objective": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gate result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["success", "request_id", "execution_ready"],
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "request_id": { "type": "string", "format": "uuid" },
+                    "execution_ready": { "type": "boolean" },
+                    "next_api": { "type": "string" },
+                    "next_endpoint": { "type": "string" },
+                    "blocking_flags": { "type": "array", "items": { "type": "string" } },
+                    "confidence": { "$ref": "#/components/schemas/Confidence" },
+                    "provenance": { "$ref": "#/components/schemas/Provenance" },
+                    "execution_metadata": { "$ref": "#/components/schemas/ExecMeta" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    },
+    "schemas": {
+      "Confidence": {
+        "type": "object",
+        "required": ["score"],
+        "properties": {
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reason": { "type": "string" },
+          "per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+        }
+      },
+      "Provenance": {
+        "type": "object",
+        "required": ["provider", "retrieved_at"],
+        "properties": {
+          "provider": { "type": "string" },
+          "retrieved_at": { "type": "string", "format": "date-time" },
+          "source_type": { "type": "string", "enum": ["live_scan", "cached", "ai_generated", "api_call"] }
+        }
+      },
+      "Cache": {
+        "type": "object",
+        "properties": {
+          "recommended_ttl_seconds": { "type": "integer" },
+          "retryable": { "type": "boolean" },
+          "cache_recommended": { "type": "boolean" }
+        }
+      },
+      "NextApi": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["api", "reason"],
+          "properties": {
+            "api": { "type": "string" },
+            "endpoint": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "Recommendation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["priority", "action"],
+          "properties": {
+            "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+            "action": { "type": "string" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "ExecMeta": {
+        "type": "object",
+        "properties": {
+          "latency_ms": { "type": "integer" },
+          "model": { "type": "string" },
+          "automation_safe": { "type": "boolean" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error", "code"],
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "retryable": { "type": "boolean" }
+        }
+      },
+      "HallucinationData": {
+        "type": "object",
+        "required": ["hallucination_risk_score", "risk_level"],
+        "properties": {
+          "hallucination_risk_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "risk_level": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+          "claim_count": { "type": "integer" },
+          "hedging_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "specificity_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "verifiability_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "unsupported_claims": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "claim": { "type": "string" },
+                "reason": { "type": "string" },
+                "risk_score": { "type": "number" }
+              }
+            }
+          },
+          "overconfidence_signals": { "type": "array", "items": { "type": "string" } },
+          "recommendations": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "HallucinationAnalysisData": {
+        "type": "object",
+        "properties": {
+          "fact_density": { "type": "number", "minimum": 0, "maximum": 1 },
+          "citation_presence": { "type": "boolean" },
+          "vague_qualifiers_count": { "type": "integer" },
+          "specific_claims": { "type": "array", "items": { "type": "string" } },
+          "unverifiable_claims": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

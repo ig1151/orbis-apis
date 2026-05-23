@@ -1,0 +1,29 @@
+{
+  "name": "Phishing Keyword Detector API",
+  "slug": "phishing-keyword-detector",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": { "data_stored": false, "retention": "none" },
+  "pricing": {
+    "free_tier": { "requests_per_day": 500 },
+    "pay_per_call": {
+      "detect": "$0.003",
+      "analyze": "$0.004",
+      "execution-gate": "$0.001",
+      "phishing-intelligence": "$0.006"
+    }
+  },
+  "rate_limits": { "free": "500/day", "paid": "50000/day", "enterprise": "500000/day" },
+  "endpoints": [
+    { "method": "POST", "path": "/detect", "description": "Detect phishing signals in URL, email subject, or domain name — phishing score, signals, brand impersonation, risk level" },
+    { "method": "POST", "path": "/analyze", "description": "Deep phishing analysis — attack vectors, lookalike domain distance, mitigations" },
+    { "method": "POST", "path": "/execution-gate", "description": "Execution readiness check with next API chaining" },
+    { "method": "POST", "path": "/phishing-intelligence", "description": "ONE-CALL: full phishing intelligence — detect + analysis + mitigations + recommendations" }
+  ],
+  "execution_chain": {
+    "recommended_start": "/phishing-intelligence",
+    "fallback": "/detect",
+    "batch_endpoint": "/detect"
+  }
+}

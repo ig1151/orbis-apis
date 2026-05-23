@@ -649,3 +649,8 @@ Return only the JSON object:`);
     logger.info({ endpoint: 'stream', target_roles: roles }, 'SSE client disconnected');
   });
 });
+
+// Health check
+router.get('/', (_req, res) => {
+  res.json({ name: 'Resume API', slug: 'resume', health: 'ok' });
+});

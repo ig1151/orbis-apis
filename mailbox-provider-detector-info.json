@@ -1,0 +1,38 @@
+{
+  "name": "Mailbox Provider Detector API",
+  "slug": "mailbox-provider-detector",
+  "version": "2.0.0",
+  "grade": "A+",
+  "mcp_compatible": true,
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "pricing": {
+    "free_tier": {
+      "requests_per_day": 500
+    },
+    "pay_per_call": {
+      "detect": "$0.002",
+      "lookup": "$0.002",
+      "execution-gate": "$0.001",
+      "mailbox-intelligence": "$0.006"
+    }
+  },
+  "rate_limits": {
+    "free": "500/day",
+    "paid": "50000/day",
+    "enterprise": "500000/day"
+  },
+  "endpoints": [
+    "detect",
+    "lookup",
+    "execution-gate",
+    "mailbox-intelligence"
+  ],
+  "execution_chain": {
+    "recommended_start": "/mailbox-intelligence",
+    "fallback": "/detect",
+    "batch_endpoint": "/detect"
+  }
+}
