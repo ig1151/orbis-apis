@@ -1,3 +1,5 @@
+import marketSignalV2Router from './routes/market-signal-v2-api/routes/intelligence';
+import marketSignalV2OpenapiRouter from './routes/market-signal-v2-api/routes/openapi';
 import websiteSpeedLiteRouter from './routes/website-speed-lite-api/routes/intelligence';
 import websiteSpeedLiteOpenapiRouter from './routes/website-speed-lite-api/routes/openapi';
 import companyLogoRouter from './routes/company-logo-api/routes/intelligence';
@@ -119,7 +121,6 @@ import 'dotenv/config';
 import youtubeIntelligenceRouter from './routes/youtube-intelligence-api/routes/intelligence';
 import youtubeIntelligenceOpenapiRouter from './routes/youtube-intelligence-api/routes/openapi';
 import marketIntelligenceV2Router from './routes/market-data-api-v2/routes/intelligence';
-import marketSignalV2OpenapiRouter from './routes/market-data-api-v2/routes/openapi';
 import phoneOpenapiRouter from './routes/phone-validation-api/routes/openapi.route';
 import { actionRouter, actionTaskTypesRouter } from './routes/action';
 import { nftMetadataInfoRouter, nftTokenRouter, nftCollectionRouter, nftWalletRouter, nftTransfersRouter } from './routes/nft-metadata';
