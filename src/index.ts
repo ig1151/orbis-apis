@@ -1,3 +1,33 @@
+import agentIdentityIndexRouter from './routes/agent-identity-api/routes/index';
+import agentWebDataExtractionIndexRouter from './routes/agent-web-data-extraction-api/routes/index';
+import careerOptimizationIndexRouter from './routes/career-optimization-api/routes/index';
+import contractAnalyzerAnalyzeRouter from './routes/contract-analyzer/routes/analyze';
+import crossChainBridgeIndexRouter from './routes/cross-chain-bridge-api/routes/index';
+import cryptoTriggerIndexRouter from './routes/crypto-trigger-api/routes/index';
+import decisionScorerScoreRouter from './routes/decision-scorer/routes/score';
+import defiPositionRiskIndexRouter from './routes/defi-position-risk-api/routes/index';
+import defiRiskIndexRouter from './routes/defi-risk-api/routes/index';
+import derivativesIndexRouter from './routes/derivatives-api/routes/index';
+import derivativesIntelligenceIndexRouter from './routes/derivatives-intelligence-api/routes/index';
+import ensResolverEnsRouter from './routes/ens-resolver/routes/ens';
+import intelligenceExtractionIndexRouter from './routes/intelligence-extraction-api/routes/index';
+import liquidationFeedIndexRouter from './routes/liquidation-feed-api/routes/index';
+import marketCorrelationIndexRouter from './routes/market-correlation-api/routes/index';
+import marketStressIndexRouter from './routes/market-stress-api/routes/index';
+import { nftTokenRouter as nftMetadataIndexRouter } from './routes/nft-metadata/index';
+import onchainNewsNewsRouter from './routes/onchain-news/routes/news';
+import smartContractRiskIndexRouter from './routes/smart-contract-risk-api/routes/index';
+import strategySignalIndexRouter from './routes/strategy-signal-api/routes/index';
+import textExtractorExtractRouter from './routes/text-extractor/routes/extract';
+import textGenerationIndexRouter from './routes/text-generation-api/routes/index';
+import tokenPriceFeedPriceRouter from './routes/token-price-feed/routes/price';
+import tokenScreenerIndexRouter from './routes/token-screener-api/routes/index';
+import tokenomicsIndexRouter from './routes/tokenomics-api/routes/index';
+import txSimulatorSimulateRouter from './routes/tx-simulator/routes/simulate';
+import unifiedAiCompletionIndexRouter from './routes/unified-ai-completion-api/routes/index';
+import walletReputationReputationRouter from './routes/wallet-reputation/routes/reputation';
+import webResearcherResearchRouter from './routes/web-researcher/routes/research';
+import yieldFarmingIndexRouter from './routes/yield-farming-api/routes/index';
 import marketSignalV2Router from './routes/market-signal-v2-api/routes/intelligence';
 import marketSignalV2OpenapiRouter from './routes/market-signal-v2-api/routes/openapi';
 import websiteSpeedLiteRouter from './routes/website-speed-lite-api/routes/intelligence';
@@ -1023,6 +1053,16 @@ const routerMap: Record<string, import("express").Router> = {
   'website-tech-stack': websiteTechStackDetectorRouter,
   'company-logo': companyLogoRouter,
   'website-speed-lite': websiteSpeedLiteRouter,
+  'contract-analyzer': contractAnalyzerAnalyzeRouter,
+  'decision-scorer': decisionScorerScoreRouter,
+  'ens-resolver': ensResolverEnsRouter,
+  'nft-metadata': nftMetadataIndexRouter,
+  'onchain-news': onchainNewsNewsRouter,
+  'text-extractor': textExtractorExtractRouter,
+  'token-price-feed': tokenPriceFeedPriceRouter,
+  'unified-ai-completion': unifiedAiCompletionIndexRouter,
+  'wallet-reputation': walletReputationReputationRouter,
+  'web-researcher': webResearcherResearchRouter,
   'cdn-detector': cdnDetectorRouter,
   'hosting-provider-detector': hostingProviderDetectorRouter,
   'whois-lite': whoisLiteRouter,
@@ -1321,6 +1361,16 @@ const openapiMap: Record<string, import("express").Router> = {
   'website-tech-stack': websiteTechStackDetectorOpenapiRouter,
   'company-logo': companyLogoOpenapiRouter,
   'website-speed-lite': websiteSpeedLiteOpenapiRouter,
+  'contract-analyzer': contractAnalyzerAnalyzeRouter,
+  'decision-scorer': decisionScorerScoreRouter,
+  'ens-resolver': ensResolverEnsRouter,
+  'nft-metadata': nftMetadataIndexRouter,
+  'onchain-news': onchainNewsNewsRouter,
+  'text-extractor': textExtractorExtractRouter,
+  'token-price-feed': tokenPriceFeedPriceRouter,
+  'unified-ai-completion': unifiedAiCompletionIndexRouter,
+  'wallet-reputation': walletReputationReputationRouter,
+  'web-researcher': webResearcherResearchRouter,
   'cdn-detector': cdnDetectorOpenapiRouter,
   'hosting-provider-detector': hostingProviderDetectorOpenapiRouter,
   'whois-lite': whoisLiteOpenapiRouter,
