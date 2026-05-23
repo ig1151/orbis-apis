@@ -1,3 +1,8 @@
+import { extractRouter as docIntelligenceRouter } from './routes/document-intelligence-api/routes/extract.route';
+import { analyzeRouter as identityIntelligenceRouteRouter } from './routes/identity-intelligence-api/routes/analyze.route';
+import { analyzeRouter as imageToContentRouteRouter } from './routes/image-to-content-api/routes/analyze.route';
+import { enrichRouter as leadEnrichmentRouteRouter } from './routes/lead-enrichment-api/routes/enrich.route';
+import { scoreRouter as leadQualityRouteRouter } from './routes/lead-quality-api/routes/score.route';
 import agentIdentityIndexRouter from './routes/agent-identity-api/routes/index';
 import agentWebDataExtractionIndexRouter from './routes/agent-web-data-extraction-api/routes/index';
 import careerOptimizationIndexRouter from './routes/career-optimization-api/routes/index';
@@ -834,7 +839,7 @@ const routerMap: Record<string, import("express").Router> = {
   'company-research': companyResearchInfoRouter,
   'crypto-news-impact': newsImpactRouter,
   'dev-utilities': urlMetadataRouter,
-  'document-intelligence': extractRouter,
+  'document-intelligence': docIntelligenceRouter,
   'email-validation': emailValidationInfoRouter,
   'phone-validation': phoneValidationInfoRouter,
   'search-extract': searchExtractInfoRouter,
@@ -844,12 +849,12 @@ const routerMap: Record<string, import("express").Router> = {
   'wallet-intelligence': walletIntelligenceInfoRouter,
   'extraction': extractionIntelligenceRouter,
   'resume': resumeRouter,
-  'identity-intelligence': analyzeRouter,
-  'image-to-content': imageAnalyzeRouter,
+  'identity-intelligence': identityIntelligenceRouteRouter,
+  'image-to-content': imageToContentRouteRouter,
   'ip-intelligence': ipIntelligenceInfoRouter,
   'lead-discovery': leadsRouter,
-  'lead-enrichment': enrichRouter,
-  'lead-quality': scoreRouter,
+  'lead-enrichment': leadEnrichmentRouteRouter,
+  'lead-quality': leadQualityRouteRouter,
   'market-intelligence': marketIntelligenceRouter,
   'market-signal-v2': marketSignalV2Router,
   'market-signal': marketSignalRouter,
