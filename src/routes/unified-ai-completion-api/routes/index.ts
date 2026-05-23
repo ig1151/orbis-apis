@@ -167,4 +167,5 @@ router.post('/v1/chat/completions', async (req, res) => {
   return res.json(result);
 });
 
+router.get('/', (_req, res) => res.json({ name: 'unified-ai-completion', health: 'ok' }));
 export default router;
