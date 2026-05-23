@@ -22,7 +22,7 @@ router.get('/', (_req: Request, res: Response) => {
     servers: [{ url: 'https://orbis-apis.onrender.com/phone-validation' }],
     security: [{ ApiKeyAuth: [] }],
     paths: {
-      '/validate': {
+      '/v1/validate': {
         post: {
           operationId: 'validatePhone',
           summary: 'Validate phone number — valid/possible, country, number type, risk score',
@@ -33,7 +33,7 @@ router.get('/', (_req: Request, res: Response) => {
           },
         },
       },
-      '/carrier': {
+      '/v1/carrier': {
         post: {
           operationId: 'phoneCarrier',
           summary: 'Carrier and line type detection — carrier name, network type, VOIP, ported status',
@@ -44,7 +44,7 @@ router.get('/', (_req: Request, res: Response) => {
           },
         },
       },
-      '/format': {
+      '/v1/format': {
         post: {
           operationId: 'phoneFormat',
           summary: 'Format phone in international standards — E.164, national, international, RFC3966',
@@ -55,7 +55,7 @@ router.get('/', (_req: Request, res: Response) => {
           },
         },
       },
-      '/execution-gate': {
+      '/v1/execution-gate': {
         post: {
           operationId: 'executionGate',
           summary: 'Execution readiness check before phone validation workflow',
@@ -65,7 +65,7 @@ router.get('/', (_req: Request, res: Response) => {
           },
         },
       },
-      '/lookup': {
+      '/v1/lookup': {
         post: {
           operationId: 'lookup',
           summary: 'ONE-CALL: full phone intelligence — validate + carrier + format + risk score',
