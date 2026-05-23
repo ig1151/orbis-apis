@@ -10,7 +10,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
       description: 'Trust scoring for crypto tokens based on on-chain metrics, contract analysis and community signals.',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
-      'x-pricing': { '/v1/score': 0.005, '/v1/check': 0.005, '/check/batch': 0.015 },
+      'x-pricing': { '/v1/score': 0.005, '/v1/check': 0.005, '/v1/check/batch': 0.015 },
       disclaimer: 'For informational purposes only. Not financial advice.',
       privacy: { data_stored: false, retention: 'none' },
     
@@ -85,7 +85,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
           chain_to: { type: 'array', items: { type: 'string' } }, disclaimer: { type: 'string' },
         }}}}}}}},
-      '/check/batch': { post: { operationId: 'batchCheckTokens', summary: 'Batch check up to 10 token trust scores', 'x-agent-callable': true,
+      '/v1/check/batch': { post: { operationId: 'batchCheckTokens', summary: 'Batch check up to 10 token trust scores', 'x-agent-callable': true,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['tokens'], properties: {
           recommended_actions_priority_order: { type: 'array', items: { type: 'string' }, description: 'Ordered list of recommended next actions for the agent' },
           privacy: { type: 'object', description: 'Privacy metadata for this response' },
