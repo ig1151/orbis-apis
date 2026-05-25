@@ -435,6 +435,18 @@ import newsSearchRouter from './routes/news-search-api/routes/intelligence';
 import newsSearchOpenapiRouter from './routes/news-search-api/routes/openapi';
 import cryptoPriceRouter from './routes/crypto-price-api/routes/intelligence';
 import cryptoPriceOpenapiRouter from './routes/crypto-price-api/routes/openapi';
+import fearGreedRouter from './routes/fear-greed-api/routes/intelligence';
+import fearGreedOpenapiRouter from './routes/fear-greed-api/routes/openapi';
+import stablecoinDepegRouter from './routes/stablecoin-depeg-api/routes/intelligence';
+import stablecoinDepegOpenapiRouter from './routes/stablecoin-depeg-api/routes/openapi';
+import topMoversRouter from './routes/top-movers-api/routes/intelligence';
+import topMoversOpenapiRouter from './routes/top-movers-api/routes/openapi';
+import impermanentLossRouter from './routes/impermanent-loss-api/routes/intelligence';
+import impermanentLossOpenapiRouter from './routes/impermanent-loss-api/routes/openapi';
+import nftFloorPriceRouter from './routes/nft-floor-price-api/routes/intelligence';
+import nftFloorPriceOpenapiRouter from './routes/nft-floor-price-api/routes/openapi';
+import stakingRewardsRouter from './routes/staking-rewards-api/routes/intelligence';
+import stakingRewardsOpenapiRouter from './routes/staking-rewards-api/routes/openapi';
 import fxRatesRouter from './routes/fx-rates-api/routes/intelligence';
 import fxRatesOpenapiRouter from './routes/fx-rates-api/routes/openapi';
 import weatherRouter from './routes/weather-api/routes/intelligence';
@@ -953,6 +965,12 @@ const routerMap: Record<string, import("express").Router> = {
   'web-page-extractor': webPageExtractorRouter,
   'news-search': newsSearchRouter,
   'crypto-price': cryptoPriceRouter,
+  'fear-greed': fearGreedRouter,
+  'stablecoin-depeg': stablecoinDepegRouter,
+  'top-movers': topMoversRouter,
+  'impermanent-loss': impermanentLossRouter,
+  'nft-floor-price': nftFloorPriceRouter,
+  'staking-rewards': stakingRewardsRouter,
   'fx-rates': fxRatesRouter,
   'weather': weatherRouter,
   'ip-geolocation': ipGeolocationRouter,
@@ -1260,6 +1278,12 @@ const openapiMap: Record<string, import("express").Router> = {
   'web-page-extractor': webPageExtractorOpenapiRouter,
   'news-search': newsSearchOpenapiRouter,
   'crypto-price': cryptoPriceOpenapiRouter,
+  'fear-greed': fearGreedOpenapiRouter,
+  'stablecoin-depeg': stablecoinDepegOpenapiRouter,
+  'top-movers': topMoversOpenapiRouter,
+  'impermanent-loss': impermanentLossOpenapiRouter,
+  'nft-floor-price': nftFloorPriceOpenapiRouter,
+  'staking-rewards': stakingRewardsOpenapiRouter,
   'fx-rates': fxRatesOpenapiRouter,
   'weather': weatherOpenapiRouter,
   'geocoding': geocodingIntelligenceOpenapiRouter,
