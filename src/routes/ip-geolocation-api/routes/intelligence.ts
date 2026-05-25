@@ -15,7 +15,11 @@ async function callClaude(prompt: string): Promise<string> {
 }
 
 function parseJSON(raw: string) {
-  return JSON.parse(raw.replace(/```json|```/g, '').trim());
+  const cleaned = raw.replace(/```json|```/g, '').trim();
+  const start = cleaned.indexOf('{');
+  const end = cleaned.lastIndexOf('}');
+  if (start !== -1 && end !== -1) return JSON.parse(cleaned.slice(start, end + 1));
+  return JSON.parse(cleaned);
 }
 
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
