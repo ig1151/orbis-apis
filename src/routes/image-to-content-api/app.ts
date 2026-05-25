@@ -22,6 +22,6 @@ app.use(`/${config.server.apiVersion}`, rateLimiter);
 app.use(`/${config.server.apiVersion}`, analyzeRouter);
 app.use(`/${config.server.apiVersion}/health`, healthRouter);
 app.use('/openapi.json', openapiRouter);
-app.get('/', (_req, res) => res.redirect(`/${config.server.apiVersion}/health`));
+app.get('/', (_req, res) => res.json({ name: 'image-to-content', health: 'ok', version: config.server.apiVersion }));
 app.use(notFound); app.use(errorHandler);
 export { app };

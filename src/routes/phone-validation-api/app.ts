@@ -20,7 +20,7 @@ app.use(`/${config.server.apiVersion}`, validateRouter);
 app.use(`/${config.server.apiVersion}/health`, healthRouter);
 app.use('/openapi.json', openapiRouter);
 app.use('/docs', docsRouter);
-app.get('/', (_req, res) => res.redirect(`/${config.server.apiVersion}/health`));
+app.get('/', (_req, res) => res.json({ name: 'phone-validation', health: 'ok', version: config.server.apiVersion }));
 app.use(notFound);
 app.use(errorHandler);
 export { app };
