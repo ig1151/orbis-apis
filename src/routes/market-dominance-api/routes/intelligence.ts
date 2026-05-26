@@ -25,7 +25,22 @@ function parseJSON(raw: string) {
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
 
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ name: 'Market Dominance API', openapi: '/market-dominance/openapi.json', health: 'ok' });
+  res.json({
+    name: 'Market Dominance API', version: '1.0.0',
+    description: 'BTC/ETH/alt dominance in real time — phase detection, rotation signals, and portfolio allocation implications.',
+    docs_url: 'https://orbis-apis.onrender.com/market-dominance/openapi.json',
+    openapi_url: 'https://orbis-apis.onrender.com/market-dominance/openapi.json',
+    health: 'ok',
+    auth: { type: 'apiKey', header: 'X-API-Key', docs: 'https://orbisapi.com/docs/auth' },
+    endpoints: [
+      { method: 'POST', path: '/current', summary: 'Current dominance breakdown and market phase', price_usdc: 0.002 },
+      { method: 'POST', path: '/history', summary: 'Historical dominance with phase transitions', price_usdc: 0.003 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: dominance + phase + rotation signals + allocation implications', price_usdc: 0.005 },
+    ],
+    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { current: '$0.002', history: '$0.003', lookup: '$0.005' } },
+    agent_capabilities: ['dominance-tracking', 'phase-detection', 'rotation-signals', 'macro-context', 'allocation-guidance'],
+    x402_compatible: true, paper_mode_recommended: true, execution_gate_required: true,
+  });
 });
 
 // POST /current — current BTC/ETH/alt dominance

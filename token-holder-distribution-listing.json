@@ -9,7 +9,13 @@
     "docsUrl": "https://orbis-apis.onrender.com/token-holder-distribution/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/token-holder-distribution/openapi.json",
     "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-    "tags": ["token-holders", "whale-concentration", "tokenomics", "crypto", "risk-analysis"],
+    "tags": [
+      "token-holders",
+      "whale-concentration",
+      "tokenomics",
+      "crypto",
+      "risk-analysis"
+    ],
     "keywords": [
       "token holder distribution api",
       "crypto whale concentration api",
@@ -28,33 +34,75 @@
         "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.006,
+        "pricePerCall": 0.008,
         "requestsPerDay": 50000,
         "requestsPerMonth": 1500000,
         "endpointPricing": [
-          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.003, "description": "Holder distribution snapshot — whale %, concentration, segments, sell pressure risk" },
-          { "method": "POST", "pathPattern": "/trend", "pricePerCallUsdc": 0.003, "description": "Distribution trend — holder growth, decentralization direction, whale behavior over time" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.006, "description": "ONE-CALL: snapshot + trend + risk + investment signal for a token" }
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Holder distribution snapshot \u2014 whale %, concentration, segments, sell pressure risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trend",
+            "pricePerCallUsdc": 0.003,
+            "description": "Distribution trend \u2014 holder growth, decentralization direction, whale behavior over time"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: snapshot + trend + risk + investment signal for a token"
+          }
         ]
       },
       {
         "name": "High Volume",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.003,
+        "pricePerCall": 0.004,
         "requestsPerDay": 500000,
         "requestsPerMonth": 15000000,
         "endpointPricing": [
-          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.0015, "description": "Analyze (discounted)" },
-          { "method": "POST", "pathPattern": "/trend", "pricePerCallUsdc": 0.0015, "description": "Trend (discounted)" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "Full lookup (discounted)" }
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trend",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Trend (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "Full lookup (discounted)"
+          }
         ]
       }
     ],
     "endpoints": [
-      { "method": "POST", "path": "/analyze", "description": "Snapshot of holder distribution — top holder breakdown, whale %, concentration metrics, sell pressure risk" },
-      { "method": "POST", "path": "/trend", "description": "Holder distribution trend over time — growth rate, decentralization direction, whale behavior, key events" },
-      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: snapshot + 30d trend + concentration risk + investment signal for a token" }
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Snapshot of holder distribution \u2014 top holder breakdown, whale %, concentration metrics, sell pressure risk"
+      },
+      {
+        "method": "POST",
+        "path": "/trend",
+        "description": "Holder distribution trend over time \u2014 growth rate, decentralization direction, whale behavior, key events"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: snapshot + 30d trend + concentration risk + investment signal for a token"
+      }
     ]
   }
 ]

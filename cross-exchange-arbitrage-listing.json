@@ -9,7 +9,13 @@
     "docsUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json",
     "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-    "tags": ["arbitrage", "cross-exchange", "crypto", "trading", "price-comparison"],
+    "tags": [
+      "arbitrage",
+      "cross-exchange",
+      "crypto",
+      "trading",
+      "price-comparison"
+    ],
     "keywords": [
       "cross exchange arbitrage api",
       "crypto arbitrage api",
@@ -28,33 +34,75 @@
         "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.006,
+        "pricePerCall": 0.01,
         "requestsPerDay": 50000,
         "requestsPerMonth": 1500000,
         "endpointPricing": [
-          { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.003, "description": "Price comparison across exchanges with fee breakdown and net spread" },
-          { "method": "POST", "pathPattern": "/opportunities", "pricePerCallUsdc": 0.005, "description": "Top arbitrage opportunities ranked by net profit after all fees" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.006, "description": "ONE-CALL: full arbitrage analysis — prices, best route, alternatives, risk, verdict" }
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.003,
+            "description": "Price comparison across exchanges with fee breakdown and net spread"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/opportunities",
+            "pricePerCallUsdc": 0.005,
+            "description": "Top arbitrage opportunities ranked by net profit after all fees"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL: full arbitrage analysis \u2014 prices, best route, alternatives, risk, verdict"
+          }
         ]
       },
       {
         "name": "High Volume",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.003,
+        "pricePerCall": 0.005,
         "requestsPerDay": 500000,
         "requestsPerMonth": 15000000,
         "endpointPricing": [
-          { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.0015, "description": "Scan (discounted)" },
-          { "method": "POST", "pathPattern": "/opportunities", "pricePerCallUsdc": 0.0025, "description": "Opportunities (discounted)" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "Full lookup (discounted)" }
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Scan (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/opportunities",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Opportunities (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "Full lookup (discounted)"
+          }
         ]
       }
     ],
     "endpoints": [
-      { "method": "POST", "path": "/scan", "description": "Price matrix across exchanges for a token — bid, ask, fees, withdrawal cost, net spread" },
-      { "method": "POST", "path": "/opportunities", "description": "Top arbitrage opportunities across the market — ranked by net profit after all fees" },
-      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: full arbitrage analysis — price matrix, best route, alternatives, risk assessment, execute/watch/pass verdict" }
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Price matrix across exchanges for a token \u2014 bid, ask, fees, withdrawal cost, net spread"
+      },
+      {
+        "method": "POST",
+        "path": "/opportunities",
+        "description": "Top arbitrage opportunities across the market \u2014 ranked by net profit after all fees"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: full arbitrage analysis \u2014 price matrix, best route, alternatives, risk assessment, execute/watch/pass verdict"
+      }
     ]
   }
 ]

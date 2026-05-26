@@ -25,7 +25,22 @@ function parseJSON(raw: string) {
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
 
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ name: 'Token Holder Distribution API', openapi: '/token-holder-distribution/openapi.json', health: 'ok' });
+  res.json({
+    name: 'Token Holder Distribution API', version: '1.0.0',
+    description: 'Whale concentration, top holder behavior, decentralization trends, and sell pressure risk for any token.',
+    docs_url: 'https://orbis-apis.onrender.com/token-holder-distribution/openapi.json',
+    openapi_url: 'https://orbis-apis.onrender.com/token-holder-distribution/openapi.json',
+    health: 'ok',
+    auth: { type: 'apiKey', header: 'X-API-Key', docs: 'https://orbisapi.com/docs/auth' },
+    endpoints: [
+      { method: 'POST', path: '/analyze', summary: 'Holder distribution snapshot — whale %, concentration, segments', price_usdc: 0.003 },
+      { method: 'POST', path: '/trend', summary: 'Distribution trend — holder growth, whale behavior over time', price_usdc: 0.003 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: snapshot + trend + risk + investment signal', price_usdc: 0.008 },
+    ],
+    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { analyze: '$0.003', trend: '$0.003', lookup: '$0.008' } },
+    agent_capabilities: ['holder-analysis', 'concentration-risk', 'sell-pressure-detection', 'tokenomics-due-diligence', 'whale-behavior'],
+    x402_compatible: true, paper_mode_recommended: true,
+  });
 });
 
 // POST /analyze — snapshot of holder distribution

@@ -13,9 +13,31 @@ const holderItem = {
     address: { type: 'string' },
     label: { type: 'string' },
     type: { type: 'string', enum: ['exchange', 'team', 'dao', 'whale', 'retail', 'contract'] },
+    balance: { type: 'number' },
     pct_supply: { type: 'number', minimum: 0, maximum: 100 },
     change_30d_pct: { type: 'number' },
     behavior: { type: 'string', enum: ['accumulating', 'distributing', 'holding'] },
+  },
+};
+
+const concentrationRisk = {
+  type: 'object', properties: {
+    gini_coefficient: { type: 'number', minimum: 0, maximum: 1 },
+    risk_level: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+    risk_note: { type: 'string' },
+    sell_pressure_risk: { type: 'string', enum: ['high', 'medium', 'low'] },
+  },
+};
+
+const discoverySchema = {
+  type: 'object', properties: {
+    name: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
+    docs_url: { type: 'string', format: 'uri' }, openapi_url: { type: 'string', format: 'uri' }, health: { type: 'string' },
+    auth: { type: 'object', properties: { type: { type: 'string' }, header: { type: 'string' }, docs: { type: 'string' } } },
+    endpoints: { type: 'array', items: { type: 'object', properties: { method: { type: 'string' }, path: { type: 'string' }, summary: { type: 'string' }, price_usdc: { type: 'number' } } } },
+    pricing: { type: 'object', properties: { free_tier: { type: 'object', properties: { requests_per_day: { type: 'integer' }, requests_per_month: { type: 'integer' } } }, pay_per_call: { type: 'object', additionalProperties: { type: 'string' } } } },
+    agent_capabilities: { type: 'array', items: { type: 'string' } },
+    x402_compatible: { type: 'boolean' }, paper_mode_recommended: { type: 'boolean' },
   },
 };
 
@@ -29,9 +51,13 @@ router.get('/', (_req: Request, res: Response) => {
       'x-agent-callable': true,
       'x-mcp-compatible': true,
       'x-human-approval-required': false,
-      'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { analyze: '$0.003', trend: '$0.003', lookup: '$0.006' } },
-      'x-financial-disclaimer': 'For informational purposes only. Not financial advice. Verify independently before use in trading workflows.',
+      'x-execution-gate-required': false,
       'x-paper-mode-recommended': true,
+      'x402-compatible': true,
+      'x-agent-marketplace-ready': true,
+      'x-pay-per-call-optimized': true,
+      'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { analyze: '$0.003', trend: '$0.003', lookup: '$0.008' } },
+      'x-financial-disclaimer': 'For informational purposes only. Not financial advice. Verify independently before use in trading workflows.',
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/token-holder-distribution' }],
     security: [{ ApiKeyAuth: [] }],
@@ -39,15 +65,15 @@ router.get('/', (_req: Request, res: Response) => {
       '/': {
         get: {
           operationId: 'tokenHolderDiscovery',
-          summary: 'API discovery — name, version, available endpoints',
+          summary: 'API discovery — name, version, endpoints, pricing, auth, agent capabilities',
           security: [],
-          responses: { '200': { description: 'Discovery info' } },
+          responses: { '200': { description: 'Full discovery payload', content: { 'application/json': { schema: discoverySchema } } } },
         },
       },
       '/analyze': {
         post: {
           operationId: 'tokenHolderAnalyze',
-          summary: 'Snapshot of token holder distribution — whale %, top-10 concentration, segment breakdown',
+          summary: 'Snapshot of token holder distribution — whale %, top-10 concentration, segment breakdown, sell pressure risk',
           requestBody: {
             required: true,
             content: {
@@ -72,19 +98,32 @@ router.get('/', (_req: Request, res: Response) => {
                     type: 'object',
                     properties: {
                       ...traceFields,
-                      token: { type: 'string' },
-                      chain: { type: 'string' },
+                      token: { type: 'string' }, chain: { type: 'string' },
                       total_holders: { type: 'integer' },
-                      distribution: { type: 'object', properties: { top_1_pct_supply: { type: 'number' }, top_10_pct_supply: { type: 'number' }, top_50_pct_supply: { type: 'number' }, retail_holders_pct: { type: 'number' }, exchange_held_pct: { type: 'number' }, locked_pct: { type: 'number' } } },
+                      distribution: {
+                        type: 'object', properties: {
+                          top_1_pct_supply: { type: 'number' }, top_10_pct_supply: { type: 'number' },
+                          top_50_pct_supply: { type: 'number' }, top_100_pct_supply: { type: 'number' },
+                          retail_holders_pct: { type: 'number' }, exchange_held_pct: { type: 'number' },
+                          contract_held_pct: { type: 'number' }, locked_pct: { type: 'number' },
+                        },
+                      },
                       top_holders: { type: 'array', items: holderItem },
-                      holder_segments: { type: 'array', items: { type: 'object', properties: { range: { type: 'string' }, count: { type: 'integer' }, pct_of_supply: { type: 'number' }, type: { type: 'string' } } } },
-                      concentration_risk: { type: 'object', properties: { gini_coefficient: { type: 'number', minimum: 0, maximum: 1 }, risk_level: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] }, risk_note: { type: 'string' }, sell_pressure_risk: { type: 'string' } } },
+                      holder_segments: {
+                        type: 'array', items: {
+                          type: 'object', properties: {
+                            range: { type: 'string' }, count: { type: 'integer' },
+                            pct_of_supply: { type: 'number' },
+                            type: { type: 'string', enum: ['whale', 'large', 'medium', 'small', 'micro'] },
+                          },
+                        },
+                      },
+                      concentration_risk: concentrationRisk,
                       financial_disclaimer: { type: 'string' },
                       paper_mode_recommended: { type: 'boolean' },
                       confidence_per_section: confidence,
                       recommended_actions_priority_order: actions,
-                      chain_to,
-                      privacy,
+                      chain_to, privacy,
                     },
                   },
                 },
@@ -108,7 +147,7 @@ router.get('/', (_req: Request, res: Response) => {
                   required: ['token'],
                   properties: {
                     token: { type: 'string' },
-                    chain: { type: 'string', default: 'ethereum' },
+                    chain: { type: 'string', default: 'ethereum', enum: ['ethereum', 'base', 'arbitrum', 'polygon', 'bsc', 'solana'] },
                     days: { type: 'integer', default: 30, minimum: 7, maximum: 365 },
                   },
                 },
@@ -124,19 +163,46 @@ router.get('/', (_req: Request, res: Response) => {
                     type: 'object',
                     properties: {
                       ...traceFields,
-                      token: { type: 'string' },
-                      chain: { type: 'string' },
-                      period_days: { type: 'integer' },
-                      holder_count_trend: { type: 'array', items: { type: 'object', properties: { date: { type: 'string', format: 'date' }, total_holders: { type: 'integer' }, new_holders: { type: 'integer' }, lost_holders: { type: 'integer' } } } },
-                      concentration_trend: { type: 'array', items: { type: 'object', properties: { date: { type: 'string', format: 'date' }, top_10_pct_supply: { type: 'number' }, whale_count: { type: 'integer' } } } },
-                      trend_summary: { type: 'object', properties: { holder_growth_rate_pct: { type: 'number' }, holder_trend: { type: 'string' }, decentralization_trend: { type: 'string' }, whale_activity: { type: 'string' }, retail_adoption: { type: 'string' } } },
-                      key_events: { type: 'array', items: { type: 'object', properties: { date: { type: 'string' }, event: { type: 'string' }, impact: { type: 'string' } } } },
+                      token: { type: 'string' }, chain: { type: 'string' }, period_days: { type: 'integer' },
+                      holder_count_trend: {
+                        type: 'array', items: {
+                          type: 'object', properties: {
+                            date: { type: 'string', format: 'date' },
+                            total_holders: { type: 'integer' }, new_holders: { type: 'integer' }, lost_holders: { type: 'integer' },
+                          },
+                        },
+                      },
+                      concentration_trend: {
+                        type: 'array', items: {
+                          type: 'object', properties: {
+                            date: { type: 'string', format: 'date' },
+                            top_10_pct_supply: { type: 'number' }, whale_count: { type: 'integer' },
+                          },
+                        },
+                      },
+                      trend_summary: {
+                        type: 'object', properties: {
+                          holder_growth_rate_pct: { type: 'number' },
+                          holder_trend: { type: 'string', enum: ['growing', 'shrinking', 'stable'] },
+                          decentralization_trend: { type: 'string', enum: ['improving', 'worsening', 'stable'] },
+                          whale_activity: { type: 'string', enum: ['accumulating', 'distributing', 'neutral'] },
+                          retail_adoption: { type: 'string', enum: ['increasing', 'decreasing', 'stable'] },
+                        },
+                      },
+                      key_events: {
+                        type: 'array', items: {
+                          type: 'object', properties: {
+                            date: { type: 'string', format: 'date' },
+                            event: { type: 'string' },
+                            impact: { type: 'string', enum: ['positive', 'negative', 'neutral'] },
+                          },
+                        },
+                      },
                       financial_disclaimer: { type: 'string' },
                       paper_mode_recommended: { type: 'boolean' },
                       confidence_per_section: confidence,
                       recommended_actions_priority_order: actions,
-                      chain_to,
-                      privacy,
+                      chain_to, privacy,
                     },
                   },
                 },
@@ -150,7 +216,7 @@ router.get('/', (_req: Request, res: Response) => {
       '/lookup': {
         post: {
           operationId: 'tokenHolderLookup',
-          summary: 'ONE-CALL: snapshot + trend + concentration risk + investment signal for a token',
+          summary: 'ONE-CALL: snapshot + 30d trend + concentration risk + investment signal for a token',
           'x-one-call': true,
           requestBody: {
             required: true,
@@ -161,7 +227,7 @@ router.get('/', (_req: Request, res: Response) => {
                   required: ['token'],
                   properties: {
                     token: { type: 'string' },
-                    chain: { type: 'string', default: 'ethereum' },
+                    chain: { type: 'string', default: 'ethereum', enum: ['ethereum', 'base', 'arbitrum', 'polygon', 'bsc', 'solana'] },
                   },
                 },
               },
@@ -176,19 +242,38 @@ router.get('/', (_req: Request, res: Response) => {
                     type: 'object',
                     properties: {
                       ...traceFields,
-                      token: { type: 'string' },
-                      chain: { type: 'string' },
-                      snapshot: { type: 'object', properties: { total_holders: { type: 'integer' }, top_10_pct_supply: { type: 'number' }, top_50_pct_supply: { type: 'number' }, whale_count: { type: 'integer' }, retail_pct_supply: { type: 'number' }, exchange_pct_supply: { type: 'number' } } },
+                      token: { type: 'string' }, chain: { type: 'string' },
+                      snapshot: {
+                        type: 'object', properties: {
+                          total_holders: { type: 'integer' },
+                          top_10_pct_supply: { type: 'number' }, top_50_pct_supply: { type: 'number' },
+                          whale_count: { type: 'integer' }, retail_pct_supply: { type: 'number' },
+                          exchange_pct_supply: { type: 'number' }, locked_pct: { type: 'number' },
+                        },
+                      },
                       top_holders: { type: 'array', items: holderItem },
-                      trend_30d: { type: 'object', properties: { holder_count_change: { type: 'integer' }, holder_trend: { type: 'string' }, whale_trend: { type: 'string' }, decentralization_trend: { type: 'string' } } },
-                      concentration_risk: { type: 'object', properties: { risk_level: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] }, gini_coefficient: { type: 'number' }, key_risks: { type: 'array', items: { type: 'string' } }, sell_pressure_risk: { type: 'string' } } },
-                      investment_signal: { type: 'object', properties: { signal: { type: 'string', enum: ['bullish', 'neutral', 'bearish'] }, conviction: { type: 'string' }, key_insight: { type: 'string' }, watch_list: { type: 'array', items: { type: 'string' } } } },
+                      trend_30d: {
+                        type: 'object', properties: {
+                          holder_count_change: { type: 'integer' },
+                          holder_trend: { type: 'string', enum: ['growing', 'shrinking', 'stable'] },
+                          whale_trend: { type: 'string', enum: ['accumulating', 'distributing', 'neutral'] },
+                          decentralization_trend: { type: 'string', enum: ['improving', 'worsening', 'stable'] },
+                        },
+                      },
+                      concentration_risk: concentrationRisk,
+                      investment_signal: {
+                        type: 'object', properties: {
+                          signal: { type: 'string', enum: ['bullish', 'neutral', 'bearish'] },
+                          conviction: { type: 'string', enum: ['high', 'medium', 'low'] },
+                          key_insight: { type: 'string' },
+                          watch_list: { type: 'array', items: { type: 'string', description: 'Address or condition to monitor' } },
+                        },
+                      },
                       financial_disclaimer: { type: 'string' },
                       paper_mode_recommended: { type: 'boolean' },
                       confidence_per_section: confidence,
                       recommended_actions_priority_order: actions,
-                      chain_to,
-                      privacy,
+                      chain_to, privacy,
                     },
                   },
                 },

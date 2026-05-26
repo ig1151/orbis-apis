@@ -25,7 +25,22 @@ function parseJSON(raw: string) {
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
 
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ name: 'Cross-Exchange Arbitrage API', openapi: '/cross-exchange-arbitrage/openapi.json', health: 'ok' });
+  res.json({
+    name: 'Cross-Exchange Arbitrage API', version: '1.0.0',
+    description: 'Detect price gaps across CEXs and calculate net profit after all fees. For arbitrage bots, trading agents, and quant strategies.',
+    docs_url: 'https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json',
+    openapi_url: 'https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json',
+    health: 'ok',
+    auth: { type: 'apiKey', header: 'X-API-Key', docs: 'https://orbisapi.com/docs/auth' },
+    endpoints: [
+      { method: 'POST', path: '/scan', summary: 'Price matrix across exchanges with net spread', price_usdc: 0.003 },
+      { method: 'POST', path: '/opportunities', summary: 'Top arbitrage opportunities ranked by net profit', price_usdc: 0.005 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: full arbitrage analysis with execute/watch/pass verdict', price_usdc: 0.010 },
+    ],
+    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.003', opportunities: '$0.005', lookup: '$0.010' } },
+    agent_capabilities: ['arbitrage-detection', 'fee-calculation', 'price-comparison', 'profit-estimation', 'risk-assessment'],
+    x402_compatible: true, paper_mode_recommended: true, execution_gate_required: true, human_approval_required: true,
+  });
 });
 
 // POST /scan — scan for arbitrage opportunities for a token

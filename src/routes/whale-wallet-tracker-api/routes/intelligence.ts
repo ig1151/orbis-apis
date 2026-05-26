@@ -25,7 +25,22 @@ function parseJSON(raw: string) {
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
 
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ name: 'Whale Wallet Tracker API', openapi: '/whale-wallet-tracker/openapi.json', health: 'ok' });
+  res.json({
+    name: 'Whale Wallet Tracker API', version: '1.0.0',
+    description: 'Track large on-chain wallet movements, identify whale accumulation/distribution patterns, and surface entry/exit signals.',
+    docs_url: 'https://orbis-apis.onrender.com/whale-wallet-tracker/openapi.json',
+    openapi_url: 'https://orbis-apis.onrender.com/whale-wallet-tracker/openapi.json',
+    health: 'ok',
+    auth: { type: 'apiKey', header: 'X-API-Key', docs: 'https://orbisapi.com/docs/auth' },
+    endpoints: [
+      { method: 'POST', path: '/track', summary: 'Track a specific wallet — classification, holdings, signals', price_usdc: 0.003 },
+      { method: 'POST', path: '/scan', summary: 'Scan for large whale market movements', price_usdc: 0.004 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: full whale intelligence for a token', price_usdc: 0.008 },
+    ],
+    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { track: '$0.003', scan: '$0.004', lookup: '$0.008' } },
+    agent_capabilities: ['whale-tracking', 'on-chain-intelligence', 'entry-exit-signals', 'concentration-risk', 'copy-trading-support'],
+    x402_compatible: true, paper_mode_recommended: true,
+  });
 });
 
 // POST /track — track a specific wallet for whale activity

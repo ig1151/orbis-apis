@@ -1,7 +1,7 @@
 [
   {
     "name": "Smart Money Flow API",
-    "shortDescription": "Track institutional and smart-money capital flows on-chain — sector rotation signals and top wallet intelligence",
+    "shortDescription": "Track institutional and smart-money capital flows on-chain \u2014 sector rotation signals and top wallet intelligence",
     "description": "Follow where sophisticated investors, institutions, and smart-money wallets are deploying capital. Analyze sector rotation across DeFi, NFTs, L2s, and more. Get top smart-money wallet profiles with ROI, win rate, and current thesis. Designed for trading agents, quant strategies, and portfolio managers that want to follow institutional flow before it hits price.",
     "category": "financial-data",
     "baseUrl": "https://orbis-apis.onrender.com/smart-money-flow",
@@ -9,7 +9,13 @@
     "docsUrl": "https://orbis-apis.onrender.com/smart-money-flow/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/smart-money-flow/openapi.json",
     "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-    "tags": ["smart-money", "on-chain", "crypto", "institutional", "capital-flows"],
+    "tags": [
+      "smart-money",
+      "on-chain",
+      "crypto",
+      "institutional",
+      "capital-flows"
+    ],
     "keywords": [
       "smart money flow api",
       "institutional crypto flow api",
@@ -28,33 +34,75 @@
         "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.006,
+        "pricePerCall": 0.01,
         "requestsPerDay": 50000,
         "requestsPerMonth": 1500000,
         "endpointPricing": [
-          { "method": "POST", "pathPattern": "/flows", "pricePerCallUsdc": 0.003, "description": "Smart money flows by sector with rotation direction and market regime" },
-          { "method": "POST", "pathPattern": "/wallets", "pricePerCallUsdc": 0.004, "description": "Top smart money wallets with positions, ROI, and current thesis" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.006, "description": "ONE-CALL: smart money position + top holders + rotation signal for a token" }
+          {
+            "method": "POST",
+            "pathPattern": "/flows",
+            "pricePerCallUsdc": 0.003,
+            "description": "Smart money flows by sector with rotation direction and market regime"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/wallets",
+            "pricePerCallUsdc": 0.004,
+            "description": "Top smart money wallets with positions, ROI, and current thesis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL: smart money position + top holders + rotation signal for a token"
+          }
         ]
       },
       {
         "name": "High Volume",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.003,
+        "pricePerCall": 0.005,
         "requestsPerDay": 500000,
         "requestsPerMonth": 15000000,
         "endpointPricing": [
-          { "method": "POST", "pathPattern": "/flows", "pricePerCallUsdc": 0.0015, "description": "Sector flows (discounted)" },
-          { "method": "POST", "pathPattern": "/wallets", "pricePerCallUsdc": 0.002, "description": "Wallet list (discounted)" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "Full lookup (discounted)" }
+          {
+            "method": "POST",
+            "pathPattern": "/flows",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Sector flows (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/wallets",
+            "pricePerCallUsdc": 0.002,
+            "description": "Wallet list (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "Full lookup (discounted)"
+          }
         ]
       }
     ],
     "endpoints": [
-      { "method": "POST", "path": "/flows", "description": "Current smart money capital flows by sector — direction, momentum, market regime" },
-      { "method": "POST", "path": "/wallets", "description": "Top smart money wallets with recent positions, ROI, win rate, and current thesis" },
-      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: smart money position + top holders + rotation context + aggregate signal for a token" }
+      {
+        "method": "POST",
+        "path": "/flows",
+        "description": "Current smart money capital flows by sector \u2014 direction, momentum, market regime"
+      },
+      {
+        "method": "POST",
+        "path": "/wallets",
+        "description": "Top smart money wallets with recent positions, ROI, win rate, and current thesis"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: smart money position + top holders + rotation context + aggregate signal for a token"
+      }
     ]
   }
 ]

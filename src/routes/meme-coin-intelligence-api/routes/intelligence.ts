@@ -25,7 +25,22 @@ function parseJSON(raw: string) {
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
 
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ name: 'Meme Coin Intelligence API', openapi: '/meme-coin-intelligence/openapi.json', health: 'ok' });
+  res.json({
+    name: 'Meme Coin Intelligence API', version: '1.0.0',
+    description: 'Virality scores, rugpull risk, momentum analysis, and social signals for meme coins.',
+    docs_url: 'https://orbis-apis.onrender.com/meme-coin-intelligence/openapi.json',
+    openapi_url: 'https://orbis-apis.onrender.com/meme-coin-intelligence/openapi.json',
+    health: 'ok',
+    auth: { type: 'apiKey', header: 'X-API-Key', docs: 'https://orbisapi.com/docs/auth' },
+    endpoints: [
+      { method: 'POST', path: '/score', summary: 'Virality + rugpull risk score for a meme coin', price_usdc: 0.003 },
+      { method: 'POST', path: '/trending', summary: 'Trending meme coins ranked by virality with risk filter', price_usdc: 0.004 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: full meme coin intelligence — virality, risk, lifecycle, entry window', price_usdc: 0.008 },
+    ],
+    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { score: '$0.003', trending: '$0.004', lookup: '$0.008' } },
+    agent_capabilities: ['virality-scoring', 'rugpull-detection', 'momentum-analysis', 'social-signals', 'lifecycle-tracking'],
+    x402_compatible: true, paper_mode_recommended: true, execution_gate_required: true, human_approval_required: true,
+  });
 });
 
 // POST /score — virality + rugpull risk score for a token

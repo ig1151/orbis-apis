@@ -25,7 +25,22 @@ function parseJSON(raw: string) {
 function traceId() { return Math.random().toString(36).slice(2, 10) + '-' + Date.now(); }
 
 router.get('/', (_req: Request, res: Response) => {
-  res.json({ name: 'Smart Money Flow API', openapi: '/smart-money-flow/openapi.json', health: 'ok' });
+  res.json({
+    name: 'Smart Money Flow API', version: '1.0.0',
+    description: 'Track institutional and smart-money capital flows on-chain — sector rotation, top wallet activity, and flow signals.',
+    docs_url: 'https://orbis-apis.onrender.com/smart-money-flow/openapi.json',
+    openapi_url: 'https://orbis-apis.onrender.com/smart-money-flow/openapi.json',
+    health: 'ok',
+    auth: { type: 'apiKey', header: 'X-API-Key', docs: 'https://orbisapi.com/docs/auth' },
+    endpoints: [
+      { method: 'POST', path: '/flows', summary: 'Smart money flows by sector with rotation direction', price_usdc: 0.003 },
+      { method: 'POST', path: '/wallets', summary: 'Top smart money wallets — ROI, thesis, positions', price_usdc: 0.004 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: smart money intelligence for a token', price_usdc: 0.010 },
+    ],
+    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { flows: '$0.003', wallets: '$0.004', lookup: '$0.010' } },
+    agent_capabilities: ['smart-money-tracking', 'sector-rotation', 'institutional-flow', 'wallet-intelligence', 'capital-flow-signals'],
+    x402_compatible: true, paper_mode_recommended: true,
+  });
 });
 
 // POST /flows — current smart money capital flows by sector/chain

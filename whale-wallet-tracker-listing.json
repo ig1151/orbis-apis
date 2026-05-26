@@ -9,7 +9,13 @@
     "docsUrl": "https://orbis-apis.onrender.com/whale-wallet-tracker/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/whale-wallet-tracker/openapi.json",
     "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-    "tags": ["whale-tracking", "on-chain", "crypto", "wallet-intelligence", "trading-signals"],
+    "tags": [
+      "whale-tracking",
+      "on-chain",
+      "crypto",
+      "wallet-intelligence",
+      "trading-signals"
+    ],
     "keywords": [
       "whale wallet tracker api",
       "crypto whale movements api",
@@ -28,33 +34,75 @@
         "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.006,
+        "pricePerCall": 0.008,
         "requestsPerDay": 50000,
         "requestsPerMonth": 1500000,
         "endpointPricing": [
-          { "method": "POST", "pathPattern": "/track", "pricePerCallUsdc": 0.003, "description": "Track a specific wallet — classification, holdings, behavior, entry/exit signals" },
-          { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.004, "description": "Scan for recent whale movements across the market" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.006, "description": "ONE-CALL: top whale wallets + movements + aggregate signal for a token" }
+          {
+            "method": "POST",
+            "pathPattern": "/track",
+            "pricePerCallUsdc": 0.003,
+            "description": "Track a specific wallet \u2014 classification, holdings, behavior, entry/exit signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.004,
+            "description": "Scan for recent whale movements across the market"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: top whale wallets + movements + aggregate signal for a token"
+          }
         ]
       },
       {
         "name": "High Volume",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.003,
+        "pricePerCall": 0.004,
         "requestsPerDay": 500000,
         "requestsPerMonth": 15000000,
         "endpointPricing": [
-          { "method": "POST", "pathPattern": "/track", "pricePerCallUsdc": 0.0015, "description": "Track wallet (discounted)" },
-          { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.002, "description": "Market scan (discounted)" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "Full lookup (discounted)" }
+          {
+            "method": "POST",
+            "pathPattern": "/track",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Track wallet (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.002,
+            "description": "Market scan (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "Full lookup (discounted)"
+          }
         ]
       }
     ],
     "endpoints": [
-      { "method": "POST", "path": "/track", "description": "Track a specific wallet — whale classification, recent activity, holdings, behavior patterns, entry/exit signals" },
-      { "method": "POST", "path": "/scan", "description": "Scan for recent large whale movements across the market with market summary" },
-      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: top whale wallets for a token + recent moves + concentration risk + aggregate signal" }
+      {
+        "method": "POST",
+        "path": "/track",
+        "description": "Track a specific wallet \u2014 whale classification, recent activity, holdings, behavior patterns, entry/exit signals"
+      },
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Scan for recent large whale movements across the market with market summary"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: top whale wallets for a token + recent moves + concentration risk + aggregate signal"
+      }
     ]
   }
 ]
