@@ -1,0 +1,60 @@
+[
+  {
+    "name": "Market Dominance API",
+    "shortDescription": "BTC/ETH/alt dominance in real time — phase detection, rotation signals, and portfolio allocation implications",
+    "description": "Track Bitcoin, Ethereum, altcoin, and stablecoin market dominance with phase classification (BTC season, alt season, etc.), rotation signals, and portfolio allocation implications. Get current snapshot, 30-day history with phase transitions, or a full ONE-CALL intelligence package. Built for macro-aware trading agents and portfolio managers.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/market-dominance",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/market-dominance/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/market-dominance/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["market-dominance", "btc-dominance", "alt-season", "crypto", "macro"],
+    "keywords": [
+      "bitcoin dominance api",
+      "crypto market dominance api",
+      "alt season indicator api",
+      "btc eth dominance tracker api",
+      "market rotation signal api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/current", "pricePerCallUsdc": 0.002, "description": "Current dominance breakdown with phase classification and rotation signals" },
+          { "method": "POST", "pathPattern": "/history", "pricePerCallUsdc": 0.003, "description": "Historical dominance with trend analysis and phase transitions" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.005, "description": "ONE-CALL: dominance + phase + rotation signals + portfolio allocation implications" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0025,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/current", "pricePerCallUsdc": 0.001, "description": "Current (discounted)" },
+          { "method": "POST", "pathPattern": "/history", "pricePerCallUsdc": 0.0015, "description": "History (discounted)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.0025, "description": "Full lookup (discounted)" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/current", "description": "Current BTC/ETH/alt dominance with phase classification and rotation signals" },
+      { "method": "POST", "path": "/history", "description": "Historical dominance trends with phase transitions and catalysts" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: dominance + phase + rotation signals + key levels + portfolio allocation implications" }
+    ]
+  }
+]

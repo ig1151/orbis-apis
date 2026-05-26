@@ -1,0 +1,60 @@
+[
+  {
+    "name": "Whale Wallet Tracker API",
+    "shortDescription": "Track large on-chain wallet movements, detect whale accumulation/distribution, and surface entry/exit signals",
+    "description": "Monitor whale wallet activity on Ethereum, Base, Solana, and other chains. Track individual wallets for classification and behavior patterns, scan the market for recent large movements, or get a complete token-level view of top whale wallets and their aggregate signal. Built for trading agents, copy-trading bots, and on-chain intelligence workflows.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/whale-wallet-tracker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/whale-wallet-tracker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/whale-wallet-tracker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["whale-tracking", "on-chain", "crypto", "wallet-intelligence", "trading-signals"],
+    "keywords": [
+      "whale wallet tracker api",
+      "crypto whale movements api",
+      "on-chain whale alert api",
+      "large wallet tracking api",
+      "whale accumulation signal api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/track", "pricePerCallUsdc": 0.003, "description": "Track a specific wallet — classification, holdings, behavior, entry/exit signals" },
+          { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.004, "description": "Scan for recent whale movements across the market" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.006, "description": "ONE-CALL: top whale wallets + movements + aggregate signal for a token" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/track", "pricePerCallUsdc": 0.0015, "description": "Track wallet (discounted)" },
+          { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.002, "description": "Market scan (discounted)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "Full lookup (discounted)" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/track", "description": "Track a specific wallet — whale classification, recent activity, holdings, behavior patterns, entry/exit signals" },
+      { "method": "POST", "path": "/scan", "description": "Scan for recent large whale movements across the market with market summary" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: top whale wallets for a token + recent moves + concentration risk + aggregate signal" }
+    ]
+  }
+]

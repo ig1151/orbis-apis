@@ -447,6 +447,18 @@ import nftFloorPriceRouter from './routes/nft-floor-price-api/routes/intelligenc
 import nftFloorPriceOpenapiRouter from './routes/nft-floor-price-api/routes/openapi';
 import stakingRewardsRouter from './routes/staking-rewards-api/routes/intelligence';
 import stakingRewardsOpenapiRouter from './routes/staking-rewards-api/routes/openapi';
+import whaleWalletTrackerRouter from './routes/whale-wallet-tracker-api/routes/intelligence';
+import whaleWalletTrackerOpenapiRouter from './routes/whale-wallet-tracker-api/routes/openapi';
+import smartMoneyFlowRouter from './routes/smart-money-flow-api/routes/intelligence';
+import smartMoneyFlowOpenapiRouter from './routes/smart-money-flow-api/routes/openapi';
+import memeCoinIntelligenceRouter from './routes/meme-coin-intelligence-api/routes/intelligence';
+import memeCoinIntelligenceOpenapiRouter from './routes/meme-coin-intelligence-api/routes/openapi';
+import crossExchangeArbitrageRouter from './routes/cross-exchange-arbitrage-api/routes/intelligence';
+import crossExchangeArbitrageOpenapiRouter from './routes/cross-exchange-arbitrage-api/routes/openapi';
+import marketDominanceRouter from './routes/market-dominance-api/routes/intelligence';
+import marketDominanceOpenapiRouter from './routes/market-dominance-api/routes/openapi';
+import tokenHolderDistributionRouter from './routes/token-holder-distribution-api/routes/intelligence';
+import tokenHolderDistributionOpenapiRouter from './routes/token-holder-distribution-api/routes/openapi';
 import fxRatesRouter from './routes/fx-rates-api/routes/intelligence';
 import fxRatesOpenapiRouter from './routes/fx-rates-api/routes/openapi';
 import weatherRouter from './routes/weather-api/routes/intelligence';
@@ -971,6 +983,12 @@ const routerMap: Record<string, import("express").Router> = {
   'impermanent-loss': impermanentLossRouter,
   'nft-floor-price': nftFloorPriceRouter,
   'staking-rewards': stakingRewardsRouter,
+  'whale-wallet-tracker': whaleWalletTrackerRouter,
+  'smart-money-flow': smartMoneyFlowRouter,
+  'meme-coin-intelligence': memeCoinIntelligenceRouter,
+  'cross-exchange-arbitrage': crossExchangeArbitrageRouter,
+  'market-dominance': marketDominanceRouter,
+  'token-holder-distribution': tokenHolderDistributionRouter,
   'fx-rates': fxRatesRouter,
   'weather': weatherRouter,
   'ip-geolocation': ipGeolocationRouter,
@@ -1284,6 +1302,12 @@ const openapiMap: Record<string, import("express").Router> = {
   'impermanent-loss': impermanentLossOpenapiRouter,
   'nft-floor-price': nftFloorPriceOpenapiRouter,
   'staking-rewards': stakingRewardsOpenapiRouter,
+  'whale-wallet-tracker': whaleWalletTrackerOpenapiRouter,
+  'smart-money-flow': smartMoneyFlowOpenapiRouter,
+  'meme-coin-intelligence': memeCoinIntelligenceOpenapiRouter,
+  'cross-exchange-arbitrage': crossExchangeArbitrageOpenapiRouter,
+  'market-dominance': marketDominanceOpenapiRouter,
+  'token-holder-distribution': tokenHolderDistributionOpenapiRouter,
   'fx-rates': fxRatesOpenapiRouter,
   'weather': weatherOpenapiRouter,
   'geocoding': geocodingIntelligenceOpenapiRouter,

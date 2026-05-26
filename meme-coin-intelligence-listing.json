@@ -1,0 +1,60 @@
+[
+  {
+    "name": "Meme Coin Intelligence API",
+    "shortDescription": "Virality scores, rugpull risk, momentum analysis, and social signals for meme coins",
+    "description": "Get structured meme coin intelligence for trading agents: virality score (0-100), rugpull risk assessment with contract flags, momentum score, social signal strength, and lifecycle stage. Surface trending meme coins with risk filters, or run a full single-token analysis with entry window recommendations. Built for meme coin traders, risk-aware agents, and portfolio dashboards.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/meme-coin-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/meme-coin-intelligence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/meme-coin-intelligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["meme-coins", "rugpull-detection", "crypto", "virality", "trading-signals"],
+    "keywords": [
+      "meme coin intelligence api",
+      "meme coin rugpull risk api",
+      "crypto virality score api",
+      "meme coin trending api",
+      "meme coin momentum api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.003, "description": "Virality + rugpull risk score for a meme coin" },
+          { "method": "POST", "pathPattern": "/trending", "pricePerCallUsdc": 0.004, "description": "Trending meme coins ranked by virality with risk filters" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.006, "description": "ONE-CALL: full meme coin intelligence — virality, rugpull, momentum, lifecycle, entry window" }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.0015, "description": "Score (discounted)" },
+          { "method": "POST", "pathPattern": "/trending", "pricePerCallUsdc": 0.002, "description": "Trending (discounted)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "Full lookup (discounted)" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/score", "description": "Virality score, rugpull risk, social signal, and momentum score for a specific meme coin" },
+      { "method": "POST", "path": "/trending", "description": "Trending meme coins now — ranked by virality with rugpull risk level and lifecycle stage" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: complete meme coin intelligence — virality, rugpull, momentum, lifecycle stage, entry window, aggregate signal" }
+    ]
+  }
+]
