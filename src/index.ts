@@ -459,6 +459,18 @@ import marketDominanceRouter from './routes/market-dominance-api/routes/intellig
 import marketDominanceOpenapiRouter from './routes/market-dominance-api/routes/openapi';
 import tokenHolderDistributionRouter from './routes/token-holder-distribution-api/routes/intelligence';
 import tokenHolderDistributionOpenapiRouter from './routes/token-holder-distribution-api/routes/openapi';
+import lendingRatesRouter from './routes/lending-rates-api/routes/intelligence';
+import lendingRatesOpenapiRouter from './routes/lending-rates-api/routes/openapi';
+import borrowingRatesRouter from './routes/borrowing-rates-api/routes/intelligence';
+import borrowingRatesOpenapiRouter from './routes/borrowing-rates-api/routes/openapi';
+import tvlAnalyticsRouter from './routes/tvl-analytics-api/routes/intelligence';
+import tvlAnalyticsOpenapiRouter from './routes/tvl-analytics-api/routes/openapi';
+import honeypotScannerRouter from './routes/honeypot-scanner-api/routes/intelligence';
+import honeypotScannerOpenapiRouter from './routes/honeypot-scanner-api/routes/openapi';
+import nftCollectionAnalyticsRouter from './routes/nft-collection-analytics-api/routes/intelligence';
+import nftCollectionAnalyticsOpenapiRouter from './routes/nft-collection-analytics-api/routes/openapi';
+import aiTradeConfidenceRouter from './routes/ai-trade-confidence-api/routes/intelligence';
+import aiTradeConfidenceOpenapiRouter from './routes/ai-trade-confidence-api/routes/openapi';
 import fxRatesRouter from './routes/fx-rates-api/routes/intelligence';
 import fxRatesOpenapiRouter from './routes/fx-rates-api/routes/openapi';
 import weatherRouter from './routes/weather-api/routes/intelligence';
@@ -989,6 +1001,12 @@ const routerMap: Record<string, import("express").Router> = {
   'cross-exchange-arbitrage': crossExchangeArbitrageRouter,
   'market-dominance': marketDominanceRouter,
   'token-holder-distribution': tokenHolderDistributionRouter,
+  'lending-rates': lendingRatesRouter,
+  'borrowing-rates': borrowingRatesRouter,
+  'tvl-analytics': tvlAnalyticsRouter,
+  'honeypot-scanner': honeypotScannerRouter,
+  'nft-collection-analytics': nftCollectionAnalyticsRouter,
+  'ai-trade-confidence': aiTradeConfidenceRouter,
   'fx-rates': fxRatesRouter,
   'weather': weatherRouter,
   'ip-geolocation': ipGeolocationRouter,
@@ -1308,6 +1326,12 @@ const openapiMap: Record<string, import("express").Router> = {
   'cross-exchange-arbitrage': crossExchangeArbitrageOpenapiRouter,
   'market-dominance': marketDominanceOpenapiRouter,
   'token-holder-distribution': tokenHolderDistributionOpenapiRouter,
+  'lending-rates': lendingRatesOpenapiRouter,
+  'borrowing-rates': borrowingRatesOpenapiRouter,
+  'tvl-analytics': tvlAnalyticsOpenapiRouter,
+  'honeypot-scanner': honeypotScannerOpenapiRouter,
+  'nft-collection-analytics': nftCollectionAnalyticsOpenapiRouter,
+  'ai-trade-confidence': aiTradeConfidenceOpenapiRouter,
   'fx-rates': fxRatesOpenapiRouter,
   'weather': weatherOpenapiRouter,
   'geocoding': geocodingIntelligenceOpenapiRouter,

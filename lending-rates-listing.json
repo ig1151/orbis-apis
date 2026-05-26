@@ -1,0 +1,75 @@
+[
+  {
+    "name": "Lending Rates API",
+    "shortDescription": "Compare DeFi lending rates across Aave, Compound, Spark, and Morpho — find the best yield with risk context",
+    "description": "Compare DeFi lending rates across Aave, Compound, Spark, Morpho, Euler, and other major protocols. Get current APY, 7-day and 30-day averages, utilization rates, and rate trends. Compare risk-adjusted yields side-by-side with protocol audit status, insurance availability, and withdrawal delays. Get a full ONE-CALL intelligence package with the best rate, trend analysis, protocol risk, and deposit recommendation. Built for yield optimization agents, DeFi portfolio managers, and treasury automation.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/lending-rates",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/lending-rates/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/lending-rates/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["lending-rates", "defi-yield", "aave", "compound", "crypto"],
+    "keywords": [
+      "defi lending rates api",
+      "aave compound lending comparison api",
+      "best crypto yield api",
+      "defi protocol rates api",
+      "risk adjusted yield api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rates",
+            "pricePerCallUsdc": 0.003,
+            "description": "Current lending rates for an asset across protocols"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.003,
+            "description": "Risk-adjusted side-by-side protocol comparison"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: best rate + trend + protocol risk + recommendation"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/rates", "pricePerCallUsdc": 0.0015, "description": "Rates (discounted)" },
+          { "method": "POST", "pathPattern": "/compare", "pricePerCallUsdc": 0.0015, "description": "Compare (discounted)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "Full lookup (discounted)" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/rates", "description": "Current lending rates across protocols — APY, utilization, trend, supply cap" },
+      { "method": "POST", "path": "/compare", "description": "Risk-adjusted yield comparison — audit status, insurance, withdrawal delay, notable risks" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: best rate + 30d trend + protocol risk + deposit action recommendation" }
+    ]
+  }
+]

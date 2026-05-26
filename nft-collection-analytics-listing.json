@@ -1,0 +1,75 @@
+[
+  {
+    "name": "NFT Collection Analytics API",
+    "shortDescription": "Floor price, volume, whale holders, and market cycle stage for any NFT collection",
+    "description": "Analyze NFT collection performance with floor price, volume trends, holder distribution, whale activity, and supply metrics. Surface trending collections ranked by momentum. Identify the current market cycle stage (discovery, accumulation, hype, distribution, decline) for any collection. Get a full ONE-CALL intelligence package with metrics, holder analysis, cycle stage, and investment signal. Built for NFT trading agents, portfolio trackers, and collection analytics dashboards.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/nft-collection-analytics",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/nft-collection-analytics/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-collection-analytics/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["nft", "collection-analytics", "floor-price", "crypto", "trading-signals"],
+    "keywords": [
+      "nft collection analytics api",
+      "nft floor price api",
+      "nft volume tracker api",
+      "nft whale holder api",
+      "nft market cycle api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/collection",
+            "pricePerCallUsdc": 0.003,
+            "description": "Floor, volume, holders, and supply data for a collection"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.004,
+            "description": "Trending collections ranked by momentum score"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: full collection intelligence with cycle stage and investment signal"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/collection", "pricePerCallUsdc": 0.0015, "description": "Collection (discounted)" },
+          { "method": "POST", "pathPattern": "/trending", "pricePerCallUsdc": 0.002, "description": "Trending (discounted)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "Full lookup (discounted)" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/collection", "description": "Floor price, volume, holder count, whale %, listed supply, and 24h/7d/30d changes" },
+      { "method": "POST", "path": "/trending", "description": "Trending NFT collections — momentum score, floor change, volume, trend label, market sentiment" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: metrics + holder analysis + market cycle stage + investment signal for a collection" }
+    ]
+  }
+]

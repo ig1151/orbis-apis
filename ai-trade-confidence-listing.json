@@ -1,0 +1,75 @@
+[
+  {
+    "name": "AI Trade Confidence API",
+    "shortDescription": "AI-scored trade signal confidence with setup validation, risk-reward analysis, and go/no-go verdict",
+    "description": "Score the confidence of any trade signal using AI multi-factor analysis across technical, fundamental, sentiment, on-chain, and macro dimensions. Validate complete trade setups with risk-reward ratio, confluence analysis, key support/resistance levels, and setup grade (A-F). Get a full ONE-CALL intelligence package with confidence score, setup validation, risk assessment, and a clear execute/wait/reduce_size/pass verdict. Built for autonomous trading agents, algo strategy pipelines, and risk-aware portfolio managers requiring a second opinion before execution.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/ai-trade-confidence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ai-trade-confidence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ai-trade-confidence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["trade-confidence", "signal-validation", "ai-trading", "crypto", "risk-assessment"],
+    "keywords": [
+      "ai trade confidence api",
+      "trade signal validation api",
+      "crypto trade confidence score api",
+      "go no go trade verdict api",
+      "trade setup risk reward api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.010,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.003,
+            "description": "AI confidence score for a directional trade signal"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.005,
+            "description": "Full trade setup validation with R:R, confluence, and key levels"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.010,
+            "description": "ONE-CALL: confidence + validation + risk + go/no-go verdict"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.0015, "description": "Score (discounted)" },
+          { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.0025, "description": "Validate (discounted)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.005, "description": "Full lookup (discounted)" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/score", "description": "Confidence score (0-100) with technical, fundamental, sentiment, and on-chain factor breakdown" },
+      { "method": "POST", "path": "/validate", "description": "Trade setup validation — R:R ratio, setup grade A-F, confluence score, key support/resistance" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: confidence score + setup validation + risk assessment + execute/wait/pass verdict" }
+    ]
+  }
+]

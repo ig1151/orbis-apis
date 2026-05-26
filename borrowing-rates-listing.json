@@ -1,0 +1,75 @@
+[
+  {
+    "name": "Borrowing Rates API",
+    "shortDescription": "Find the cheapest DeFi borrow across protocols with collateral options and liquidation risk analysis",
+    "description": "Compare DeFi borrowing costs across Aave, Compound, Spark, Morpho, and other protocols. Get variable and stable borrow APRs, utilization, and rate trends. Optimize your borrow strategy with collateral analysis, LTV parameters, health factor projections, and liquidation risk scoring. Get a full ONE-CALL package with cheapest borrow, collateral options, liquidation risk, and strategy recommendation. Built for leveraged traders, treasury borrowing agents, and DeFi debt managers.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/borrowing-rates",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/borrowing-rates/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/borrowing-rates/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["borrowing-rates", "defi-lending", "liquidation-risk", "crypto", "leverage"],
+    "keywords": [
+      "defi borrowing rates api",
+      "crypto borrow cost api",
+      "aave compound borrow api",
+      "liquidation risk api",
+      "defi leverage strategy api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rates",
+            "pricePerCallUsdc": 0.003,
+            "description": "Current borrowing rates for an asset across protocols"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.004,
+            "description": "Cheapest borrow strategy with collateral and liquidation risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: cheapest borrow + collateral options + risk + strategy"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/rates", "pricePerCallUsdc": 0.0015, "description": "Rates (discounted)" },
+          { "method": "POST", "pathPattern": "/optimize", "pricePerCallUsdc": 0.002, "description": "Optimize (discounted)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "Full lookup (discounted)" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/rates", "description": "Variable and stable borrow APRs across protocols — utilization, rate trend, borrow cap" },
+      { "method": "POST", "path": "/optimize", "description": "Cheapest borrow strategy with collateral — LTV, health factor, liquidation risk level" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: cheapest borrow + all collateral options + liquidation risk + strategy recommendation" }
+    ]
+  }
+]

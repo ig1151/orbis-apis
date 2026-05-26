@@ -1,0 +1,75 @@
+[
+  {
+    "name": "TVL Analytics API",
+    "shortDescription": "Track DeFi protocol TVL, chain dominance, and growth trends — with health scores and investment signals",
+    "description": "Track Total Value Locked across DeFi protocols and blockchains. Get current TVL, chain-by-chain breakdown, 7/30/90-day growth trends, market share, and ATH drawdown. Analyze chain dominance and TVL flow rotation across Ethereum, L2s, and alt-L1s. Get a full ONE-CALL intelligence package with protocol TVL, growth quality score, health assessment, and investment signal. Built for DeFi research agents, portfolio managers, and on-chain analytics workflows.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/tvl-analytics",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/tvl-analytics/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/tvl-analytics/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["tvl", "defi-analytics", "protocol-health", "crypto", "on-chain"],
+    "keywords": [
+      "tvl analytics api",
+      "defi tvl tracker api",
+      "protocol total value locked api",
+      "defi growth trend api",
+      "chain tvl comparison api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/protocol",
+            "pricePerCallUsdc": 0.003,
+            "description": "TVL snapshot for a protocol with trend and market position"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/chains",
+            "pricePerCallUsdc": 0.003,
+            "description": "TVL breakdown by chain with flow and rotation signal"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: TVL + growth trend + health score + investment signal"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/protocol", "pricePerCallUsdc": 0.0015, "description": "Protocol TVL (discounted)" },
+          { "method": "POST", "pathPattern": "/chains", "pricePerCallUsdc": 0.0015, "description": "Chain breakdown (discounted)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "Full lookup (discounted)" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/protocol", "description": "TVL for a protocol — chain breakdown, 24h/7d/30d change, ATH drawdown, market share, rank" },
+      { "method": "POST", "path": "/chains", "description": "TVL by blockchain — market share, flow direction, top protocol per chain, rotation signal" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: TVL snapshot + growth quality + health score + investment signal for a protocol" }
+    ]
+  }
+]
