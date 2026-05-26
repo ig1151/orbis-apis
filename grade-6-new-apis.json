@@ -1,0 +1,4148 @@
+{
+  "apis": [
+    {
+      "info": {
+        "name": "Fear & Greed Index API",
+        "slug": "fear-greed",
+        "version": "1.0.0",
+        "grade": "A+",
+        "mcp_compatible": true,
+        "privacy": {
+          "data_stored": false,
+          "retention": "none"
+        },
+        "pricing": {
+          "free_tier": {
+            "requests_per_day": 100,
+            "requests_per_month": 3000
+          },
+          "pay_per_call": {
+            "current": "$0.002",
+            "history": "$0.003",
+            "lookup": "$0.004"
+          },
+          "high_volume": {
+            "current": "$0.001",
+            "history": "$0.0015",
+            "lookup": "$0.002"
+          }
+        },
+        "rate_limits": {
+          "free": "100/day",
+          "paid": "50000/day",
+          "enterprise": "500000/day"
+        },
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/current",
+            "description": "Current Fear & Greed Index \u2014 value (0-100), label, drivers, and trade signal"
+          },
+          {
+            "method": "POST",
+            "path": "/history",
+            "description": "Historical daily Fear & Greed readings with summary stats and streak analysis"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL: current index + 30d history + contrarian opportunity signal",
+            "x_one_call": true
+          }
+        ],
+        "execution_chain": {
+          "previous": "crypto-price",
+          "next": "top-movers",
+          "optional_next": [
+            "market-signal",
+            "onchain-signal"
+          ]
+        }
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Fear & Greed Index API",
+          "version": "1.0.0",
+          "description": "Crypto and market Fear & Greed Index \u2014 current value, history, and drivers for sentiment-aware trading agents and portfolio managers.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x-human-approval-required": false,
+          "x-pricing": {
+            "free_tier": {
+              "requests_per_day": 100,
+              "requests_per_month": 3000
+            },
+            "pay_per_call": {
+              "current": "$0.002",
+              "history": "$0.003",
+              "lookup": "$0.004"
+            }
+          },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows.",
+          "x-paper-mode-recommended": true
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/fear-greed"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "fearGreedDiscovery",
+              "summary": "API discovery \u2014 name, version, available endpoints",
+              "security": [],
+              "responses": {
+                "200": {
+                  "description": "Discovery info"
+                }
+              }
+            }
+          },
+          "/current": {
+            "post": {
+              "operationId": "fearGreedCurrent",
+              "summary": "Current Fear & Greed Index \u2014 value, label, drivers, market context, and signal",
+              "requestBody": {
+                "required": false,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "asset": {
+                          "type": "string",
+                          "default": "crypto",
+                          "enum": [
+                            "crypto",
+                            "stocks",
+                            "global"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Current index with drivers and trade signal",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "asset": {
+                            "type": "string"
+                          },
+                          "index": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              "label": {
+                                "type": "string",
+                                "enum": [
+                                  "Extreme Fear",
+                                  "Fear",
+                                  "Neutral",
+                                  "Greed",
+                                  "Extreme Greed"
+                                ]
+                              },
+                              "previous_day": {
+                                "type": "number"
+                              },
+                              "previous_week": {
+                                "type": "number"
+                              },
+                              "previous_month": {
+                                "type": "number"
+                              },
+                              "change_24h": {
+                                "type": "number"
+                              },
+                              "trend": {
+                                "type": "string",
+                                "enum": [
+                                  "improving",
+                                  "deteriorating",
+                                  "stable"
+                                ]
+                              }
+                            }
+                          },
+                          "drivers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "factor": {
+                                  "type": "string"
+                                },
+                                "weight_pct": {
+                                  "type": "number"
+                                },
+                                "current_reading": {
+                                  "type": "string"
+                                },
+                                "sentiment": {
+                                  "type": "string",
+                                  "enum": [
+                                    "bearish",
+                                    "neutral",
+                                    "bullish"
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "market_context": {
+                            "type": "string"
+                          },
+                          "signal": {
+                            "type": "string",
+                            "enum": [
+                              "strong_buy",
+                              "buy",
+                              "neutral",
+                              "sell",
+                              "strong_sell"
+                            ]
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "paper_mode_recommended": {
+                            "type": "boolean"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/history": {
+            "post": {
+              "operationId": "fearGreedHistory",
+              "summary": "Historical Fear & Greed values \u2014 daily readings, summary stats, and streak analysis",
+              "requestBody": {
+                "required": false,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "days": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 365,
+                          "default": 30
+                        },
+                        "asset": {
+                          "type": "string",
+                          "default": "crypto"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Historical readings with summary",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "asset": {
+                            "type": "string"
+                          },
+                          "period_days": {
+                            "type": "integer"
+                          },
+                          "history": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "date": {
+                                  "type": "string",
+                                  "format": "date"
+                                },
+                                "value": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "maximum": 100
+                                },
+                                "label": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "summary": {
+                            "type": "object",
+                            "properties": {
+                              "avg_value": {
+                                "type": "number"
+                              },
+                              "avg_label": {
+                                "type": "string"
+                              },
+                              "days_in_fear": {
+                                "type": "integer"
+                              },
+                              "days_in_greed": {
+                                "type": "integer"
+                              },
+                              "min_value": {
+                                "type": "number"
+                              },
+                              "max_value": {
+                                "type": "number"
+                              },
+                              "current_streak": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "fearGreedLookup",
+              "summary": "ONE-CALL: current index + 30d history + contrarian opportunity signal",
+              "x-one-call": true,
+              "requestBody": {
+                "required": false,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "asset": {
+                          "type": "string",
+                          "default": "crypto"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Full sentiment intelligence",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "asset": {
+                            "type": "string"
+                          },
+                          "index": {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              "label": {
+                                "type": "string",
+                                "enum": [
+                                  "Extreme Fear",
+                                  "Fear",
+                                  "Neutral",
+                                  "Greed",
+                                  "Extreme Greed"
+                                ]
+                              },
+                              "previous_day": {
+                                "type": "number"
+                              },
+                              "previous_week": {
+                                "type": "number"
+                              },
+                              "previous_month": {
+                                "type": "number"
+                              },
+                              "change_24h": {
+                                "type": "number"
+                              },
+                              "trend": {
+                                "type": "string",
+                                "enum": [
+                                  "improving",
+                                  "deteriorating",
+                                  "stable"
+                                ]
+                              }
+                            }
+                          },
+                          "drivers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "factor": {
+                                  "type": "string"
+                                },
+                                "weight_pct": {
+                                  "type": "number"
+                                },
+                                "current_reading": {
+                                  "type": "string"
+                                },
+                                "sentiment": {
+                                  "type": "string",
+                                  "enum": [
+                                    "bearish",
+                                    "neutral",
+                                    "bullish"
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "30d_summary": {
+                            "type": "object",
+                            "properties": {
+                              "avg_value": {
+                                "type": "number"
+                              },
+                              "days_in_fear": {
+                                "type": "integer"
+                              },
+                              "days_in_greed": {
+                                "type": "integer"
+                              },
+                              "current_streak": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "market_context": {
+                            "type": "string"
+                          },
+                          "signal": {
+                            "type": "string",
+                            "enum": [
+                              "strong_buy",
+                              "buy",
+                              "neutral",
+                              "sell",
+                              "strong_sell"
+                            ]
+                          },
+                          "contrarian_opportunity": {
+                            "type": "boolean"
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "paper_mode_recommended": {
+                            "type": "boolean"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          }
+        }
+      }
+    },
+    {
+      "info": {
+        "name": "Stablecoin Depeg Risk API",
+        "slug": "stablecoin-depeg",
+        "version": "1.0.0",
+        "grade": "A+",
+        "mcp_compatible": true,
+        "privacy": {
+          "data_stored": false,
+          "retention": "none"
+        },
+        "pricing": {
+          "free_tier": {
+            "requests_per_day": 100,
+            "requests_per_month": 3000
+          },
+          "pay_per_call": {
+            "check": "$0.003",
+            "monitor": "$0.004",
+            "lookup": "$0.005"
+          },
+          "high_volume": {
+            "check": "$0.0015",
+            "monitor": "$0.002",
+            "lookup": "$0.0025"
+          }
+        },
+        "rate_limits": {
+          "free": "100/day",
+          "paid": "50000/day",
+          "enterprise": "500000/day"
+        },
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/check",
+            "description": "Check stablecoin peg deviation, collateral ratio, reserve transparency, and risk score"
+          },
+          {
+            "method": "POST",
+            "path": "/monitor",
+            "description": "Batch monitor up to 20 stablecoins \u2014 risk levels, alerts, market health"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL: full stablecoin intelligence \u2014 peg, risk, history, issuer, market data",
+            "x_one_call": true
+          }
+        ],
+        "execution_chain": {
+          "previous": "wallet-balance",
+          "next": "defi-position-risk",
+          "optional_next": [
+            "stablecoin-yield",
+            "yield-farming"
+          ]
+        }
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Stablecoin Depeg Risk API",
+          "version": "1.0.0",
+          "description": "Monitor stablecoin peg stability, collateral health, and depeg risk. Built for DeFi agents, risk managers, and autonomous trading workflows that hold or interact with stablecoins.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x-human-approval-required": false,
+          "x-pricing": {
+            "free_tier": {
+              "requests_per_day": 100,
+              "requests_per_month": 3000
+            },
+            "pay_per_call": {
+              "check": "$0.003",
+              "monitor": "$0.004",
+              "lookup": "$0.005"
+            }
+          },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice."
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/stablecoin-depeg"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "depegDiscovery",
+              "summary": "API discovery",
+              "security": [],
+              "responses": {
+                "200": {
+                  "description": "Discovery info"
+                }
+              }
+            }
+          },
+          "/check": {
+            "post": {
+              "operationId": "depegCheck",
+              "summary": "Stablecoin peg check \u2014 deviation, risk score, collateral, recommendation",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "symbol"
+                      ],
+                      "properties": {
+                        "symbol": {
+                          "type": "string",
+                          "example": "USDT"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Depeg risk result",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "symbol": {
+                            "type": "string"
+                          },
+                          "peg": {
+                            "type": "object",
+                            "properties": {
+                              "target": {
+                                "type": "number"
+                              },
+                              "current_price": {
+                                "type": "number"
+                              },
+                              "deviation_pct": {
+                                "type": "number"
+                              },
+                              "deviation_direction": {
+                                "type": "string",
+                                "enum": [
+                                  "above",
+                                  "below",
+                                  "on_peg"
+                                ]
+                              },
+                              "is_depegged": {
+                                "type": "boolean"
+                              },
+                              "depeg_threshold_pct": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "risk": {
+                            "type": "object",
+                            "properties": {
+                              "score": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              "level": {
+                                "type": "string",
+                                "enum": [
+                                  "low",
+                                  "medium",
+                                  "high",
+                                  "critical"
+                                ]
+                              },
+                              "collateral_ratio": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "collateral_type": {
+                                "type": "string",
+                                "enum": [
+                                  "fiat-backed",
+                                  "crypto-backed",
+                                  "algorithmic",
+                                  "hybrid"
+                                ]
+                              },
+                              "reserve_transparency": {
+                                "type": "string",
+                                "enum": [
+                                  "high",
+                                  "medium",
+                                  "low",
+                                  "unknown"
+                                ]
+                              },
+                              "audit_status": {
+                                "type": "string",
+                                "enum": [
+                                  "audited",
+                                  "unaudited",
+                                  "partial"
+                                ]
+                              }
+                            }
+                          },
+                          "history": {
+                            "type": "object",
+                            "properties": {
+                              "largest_depeg_30d_pct": {
+                                "type": "number"
+                              },
+                              "depeg_events_90d": {
+                                "type": "integer"
+                              },
+                              "days_since_last_depeg": {
+                                "type": "integer",
+                                "nullable": true
+                              }
+                            }
+                          },
+                          "recommendation": {
+                            "type": "string",
+                            "enum": [
+                              "safe",
+                              "monitor",
+                              "reduce_exposure",
+                              "exit"
+                            ]
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Missing symbol"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/monitor": {
+            "post": {
+              "operationId": "depegMonitor",
+              "summary": "Batch stablecoin monitoring \u2014 up to 20 symbols with alerts",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "symbols"
+                      ],
+                      "properties": {
+                        "symbols": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 1,
+                          "maxItems": 20
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Batch monitoring results",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "total": {
+                            "type": "integer"
+                          },
+                          "results": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "current_price": {
+                                  "type": "number"
+                                },
+                                "deviation_pct": {
+                                  "type": "number"
+                                },
+                                "risk_level": {
+                                  "type": "string",
+                                  "enum": [
+                                    "low",
+                                    "medium",
+                                    "high",
+                                    "critical"
+                                  ]
+                                },
+                                "recommendation": {
+                                  "type": "string"
+                                },
+                                "is_depegged": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          },
+                          "alerts": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "market_health": {
+                            "type": "string",
+                            "enum": [
+                              "stable",
+                              "stressed",
+                              "crisis"
+                            ]
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid input"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "depegLookup",
+              "summary": "ONE-CALL: full depeg intelligence \u2014 peg, risk, history, issuer, market",
+              "x-one-call": true,
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "symbol"
+                      ],
+                      "properties": {
+                        "symbol": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Full stablecoin intelligence",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "symbol": {
+                            "type": "string"
+                          },
+                          "peg": {
+                            "type": "object",
+                            "properties": {
+                              "target": {
+                                "type": "number"
+                              },
+                              "current_price": {
+                                "type": "number"
+                              },
+                              "deviation_pct": {
+                                "type": "number"
+                              },
+                              "deviation_direction": {
+                                "type": "string",
+                                "enum": [
+                                  "above",
+                                  "below",
+                                  "on_peg"
+                                ]
+                              },
+                              "is_depegged": {
+                                "type": "boolean"
+                              },
+                              "depeg_threshold_pct": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "risk": {
+                            "type": "object",
+                            "properties": {
+                              "score": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                              },
+                              "level": {
+                                "type": "string",
+                                "enum": [
+                                  "low",
+                                  "medium",
+                                  "high",
+                                  "critical"
+                                ]
+                              },
+                              "collateral_ratio": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "collateral_type": {
+                                "type": "string",
+                                "enum": [
+                                  "fiat-backed",
+                                  "crypto-backed",
+                                  "algorithmic",
+                                  "hybrid"
+                                ]
+                              },
+                              "reserve_transparency": {
+                                "type": "string",
+                                "enum": [
+                                  "high",
+                                  "medium",
+                                  "low",
+                                  "unknown"
+                                ]
+                              },
+                              "audit_status": {
+                                "type": "string",
+                                "enum": [
+                                  "audited",
+                                  "unaudited",
+                                  "partial"
+                                ]
+                              }
+                            }
+                          },
+                          "history": {
+                            "type": "object",
+                            "properties": {
+                              "largest_depeg_30d_pct": {
+                                "type": "number"
+                              },
+                              "depeg_events_90d": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "issuer": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "jurisdiction": {
+                                "type": "string"
+                              },
+                              "regulated": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "market": {
+                            "type": "object",
+                            "properties": {
+                              "market_cap_usd": {
+                                "type": "number"
+                              },
+                              "volume_24h_usd": {
+                                "type": "number"
+                              },
+                              "rank_among_stablecoins": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "recommendation": {
+                            "type": "string",
+                            "enum": [
+                              "safe",
+                              "monitor",
+                              "reduce_exposure",
+                              "exit"
+                            ]
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Missing symbol"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          }
+        }
+      }
+    },
+    {
+      "info": {
+        "name": "Top Movers API",
+        "slug": "top-movers",
+        "version": "1.0.0",
+        "grade": "A+",
+        "mcp_compatible": true,
+        "privacy": {
+          "data_stored": false,
+          "retention": "none"
+        },
+        "pricing": {
+          "free_tier": {
+            "requests_per_day": 100,
+            "requests_per_month": 3000
+          },
+          "pay_per_call": {
+            "gainers": "$0.002",
+            "losers": "$0.002",
+            "trending": "$0.002",
+            "lookup": "$0.005"
+          },
+          "high_volume": {
+            "gainers": "$0.001",
+            "losers": "$0.001",
+            "trending": "$0.001",
+            "lookup": "$0.0025"
+          }
+        },
+        "rate_limits": {
+          "free": "100/day",
+          "paid": "50000/day",
+          "enterprise": "500000/day"
+        },
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/gainers",
+            "description": "Top crypto gainers ranked by % gain \u2014 with momentum, signal, and category"
+          },
+          {
+            "method": "POST",
+            "path": "/losers",
+            "description": "Top crypto losers ranked by % decline \u2014 with recovery likelihood and cause"
+          },
+          {
+            "method": "POST",
+            "path": "/trending",
+            "description": "Trending coins by search volume, social mentions, and on-chain activity"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL: gainers + losers + trending + market sentiment + sector rotation",
+            "x_one_call": true
+          }
+        ],
+        "execution_chain": {
+          "previous": "fear-greed",
+          "next": "crypto-price",
+          "optional_next": [
+            "token-trust",
+            "market-signal"
+          ]
+        }
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Top Movers API",
+          "version": "1.0.0",
+          "description": "Real-time top crypto gainers, losers, and trending coins. Built for trading agents, market scanners, and portfolio dashboards that need to act on momentum signals.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x-human-approval-required": true,
+          "x-pricing": {
+            "free_tier": {
+              "requests_per_day": 100,
+              "requests_per_month": 3000
+            },
+            "pay_per_call": {
+              "gainers": "$0.002",
+              "losers": "$0.002",
+              "trending": "$0.002",
+              "lookup": "$0.005"
+            }
+          },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice.",
+          "x-paper-mode-recommended": true
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/top-movers"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "moversDiscovery",
+              "summary": "API discovery",
+              "security": [],
+              "responses": {
+                "200": {
+                  "description": "Discovery info"
+                }
+              }
+            }
+          },
+          "/gainers": {
+            "post": {
+              "operationId": "topGainers",
+              "summary": "Top crypto gainers \u2014 ranked by % gain with momentum, signal, and category",
+              "requestBody": {
+                "required": false,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "limit": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100,
+                          "default": 10
+                        },
+                        "timeframe": {
+                          "type": "string",
+                          "enum": [
+                            "1h",
+                            "4h",
+                            "24h",
+                            "7d"
+                          ],
+                          "default": "24h"
+                        },
+                        "min_market_cap_usd": {
+                          "type": "number",
+                          "default": 0
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Top gainers list",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "timeframe": {
+                            "type": "string"
+                          },
+                          "gainers": {
+                            "type": "array",
+                            "items": {
+                              "allOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "rank": {
+                                      "type": "integer"
+                                    },
+                                    "symbol": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "price_usd": {
+                                      "type": "number"
+                                    },
+                                    "change_pct": {
+                                      "type": "number"
+                                    },
+                                    "volume_24h_usd": {
+                                      "type": "number"
+                                    },
+                                    "market_cap_usd": {
+                                      "type": "number"
+                                    },
+                                    "category": {
+                                      "type": "string",
+                                      "enum": [
+                                        "layer1",
+                                        "layer2",
+                                        "defi",
+                                        "meme",
+                                        "nft",
+                                        "stablecoin",
+                                        "other"
+                                      ]
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "signal": {
+                                      "type": "string",
+                                      "enum": [
+                                        "bullish",
+                                        "neutral"
+                                      ]
+                                    },
+                                    "momentum": {
+                                      "type": "string",
+                                      "enum": [
+                                        "accelerating",
+                                        "steady",
+                                        "fading"
+                                      ]
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "market_context": {
+                            "type": "string"
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "paper_mode_recommended": {
+                            "type": "boolean"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/losers": {
+            "post": {
+              "operationId": "topLosers",
+              "summary": "Top crypto losers \u2014 ranked by % decline with recovery likelihood and cause",
+              "requestBody": {
+                "required": false,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "limit": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 100,
+                          "default": 10
+                        },
+                        "timeframe": {
+                          "type": "string",
+                          "enum": [
+                            "1h",
+                            "4h",
+                            "24h",
+                            "7d"
+                          ],
+                          "default": "24h"
+                        },
+                        "min_market_cap_usd": {
+                          "type": "number",
+                          "default": 0
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Top losers list",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "timeframe": {
+                            "type": "string"
+                          },
+                          "losers": {
+                            "type": "array",
+                            "items": {
+                              "allOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "rank": {
+                                      "type": "integer"
+                                    },
+                                    "symbol": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "price_usd": {
+                                      "type": "number"
+                                    },
+                                    "change_pct": {
+                                      "type": "number"
+                                    },
+                                    "volume_24h_usd": {
+                                      "type": "number"
+                                    },
+                                    "market_cap_usd": {
+                                      "type": "number"
+                                    },
+                                    "category": {
+                                      "type": "string",
+                                      "enum": [
+                                        "layer1",
+                                        "layer2",
+                                        "defi",
+                                        "meme",
+                                        "nft",
+                                        "stablecoin",
+                                        "other"
+                                      ]
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "signal": {
+                                      "type": "string",
+                                      "enum": [
+                                        "bearish",
+                                        "neutral"
+                                      ]
+                                    },
+                                    "recovery_likelihood": {
+                                      "type": "string",
+                                      "enum": [
+                                        "high",
+                                        "medium",
+                                        "low"
+                                      ]
+                                    },
+                                    "possible_cause": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "market_context": {
+                            "type": "string"
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "paper_mode_recommended": {
+                            "type": "boolean"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/trending": {
+            "post": {
+              "operationId": "trending",
+              "summary": "Trending coins \u2014 by search volume, social mentions, and on-chain activity",
+              "requestBody": {
+                "required": false,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "limit": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 50,
+                          "default": 10
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Trending coins with trend score and drivers",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "trending": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "rank": {
+                                  "type": "integer"
+                                },
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "price_usd": {
+                                  "type": "number"
+                                },
+                                "change_pct_24h": {
+                                  "type": "number"
+                                },
+                                "trend_score": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "maximum": 100
+                                },
+                                "trend_drivers": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "enum": [
+                                      "social_volume",
+                                      "search_spike",
+                                      "on_chain_activity",
+                                      "exchange_listing",
+                                      "news"
+                                    ]
+                                  }
+                                },
+                                "category": {
+                                  "type": "string"
+                                },
+                                "risk_level": {
+                                  "type": "string",
+                                  "enum": [
+                                    "low",
+                                    "medium",
+                                    "high"
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "narrative": {
+                            "type": "string"
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "paper_mode_recommended": {
+                            "type": "boolean"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "moversLookup",
+              "summary": "ONE-CALL: gainers + losers + trending + market sentiment + sector rotation",
+              "x-one-call": true,
+              "requestBody": {
+                "required": false,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "limit": {
+                          "type": "integer",
+                          "default": 5
+                        },
+                        "timeframe": {
+                          "type": "string",
+                          "default": "24h",
+                          "enum": [
+                            "1h",
+                            "4h",
+                            "24h",
+                            "7d"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Full market movers snapshot",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "timeframe": {
+                            "type": "string"
+                          },
+                          "gainers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "rank": {
+                                  "type": "integer"
+                                },
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "change_pct": {
+                                  "type": "number"
+                                },
+                                "price_usd": {
+                                  "type": "number"
+                                },
+                                "momentum": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "losers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "rank": {
+                                  "type": "integer"
+                                },
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "change_pct": {
+                                  "type": "number"
+                                },
+                                "price_usd": {
+                                  "type": "number"
+                                },
+                                "recovery_likelihood": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "trending": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "rank": {
+                                  "type": "integer"
+                                },
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "trend_score": {
+                                  "type": "number"
+                                },
+                                "trend_drivers": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "market_sentiment": {
+                            "type": "string",
+                            "enum": [
+                              "risk_on",
+                              "risk_off",
+                              "mixed"
+                            ]
+                          },
+                          "sector_rotation": {
+                            "type": "string"
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "paper_mode_recommended": {
+                            "type": "boolean"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          }
+        }
+      }
+    },
+    {
+      "info": {
+        "name": "Impermanent Loss API",
+        "slug": "impermanent-loss",
+        "version": "1.0.0",
+        "grade": "A+",
+        "mcp_compatible": true,
+        "privacy": {
+          "data_stored": false,
+          "retention": "none"
+        },
+        "pricing": {
+          "free_tier": {
+            "requests_per_day": 100,
+            "requests_per_month": 3000
+          },
+          "pay_per_call": {
+            "calculate": "$0.003",
+            "simulate": "$0.004",
+            "lookup": "$0.005"
+          },
+          "high_volume": {
+            "calculate": "$0.0015",
+            "simulate": "$0.002",
+            "lookup": "$0.0025"
+          }
+        },
+        "rate_limits": {
+          "free": "100/day",
+          "paid": "50000/day",
+          "enterprise": "500000/day"
+        },
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/calculate",
+            "description": "Calculate current impermanent loss for an AMM LP position using x*y=k formula"
+          },
+          {
+            "method": "POST",
+            "path": "/simulate",
+            "description": "Simulate IL across custom price change scenarios \u2014 compare LP vs HODL value"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL: IL calculation + scenarios + position value + exit recommendation",
+            "x_one_call": true
+          }
+        ],
+        "execution_chain": {
+          "previous": "defi-pool-data",
+          "next": "defi-position-risk",
+          "optional_next": [
+            "stablecoin-yield",
+            "yield-farming"
+          ]
+        }
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Impermanent Loss API",
+          "version": "1.0.0",
+          "description": "Calculate and simulate impermanent loss for AMM liquidity pool positions. Supports x*y=k constant product formula, multi-scenario simulation, and exit recommendations for DeFi LP agents.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x-human-approval-required": false,
+          "x-pricing": {
+            "free_tier": {
+              "requests_per_day": 100,
+              "requests_per_month": 3000
+            },
+            "pay_per_call": {
+              "calculate": "$0.003",
+              "simulate": "$0.004",
+              "lookup": "$0.005"
+            }
+          },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice."
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/impermanent-loss"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "ilDiscovery",
+              "summary": "API discovery",
+              "security": [],
+              "responses": {
+                "200": {
+                  "description": "Discovery info"
+                }
+              }
+            }
+          },
+          "/calculate": {
+            "post": {
+              "operationId": "ilCalculate",
+              "summary": "Calculate current impermanent loss for an AMM LP position using x*y=k formula",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "token_a",
+                        "token_b",
+                        "entry_price_a",
+                        "entry_price_b",
+                        "current_price_a",
+                        "current_price_b"
+                      ],
+                      "properties": {
+                        "token_a": {
+                          "type": "string",
+                          "example": "ETH"
+                        },
+                        "token_b": {
+                          "type": "string",
+                          "example": "USDC"
+                        },
+                        "entry_price_a": {
+                          "type": "number",
+                          "description": "Price of token A when LP position was opened"
+                        },
+                        "entry_price_b": {
+                          "type": "number",
+                          "description": "Price of token B when LP position was opened"
+                        },
+                        "liquidity_usd": {
+                          "type": "number",
+                          "description": "Total USD value deposited into the LP (optional)"
+                        },
+                        "current_price_a": {
+                          "type": "number",
+                          "description": "Current price of token A"
+                        },
+                        "current_price_b": {
+                          "type": "number",
+                          "description": "Current price of token B"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "IL calculation with hodl comparison and break-even analysis",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "pair": {
+                            "type": "string"
+                          },
+                          "entry": {
+                            "type": "object",
+                            "properties": {
+                              "price_a": {
+                                "type": "number"
+                              },
+                              "price_b": {
+                                "type": "number"
+                              },
+                              "ratio": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "current": {
+                            "type": "object",
+                            "properties": {
+                              "price_a": {
+                                "type": "number"
+                              },
+                              "price_b": {
+                                "type": "number"
+                              },
+                              "ratio": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "price_change": {
+                            "type": "object",
+                            "properties": {
+                              "token_a_pct": {
+                                "type": "number"
+                              },
+                              "token_b_pct": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "impermanent_loss": {
+                            "type": "object",
+                            "properties": {
+                              "pct": {
+                                "type": "number",
+                                "description": "Negative number, e.g. -3.45"
+                              },
+                              "usd": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "vs_hodl_usd": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "explanation": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "hodl_value_usd": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "lp_value_usd": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "break_even_fees_needed_usd": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "recommendation": {
+                            "type": "string",
+                            "enum": [
+                              "hold",
+                              "exit",
+                              "monitor"
+                            ]
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Missing required fields"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/simulate": {
+            "post": {
+              "operationId": "ilSimulate",
+              "summary": "Simulate impermanent loss across price change scenarios \u2014 LP vs HODL comparison",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "token_a",
+                        "token_b",
+                        "entry_price_a",
+                        "entry_price_b"
+                      ],
+                      "properties": {
+                        "token_a": {
+                          "type": "string",
+                          "example": "ETH"
+                        },
+                        "token_b": {
+                          "type": "string",
+                          "example": "USDC"
+                        },
+                        "entry_price_a": {
+                          "type": "number",
+                          "description": "Price of token A when LP position was opened"
+                        },
+                        "entry_price_b": {
+                          "type": "number",
+                          "description": "Price of token B when LP position was opened"
+                        },
+                        "liquidity_usd": {
+                          "type": "number",
+                          "description": "Total USD value deposited into the LP (optional)"
+                        },
+                        "scenarios": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "-50%",
+                            "-25%",
+                            "0%",
+                            "+25%",
+                            "+50%",
+                            "+100%",
+                            "+200%"
+                          ],
+                          "description": "Price change % scenarios for token A relative to token B"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Scenario simulation results",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "pair": {
+                            "type": "string"
+                          },
+                          "scenarios": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "price_change_pct": {
+                                  "type": "number"
+                                },
+                                "il_pct": {
+                                  "type": "number"
+                                },
+                                "il_usd": {
+                                  "type": "number",
+                                  "nullable": true
+                                },
+                                "lp_value_usd": {
+                                  "type": "number",
+                                  "nullable": true
+                                },
+                                "hodl_value_usd": {
+                                  "type": "number",
+                                  "nullable": true
+                                },
+                                "fee_needed_to_break_even_usd": {
+                                  "type": "number",
+                                  "nullable": true
+                                }
+                              }
+                            }
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Missing required fields"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "ilLookup",
+              "summary": "ONE-CALL: IL calculation + scenarios + position value + exit recommendation",
+              "x-one-call": true,
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "token_a",
+                        "token_b",
+                        "entry_price_a",
+                        "entry_price_b",
+                        "current_price_a",
+                        "current_price_b"
+                      ],
+                      "properties": {
+                        "token_a": {
+                          "type": "string",
+                          "example": "ETH"
+                        },
+                        "token_b": {
+                          "type": "string",
+                          "example": "USDC"
+                        },
+                        "entry_price_a": {
+                          "type": "number",
+                          "description": "Price of token A when LP position was opened"
+                        },
+                        "entry_price_b": {
+                          "type": "number",
+                          "description": "Price of token B when LP position was opened"
+                        },
+                        "liquidity_usd": {
+                          "type": "number",
+                          "description": "Total USD value deposited into the LP (optional)"
+                        },
+                        "current_price_a": {
+                          "type": "number"
+                        },
+                        "current_price_b": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Full IL intelligence",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "pair": {
+                            "type": "string"
+                          },
+                          "impermanent_loss": {
+                            "type": "object",
+                            "properties": {
+                              "pct": {
+                                "type": "number",
+                                "description": "Negative number, e.g. -3.45"
+                              },
+                              "usd": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "vs_hodl_usd": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "explanation": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "position": {
+                            "type": "object",
+                            "properties": {
+                              "lp_value_usd": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "hodl_value_usd": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "net_vs_hodl_usd": {
+                                "type": "number",
+                                "nullable": true
+                              }
+                            }
+                          },
+                          "scenarios": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string"
+                                },
+                                "price_change_pct": {
+                                  "type": "number"
+                                },
+                                "il_pct": {
+                                  "type": "number"
+                                }
+                              }
+                            }
+                          },
+                          "break_even_fee_needed_usd": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "recommendation": {
+                            "type": "string",
+                            "enum": [
+                              "hold",
+                              "exit",
+                              "monitor"
+                            ]
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Missing required fields"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          }
+        }
+      }
+    },
+    {
+      "info": {
+        "name": "NFT Floor Price API",
+        "slug": "nft-floor-price",
+        "version": "1.0.0",
+        "grade": "A+",
+        "mcp_compatible": true,
+        "privacy": {
+          "data_stored": false,
+          "retention": "none"
+        },
+        "pricing": {
+          "free_tier": {
+            "requests_per_day": 100,
+            "requests_per_month": 3000
+          },
+          "pay_per_call": {
+            "floor": "$0.003",
+            "compare": "$0.004",
+            "lookup": "$0.006"
+          },
+          "high_volume": {
+            "floor": "$0.0015",
+            "compare": "$0.002",
+            "lookup": "$0.003"
+          }
+        },
+        "rate_limits": {
+          "free": "100/day",
+          "paid": "50000/day",
+          "enterprise": "500000/day"
+        },
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/floor",
+            "description": "NFT collection floor price \u2014 USD/ETH, 24h/7d change, volume, supply, listed%, signal"
+          },
+          {
+            "method": "POST",
+            "path": "/compare",
+            "description": "Compare floor prices across up to 10 NFT collections \u2014 ranked by floor, volume, market cap"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL: floor + volume + market + rarity + wash trading risk + investment grade",
+            "x_one_call": true
+          }
+        ],
+        "execution_chain": {
+          "previous": "nft-metadata",
+          "next": "token-trust",
+          "optional_next": [
+            "wallet-balance",
+            "onchain-labeling"
+          ]
+        }
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "NFT Floor Price API",
+          "version": "1.0.0",
+          "description": "NFT collection floor prices, volume, market data, and risk signals. Supports collection comparison and full intelligence including wash trading detection for NFT trading agents and portfolio trackers.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x-human-approval-required": true,
+          "x-pricing": {
+            "free_tier": {
+              "requests_per_day": 100,
+              "requests_per_month": 3000
+            },
+            "pay_per_call": {
+              "floor": "$0.003",
+              "compare": "$0.004",
+              "lookup": "$0.006"
+            }
+          },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice.",
+          "x-paper-mode-recommended": true
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/nft-floor-price"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "nftDiscovery",
+              "summary": "API discovery",
+              "security": [],
+              "responses": {
+                "200": {
+                  "description": "Discovery info"
+                }
+              }
+            }
+          },
+          "/floor": {
+            "post": {
+              "operationId": "nftFloor",
+              "summary": "NFT floor price \u2014 current price, 24h/7d change, volume, supply, listed%, and signal",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "collection"
+                      ],
+                      "properties": {
+                        "collection": {
+                          "type": "string",
+                          "example": "Bored Ape Yacht Club",
+                          "description": "Collection name or contract address"
+                        },
+                        "chain": {
+                          "type": "string",
+                          "default": "ethereum",
+                          "enum": [
+                            "ethereum",
+                            "polygon",
+                            "solana",
+                            "base"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Floor price, volume, market stats, and trade signal",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "collection": {
+                            "type": "string"
+                          },
+                          "chain": {
+                            "type": "string"
+                          },
+                          "floor": {
+                            "type": "object",
+                            "properties": {
+                              "price_eth": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "price_usd": {
+                                "type": "number"
+                              },
+                              "change_24h_pct": {
+                                "type": "number"
+                              },
+                              "change_7d_pct": {
+                                "type": "number"
+                              },
+                              "ath_usd": {
+                                "type": "number"
+                              },
+                              "ath_date": {
+                                "type": "string",
+                                "format": "date"
+                              },
+                              "atl_usd": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "volume": {
+                            "type": "object",
+                            "properties": {
+                              "volume_24h_eth": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "volume_24h_usd": {
+                                "type": "number"
+                              },
+                              "volume_7d_usd": {
+                                "type": "number"
+                              },
+                              "sales_24h": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "market": {
+                            "type": "object",
+                            "properties": {
+                              "total_supply": {
+                                "type": "integer"
+                              },
+                              "owners": {
+                                "type": "integer"
+                              },
+                              "unique_owners_pct": {
+                                "type": "number"
+                              },
+                              "listed_pct": {
+                                "type": "number"
+                              },
+                              "market_cap_usd": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "signal": {
+                            "type": "string",
+                            "enum": [
+                              "bullish",
+                              "bearish",
+                              "neutral"
+                            ]
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "paper_mode_recommended": {
+                            "type": "boolean"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Missing collection"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/compare": {
+            "post": {
+              "operationId": "nftCompare",
+              "summary": "Compare floor prices across up to 10 NFT collections \u2014 ranked by floor, volume, market cap",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "collections"
+                      ],
+                      "properties": {
+                        "collections": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 2,
+                          "maxItems": 10
+                        },
+                        "chain": {
+                          "type": "string",
+                          "default": "ethereum"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Ranked comparison with best value and momentum picks",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "chain": {
+                            "type": "string"
+                          },
+                          "results": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "collection": {
+                                  "type": "string"
+                                },
+                                "floor_usd": {
+                                  "type": "number"
+                                },
+                                "change_24h_pct": {
+                                  "type": "number"
+                                },
+                                "volume_24h_usd": {
+                                  "type": "number"
+                                },
+                                "market_cap_usd": {
+                                  "type": "number"
+                                },
+                                "rank": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
+                          },
+                          "best_value": {
+                            "type": "string"
+                          },
+                          "strongest_momentum": {
+                            "type": "string"
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid input"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "nftLookup",
+              "summary": "ONE-CALL: floor + volume + market + rarity + wash trading risk + investment grade",
+              "x-one-call": true,
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "collection"
+                      ],
+                      "properties": {
+                        "collection": {
+                          "type": "string"
+                        },
+                        "chain": {
+                          "type": "string",
+                          "default": "ethereum"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Full NFT collection intelligence with investment grade",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "collection": {
+                            "type": "string"
+                          },
+                          "chain": {
+                            "type": "string"
+                          },
+                          "floor": {
+                            "type": "object",
+                            "properties": {
+                              "price_eth": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "price_usd": {
+                                "type": "number"
+                              },
+                              "change_24h_pct": {
+                                "type": "number"
+                              },
+                              "change_7d_pct": {
+                                "type": "number"
+                              },
+                              "ath_usd": {
+                                "type": "number"
+                              },
+                              "ath_date": {
+                                "type": "string",
+                                "format": "date"
+                              },
+                              "atl_usd": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "volume": {
+                            "type": "object",
+                            "properties": {
+                              "volume_24h_eth": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "volume_24h_usd": {
+                                "type": "number"
+                              },
+                              "volume_7d_usd": {
+                                "type": "number"
+                              },
+                              "sales_24h": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "market": {
+                            "type": "object",
+                            "properties": {
+                              "total_supply": {
+                                "type": "integer"
+                              },
+                              "owners": {
+                                "type": "integer"
+                              },
+                              "unique_owners_pct": {
+                                "type": "number"
+                              },
+                              "listed_pct": {
+                                "type": "number"
+                              },
+                              "market_cap_usd": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "rarity": {
+                            "type": "object",
+                            "properties": {
+                              "trait_count": {
+                                "type": "integer",
+                                "nullable": true
+                              },
+                              "rarest_trait": {
+                                "type": "string",
+                                "nullable": true
+                              }
+                            }
+                          },
+                          "risk": {
+                            "type": "object",
+                            "properties": {
+                              "wash_trading_suspected": {
+                                "type": "boolean"
+                              },
+                              "whale_concentration_pct": {
+                                "type": "number"
+                              },
+                              "risk_level": {
+                                "type": "string",
+                                "enum": [
+                                  "low",
+                                  "medium",
+                                  "high"
+                                ]
+                              }
+                            }
+                          },
+                          "signal": {
+                            "type": "string",
+                            "enum": [
+                              "bullish",
+                              "bearish",
+                              "neutral"
+                            ]
+                          },
+                          "investment_grade": {
+                            "type": "string",
+                            "enum": [
+                              "A",
+                              "B",
+                              "C",
+                              "D",
+                              "F"
+                            ]
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "paper_mode_recommended": {
+                            "type": "boolean"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Missing collection"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          }
+        }
+      }
+    },
+    {
+      "info": {
+        "name": "Staking Rewards API",
+        "slug": "staking-rewards",
+        "version": "1.0.0",
+        "grade": "A+",
+        "mcp_compatible": true,
+        "privacy": {
+          "data_stored": false,
+          "retention": "none"
+        },
+        "pricing": {
+          "free_tier": {
+            "requests_per_day": 100,
+            "requests_per_month": 3000
+          },
+          "pay_per_call": {
+            "rates": "$0.003",
+            "estimate": "$0.003",
+            "compare": "$0.004",
+            "lookup": "$0.006"
+          },
+          "high_volume": {
+            "rates": "$0.0015",
+            "estimate": "$0.0015",
+            "compare": "$0.002",
+            "lookup": "$0.003"
+          }
+        },
+        "rate_limits": {
+          "free": "100/day",
+          "paid": "50000/day",
+          "enterprise": "500000/day"
+        },
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/rates",
+            "description": "Staking rates \u2014 native APY, real APY after inflation, providers, lock-up, unbonding, slash risk"
+          },
+          {
+            "method": "POST",
+            "path": "/estimate",
+            "description": "Estimate staking rewards for a given amount and duration with price scenarios"
+          },
+          {
+            "method": "POST",
+            "path": "/compare",
+            "description": "Compare staking yields across up to 15 PoS assets \u2014 ranked by risk-adjusted APY"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL: rates + provider comparison + reward estimate + network health",
+            "x_one_call": true
+          }
+        ],
+        "execution_chain": {
+          "previous": "defi-position-risk",
+          "next": "stablecoin-yield",
+          "optional_next": [
+            "wallet-balance",
+            "yield-farming"
+          ]
+        }
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Staking Rewards API",
+          "version": "1.0.0",
+          "description": "Staking APY rates, provider comparison, reward estimates, and network health for PoS assets. Built for yield-seeking agents, portfolio managers, and DeFi automation workflows.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x-human-approval-required": false,
+          "x-pricing": {
+            "free_tier": {
+              "requests_per_day": 100,
+              "requests_per_month": 3000
+            },
+            "pay_per_call": {
+              "rates": "$0.003",
+              "estimate": "$0.003",
+              "compare": "$0.004",
+              "lookup": "$0.006"
+            }
+          },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice."
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/staking-rewards"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "stakingDiscovery",
+              "summary": "API discovery",
+              "security": [],
+              "responses": {
+                "200": {
+                  "description": "Discovery info"
+                }
+              }
+            }
+          },
+          "/rates": {
+            "post": {
+              "operationId": "stakingRates",
+              "summary": "Staking rates \u2014 native APY, real APY after inflation, providers, lock-up, and slash risk",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "symbol"
+                      ],
+                      "properties": {
+                        "symbol": {
+                          "type": "string",
+                          "example": "ETH"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Staking rates with provider breakdown",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "symbol": {
+                            "type": "string"
+                          },
+                          "staking": {
+                            "type": "object",
+                            "properties": {
+                              "native_apy": {
+                                "type": "number"
+                              },
+                              "real_apy_after_inflation": {
+                                "type": "number"
+                              },
+                              "reward_token": {
+                                "type": "string"
+                              },
+                              "lock_up_days": {
+                                "type": "integer",
+                                "nullable": true
+                              },
+                              "unbonding_days": {
+                                "type": "integer",
+                                "nullable": true
+                              },
+                              "min_stake": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "compounding": {
+                                "type": "boolean"
+                              },
+                              "slash_risk": {
+                                "type": "string",
+                                "enum": [
+                                  "low",
+                                  "medium",
+                                  "high",
+                                  "none"
+                                ]
+                              }
+                            }
+                          },
+                          "providers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "exchange",
+                                    "liquid_staking",
+                                    "self_custody",
+                                    "pool"
+                                  ]
+                                },
+                                "apy": {
+                                  "type": "number"
+                                },
+                                "fee_pct": {
+                                  "type": "number"
+                                },
+                                "liquid": {
+                                  "type": "boolean"
+                                },
+                                "risk_level": {
+                                  "type": "string",
+                                  "enum": [
+                                    "low",
+                                    "medium",
+                                    "high"
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "best_option": {
+                            "type": "string"
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Missing symbol"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/estimate": {
+            "post": {
+              "operationId": "stakingEstimate",
+              "summary": "Estimate staking rewards \u2014 tokens earned, USD value, daily income, and 4 price scenarios",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "symbol",
+                        "amount"
+                      ],
+                      "properties": {
+                        "symbol": {
+                          "type": "string"
+                        },
+                        "amount": {
+                          "type": "number",
+                          "description": "Number of tokens to stake"
+                        },
+                        "duration_days": {
+                          "type": "integer",
+                          "default": 365
+                        },
+                        "provider": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Reward estimate with daily breakdown and price scenarios",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "symbol": {
+                            "type": "string"
+                          },
+                          "amount_staked": {
+                            "type": "number"
+                          },
+                          "duration_days": {
+                            "type": "integer"
+                          },
+                          "provider": {
+                            "type": "string"
+                          },
+                          "estimate": {
+                            "type": "object",
+                            "properties": {
+                              "apy": {
+                                "type": "number"
+                              },
+                              "rewards_tokens": {
+                                "type": "number"
+                              },
+                              "rewards_usd": {
+                                "type": "number"
+                              },
+                              "principal_usd": {
+                                "type": "number"
+                              },
+                              "total_value_usd": {
+                                "type": "number"
+                              },
+                              "daily_rewards_tokens": {
+                                "type": "number"
+                              },
+                              "daily_rewards_usd": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "scenarios": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "price_change": {
+                                  "type": "string"
+                                },
+                                "total_value_usd": {
+                                  "type": "number"
+                                },
+                                "net_return_pct": {
+                                  "type": "number"
+                                }
+                              }
+                            }
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Missing symbol or amount"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/compare": {
+            "post": {
+              "operationId": "stakingCompare",
+              "summary": "Compare staking yields across up to 15 PoS assets \u2014 ranked by risk-adjusted APY",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "symbols"
+                      ],
+                      "properties": {
+                        "symbols": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "minItems": 2,
+                          "maxItems": 15
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Ranked staking comparison",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "results": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "symbol": {
+                                  "type": "string"
+                                },
+                                "best_apy": {
+                                  "type": "number"
+                                },
+                                "real_apy_after_inflation": {
+                                  "type": "number"
+                                },
+                                "best_provider": {
+                                  "type": "string"
+                                },
+                                "lock_up_days": {
+                                  "type": "integer",
+                                  "nullable": true
+                                },
+                                "liquid_option_available": {
+                                  "type": "boolean"
+                                },
+                                "slash_risk": {
+                                  "type": "string",
+                                  "enum": [
+                                    "low",
+                                    "medium",
+                                    "high",
+                                    "none"
+                                  ]
+                                },
+                                "rank": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
+                          },
+                          "best_yield": {
+                            "type": "string"
+                          },
+                          "best_risk_adjusted": {
+                            "type": "string"
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid input"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "stakingLookup",
+              "summary": "ONE-CALL: rates + provider comparison + reward estimate + network health",
+              "x-one-call": true,
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "symbol"
+                      ],
+                      "properties": {
+                        "symbol": {
+                          "type": "string"
+                        },
+                        "amount": {
+                          "type": "number",
+                          "description": "Optional: include for reward estimate"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Full staking intelligence",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": {
+                            "type": "string"
+                          },
+                          "computed_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "symbol": {
+                            "type": "string"
+                          },
+                          "staking": {
+                            "type": "object",
+                            "properties": {
+                              "native_apy": {
+                                "type": "number"
+                              },
+                              "real_apy_after_inflation": {
+                                "type": "number"
+                              },
+                              "reward_token": {
+                                "type": "string"
+                              },
+                              "lock_up_days": {
+                                "type": "integer",
+                                "nullable": true
+                              },
+                              "unbonding_days": {
+                                "type": "integer",
+                                "nullable": true
+                              },
+                              "min_stake": {
+                                "type": "number",
+                                "nullable": true
+                              },
+                              "compounding": {
+                                "type": "boolean"
+                              },
+                              "slash_risk": {
+                                "type": "string",
+                                "enum": [
+                                  "low",
+                                  "medium",
+                                  "high",
+                                  "none"
+                                ]
+                              }
+                            }
+                          },
+                          "providers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "enum": [
+                                    "exchange",
+                                    "liquid_staking",
+                                    "self_custody",
+                                    "pool"
+                                  ]
+                                },
+                                "apy": {
+                                  "type": "number"
+                                },
+                                "fee_pct": {
+                                  "type": "number"
+                                },
+                                "liquid": {
+                                  "type": "boolean"
+                                },
+                                "risk_level": {
+                                  "type": "string",
+                                  "enum": [
+                                    "low",
+                                    "medium",
+                                    "high"
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "estimate_1yr": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "amount": {
+                                "type": "number"
+                              },
+                              "rewards_tokens": {
+                                "type": "number"
+                              },
+                              "rewards_usd": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "best_option": {
+                            "type": "string"
+                          },
+                          "network_health": {
+                            "type": "object",
+                            "properties": {
+                              "validators": {
+                                "type": "integer"
+                              },
+                              "staking_ratio_pct": {
+                                "type": "number"
+                              },
+                              "decentralization": {
+                                "type": "string",
+                                "enum": [
+                                  "high",
+                                  "medium",
+                                  "low"
+                                ]
+                              }
+                            }
+                          },
+                          "financial_disclaimer": {
+                            "type": "string"
+                          },
+                          "confidence_per_section": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "number"
+                            }
+                          },
+                          "recommended_actions_priority_order": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chain_to": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "privacy": {
+                            "type": "object",
+                            "properties": {
+                              "data_stored": {
+                                "type": "boolean"
+                              },
+                              "retention": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Missing symbol"
+                },
+                "500": {
+                  "description": "Internal error"
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
