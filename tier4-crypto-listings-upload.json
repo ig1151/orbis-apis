@@ -1,8 +1,8 @@
 [
   {
     "name": "DEX vs CEX Arbitrage API",
-    "shortDescription": "Detect price gaps between DEX pools and CEX order books with net profit after fees for instant arbitrage",
-    "description": "Agent-native DEX vs CEX arbitrage API for trading agents, execution routers, and arbitrage bots. Detects real-time price gaps between decentralized exchange pools and centralized exchange order books, models swap fees, DEX liquidity depth, CEX spread, and returns net profit estimates with execution viability scoring.",
+    "shortDescription": "Detect DEX vs CEX price gaps with fee-adjusted profit, liquidity depth, and execution viability",
+    "description": "Agent-native DEX vs CEX arbitrage intelligence API for trading bots, quant agents, and market makers. Scans token price gaps between decentralized and centralized venues, estimates price impact, liquidity depth, exchange fees, gas costs, execution readiness, and net profit after fees. Built for x402 pay-per-call workflows, Coinbase Bazaar, Agentic Market, and Orbis agent chaining.",
     "category": "financial-data",
     "baseUrl": "https://orbis-apis.onrender.com/dex-cex-arbitrage",
     "websiteUrl": "https://orbis-apis.onrender.com",
@@ -10,10 +10,12 @@
     "openApiSpecUrl": "https://orbis-apis.onrender.com/dex-cex-arbitrage/openapi.json",
     "logoUrl": "https://orbis-apis.onrender.com/assets/dex-cex-arbitrage.png",
     "tags": [
+      "dex-cex-arbitrage",
       "arbitrage",
       "dex",
       "cex",
-      "price-gap",
+      "trading",
+      "market-making",
       "crypto",
       "ai-agents",
       "x402",
@@ -23,166 +25,10 @@
     ],
     "keywords": [
       "dex cex arbitrage api",
-      "crypto price gap detection",
-      "defi cex spread arbitrage",
-      "trading agent arbitrage api",
-      "net profit arbitrage crypto"
-    ],
-    "tiers": [
-      {
-        "name": "Free",
-        "isFree": true,
-        "requestsPerDay": 100,
-        "requestsPerMonth": 3000
-      },
-      {
-        "name": "Pay Per Call",
-        "isFree": false,
-        "pricingType": "per_call",
-        "pricePerCall": 0.015,
-        "endpointPricing": [
-          {
-            "method": "POST",
-            "pathPattern": "/scan",
-            "pricePerCallUsdc": 0.005
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/alerts",
-            "pricePerCallUsdc": 0.004
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.015
-          }
-        ]
-      }
-    ],
-    "endpoints": [
-      {
-        "method": "POST",
-        "path": "/scan",
-        "description": "Scan for DEX-CEX price gaps for a specific token"
-      },
-      {
-        "method": "POST",
-        "path": "/alerts",
-        "description": "Market-wide DEX-CEX spread alerts above profit threshold"
-      },
-      {
-        "method": "POST",
-        "path": "/lookup",
-        "description": "ONE-CALL: full arb opportunity with net profit after gas + fees"
-      }
-    ]
-  },
-  {
-    "name": "Triangular Arbitrage API",
-    "shortDescription": "Find profitable three-leg arbitrage loops within a single exchange with exact execution sequence and net profit",
-    "description": "Triangular arbitrage detection API for crypto trading agents and quant systems. Finds profitable A→B→C→A loops within a single exchange, models per-leg taker fees, slippage, and price impact. Returns net profit after fees, exact execution sequence, trade sizes, and viability window before the opportunity closes.",
-    "category": "financial-data",
-    "baseUrl": "https://orbis-apis.onrender.com/triangular-arbitrage",
-    "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/triangular-arbitrage/docs",
-    "openApiSpecUrl": "https://orbis-apis.onrender.com/triangular-arbitrage/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/assets/triangular-arbitrage.png",
-    "tags": [
-      "arbitrage",
-      "triangular",
-      "trading-loops",
-      "exchange",
-      "crypto",
-      "ai-agents",
-      "x402",
-      "coinbase-bazaar",
-      "agentic-market",
-      "orbis"
-    ],
-    "keywords": [
-      "triangular arbitrage crypto api",
-      "three leg trading loop",
-      "exchange arbitrage path finder",
-      "crypto arb profit calculator",
-      "automated arbitrage detection api"
-    ],
-    "tiers": [
-      {
-        "name": "Free",
-        "isFree": true,
-        "requestsPerDay": 100,
-        "requestsPerMonth": 3000
-      },
-      {
-        "name": "Pay Per Call",
-        "isFree": false,
-        "pricingType": "per_call",
-        "pricePerCall": 0.015,
-        "endpointPricing": [
-          {
-            "method": "POST",
-            "pathPattern": "/scan",
-            "pricePerCallUsdc": 0.005
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/paths",
-            "pricePerCallUsdc": 0.005
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.015
-          }
-        ]
-      }
-    ],
-    "endpoints": [
-      {
-        "method": "POST",
-        "path": "/scan",
-        "description": "Scan for triangular arb paths for a base currency on an exchange"
-      },
-      {
-        "method": "POST",
-        "path": "/paths",
-        "description": "All profitable arb paths on an exchange ranked by net profit"
-      },
-      {
-        "method": "POST",
-        "path": "/lookup",
-        "description": "ONE-CALL: best triangular arb with exact execution sequence and trade sizes"
-      }
-    ]
-  },
-  {
-    "name": "Stablecoin Arbitrage API",
-    "shortDescription": "Stablecoin peg deviations across DEXs and CEXs — risk-minimal arbitrage for USDC, USDT, DAI, FRAX",
-    "description": "Stablecoin arbitrage API for risk-minimal crypto arbitrage agents and DeFi yield strategies. Tracks USDC, USDT, DAI, and FRAX price deviations across DEX pools and CEX venues, identifies best buy and sell venues, models swap fees, and flags depeg risk context for safe execution.",
-    "category": "financial-data",
-    "baseUrl": "https://orbis-apis.onrender.com/stablecoin-arbitrage",
-    "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/stablecoin-arbitrage/docs",
-    "openApiSpecUrl": "https://orbis-apis.onrender.com/stablecoin-arbitrage/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/assets/stablecoin-arbitrage.png",
-    "tags": [
-      "stablecoin",
-      "arbitrage",
-      "peg",
-      "usdc",
-      "defi",
-      "ai-agents",
-      "x402",
-      "coinbase-bazaar",
-      "agentic-market",
-      "orbis"
-    ],
-    "keywords": [
-      "stablecoin arbitrage api",
-      "usdc usdt dai spread",
-      "stablecoin peg deviation",
-      "risk minimal crypto arbitrage",
-      "defi stable arb opportunities"
+      "crypto arbitrage scanner",
+      "fee adjusted arbitrage",
+      "dex price gap",
+      "cex arbitrage bot"
     ],
     "tiers": [
       {
@@ -196,21 +42,191 @@
         "isFree": false,
         "pricingType": "per_call",
         "pricePerCall": 0.012,
+        "requestsPerDay": 50000,
         "endpointPricing": [
           {
             "method": "POST",
-            "pathPattern": "/spreads",
-            "pricePerCallUsdc": 0.004
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.004,
+            "description": "DEX vs CEX price gap scan for a token"
           },
           {
             "method": "POST",
             "pathPattern": "/alerts",
-            "pricePerCallUsdc": 0.004
+            "pricePerCallUsdc": 0.005,
+            "description": "Market-wide DEX/CEX arbitrage alerts above gap threshold"
           },
           {
             "method": "POST",
             "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.012
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL full DEX/CEX arbitrage analysis with checklist and reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "DEX vs CEX price gap scan for a token"
+      },
+      {
+        "method": "POST",
+        "path": "/alerts",
+        "description": "Market-wide DEX/CEX arbitrage alerts above gap threshold"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full DEX/CEX arbitrage analysis with checklist and reasoning"
+      }
+    ]
+  },
+  {
+    "name": "Triangular Arbitrage API",
+    "shortDescription": "Find profitable triangular arbitrage loops with execution sequence, sizing, and timing windows",
+    "description": "Professional triangular arbitrage API for exchange trading bots and AI quant agents. Detects viable three-leg arbitrage loops, ranks paths by net profit after fees, estimates viability windows, execution complexity, trade volume limits, exact execution sequence, trade sizing, slippage, and timing risk.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/triangular-arbitrage",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/triangular-arbitrage/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/triangular-arbitrage/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/triangular-arbitrage.png",
+    "tags": [
+      "triangular-arbitrage",
+      "exchange-arbitrage",
+      "crypto",
+      "quant",
+      "trading-bots",
+      "ai-agents",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market",
+      "orbis"
+    ],
+    "keywords": [
+      "triangular arbitrage api",
+      "crypto triangular arb",
+      "exchange arbitrage paths",
+      "arbitrage loop scanner",
+      "three leg crypto arbitrage"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.004,
+            "description": "Scan for viable triangular arbitrage loops"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/paths",
+            "pricePerCallUsdc": 0.005,
+            "description": "Ranked triangular arbitrage paths by net profit"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL best triangular loop with execution sequence and timing"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Scan for viable triangular arbitrage loops"
+      },
+      {
+        "method": "POST",
+        "path": "/paths",
+        "description": "Ranked triangular arbitrage paths by net profit"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL best triangular loop with execution sequence and timing"
+      }
+    ]
+  },
+  {
+    "name": "Stablecoin Arbitrage API",
+    "shortDescription": "Track stablecoin spreads, peg risk, and safe arbitrage opportunities across venues",
+    "description": "Stablecoin arbitrage intelligence API for treasury agents, market makers, DeFi bots, and risk-aware trading systems. Detects stablecoin price spreads across DEX and CEX venues, identifies best buy/sell venues, estimates profit after fees, flags peg risk, and returns execution plans with reasoning and safety checks.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/stablecoin-arbitrage",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/stablecoin-arbitrage/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/stablecoin-arbitrage/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/stablecoin-arbitrage.png",
+    "tags": [
+      "stablecoin",
+      "stablecoin-arbitrage",
+      "peg-risk",
+      "usdc",
+      "usdt",
+      "defi",
+      "crypto",
+      "ai-agents",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market",
+      "orbis"
+    ],
+    "keywords": [
+      "stablecoin arbitrage api",
+      "usdc spread scanner",
+      "stablecoin peg risk",
+      "stablecoin trading bot",
+      "stablecoin arbitrage alert"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/spreads",
+            "pricePerCallUsdc": 0.003,
+            "description": "Stablecoin price spreads across DEX and CEX venues"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/alerts",
+            "pricePerCallUsdc": 0.004,
+            "description": "Stablecoin arbitrage alerts with peg risk flags"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL stablecoin spread trade with peg risk and execution plan"
           }
         ]
       }
@@ -219,24 +235,24 @@
       {
         "method": "POST",
         "path": "/spreads",
-        "description": "All stablecoin price spreads across DEX and CEX venues"
+        "description": "Stablecoin price spreads across DEX and CEX venues"
       },
       {
         "method": "POST",
         "path": "/alerts",
-        "description": "Stablecoin spread alerts above profit threshold"
+        "description": "Stablecoin arbitrage alerts with peg risk flags"
       },
       {
         "method": "POST",
         "path": "/lookup",
-        "description": "ONE-CALL: best stablecoin arb with entry/exit venues, net profit, and depeg context"
+        "description": "ONE-CALL stablecoin spread trade with peg risk and execution plan"
       }
     ]
   },
   {
     "name": "Cross-Chain Arbitrage API",
-    "shortDescription": "Token price gaps across Ethereum, Base, Arbitrum, Polygon, BSC, and Solana — net profit after bridge costs",
-    "description": "Cross-chain arbitrage intelligence API for multi-chain trading agents and DeFi routers. Detects price differences for a token across six major chains, models bridge costs (Stargate, Across, Hop, LayerZero), gas per chain, and bridge latency. Returns net profit after all costs with route recommendations and execution window.",
+    "shortDescription": "Find cross-chain arbitrage routes with bridge costs, latency risk, and execution steps",
+    "description": "Cross-chain arbitrage API for DeFi agents, bridge-aware trading bots, and on-chain market makers. Compares token prices across chains, estimates bridge costs, gas, latency, liquidity, price risk during bridge transfer, bridge protocol recommendation, execution window, and step-by-step route plan.",
     "category": "financial-data",
     "baseUrl": "https://orbis-apis.onrender.com/cross-chain-arbitrage",
     "websiteUrl": "https://orbis-apis.onrender.com",
@@ -247,7 +263,8 @@
       "cross-chain",
       "arbitrage",
       "bridge",
-      "multichain",
+      "defi",
+      "multi-chain",
       "crypto",
       "ai-agents",
       "x402",
@@ -257,88 +274,10 @@
     ],
     "keywords": [
       "cross chain arbitrage api",
-      "multichain price gap detection",
-      "crypto bridge arbitrage",
-      "layer 2 price arbitrage",
-      "ethereum base arbitrum price gap"
-    ],
-    "tiers": [
-      {
-        "name": "Free",
-        "isFree": true,
-        "requestsPerDay": 100,
-        "requestsPerMonth": 3000
-      },
-      {
-        "name": "Pay Per Call",
-        "isFree": false,
-        "pricingType": "per_call",
-        "pricePerCall": 0.018,
-        "endpointPricing": [
-          {
-            "method": "POST",
-            "pathPattern": "/scan",
-            "pricePerCallUsdc": 0.006
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/routes",
-            "pricePerCallUsdc": 0.006
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.018
-          }
-        ]
-      }
-    ],
-    "endpoints": [
-      {
-        "method": "POST",
-        "path": "/scan",
-        "description": "Scan price differences for a token across chains"
-      },
-      {
-        "method": "POST",
-        "path": "/routes",
-        "description": "All profitable cross-chain arb routes ranked by net profit after bridge"
-      },
-      {
-        "method": "POST",
-        "path": "/lookup",
-        "description": "ONE-CALL: full cross-chain arb with bridge recommendation and execution steps"
-      }
-    ]
-  },
-  {
-    "name": "NFT Arbitrage API",
-    "shortDescription": "NFT floor price gaps across OpenSea, Blur, LooksRare, and X2Y2 — rarity-adjusted arbitrage opportunities",
-    "description": "NFT arbitrage API for trading agents, NFT floor flippers, and cross-marketplace bots. Detects floor price and individual item price gaps across OpenSea, Blur, LooksRare, and X2Y2. Adjusts for rarity, models marketplace fees and gas, flags listing freshness and liquidity risk for safe execution.",
-    "category": "financial-data",
-    "baseUrl": "https://orbis-apis.onrender.com/nft-arbitrage",
-    "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/nft-arbitrage/docs",
-    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-arbitrage/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/assets/nft-arbitrage.png",
-    "tags": [
-      "nft",
-      "arbitrage",
-      "marketplace",
-      "floor-price",
-      "crypto",
-      "ai-agents",
-      "x402",
-      "coinbase-bazaar",
-      "agentic-market",
-      "orbis"
-    ],
-    "keywords": [
-      "nft arbitrage api",
-      "nft marketplace price gap",
-      "opensea blur arbitrage",
-      "nft floor flipping api",
-      "cross marketplace nft spread"
+      "bridge arbitrage scanner",
+      "multi chain price gap",
+      "cross chain trading bot",
+      "bridge latency arbitrage"
     ],
     "tiers": [
       {
@@ -352,21 +291,25 @@
         "isFree": false,
         "pricingType": "per_call",
         "pricePerCall": 0.015,
+        "requestsPerDay": 50000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/scan",
-            "pricePerCallUsdc": 0.005
+            "pricePerCallUsdc": 0.005,
+            "description": "Cross-chain price scan with bridge cost estimate"
           },
           {
             "method": "POST",
-            "pathPattern": "/opportunities",
-            "pricePerCallUsdc": 0.005
+            "pathPattern": "/routes",
+            "pricePerCallUsdc": 0.006,
+            "description": "Profitable cross-chain arbitrage routes ranked by net profit"
           },
           {
             "method": "POST",
             "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.015
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL full cross-chain arbitrage route with bridge recommendation"
           }
         ]
       }
@@ -375,24 +318,107 @@
       {
         "method": "POST",
         "path": "/scan",
-        "description": "NFT floor price gaps for a collection across marketplaces"
+        "description": "Cross-chain price scan with bridge cost estimate"
       },
       {
         "method": "POST",
-        "path": "/opportunities",
-        "description": "Market-wide NFT arb opportunities ranked by estimated profit"
+        "path": "/routes",
+        "description": "Profitable cross-chain arbitrage routes ranked by net profit"
       },
       {
         "method": "POST",
         "path": "/lookup",
-        "description": "ONE-CALL: full NFT arb with rarity-adjusted valuation and liquidity risk"
+        "description": "ONE-CALL full cross-chain arbitrage route with bridge recommendation"
+      }
+    ]
+  },
+  {
+    "name": "NFT Arbitrage API",
+    "shortDescription": "Detect NFT marketplace floor spreads with rarity, gas, and liquidity-risk adjustment",
+    "description": "NFT arbitrage API for NFT traders, marketplace bots, collectors, and autonomous NFT agents. Compares floor prices across OpenSea, Blur, LooksRare, and X2Y2, estimates fee-adjusted profit, gas costs, rarity impact, item freshness, average time to sell, and marketplace liquidity risk.",
+    "category": "nft",
+    "baseUrl": "https://orbis-apis.onrender.com/nft-arbitrage",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/nft-arbitrage/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-arbitrage/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/nft-arbitrage.png",
+    "tags": [
+      "nft",
+      "nft-arbitrage",
+      "floor-price",
+      "opensea",
+      "blur",
+      "marketplaces",
+      "ai-agents",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market",
+      "orbis"
+    ],
+    "keywords": [
+      "nft arbitrage api",
+      "nft floor spread",
+      "opensea blur arbitrage",
+      "nft marketplace arbitrage",
+      "nft profit scanner"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.003,
+            "description": "NFT floor price spread scan for a collection"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/opportunities",
+            "pricePerCallUsdc": 0.005,
+            "description": "Market-wide NFT arbitrage opportunities"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL full NFT arbitrage with rarity, gas, liquidity risk, and reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "NFT floor price spread scan for a collection"
+      },
+      {
+        "method": "POST",
+        "path": "/opportunities",
+        "description": "Market-wide NFT arbitrage opportunities"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full NFT arbitrage with rarity, gas, liquidity risk, and reasoning"
       }
     ]
   },
   {
     "name": "Gas-Adjusted Arbitrage API",
-    "shortDescription": "True net profit of any arbitrage opportunity after gas costs, slippage, and protocol fees",
-    "description": "Gas-adjusted arbitrage profitability API for trading agents and DeFi execution systems. Given a price gap, trade size, and chain — computes true net profit after live gas (gwei), estimated slippage, and protocol fees. Returns optimal gas strategy, break-even spread, and net profit scenarios across small, medium, and large position sizes.",
+    "shortDescription": "Calculate arbitrage profitability after gas, fees, slippage, and congestion costs",
+    "description": "Gas-adjusted arbitrage API for DeFi traders, AI agents, and execution-aware arbitrage systems. Estimates gas costs, break-even spreads, congestion, trade-size sensitivity, fee breakdown, and net profit under standard, fast, and aggressive gas strategies.",
     "category": "financial-data",
     "baseUrl": "https://orbis-apis.onrender.com/gas-adjusted-arbitrage",
     "websiteUrl": "https://orbis-apis.onrender.com",
@@ -402,8 +428,9 @@
     "tags": [
       "gas",
       "arbitrage",
-      "net-profit",
-      "slippage",
+      "defi",
+      "profitability",
+      "execution-costs",
       "crypto",
       "ai-agents",
       "x402",
@@ -413,10 +440,10 @@
     ],
     "keywords": [
       "gas adjusted arbitrage api",
-      "crypto net profit after gas",
-      "arbitrage slippage calculator",
-      "ethereum gas cost arbitrage",
-      "defi trade profitability api"
+      "arbitrage gas calculator",
+      "break even spread crypto",
+      "defi gas cost api",
+      "arbitrage profitability"
     ],
     "tiers": [
       {
@@ -429,22 +456,26 @@
         "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.015,
+        "pricePerCall": 0.012,
+        "requestsPerDay": 50000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/estimate",
-            "pricePerCallUsdc": 0.004
+            "pricePerCallUsdc": 0.003,
+            "description": "Gas cost estimate and break-even spread"
           },
           {
             "method": "POST",
             "pathPattern": "/scan",
-            "pricePerCallUsdc": 0.005
+            "pricePerCallUsdc": 0.005,
+            "description": "Arbitrage opportunities ranked by net profit after gas"
           },
           {
             "method": "POST",
             "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.015
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL gas-adjusted analysis with strategy and profit scenarios"
           }
         ]
       }
@@ -453,24 +484,24 @@
       {
         "method": "POST",
         "path": "/estimate",
-        "description": "Gas cost estimate for an arb execution on a chain"
+        "description": "Gas cost estimate and break-even spread"
       },
       {
         "method": "POST",
         "path": "/scan",
-        "description": "Scan for profitable arb opportunities after gas costs"
+        "description": "Arbitrage opportunities ranked by net profit after gas"
       },
       {
         "method": "POST",
         "path": "/lookup",
-        "description": "ONE-CALL: net profit after gas + slippage with optimal gas strategy"
+        "description": "ONE-CALL gas-adjusted analysis with strategy and profit scenarios"
       }
     ]
   },
   {
     "name": "Flash Loan Opportunity API",
-    "shortDescription": "Zero-capital flash loan arbitrage via Aave, dYdX, and Balancer — profit estimates with MEV risk and execution steps",
-    "description": "Flash loan opportunity API for DeFi arbitrage agents, MEV bots, and smart contract execution systems. Detects arbitrage paths executable via flash loans for zero capital outlay. Covers Aave v3, dYdX, and Balancer flash loans with fee modeling, MEV sandwich risk, step-by-step execution plans, and smart contract call sequences.",
+    "shortDescription": "Find flash loan opportunities with MEV risk, failure scenarios, and execution plans",
+    "description": "Premium flash loan opportunity API for advanced DeFi agents, quant systems, and execution-aware arbitrage bots. Compares flash loan protocols, scans opportunities, estimates required loan size, net profit, complexity, MEV risk, success probability, mitigation strategies, failure scenarios, and step-by-step contract execution plans.",
     "category": "financial-data",
     "baseUrl": "https://orbis-apis.onrender.com/flash-loan-opportunity",
     "websiteUrl": "https://orbis-apis.onrender.com",
@@ -479,87 +510,11 @@
     "logoUrl": "https://orbis-apis.onrender.com/assets/flash-loan-opportunity.png",
     "tags": [
       "flash-loan",
+      "defi",
       "arbitrage",
       "mev",
-      "defi",
       "aave",
-      "ai-agents",
-      "x402",
-      "coinbase-bazaar",
-      "agentic-market",
-      "orbis"
-    ],
-    "keywords": [
-      "flash loan arbitrage api",
-      "aave flash loan opportunity",
-      "zero capital crypto arbitrage",
-      "mev bot arbitrage detection",
-      "defi flash loan profit api"
-    ],
-    "tiers": [
-      {
-        "name": "Free",
-        "isFree": true,
-        "requestsPerDay": 100,
-        "requestsPerMonth": 3000
-      },
-      {
-        "name": "Pay Per Call",
-        "isFree": false,
-        "pricingType": "per_call",
-        "pricePerCall": 0.020,
-        "endpointPricing": [
-          {
-            "method": "POST",
-            "pathPattern": "/protocols",
-            "pricePerCallUsdc": 0.003
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/scan",
-            "pricePerCallUsdc": 0.006
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.020
-          }
-        ]
-      }
-    ],
-    "endpoints": [
-      {
-        "method": "POST",
-        "path": "/protocols",
-        "description": "Available flash loan protocols with liquidity and fee rates"
-      },
-      {
-        "method": "POST",
-        "path": "/scan",
-        "description": "Detect executable flash loan arb opportunities above profit threshold"
-      },
-      {
-        "method": "POST",
-        "path": "/lookup",
-        "description": "ONE-CALL: flash loan execution plan with step-by-step contract calls and MEV risk"
-      }
-    ]
-  },
-  {
-    "name": "Market Inefficiency Scanner API",
-    "shortDescription": "Broad crypto market inefficiency detection — price lags, orderbook imbalances, liquidity gaps, and arbitrage windows",
-    "description": "Market inefficiency scanner API for trading agents, quant funds, and alpha-generation workflows. Detects structural and transient market inefficiencies across DEX and CEX venues: price discovery lag, orderbook imbalances, liquidity gaps, arbitrage windows, and wash trading distortions. Returns root cause, profit window, exploitation strategy, and risk factors.",
-    "category": "financial-data",
-    "baseUrl": "https://orbis-apis.onrender.com/market-inefficiency-scanner",
-    "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/market-inefficiency-scanner/docs",
-    "openApiSpecUrl": "https://orbis-apis.onrender.com/market-inefficiency-scanner/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/assets/market-inefficiency-scanner.png",
-    "tags": [
-      "market-inefficiency",
-      "price-discovery",
-      "orderbook",
-      "alpha",
+      "balancer",
       "crypto",
       "ai-agents",
       "x402",
@@ -568,11 +523,11 @@
       "orbis"
     ],
     "keywords": [
-      "market inefficiency scanner api",
-      "crypto price discovery lag",
-      "orderbook imbalance detection",
-      "crypto alpha signal api",
-      "market microstructure analysis"
+      "flash loan opportunity api",
+      "flash loan arbitrage scanner",
+      "defi flash loan api",
+      "mev mitigation arbitrage",
+      "aave flash loan bot"
     ],
     "tiers": [
       {
@@ -585,22 +540,109 @@
         "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.015,
+        "pricePerCall": 0.025,
+        "requestsPerDay": 50000,
         "endpointPricing": [
           {
             "method": "POST",
-            "pathPattern": "/scan",
-            "pricePerCallUsdc": 0.005
+            "pathPattern": "/protocols",
+            "pricePerCallUsdc": 0.005,
+            "description": "Flash loan protocol liquidity and fee comparison"
           },
           {
             "method": "POST",
-            "pathPattern": "/signals",
-            "pricePerCallUsdc": 0.004
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.01,
+            "description": "Flash loan arbitrage opportunities with MEV risk"
           },
           {
             "method": "POST",
             "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.015
+            "pricePerCallUsdc": 0.025,
+            "description": "ONE-CALL full flash loan execution plan with MEV mitigation"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/protocols",
+        "description": "Flash loan protocol liquidity and fee comparison"
+      },
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Flash loan arbitrage opportunities with MEV risk"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full flash loan execution plan with MEV mitigation"
+      }
+    ]
+  },
+  {
+    "name": "Market Inefficiency Scanner API",
+    "shortDescription": "Scan market inefficiencies across crypto, NFT, and DeFi with root-cause analysis",
+    "description": "Institutional-grade market inefficiency scanner for AI quant agents, hedge-fund-style workflows, and arbitrage systems. Detects price lag, orderbook imbalance, liquidity gaps, arbitrage windows, and wash-trading distortions across crypto, NFT, and DeFi markets. Returns magnitude, confidence, actionability, root cause, profit window, required capital, exploitation difficulty, risk factors, reasoning, and latency metadata.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/market-inefficiency-scanner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/market-inefficiency-scanner/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/market-inefficiency-scanner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/market-inefficiency-scanner.png",
+    "tags": [
+      "market-inefficiency",
+      "quant",
+      "arbitrage",
+      "microstructure",
+      "liquidity",
+      "crypto",
+      "ai-agents",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market",
+      "orbis"
+    ],
+    "keywords": [
+      "market inefficiency scanner",
+      "crypto microstructure api",
+      "orderbook imbalance api",
+      "liquidity gap scanner",
+      "arbitrage window api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 50000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.006,
+            "description": "Market inefficiency scan across crypto, NFT, and DeFi"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/signals",
+            "pricePerCallUsdc": 0.008,
+            "description": "Ranked inefficiency signals with actionability and profit estimates"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL full inefficiency analysis with root cause and exploitation strategy"
           }
         ]
       }
@@ -609,17 +651,17 @@
       {
         "method": "POST",
         "path": "/scan",
-        "description": "Scan for market-wide inefficiency signals by market and timeframe"
+        "description": "Market inefficiency scan across crypto, NFT, and DeFi"
       },
       {
         "method": "POST",
         "path": "/signals",
-        "description": "Ranked inefficiency signals above confidence threshold"
+        "description": "Ranked inefficiency signals with actionability and profit estimates"
       },
       {
         "method": "POST",
         "path": "/lookup",
-        "description": "ONE-CALL: full inefficiency analysis with root cause, profit window, and exploitation strategy"
+        "description": "ONE-CALL full inefficiency analysis with root cause and exploitation strategy"
       }
     ]
   }
