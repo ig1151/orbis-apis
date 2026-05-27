@@ -40,8 +40,14 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { estimate: '$0.004', scan: '$0.005', lookup: '$0.015' } },
     agent_capabilities: ['gas-adjusted-profitability', 'real-time-gas-pricing', 'net-profit-calculation', 'gas-strategy-optimization', 'slippage-modeling'],
     x402_compatible: true, paper_mode_recommended: true,
+    'x-paper-mode-recommended': true,
     execution_modes: ['agent-callable', 'execution-gated'],
     'x-latency-tier': 'real-time',
+    chain_to: [
+      { api: 'dex-cex-arbitrage-api', reason: 'find the actual arb opportunity this gas budget can profitably execute' },
+      { api: 'flash-loan-opportunity-api', reason: 'flash loans reduce capital at risk even when gas is high' },
+      { api: 'triangular-arbitrage-api', reason: 'evaluate triangular loops that fit within the current gas budget' },
+    ],
   });
 });
 

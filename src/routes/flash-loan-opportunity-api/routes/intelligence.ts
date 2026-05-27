@@ -40,8 +40,17 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { protocols: '$0.003', scan: '$0.006', lookup: '$0.020' } },
     agent_capabilities: ['flash-loan-detection', 'zero-capital-arbitrage', 'aave-integration', 'dydx-integration', 'balancer-integration', 'mev-risk-assessment'],
     x402_compatible: true, paper_mode_recommended: true,
+    'x-paper-mode-recommended': true,
+    'x-execution-gate-required': true,
+    'x-human-approval-required': true,
     execution_modes: ['agent-callable', 'execution-gated'],
     'x-latency-tier': 'real-time',
+    chain_to: [
+      { api: 'dex-cex-arbitrage-api', reason: 'identify the price gap to wrap in the flash loan' },
+      { api: 'gas-adjusted-arbitrage-api', reason: 'validate all step gas costs before building the flash loan contract' },
+      { api: 'triangular-arbitrage-api', reason: 'wrap triangular loops in flash loan for zero-capital execution' },
+      { api: 'market-inefficiency-scanner-api', reason: 'identify exploitable inefficiencies suitable for flash loan wrapping' },
+    ],
   });
 });
 

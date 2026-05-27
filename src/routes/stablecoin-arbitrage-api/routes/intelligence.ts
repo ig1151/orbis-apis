@@ -40,8 +40,14 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { spreads: '$0.004', alerts: '$0.004', lookup: '$0.012' } },
     agent_capabilities: ['stablecoin-arbitrage', 'peg-deviation-detection', 'low-risk-spread-trading', 'dex-cex-stablecoin', 'peg-risk-context'],
     x402_compatible: true, paper_mode_recommended: true,
-    execution_modes: ['agent-callable', 'read-only'],
+    'x-paper-mode-recommended': true,
+    execution_modes: ['agent-callable', 'execution-gated'],
     'x-latency-tier': 'near-real-time',
+    chain_to: [
+      { api: 'stablecoin-depeg-api', reason: 'verify peg health before trading any stablecoin spread' },
+      { api: 'gas-adjusted-arbitrage-api', reason: 'gas costs often exceed thin stable spread — validate first' },
+      { api: 'dex-cex-arbitrage-api', reason: 'cross-venue stablecoin gaps often have an underlying DEX/CEX component' },
+    ],
   });
 });
 

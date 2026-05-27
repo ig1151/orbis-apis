@@ -40,8 +40,17 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.005', alerts: '$0.004', lookup: '$0.015' } },
     agent_capabilities: ['dex-cex-arbitrage', 'price-gap-detection', 'liquidity-depth-analysis', 'fee-adjusted-profit', 'execution-viability'],
     x402_compatible: true, paper_mode_recommended: true,
+    'x-paper-mode-recommended': true,
+    'x-execution-gate-required': true,
+    'x-human-approval-required': true,
     execution_modes: ['agent-callable', 'execution-gated'],
     'x-latency-tier': 'real-time',
+    chain_to: [
+      { api: 'gas-adjusted-arbitrage-api', reason: 'validate profitability after gas before committing capital' },
+      { api: 'flash-loan-opportunity-api', reason: 'wrap the spread in a flash loan for zero-capital execution' },
+      { api: 'triangular-arbitrage-api', reason: 'check for triangular loops on CEX that compound the arb' },
+      { api: 'market-inefficiency-scanner-api', reason: 'detect broader price discovery lag patterns' },
+    ],
   });
 });
 

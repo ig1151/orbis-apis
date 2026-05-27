@@ -28,7 +28,12 @@ const discoverySchema = {
     pricing: { type: 'object', properties: { free_tier: { type: 'object', properties: { requests_per_day: { type: 'integer' }, requests_per_month: { type: 'integer' } } }, pay_per_call: { type: 'object', additionalProperties: { type: 'string' } } } },
     agent_capabilities: { type: 'array', items: { type: 'string' } },
     x402_compatible: { type: 'boolean' }, paper_mode_recommended: { type: 'boolean' },
+    'x-paper-mode-recommended': { type: 'boolean' },
+    'x-execution-gate-required': { type: 'boolean' },
+    'x-human-approval-required': { type: 'boolean' },
+    'x-latency-tier': { type: 'string' },
     execution_modes: { type: 'array', items: { type: 'string' } },
+    chain_to: { type: 'array', items: { type: 'object', properties: { api: { type: 'string' }, reason: { type: 'string' } } } },
   },
 };
 
@@ -40,7 +45,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Find triangular arbitrage loops within a single exchange — three-leg trades that return more than started with. Returns profit after fees, execution order, and viability window.',
       'x-agent-callable': true, 'x-mcp-compatible': true,
-      'x-human-approval-required': false, 'x-execution-gate-required': false,
+      'x-human-approval-required': true, 'x-execution-gate-required': true,
       'x-paper-mode-recommended': true, 'x402-compatible': true,
       'x-agent-marketplace-ready': true, 'x-pay-per-call-optimized': true,
       'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.005', paths: '$0.005', lookup: '$0.015' } },

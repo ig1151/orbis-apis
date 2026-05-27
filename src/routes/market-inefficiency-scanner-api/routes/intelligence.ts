@@ -40,8 +40,14 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.005', signals: '$0.004', lookup: '$0.015' } },
     agent_capabilities: ['market-inefficiency-detection', 'price-discovery-lag', 'orderbook-imbalance', 'microstructure-analysis', 'exploitation-strategy'],
     x402_compatible: true, paper_mode_recommended: true,
-    execution_modes: ['agent-callable', 'read-only'],
+    'x-paper-mode-recommended': true,
+    execution_modes: ['agent-callable', 'execution-gated'],
     'x-latency-tier': 'real-time',
+    chain_to: [
+      { api: 'dex-cex-arbitrage-api', reason: 'exploit price_lag signals between DEX and CEX venues' },
+      { api: 'triangular-arbitrage-api', reason: 'arbitrage_window signals often map to triangular loops on exchange' },
+      { api: 'flash-loan-opportunity-api', reason: 'wrap high-magnitude signals in flash loan for zero-capital execution' },
+    ],
   });
 });
 

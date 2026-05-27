@@ -40,8 +40,17 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.005', paths: '$0.005', lookup: '$0.015' } },
     agent_capabilities: ['triangular-arbitrage', 'loop-detection', 'three-leg-trading', 'fee-adjusted-profit', 'viability-window'],
     x402_compatible: true, paper_mode_recommended: true,
+    'x-paper-mode-recommended': true,
+    'x-execution-gate-required': true,
+    'x-human-approval-required': true,
     execution_modes: ['agent-callable', 'execution-gated'],
     'x-latency-tier': 'real-time',
+    chain_to: [
+      { api: 'gas-adjusted-arbitrage-api', reason: 'validate net profit after gas on each leg before executing' },
+      { api: 'flash-loan-opportunity-api', reason: 'wrap best triangular loop in flash loan for zero-capital execution' },
+      { api: 'dex-cex-arbitrage-api', reason: 'compare triangular loop profit vs simpler DEX/CEX price gap' },
+      { api: 'market-inefficiency-scanner-api', reason: 'confirm loop is structural inefficiency not a transient artifact' },
+    ],
   });
 });
 

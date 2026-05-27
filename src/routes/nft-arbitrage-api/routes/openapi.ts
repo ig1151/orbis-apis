@@ -32,7 +32,12 @@ const discoverySchema = {
     pricing: { type: 'object', properties: { free_tier: { type: 'object', properties: { requests_per_day: { type: 'integer' }, requests_per_month: { type: 'integer' } } }, pay_per_call: { type: 'object', additionalProperties: { type: 'string' } } } },
     agent_capabilities: { type: 'array', items: { type: 'string' } },
     x402_compatible: { type: 'boolean' }, paper_mode_recommended: { type: 'boolean' },
+    'x-paper-mode-recommended': { type: 'boolean' },
+    'x-execution-gate-required': { type: 'boolean' },
+    'x-human-approval-required': { type: 'boolean' },
+    'x-latency-tier': { type: 'string' },
     execution_modes: { type: 'array', items: { type: 'string' } },
+    chain_to: { type: 'array', items: { type: 'object', properties: { api: { type: 'string' }, reason: { type: 'string' } } } },
   },
 };
 

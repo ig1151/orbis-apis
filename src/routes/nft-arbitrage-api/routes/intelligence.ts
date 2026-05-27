@@ -40,8 +40,14 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.005', opportunities: '$0.005', lookup: '$0.015' } },
     agent_capabilities: ['nft-arbitrage', 'floor-price-comparison', 'marketplace-fee-analysis', 'rarity-adjusted-pricing', 'nft-liquidity-risk'],
     x402_compatible: true, paper_mode_recommended: true,
+    'x-paper-mode-recommended': true,
     execution_modes: ['agent-callable', 'execution-gated'],
     'x-latency-tier': 'near-real-time',
+    chain_to: [
+      { api: 'nft-floor-price-api', reason: 'real-time floor validation before committing to any purchase' },
+      { api: 'gas-adjusted-arbitrage-api', reason: 'Ethereum gas often exceeds NFT floor spread — validate first' },
+      { api: 'market-inefficiency-scanner-api', reason: 'detect broader NFT market microstructure inefficiency patterns' },
+    ],
   });
 });
 

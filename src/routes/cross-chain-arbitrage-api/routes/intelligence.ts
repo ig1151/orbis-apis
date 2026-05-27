@@ -40,8 +40,17 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.006', routes: '$0.006', lookup: '$0.018' } },
     agent_capabilities: ['cross-chain-arbitrage', 'bridge-cost-analysis', 'multi-chain-price-comparison', 'bridge-recommendation', 'latency-risk-assessment'],
     x402_compatible: true, paper_mode_recommended: true,
+    'x-paper-mode-recommended': true,
+    'x-execution-gate-required': true,
+    'x-human-approval-required': true,
     execution_modes: ['agent-callable', 'execution-gated'],
     'x-latency-tier': 'real-time',
+    chain_to: [
+      { api: 'gas-adjusted-arbitrage-api', reason: 'validate total gas cost on both chains before committing capital' },
+      { api: 'dex-cex-arbitrage-api', reason: 'compare cross-chain spread vs faster single-chain DEX/CEX arb' },
+      { api: 'flash-loan-opportunity-api', reason: 'flash loan on source chain can fund the buy side without pre-capital' },
+      { api: 'market-inefficiency-scanner-api', reason: 'confirm cross-chain gap is a persistent structural inefficiency' },
+    ],
   });
 });
 
