@@ -4,7 +4,7 @@ const router = Router();
 const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
 const confidence = { type: 'object', additionalProperties: { type: 'number' } };
 const actions = { type: 'array', items: { type: 'string' } };
-const chain_to = { type: 'array', items: { type: 'string' } };
+const chain_to = { type: 'array', items: { type: 'object', properties: { api: { type: 'string' }, reason: { type: 'string' } } } };
 const traceFields = { trace_id: { type: 'string' }, computed_at: { type: 'string', format: 'date-time' }, success: { type: 'boolean' } };
 
 const crossoverTypeEnum = { type: 'string', enum: ['bullish_signal_cross', 'bearish_signal_cross', 'bullish_zero_cross', 'bearish_zero_cross', 'none'] };
@@ -19,6 +19,7 @@ const discoverySchema = {
     pricing: { type: 'object', properties: { free_tier: { type: 'object', properties: { requests_per_day: { type: 'integer' }, requests_per_month: { type: 'integer' } } }, pay_per_call: { type: 'object', additionalProperties: { type: 'string' } } } },
     agent_capabilities: { type: 'array', items: { type: 'string' } },
     x402_compatible: { type: 'boolean' }, paper_mode_recommended: { type: 'boolean' },
+    execution_modes: { type: 'array', items: { type: 'string' } },
   },
 };
 
@@ -35,6 +36,7 @@ router.get('/', (_req: Request, res: Response) => {
       'x-agent-marketplace-ready': true, 'x-pay-per-call-optimized': true,
       'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { macd: '$0.003', crossovers: '$0.004', lookup: '$0.010' } },
       'x-financial-disclaimer': 'For informational purposes only. Not financial advice. Verify independently before use in trading workflows.',
+      'x-latency-tier': 'near-real-time',
     },
     servers: [{ url: 'https://orbis-apis.onrender.com/macd-signal' }],
     security: [{ ApiKeyAuth: [] }],

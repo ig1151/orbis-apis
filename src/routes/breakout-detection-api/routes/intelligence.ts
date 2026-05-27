@@ -40,6 +40,8 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.004', signals: '$0.004', lookup: '$0.010' } },
     agent_capabilities: ['breakout-detection', 'technical-setups', 'entry-signals', 'invalidation-levels', 'momentum-confirmation'],
     x402_compatible: true, paper_mode_recommended: true,
+    execution_modes: ['agent-callable', 'execution-gated'],
+    'x-latency-tier': 'real-time',
   });
 });
 
@@ -185,9 +187,16 @@ router.post('/lookup', async (req: Request, res: Response) => {
     "conviction": "high|medium|low",
     "key_insight": "string"
   },
+  "reasoning": {
+    "why_signal_generated": "string explanation of the primary factor driving this breakout signal",
+    "key_factors": ["factor 1 (e.g. volume surge above 20d avg)", "factor 2 (e.g. closed above resistance)", "factor 3"],
+    "invalidators": ["price drops back below breakout level", "volume collapses on next candle", "broader market reversal"]
+  },
+  "latency_ms": number,
+  "chain_to": [{"api": "risk-manager-api", "reason": "validate position size before execution"}, {"api": "portfolio-risk-api", "reason": "check overall portfolio exposure"}],
   "financial_disclaimer": "For informational purposes only. Not financial advice.",
   "paper_mode_recommended": true,
-  "confidence_per_section": {"setup": 0.78, "confirmation": 0.80, "levels": 0.77, "signal": 0.74},
+  "confidence_per_section": {"setup": 0.78, "confirmation": 0.80, "levels": 0.77, "signal": 0.74, "reasoning": 0.76},
   "recommended_actions_priority_order": ["confirmation score must be 4/5+ before entry", "set stop at invalidation level immediately", "partial profits at target_1 reduce risk"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);

@@ -1,0 +1,968 @@
+{
+  "generated_at": "2026-05-27T00:00:00Z",
+  "batch": "Tier 3 Crypto APIs — A+ upgraded (discovery schemas, execution gates, reasoning objects, structured chain_to, latency metadata)",
+  "improvements_applied": [
+    "1. Discovery endpoints have full explicit schemas with execution_modes",
+    "2. /lookup on Scalping, Breakout, Whale Entry: x-execution-gate-required + x-human-approval-required = true",
+    "3. reasoning object (why_signal_generated, key_factors, invalidators) on all execution-critical /lookup responses",
+    "4. chain_to upgraded from string[] to [{api, reason}] objects",
+    "5. x-latency-tier added to all APIs (real-time: Ticker, Breakout, Whale, Scalping; near-real-time: OHLCV, RSI, MACD, BB)"
+  ],
+  "apis": [
+    {
+      "name": "OHLCV Candlestick API",
+      "base_url": "https://orbis-apis.onrender.com/ohlcv-candlestick",
+      "listing": {
+        "name": "OHLCV Candlestick API",
+        "shortDescription": "OHLCV candlestick data with multi-timeframe summaries, trend detection, and pattern recognition for trading agents",
+        "category": "financial-data",
+        "tags": ["ohlcv", "candlestick", "technical-analysis", "crypto", "trading"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/candles", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/aggregate", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "OHLCV Candlestick API",
+          "version": "1.0.0",
+          "description": "Retrieve OHLCV candlestick data, multi-timeframe summaries, and full candlestick intelligence with trend and pattern detection for trading agents.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-latency-tier": "near-real-time",
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "candles": "$0.003", "aggregate": "$0.003", "lookup": "$0.008" } },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/ohlcv-candlestick" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "ohlcvCandlestickDiscovery",
+              "summary": "API discovery — name, version, endpoints, pricing, auth, agent capabilities",
+              "security": [],
+              "responses": {
+                "200": {
+                  "description": "Full discovery payload",
+                  "content": { "application/json": { "schema": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" },
+                      "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" },
+                      "health": { "type": "string" },
+                      "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } },
+                      "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } },
+                      "pricing": { "type": "object", "properties": { "free_tier": { "type": "object", "properties": { "requests_per_day": { "type": "integer" }, "requests_per_month": { "type": "integer" } } }, "pay_per_call": { "type": "object", "additionalProperties": { "type": "string" } } } },
+                      "agent_capabilities": { "type": "array", "items": { "type": "string" } },
+                      "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" },
+                      "execution_modes": { "type": "array", "items": { "type": "string" } }
+                    }
+                  } } }
+                }
+              }
+            }
+          },
+          "/candles": {
+            "post": {
+              "operationId": "ohlcvCandlesGet",
+              "summary": "OHLCV data for a symbol and timeframe",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "timeframe": { "type": "string", "default": "1h", "enum": ["1m","5m","15m","1h","4h","1d"] }, "exchange": { "type": "string", "default": "binance", "enum": ["binance","coinbase","kraken","bybit","okx"] }, "limit": { "type": "integer", "default": 50, "minimum": 1, "maximum": 500 } } } } } },
+              "responses": {
+                "200": { "description": "OHLCV candle series with trend summary", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                  "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                  "symbol": { "type": "string" }, "exchange": { "type": "string" }, "timeframe": { "type": "string" },
+                  "candles": { "type": "array", "items": { "type": "object", "properties": { "timestamp": { "type": "string", "format": "date-time" }, "open": { "type": "number" }, "high": { "type": "number" }, "low": { "type": "number" }, "close": { "type": "number" }, "volume": { "type": "number" }, "candle_type": { "type": "string", "enum": ["bullish","bearish","doji","hammer","shooting_star","engulfing"] } } } },
+                  "summary": { "type": "object", "properties": { "current_price": { "type": "number" }, "price_change_pct": { "type": "number" }, "highest_high": { "type": "number" }, "lowest_low": { "type": "number" }, "avg_volume": { "type": "number" }, "trend_direction": { "type": "string", "enum": ["uptrend","downtrend","sideways"] }, "trend_strength": { "type": "string", "enum": ["strong","moderate","weak"] } } },
+                  "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                  "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                  "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                  "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                  "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+                } } } } },
+                "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/aggregate": {
+            "post": {
+              "operationId": "ohlcvAggregateGet",
+              "summary": "Multi-timeframe OHLCV summary for a symbol",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "exchange": { "type": "string", "default": "binance", "enum": ["binance","coinbase","kraken","bybit","okx"] } } } } } },
+              "responses": {
+                "200": { "description": "Multi-timeframe OHLCV summary with trend alignment", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                  "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                  "symbol": { "type": "string" }, "exchange": { "type": "string" },
+                  "timeframes": { "type": "object", "properties": { "15m": { "type": "object", "properties": { "open": { "type": "number" }, "high": { "type": "number" }, "low": { "type": "number" }, "close": { "type": "number" }, "volume": { "type": "number" }, "trend": { "type": "string", "enum": ["uptrend","downtrend","sideways"] }, "candle_count": { "type": "number" } } }, "1h": { "type": "object" }, "4h": { "type": "object" }, "1d": { "type": "object" } } },
+                  "alignment": { "type": "object", "properties": { "trend_alignment": { "type": "string", "enum": ["aligned_bullish","aligned_bearish","mixed","conflicted"] }, "dominant_timeframe": { "type": "string" }, "confluence_score": { "type": "number" } } },
+                  "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                  "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                  "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                  "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                  "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+                } } } } },
+                "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "ohlcvCandlestickLookup",
+              "summary": "ONE-CALL: full candlestick intelligence + trend + pattern detection",
+              "x-one-call": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "exchange": { "type": "string", "default": "binance", "enum": ["binance","coinbase","kraken","bybit","okx"] } } } } } },
+              "responses": {
+                "200": { "description": "Full candlestick intelligence with patterns, trend, and signal", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                  "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                  "symbol": { "type": "string" }, "exchange": { "type": "string" },
+                  "current_candle": { "type": "object", "properties": { "timeframe": { "type": "string" }, "open": { "type": "number" }, "high": { "type": "number" }, "low": { "type": "number" }, "close": { "type": "number" }, "volume": { "type": "number" }, "candle_type": { "type": "string", "enum": ["bullish","bearish","doji","hammer","shooting_star","engulfing"] }, "body_pct": { "type": "number" }, "wick_ratio": { "type": "number" } } },
+                  "pattern_detection": { "type": "object", "properties": { "patterns_found": { "type": "array", "items": { "type": "object", "properties": { "pattern": { "type": "string" }, "timeframe": { "type": "string" }, "reliability": { "type": "string", "enum": ["high","medium","low"] }, "implication": { "type": "string", "enum": ["bullish","bearish","continuation","reversal"] } } } }, "dominant_pattern": { "type": "string" }, "pattern_signal": { "type": "string", "enum": ["bullish","bearish","neutral"] } } },
+                  "trend_analysis": { "type": "object", "properties": { "short_term": { "type": "string", "enum": ["uptrend","downtrend","sideways"] }, "medium_term": { "type": "string", "enum": ["uptrend","downtrend","sideways"] }, "long_term": { "type": "string", "enum": ["uptrend","downtrend","sideways"] }, "trend_alignment": { "type": "string", "enum": ["aligned","mixed","conflicted"] }, "key_levels": { "type": "object", "properties": { "support": { "type": "number" }, "resistance": { "type": "number" }, "pivot": { "type": "number" } } } } },
+                  "aggregate_signal": { "type": "object", "properties": { "signal": { "type": "string", "enum": ["strong_buy","buy","neutral","sell","strong_sell"] }, "conviction": { "type": "string", "enum": ["high","medium","low"] }, "entry_zone": { "type": "string" }, "invalidation_level": { "type": "number" }, "key_insight": { "type": "string" } } },
+                  "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                  "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                  "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                  "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                  "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+                } } } } },
+                "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" }
+              }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "Multi-Exchange Ticker API",
+      "base_url": "https://orbis-apis.onrender.com/multi-exchange-ticker",
+      "listing": {
+        "name": "Multi-Exchange Ticker API",
+        "shortDescription": "Real-time price and volume across all major exchanges — spread analysis, best execution, and arbitrage detection",
+        "category": "financial-data",
+        "tags": ["ticker", "multi-exchange", "best-execution", "spread", "crypto"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/ticker", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/compare", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Multi-Exchange Ticker API",
+          "version": "1.0.0",
+          "description": "Fetch real-time price and volume ticker data across multiple exchanges, compare spreads, and get unified best-price recommendations for trading agents.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-latency-tier": "real-time",
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "ticker": "$0.003", "compare": "$0.003", "lookup": "$0.008" } },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/multi-exchange-ticker" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "multiExchangeTickerDiscovery",
+              "summary": "API discovery — name, version, endpoints, pricing, auth, agent capabilities",
+              "security": [],
+              "responses": {
+                "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": {
+                  "type": "object", "properties": {
+                    "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" },
+                    "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" },
+                    "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } },
+                    "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } },
+                    "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
+                    "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" },
+                    "execution_modes": { "type": "array", "items": { "type": "string" } }
+                  }
+                } } } }
+              }
+            }
+          },
+          "/ticker": {
+            "post": {
+              "operationId": "multiExchangeTickerGet",
+              "summary": "Price and volume for a symbol across all major exchanges",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" } } } } } },
+              "responses": {
+                "200": { "description": "Ticker data across all exchanges with global stats", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                  "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                  "symbol": { "type": "string" },
+                  "tickers": { "type": "array", "items": { "type": "object", "properties": { "exchange": { "type": "string" }, "bid": { "type": "number" }, "ask": { "type": "number" }, "last": { "type": "number" }, "volume_24h": { "type": "number" }, "volume_usd_24h": { "type": "number" }, "price_change_pct_24h": { "type": "number" }, "market_share_pct": { "type": "number" }, "latency_ms": { "type": "number" } } } },
+                  "global_stats": { "type": "object", "properties": { "total_volume_usd_24h": { "type": "number" }, "highest_price": { "type": "number" }, "lowest_price": { "type": "number" }, "price_spread_pct": { "type": "number" }, "most_liquid_exchange": { "type": "string" } } },
+                  "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                  "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                  "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                  "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                  "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+                } } } } },
+                "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/compare": {
+            "post": {
+              "operationId": "multiExchangeTickerCompare",
+              "summary": "Side-by-side exchange comparison with spread and cost analysis",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" } } } } } },
+              "responses": {
+                "200": { "description": "Exchange comparison with spread analysis and arbitrage detection", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                  "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                  "symbol": { "type": "string" },
+                  "comparison": { "type": "array", "items": { "type": "object", "properties": { "exchange": { "type": "string" }, "bid": { "type": "number" }, "ask": { "type": "number" }, "spread_usd": { "type": "number" }, "spread_pct": { "type": "number" }, "depth_bid_usd": { "type": "number" }, "depth_ask_usd": { "type": "number" }, "fee_taker_pct": { "type": "number" }, "effective_cost_pct": { "type": "number" }, "rank_for_buying": { "type": "integer" }, "rank_for_selling": { "type": "integer" } } } },
+                  "spread_analysis": { "type": "object", "properties": { "tightest_spread_exchange": { "type": "string" }, "widest_spread_exchange": { "type": "string" }, "avg_spread_pct": { "type": "number" }, "arbitrage_opportunity": { "type": "boolean" }, "arb_profit_pct": { "type": "number" } } },
+                  "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                  "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                  "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                  "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                  "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+                } } } } },
+                "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "multiExchangeTickerLookup",
+              "summary": "ONE-CALL: unified ticker + best price + spread analysis + trade recommendation",
+              "x-one-call": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" } } } } } },
+              "responses": {
+                "200": { "description": "Full multi-exchange intelligence with best execution and arbitrage alert", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                  "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                  "symbol": { "type": "string" },
+                  "unified_price": { "type": "object", "properties": { "mid_price": { "type": "number" }, "vwap_24h": { "type": "number" }, "price_volatility_24h_pct": { "type": "number" }, "momentum": { "type": "string", "enum": ["bullish","bearish","neutral"] } } },
+                  "best_execution": { "type": "object", "properties": { "best_exchange_to_buy": { "type": "string" }, "best_exchange_to_sell": { "type": "string" }, "best_bid": { "type": "number" }, "best_ask": { "type": "number" }, "effective_spread_pct": { "type": "number" }, "reasoning": { "type": "string" } } },
+                  "exchange_rankings": { "type": "array", "items": { "type": "object", "properties": { "exchange": { "type": "string" }, "score": { "type": "number" }, "liquidity_grade": { "type": "string", "enum": ["A","B","C","D"] }, "recommended_for": { "type": "string" } } } },
+                  "arbitrage_alert": { "type": "object", "properties": { "detected": { "type": "boolean" }, "buy_exchange": { "type": "string" }, "sell_exchange": { "type": "string" }, "gross_profit_pct": { "type": "number" }, "net_profit_pct": { "type": "number" }, "viability": { "type": "string", "enum": ["viable","marginal","not_viable"] } } },
+                  "recommendation": { "type": "object", "properties": { "action": { "type": "string", "enum": ["buy","sell","hold","wait"] }, "preferred_exchange": { "type": "string" }, "urgency": { "type": "string", "enum": ["immediate","normal","low"] }, "key_insight": { "type": "string" } } },
+                  "latency_ms": { "type": "number", "description": "Price feed aggregation time in milliseconds" },
+                  "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                  "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                  "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                  "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                  "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+                } } } } },
+                "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" }
+              }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "Breakout Detection API",
+      "base_url": "https://orbis-apis.onrender.com/breakout-detection",
+      "listing": {
+        "name": "Breakout Detection API",
+        "shortDescription": "Detect breakout setups with volume confirmation, scan market-wide breakout signals, and get entry/invalidation levels",
+        "category": "financial-data",
+        "tags": ["breakout", "technical-analysis", "trading-signals", "crypto", "volume"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.010,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.004 },
+              { "method": "POST", "pathPattern": "/signals", "pricePerCallUsdc": 0.004 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.010 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Breakout Detection API",
+          "version": "1.0.0",
+          "description": "Detect breakout setups, surface active breakout signals across the market, and provide full breakout analysis with entry and invalidation levels for trading agents.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-latency-tier": "real-time",
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "scan": "$0.004", "signals": "$0.004", "lookup": "$0.010" } },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/breakout-detection" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "breakoutDetectionDiscovery",
+              "summary": "API discovery — name, version, endpoints, pricing, auth, agent capabilities",
+              "security": [],
+              "responses": {
+                "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": {
+                  "type": "object", "properties": {
+                    "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" },
+                    "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" },
+                    "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } },
+                    "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } },
+                    "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
+                    "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" },
+                    "execution_modes": { "type": "array", "items": { "type": "string" } }
+                  }
+                } } } }
+              }
+            }
+          },
+          "/scan": {
+            "post": {
+              "operationId": "breakoutDetectionScan",
+              "summary": "Scan for breakout setups for a specific symbol",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "timeframe": { "type": "string", "default": "1h", "enum": ["15m","1h","4h","1d"] }, "exchange": { "type": "string", "default": "binance", "enum": ["binance","coinbase","kraken","bybit","okx"] } } } } } },
+              "responses": {
+                "200": { "description": "Breakout setups with key levels and volume profile", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                  "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                  "symbol": { "type": "string" }, "exchange": { "type": "string" }, "timeframe": { "type": "string" },
+                  "breakout_setups": { "type": "array", "items": { "type": "object", "properties": { "setup_type": { "type": "string", "enum": ["resistance_breakout","support_breakdown","range_breakout","flag_breakout","triangle_breakout","channel_breakout"] }, "direction": { "type": "string", "enum": ["bullish","bearish"] }, "key_level": { "type": "number" }, "current_price": { "type": "number" }, "distance_to_level_pct": { "type": "number" }, "volume_confirmation": { "type": "boolean" }, "setup_quality": { "type": "string", "enum": ["A+","A","B","C"] }, "maturity": { "type": "string", "enum": ["forming","ready","triggered","failed"] } } } },
+                  "key_levels": { "type": "object", "properties": { "major_resistance": { "type": "number" }, "major_support": { "type": "number" }, "range_high": { "type": "number" }, "range_low": { "type": "number" }, "consolidation_days": { "type": "number" } } },
+                  "volume_profile": { "type": "object", "properties": { "avg_volume_20d": { "type": "number" }, "current_volume": { "type": "number" }, "volume_surge": { "type": "boolean" }, "volume_trend": { "type": "string", "enum": ["increasing","decreasing","flat"] } } },
+                  "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                  "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                  "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                  "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                  "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+                } } } } },
+                "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/signals": {
+            "post": {
+              "operationId": "breakoutDetectionSignals",
+              "summary": "Active breakout signals across the market",
+              "requestBody": { "required": false, "content": { "application/json": { "schema": { "type": "object", "properties": { "timeframe": { "type": "string", "default": "1h", "enum": ["15m","1h","4h","1d"] }, "min_confidence": { "type": "number", "default": 70, "minimum": 0, "maximum": 100 } } } } } },
+              "responses": {
+                "200": { "description": "Active market-wide breakout signals with context", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                  "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                  "signals": { "type": "array", "items": { "type": "object", "properties": { "symbol": { "type": "string" }, "exchange": { "type": "string" }, "breakout_type": { "type": "string" }, "direction": { "type": "string", "enum": ["bullish","bearish"] }, "breakout_level": { "type": "number" }, "current_price": { "type": "number" }, "confidence_pct": { "type": "number" }, "volume_confirmed": { "type": "boolean" }, "age_minutes": { "type": "number" }, "target_pct": { "type": "number" }, "stop_pct": { "type": "number" } } } },
+                  "market_context": { "type": "object", "properties": { "total_signals_found": { "type": "integer" }, "bullish_count": { "type": "integer" }, "bearish_count": { "type": "integer" }, "market_bias": { "type": "string", "enum": ["bullish","bearish","neutral"] }, "highest_confidence_symbol": { "type": "string" } } },
+                  "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                  "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                  "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                  "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                  "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+                } } } } },
+                "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "breakoutDetectionLookup",
+              "summary": "ONE-CALL: breakout analysis + confirmation checklist + entry/invalidation levels",
+              "x-one-call": true,
+              "x-execution-gate-required": true,
+              "x-human-approval-required": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "timeframe": { "type": "string", "default": "1h", "enum": ["15m","1h","4h","1d"] } } } } } },
+              "responses": {
+                "200": { "description": "Full breakout intelligence with trade levels, reasoning, and probability", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                  "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                  "symbol": { "type": "string" }, "timeframe": { "type": "string" },
+                  "primary_setup": { "type": "object", "properties": { "setup_type": { "type": "string", "enum": ["resistance_breakout","support_breakdown","range_breakout","flag_breakout","triangle_breakout","channel_breakout"] }, "direction": { "type": "string", "enum": ["bullish","bearish"] }, "breakout_level": { "type": "number" }, "current_price": { "type": "number" }, "status": { "type": "string", "enum": ["pre_breakout","breaking_out","confirmed","failed"] }, "volume_confirmation": { "type": "boolean" }, "momentum_confirmation": { "type": "boolean" } } },
+                  "confirmation_checklist": { "type": "object", "properties": { "price_above_level": { "type": "boolean" }, "volume_above_average": { "type": "boolean" }, "momentum_positive": { "type": "boolean" }, "no_immediate_resistance": { "type": "boolean" }, "candle_closed_above": { "type": "boolean" }, "confirmation_score": { "type": "number" } } },
+                  "trade_levels": { "type": "object", "properties": { "entry_price": { "type": "number" }, "entry_zone_low": { "type": "number" }, "entry_zone_high": { "type": "number" }, "target_1": { "type": "number" }, "target_2": { "type": "number" }, "target_3": { "type": "number" }, "invalidation_level": { "type": "number" }, "stop_loss": { "type": "number" }, "risk_reward_ratio": { "type": "number" } } },
+                  "breakout_probability": { "type": "object", "properties": { "probability_pct": { "type": "number" }, "expected_move_pct": { "type": "number" }, "false_breakout_risk": { "type": "string", "enum": ["high","medium","low"] }, "time_to_resolve_hours": { "type": "number" } } },
+                  "aggregate_signal": { "type": "object", "properties": { "signal": { "type": "string", "enum": ["strong_buy","buy","neutral","sell","strong_sell"] }, "conviction": { "type": "string", "enum": ["high","medium","low"] }, "key_insight": { "type": "string" } } },
+                  "reasoning": { "type": "object", "properties": { "why_signal_generated": { "type": "string" }, "key_factors": { "type": "array", "items": { "type": "string" } }, "invalidators": { "type": "array", "items": { "type": "string" } } } },
+                  "latency_ms": { "type": "number", "description": "Signal computation time in milliseconds" },
+                  "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                  "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                  "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                  "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                  "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+                } } } } },
+                "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" }
+              }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "RSI Signal API",
+      "base_url": "https://orbis-apis.onrender.com/rsi-signal",
+      "listing": {
+        "name": "RSI Signal API",
+        "shortDescription": "RSI values, divergence detection, overbought/oversold market alerts, and multi-timeframe RSI trade signals",
+        "category": "financial-data",
+        "tags": ["rsi", "technical-analysis", "divergence", "overbought", "crypto"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/rsi", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/alerts", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "RSI Signal API",
+          "version": "1.0.0",
+          "description": "Get RSI values, divergence detection, overbought/oversold alerts across the market, and full RSI intelligence with trade implications for trading agents.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-latency-tier": "near-real-time",
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "rsi": "$0.003", "alerts": "$0.003", "lookup": "$0.008" } },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/rsi-signal" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "rsiSignalDiscovery",
+              "summary": "API discovery",
+              "security": [],
+              "responses": { "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" }, "endpoints": { "type": "array", "items": { "type": "object" } }, "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } }, "x402_compatible": { "type": "boolean" }, "execution_modes": { "type": "array", "items": { "type": "string" } } } } } } } }
+            }
+          },
+          "/rsi": {
+            "post": {
+              "operationId": "rsiSignalGet",
+              "summary": "Current RSI value, zone, and divergence detection for a symbol",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "timeframe": { "type": "string", "default": "1h", "enum": ["5m","15m","1h","4h","1d"] }, "exchange": { "type": "string", "default": "binance" } } } } } },
+              "responses": { "200": { "description": "RSI value with zone classification and divergence analysis", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "symbol": { "type": "string" }, "exchange": { "type": "string" }, "timeframe": { "type": "string" },
+                "rsi": { "type": "object", "properties": { "period": { "type": "integer" }, "value": { "type": "number" }, "rsi_zone": { "type": "string", "enum": ["overbought","oversold","neutral","extreme_overbought","extreme_oversold"] }, "overbought_threshold": { "type": "number" }, "oversold_threshold": { "type": "number" }, "previous_value": { "type": "number" }, "trend": { "type": "string", "enum": ["rising","falling","flat"] } } },
+                "divergence": { "type": "object", "properties": { "divergence_detected": { "type": "boolean" }, "divergence_type": { "type": "string", "enum": ["bullish_regular","bearish_regular","bullish_hidden","bearish_hidden","none"] }, "significance": { "type": "string", "enum": ["high","medium","low","none"] } } },
+                "rsi_history": { "type": "array", "items": { "type": "object", "properties": { "timestamp": { "type": "string", "format": "date-time" }, "value": { "type": "number" }, "zone": { "type": "string" } } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" } }
+            }
+          },
+          "/alerts": {
+            "post": {
+              "operationId": "rsiSignalAlerts",
+              "summary": "Overbought/oversold RSI alerts across the market",
+              "requestBody": { "required": false, "content": { "application/json": { "schema": { "type": "object", "properties": { "timeframe": { "type": "string", "default": "1h" }, "threshold": { "type": "number", "default": 70 } } } } } },
+              "responses": { "200": { "description": "Market-wide RSI alerts", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "alerts": { "type": "array", "items": { "type": "object", "properties": { "symbol": { "type": "string" }, "rsi_value": { "type": "number" }, "rsi_zone": { "type": "string" }, "price": { "type": "number" }, "divergence_present": { "type": "boolean" }, "signal": { "type": "string" }, "alert_strength": { "type": "string" } } } },
+                "summary": { "type": "object", "properties": { "total_overbought": { "type": "integer" }, "total_oversold": { "type": "integer" }, "extreme_readings": { "type": "integer" }, "market_bias": { "type": "string" }, "mean_rsi": { "type": "number" } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "500": { "description": "Internal error" } }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "rsiSignalLookup",
+              "summary": "ONE-CALL: RSI + divergence + multi-timeframe + trade signal",
+              "x-one-call": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "timeframe": { "type": "string", "default": "1h" } } } } } },
+              "responses": { "200": { "description": "Full RSI intelligence with divergence, multi-timeframe, and trade signal", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "symbol": { "type": "string" }, "timeframe": { "type": "string" },
+                "rsi_state": { "type": "object", "properties": { "value": { "type": "number" }, "rsi_zone": { "type": "string", "enum": ["overbought","oversold","neutral","extreme_overbought","extreme_oversold"] }, "trend": { "type": "string", "enum": ["rising","falling","flat"] }, "distance_from_50": { "type": "number" }, "speed_of_change": { "type": "string", "enum": ["fast","moderate","slow"] } } },
+                "divergence_analysis": { "type": "object", "properties": { "divergence_detected": { "type": "boolean" }, "divergence_type": { "type": "string", "enum": ["bullish_regular","bearish_regular","bullish_hidden","bearish_hidden","none"] }, "strength": { "type": "string", "enum": ["strong","moderate","weak","none"] }, "expected_reaction": { "type": "string" } } },
+                "multi_timeframe_rsi": { "type": "object", "properties": { "15m": { "type": "number" }, "1h": { "type": "number" }, "4h": { "type": "number" }, "1d": { "type": "number" }, "alignment": { "type": "string", "enum": ["all_overbought","all_oversold","rising","falling","mixed"] } } },
+                "trade_signal": { "type": "object", "properties": { "signal": { "type": "string", "enum": ["strong_buy","buy","neutral","sell","strong_sell"] }, "trigger": { "type": "string", "enum": ["divergence","zone_extreme","momentum_shift","none"] }, "entry_timing": { "type": "string", "enum": ["now","wait_for_confirmation","avoid"] }, "stop_suggestion": { "type": "number" }, "key_insight": { "type": "string" } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" } }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "MACD Signal API",
+      "base_url": "https://orbis-apis.onrender.com/macd-signal",
+      "listing": {
+        "name": "MACD Signal API",
+        "shortDescription": "MACD line, signal line, histogram values, crossover detection, and multi-timeframe momentum trade signals",
+        "category": "financial-data",
+        "tags": ["macd", "technical-analysis", "crossover", "momentum", "crypto"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.010,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/macd", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/crossovers", "pricePerCallUsdc": 0.004 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.010 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "MACD Signal API",
+          "version": "1.0.0",
+          "description": "Get MACD line, signal line, and histogram values, detect crossovers, and receive full MACD intelligence with momentum and trade signals for trading agents.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-latency-tier": "near-real-time",
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "macd": "$0.003", "crossovers": "$0.004", "lookup": "$0.010" } },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/macd-signal" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "macdSignalDiscovery",
+              "summary": "API discovery",
+              "security": [],
+              "responses": { "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" }, "endpoints": { "type": "array", "items": { "type": "object" } }, "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } }, "x402_compatible": { "type": "boolean" }, "execution_modes": { "type": "array", "items": { "type": "string" } } } } } } } }
+            }
+          },
+          "/macd": {
+            "post": {
+              "operationId": "macdSignalGet",
+              "summary": "Current MACD line, signal line, and histogram for a symbol",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "timeframe": { "type": "string", "default": "1h", "enum": ["5m","15m","1h","4h","1d"] }, "exchange": { "type": "string", "default": "binance" } } } } } },
+              "responses": { "200": { "description": "MACD state with momentum assessment", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "symbol": { "type": "string" }, "exchange": { "type": "string" }, "timeframe": { "type": "string" },
+                "macd": { "type": "object", "properties": { "macd_line": { "type": "number" }, "signal_line": { "type": "number" }, "histogram": { "type": "number" }, "histogram_color": { "type": "string", "enum": ["green","red"] }, "histogram_trend": { "type": "string", "enum": ["expanding","contracting","flat"] }, "position": { "type": "string", "enum": ["above_zero","below_zero"] }, "macd_vs_signal": { "type": "string", "enum": ["macd_above","macd_below","crossing"] } } },
+                "momentum": { "type": "object", "properties": { "strength": { "type": "string", "enum": ["strong_bullish","bullish","neutral","bearish","strong_bearish"] }, "acceleration": { "type": "string", "enum": ["accelerating","decelerating","flat"] }, "zero_line_distance": { "type": "number" } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" } }
+            }
+          },
+          "/crossovers": {
+            "post": {
+              "operationId": "macdSignalCrossovers",
+              "summary": "Recent and upcoming MACD crossover signals for a symbol",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "timeframe": { "type": "string", "default": "1h" } } } } } },
+              "responses": { "200": { "description": "Crossovers with pending prediction and historical stats", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "recent_crossovers": { "type": "array", "items": { "type": "object", "properties": { "crossover_type": { "type": "string" }, "timestamp": { "type": "string", "format": "date-time" }, "price_at_crossover": { "type": "number" }, "outcome": { "type": "string", "enum": ["profitable","unprofitable","pending"] }, "max_move_pct": { "type": "number" } } } },
+                "pending_crossover": { "type": "object", "properties": { "likely": { "type": "boolean" }, "type": { "type": "string" }, "bars_estimated": { "type": "number" }, "probability_pct": { "type": "number" } } },
+                "crossover_stats": { "type": "object", "properties": { "win_rate_last_10": { "type": "number" }, "avg_move_after_cross_pct": { "type": "number" }, "false_signal_rate_pct": { "type": "number" } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" } }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "macdSignalLookup",
+              "summary": "ONE-CALL: MACD state + crossover + momentum + trade signal",
+              "x-one-call": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "timeframe": { "type": "string", "default": "1h" } } } } } },
+              "responses": { "200": { "description": "Full MACD intelligence with multi-timeframe analysis and trade signal", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "macd_state": { "type": "object", "properties": { "macd_line": { "type": "number" }, "signal_line": { "type": "number" }, "histogram": { "type": "number" }, "position": { "type": "string", "enum": ["above_zero","below_zero"] }, "crossover_status": { "type": "string", "enum": ["just_crossed_bullish","just_crossed_bearish","macd_above_signal","macd_below_signal"] } } },
+                "momentum_assessment": { "type": "object", "properties": { "current_momentum": { "type": "string", "enum": ["strong_bullish","bullish","fading_bullish","neutral","fading_bearish","bearish","strong_bearish"] }, "momentum_shift_detected": { "type": "boolean" }, "divergence_from_price": { "type": "boolean" } } },
+                "multi_timeframe_macd": { "type": "object", "properties": { "15m": { "type": "object" }, "1h": { "type": "object" }, "4h": { "type": "object" }, "1d": { "type": "object" } } },
+                "trade_signal": { "type": "object", "properties": { "signal": { "type": "string", "enum": ["strong_buy","buy","neutral","sell","strong_sell"] }, "trigger": { "type": "string", "enum": ["signal_crossover","zero_crossover","histogram_reversal","divergence"] }, "entry_timing": { "type": "string", "enum": ["now","wait_for_crossover","wait_for_zero_cross","avoid"] }, "conviction": { "type": "string", "enum": ["high","medium","low"] }, "key_insight": { "type": "string" } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" } }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "Bollinger Band Alert API",
+      "base_url": "https://orbis-apis.onrender.com/bollinger-band",
+      "listing": {
+        "name": "Bollinger Band Alert API",
+        "shortDescription": "Bollinger Band values, squeeze and breakout alerts across the market, and full BB intelligence with breakout probability",
+        "category": "financial-data",
+        "tags": ["bollinger-bands", "squeeze", "breakout", "volatility", "crypto"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.010,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/bands", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/alerts", "pricePerCallUsdc": 0.004 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.010 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Bollinger Band Alert API",
+          "version": "1.0.0",
+          "description": "Get Bollinger Band values, band width, and price position; detect squeezes and breakouts across the market; receive full BB intelligence with breakout probability for trading agents.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-latency-tier": "near-real-time",
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "bands": "$0.003", "alerts": "$0.004", "lookup": "$0.010" } },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/bollinger-band" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "bollingerBandDiscovery",
+              "summary": "API discovery",
+              "security": [],
+              "responses": { "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" }, "endpoints": { "type": "array", "items": { "type": "object" } }, "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } }, "x402_compatible": { "type": "boolean" }, "execution_modes": { "type": "array", "items": { "type": "string" } } } } } } } }
+            }
+          },
+          "/bands": {
+            "post": {
+              "operationId": "bollingerBandGet",
+              "summary": "Current Bollinger Band values, band width, and price position for a symbol",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "timeframe": { "type": "string", "default": "1h" }, "period": { "type": "integer", "default": 20 }, "std_dev": { "type": "number", "default": 2 } } } } } },
+              "responses": { "200": { "description": "Bollinger Band state with volatility and mean reversion", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "bands": { "type": "object", "properties": { "upper_band": { "type": "number" }, "middle_band": { "type": "number" }, "lower_band": { "type": "number" }, "band_width_pct": { "type": "number" }, "current_price": { "type": "number" }, "percent_b": { "type": "number" }, "price_position": { "type": "string", "enum": ["above_upper","near_upper","middle","near_lower","below_lower"] } } },
+                "volatility": { "type": "object", "properties": { "current_volatility": { "type": "string", "enum": ["high","normal","low","compressed"] }, "historical_rank_pct": { "type": "number" }, "expanding": { "type": "boolean" }, "contracting": { "type": "boolean" } } },
+                "mean_reversion": { "type": "object", "properties": { "stretched_from_mean_pct": { "type": "number" }, "reversion_likely": { "type": "boolean" }, "direction": { "type": "string", "enum": ["to_upper","to_lower","neutral"] } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" } }
+            }
+          },
+          "/alerts": {
+            "post": {
+              "operationId": "bollingerBandAlerts",
+              "summary": "Squeeze and breakout BB alerts across the market",
+              "requestBody": { "required": false, "content": { "application/json": { "schema": { "type": "object", "properties": { "timeframe": { "type": "string", "default": "1h" }, "type": { "type": "string", "default": "both", "enum": ["squeeze","breakout","both"] } } } } } },
+              "responses": { "200": { "description": "Market-wide Bollinger Band squeeze and breakout alerts", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "alerts": { "type": "array", "items": { "type": "object", "properties": { "symbol": { "type": "string" }, "alert_type": { "type": "string", "enum": ["squeeze","breakout_up","breakout_down","touch_upper","touch_lower","walk_upper","walk_lower"] }, "band_width_pct": { "type": "number" }, "squeeze_duration_bars": { "type": "number" }, "breakout_confirmed": { "type": "boolean" }, "volume_surge": { "type": "boolean" }, "signal": { "type": "string", "enum": ["bullish","bearish","neutral"] }, "urgency": { "type": "string", "enum": ["high","medium","low"] } } } },
+                "market_summary": { "type": "object", "properties": { "total_squeezes": { "type": "integer" }, "total_breakouts": { "type": "integer" }, "market_volatility_state": { "type": "string", "enum": ["high","normal","low","compressed"] } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "500": { "description": "Internal error" } }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "bollingerBandLookup",
+              "summary": "ONE-CALL: BB state + squeeze detection + breakout probability + trade signal",
+              "x-one-call": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "timeframe": { "type": "string", "default": "1h" } } } } } },
+              "responses": { "200": { "description": "Full Bollinger Band intelligence with squeeze, breakout, and signal analysis", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "bb_state": { "type": "object", "properties": { "upper_band": { "type": "number" }, "middle_band": { "type": "number" }, "lower_band": { "type": "number" }, "current_price": { "type": "number" }, "percent_b": { "type": "number" }, "band_width_pct": { "type": "number" }, "price_position": { "type": "string", "enum": ["above_upper","near_upper","middle","near_lower","below_lower"] } } },
+                "squeeze_analysis": { "type": "object", "properties": { "squeeze_detected": { "type": "boolean" }, "squeeze_strength": { "type": "string", "enum": ["extreme","strong","moderate","none"] }, "bandwidth_percentile_20d": { "type": "number" }, "squeeze_duration_bars": { "type": "number" }, "historical_avg_move_after_squeeze_pct": { "type": "number" } } },
+                "breakout_analysis": { "type": "object", "properties": { "breakout_detected": { "type": "boolean" }, "breakout_direction": { "type": "string", "enum": ["up","down","none"] }, "breakout_probability_pct": { "type": "number" }, "volume_confirmation": { "type": "boolean" }, "expected_move_pct": { "type": "number" } } },
+                "mean_reversion_setup": { "type": "object", "properties": { "setup_active": { "type": "boolean" }, "direction": { "type": "string", "enum": ["buy_lower_band","sell_upper_band","none"] }, "target_middle_band": { "type": "number" } } },
+                "aggregate_signal": { "type": "object", "properties": { "signal": { "type": "string", "enum": ["strong_buy","buy","neutral","sell","strong_sell"] }, "primary_setup": { "type": "string", "enum": ["squeeze_breakout","mean_reversion","trend_continuation","none"] }, "conviction": { "type": "string", "enum": ["high","medium","low"] }, "key_insight": { "type": "string" } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" } }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "Whale Entry Signal API",
+      "base_url": "https://orbis-apis.onrender.com/whale-entry-signal",
+      "listing": {
+        "name": "Whale Entry Signal API",
+        "shortDescription": "Detect whale accumulation entry signals, scan market-wide whale patterns, and get on-chain evidence with confidence scoring",
+        "category": "financial-data",
+        "tags": ["whale", "accumulation", "on-chain", "smart-money", "crypto"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/signals", "pricePerCallUsdc": 0.004 },
+              { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.005 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Whale Entry Signal API",
+          "version": "1.0.0",
+          "description": "Detect whale accumulation entry signals for specific tokens, scan the market for active whale entry patterns, and get full whale entry intelligence with confidence scoring for trading agents.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-latency-tier": "real-time",
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "signals": "$0.004", "scan": "$0.005", "lookup": "$0.012" } },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/whale-entry-signal" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "whaleEntrySignalDiscovery",
+              "summary": "API discovery — name, version, endpoints, pricing, auth, agent capabilities",
+              "security": [],
+              "responses": {
+                "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": {
+                  "type": "object", "properties": {
+                    "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" },
+                    "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" },
+                    "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } },
+                    "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } },
+                    "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
+                    "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" },
+                    "execution_modes": { "type": "array", "items": { "type": "string" } }
+                  }
+                } } } }
+              }
+            }
+          },
+          "/signals": {
+            "post": {
+              "operationId": "whaleEntrySignalGet",
+              "summary": "Whale accumulation entry signals for a specific token",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["token"], "properties": { "token": { "type": "string" }, "chain": { "type": "string", "default": "ethereum", "enum": ["ethereum","base","arbitrum","polygon","bsc","solana"] } } } } } },
+              "responses": { "200": { "description": "Whale entry signals with accumulation pattern analysis", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "token": { "type": "string" }, "chain": { "type": "string" },
+                "entry_signals": { "type": "array", "items": { "type": "object", "properties": { "signal_type": { "type": "string", "enum": ["accumulation_zone","dip_buy","stealth_accumulation","ot_wallet_entry","exchange_withdrawal","large_otc"] }, "detected_at": { "type": "string", "format": "date-time" }, "whale_tier": { "type": "string", "enum": ["mega_whale","whale","large_holder"] }, "estimated_usd": { "type": "number" }, "entry_price": { "type": "number" }, "signal_strength": { "type": "string", "enum": ["strong","moderate","weak"] }, "on_chain_evidence": { "type": "string" }, "follow_through_probability_pct": { "type": "number" } } } },
+                "accumulation_pattern": { "type": "object", "properties": { "pattern_active": { "type": "boolean" }, "pattern_type": { "type": "string", "enum": ["steady_accumulation","aggressive_buy","dip_hunting","range_loading","none"] }, "duration_days": { "type": "number" }, "estimated_total_usd": { "type": "number" } } },
+                "current_signal": { "type": "object", "properties": { "overall_signal": { "type": "string", "enum": ["strong_entry","entry","watch","no_signal"] }, "confidence_pct": { "type": "number" }, "key_evidence": { "type": "string" } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing token" }, "500": { "description": "Internal error" } }
+            }
+          },
+          "/scan": {
+            "post": {
+              "operationId": "whaleEntrySignalScan",
+              "summary": "Scan the market for active whale entry patterns",
+              "requestBody": { "required": false, "content": { "application/json": { "schema": { "type": "object", "properties": { "chain": { "type": "string", "default": "ethereum" }, "min_confidence": { "type": "number", "default": 70 } } } } } },
+              "responses": { "200": { "description": "Market-wide whale entry patterns with aggregate intel", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "whale_entry_patterns": { "type": "array", "items": { "type": "object", "properties": { "token": { "type": "string" }, "pattern_type": { "type": "string" }, "confidence_pct": { "type": "number" }, "estimated_usd_accumulated": { "type": "number" }, "whale_count": { "type": "integer" }, "entry_window_open": { "type": "boolean" } } } },
+                "market_intel": { "type": "object", "properties": { "total_patterns_found": { "type": "integer" }, "highest_confidence_token": { "type": "string" }, "aggregate_usd_accumulating": { "type": "number" } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "500": { "description": "Internal error" } }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "whaleEntrySignalLookup",
+              "summary": "ONE-CALL: whale entry intelligence + confidence + recommended action",
+              "x-one-call": true,
+              "x-execution-gate-required": true,
+              "x-human-approval-required": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["token"], "properties": { "token": { "type": "string" }, "chain": { "type": "string", "default": "ethereum", "enum": ["ethereum","base","arbitrum","polygon","bsc","solana"] } } } } } },
+              "responses": { "200": { "description": "Full whale entry intelligence with on-chain evidence, reasoning, and recommended action", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "token": { "type": "string" }, "chain": { "type": "string" },
+                "whale_entry_summary": { "type": "object", "properties": { "entry_signal_active": { "type": "boolean" }, "signal_type": { "type": "string", "enum": ["accumulation_zone","dip_buy","stealth_accumulation","ot_wallet_entry","none"] }, "whale_count_accumulating": { "type": "integer" }, "total_usd_accumulated_24h": { "type": "number" }, "entry_quality": { "type": "string", "enum": ["A+","A","B","C","none"] } } },
+                "on_chain_evidence": { "type": "object", "properties": { "large_transactions_24h": { "type": "integer" }, "net_exchange_flow_usd": { "type": "number" }, "exchange_withdrawals_usd": { "type": "number" }, "exchange_deposits_usd": { "type": "number" }, "wallet_concentration_change": { "type": "string", "enum": ["increasing","decreasing","flat"] }, "top_buyer_type": { "type": "string", "enum": ["institutional","whale","smart_money","unknown"] } } },
+                "price_context": { "type": "object", "properties": { "current_price": { "type": "number" }, "distance_from_52w_low_pct": { "type": "number" }, "distance_from_ath_pct": { "type": "number" }, "recent_drawdown_pct": { "type": "number" }, "accumulation_range": { "type": "object", "properties": { "low": { "type": "number" }, "high": { "type": "number" } } } } },
+                "risk_factors": { "type": "object", "properties": { "unlock_event_approaching": { "type": "boolean" }, "large_holder_count": { "type": "integer" }, "concentration_risk": { "type": "string", "enum": ["high","medium","low"] }, "liquidity_depth_usd": { "type": "number" } } },
+                "recommended_action": { "type": "object", "properties": { "action": { "type": "string", "enum": ["follow_whales","watch","wait","avoid"] }, "entry_zone": { "type": "string" }, "stop_suggestion": { "type": "string" }, "confidence_pct": { "type": "number" }, "key_insight": { "type": "string" } } },
+                "reasoning": { "type": "object", "properties": { "why_signal_generated": { "type": "string" }, "key_factors": { "type": "array", "items": { "type": "string" } }, "invalidators": { "type": "array", "items": { "type": "string" } } } },
+                "latency_ms": { "type": "number", "description": "Signal computation time in milliseconds" },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing token" }, "500": { "description": "Internal error" } }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "Scalping Opportunity API",
+      "base_url": "https://orbis-apis.onrender.com/scalping-opportunity",
+      "listing": {
+        "name": "Scalping Opportunity API",
+        "shortDescription": "Live short-timeframe scalping setups with precise entry/target/stop, orderbook intel, and risk assessment for trading agents",
+        "category": "financial-data",
+        "tags": ["scalping", "short-term-trading", "orderbook", "entry-signals", "crypto"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/opportunities", "pricePerCallUsdc": 0.004 },
+              { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.005 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Scalping Opportunity API",
+          "version": "1.0.0",
+          "description": "Find live scalping setups for a symbol, scan the market for the best scalping opportunities right now, and get full scalping intelligence with entry/target/stop and risk assessment for trading agents.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-latency-tier": "real-time",
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "opportunities": "$0.004", "scan": "$0.005", "lookup": "$0.012" } },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/scalping-opportunity" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "scalpingOpportunityDiscovery",
+              "summary": "API discovery — name, version, endpoints, pricing, auth, agent capabilities",
+              "security": [],
+              "responses": {
+                "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": {
+                  "type": "object", "properties": {
+                    "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" },
+                    "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" },
+                    "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } },
+                    "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } },
+                    "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
+                    "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" },
+                    "execution_modes": { "type": "array", "items": { "type": "string" } }
+                  }
+                } } } }
+              }
+            }
+          },
+          "/opportunities": {
+            "post": {
+              "operationId": "scalpingOpportunitiesGet",
+              "summary": "Live scalping setups for a specific symbol",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "exchange": { "type": "string", "default": "binance", "enum": ["binance","coinbase","bybit","okx","kraken"] }, "timeframe": { "type": "string", "default": "5m", "enum": ["1m","3m","5m","15m"] } } } } } },
+              "responses": { "200": { "description": "Scalping setups with market conditions assessment", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "symbol": { "type": "string" }, "exchange": { "type": "string" }, "timeframe": { "type": "string" },
+                "scalping_setups": { "type": "array", "items": { "type": "object", "properties": { "setup_type": { "type": "string", "enum": ["momentum_scalp","reversal_scalp","range_scalp","breakout_scalp","orderbook_scalp"] }, "direction": { "type": "string", "enum": ["long","short"] }, "entry_price": { "type": "number" }, "target_price": { "type": "number" }, "stop_loss": { "type": "number" }, "expected_move_pct": { "type": "number" }, "risk_reward": { "type": "number" }, "setup_quality": { "type": "string", "enum": ["A+","A","B","C"] }, "confidence_pct": { "type": "number" }, "key_trigger": { "type": "string" } } } },
+                "market_conditions": { "type": "object", "properties": { "current_price": { "type": "number" }, "spread_pct": { "type": "number" }, "liquidity_score": { "type": "number" }, "volatility_suitable": { "type": "boolean" }, "scalping_friendly": { "type": "boolean" } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" } }
+            }
+          },
+          "/scan": {
+            "post": {
+              "operationId": "scalpingOpportunityScan",
+              "summary": "Scan the market for best scalping setups right now",
+              "requestBody": { "required": false, "content": { "application/json": { "schema": { "type": "object", "properties": { "exchange": { "type": "string", "default": "binance" }, "min_score": { "type": "number", "default": 70 } } } } } },
+              "responses": { "200": { "description": "Top scalping setups across the market with overview", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "top_setups": { "type": "array", "items": { "type": "object", "properties": { "symbol": { "type": "string" }, "setup_type": { "type": "string" }, "direction": { "type": "string", "enum": ["long","short"] }, "score": { "type": "number" }, "entry_price": { "type": "number" }, "target_price": { "type": "number" }, "stop_loss": { "type": "number" }, "risk_reward": { "type": "number" }, "urgency": { "type": "string", "enum": ["immediate","soon","available"] }, "key_reason": { "type": "string" } } } },
+                "market_overview": { "type": "object", "properties": { "total_opportunities_found": { "type": "integer" }, "best_symbol": { "type": "string" }, "avg_risk_reward": { "type": "number" }, "market_phase": { "type": "string", "enum": ["trending","ranging","volatile"] }, "scalping_conditions": { "type": "string", "enum": ["excellent","good","fair","poor"] } } },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "500": { "description": "Internal error" } }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "scalpingOpportunityLookup",
+              "summary": "ONE-CALL: top scalping setup + precise levels + orderbook intel + risk assessment",
+              "x-one-call": true,
+              "x-execution-gate-required": true,
+              "x-human-approval-required": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["symbol"], "properties": { "symbol": { "type": "string" }, "exchange": { "type": "string", "default": "binance", "enum": ["binance","coinbase","bybit","okx","kraken"] } } } } } },
+              "responses": { "200": { "description": "Full scalping intelligence with precise levels, orderbook data, reasoning, and risk scoring", "content": { "application/json": { "schema": { "type": "object", "properties": {
+                "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                "symbol": { "type": "string" }, "exchange": { "type": "string" },
+                "best_setup": { "type": "object", "properties": { "setup_type": { "type": "string", "enum": ["momentum_scalp","reversal_scalp","range_scalp","breakout_scalp","orderbook_scalp"] }, "direction": { "type": "string", "enum": ["long","short"] }, "score": { "type": "number" }, "confidence_pct": { "type": "number" }, "time_sensitivity": { "type": "string", "enum": ["immediate","within_5m","within_15m","no_rush"] } } },
+                "precise_levels": { "type": "object", "properties": { "entry_price": { "type": "number" }, "entry_zone_low": { "type": "number" }, "entry_zone_high": { "type": "number" }, "target_1": { "type": "number" }, "target_2": { "type": "number" }, "stop_loss": { "type": "number" }, "invalidation_price": { "type": "number" }, "risk_reward_ratio": { "type": "number" }, "max_loss_pct": { "type": "number" } } },
+                "orderbook_intel": { "type": "object", "properties": { "bid_ask_spread_pct": { "type": "number" }, "depth_bid_usd": { "type": "number" }, "depth_ask_usd": { "type": "number" }, "large_orders_nearby": { "type": "boolean" }, "liquidity_grade": { "type": "string", "enum": ["A","B","C","D"] }, "slippage_estimate_pct": { "type": "number" } } },
+                "risk_assessment": { "type": "object", "properties": { "overall_risk": { "type": "string", "enum": ["low","medium","high","extreme"] }, "volatility_risk": { "type": "string", "enum": ["low","medium","high"] }, "liquidity_risk": { "type": "string", "enum": ["low","medium","high"] }, "recommended_position_size_pct": { "type": "number" }, "max_trades_simultaneously": { "type": "integer" } } },
+                "execution_checklist": { "type": "object", "properties": { "spread_acceptable": { "type": "boolean" }, "volume_sufficient": { "type": "boolean" }, "momentum_aligned": { "type": "boolean" }, "no_major_news_pending": { "type": "boolean" }, "readiness_score": { "type": "number", "minimum": 0, "maximum": 5 } } },
+                "reasoning": { "type": "object", "properties": { "why_signal_generated": { "type": "string" }, "key_factors": { "type": "array", "items": { "type": "string" } }, "invalidators": { "type": "array", "items": { "type": "string" } } } },
+                "latency_ms": { "type": "number", "description": "Signal computation time in milliseconds" },
+                "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } },
+                "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" }
+              } } } } }, "400": { "description": "Missing symbol" }, "500": { "description": "Internal error" } }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    }
+  ]
+}

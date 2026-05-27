@@ -40,6 +40,8 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { signals: '$0.004', scan: '$0.005', lookup: '$0.012' } },
     agent_capabilities: ['whale-entry-detection', 'accumulation-patterns', 'on-chain-signals', 'copy-trade-support', 'smart-money-following'],
     x402_compatible: true, paper_mode_recommended: true,
+    execution_modes: ['agent-callable', 'execution-gated'],
+    'x-latency-tier': 'real-time',
   });
 });
 
@@ -178,9 +180,16 @@ router.post('/lookup', async (req: Request, res: Response) => {
     "confidence_pct": number,
     "key_insight": "string"
   },
+  "reasoning": {
+    "why_signal_generated": "string explanation of the primary on-chain evidence driving this whale entry signal",
+    "key_factors": ["factor 1 (e.g. 3 mega-whales withdrew from exchanges in 24h)", "factor 2 (e.g. net exchange flow strongly negative = accumulation)", "factor 3"],
+    "invalidators": ["whale wallets begin depositing back to exchanges", "token unlock event occurs", "large holder exits detected on-chain"]
+  },
+  "latency_ms": number,
+  "chain_to": [{"api": "wallet-intelligence-api", "reason": "verify top whale wallet track records"}, {"api": "portfolio-risk-api", "reason": "size position relative to portfolio risk tolerance"}],
   "financial_disclaimer": "For informational purposes only. Not financial advice.",
   "paper_mode_recommended": true,
-  "confidence_per_section": {"entry_summary": 0.76, "on_chain": 0.74, "price_context": 0.80, "action": 0.72},
+  "confidence_per_section": {"entry_summary": 0.76, "on_chain": 0.74, "price_context": 0.80, "action": 0.72, "reasoning": 0.75},
   "recommended_actions_priority_order": ["verify whale movements on-chain before acting", "whale accumulation can take days to weeks", "monitor exchange flow for early exit warning"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);

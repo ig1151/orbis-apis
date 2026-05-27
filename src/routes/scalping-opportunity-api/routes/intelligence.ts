@@ -40,6 +40,8 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { opportunities: '$0.004', scan: '$0.005', lookup: '$0.012' } },
     agent_capabilities: ['scalping-setups', 'micro-timeframe-analysis', 'entry-exit-precision', 'risk-reward-scoring', 'market-microstructure'],
     x402_compatible: true, paper_mode_recommended: true,
+    execution_modes: ['agent-callable', 'execution-gated'],
+    'x-latency-tier': 'real-time',
   });
 });
 
@@ -186,9 +188,16 @@ router.post('/lookup', async (req: Request, res: Response) => {
     "no_major_news_pending": boolean,
     "readiness_score": number
   },
+  "reasoning": {
+    "why_signal_generated": "string explanation of the primary microstructure factor triggering this scalp setup",
+    "key_factors": ["factor 1 (e.g. momentum aligned on 1m and 5m)", "factor 2 (e.g. tight spread with deep bid side)", "factor 3 (e.g. volume surge at key level)"],
+    "invalidators": ["spread widens above 0.05%", "bid depth drops below $50k", "opposing momentum signal on higher timeframe"]
+  },
+  "latency_ms": number,
+  "chain_to": [{"api": "multi-exchange-ticker-api", "reason": "confirm best execution exchange before entry"}, {"api": "breakout-detection-api", "reason": "verify scalp direction aligns with larger breakout setup"}],
   "financial_disclaimer": "For informational purposes only. Not financial advice.",
   "paper_mode_recommended": true,
-  "confidence_per_section": {"setup": 0.75, "levels": 0.78, "orderbook": 0.80, "risk": 0.77},
+  "confidence_per_section": {"setup": 0.75, "levels": 0.78, "orderbook": 0.80, "risk": 0.77, "reasoning": 0.76},
   "recommended_actions_priority_order": ["readiness score < 4/5 = skip this trade", "max loss per trade should be < 0.5% of capital", "paper trade first to validate setup type"],
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
