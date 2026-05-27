@@ -35,9 +35,9 @@ router.get('/', (_req: Request, res: Response) => {
     endpoints: [
       { method: 'POST', path: '/opportunities', summary: 'Live scalping setups for a symbol', price_usdc: 0.004 },
       { method: 'POST', path: '/scan', summary: 'Scan market for best scalping setups right now', price_usdc: 0.005 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: top scalping setup + entry/target/stop + risk assessment', price_usdc: 0.012 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: top scalping setup + entry/target/stop + risk assessment', price_usdc: 0.015 },
     ],
-    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { opportunities: '$0.004', scan: '$0.005', lookup: '$0.012' } },
+    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { opportunities: '$0.004', scan: '$0.005', lookup: '$0.015' } },
     agent_capabilities: ['scalping-setups', 'micro-timeframe-analysis', 'entry-exit-precision', 'risk-reward-scoring', 'market-microstructure'],
     x402_compatible: true, paper_mode_recommended: true,
     execution_modes: ['agent-callable', 'execution-gated'],

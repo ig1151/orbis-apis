@@ -35,9 +35,9 @@ router.get('/', (_req: Request, res: Response) => {
     endpoints: [
       { method: 'POST', path: '/signals', summary: 'Whale accumulation entry signals for a token', price_usdc: 0.004 },
       { method: 'POST', path: '/scan', summary: 'Scan market for active whale entry patterns', price_usdc: 0.005 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: whale entry intelligence + confidence + recommended action', price_usdc: 0.012 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: whale entry intelligence + confidence + recommended action', price_usdc: 0.015 },
     ],
-    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { signals: '$0.004', scan: '$0.005', lookup: '$0.012' } },
+    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { signals: '$0.004', scan: '$0.005', lookup: '$0.015' } },
     agent_capabilities: ['whale-entry-detection', 'accumulation-patterns', 'on-chain-signals', 'copy-trade-support', 'smart-money-following'],
     x402_compatible: true, paper_mode_recommended: true,
     execution_modes: ['agent-callable', 'execution-gated'],

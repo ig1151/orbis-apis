@@ -102,7 +102,7 @@
                 "200": { "description": "Multi-timeframe OHLCV summary with trend alignment", "content": { "application/json": { "schema": { "type": "object", "properties": {
                   "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
                   "symbol": { "type": "string" }, "exchange": { "type": "string" },
-                  "timeframes": { "type": "object", "properties": { "15m": { "type": "object", "properties": { "open": { "type": "number" }, "high": { "type": "number" }, "low": { "type": "number" }, "close": { "type": "number" }, "volume": { "type": "number" }, "trend": { "type": "string", "enum": ["uptrend","downtrend","sideways"] }, "candle_count": { "type": "number" } } }, "1h": { "type": "object" }, "4h": { "type": "object" }, "1d": { "type": "object" } } },
+                  "timeframes": { "type": "object", "properties": { "15m": { "type": "object", "properties": { "open": { "type": "number" }, "high": { "type": "number" }, "low": { "type": "number" }, "close": { "type": "number" }, "volume": { "type": "number" }, "trend": { "type": "string", "enum": ["uptrend","downtrend","sideways"] }, "candle_count": { "type": "number" } } }, "1h": { "type": "object", "properties": { "open": { "type": "number" }, "high": { "type": "number" }, "low": { "type": "number" }, "close": { "type": "number" }, "volume": { "type": "number" }, "trend": { "type": "string", "enum": ["uptrend","downtrend","sideways"] }, "candle_count": { "type": "number" } } }, "4h": { "type": "object", "properties": { "open": { "type": "number" }, "high": { "type": "number" }, "low": { "type": "number" }, "close": { "type": "number" }, "volume": { "type": "number" }, "trend": { "type": "string", "enum": ["uptrend","downtrend","sideways"] }, "candle_count": { "type": "number" } } }, "1d": { "type": "object", "properties": { "open": { "type": "number" }, "high": { "type": "number" }, "low": { "type": "number" }, "close": { "type": "number" }, "volume": { "type": "number" }, "trend": { "type": "string", "enum": ["uptrend","downtrend","sideways"] }, "candle_count": { "type": "number" } } } } },
                   "alignment": { "type": "object", "properties": { "trend_alignment": { "type": "string", "enum": ["aligned_bullish","aligned_bearish","mixed","conflicted"] }, "dominant_timeframe": { "type": "string" }, "confluence_score": { "type": "number" } } },
                   "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
                   "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
@@ -191,7 +191,7 @@
                     "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" },
                     "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } },
                     "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } },
-                    "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
+                    "pricing": { "type": "object", "properties": { "free_tier": { "type": "object", "properties": { "requests_per_day": { "type": "integer" }, "requests_per_month": { "type": "integer" } } }, "pay_per_call": { "type": "object", "additionalProperties": { "type": "string" } } } }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
                     "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" },
                     "execution_modes": { "type": "array", "items": { "type": "string" } }
                   }
@@ -302,7 +302,7 @@
           "x-paper-mode-recommended": true, "x402-compatible": true,
           "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
           "x-latency-tier": "real-time",
-          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "scan": "$0.004", "signals": "$0.004", "lookup": "$0.010" } },
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "scan": "$0.004", "signals": "$0.004", "lookup": "$0.012" } },
           "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
         },
         "servers": [{ "url": "https://orbis-apis.onrender.com/breakout-detection" }],
@@ -320,7 +320,7 @@
                     "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" },
                     "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } },
                     "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } },
-                    "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
+                    "pricing": { "type": "object", "properties": { "free_tier": { "type": "object", "properties": { "requests_per_day": { "type": "integer" }, "requests_per_month": { "type": "integer" } } }, "pay_per_call": { "type": "object", "additionalProperties": { "type": "string" } } } }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
                     "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" },
                     "execution_modes": { "type": "array", "items": { "type": "string" } }
                   }
@@ -443,9 +443,9 @@
           "/": {
             "get": {
               "operationId": "rsiSignalDiscovery",
-              "summary": "API discovery",
+              "summary": "API discovery — name, version, endpoints, pricing, auth, agent capabilities",
               "security": [],
-              "responses": { "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" }, "endpoints": { "type": "array", "items": { "type": "object" } }, "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } }, "x402_compatible": { "type": "boolean" }, "execution_modes": { "type": "array", "items": { "type": "string" } } } } } } } }
+              "responses": { "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" }, "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" }, "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } }, "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } }, "pricing": { "type": "object", "properties": { "free_tier": { "type": "object", "properties": { "requests_per_day": { "type": "integer" }, "requests_per_month": { "type": "integer" } } }, "pay_per_call": { "type": "object", "additionalProperties": { "type": "string" } } } }, "agent_capabilities": { "type": "array", "items": { "type": "string" } }, "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" }, "execution_modes": { "type": "array", "items": { "type": "string" } } } } } } } }
             }
           },
           "/rsi": {
@@ -549,9 +549,9 @@
           "/": {
             "get": {
               "operationId": "macdSignalDiscovery",
-              "summary": "API discovery",
+              "summary": "API discovery — name, version, endpoints, pricing, auth, agent capabilities",
               "security": [],
-              "responses": { "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" }, "endpoints": { "type": "array", "items": { "type": "object" } }, "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } }, "x402_compatible": { "type": "boolean" }, "execution_modes": { "type": "array", "items": { "type": "string" } } } } } } } }
+              "responses": { "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" }, "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" }, "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } }, "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } }, "pricing": { "type": "object", "properties": { "free_tier": { "type": "object", "properties": { "requests_per_day": { "type": "integer" }, "requests_per_month": { "type": "integer" } } }, "pay_per_call": { "type": "object", "additionalProperties": { "type": "string" } } } }, "agent_capabilities": { "type": "array", "items": { "type": "string" } }, "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" }, "execution_modes": { "type": "array", "items": { "type": "string" } } } } } } } }
             }
           },
           "/macd": {
@@ -600,7 +600,7 @@
                 "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
                 "macd_state": { "type": "object", "properties": { "macd_line": { "type": "number" }, "signal_line": { "type": "number" }, "histogram": { "type": "number" }, "position": { "type": "string", "enum": ["above_zero","below_zero"] }, "crossover_status": { "type": "string", "enum": ["just_crossed_bullish","just_crossed_bearish","macd_above_signal","macd_below_signal"] } } },
                 "momentum_assessment": { "type": "object", "properties": { "current_momentum": { "type": "string", "enum": ["strong_bullish","bullish","fading_bullish","neutral","fading_bearish","bearish","strong_bearish"] }, "momentum_shift_detected": { "type": "boolean" }, "divergence_from_price": { "type": "boolean" } } },
-                "multi_timeframe_macd": { "type": "object", "properties": { "15m": { "type": "object" }, "1h": { "type": "object" }, "4h": { "type": "object" }, "1d": { "type": "object" } } },
+                "multi_timeframe_macd": { "type": "object", "properties": { "15m": { "type": "object", "properties": { "above_zero": { "type": "boolean" }, "bullish_cross": { "type": "boolean" }, "histogram_expanding": { "type": "boolean" } } }, "1h": { "type": "object", "properties": { "above_zero": { "type": "boolean" }, "bullish_cross": { "type": "boolean" }, "histogram_expanding": { "type": "boolean" } } }, "4h": { "type": "object", "properties": { "above_zero": { "type": "boolean" }, "bullish_cross": { "type": "boolean" }, "histogram_expanding": { "type": "boolean" } } }, "1d": { "type": "object", "properties": { "above_zero": { "type": "boolean" }, "bullish_cross": { "type": "boolean" }, "histogram_expanding": { "type": "boolean" } } } } },
                 "trade_signal": { "type": "object", "properties": { "signal": { "type": "string", "enum": ["strong_buy","buy","neutral","sell","strong_sell"] }, "trigger": { "type": "string", "enum": ["signal_crossover","zero_crossover","histogram_reversal","divergence"] }, "entry_timing": { "type": "string", "enum": ["now","wait_for_crossover","wait_for_zero_cross","avoid"] }, "conviction": { "type": "string", "enum": ["high","medium","low"] }, "key_insight": { "type": "string" } } },
                 "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
                 "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
@@ -654,9 +654,9 @@
           "/": {
             "get": {
               "operationId": "bollingerBandDiscovery",
-              "summary": "API discovery",
+              "summary": "API discovery — name, version, endpoints, pricing, auth, agent capabilities",
               "security": [],
-              "responses": { "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" }, "endpoints": { "type": "array", "items": { "type": "object" } }, "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } }, "x402_compatible": { "type": "boolean" }, "execution_modes": { "type": "array", "items": { "type": "string" } } } } } } } }
+              "responses": { "200": { "description": "Full discovery payload", "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "description": { "type": "string" }, "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" }, "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } }, "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } }, "pricing": { "type": "object", "properties": { "free_tier": { "type": "object", "properties": { "requests_per_day": { "type": "integer" }, "requests_per_month": { "type": "integer" } } }, "pay_per_call": { "type": "object", "additionalProperties": { "type": "string" } } } }, "agent_capabilities": { "type": "array", "items": { "type": "string" } }, "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" }, "execution_modes": { "type": "array", "items": { "type": "string" } } } } } } } }
             }
           },
           "/bands": {
@@ -750,7 +750,7 @@
           "x-paper-mode-recommended": true, "x402-compatible": true,
           "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
           "x-latency-tier": "real-time",
-          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "signals": "$0.004", "scan": "$0.005", "lookup": "$0.012" } },
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "signals": "$0.004", "scan": "$0.005", "lookup": "$0.015" } },
           "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
         },
         "servers": [{ "url": "https://orbis-apis.onrender.com/whale-entry-signal" }],
@@ -768,7 +768,7 @@
                     "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" },
                     "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } },
                     "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } },
-                    "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
+                    "pricing": { "type": "object", "properties": { "free_tier": { "type": "object", "properties": { "requests_per_day": { "type": "integer" }, "requests_per_month": { "type": "integer" } } }, "pay_per_call": { "type": "object", "additionalProperties": { "type": "string" } } } }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
                     "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" },
                     "execution_modes": { "type": "array", "items": { "type": "string" } }
                   }
@@ -873,7 +873,7 @@
           "x-paper-mode-recommended": true, "x402-compatible": true,
           "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
           "x-latency-tier": "real-time",
-          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "opportunities": "$0.004", "scan": "$0.005", "lookup": "$0.012" } },
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "opportunities": "$0.004", "scan": "$0.005", "lookup": "$0.015" } },
           "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
         },
         "servers": [{ "url": "https://orbis-apis.onrender.com/scalping-opportunity" }],
@@ -891,7 +891,7 @@
                     "docs_url": { "type": "string", "format": "uri" }, "openapi_url": { "type": "string", "format": "uri" }, "health": { "type": "string" },
                     "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" }, "docs": { "type": "string" } } },
                     "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } },
-                    "pricing": { "type": "object" }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
+                    "pricing": { "type": "object", "properties": { "free_tier": { "type": "object", "properties": { "requests_per_day": { "type": "integer" }, "requests_per_month": { "type": "integer" } } }, "pay_per_call": { "type": "object", "additionalProperties": { "type": "string" } } } }, "agent_capabilities": { "type": "array", "items": { "type": "string" } },
                     "x402_compatible": { "type": "boolean" }, "paper_mode_recommended": { "type": "boolean" },
                     "execution_modes": { "type": "array", "items": { "type": "string" } }
                   }

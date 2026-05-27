@@ -40,6 +40,8 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { rsi: '$0.003', alerts: '$0.003', lookup: '$0.008' } },
     agent_capabilities: ['rsi-analysis', 'divergence-detection', 'overbought-oversold', 'momentum-signals', 'trade-timing'],
     x402_compatible: true, paper_mode_recommended: true,
+    execution_modes: ['agent-callable', 'read-only'],
+    'x-latency-tier': 'near-real-time',
   });
 });
 

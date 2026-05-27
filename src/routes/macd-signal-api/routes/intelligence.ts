@@ -40,6 +40,8 @@ router.get('/', (_req: Request, res: Response) => {
     pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { macd: '$0.003', crossovers: '$0.004', lookup: '$0.010' } },
     agent_capabilities: ['macd-analysis', 'crossover-detection', 'momentum-assessment', 'histogram-trend', 'trade-timing'],
     x402_compatible: true, paper_mode_recommended: true,
+    execution_modes: ['agent-callable', 'read-only'],
+    'x-latency-tier': 'near-real-time',
   });
 });
 

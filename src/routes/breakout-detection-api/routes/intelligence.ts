@@ -35,9 +35,9 @@ router.get('/', (_req: Request, res: Response) => {
     endpoints: [
       { method: 'POST', path: '/scan', summary: 'Scan for breakout setups for a symbol', price_usdc: 0.004 },
       { method: 'POST', path: '/signals', summary: 'Active breakout signals across the market', price_usdc: 0.004 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: breakout analysis + confirmation + entry/invalidation levels', price_usdc: 0.010 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: breakout analysis + confirmation + entry/invalidation levels', price_usdc: 0.012 },
     ],
-    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.004', signals: '$0.004', lookup: '$0.010' } },
+    pricing: { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.004', signals: '$0.004', lookup: '$0.012' } },
     agent_capabilities: ['breakout-detection', 'technical-setups', 'entry-signals', 'invalidation-levels', 'momentum-confirmation'],
     x402_compatible: true, paper_mode_recommended: true,
     execution_modes: ['agent-callable', 'execution-gated'],

@@ -36,7 +36,7 @@ router.get('/', (_req: Request, res: Response) => {
       'x-human-approval-required': false, 'x-execution-gate-required': false,
       'x-paper-mode-recommended': true, 'x402-compatible': true,
       'x-agent-marketplace-ready': true, 'x-pay-per-call-optimized': true,
-      'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { signals: '$0.004', scan: '$0.005', lookup: '$0.012' } },
+      'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { signals: '$0.004', scan: '$0.005', lookup: '$0.015' } },
       'x-financial-disclaimer': 'For informational purposes only. Not financial advice. Verify independently before use in trading workflows.',
       'x-latency-tier': 'real-time',
     },
