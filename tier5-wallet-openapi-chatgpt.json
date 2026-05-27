@@ -1,0 +1,1561 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Orbis Tier 5 Wallet Deep Suite",
+    "version": "1.0.0",
+    "description": "Seven on-chain wallet intelligence APIs: Smart Wallet Discovery, Wallet Copy Trading, Insider Wallet Detection, Dormant Wallet Awakening, Whale Transaction, Validator Activity, and Cross-Chain Liquidity. All endpoints require an X-API-Key header. Free tier: 100 req/day, 3000/month. Pay-per-call pricing from $0.004 to $0.018/call. All responses include financial_disclaimer — for informational purposes only, not financial advice. Wallet Copy Trading requires x-execution-gate and human approval before acting on signals."
+  },
+  "servers": [
+    { "url": "https://orbis-apis.onrender.com" }
+  ],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+
+    "/smart-wallet-discovery/scan": {
+      "post": {
+        "operationId": "smartWalletDiscoveryScan",
+        "summary": "Scan for top-performing wallets by ROI and win rate",
+        "description": "Returns wallets ranked by alpha — ROI, win rate, strategy, hold time. Price: $0.005/call.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc"], "default": "ethereum" },
+                  "limit": { "type": "integer", "default": 20, "minimum": 1, "maximum": 100 },
+                  "min_roi_30d_pct": { "type": "number", "default": 20, "description": "Minimum 30-day ROI percentage" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Top-performing wallets ranked by alpha",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "wallets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": { "type": "string" },
+                          "rank": { "type": "integer" },
+                          "roi_30d_pct": { "type": "number" },
+                          "roi_90d_pct": { "type": "number" },
+                          "win_rate_pct": { "type": "number" },
+                          "total_trades_30d": { "type": "integer" },
+                          "avg_hold_hours": { "type": "number" },
+                          "pnl_30d_usd": { "type": "number" },
+                          "max_drawdown_pct": { "type": "number" },
+                          "strategy": { "type": "string", "enum": ["degen", "conservative", "arbitrageur", "swing_trader", "yield_farmer", "sniper"] },
+                          "wallet_type": { "type": "string", "enum": ["whale", "smart_money", "bot", "retail", "institutional"] },
+                          "top_token": { "type": "string" },
+                          "last_active": { "type": "string", "format": "date-time" }
+                        }
+                      }
+                    },
+                    "scan_summary": {
+                      "type": "object",
+                      "properties": {
+                        "total_wallets_analyzed": { "type": "integer" },
+                        "qualifying_count": { "type": "integer" },
+                        "avg_roi_pct": { "type": "number" },
+                        "top_strategy": { "type": "string" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/smart-wallet-discovery/filter": {
+      "post": {
+        "operationId": "smartWalletDiscoveryFilter",
+        "summary": "Filter smart wallets by strategy, ROI, drawdown, and hold time",
+        "description": "Narrow the smart wallet universe by trading strategy, win rate, drawdown tolerance, and ROI floor. Returns copy-trade suitability per wallet. Price: $0.005/call.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chain": { "type": "string", "default": "ethereum" },
+                  "strategy": { "type": "string", "enum": ["degen", "conservative", "arbitrageur", "swing_trader", "yield_farmer", "sniper"] },
+                  "min_win_rate_pct": { "type": "number", "default": 60 },
+                  "max_drawdown_pct": { "type": "number", "default": 30 },
+                  "min_roi_30d_pct": { "type": "number", "default": 0 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Filtered wallets with copy-trade suitability",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "wallets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": { "type": "string" },
+                          "roi_30d_pct": { "type": "number" },
+                          "win_rate_pct": { "type": "number" },
+                          "max_drawdown_pct": { "type": "number" },
+                          "strategy": { "type": "string", "enum": ["degen", "conservative", "arbitrageur", "swing_trader", "yield_farmer", "sniper"] },
+                          "wallet_type": { "type": "string", "enum": ["whale", "smart_money", "bot", "retail", "institutional"] },
+                          "consistency_score": { "type": "number" },
+                          "copy_trade_suitability": { "type": "string", "enum": ["excellent", "good", "fair", "poor"] }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/smart-wallet-discovery/lookup": {
+      "post": {
+        "operationId": "smartWalletDiscoveryLookup",
+        "summary": "ONE-CALL: full smart wallet profile with strategy, top trades, and risk metrics",
+        "description": "Full wallet intelligence report: classification, performance across 7/30/90d, token preferences, timing patterns, and copy-trade assessment with recommended size multiplier. Price: $0.015/call.",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["address"],
+                "properties": {
+                  "address": { "type": "string", "description": "Wallet address to profile" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full smart wallet intelligence profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "address": { "type": "string" },
+                    "wallet_classification": {
+                      "type": "object",
+                      "properties": {
+                        "wallet_type": { "type": "string", "enum": ["whale", "smart_money", "bot", "retail", "institutional"] },
+                        "strategy": { "type": "string", "enum": ["degen", "conservative", "arbitrageur", "swing_trader", "yield_farmer", "sniper"] },
+                        "experience_level": { "type": "string", "enum": ["novice", "intermediate", "expert", "elite"] },
+                        "classification_confidence_pct": { "type": "number" }
+                      }
+                    },
+                    "performance_metrics": {
+                      "type": "object",
+                      "properties": {
+                        "roi_7d_pct": { "type": "number" },
+                        "roi_30d_pct": { "type": "number" },
+                        "roi_90d_pct": { "type": "number" },
+                        "win_rate_pct": { "type": "number" },
+                        "max_drawdown_pct": { "type": "number" },
+                        "sharpe_ratio": { "type": "number" },
+                        "total_trades": { "type": "integer" },
+                        "pnl_30d_usd": { "type": "number" }
+                      }
+                    },
+                    "token_preferences": {
+                      "type": "object",
+                      "properties": {
+                        "most_traded_tokens": { "type": "array", "items": { "type": "string" } },
+                        "preferred_market_cap": { "type": "string", "enum": ["micro", "small", "mid", "large"] },
+                        "sector_focus": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "copy_trade_assessment": {
+                      "type": "object",
+                      "properties": {
+                        "suitability": { "type": "string", "enum": ["excellent", "good", "fair", "poor"] },
+                        "recommended_size_multiplier": { "type": "number" },
+                        "lag_tolerance_minutes": { "type": "number" },
+                        "risk_of_following": { "type": "string", "enum": ["low", "medium", "high"] },
+                        "cautions": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "reasoning": {
+                      "type": "object",
+                      "properties": {
+                        "why_signal_generated": { "type": "string" },
+                        "key_factors": { "type": "array", "items": { "type": "string" } },
+                        "invalidators": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing address" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/wallet-copy-trading/signals": {
+      "post": {
+        "operationId": "walletCopyTradingSignals",
+        "summary": "Recent trades from a wallet to copy with timing and sizing",
+        "description": "Returns copyable trade signals from a specific wallet: action, token, urgency, suggested size, and whether the trade is still actionable. Requires human review before acting. Price: $0.004/call.",
+        "x-execution-gate-required": true,
+        "x-human-approval-required": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["address"],
+                "properties": {
+                  "address": { "type": "string", "description": "Wallet address to get copy signals from" },
+                  "chain": { "type": "string", "default": "ethereum" },
+                  "lookback_hours": { "type": "integer", "default": 24, "minimum": 1, "maximum": 168 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Copy trade signals with urgency and sizing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "signals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "tx_hash": { "type": "string" },
+                          "action": { "type": "string", "enum": ["buy", "sell"] },
+                          "token": { "type": "string" },
+                          "amount_usd": { "type": "number" },
+                          "copy_urgency": { "type": "string", "enum": ["immediate", "valid_30m", "valid_1h", "stale"] },
+                          "copy_confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+                          "suggested_copy_size_usd": { "type": "number" },
+                          "still_actionable": { "type": "boolean" },
+                          "price_moved_since_pct": { "type": "number" }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing address" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/wallet-copy-trading/leaderboard": {
+      "post": {
+        "operationId": "walletCopyTradingLeaderboard",
+        "summary": "Top wallets ranked by copy-trade alpha and suitability",
+        "description": "Leaderboard of wallets best suited for copy trading, ranked by 30d copy-trade alpha, suitability score, lag tolerance, and caution flags. Price: $0.004/call.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chain": { "type": "string", "default": "ethereum" },
+                  "strategy": { "type": "string", "enum": ["degen", "conservative", "arbitrageur", "swing_trader", "yield_farmer", "sniper"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Copy trade leaderboard ranked by alpha",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "leaderboard": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rank": { "type": "integer" },
+                          "address": { "type": "string" },
+                          "copy_trade_alpha_30d_pct": { "type": "number" },
+                          "win_rate_pct": { "type": "number" },
+                          "suitability_score": { "type": "number" },
+                          "strategy": { "type": "string", "enum": ["degen", "conservative", "arbitrageur", "swing_trader", "yield_farmer", "sniper"] },
+                          "lag_tolerance_minutes": { "type": "number" },
+                          "caution": { "type": "string" }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/wallet-copy-trading/lookup": {
+      "post": {
+        "operationId": "walletCopyTradingLookup",
+        "summary": "ONE-CALL: full copy trading plan with position sizing and risk limits",
+        "description": "Full copy plan: recommended allocation %, max position size, copy ratio, lag tolerance, stop loss, daily loss limit, simulated 30d performance, and risk classification. Requires human approval before acting. Price: $0.015/call.",
+        "x-one-call": true,
+        "x-execution-gate-required": true,
+        "x-human-approval-required": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["address"],
+                "properties": {
+                  "address": { "type": "string" },
+                  "portfolio_size_usd": { "type": "number", "description": "Your portfolio size for sizing recommendations" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full copy trading plan with risk assessment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "copy_plan": {
+                      "type": "object",
+                      "properties": {
+                        "recommended_allocation_pct": { "type": "number" },
+                        "max_position_size_usd": { "type": "number" },
+                        "copy_ratio": { "type": "number" },
+                        "lag_tolerance_minutes": { "type": "number" },
+                        "stop_loss_per_trade_pct": { "type": "number" },
+                        "daily_loss_limit_usd": { "type": "number" }
+                      }
+                    },
+                    "historical_copy_performance": {
+                      "type": "object",
+                      "properties": {
+                        "simulated_30d_roi_pct": { "type": "number" },
+                        "simulated_win_rate_pct": { "type": "number" },
+                        "max_copy_drawdown_pct": { "type": "number" },
+                        "avg_lag_impact_pct": { "type": "number" }
+                      }
+                    },
+                    "risk_assessment": {
+                      "type": "object",
+                      "properties": {
+                        "overall_risk": { "type": "string", "enum": ["low", "medium", "high", "degen"] },
+                        "timing_dependency": { "type": "string", "enum": ["low", "medium", "critical"] }
+                      }
+                    },
+                    "reasoning": {
+                      "type": "object",
+                      "properties": {
+                        "why_signal_generated": { "type": "string" },
+                        "key_factors": { "type": "array", "items": { "type": "string" } },
+                        "invalidators": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing address" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/insider-wallet-detection/scan": {
+      "post": {
+        "operationId": "insiderWalletDetectionScan",
+        "summary": "Scan for wallets with insider-pattern buying behavior",
+        "description": "Returns wallets that consistently buy before major events. Includes pattern type, average days before event, ROI, and statistical confidence. Price: $0.006/call.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chain": { "type": "string", "default": "ethereum" },
+                  "lookback_days": { "type": "integer", "default": 30, "minimum": 7, "maximum": 90 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Insider-pattern wallets with confidence scores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "insider_wallets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": { "type": "string" },
+                          "pattern_type": { "type": "string", "enum": ["pre_announcement_buy", "coordinated_accumulation", "early_exit", "recurring_alpha"] },
+                          "pattern_count_in_period": { "type": "integer" },
+                          "avg_days_before_event": { "type": "number" },
+                          "avg_roi_pct": { "type": "number" },
+                          "tokens_involved": { "type": "array", "items": { "type": "string" } },
+                          "confidence_pct": { "type": "number" },
+                          "risk_level": { "type": "string", "enum": ["confirmed", "probable", "possible"] }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/insider-wallet-detection/alerts": {
+      "post": {
+        "operationId": "insiderWalletDetectionAlerts",
+        "summary": "Live alerts when insider-pattern wallets accumulate a token",
+        "description": "Real-time alert when a confirmed or probable insider wallet accumulates a specific token. Includes historical accuracy, average gain after pattern, and urgency. Price: $0.005/call.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": { "type": "string", "description": "Token symbol to monitor for insider accumulation" },
+                  "chain": { "type": "string", "default": "ethereum" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Live insider accumulation alerts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "alerts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "wallet_address": { "type": "string" },
+                          "pattern_type": { "type": "string", "enum": ["pre_announcement_buy", "coordinated_accumulation", "early_exit", "recurring_alpha"] },
+                          "amount_usd": { "type": "number" },
+                          "wallet_historical_accuracy_pct": { "type": "number" },
+                          "avg_gain_after_pattern_pct": { "type": "number" },
+                          "urgency": { "type": "string", "enum": ["immediate", "high", "medium", "monitor"] }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing token" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/insider-wallet-detection/lookup": {
+      "post": {
+        "operationId": "insiderWalletDetectionLookup",
+        "summary": "ONE-CALL: full insider analysis for a wallet or token",
+        "description": "Statistical analysis of insider behavior: is_insider_wallet, confidence %, primary pattern, p-value, hit rate, false positive rate. Supply wallet address or token symbol. Price: $0.018/call.",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "address": { "type": "string", "description": "Wallet address to analyze for insider patterns" },
+                  "token": { "type": "string", "description": "Token to analyze for insider accumulation" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full insider analysis with statistical significance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "insider_profile": {
+                      "type": "object",
+                      "properties": {
+                        "is_insider_wallet": { "type": "boolean" },
+                        "insider_confidence_pct": { "type": "number" },
+                        "primary_pattern": { "type": "string", "enum": ["pre_announcement_buy", "coordinated_accumulation", "early_exit", "recurring_alpha"] },
+                        "pattern_count": { "type": "integer" }
+                      }
+                    },
+                    "statistical_analysis": {
+                      "type": "object",
+                      "properties": {
+                        "avg_roi_pct": { "type": "number" },
+                        "hit_rate_pct": { "type": "number" },
+                        "false_positive_rate_pct": { "type": "number" },
+                        "p_value": { "type": "number" }
+                      }
+                    },
+                    "reasoning": {
+                      "type": "object",
+                      "properties": {
+                        "why_signal_generated": { "type": "string" },
+                        "key_factors": { "type": "array", "items": { "type": "string" } },
+                        "invalidators": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing address or token" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/dormant-wallet-awakening/scan": {
+      "post": {
+        "operationId": "dormantWalletAwakeningScan",
+        "summary": "Scan for recently awakened dormant wallets",
+        "description": "Returns wallets dormant for 180+ days that recently made their first movement. Includes dormancy duration, awakening type, balance, and significance score. Price: $0.005/call.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chain": { "type": "string", "default": "ethereum" },
+                  "min_dormancy_days": { "type": "integer", "default": 180, "minimum": 30 },
+                  "min_balance_usd": { "type": "number", "default": 10000, "minimum": 0 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recently awakened dormant wallets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "awakened_wallets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": { "type": "string" },
+                          "dormancy_days": { "type": "number" },
+                          "awakening_type": { "type": "string", "enum": ["transfer_out", "transfer_in", "swap", "nft_purchase", "defi_interaction"] },
+                          "balance_usd": { "type": "number" },
+                          "significance_score": { "type": "number" },
+                          "primary_holdings": { "type": "array", "items": { "type": "string" } }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/dormant-wallet-awakening/alerts": {
+      "post": {
+        "operationId": "dormantWalletAwakeningAlerts",
+        "summary": "High-significance dormant wallet awakening alerts",
+        "description": "Filters to only high-value awakenings (default $100k+ balance, 365+ days dormant). Returns destination type and market impact potential. Price: $0.004/call.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "min_balance_usd": { "type": "number", "default": 100000, "description": "Minimum wallet balance in USD" },
+                  "min_dormancy_days": { "type": "integer", "default": 365, "description": "Minimum days dormant to alert" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "High-significance awakening alerts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "alerts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": { "type": "string" },
+                          "chain": { "type": "string" },
+                          "dormancy_days": { "type": "number" },
+                          "balance_usd": { "type": "number" },
+                          "awakening_type": { "type": "string", "enum": ["transfer_out", "transfer_in", "swap", "nft_purchase", "defi_interaction"] },
+                          "destination_type": { "type": "string", "enum": ["exchange", "defi_protocol", "unknown_wallet", "burn"] },
+                          "market_impact_potential": { "type": "string", "enum": ["high", "medium", "low"] },
+                          "amount_moved_usd": { "type": "number" }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/dormant-wallet-awakening/lookup": {
+      "post": {
+        "operationId": "dormantWalletAwakeningLookup",
+        "summary": "ONE-CALL: full dormant wallet profile with movement analysis",
+        "description": "Complete awakening analysis: dormancy profile (total days, date, wallet age), significance score, watch level, market correlation, and structured reasoning. Price: $0.015/call.",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["address"],
+                "properties": {
+                  "address": { "type": "string", "description": "Wallet address to analyze" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full dormant wallet awakening analysis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "dormancy_profile": {
+                      "type": "object",
+                      "properties": {
+                        "total_dormancy_days": { "type": "number" },
+                        "dormant_since": { "type": "string", "format": "date-time" },
+                        "historically_significant": { "type": "boolean" },
+                        "estimated_wallet_age_years": { "type": "number" }
+                      }
+                    },
+                    "significance_analysis": {
+                      "type": "object",
+                      "properties": {
+                        "significance_score": { "type": "number" },
+                        "watch_level": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+                        "reasons": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "reasoning": {
+                      "type": "object",
+                      "properties": {
+                        "why_signal_generated": { "type": "string" },
+                        "key_factors": { "type": "array", "items": { "type": "string" } },
+                        "invalidators": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing address" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/whale-transaction/feed": {
+      "post": {
+        "operationId": "whaleTransactionFeed",
+        "summary": "Real-time whale transactions above a USD threshold",
+        "description": "Live feed of large on-chain transfers above a minimum USD threshold. Returns tx type, wallet types, market impact, exchange inflow/outflow summary. Price: $0.004/call.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chain": { "type": "string", "default": "ethereum" },
+                  "min_usd": { "type": "number", "default": 500000, "minimum": 10000 },
+                  "limit": { "type": "integer", "default": 20, "minimum": 1, "maximum": 100 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Real-time whale transaction feed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "transactions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "tx_hash": { "type": "string" },
+                          "token": { "type": "string" },
+                          "amount_usd": { "type": "number" },
+                          "tx_type": { "type": "string", "enum": ["transfer", "swap", "bridge", "stake", "unstake"] },
+                          "from_type": { "type": "string", "enum": ["exchange", "defi_protocol", "known_whale", "smart_money", "unknown"] },
+                          "to_type": { "type": "string", "enum": ["exchange", "defi_protocol", "known_whale", "smart_money", "unknown"] },
+                          "market_impact": { "type": "string", "enum": ["high", "medium", "low", "negligible"] },
+                          "minutes_ago": { "type": "number" }
+                        }
+                      }
+                    },
+                    "feed_summary": {
+                      "type": "object",
+                      "properties": {
+                        "total_transactions": { "type": "integer" },
+                        "total_volume_usd": { "type": "number" },
+                        "exchange_inflows_usd": { "type": "number" },
+                        "exchange_outflows_usd": { "type": "number" },
+                        "net_exchange_flow_usd": { "type": "number" },
+                        "dominant_token": { "type": "string" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/whale-transaction/alerts": {
+      "post": {
+        "operationId": "whaleTransactionAlerts",
+        "summary": "Whale movement alerts for a specific token",
+        "description": "Token-specific whale alerts with direction, urgency, price impact estimate, and signal bias (bullish/bearish/neutral). Price: $0.004/call.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": { "type": "string", "description": "Token symbol to monitor for whale movements" },
+                  "min_usd": { "type": "number", "default": 100000, "minimum": 1000 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Whale alerts with market impact and direction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "alerts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "tx_hash": { "type": "string" },
+                          "amount_usd": { "type": "number" },
+                          "tx_type": { "type": "string", "enum": ["transfer", "swap", "bridge", "stake", "unstake"] },
+                          "direction": { "type": "string", "enum": ["to_exchange", "from_exchange", "wallet_to_wallet", "to_defi", "from_defi"] },
+                          "urgency": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+                          "price_impact_pct": { "type": "number" },
+                          "hours_ago": { "type": "number" }
+                        }
+                      }
+                    },
+                    "token_whale_summary": {
+                      "type": "object",
+                      "properties": {
+                        "net_exchange_flow_usd": { "type": "number" },
+                        "signal_bias": { "type": "string", "enum": ["bullish", "bearish", "neutral"] },
+                        "whale_count_active": { "type": "integer" },
+                        "largest_single_tx_usd": { "type": "number" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing token" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/whale-transaction/lookup": {
+      "post": {
+        "operationId": "whaleTransactionLookup",
+        "summary": "ONE-CALL: full whale transaction analysis with wallet context and market impact",
+        "description": "Analyzes a specific tx hash or whale wallet address. Returns wallet context (type, holdings, % moved), market impact (immediate, exchange flow implication, estimated price impact), destination analysis (type, intent, time to impact), and reasoning. Price: $0.015/call.",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tx_hash": { "type": "string", "description": "Transaction hash to analyze" },
+                  "address": { "type": "string", "description": "Whale wallet address to analyze" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full whale transaction analysis with market impact",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "wallet_context": {
+                      "type": "object",
+                      "properties": {
+                        "wallet_type": { "type": "string", "enum": ["exchange", "defi_protocol", "known_whale", "smart_money", "unknown"] },
+                        "total_holdings_usd": { "type": "number" },
+                        "pct_of_holdings_moved": { "type": "number" }
+                      }
+                    },
+                    "market_impact_analysis": {
+                      "type": "object",
+                      "properties": {
+                        "immediate_impact": { "type": "string", "enum": ["high", "medium", "low", "negligible"] },
+                        "exchange_flow_implication": { "type": "string", "enum": ["selling_pressure", "accumulation", "neutral"] },
+                        "estimated_price_impact_pct": { "type": "number" }
+                      }
+                    },
+                    "destination_analysis": {
+                      "type": "object",
+                      "properties": {
+                        "destination_type": { "type": "string", "enum": ["exchange", "defi_protocol", "cold_storage", "burn", "unknown"] },
+                        "likely_intent": { "type": "string", "enum": ["sell", "stake", "bridge", "accumulate", "unknown"] },
+                        "time_to_market_impact_hours": { "type": "number" }
+                      }
+                    },
+                    "reasoning": {
+                      "type": "object",
+                      "properties": {
+                        "why_signal_generated": { "type": "string" },
+                        "key_factors": { "type": "array", "items": { "type": "string" } },
+                        "invalidators": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing tx_hash or address" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/validator-activity/performance": {
+      "post": {
+        "operationId": "validatorActivityPerformance",
+        "summary": "Validator performance metrics, uptime, and APR",
+        "description": "Returns top validators ranked by uptime and effective APR across Ethereum, Solana, Cosmos, Polkadot, or Avalanche. Includes commission, delegator count, self-stake %, and slashing history. Price: $0.004/call.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "network": { "type": "string", "enum": ["ethereum", "solana", "cosmos", "polkadot", "avalanche"], "default": "ethereum" },
+                  "limit": { "type": "integer", "default": 20, "minimum": 1, "maximum": 100 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validator performance rankings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "validators": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "validator_address": { "type": "string" },
+                          "name": { "type": "string" },
+                          "status": { "type": "string", "enum": ["active", "inactive", "jailed", "tombstoned"] },
+                          "uptime_30d_pct": { "type": "number" },
+                          "uptime_90d_pct": { "type": "number" },
+                          "commission_pct": { "type": "number" },
+                          "effective_apr_pct": { "type": "number" },
+                          "total_staked_usd": { "type": "number" },
+                          "delegator_count": { "type": "integer" },
+                          "slashing_count_all_time": { "type": "integer" },
+                          "self_stake_pct": { "type": "number" }
+                        }
+                      }
+                    },
+                    "network_summary": {
+                      "type": "object",
+                      "properties": {
+                        "total_active_validators": { "type": "integer" },
+                        "avg_uptime_pct": { "type": "number" },
+                        "avg_commission_pct": { "type": "number" },
+                        "avg_effective_apr_pct": { "type": "number" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/validator-activity/slashing": {
+      "post": {
+        "operationId": "validatorActivitySlashing",
+        "summary": "Slashing events, risk scores, and jailed validators",
+        "description": "Returns recent slashing events by type (double_sign, downtime, equivocation) with risk scores and safe/monitor/avoid recommendations per validator. Price: $0.005/call.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "network": { "type": "string", "enum": ["ethereum", "solana", "cosmos", "polkadot", "avalanche"], "default": "ethereum" },
+                  "include_jailed": { "type": "boolean", "default": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Slashing events and validator risk scores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "slashing_events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "validator_address": { "type": "string" },
+                          "validator_name": { "type": "string" },
+                          "slash_type": { "type": "string", "enum": ["double_sign", "downtime", "equivocation"] },
+                          "amount_slashed_usd": { "type": "number" },
+                          "status_after": { "type": "string", "enum": ["active", "inactive", "jailed", "tombstoned"] }
+                        }
+                      }
+                    },
+                    "risk_scores": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "validator_address": { "type": "string" },
+                          "name": { "type": "string" },
+                          "slashing_risk": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+                          "recommendation": { "type": "string", "enum": ["safe", "monitor", "avoid"] }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/validator-activity/lookup": {
+      "post": {
+        "operationId": "validatorActivityLookup",
+        "summary": "ONE-CALL: full validator profile with risk rating and delegation recommendation",
+        "description": "Complete validator report: overall risk (low/medium/high/critical), slashing risk, uptime risk, risk factors, and a delegation recommendation (strong_buy to avoid) with rationale and suggested max allocation %. Price: $0.015/call.",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["validator_address"],
+                "properties": {
+                  "validator_address": { "type": "string", "description": "Validator address or identity" },
+                  "network": { "type": "string", "enum": ["ethereum", "solana", "cosmos", "polkadot", "avalanche"], "default": "ethereum" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full validator profile with delegation recommendation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "risk_assessment": {
+                      "type": "object",
+                      "properties": {
+                        "overall_risk": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+                        "slashing_risk": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+                        "uptime_risk": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+                        "risk_factors": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "delegation_recommendation": {
+                      "type": "object",
+                      "properties": {
+                        "recommendation": { "type": "string", "enum": ["strong_buy", "buy", "hold", "reduce", "avoid"] },
+                        "rationale": { "type": "string" },
+                        "suggested_max_allocation_pct": { "type": "number" }
+                      }
+                    },
+                    "reasoning": {
+                      "type": "object",
+                      "properties": {
+                        "why_signal_generated": { "type": "string" },
+                        "key_factors": { "type": "array", "items": { "type": "string" } },
+                        "invalidators": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing validator_address" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/cross-chain-liquidity/depth": {
+      "post": {
+        "operationId": "crossChainLiquidityDepth",
+        "summary": "Liquidity depth for an asset across all supported chains",
+        "description": "Returns slippage at $1k, $10k, $100k, and $1M trade sizes per chain. Includes primary pool, TVL trend (7d), liquidity quality, and max trade without 10% slippage. Price: $0.004/call.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["symbol"],
+                "properties": {
+                  "symbol": { "type": "string", "description": "Token symbol to analyze liquidity for" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Liquidity depth by chain with slippage tiers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "symbol": { "type": "string" },
+                    "chains": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc", "solana"] },
+                          "total_liquidity_usd": { "type": "number" },
+                          "primary_pool": { "type": "string" },
+                          "slippage_1k_usd_pct": { "type": "number" },
+                          "slippage_10k_usd_pct": { "type": "number" },
+                          "slippage_100k_usd_pct": { "type": "number" },
+                          "slippage_1m_usd_pct": { "type": "number" },
+                          "max_trade_without_10pct_slippage_usd": { "type": "number" },
+                          "liquidity_quality": { "type": "string", "enum": ["deep", "adequate", "thin", "illiquid"] },
+                          "tvl_trend_7d": { "type": "string", "enum": ["growing", "stable", "declining"] }
+                        }
+                      }
+                    },
+                    "depth_summary": {
+                      "type": "object",
+                      "properties": {
+                        "deepest_chain": { "type": "string" },
+                        "total_cross_chain_liquidity_usd": { "type": "number" },
+                        "best_for_large_trades": { "type": "string" },
+                        "best_for_small_trades": { "type": "string" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing symbol" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/cross-chain-liquidity/compare": {
+      "post": {
+        "operationId": "crossChainLiquidityCompare",
+        "summary": "Side-by-side chain liquidity comparison with slippage tiers",
+        "description": "Ranks chains by net cost (slippage + gas) for a specific trade size. Returns verdict (recommended/acceptable/suboptimal/avoid) per chain and a best-chain recommendation. Price: $0.005/call.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["symbol"],
+                "properties": {
+                  "symbol": { "type": "string" },
+                  "trade_size_usd": { "type": "number", "default": 10000, "minimum": 100, "description": "Trade size to model slippage for" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Side-by-side chain comparison for a specific trade size",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "symbol": { "type": "string" },
+                    "trade_size_usd": { "type": "number" },
+                    "comparison": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rank": { "type": "integer" },
+                          "chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc", "solana"] },
+                          "slippage_at_trade_size_pct": { "type": "number" },
+                          "gas_cost_usd": { "type": "number" },
+                          "net_cost_pct": { "type": "number" },
+                          "liquidity_quality": { "type": "string", "enum": ["deep", "adequate", "thin", "illiquid"] },
+                          "verdict": { "type": "string", "enum": ["recommended", "acceptable", "suboptimal", "avoid"] }
+                        }
+                      }
+                    },
+                    "recommendation": {
+                      "type": "object",
+                      "properties": {
+                        "best_chain": { "type": "string" },
+                        "reason": { "type": "string" },
+                        "expected_slippage_pct": { "type": "number" },
+                        "total_cost_pct": { "type": "number" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing symbol" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    },
+
+    "/cross-chain-liquidity/lookup": {
+      "post": {
+        "operationId": "crossChainLiquidityLookup",
+        "summary": "ONE-CALL: optimal chain for a trade size with execution recommendation",
+        "description": "Single call returns optimal chain, best DEX route, expected slippage and gas, and a split strategy with savings estimate if routing across multiple chains is beneficial. Includes structured reasoning. Price: $0.015/call.",
+        "x-one-call": true,
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["symbol", "trade_size_usd"],
+                "properties": {
+                  "symbol": { "type": "string", "description": "Token to trade" },
+                  "trade_size_usd": { "type": "number", "description": "Trade size in USD for routing analysis" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Optimal chain routing with split strategy if beneficial",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "success": { "type": "boolean" },
+                    "symbol": { "type": "string" },
+                    "trade_size_usd": { "type": "number" },
+                    "optimal_chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc", "solana"] },
+                    "optimal_route": {
+                      "type": "object",
+                      "properties": {
+                        "chain": { "type": "string" },
+                        "dex": { "type": "string" },
+                        "slippage_pct": { "type": "number" },
+                        "gas_cost_usd": { "type": "number" },
+                        "total_cost_pct": { "type": "number" },
+                        "expected_output_usd": { "type": "number" }
+                      }
+                    },
+                    "split_strategy": {
+                      "type": "object",
+                      "properties": {
+                        "recommended": { "type": "boolean" },
+                        "reason": { "type": "string" },
+                        "savings_vs_single_chain_pct": { "type": "number" },
+                        "splits": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "chain": { "type": "string" },
+                              "amount_usd": { "type": "number" },
+                              "slippage_pct": { "type": "number" },
+                              "gas_cost_usd": { "type": "number" }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "reasoning": {
+                      "type": "object",
+                      "properties": {
+                        "why_signal_generated": { "type": "string" },
+                        "key_factors": { "type": "array", "items": { "type": "string" } },
+                        "invalidators": { "type": "array", "items": { "type": "string" } }
+                      }
+                    },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" },
+                    "paper_mode_recommended": { "type": "boolean" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                    "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                    "chain_to": { "type": "array", "items": { "type": "object", "properties": { "api": { "type": "string" }, "reason": { "type": "string" } } } },
+                    "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing symbol or trade_size_usd" },
+          "500": { "description": "Internal error" }
+        }
+      }
+    }
+
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" }
+    }
+  }
+}
