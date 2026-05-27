@@ -503,6 +503,20 @@ import flashLoanOpportunityRouter from './routes/flash-loan-opportunity-api/rout
 import flashLoanOpportunityOpenapiRouter from './routes/flash-loan-opportunity-api/routes/openapi';
 import marketInefficiencyScannerRouter from './routes/market-inefficiency-scanner-api/routes/intelligence';
 import marketInefficiencyScannerOpenapiRouter from './routes/market-inefficiency-scanner-api/routes/openapi';
+import smartWalletDiscoveryRouter from './routes/smart-wallet-discovery-api/routes/intelligence';
+import smartWalletDiscoveryOpenapiRouter from './routes/smart-wallet-discovery-api/routes/openapi';
+import walletCopyTradingRouter from './routes/wallet-copy-trading-api/routes/intelligence';
+import walletCopyTradingOpenapiRouter from './routes/wallet-copy-trading-api/routes/openapi';
+import insiderWalletDetectionRouter from './routes/insider-wallet-detection-api/routes/intelligence';
+import insiderWalletDetectionOpenapiRouter from './routes/insider-wallet-detection-api/routes/openapi';
+import dormantWalletAwakeningRouter from './routes/dormant-wallet-awakening-api/routes/intelligence';
+import dormantWalletAwakeningOpenapiRouter from './routes/dormant-wallet-awakening-api/routes/openapi';
+import whaleTransactionRouter from './routes/whale-transaction-api/routes/intelligence';
+import whaleTransactionOpenapiRouter from './routes/whale-transaction-api/routes/openapi';
+import validatorActivityRouter from './routes/validator-activity-api/routes/intelligence';
+import validatorActivityOpenapiRouter from './routes/validator-activity-api/routes/openapi';
+import crossChainLiquidityRouter from './routes/cross-chain-liquidity-api/routes/intelligence';
+import crossChainLiquidityOpenapiRouter from './routes/cross-chain-liquidity-api/routes/openapi';
 import fxRatesRouter from './routes/fx-rates-api/routes/intelligence';
 import fxRatesOpenapiRouter from './routes/fx-rates-api/routes/openapi';
 import weatherRouter from './routes/weather-api/routes/intelligence';
@@ -1055,6 +1069,13 @@ const routerMap: Record<string, import("express").Router> = {
   'gas-adjusted-arbitrage': gasAdjustedArbitrageRouter,
   'flash-loan-opportunity': flashLoanOpportunityRouter,
   'market-inefficiency-scanner': marketInefficiencyScannerRouter,
+  'smart-wallet-discovery': smartWalletDiscoveryRouter,
+  'wallet-copy-trading': walletCopyTradingRouter,
+  'insider-wallet-detection': insiderWalletDetectionRouter,
+  'dormant-wallet-awakening': dormantWalletAwakeningRouter,
+  'whale-transaction': whaleTransactionRouter,
+  'validator-activity': validatorActivityRouter,
+  'cross-chain-liquidity': crossChainLiquidityRouter,
   'fx-rates': fxRatesRouter,
   'weather': weatherRouter,
   'ip-geolocation': ipGeolocationRouter,
@@ -1396,6 +1417,13 @@ const openapiMap: Record<string, import("express").Router> = {
   'gas-adjusted-arbitrage': gasAdjustedArbitrageOpenapiRouter,
   'flash-loan-opportunity': flashLoanOpportunityOpenapiRouter,
   'market-inefficiency-scanner': marketInefficiencyScannerOpenapiRouter,
+  'smart-wallet-discovery': smartWalletDiscoveryOpenapiRouter,
+  'wallet-copy-trading': walletCopyTradingOpenapiRouter,
+  'insider-wallet-detection': insiderWalletDetectionOpenapiRouter,
+  'dormant-wallet-awakening': dormantWalletAwakeningOpenapiRouter,
+  'whale-transaction': whaleTransactionOpenapiRouter,
+  'validator-activity': validatorActivityOpenapiRouter,
+  'cross-chain-liquidity': crossChainLiquidityOpenapiRouter,
   'fx-rates': fxRatesOpenapiRouter,
   'weather': weatherOpenapiRouter,
   'geocoding': geocodingIntelligenceOpenapiRouter,

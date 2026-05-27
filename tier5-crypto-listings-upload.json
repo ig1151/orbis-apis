@@ -1,0 +1,261 @@
+[
+  {
+    "name": "Smart Wallet Discovery API",
+    "shortDescription": "Discover top-performing smart money wallets by ROI, strategy, and copy-trade suitability.",
+    "description": "Identify the highest-performing wallets on-chain by ROI, win rate, drawdown, and strategy classification. Filter by copy-trade suitability, risk profile, and trading style. Full profile includes token preferences, timing patterns, and risk metrics to inform copy-trading decisions.",
+    "category": "Crypto & Blockchain",
+    "baseUrl": "https://orbis-apis.onrender.com/smart-wallet-discovery",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/smart-wallet-discovery/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/smart-wallet-discovery/openapi",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["crypto", "wallet", "smart-money", "copy-trading", "on-chain"],
+    "keywords": ["smart wallet", "copy trade", "wallet performance", "ROI", "on-chain analytics"],
+    "tiers": [
+      {
+        "name": "Free",
+        "description": "100 requests/day, 3000/month",
+        "price": 0,
+        "rateLimit": { "requests": 100, "period": "day" }
+      },
+      {
+        "name": "Pay Per Call",
+        "description": "Pay only for what you use",
+        "price": 0.015,
+        "rateLimit": { "requests": 10000, "period": "day" },
+        "endpointPricing": [
+          { "path": "/scan", "method": "POST", "pricePerCallUsdc": 0.005 },
+          { "path": "/filter", "method": "POST", "pricePerCallUsdc": 0.005 },
+          { "path": "/lookup", "method": "POST", "pricePerCallUsdc": 0.015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/scan", "summary": "Top-performing smart wallets ranked by ROI and win rate" },
+      { "method": "POST", "path": "/filter", "summary": "Filter smart wallets by strategy, risk, and copy-trade suitability" },
+      { "method": "POST", "path": "/lookup", "summary": "ONE-CALL: full wallet profile with copy-trade assessment" }
+    ]
+  },
+  {
+    "name": "Wallet Copy Trading API",
+    "shortDescription": "Real-time copy signals from top-performing smart money wallets with execution context.",
+    "description": "Generate actionable copy-trade signals from the best on-chain wallets. Track a specific address for live buy/sell signals with urgency ratings, or browse the copy-trading leaderboard by suitability score. Full lookup returns a copy plan with historical performance, lag tolerance, and risk assessment.",
+    "category": "Crypto & Blockchain",
+    "baseUrl": "https://orbis-apis.onrender.com/wallet-copy-trading",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/wallet-copy-trading/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/wallet-copy-trading/openapi",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["crypto", "copy-trading", "wallet", "signals", "smart-money"],
+    "keywords": ["copy trading", "wallet signals", "smart money", "trade signals", "on-chain copy"],
+    "tiers": [
+      {
+        "name": "Free",
+        "description": "100 requests/day, 3000/month",
+        "price": 0,
+        "rateLimit": { "requests": 100, "period": "day" }
+      },
+      {
+        "name": "Pay Per Call",
+        "description": "Pay only for what you use",
+        "price": 0.015,
+        "rateLimit": { "requests": 10000, "period": "day" },
+        "endpointPricing": [
+          { "path": "/signals", "method": "POST", "pricePerCallUsdc": 0.004 },
+          { "path": "/leaderboard", "method": "POST", "pricePerCallUsdc": 0.004 },
+          { "path": "/lookup", "method": "POST", "pricePerCallUsdc": 0.015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/signals", "summary": "Live copy-trade signals for a specific wallet address" },
+      { "method": "POST", "path": "/leaderboard", "summary": "Copy-trading leaderboard ranked by suitability score" },
+      { "method": "POST", "path": "/lookup", "summary": "ONE-CALL: full copy plan with risk assessment" }
+    ]
+  },
+  {
+    "name": "Insider Wallet Detection API",
+    "shortDescription": "Detect wallets that consistently buy before major announcements, listings, or price events.",
+    "description": "Identify wallets exhibiting insider-pattern behavior: pre-announcement buys, coordinated accumulation, early exits, and recurring alpha. Statistical analysis with p-value, hit rate, and false positive rate. Receive live alerts when confirmed insider wallets accumulate a specific token.",
+    "category": "Crypto & Blockchain",
+    "baseUrl": "https://orbis-apis.onrender.com/insider-wallet-detection",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/insider-wallet-detection/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/insider-wallet-detection/openapi",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["crypto", "insider", "wallet", "on-chain", "alpha"],
+    "keywords": ["insider wallet", "smart money", "pre-announcement", "accumulation", "on-chain signals"],
+    "tiers": [
+      {
+        "name": "Free",
+        "description": "100 requests/day, 3000/month",
+        "price": 0,
+        "rateLimit": { "requests": 100, "period": "day" }
+      },
+      {
+        "name": "Pay Per Call",
+        "description": "Pay only for what you use",
+        "price": 0.018,
+        "rateLimit": { "requests": 10000, "period": "day" },
+        "endpointPricing": [
+          { "path": "/scan", "method": "POST", "pricePerCallUsdc": 0.006 },
+          { "path": "/alerts", "method": "POST", "pricePerCallUsdc": 0.005 },
+          { "path": "/lookup", "method": "POST", "pricePerCallUsdc": 0.018 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/scan", "summary": "Scan for wallets with insider-pattern buying behavior" },
+      { "method": "POST", "path": "/alerts", "summary": "Live alerts when insider wallets accumulate a token" },
+      { "method": "POST", "path": "/lookup", "summary": "ONE-CALL: full insider analysis with statistical significance" }
+    ]
+  },
+  {
+    "name": "Dormant Wallet Awakening API",
+    "shortDescription": "Alert when long-dormant crypto wallets make their first on-chain movement after months or years.",
+    "description": "Track wallets that have been silent for 180+ days and suddenly move funds. Correlate awakening events with token holdings, market conditions, and historical significance. High-value alerts for wallets holding $100k+ that have been dormant for 365+ days. Full lookup reveals dormancy profile, movement analysis, and market impact potential.",
+    "category": "Crypto & Blockchain",
+    "baseUrl": "https://orbis-apis.onrender.com/dormant-wallet-awakening",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/dormant-wallet-awakening/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/dormant-wallet-awakening/openapi",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["crypto", "wallet", "dormant", "on-chain", "alerts"],
+    "keywords": ["dormant wallet", "wallet awakening", "sleeping wallets", "old wallets", "on-chain alerts"],
+    "tiers": [
+      {
+        "name": "Free",
+        "description": "100 requests/day, 3000/month",
+        "price": 0,
+        "rateLimit": { "requests": 100, "period": "day" }
+      },
+      {
+        "name": "Pay Per Call",
+        "description": "Pay only for what you use",
+        "price": 0.015,
+        "rateLimit": { "requests": 10000, "period": "day" },
+        "endpointPricing": [
+          { "path": "/scan", "method": "POST", "pricePerCallUsdc": 0.005 },
+          { "path": "/alerts", "method": "POST", "pricePerCallUsdc": 0.004 },
+          { "path": "/lookup", "method": "POST", "pricePerCallUsdc": 0.015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/scan", "summary": "Scan for recently awakened dormant wallets" },
+      { "method": "POST", "path": "/alerts", "summary": "High-significance dormant wallet awakening alerts" },
+      { "method": "POST", "path": "/lookup", "summary": "ONE-CALL: full dormant wallet profile with movement analysis" }
+    ]
+  },
+  {
+    "name": "Whale Transaction API",
+    "shortDescription": "Real-time large on-chain transfer alerts for crypto whales across chains.",
+    "description": "Monitor on-chain movements of crypto whales — transfers above $500k, exchange inflows/outflows, bridge activity, and staking events. Token-specific alerts surface urgency levels, direction, and price impact estimates. Full transaction lookup provides wallet context, market impact analysis, and likely intent classification.",
+    "category": "Crypto & Blockchain",
+    "baseUrl": "https://orbis-apis.onrender.com/whale-transaction",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/whale-transaction/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/whale-transaction/openapi",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["crypto", "whale", "on-chain", "alerts", "market-impact"],
+    "keywords": ["whale transactions", "large transfers", "crypto whale", "exchange flows", "on-chain monitoring"],
+    "tiers": [
+      {
+        "name": "Free",
+        "description": "100 requests/day, 3000/month",
+        "price": 0,
+        "rateLimit": { "requests": 100, "period": "day" }
+      },
+      {
+        "name": "Pay Per Call",
+        "description": "Pay only for what you use",
+        "price": 0.015,
+        "rateLimit": { "requests": 10000, "period": "day" },
+        "endpointPricing": [
+          { "path": "/feed", "method": "POST", "pricePerCallUsdc": 0.004 },
+          { "path": "/alerts", "method": "POST", "pricePerCallUsdc": 0.004 },
+          { "path": "/lookup", "method": "POST", "pricePerCallUsdc": 0.015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/feed", "summary": "Real-time whale transactions above a USD threshold" },
+      { "method": "POST", "path": "/alerts", "summary": "Whale movement alerts for a specific token" },
+      { "method": "POST", "path": "/lookup", "summary": "ONE-CALL: full whale transaction analysis with wallet context" }
+    ]
+  },
+  {
+    "name": "Validator Activity API",
+    "shortDescription": "Track validator performance, uptime, commission, and slashing risk across PoS networks.",
+    "description": "Monitor validator health across Ethereum, Solana, Cosmos, Polkadot, and Avalanche. Track uptime, commission rates, effective APR, delegator count, and self-stake percentage. Slashing event history with risk scores and recommendations. Full validator lookup returns a delegation recommendation (strong_buy to avoid) with risk breakdown.",
+    "category": "Crypto & Blockchain",
+    "baseUrl": "https://orbis-apis.onrender.com/validator-activity",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/validator-activity/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/validator-activity/openapi",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["crypto", "staking", "validator", "PoS", "delegation"],
+    "keywords": ["validator", "staking", "slashing", "uptime", "delegation", "PoS networks"],
+    "tiers": [
+      {
+        "name": "Free",
+        "description": "100 requests/day, 3000/month",
+        "price": 0,
+        "rateLimit": { "requests": 100, "period": "day" }
+      },
+      {
+        "name": "Pay Per Call",
+        "description": "Pay only for what you use",
+        "price": 0.015,
+        "rateLimit": { "requests": 10000, "period": "day" },
+        "endpointPricing": [
+          { "path": "/performance", "method": "POST", "pricePerCallUsdc": 0.004 },
+          { "path": "/slashing", "method": "POST", "pricePerCallUsdc": 0.005 },
+          { "path": "/lookup", "method": "POST", "pricePerCallUsdc": 0.015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/performance", "summary": "Validator performance metrics, uptime, and APR" },
+      { "method": "POST", "path": "/slashing", "summary": "Slashing events, risk scores, and jailed validators" },
+      { "method": "POST", "path": "/lookup", "summary": "ONE-CALL: full validator profile with delegation recommendation" }
+    ]
+  },
+  {
+    "name": "Cross-Chain Liquidity API",
+    "shortDescription": "Liquidity depth analysis for a token across 6 chains with slippage tiers and routing.",
+    "description": "Analyze on-chain liquidity for any token across Ethereum, Base, Arbitrum, Polygon, BSC, and Solana. Get slippage estimates at $1k, $10k, $100k, and $1M trade sizes. Side-by-side chain comparison with net cost (slippage + gas). Full routing lookup returns optimal chain, split strategy with savings estimate, and structured reasoning.",
+    "category": "Crypto & Blockchain",
+    "baseUrl": "https://orbis-apis.onrender.com/cross-chain-liquidity",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/cross-chain-liquidity/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/cross-chain-liquidity/openapi",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["crypto", "liquidity", "cross-chain", "DeFi", "routing"],
+    "keywords": ["cross-chain liquidity", "slippage", "liquidity depth", "trade routing", "DeFi"],
+    "tiers": [
+      {
+        "name": "Free",
+        "description": "100 requests/day, 3000/month",
+        "price": 0,
+        "rateLimit": { "requests": 100, "period": "day" }
+      },
+      {
+        "name": "Pay Per Call",
+        "description": "Pay only for what you use",
+        "price": 0.015,
+        "rateLimit": { "requests": 10000, "period": "day" },
+        "endpointPricing": [
+          { "path": "/depth", "method": "POST", "pricePerCallUsdc": 0.004 },
+          { "path": "/compare", "method": "POST", "pricePerCallUsdc": 0.005 },
+          { "path": "/lookup", "method": "POST", "pricePerCallUsdc": 0.015 }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/depth", "summary": "Liquidity depth for an asset across all supported chains" },
+      { "method": "POST", "path": "/compare", "summary": "Side-by-side chain liquidity comparison with slippage tiers" },
+      { "method": "POST", "path": "/lookup", "summary": "ONE-CALL: optimal chain for a trade size with execution recommendation" }
+    ]
+  }
+]
