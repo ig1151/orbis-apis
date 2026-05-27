@@ -487,6 +487,22 @@ import whaleEntrySignalRouter from './routes/whale-entry-signal-api/routes/intel
 import whaleEntrySignalOpenapiRouter from './routes/whale-entry-signal-api/routes/openapi';
 import scalpingOpportunityRouter from './routes/scalping-opportunity-api/routes/intelligence';
 import scalpingOpportunityOpenapiRouter from './routes/scalping-opportunity-api/routes/openapi';
+import dexCexArbitrageRouter from './routes/dex-cex-arbitrage-api/routes/intelligence';
+import dexCexArbitrageOpenapiRouter from './routes/dex-cex-arbitrage-api/routes/openapi';
+import triangularArbitrageRouter from './routes/triangular-arbitrage-api/routes/intelligence';
+import triangularArbitrageOpenapiRouter from './routes/triangular-arbitrage-api/routes/openapi';
+import stablecoinArbitrageRouter from './routes/stablecoin-arbitrage-api/routes/intelligence';
+import stablecoinArbitrageOpenapiRouter from './routes/stablecoin-arbitrage-api/routes/openapi';
+import crossChainArbitrageRouter from './routes/cross-chain-arbitrage-api/routes/intelligence';
+import crossChainArbitrageOpenapiRouter from './routes/cross-chain-arbitrage-api/routes/openapi';
+import nftArbitrageRouter from './routes/nft-arbitrage-api/routes/intelligence';
+import nftArbitrageOpenapiRouter from './routes/nft-arbitrage-api/routes/openapi';
+import gasAdjustedArbitrageRouter from './routes/gas-adjusted-arbitrage-api/routes/intelligence';
+import gasAdjustedArbitrageOpenapiRouter from './routes/gas-adjusted-arbitrage-api/routes/openapi';
+import flashLoanOpportunityRouter from './routes/flash-loan-opportunity-api/routes/intelligence';
+import flashLoanOpportunityOpenapiRouter from './routes/flash-loan-opportunity-api/routes/openapi';
+import marketInefficiencyScannerRouter from './routes/market-inefficiency-scanner-api/routes/intelligence';
+import marketInefficiencyScannerOpenapiRouter from './routes/market-inefficiency-scanner-api/routes/openapi';
 import fxRatesRouter from './routes/fx-rates-api/routes/intelligence';
 import fxRatesOpenapiRouter from './routes/fx-rates-api/routes/openapi';
 import weatherRouter from './routes/weather-api/routes/intelligence';
@@ -1031,6 +1047,14 @@ const routerMap: Record<string, import("express").Router> = {
   'bollinger-band': bollingerBandRouter,
   'whale-entry-signal': whaleEntrySignalRouter,
   'scalping-opportunity': scalpingOpportunityRouter,
+  'dex-cex-arbitrage': dexCexArbitrageRouter,
+  'triangular-arbitrage': triangularArbitrageRouter,
+  'stablecoin-arbitrage': stablecoinArbitrageRouter,
+  'cross-chain-arbitrage': crossChainArbitrageRouter,
+  'nft-arbitrage': nftArbitrageRouter,
+  'gas-adjusted-arbitrage': gasAdjustedArbitrageRouter,
+  'flash-loan-opportunity': flashLoanOpportunityRouter,
+  'market-inefficiency-scanner': marketInefficiencyScannerRouter,
   'fx-rates': fxRatesRouter,
   'weather': weatherRouter,
   'ip-geolocation': ipGeolocationRouter,
@@ -1364,6 +1388,14 @@ const openapiMap: Record<string, import("express").Router> = {
   'bollinger-band': bollingerBandOpenapiRouter,
   'whale-entry-signal': whaleEntrySignalOpenapiRouter,
   'scalping-opportunity': scalpingOpportunityOpenapiRouter,
+  'dex-cex-arbitrage': dexCexArbitrageOpenapiRouter,
+  'triangular-arbitrage': triangularArbitrageOpenapiRouter,
+  'stablecoin-arbitrage': stablecoinArbitrageOpenapiRouter,
+  'cross-chain-arbitrage': crossChainArbitrageOpenapiRouter,
+  'nft-arbitrage': nftArbitrageOpenapiRouter,
+  'gas-adjusted-arbitrage': gasAdjustedArbitrageOpenapiRouter,
+  'flash-loan-opportunity': flashLoanOpportunityOpenapiRouter,
+  'market-inefficiency-scanner': marketInefficiencyScannerOpenapiRouter,
   'fx-rates': fxRatesOpenapiRouter,
   'weather': weatherOpenapiRouter,
   'geocoding': geocodingIntelligenceOpenapiRouter,
