@@ -1,0 +1,1563 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Orbis Tier 4 Arbitrage Suite",
+    "version": "1.0.0",
+    "description": "Eight arbitrage intelligence APIs: DEX vs CEX Arbitrage, Triangular Arbitrage, Stablecoin Arbitrage, Cross-Chain Arbitrage, NFT Arbitrage, Gas-Adjusted Arbitrage, Flash Loan Opportunity, and Market Inefficiency Scanner. All endpoints require an X-API-Key header. Free tier: 100 req/day. Pay-per-call pricing from $0.003 to $0.020/call. All responses include financial_disclaimer — for informational purposes only, not financial advice."
+  },
+  "servers": [
+    { "url": "https://orbis-apis.onrender.com" }
+  ],
+  "security": [{ "ApiKeyAuth": [] }],
+  "paths": {
+
+    "/dex-cex-arbitrage/scan": {
+      "post": {
+        "operationId": "dexCexArbitrageScan",
+        "summary": "DEX vs CEX price gap scan for a token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["symbol"],
+                "properties": {
+                  "symbol": { "type": "string", "description": "Token symbol, e.g. ETH, WBTC, ARB" },
+                  "chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "bsc"], "default": "ethereum" },
+                  "exchange": { "type": "string", "enum": ["binance", "coinbase", "kraken", "bybit", "okx"], "default": "binance" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "DEX vs CEX price gap with viability, direction, and fee-adjusted profit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "computed_at": { "type": "string", "format": "date-time" },
+                    "symbol": { "type": "string" },
+                    "chain": { "type": "string" },
+                    "exchange": { "type": "string" },
+                    "dex_price": { "type": "number" },
+                    "cex_price": { "type": "number" },
+                    "gap_pct": { "type": "number" },
+                    "direction": { "type": "string", "enum": ["buy_dex_sell_cex", "buy_cex_sell_dex"] },
+                    "estimated_profit_usdc": { "type": "number" },
+                    "liquidity_depth_usd": { "type": "number" },
+                    "fee_estimate_pct": { "type": "number" },
+                    "viability": { "type": "string", "enum": ["viable", "marginal", "not_viable"] },
+                    "dex_details": {
+                      "type": "object",
+                      "properties": {
+                        "pool_address": { "type": "string" },
+                        "dex_protocol": { "type": "string", "enum": ["uniswap_v3", "uniswap_v2", "curve", "balancer", "sushiswap", "pancakeswap"] },
+                        "pool_fee_tier_pct": { "type": "number" },
+                        "price_impact_pct": { "type": "number" },
+                        "tvl_usd": { "type": "number" }
+                      }
+                    },
+                    "cex_details": {
+                      "type": "object",
+                      "properties": {
+                        "best_bid": { "type": "number" },
+                        "best_ask": { "type": "number" },
+                        "spread_pct": { "type": "number" },
+                        "order_book_depth_usd": { "type": "number" },
+                        "taker_fee_pct": { "type": "number" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" },
+                    "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/dex-cex-arbitrage/alerts": {
+      "post": {
+        "operationId": "dexCexArbitrageAlerts",
+        "summary": "Market-wide DEX/CEX arb opportunities above gap threshold",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "min_gap_pct": { "type": "number", "default": 0.5, "minimum": 0.1, "description": "Minimum price gap % to surface" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Active DEX/CEX arb alerts with urgency",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "min_gap_pct": { "type": "number" },
+                    "opportunities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "symbol": { "type": "string" },
+                          "chain": { "type": "string" },
+                          "dex_protocol": { "type": "string" },
+                          "cex": { "type": "string" },
+                          "gap_pct": { "type": "number" },
+                          "direction": { "type": "string", "enum": ["buy_dex_sell_cex", "buy_cex_sell_dex"] },
+                          "estimated_profit_usdc": { "type": "number" },
+                          "viability": { "type": "string", "enum": ["viable", "marginal", "not_viable"] },
+                          "urgency": { "type": "string", "enum": ["immediate", "building", "fading"] },
+                          "detected_ago_seconds": { "type": "number" }
+                        }
+                      }
+                    },
+                    "market_summary": {
+                      "type": "object",
+                      "properties": {
+                        "total_opportunities": { "type": "integer" },
+                        "viable_count": { "type": "integer" },
+                        "best_gap_pct": { "type": "number" },
+                        "best_symbol": { "type": "string" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/dex-cex-arbitrage/lookup": {
+      "post": {
+        "operationId": "dexCexArbitrageLookup",
+        "summary": "ONE-CALL: full DEX/CEX arb analysis with execution checklist, profit scenarios, and reasoning",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["symbol"],
+                "properties": {
+                  "symbol": { "type": "string", "description": "Token symbol" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full DEX/CEX arb intelligence with execution checklist, profit scenarios by position size, and reasoning",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "symbol": { "type": "string" },
+                    "best_opportunity": {
+                      "type": "object",
+                      "properties": {
+                        "dex_protocol": { "type": "string" },
+                        "dex_chain": { "type": "string" },
+                        "cex": { "type": "string" },
+                        "direction": { "type": "string", "enum": ["buy_dex_sell_cex", "buy_cex_sell_dex"] },
+                        "raw_gap_pct": { "type": "number" },
+                        "gas_estimate_usd": { "type": "number" },
+                        "net_profit_after_fees_usd": { "type": "number" },
+                        "viability": { "type": "string", "enum": ["viable", "marginal", "not_viable"] }
+                      }
+                    },
+                    "execution_checklist": {
+                      "type": "object",
+                      "properties": {
+                        "liquidity_sufficient": { "type": "boolean" },
+                        "price_impact_acceptable": { "type": "boolean" },
+                        "gas_within_budget": { "type": "boolean" },
+                        "cex_withdrawal_open": { "type": "boolean" },
+                        "readiness_score": { "type": "number" }
+                      }
+                    },
+                    "net_profit_scenarios": {
+                      "type": "object",
+                      "properties": {
+                        "small_position_1k_usd": { "type": "number" },
+                        "medium_position_10k_usd": { "type": "number" },
+                        "large_position_50k_usd": { "type": "number" }
+                      }
+                    },
+                    "reasoning": { "$ref": "#/components/schemas/Reasoning" },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/triangular-arbitrage/scan": {
+      "post": {
+        "operationId": "triangularArbitrageScan",
+        "summary": "Scan for viable triangular arb loops for a base currency on an exchange",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["base_currency"],
+                "properties": {
+                  "base_currency": { "type": "string", "description": "Starting currency, e.g. BTC, ETH, USDT" },
+                  "exchange": { "type": "string", "enum": ["binance", "coinbase", "bybit", "okx", "kraken"], "default": "binance" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Viable triangular loops with net profit and viability window",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "base_currency": { "type": "string" },
+                    "exchange": { "type": "string" },
+                    "viable_loops": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "path": { "type": "string" },
+                          "gross_profit_pct": { "type": "number" },
+                          "trading_fees_pct": { "type": "number" },
+                          "net_profit_after_fees_pct": { "type": "number" },
+                          "viability_window_seconds": { "type": "number" },
+                          "loop_quality": { "type": "string", "enum": ["A+", "A", "B", "C"] },
+                          "viable": { "type": "boolean" }
+                        }
+                      }
+                    },
+                    "market_conditions": {
+                      "type": "object",
+                      "properties": {
+                        "viable_count": { "type": "integer" },
+                        "best_net_profit_pct": { "type": "number" },
+                        "exchange_fee_tier": { "type": "number" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/triangular-arbitrage/paths": {
+      "post": {
+        "operationId": "triangularArbitragePaths",
+        "summary": "All triangular arb paths on an exchange ranked by net profit",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["exchange"],
+                "properties": {
+                  "exchange": { "type": "string", "enum": ["binance", "coinbase", "bybit", "okx", "kraken"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ranked triangular arb paths with volume limits and complexity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "exchange": { "type": "string" },
+                    "paths": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rank": { "type": "integer" },
+                          "path": { "type": "string" },
+                          "base_currency": { "type": "string" },
+                          "net_profit_after_fees_pct": { "type": "number" },
+                          "viability_window_seconds": { "type": "number" },
+                          "trade_volume_limit_usd": { "type": "number" },
+                          "execution_complexity": { "type": "string", "enum": ["simple", "medium", "complex"] },
+                          "loop_quality": { "type": "string", "enum": ["A+", "A", "B", "C"] }
+                        }
+                      }
+                    },
+                    "exchange_summary": {
+                      "type": "object",
+                      "properties": {
+                        "total_paths_found": { "type": "integer" },
+                        "profitable_paths": { "type": "integer" },
+                        "best_path": { "type": "string" },
+                        "market_efficiency_score": { "type": "number" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/triangular-arbitrage/lookup": {
+      "post": {
+        "operationId": "triangularArbitrageLookup",
+        "summary": "ONE-CALL: best triangular loop with exact execution sequence, trade sizing, and timing",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["base_currency"],
+                "properties": {
+                  "base_currency": { "type": "string", "description": "Starting currency" },
+                  "exchange": { "type": "string", "enum": ["binance", "coinbase", "bybit", "okx", "kraken"], "default": "binance" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full triangular arb with execution sequence, trade sizing, and timing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "base_currency": { "type": "string" },
+                    "best_loop": {
+                      "type": "object",
+                      "properties": {
+                        "path": { "type": "string" },
+                        "net_profit_after_fees_pct": { "type": "number" },
+                        "viability_window_seconds": { "type": "number" },
+                        "loop_quality": { "type": "string", "enum": ["A+", "A", "B", "C"] }
+                      }
+                    },
+                    "execution_sequence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "step": { "type": "integer" },
+                          "pair": { "type": "string" },
+                          "action": { "type": "string", "enum": ["buy", "sell"] },
+                          "estimated_price": { "type": "number" },
+                          "expected_slippage_pct": { "type": "number" },
+                          "time_budget_ms": { "type": "number" }
+                        }
+                      }
+                    },
+                    "trade_sizing": {
+                      "type": "object",
+                      "properties": {
+                        "optimal_size_usd": { "type": "number" },
+                        "min_profitable_size_usd": { "type": "number" },
+                        "expected_profit_at_optimal_usd": { "type": "number" }
+                      }
+                    },
+                    "execution_timeline": {
+                      "type": "object",
+                      "properties": {
+                        "total_execution_ms": { "type": "number" },
+                        "window_closes_in_seconds": { "type": "number" }
+                      }
+                    },
+                    "reasoning": { "$ref": "#/components/schemas/Reasoning" },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/stablecoin-arbitrage/spreads": {
+      "post": {
+        "operationId": "stablecoinArbitrageSpreads",
+        "summary": "Stablecoin price spreads across DEX and CEX venues for USDC, USDT, DAI, FRAX",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stablecoin": { "type": "string", "enum": ["USDC", "USDT", "DAI", "FRAX"], "description": "Filter to one stablecoin (optional)" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stablecoin spreads with best buy/sell venues per stablecoin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "stablecoins": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "stablecoin": { "type": "string", "enum": ["USDC", "USDT", "DAI", "FRAX"] },
+                          "max_spread_pct": { "type": "number" },
+                          "best_buy_venue": { "type": "string" },
+                          "best_buy_price": { "type": "number" },
+                          "best_sell_venue": { "type": "string" },
+                          "best_sell_price": { "type": "number" },
+                          "arb_viable": { "type": "boolean" }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/stablecoin-arbitrage/alerts": {
+      "post": {
+        "operationId": "stablecoinArbitrageAlerts",
+        "summary": "Stablecoin arb alerts above spread threshold with peg risk flag",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "min_spread_pct": { "type": "number", "default": 0.1, "minimum": 0.05 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stablecoin arb alerts with urgency and peg risk",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "alerts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "stablecoin": { "type": "string", "enum": ["USDC", "USDT", "DAI", "FRAX"] },
+                          "buy_venue": { "type": "string" },
+                          "sell_venue": { "type": "string" },
+                          "spread_pct": { "type": "number" },
+                          "estimated_profit_pct": { "type": "number" },
+                          "urgency": { "type": "string", "enum": ["immediate", "building", "fading"] },
+                          "peg_risk": { "type": "string", "enum": ["safe", "caution", "high_risk"] }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/stablecoin-arbitrage/lookup": {
+      "post": {
+        "operationId": "stablecoinArbitrageLookup",
+        "summary": "ONE-CALL: best stablecoin spread trade with peg risk context and execution plan",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["stablecoin"],
+                "properties": {
+                  "stablecoin": { "type": "string", "enum": ["USDC", "USDT", "DAI", "FRAX"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Best stablecoin trade with net profit, peg risk context, 3-step execution plan, and reasoning",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "stablecoin": { "type": "string" },
+                    "best_trade": {
+                      "type": "object",
+                      "properties": {
+                        "entry_venue": { "type": "string" },
+                        "exit_venue": { "type": "string" },
+                        "net_profit_after_fees_pct": { "type": "number" },
+                        "min_profitable_size_usd": { "type": "number" }
+                      }
+                    },
+                    "peg_risk_context": {
+                      "type": "object",
+                      "properties": {
+                        "peg_risk_level": { "type": "string", "enum": ["safe", "caution", "high_risk", "critical"] },
+                        "depeg_probability_pct": { "type": "number" },
+                        "safe_to_arb": { "type": "boolean" }
+                      }
+                    },
+                    "execution_plan": {
+                      "type": "object",
+                      "properties": {
+                        "step_1": { "type": "string" },
+                        "step_2": { "type": "string" },
+                        "step_3": { "type": "string" },
+                        "recommended_size_usd": { "type": "number" }
+                      }
+                    },
+                    "reasoning": { "$ref": "#/components/schemas/Reasoning" },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/cross-chain-arbitrage/scan": {
+      "post": {
+        "operationId": "crossChainArbitrageScan",
+        "summary": "Cross-chain price scan for a token — price on each chain with bridge cost estimate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["symbol"],
+                "properties": {
+                  "symbol": { "type": "string", "description": "Token symbol, e.g. ETH, WBTC, LINK" },
+                  "chains": { "type": "array", "items": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc", "solana"] } }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Chain-by-chain prices with best buy/sell chains and net profit after bridge",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "symbol": { "type": "string" },
+                    "chain_prices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "chain": { "type": "string" },
+                          "price_usd": { "type": "number" },
+                          "liquidity_usd": { "type": "number" },
+                          "gas_cost_usd": { "type": "number" }
+                        }
+                      }
+                    },
+                    "best_buy_chain": { "type": "string" },
+                    "best_sell_chain": { "type": "string" },
+                    "raw_spread_pct": { "type": "number" },
+                    "bridge_cost_estimate_usd": { "type": "number" },
+                    "net_profit_after_bridge_usd": { "type": "number" },
+                    "bridge_latency_minutes": { "type": "number" },
+                    "viable": { "type": "boolean" },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/cross-chain-arbitrage/routes": {
+      "post": {
+        "operationId": "crossChainArbitrageRoutes",
+        "summary": "All profitable cross-chain arb routes ranked by net profit after all costs",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["symbol"],
+                "properties": {
+                  "symbol": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ranked routes with bridge protocol, cost breakdown, and latency",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "symbol": { "type": "string" },
+                    "routes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rank": { "type": "integer" },
+                          "buy_chain": { "type": "string" },
+                          "sell_chain": { "type": "string" },
+                          "bridge_protocol": { "type": "string", "enum": ["stargate", "across", "hop", "layerzero", "wormhole", "synapse"] },
+                          "net_profit_after_all_costs_usd": { "type": "number" },
+                          "bridge_latency_minutes": { "type": "number" },
+                          "price_risk_during_bridge": { "type": "string", "enum": ["low", "medium", "high"] }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/cross-chain-arbitrage/lookup": {
+      "post": {
+        "operationId": "crossChainArbitrageLookup",
+        "summary": "ONE-CALL: full cross-chain arb with bridge recommendation, execution steps, and latency risk",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["symbol"],
+                "properties": {
+                  "symbol": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Best cross-chain route with bridge recommendation, step-by-step execution, latency risk, and reasoning",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "symbol": { "type": "string" },
+                    "best_route": {
+                      "type": "object",
+                      "properties": {
+                        "buy_chain": { "type": "string" },
+                        "sell_chain": { "type": "string" },
+                        "bridge_protocol": { "type": "string" },
+                        "net_profit_after_all_costs_usd": { "type": "number" },
+                        "bridge_latency_minutes": { "type": "number" },
+                        "execution_window_minutes": { "type": "number" }
+                      }
+                    },
+                    "bridge_recommendation": {
+                      "type": "object",
+                      "properties": {
+                        "protocol": { "type": "string" },
+                        "rationale": { "type": "string" },
+                        "security_rating": { "type": "string", "enum": ["battle_tested", "audited", "experimental"] }
+                      }
+                    },
+                    "execution_steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "step": { "type": "integer" },
+                          "action": { "type": "string" },
+                          "chain": { "type": "string" },
+                          "estimated_time_minutes": { "type": "number" },
+                          "estimated_cost_usd": { "type": "number" }
+                        }
+                      }
+                    },
+                    "latency_risk": {
+                      "type": "object",
+                      "properties": {
+                        "price_volatility_risk": { "type": "string", "enum": ["low", "medium", "high"] },
+                        "hedge_strategy": { "type": "string" }
+                      }
+                    },
+                    "reasoning": { "$ref": "#/components/schemas/Reasoning" },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/nft-arbitrage/scan": {
+      "post": {
+        "operationId": "nftArbitrageScan",
+        "summary": "NFT floor price spread across OpenSea, Blur, LooksRare, X2Y2 for a collection",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["collection"],
+                "properties": {
+                  "collection": { "type": "string", "description": "Collection slug or contract address" },
+                  "chain": { "type": "string", "enum": ["ethereum", "polygon"], "default": "ethereum" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Floor prices per marketplace with best buy/sell and arb viability",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "collection": { "type": "string" },
+                    "marketplace_floors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "marketplace": { "type": "string", "enum": ["opensea", "blur", "looksrare", "x2y2"] },
+                          "floor_price_eth": { "type": "number" },
+                          "floor_price_usd": { "type": "number" },
+                          "marketplace_fee_pct": { "type": "number" },
+                          "royalty_pct": { "type": "number" }
+                        }
+                      }
+                    },
+                    "best_buy_marketplace": { "type": "string" },
+                    "best_sell_marketplace": { "type": "string" },
+                    "floor_spread_pct": { "type": "number" },
+                    "estimated_profit_eth": { "type": "number" },
+                    "arb_viable": { "type": "boolean" },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/nft-arbitrage/opportunities": {
+      "post": {
+        "operationId": "nftArbitrageOpportunities",
+        "summary": "Market-wide NFT arb opportunities ranked by estimated profit after gas",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "min_spread_pct": { "type": "number", "default": 2.0, "minimum": 0.5 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ranked NFT arb opportunities with profit after gas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "opportunities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "collection": { "type": "string" },
+                          "buy_marketplace": { "type": "string" },
+                          "sell_marketplace": { "type": "string" },
+                          "floor_spread_pct": { "type": "number" },
+                          "estimated_profit_usd": { "type": "number" },
+                          "net_profit_after_gas_eth": { "type": "number" },
+                          "urgency": { "type": "string", "enum": ["immediate", "building", "fading"] }
+                        }
+                      }
+                    },
+                    "market_overview": {
+                      "type": "object",
+                      "properties": {
+                        "total_opportunities": { "type": "integer" },
+                        "best_collection": { "type": "string" },
+                        "best_net_profit_eth": { "type": "number" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/nft-arbitrage/lookup": {
+      "post": {
+        "operationId": "nftArbitrageLookup",
+        "summary": "ONE-CALL: full NFT arb with item analysis, rarity adjustment, gas estimate, liquidity risk, and reasoning",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["collection"],
+                "properties": {
+                  "collection": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Full NFT arb intelligence with item analysis, rarity, gas, liquidity risk, and reasoning",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "collection": { "type": "string" },
+                    "best_opportunity": {
+                      "type": "object",
+                      "properties": {
+                        "buy_marketplace": { "type": "string" },
+                        "sell_marketplace": { "type": "string" },
+                        "floor_spread_pct": { "type": "number" },
+                        "estimated_profit_eth": { "type": "number" }
+                      }
+                    },
+                    "item_analysis": {
+                      "type": "object",
+                      "properties": {
+                        "best_item_for_arb": { "type": "string" },
+                        "rarity_tier": { "type": "string", "enum": ["common", "uncommon", "rare", "epic", "legendary"] },
+                        "listing_freshness_seconds": { "type": "number" }
+                      }
+                    },
+                    "gas_estimate": {
+                      "type": "object",
+                      "properties": {
+                        "total_gas_usd": { "type": "number" },
+                        "net_profit_after_gas_eth": { "type": "number" }
+                      }
+                    },
+                    "liquidity_risk": {
+                      "type": "object",
+                      "properties": {
+                        "avg_time_to_sell_hours": { "type": "number" },
+                        "liquidity_risk_level": { "type": "string", "enum": ["low", "medium", "high"] }
+                      }
+                    },
+                    "reasoning": { "$ref": "#/components/schemas/Reasoning" },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/gas-adjusted-arbitrage/estimate": {
+      "post": {
+        "operationId": "gasAdjustedArbitrageEstimate",
+        "summary": "Gas cost estimate for a trade on a specific chain with break-even spread",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["chain", "trade_size_usd"],
+                "properties": {
+                  "chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc", "solana", "optimism"] },
+                  "trade_size_usd": { "type": "number" },
+                  "num_transactions": { "type": "integer", "default": 2, "minimum": 1, "maximum": 10 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gas cost estimate with current/fast/standard gwei and minimum spread needed to profit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "chain": { "type": "string" },
+                    "trade_size_usd": { "type": "number" },
+                    "gas_cost_usd": { "type": "number" },
+                    "gas_gwei_current": { "type": "number" },
+                    "gas_gwei_fast": { "type": "number" },
+                    "gas_gwei_standard": { "type": "number" },
+                    "time_to_confirm_seconds": { "type": "number" },
+                    "min_spread_needed_pct_to_profit": { "type": "number" },
+                    "gas_as_pct_of_trade": { "type": "number" },
+                    "chain_context": {
+                      "type": "object",
+                      "properties": {
+                        "chain_native_token": { "type": "string" },
+                        "congestion_level": { "type": "string", "enum": ["low", "moderate", "high", "very_high"] }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/gas-adjusted-arbitrage/scan": {
+      "post": {
+        "operationId": "gasAdjustedArbitrageScan",
+        "summary": "All arb opportunities on a chain ranked by net profit after gas",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc", "solana", "optimism"], "default": "ethereum" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ranked arb opportunities with gas-adjusted net profit per $10k",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "chain": { "type": "string" },
+                    "current_gas_gwei": { "type": "number" },
+                    "opportunities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "arb_type": { "type": "string", "enum": ["dex_price_gap", "triangular", "stablecoin_spread", "flash_loan"] },
+                          "symbol": { "type": "string" },
+                          "gross_spread_pct": { "type": "number" },
+                          "gas_cost_usd": { "type": "number" },
+                          "net_profit_usd_per_10k": { "type": "number" },
+                          "break_even_spread_pct": { "type": "number" },
+                          "viable": { "type": "boolean" },
+                          "urgency": { "type": "string", "enum": ["immediate", "building", "fading"] }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/gas-adjusted-arbitrage/lookup": {
+      "post": {
+        "operationId": "gasAdjustedArbitrageLookup",
+        "summary": "ONE-CALL: gas-adjusted analysis with optimal strategy, profit scenarios at 3 position sizes, and reasoning",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["symbol"],
+                "properties": {
+                  "symbol": { "type": "string" },
+                  "chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc", "solana", "optimism"], "default": "ethereum" },
+                  "trade_size_usd": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gas environment, optimal strategy (standard/fast/aggressive), net profit at 3 sizes, fee breakdown, and reasoning",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "optimal_gas_strategy": { "type": "string", "enum": ["standard", "fast", "aggressive"] },
+                    "break_even_spread_pct": { "type": "number" },
+                    "net_profit_scenarios": {
+                      "type": "object",
+                      "properties": {
+                        "small_position_1k_usd": {
+                          "type": "object",
+                          "properties": { "net_profit_usd": { "type": "number" }, "viable": { "type": "boolean" } }
+                        },
+                        "medium_position_10k_usd": {
+                          "type": "object",
+                          "properties": { "net_profit_usd": { "type": "number" }, "viable": { "type": "boolean" } }
+                        },
+                        "large_position_50k_usd": {
+                          "type": "object",
+                          "properties": { "net_profit_usd": { "type": "number" }, "viable": { "type": "boolean" } }
+                        }
+                      }
+                    },
+                    "fee_breakdown": {
+                      "type": "object",
+                      "properties": {
+                        "gas_cost_usd": { "type": "number" },
+                        "protocol_fee_pct": { "type": "number" },
+                        "slippage_estimate_pct": { "type": "number" },
+                        "total_cost_pct": { "type": "number" }
+                      }
+                    },
+                    "reasoning": { "$ref": "#/components/schemas/Reasoning" },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/flash-loan-opportunity/protocols": {
+      "post": {
+        "operationId": "flashLoanOpportunityProtocols",
+        "summary": "Available flash loan protocols with liquidity, fees, and comparison (Aave, dYdX, Balancer)",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc"], "default": "ethereum" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Flash loan protocols with available liquidity, fee rates, and best-protocol recommendation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "chain": { "type": "string" },
+                    "protocols": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "protocol": { "type": "string", "enum": ["aave_v3", "aave_v2", "dydx", "balancer", "maker", "euler"] },
+                          "available_liquidity_usd": { "type": "number" },
+                          "fee_pct": { "type": "number" },
+                          "max_loan_usd": { "type": "number" },
+                          "contract_audited": { "type": "boolean" }
+                        }
+                      }
+                    },
+                    "protocol_comparison": {
+                      "type": "object",
+                      "properties": {
+                        "cheapest_fee": { "type": "string" },
+                        "most_liquidity": { "type": "string" },
+                        "recommended": { "type": "string" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/flash-loan-opportunity/scan": {
+      "post": {
+        "operationId": "flashLoanOpportunityScan",
+        "summary": "Detected flash loan arb opportunities above minimum profit with MEV risk",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc"], "default": "ethereum" },
+                  "min_profit_usd": { "type": "number", "default": 50, "minimum": 0 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Flash loan arb opportunities with protocol, required loan, net profit, and MEV risk",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "opportunities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "protocol": { "type": "string" },
+                          "arb_path": { "type": "string" },
+                          "required_loan_usd": { "type": "number" },
+                          "net_profit_usd": { "type": "number" },
+                          "complexity": { "type": "string", "enum": ["simple", "multi-hop", "complex"] },
+                          "mev_risk": { "type": "string", "enum": ["high", "medium", "low"] },
+                          "success_probability_pct": { "type": "number" },
+                          "window_seconds": { "type": "number" }
+                        }
+                      }
+                    },
+                    "market_summary": {
+                      "type": "object",
+                      "properties": {
+                        "total_opportunities": { "type": "integer" },
+                        "best_net_profit_usd": { "type": "number" },
+                        "simplest_opportunity": { "type": "string" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/flash-loan-opportunity/lookup": {
+      "post": {
+        "operationId": "flashLoanOpportunityLookup",
+        "summary": "ONE-CALL: full flash loan execution plan — step-by-step contract calls, MEV mitigation, failure scenarios, and reasoning",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["arb_type"],
+                "properties": {
+                  "arb_type": { "type": "string", "enum": ["dex_price_gap", "liquidation", "stablecoin_depeg", "triangular"], "description": "Type of arb to wrap in flash loan" },
+                  "token": { "type": "string", "description": "Optional: specific token to focus on" },
+                  "chain": { "type": "string", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc"], "default": "ethereum" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Flash loan execution plan with step-by-step contract calls, profit summary, MEV risk, MEV mitigation, failure scenarios, and reasoning",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "recommended_protocol": { "type": "string", "enum": ["aave_v3", "aave_v2", "dydx", "balancer", "maker", "euler"] },
+                    "loan_details": {
+                      "type": "object",
+                      "properties": {
+                        "loan_token": { "type": "string" },
+                        "loan_amount_usd": { "type": "number" },
+                        "flash_loan_fee_pct": { "type": "number" },
+                        "net_profit_usd": { "type": "number" }
+                      }
+                    },
+                    "step_by_step_execution": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "step": { "type": "integer" },
+                          "action": { "type": "string" },
+                          "protocol": { "type": "string" },
+                          "input_token": { "type": "string" },
+                          "output_token": { "type": "string" },
+                          "gas_cost_usd": { "type": "number" }
+                        }
+                      }
+                    },
+                    "mev_risk": { "type": "string", "enum": ["high", "medium", "low"] },
+                    "mev_mitigation": {
+                      "type": "object",
+                      "properties": {
+                        "use_flashbots": { "type": "boolean" },
+                        "private_mempool_recommended": { "type": "boolean" },
+                        "front_run_likelihood_pct": { "type": "number" }
+                      }
+                    },
+                    "failure_scenarios": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "scenario": { "type": "string" },
+                          "probability_pct": { "type": "number" },
+                          "mitigation": { "type": "string" }
+                        }
+                      }
+                    },
+                    "reasoning": { "$ref": "#/components/schemas/Reasoning" },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/market-inefficiency-scanner/scan": {
+      "post": {
+        "operationId": "marketInefficiencyScannerScan",
+        "summary": "Scan for market inefficiency signals across crypto, NFT, and DeFi",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "market": { "type": "string", "enum": ["crypto", "nft", "defi"], "default": "crypto" },
+                  "timeframe": { "type": "string", "enum": ["1m", "5m", "15m", "1h"], "default": "5m" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inefficiency signals with type, magnitude, confidence, and actionability",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "market": { "type": "string" },
+                    "inefficiency_signals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": { "type": "string", "enum": ["price_lag", "orderbook_imbalance", "liquidity_gap", "arbitrage_window", "wash_trading_distortion"] },
+                          "symbol": { "type": "string" },
+                          "venue": { "type": "string" },
+                          "magnitude_pct": { "type": "number" },
+                          "confidence_pct": { "type": "number" },
+                          "estimated_duration_seconds": { "type": "number" },
+                          "actionability": { "type": "string", "enum": ["immediate", "building", "fading"] }
+                        }
+                      }
+                    },
+                    "scan_summary": {
+                      "type": "object",
+                      "properties": {
+                        "total_signals": { "type": "integer" },
+                        "immediate_count": { "type": "integer" },
+                        "market_efficiency_score": { "type": "number" }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/market-inefficiency-scanner/signals": {
+      "post": {
+        "operationId": "marketInefficiencyScannerSignals",
+        "summary": "Ranked inefficiency signals with actionability, difficulty, and profit estimate",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "min_confidence": { "type": "number", "default": 70, "minimum": 0, "maximum": 100 },
+                  "limit": { "type": "integer", "default": 10, "minimum": 1, "maximum": 50 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ranked signals with exploitation difficulty, required capital, and distribution breakdown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "signals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rank": { "type": "integer" },
+                          "type": { "type": "string", "enum": ["price_lag", "orderbook_imbalance", "liquidity_gap", "arbitrage_window", "wash_trading_distortion"] },
+                          "symbol": { "type": "string" },
+                          "magnitude_pct": { "type": "number" },
+                          "confidence_pct": { "type": "number" },
+                          "actionability": { "type": "string", "enum": ["immediate", "building", "fading"] },
+                          "exploitation_difficulty": { "type": "string", "enum": ["easy", "moderate", "hard"] },
+                          "estimated_profit_pct": { "type": "number" },
+                          "min_capital_usd": { "type": "number" }
+                        }
+                      }
+                    },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/market-inefficiency-scanner/lookup": {
+      "post": {
+        "operationId": "marketInefficiencyScannerLookup",
+        "summary": "ONE-CALL: full inefficiency analysis — root cause, profit window, exploitation strategy, risk factors, and reasoning",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["symbol"],
+                "properties": {
+                  "symbol": { "type": "string", "description": "Token or asset symbol" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Root cause analysis, profit window, exploitation strategy with required capital, risk factors, and reasoning",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trace_id": { "type": "string" },
+                    "symbol": { "type": "string" },
+                    "primary_inefficiency": {
+                      "type": "object",
+                      "properties": {
+                        "type": { "type": "string", "enum": ["price_lag", "orderbook_imbalance", "liquidity_gap", "arbitrage_window", "wash_trading_distortion"] },
+                        "magnitude_pct": { "type": "number" },
+                        "confidence_pct": { "type": "number" },
+                        "estimated_remaining_seconds": { "type": "number" }
+                      }
+                    },
+                    "root_cause": { "type": "string", "enum": ["market_microstructure", "information_asymmetry", "liquidity_mismatch", "coordinated_activity"] },
+                    "root_cause_analysis": {
+                      "type": "object",
+                      "properties": {
+                        "primary_driver": { "type": "string" },
+                        "structural_or_temporary": { "type": "string", "enum": ["structural", "temporary"] },
+                        "recurrence_likelihood": { "type": "string", "enum": ["high", "medium", "low"] }
+                      }
+                    },
+                    "profit_window": {
+                      "type": "object",
+                      "properties": {
+                        "profit_window_seconds": { "type": "number" },
+                        "urgency": { "type": "string", "enum": ["immediate", "building", "fading"] },
+                        "estimated_profit_pct": { "type": "number" }
+                      }
+                    },
+                    "exploitation_strategy": {
+                      "type": "object",
+                      "properties": {
+                        "strategy": { "type": "string" },
+                        "steps": { "type": "array", "items": { "type": "string" } },
+                        "required_capital_usd": { "type": "number" },
+                        "risk_level": { "type": "string", "enum": ["low", "medium", "high"] }
+                      }
+                    },
+                    "reasoning": { "$ref": "#/components/schemas/Reasoning" },
+                    "latency_ms": { "type": "number" },
+                    "financial_disclaimer": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "Reasoning": {
+        "type": "object",
+        "properties": {
+          "why_signal_generated": { "type": "string" },
+          "key_factors": { "type": "array", "items": { "type": "string" } },
+          "invalidators": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}
