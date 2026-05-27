@@ -471,6 +471,22 @@ import nftCollectionAnalyticsRouter from './routes/nft-collection-analytics-api/
 import nftCollectionAnalyticsOpenapiRouter from './routes/nft-collection-analytics-api/routes/openapi';
 import aiTradeConfidenceRouter from './routes/ai-trade-confidence-api/routes/intelligence';
 import aiTradeConfidenceOpenapiRouter from './routes/ai-trade-confidence-api/routes/openapi';
+import ohlcvCandlestickRouter from './routes/ohlcv-candlestick-api/routes/intelligence';
+import ohlcvCandlestickOpenapiRouter from './routes/ohlcv-candlestick-api/routes/openapi';
+import multiExchangeTickerRouter from './routes/multi-exchange-ticker-api/routes/intelligence';
+import multiExchangeTickerOpenapiRouter from './routes/multi-exchange-ticker-api/routes/openapi';
+import breakoutDetectionRouter from './routes/breakout-detection-api/routes/intelligence';
+import breakoutDetectionOpenapiRouter from './routes/breakout-detection-api/routes/openapi';
+import rsiSignalRouter from './routes/rsi-signal-api/routes/intelligence';
+import rsiSignalOpenapiRouter from './routes/rsi-signal-api/routes/openapi';
+import macdSignalRouter from './routes/macd-signal-api/routes/intelligence';
+import macdSignalOpenapiRouter from './routes/macd-signal-api/routes/openapi';
+import bollingerBandRouter from './routes/bollinger-band-api/routes/intelligence';
+import bollingerBandOpenapiRouter from './routes/bollinger-band-api/routes/openapi';
+import whaleEntrySignalRouter from './routes/whale-entry-signal-api/routes/intelligence';
+import whaleEntrySignalOpenapiRouter from './routes/whale-entry-signal-api/routes/openapi';
+import scalpingOpportunityRouter from './routes/scalping-opportunity-api/routes/intelligence';
+import scalpingOpportunityOpenapiRouter from './routes/scalping-opportunity-api/routes/openapi';
 import fxRatesRouter from './routes/fx-rates-api/routes/intelligence';
 import fxRatesOpenapiRouter from './routes/fx-rates-api/routes/openapi';
 import weatherRouter from './routes/weather-api/routes/intelligence';
@@ -1007,6 +1023,14 @@ const routerMap: Record<string, import("express").Router> = {
   'honeypot-scanner': honeypotScannerRouter,
   'nft-collection-analytics': nftCollectionAnalyticsRouter,
   'ai-trade-confidence': aiTradeConfidenceRouter,
+  'ohlcv-candlestick': ohlcvCandlestickRouter,
+  'multi-exchange-ticker': multiExchangeTickerRouter,
+  'breakout-detection': breakoutDetectionRouter,
+  'rsi-signal': rsiSignalRouter,
+  'macd-signal': macdSignalRouter,
+  'bollinger-band': bollingerBandRouter,
+  'whale-entry-signal': whaleEntrySignalRouter,
+  'scalping-opportunity': scalpingOpportunityRouter,
   'fx-rates': fxRatesRouter,
   'weather': weatherRouter,
   'ip-geolocation': ipGeolocationRouter,
@@ -1332,6 +1356,14 @@ const openapiMap: Record<string, import("express").Router> = {
   'honeypot-scanner': honeypotScannerOpenapiRouter,
   'nft-collection-analytics': nftCollectionAnalyticsOpenapiRouter,
   'ai-trade-confidence': aiTradeConfidenceOpenapiRouter,
+  'ohlcv-candlestick': ohlcvCandlestickOpenapiRouter,
+  'multi-exchange-ticker': multiExchangeTickerOpenapiRouter,
+  'breakout-detection': breakoutDetectionOpenapiRouter,
+  'rsi-signal': rsiSignalOpenapiRouter,
+  'macd-signal': macdSignalOpenapiRouter,
+  'bollinger-band': bollingerBandOpenapiRouter,
+  'whale-entry-signal': whaleEntrySignalOpenapiRouter,
+  'scalping-opportunity': scalpingOpportunityOpenapiRouter,
   'fx-rates': fxRatesOpenapiRouter,
   'weather': weatherOpenapiRouter,
   'geocoding': geocodingIntelligenceOpenapiRouter,
