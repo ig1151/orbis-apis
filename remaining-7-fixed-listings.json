@@ -1,0 +1,564 @@
+[
+  {
+    "name": "Stablecoin Depeg Risk API",
+    "shortDescription": "Monitor stablecoin peg deviation, collateral health, and depeg risk in real time",
+    "description": "Track stablecoin peg deviations, collateral ratios, reserve transparency, and on-chain risk signals for any stablecoin. Supports batch monitoring of up to 20 stablecoins at once. Built for DeFi risk agents, yield optimization workflows, and treasury management systems that need early depeg warnings.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/stablecoin-depeg",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/stablecoin-depeg/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/stablecoin-depeg/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "stablecoin",
+      "depeg",
+      "defi",
+      "risk-monitoring",
+      "crypto",
+      "x402",
+      "coinbase-bazaar"
+    ],
+    "keywords": [
+      "stablecoin depeg api",
+      "stablecoin risk monitor",
+      "usdc depeg tracker",
+      "stablecoin collateral ratio api",
+      "defi depeg alert"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.003,
+            "description": "Real-time peg deviation and depeg risk for a stablecoin"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.004,
+            "description": "Collateral health and reserve transparency monitoring"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full depeg risk intelligence with exit signals"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Real-time peg deviation and depeg risk"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "Collateral health and reserve monitoring"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full depeg risk intelligence"
+      }
+    ]
+  },
+  {
+    "name": "Cross-Exchange Arbitrage API",
+    "shortDescription": "Detect real-time crypto arbitrage opportunities across centralized exchanges",
+    "description": "Professional arbitrage intelligence API for trading bots, quant systems, and autonomous execution agents. Detect cross-exchange price gaps, fee-adjusted net profit, liquidity depth, transfer latency risk, and executable arbitrage opportunities in real time.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/cross-exchange-arbitrage.png",
+    "tags": [
+      "arbitrage",
+      "trading",
+      "cross-exchange",
+      "crypto",
+      "quant",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "crypto arbitrage api",
+      "cross exchange price gaps",
+      "arbitrage opportunities",
+      "net spread after fees",
+      "trading bot arbitrage"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50,
+        "requestsPerMonth": 1500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.005,
+            "description": "Price matrix across exchanges with net spread"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/opportunities",
+            "pricePerCallUsdc": 0.006,
+            "description": "Top arbitrage opportunities ranked by net profit"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL full arbitrage analysis with execute/watch/pass verdict"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Price matrix across exchanges"
+      },
+      {
+        "method": "POST",
+        "path": "/opportunities",
+        "description": "Top arbitrage opportunities by net profit"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full arbitrage analysis"
+      }
+    ]
+  },
+  {
+    "name": "Impermanent Loss API",
+    "shortDescription": "Calculate and simulate impermanent loss for AMM liquidity pool positions",
+    "description": "Calculate impermanent loss for AMM LP positions using the x*y=k constant product formula. Simulate IL across custom price scenarios, compare LP vs HODL value, and get exit recommendations. Built for DeFi liquidity providers, yield farming agents, and portfolio risk systems managing active LP positions.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/impermanent-loss",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/impermanent-loss/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/impermanent-loss/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "impermanent-loss",
+      "defi",
+      "liquidity-pool",
+      "amm",
+      "yield-farming",
+      "x402",
+      "coinbase-bazaar"
+    ],
+    "keywords": [
+      "impermanent loss calculator api",
+      "AMM liquidity pool api",
+      "uniswap impermanent loss",
+      "LP vs HODL comparison api",
+      "defi yield farming risk"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/calculate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Calculate IL for given entry and current prices"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/simulate",
+            "pricePerCallUsdc": 0.004,
+            "description": "Simulate IL across custom price range scenarios"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full IL intelligence with LP vs HODL comparison and exit signal"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/calculate",
+        "description": "Calculate impermanent loss"
+      },
+      {
+        "method": "POST",
+        "path": "/simulate",
+        "description": "Simulate IL across price scenarios"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full IL intelligence"
+      }
+    ]
+  },
+  {
+    "name": "NFT Floor Price API",
+    "shortDescription": "NFT collection floor prices, volume, market data, and wash trading risk signals",
+    "description": "Get real-time NFT collection floor prices, 24h/7d changes, volume, supply stats, and listed percentage. Compare up to 10 collections at once, or use the full lookup for wash trading detection, whale concentration, rarity data, and investment grades. Built for NFT trading agents, portfolio trackers, and DeFi automation workflows.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/nft-floor-price",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/nft-floor-price/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-floor-price/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "nft",
+      "floor-price",
+      "nft-market-data",
+      "wash-trading",
+      "nft-analytics",
+      "x402",
+      "coinbase-bazaar"
+    ],
+    "keywords": [
+      "nft floor price api",
+      "nft collection data api",
+      "nft volume tracker api",
+      "wash trading detection api",
+      "nft market analytics"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50,
+        "requestsPerMonth": 1500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/floor",
+            "pricePerCallUsdc": 0.003,
+            "description": "Real-time floor price, volume, and market stats for a collection"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.004,
+            "description": "Compare floor prices across up to 10 collections"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL full collection intelligence with wash trading and whale analysis"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/floor",
+        "description": "Real-time floor price and market stats"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare floor prices across collections"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full collection intelligence"
+      }
+    ]
+  },
+  {
+    "name": "NFT Whale Tracker API",
+    "shortDescription": "Track whale wallet movements, accumulation patterns, and sentiment across blue-chip NFT collections",
+    "description": "Institutional-grade NFT whale intelligence API for trading agents, NFT funds, alpha communities, and autonomous NFT workflows. Track large wallet buys, sells, transfers, mint activity, whale accumulation patterns, trading styles, conviction levels, and market sentiment across top NFT ecosystems. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/nft-whale-tracker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/nft-whale-tracker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-whale-tracker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/nft-whale-tracker.png",
+    "tags": [
+      "nft",
+      "whale-tracker",
+      "wallet-intelligence",
+      "blue-chip-nfts",
+      "smart-money",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "nft whale tracker api",
+      "nft smart money api",
+      "wallet accumulation tracking",
+      "blue chip nft intelligence",
+      "nft whale alerts"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 20,
+        "requestsPerMonth": 600
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/movements",
+            "pricePerCallUsdc": 0.006,
+            "description": "Recent large wallet movements across blue-chip collections"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/wallet/:address",
+            "pricePerCallUsdc": 0.006,
+            "description": "Whale profile and activity for a specific wallet address"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL full whale intelligence for a collection"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/movements",
+        "description": "Recent whale movements across collections"
+      },
+      {
+        "method": "GET",
+        "path": "/wallet/:address",
+        "description": "Whale profile for a specific wallet"
+      },
+      {
+        "method": "GET",
+        "path": "/lookup",
+        "description": "ONE-CALL full whale intelligence"
+      }
+    ]
+  },
+  {
+    "name": "NFT Influencer Tracking API",
+    "shortDescription": "Track NFT influencer purchases, shills, market impact, and win rate history",
+    "description": "NFT influencer intelligence API for traders, social sentiment systems, and autonomous NFT discovery agents. Monitor influencer NFT activity, track purchases and shill behavior, calculate influence scores, copycat risk, market impact, and historical NFT trading performance across Twitter, Discord, and on-chain. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/nft-influencer-tracking",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/nft-influencer-tracking/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-influencer-tracking/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/nft-influencer-tracking.png",
+    "tags": [
+      "nft",
+      "influencer-tracking",
+      "social-signals",
+      "market-impact",
+      "copy-trading",
+      "x402",
+      "coinbase-bazaar"
+    ],
+    "keywords": [
+      "nft influencer api",
+      "nft social signals",
+      "nft shill tracker",
+      "nft copy trading",
+      "influencer nft analytics"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 20,
+        "requestsPerMonth": 600
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/activity",
+            "pricePerCallUsdc": 0.005,
+            "description": "Recent influencer NFT activity, purchases, and shills"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/influencer/:handle",
+            "pricePerCallUsdc": 0.005,
+            "description": "Full profile and win rate for a specific influencer"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL full influencer intelligence with copycat risk scoring"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/activity",
+        "description": "Recent influencer NFT activity and shills"
+      },
+      {
+        "method": "GET",
+        "path": "/influencer/:handle",
+        "description": "Full profile for a specific influencer"
+      },
+      {
+        "method": "GET",
+        "path": "/lookup",
+        "description": "ONE-CALL full influencer intelligence"
+      }
+    ]
+  },
+  {
+    "name": "NFT Rarity Score API",
+    "shortDescription": "Trait rarity scoring, percentile ranking, and rarity-adjusted valuation for any NFT",
+    "description": "NFT rarity intelligence API for collectors, marketplaces, valuation engines, and autonomous NFT agents. Calculate rarity score, percentile, trait rarity, rarity tier, floor premium, and estimated fair value for NFT assets across major collections. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/nft-rarity-score",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/nft-rarity-score/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-rarity-score/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/nft-rarity-score.png",
+    "tags": [
+      "nft",
+      "rarity",
+      "trait-analysis",
+      "valuation",
+      "floor-premium",
+      "x402",
+      "coinbase-bazaar"
+    ],
+    "keywords": [
+      "nft rarity api",
+      "trait rarity scoring",
+      "nft valuation api",
+      "rarity percentile",
+      "nft rarity rank"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 20,
+        "requestsPerMonth": 600
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.004,
+            "description": "Rarity score, percentile, and fair value for a specific NFT"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.006,
+            "description": "Batch rarity scores for up to 20 NFTs in one call"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL full rarity intelligence with trait breakdown and investment grade"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/score",
+        "description": "Rarity score and fair value for a specific NFT"
+      },
+      {
+        "method": "GET",
+        "path": "/batch",
+        "description": "Batch rarity scores for up to 20 NFTs"
+      },
+      {
+        "method": "GET",
+        "path": "/lookup",
+        "description": "ONE-CALL full rarity intelligence"
+      }
+    ]
+  }
+]

@@ -1,0 +1,80 @@
+{
+  "name": "NFT Floor Price API",
+  "shortDescription": "NFT collection floor prices, volume, market data, and wash trading risk signals",
+  "description": "Get real-time NFT collection floor prices, 24h/7d changes, volume, supply stats, and listed percentage. Compare up to 10 collections at once, or use the full lookup for wash trading detection, whale concentration, rarity data, and investment grades. Built for NFT trading agents, portfolio trackers, and DeFi automation workflows.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/nft-floor-price",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/nft-floor-price/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-floor-price/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "nft",
+    "floor-price",
+    "nft-market-data",
+    "wash-trading",
+    "nft-analytics",
+    "x402",
+    "coinbase-bazaar"
+  ],
+  "keywords": [
+    "nft floor price api",
+    "nft collection data api",
+    "nft volume tracker api",
+    "wash trading detection api",
+    "nft market analytics"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 50,
+      "requestsPerMonth": 1500
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.006,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/floor",
+          "pricePerCallUsdc": 0.003,
+          "description": "Real-time floor price, volume, and market stats for a collection"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/compare",
+          "pricePerCallUsdc": 0.004,
+          "description": "Compare floor prices across up to 10 collections"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.006,
+          "description": "ONE-CALL full collection intelligence with wash trading and whale analysis"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/floor",
+      "description": "Real-time floor price and market stats"
+    },
+    {
+      "method": "POST",
+      "path": "/compare",
+      "description": "Compare floor prices across collections"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full collection intelligence"
+    }
+  ]
+}

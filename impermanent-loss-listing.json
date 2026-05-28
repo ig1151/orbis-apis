@@ -1,0 +1,80 @@
+{
+  "name": "Impermanent Loss API",
+  "shortDescription": "Calculate and simulate impermanent loss for AMM liquidity pool positions",
+  "description": "Calculate impermanent loss for AMM LP positions using the x*y=k constant product formula. Simulate IL across custom price scenarios, compare LP vs HODL value, and get exit recommendations. Built for DeFi liquidity providers, yield farming agents, and portfolio risk systems managing active LP positions.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/impermanent-loss",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/impermanent-loss/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/impermanent-loss/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "impermanent-loss",
+    "defi",
+    "liquidity-pool",
+    "amm",
+    "yield-farming",
+    "x402",
+    "coinbase-bazaar"
+  ],
+  "keywords": [
+    "impermanent loss calculator api",
+    "AMM liquidity pool api",
+    "uniswap impermanent loss",
+    "LP vs HODL comparison api",
+    "defi yield farming risk"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.006,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/calculate",
+          "pricePerCallUsdc": 0.003,
+          "description": "Calculate IL for given entry and current prices"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/simulate",
+          "pricePerCallUsdc": 0.004,
+          "description": "Simulate IL across custom price range scenarios"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.006,
+          "description": "ONE-CALL full IL intelligence with LP vs HODL comparison and exit signal"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/calculate",
+      "description": "Calculate impermanent loss"
+    },
+    {
+      "method": "POST",
+      "path": "/simulate",
+      "description": "Simulate IL across price scenarios"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full IL intelligence"
+    }
+  ]
+}

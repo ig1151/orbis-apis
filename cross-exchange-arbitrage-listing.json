@@ -1,108 +1,81 @@
-[
-  {
-    "name": "Cross-Exchange Arbitrage API",
-    "shortDescription": "Detect price gaps across centralized exchanges and calculate net profit after all fees",
-    "description": "Find arbitrage opportunities across Binance, Coinbase, Kraken, OKX, Bybit, and other major CEXs. Compare prices, bids, asks, trading fees, and withdrawal costs to compute real net profit. Scan for top opportunities across the market or analyze a specific token with full risk assessment and execution verdict. Built for arbitrage bots, trading agents, and quant strategies.",
-    "category": "financial-data",
-    "baseUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage",
-    "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json",
-    "openApiSpecUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-    "tags": [
-      "arbitrage",
-      "cross-exchange",
-      "crypto",
-      "trading",
-      "price-comparison"
-    ],
-    "keywords": [
-      "cross exchange arbitrage api",
-      "crypto arbitrage api",
-      "exchange price comparison api",
-      "crypto price gap api",
-      "arbitrage profit calculator api"
-    ],
-    "tiers": [
-      {
-        "name": "Free",
-        "isFree": true,
-        "requestsPerDay": 100,
-        "requestsPerMonth": 3000
-      },
-      {
-        "name": "Pay Per Call",
-        "isFree": false,
-        "pricingType": "per_call",
-        "pricePerCall": 0.01,
-        "requestsPerDay": 50000,
-        "requestsPerMonth": 1500000,
-        "endpointPricing": [
-          {
-            "method": "POST",
-            "pathPattern": "/scan",
-            "pricePerCallUsdc": 0.003,
-            "description": "Price comparison across exchanges with fee breakdown and net spread"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/opportunities",
-            "pricePerCallUsdc": 0.005,
-            "description": "Top arbitrage opportunities ranked by net profit after all fees"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.01,
-            "description": "ONE-CALL: full arbitrage analysis \u2014 prices, best route, alternatives, risk, verdict"
-          }
-        ]
-      },
-      {
-        "name": "High Volume",
-        "isFree": false,
-        "pricingType": "per_call",
-        "pricePerCall": 0.005,
-        "requestsPerDay": 500000,
-        "requestsPerMonth": 15000000,
-        "endpointPricing": [
-          {
-            "method": "POST",
-            "pathPattern": "/scan",
-            "pricePerCallUsdc": 0.0015,
-            "description": "Scan (discounted)"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/opportunities",
-            "pricePerCallUsdc": 0.0025,
-            "description": "Opportunities (discounted)"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.005,
-            "description": "Full lookup (discounted)"
-          }
-        ]
-      }
-    ],
-    "endpoints": [
-      {
-        "method": "POST",
-        "path": "/scan",
-        "description": "Price matrix across exchanges for a token \u2014 bid, ask, fees, withdrawal cost, net spread"
-      },
-      {
-        "method": "POST",
-        "path": "/opportunities",
-        "description": "Top arbitrage opportunities across the market \u2014 ranked by net profit after all fees"
-      },
-      {
-        "method": "POST",
-        "path": "/lookup",
-        "description": "ONE-CALL: full arbitrage analysis \u2014 price matrix, best route, alternatives, risk assessment, execute/watch/pass verdict"
-      }
-    ]
-  }
-]
+{
+  "name": "Cross-Exchange Arbitrage API",
+  "shortDescription": "Detect real-time crypto arbitrage opportunities across centralized exchanges",
+  "description": "Professional arbitrage intelligence API for trading bots, quant systems, and autonomous execution agents. Detect cross-exchange price gaps, fee-adjusted net profit, liquidity depth, transfer latency risk, and executable arbitrage opportunities in real time.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/assets/cross-exchange-arbitrage.png",
+  "tags": [
+    "arbitrage",
+    "trading",
+    "cross-exchange",
+    "crypto",
+    "quant",
+    "x402",
+    "coinbase-bazaar",
+    "agentic-market"
+  ],
+  "keywords": [
+    "crypto arbitrage api",
+    "cross exchange price gaps",
+    "arbitrage opportunities",
+    "net spread after fees",
+    "trading bot arbitrage"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 50,
+      "requestsPerMonth": 1500
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.01,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/scan",
+          "pricePerCallUsdc": 0.005,
+          "description": "Price matrix across exchanges with net spread"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/opportunities",
+          "pricePerCallUsdc": 0.006,
+          "description": "Top arbitrage opportunities ranked by net profit"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.01,
+          "description": "ONE-CALL full arbitrage analysis with execute/watch/pass verdict"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/scan",
+      "description": "Price matrix across exchanges"
+    },
+    {
+      "method": "POST",
+      "path": "/opportunities",
+      "description": "Top arbitrage opportunities by net profit"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full arbitrage analysis"
+    }
+  ]
+}

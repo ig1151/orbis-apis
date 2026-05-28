@@ -18,17 +18,21 @@ const PROXY = "https://orbisapi.com/proxy";
 const BAYC = "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D";
 
 const tests = [
-  // ── 402 price mismatches (retry — Orbis cache usually clears) ─────────────
-  { slug: "fear-greed-index-api-e0755b",          path: "/current",       body: {} },
+  // ── NEW slugs from re-upload (2026-05-28) ────────────────────────────────
+  { slug: "fear-greed-index-api-c790f0",          path: "/current",       body: {} },
+  { slug: "top-movers-api-a516a1",                path: "/gainers",       body: { limit: 5 } },
+  { slug: "smart-money-flow-api-10bc56",          path: "/flows",         body: { chain: "ethereum", timeframe: "24h" } },
+  { slug: "meme-coin-intelligence-api-8b376e",    path: "/score",         body: { token: "PEPE", chain: "ethereum" } },
+  { slug: "market-dominance-api-fbe043",          path: "/current",       body: {} },
+  { slug: "borrowing-rates-api-b9af4d",           path: "/rates",         body: { asset: "ETH", chain: "ethereum" } },
+  { slug: "honeypot-scanner-api-565fac",          path: "/scan",          body: { contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", chain: "ethereum" } },
+  { slug: "nft-sniper-alert-api-ad69f1",          path: "/listings?collection=bayc", method: "GET" },
+  { slug: "nft-volume-heatmap-api-9394dd",        path: "/collection?name=bayc",     method: "GET" },
+  { slug: "nft-arbitrage-api-e2ee16",             path: "/opportunities?collection=bayc", method: "GET" },
+  // ── Still on old slugs (not re-uploaded) ──────────────────────────────────
   { slug: "stablecoin-depeg-risk-api-e1a7a2",     path: "/check",         body: { symbol: "USDC" } },
-  { slug: "top-movers-api-4a05c5",                path: "/gainers",       body: { limit: 5 } },
-  { slug: "smart-money-flow-api-3bb343",          path: "/flows",         body: { chain: "ethereum", timeframe: "24h" } },
-  { slug: "meme-coin-intelligence-api-d07159",    path: "/score",         body: { token: "PEPE", chain: "ethereum" } },
   { slug: "cross-exchange-arbitrage-api-6f66f2",  path: "/scan",          body: { token: "BTC" } },
-  { slug: "market-dominance-api-db7411",          path: "/current",       body: {} },
-  { slug: "borrowing-rates-api-4e8557",           path: "/rates",         body: { asset: "ETH", chain: "ethereum" } },
   { slug: "tvl-analytics-api-616ae3",             path: "/protocol",      body: { protocol: "aave" } },
-  { slug: "honeypot-scanner-api-306e75",          path: "/scan",          body: { contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", chain: "ethereum" } },
   { slug: "nft-collection-analytics-api-0c09f6",  path: "/collection",    body: { collection: "bayc", chain: "ethereum" } },
   { slug: "bollinger-band-alert-api-2240b8",      path: "/bands",         body: { symbol: "BTC", timeframe: "1d" } },
   { slug: "triangular-arbitrage-api-9eafbd",      path: "/scan",          body: { base_currency: "BTC", exchange: "binance" } },

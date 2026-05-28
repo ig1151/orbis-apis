@@ -1,0 +1,80 @@
+{
+  "name": "NFT Rarity Score API",
+  "shortDescription": "Trait rarity scoring, percentile ranking, and rarity-adjusted valuation for any NFT",
+  "description": "NFT rarity intelligence API for collectors, marketplaces, valuation engines, and autonomous NFT agents. Calculate rarity score, percentile, trait rarity, rarity tier, floor premium, and estimated fair value for NFT assets across major collections. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/nft-rarity-score",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/nft-rarity-score/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-rarity-score/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/assets/nft-rarity-score.png",
+  "tags": [
+    "nft",
+    "rarity",
+    "trait-analysis",
+    "valuation",
+    "floor-premium",
+    "x402",
+    "coinbase-bazaar"
+  ],
+  "keywords": [
+    "nft rarity api",
+    "trait rarity scoring",
+    "nft valuation api",
+    "rarity percentile",
+    "nft rarity rank"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 20,
+      "requestsPerMonth": 600
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.008,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "GET",
+          "pathPattern": "/score",
+          "pricePerCallUsdc": 0.004,
+          "description": "Rarity score, percentile, and fair value for a specific NFT"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/batch",
+          "pricePerCallUsdc": 0.006,
+          "description": "Batch rarity scores for up to 20 NFTs in one call"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.008,
+          "description": "ONE-CALL full rarity intelligence with trait breakdown and investment grade"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/score",
+      "description": "Rarity score and fair value for a specific NFT"
+    },
+    {
+      "method": "GET",
+      "path": "/batch",
+      "description": "Batch rarity scores for up to 20 NFTs"
+    },
+    {
+      "method": "GET",
+      "path": "/lookup",
+      "description": "ONE-CALL full rarity intelligence"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "name": "NFT Whale Tracker API",
+  "shortDescription": "Track whale wallet movements, accumulation patterns, and sentiment across blue-chip NFT collections",
+  "description": "Institutional-grade NFT whale intelligence API for trading agents, NFT funds, alpha communities, and autonomous NFT workflows. Track large wallet buys, sells, transfers, mint activity, whale accumulation patterns, trading styles, conviction levels, and market sentiment across top NFT ecosystems. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/nft-whale-tracker",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/nft-whale-tracker/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-whale-tracker/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/assets/nft-whale-tracker.png",
+  "tags": [
+    "nft",
+    "whale-tracker",
+    "wallet-intelligence",
+    "blue-chip-nfts",
+    "smart-money",
+    "x402",
+    "coinbase-bazaar",
+    "agentic-market"
+  ],
+  "keywords": [
+    "nft whale tracker api",
+    "nft smart money api",
+    "wallet accumulation tracking",
+    "blue chip nft intelligence",
+    "nft whale alerts"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 20,
+      "requestsPerMonth": 600
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.01,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "GET",
+          "pathPattern": "/movements",
+          "pricePerCallUsdc": 0.006,
+          "description": "Recent large wallet movements across blue-chip collections"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/wallet/:address",
+          "pricePerCallUsdc": 0.006,
+          "description": "Whale profile and activity for a specific wallet address"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.01,
+          "description": "ONE-CALL full whale intelligence for a collection"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/movements",
+      "description": "Recent whale movements across collections"
+    },
+    {
+      "method": "GET",
+      "path": "/wallet/:address",
+      "description": "Whale profile for a specific wallet"
+    },
+    {
+      "method": "GET",
+      "path": "/lookup",
+      "description": "ONE-CALL full whale intelligence"
+    }
+  ]
+}

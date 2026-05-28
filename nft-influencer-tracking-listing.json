@@ -1,0 +1,80 @@
+{
+  "name": "NFT Influencer Tracking API",
+  "shortDescription": "Track NFT influencer purchases, shills, market impact, and win rate history",
+  "description": "NFT influencer intelligence API for traders, social sentiment systems, and autonomous NFT discovery agents. Monitor influencer NFT activity, track purchases and shill behavior, calculate influence scores, copycat risk, market impact, and historical NFT trading performance across Twitter, Discord, and on-chain. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/nft-influencer-tracking",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/nft-influencer-tracking/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-influencer-tracking/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/assets/nft-influencer-tracking.png",
+  "tags": [
+    "nft",
+    "influencer-tracking",
+    "social-signals",
+    "market-impact",
+    "copy-trading",
+    "x402",
+    "coinbase-bazaar"
+  ],
+  "keywords": [
+    "nft influencer api",
+    "nft social signals",
+    "nft shill tracker",
+    "nft copy trading",
+    "influencer nft analytics"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 20,
+      "requestsPerMonth": 600
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.008,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "GET",
+          "pathPattern": "/activity",
+          "pricePerCallUsdc": 0.005,
+          "description": "Recent influencer NFT activity, purchases, and shills"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/influencer/:handle",
+          "pricePerCallUsdc": 0.005,
+          "description": "Full profile and win rate for a specific influencer"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.008,
+          "description": "ONE-CALL full influencer intelligence with copycat risk scoring"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/activity",
+      "description": "Recent influencer NFT activity and shills"
+    },
+    {
+      "method": "GET",
+      "path": "/influencer/:handle",
+      "description": "Full profile for a specific influencer"
+    },
+    {
+      "method": "GET",
+      "path": "/lookup",
+      "description": "ONE-CALL full influencer intelligence"
+    }
+  ]
+}

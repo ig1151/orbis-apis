@@ -1,0 +1,80 @@
+{
+  "name": "Stablecoin Depeg Risk API",
+  "shortDescription": "Monitor stablecoin peg deviation, collateral health, and depeg risk in real time",
+  "description": "Track stablecoin peg deviations, collateral ratios, reserve transparency, and on-chain risk signals for any stablecoin. Supports batch monitoring of up to 20 stablecoins at once. Built for DeFi risk agents, yield optimization workflows, and treasury management systems that need early depeg warnings.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/stablecoin-depeg",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/stablecoin-depeg/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/stablecoin-depeg/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "stablecoin",
+    "depeg",
+    "defi",
+    "risk-monitoring",
+    "crypto",
+    "x402",
+    "coinbase-bazaar"
+  ],
+  "keywords": [
+    "stablecoin depeg api",
+    "stablecoin risk monitor",
+    "usdc depeg tracker",
+    "stablecoin collateral ratio api",
+    "defi depeg alert"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.006,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/check",
+          "pricePerCallUsdc": 0.003,
+          "description": "Real-time peg deviation and depeg risk for a stablecoin"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/monitor",
+          "pricePerCallUsdc": 0.004,
+          "description": "Collateral health and reserve transparency monitoring"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.006,
+          "description": "ONE-CALL full depeg risk intelligence with exit signals"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/check",
+      "description": "Real-time peg deviation and depeg risk"
+    },
+    {
+      "method": "POST",
+      "path": "/monitor",
+      "description": "Collateral health and reserve monitoring"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full depeg risk intelligence"
+    }
+  ]
+}
