@@ -40,7 +40,7 @@ router.post('/extract-price', async (req: Request, res: Response) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: 'url is required' });
   try {
-    const raw = await callClaude(`Extract product price from URL: "${url}". Return JSON:
+    const raw = await callClaude(`Based on your knowledge of this product URL "${url}", provide representative pricing intelligence. Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",

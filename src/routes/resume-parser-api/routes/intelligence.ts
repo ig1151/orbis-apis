@@ -37,15 +37,16 @@ router.get('/', (_req: Request, res: Response) => {
 
 // POST /parse
 router.post('/parse', async (req: Request, res: Response) => {
-  const { resume_url } = req.body;
-  if (!resume_url) return res.status(400).json({ error: 'resume_url is required' });
+  const { resume_url, resume_text } = req.body;
+  if (!resume_url && !resume_text) return res.status(400).json({ error: 'resume_url or resume_text is required' });
+  const source = resume_text ? `resume text: "${resume_text}"` : `resume URL: "${resume_url}"`;
   try {
-    const raw = await callClaude(`Parse resume from URL: "${resume_url}". Return JSON:
+    const raw = await callClaude(`Parse the following ${source}. Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
   "success": true,
-  "resume_url": "${resume_url}",
+  "resume_url": "${resume_url || ''}",
   "candidate": {
     "name": "string",
     "email": "string",
