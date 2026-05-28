@@ -41,11 +41,11 @@ const tests = [
   { slug: "fx-rates-api-8d45aa",                                 path: "/latest",                      body: { base: "USD" } },
   { slug: "website-change-monitor-api-5f7dad",                   path: "/check",                       body: { url: "https://example.com" } },
   { slug: "logo-finder-api-215567",                              path: "/logo",                        body: { domain: "anthropic.com" } },
-  { slug: "price-monitor-api-9d7b38",                            path: "/extract-price",               body: { url: "https://example.com/product" } },
+  { slug: "price-monitor-api-9d7b38",                            path: "/extract-price",               body: { url: "https://www.amazon.com/dp/B08N5KWB9H" } },
   { slug: "news-search-api-3c06f9",                              path: "/latest",                      body: { limit: 5 } },
   { slug: "unit-conversion-api-ccf30b",                          path: "/convert",                     body: { value: 100, from_unit: "km", to_unit: "miles" } },
   { slug: "qr-barcode-api-63d612",                               path: "/generate",                    body: { data: "https://orbisapi.com", format: "qr" } },
-  { slug: "resume-parser-api-64e5b7",                            path: "/parse",                       body: { resume_url: "https://example.com/resume.pdf" } },
+  { slug: "resume-parser-api-64e5b7",                            path: "/parse",                       body: { resume_text: "John Smith | john@example.com | Senior Software Engineer with 8 years experience in Python, JavaScript, and cloud infrastructure. Previously at Google and Stripe." } },
   { slug: "tax-rate-lookup-api-3b1119",                          path: "/sales-tax",                   body: { zip_code: "10001" } },
   { slug: "unified-multi-provider-agent-completion-api-fa0b3b",  path: "/v1/chat/completions",         body: { model: "claude-sonnet", messages: [{ role: "user", content: "What is 2+2?" }], max_tokens: 50 } },
 

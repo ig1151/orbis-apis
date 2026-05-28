@@ -40,39 +40,8 @@ router.post('/search', async (req: Request, res: Response) => {
   const { location, check_in, check_out } = req.body;
   if (!location || !check_in || !check_out) return res.status(400).json({ error: 'location, check_in, and check_out are required' });
   try {
-    const raw = await callClaude(`Search hotels in "${location}" from ${check_in} to ${check_out}. Return JSON:
-{
-  "trace_id": "${traceId()}",
-  "computed_at": "${new Date().toISOString()}",
-  "success": true,
-  "location": "${location}",
-  "check_in": "${check_in}",
-  "check_out": "${check_out}",
-  "nights": number,
-  "hotels": [
-    {
-      "hotel_id": "string",
-      "name": "string",
-      "brand": "string",
-      "star_rating": number,
-      "user_rating": number,
-      "review_count": number,
-      "address": "string",
-      "distance_from_center_miles": number,
-      "price_per_night_usd": number,
-      "total_price_usd": number,
-      "amenities": ["string"],
-      "cancellation_policy": "free|non-refundable|partial",
-      "thumbnail_url": "string"
-    }
-  ],
-  "total_results": number,
-  "price_range": {"min": number, "max": number, "avg": number},
-  "disclaimer": "Prices are indicative. Verify with hotel or booking platform before purchase.",
-  "confidence_per_section": {"hotels": 0.8, "price_range": 0.82},
-  "recommended_actions_priority_order": ["Verify price with booking platform", "Check cancellation policy before booking", "Compare amenities for business vs leisure"],
-  "privacy": {"data_stored": false, "retention": "none"}
-}`);
+    const raw = await callClaude(`List 3 representative hotels in "${location}" for ${check_in} to ${check_out}. Return compact JSON:
+{"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"location":"${location}","check_in":"${check_in}","check_out":"${check_out}","nights":2,"hotels":[{"hotel_id":"h1","name":"string","star_rating":4,"user_rating":8.5,"price_per_night_usd":150,"total_price_usd":300,"cancellation_policy":"free"},{"hotel_id":"h2","name":"string","star_rating":3,"user_rating":7.8,"price_per_night_usd":95,"total_price_usd":190,"cancellation_policy":"non-refundable"},{"hotel_id":"h3","name":"string","star_rating":5,"user_rating":9.2,"price_per_night_usd":320,"total_price_usd":640,"cancellation_policy":"free"}],"total_results":3,"price_range":{"min":95,"max":320,"avg":188},"disclaimer":"Prices are indicative. Verify with hotel or booking platform before purchase.","confidence_per_section":{"hotels":0.8},"recommended_actions_priority_order":["Verify price with booking platform","Check cancellation policy"],"privacy":{"data_stored":false,"retention":"none"}}`);
     res.json(parseJSON(raw));
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
