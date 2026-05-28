@@ -48,36 +48,8 @@ router.post('/candles', async (req: Request, res: Response) => {
   const { symbol, timeframe = '1h', exchange = 'binance', limit = 50 } = req.body;
   if (!symbol) return res.status(400).json({ error: 'symbol is required' });
   try {
-    const raw = await callClaude(`OHLCV candlestick data for ${symbol} on ${exchange} at ${timeframe} timeframe (last ${limit} candles) as of ${new Date().toISOString()}. Return JSON:
-{
-  "trace_id": "${traceId()}",
-  "computed_at": "${new Date().toISOString()}",
-  "success": true,
-  "symbol": "${symbol}",
-  "exchange": "${exchange}",
-  "timeframe": "${timeframe}",
-  "candles": [
-    {
-      "timestamp": "ISO8601",
-      "open": number,
-      "high": number,
-      "low": number,
-      "close": number,
-      "volume": number,
-      "candle_type": "bullish|bearish|doji|hammer|shooting_star|engulfing"
-    }
-  ],
-  "summary": {
-    "current_price": number,
-    "price_change_pct": number,
-    "highest_high": number,
-    "lowest_low": number,
-    "avg_volume": number,
-    "trend_direction": "uptrend|downtrend|sideways",
-    "trend_strength": "strong|moderate|weak"
-  },
-  "financial_disclaimer": "For informational purposes only. Not financial advice.",
-  "paper_mode_recommended": true,
+    const raw = await callClaude(`OHLCV data for ${symbol} on ${exchange} ${timeframe} (last 5 candles) as of ${new Date().toISOString()}. Return compact JSON:
+{"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"symbol":"${symbol}","exchange":"${exchange}","timeframe":"${timeframe}","candles":[{"timestamp":"ISO8601","open":number,"high":number,"low":number,"close":number,"volume":number,"candle_type":"bullish|bearish|doji"},{"timestamp":"ISO8601","open":number,"high":number,"low":number,"close":number,"volume":number,"candle_type":"bullish|bearish|doji"},{"timestamp":"ISO8601","open":number,"high":number,"low":number,"close":number,"volume":number,"candle_type":"bullish|bearish|doji"},{"timestamp":"ISO8601","open":number,"high":number,"low":number,"close":number,"volume":number,"candle_type":"bullish|bearish|doji"},{"timestamp":"ISO8601","open":number,"high":number,"low":number,"close":number,"volume":number,"candle_type":"bullish|bearish|doji"}],"summary":{"current_price":number,"price_change_pct":number,"trend_direction":"uptrend|downtrend|sideways","trend_strength":"strong|moderate|weak"},"financial_disclaimer":"For informational purposes only. Not financial advice.","paper_mode_recommended":true,
   "confidence_per_section": {"candles": 0.82, "summary": 0.80},
   "recommended_actions_priority_order": ["verify with live exchange data", "combine with volume analysis", "use multiple timeframes for confirmation"],
   "privacy": {"data_stored": false, "retention": "none"}

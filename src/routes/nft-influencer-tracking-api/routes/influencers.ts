@@ -9,55 +9,8 @@ nftInfluencerTrackingRouter.get('/activity', async (req: Request, res: Response)
   const timeframe = (req.query.timeframe as string) || '24h';
   const collection = (req.query.collection as string) || '';
 
-  const prompt = `You are an NFT influencer intelligence system. Track what NFT influencers are buying and shilling.
-Timeframe: ${timeframe}
-${collection ? `Filter by collection: ${collection}` : 'All collections'}
-Limit: ${limit} activity items
-
-Return JSON:
-{
-  "timeframe": "${timeframe}",
-  "generated_at": "ISO timestamp",
-  "influencer_activity": [
-    {
-      "influencer": {
-        "handle": "@twitterhandle",
-        "name": "display name",
-        "platform": "Twitter" | "Instagram" | "YouTube" | "Discord",
-        "followers": number,
-        "nft_influence_score": number (0-100),
-        "tier": "mega" | "macro" | "mid" | "micro",
-        "known_for": "brief description e.g. 'BAYC holder, crypto VC'"
-      },
-      "activity_type": "purchase" | "shill_tweet" | "list_for_sale" | "transfer" | "mint",
-      "collection": "string",
-      "token_id": "string | null",
-      "price_eth": number | null,
-      "tweet_url": "https://twitter.com/... | null",
-      "tweet_text": "brief summary of what they said (not verbatim)" ,
-      "timestamp": "ISO timestamp",
-      "market_impact": {
-        "floor_change_pct": number (floor change after this action),
-        "volume_spike_pct": number,
-        "impact_duration_hours": number
-      },
-      "signal_type": "bullish" | "bearish" | "neutral",
-      "copycat_risk": "high" | "medium" | "low" (likelihood of pump-and-dump)
-    }
-  ],
-  "trending_collections_by_influencers": [
-    {
-      "collection": "string",
-      "mention_count": number,
-      "unique_influencers": number,
-      "avg_influence_score": number,
-      "sentiment": "bullish" | "bearish" | "mixed",
-      "momentum": "accelerating" | "stable" | "fading"
-    }
-  ],
-  "top_influencers_by_accuracy": [
-    {
-      "handle": "string",
+  const prompt = `NFT influencer activity in ${timeframe}${collection ? ` for ${collection}` : ''}. Return 3 activities as compact JSON:
+{"timeframe":"${timeframe}","generated_at":"ISO timestamp","influencer_activity":[{"influencer":{"handle":"@string","name":"string","followers":number,"nft_influence_score":number,"tier":"mega|macro|mid"},"activity_type":"purchase|shill_tweet|list_for_sale","collection":"string","price_eth":number,"tweet_text":"brief summary","timestamp":"ISO timestamp","market_impact":{"floor_change_pct":number,"volume_spike_pct":number},"signal_type":"bullish|bearish|neutral","copycat_risk":"high|medium|low"},{"influencer":{"handle":"@string","name":"string","followers":number,"nft_influence_score":number,"tier":"macro|mid"},"activity_type":"purchase|shill_tweet","collection":"string","price_eth":number,"tweet_text":"brief summary","timestamp":"ISO timestamp","market_impact":{"floor_change_pct":number,"volume_spike_pct":number},"signal_type":"bullish|neutral","copycat_risk":"medium|low"},{"influencer":{"handle":"@string","name":"string","followers":number,"nft_influence_score":number,"tier":"macro|mid"},"activity_type":"shill_tweet|purchase","collection":"string","price_eth":number,"tweet_text":"brief summary","timestamp":"ISO timestamp","market_impact":{"floor_change_pct":number,"volume_spike_pct":number},"signal_type":"bullish|bearish","copycat_risk":"high|medium|low"}],"trending_collections_by_influencers":[{"collection":"string","mention_count":number,"sentiment":"bullish|bearish|mixed","momentum":"accelerating|stable|fading"},{"collection":"string","mention_count":number,"sentiment":"bullish|mixed","momentum":"accelerating|stable"}],"top_influencers_by_accuracy":[{"handle":"string",
       "win_rate_pct": number,
       "avg_return_after_shill_pct": number,
       "total_shills_30d": number

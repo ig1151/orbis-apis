@@ -58,26 +58,8 @@ router.get('/', (_req: Request, res: Response) => {
 router.post('/protocols', async (req: Request, res: Response) => {
   const { chain = 'ethereum' } = req.body;
   try {
-    const raw = await callClaude(`Available flash loan protocols on ${chain} with their liquidity and fees as of ${new Date().toISOString()}. Return JSON:
-{
-  "trace_id": "${traceId()}",
-  "computed_at": "${new Date().toISOString()}",
-  "success": true,
-  "chain": "${chain}",
-  "protocols": [
-    {
-      "protocol": "aave_v3|aave_v2|dydx|balancer|maker|euler",
-      "available_liquidity_usd": number,
-      "fee_pct": number,
-      "max_loan_usd": number,
-      "supported_tokens": ["string"],
-      "atomic_requirement": "same_block|same_transaction",
-      "gas_overhead_usd": number,
-      "reliability_score": number,
-      "contract_audited": boolean,
-      "notes": "string"
-    }
-  ],
+    const raw = await callClaude(`Top 3 flash loan protocols on ${chain} as of ${new Date().toISOString()}. Return compact JSON:
+{"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"chain":"${chain}","protocols":[{"protocol":"aave_v3","available_liquidity_usd":number,"fee_pct":0.05,"max_loan_usd":number,"supported_tokens":["USDC","USDT","WETH","DAI"],"gas_overhead_usd":number,"reliability_score":0.98,"contract_audited":true},{"protocol":"balancer","available_liquidity_usd":number,"fee_pct":0,"max_loan_usd":number,"supported_tokens":["USDC","WETH","DAI"],"gas_overhead_usd":number,"reliability_score":0.95,"contract_audited":true},{"protocol":"dydx","available_liquidity_usd":number,"fee_pct":0,"max_loan_usd":number,"supported_tokens":["USDC","WETH","DAI"],"gas_overhead_usd":number,"reliability_score":0.94,"contract_audited":true}],
   "protocol_comparison": {
     "cheapest_fee": "string",
     "most_liquidity": "string",

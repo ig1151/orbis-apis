@@ -11,53 +11,8 @@ nftArbitrageRouter.get('/opportunities', async (req: Request, res: Response) => 
 
   if (!collection) return res.status(400).json({ success: false, error: 'collection is required' });
 
-  const prompt = `You are an NFT cross-marketplace arbitrage engine. Find price discrepancies for "${collection}" across OpenSea, Blur, and X2Y2.
-
-Generate ${limit} arbitrage opportunities with minimum profit of ${minProfit} ETH.
-
-Return JSON:
-{
-  "collection": "${collection}",
-  "scan_timestamp": "ISO timestamp",
-  "marketplaces_scanned": ["OpenSea", "Blur", "X2Y2", "LooksRare", "Reservoir"],
-  "opportunities": [
-    {
-      "token_id": "string",
-      "rarity_rank": number,
-      "rarity_tier": "Legendary" | "Epic" | "Rare" | "Uncommon" | "Common",
-      "buy_side": {
-        "marketplace": "OpenSea" | "Blur" | "X2Y2" | "LooksRare",
-        "price_eth": number,
-        "price_usd": number,
-        "listing_age_minutes": number,
-        "listing_url": "https://..."
-      },
-      "sell_side": {
-        "marketplace": "OpenSea" | "Blur" | "X2Y2" | "LooksRare",
-        "expected_price_eth": number,
-        "expected_price_usd": number,
-        "sell_method": "list" | "bid_acceptance" | "sweep",
-        "estimated_sell_time_hours": number
-      },
-      "economics": {
-        "gross_profit_eth": number,
-        "gross_profit_usd": number,
-        "buy_marketplace_fee_pct": number,
-        "sell_marketplace_fee_pct": number,
-        "creator_royalty_pct": number,
-        "gas_cost_eth": number,
-        "net_profit_eth": number,
-        "net_profit_usd": number,
-        "roi_pct": number,
-        "capital_required_eth": number
-      },
-      "risk": {
-        "execution_risk": "low" | "medium" | "high",
-        "liquidity_risk": "low" | "medium" | "high",
-        "price_movement_risk": "low" | "medium" | "high",
-        "overall_risk": "low" | "medium" | "high",
-        "risk_notes": "string"
-      },
+  const prompt = `NFT arbitrage for "${collection}" across OpenSea, Blur, X2Y2. Min profit ${minProfit} ETH. Return 3 opportunities as compact JSON:
+{"collection":"${collection}","scan_timestamp":"ISO timestamp","marketplaces_scanned":["OpenSea","Blur","X2Y2"],"opportunities":[{"token_id":"string","rarity_rank":number,"buy_side":{"marketplace":"Blur|OpenSea|X2Y2","price_eth":number,"listing_age_minutes":number},"sell_side":{"marketplace":"OpenSea|Blur","expected_price_eth":number,"estimated_sell_time_hours":number},"economics":{"net_profit_eth":number,"net_profit_usd":number,"roi_pct":number,"capital_required_eth":number,"gas_cost_eth":number},"risk":{"overall_risk":"low|medium|high","risk_notes":"string"},
       "opportunity_score": number (0-100),
       "urgency": "immediate" | "high" | "medium" | "monitor",
       "expires_estimate_minutes": number | null

@@ -33,38 +33,8 @@ router.post('/rates', async (req: Request, res: Response) => {
   const { symbol } = req.body;
   if (!symbol) return res.status(400).json({ error: 'symbol is required' });
   try {
-    const raw = await callClaude(`Staking rewards and rates for: "${symbol}" as of ${new Date().toISOString()}. Return JSON:
-{
-  "trace_id": "${traceId()}",
-  "computed_at": "${new Date().toISOString()}",
-  "success": true,
-  "symbol": "${symbol.toUpperCase()}",
-  "staking": {
-    "native_apy": number,
-    "real_apy_after_inflation": number,
-    "reward_token": "string",
-    "lock_up_days": number or null,
-    "unbonding_days": number or null,
-    "min_stake": number or null,
-    "compounding": boolean,
-    "slash_risk": "low|medium|high|none"
-  },
-  "providers": [
-    {
-      "name": "string",
-      "type": "exchange|liquid_staking|self_custody|pool",
-      "apy": number,
-      "fee_pct": number,
-      "liquid": boolean,
-      "risk_level": "low|medium|high"
-    }
-  ],
-  "best_option": "string (provider name)",
-  "financial_disclaimer": "For informational purposes only. Not financial advice.",
-  "confidence_per_section": {"staking": 0.85, "providers": 0.80},
-  "recommended_actions_priority_order": ["compare real APY after inflation vs nominal", "liquid staking preferred for flexibility", "check slash risk before delegating large amounts"],
-  "privacy": {"data_stored": false, "retention": "none"}
-}`);
+    const raw = await callClaude(`Staking rates for "${symbol.toUpperCase()}" as of ${new Date().toISOString()}. Return compact JSON:
+{"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"symbol":"${symbol.toUpperCase()}","staking":{"native_apy":number,"real_apy_after_inflation":number,"reward_token":"string","lock_up_days":number,"unbonding_days":number,"compounding":boolean,"slash_risk":"low|medium|high|none"},"providers":[{"name":"string","type":"liquid_staking|exchange|self_custody","apy":number,"fee_pct":number,"liquid":boolean,"risk_level":"low|medium|high"},{"name":"string","type":"liquid_staking|exchange|self_custody","apy":number,"fee_pct":number,"liquid":boolean,"risk_level":"low|medium|high"},{"name":"string","type":"exchange|self_custody","apy":number,"fee_pct":number,"liquid":boolean,"risk_level":"low|medium|high"}],"best_option":"string","financial_disclaimer":"For informational purposes only. Not financial advice.","confidence_per_section":{"staking":0.85,"providers":0.80},"recommended_actions_priority_order":["compare real APY after inflation","prefer liquid staking for flexibility","check slash risk"],"privacy":{"data_stored":false,"retention":"none"}}`);
     res.json(parseJSON(raw));
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });

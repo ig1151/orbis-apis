@@ -9,52 +9,8 @@ nftWhaleTrackerRouter.get('/movements', async (req: Request, res: Response) => {
   const limit = Math.min(parseInt(req.query.limit as string) || 10, 50);
   const chain = (req.query.chain as string) || 'ethereum';
 
-  const prompt = `You are an NFT whale tracker. Simulate realistic large NFT wallet movements for blue-chip collections.
-
-Collection: "${collection || 'all blue-chip collections'}"
-Chain: ${chain}
-Limit: ${limit} transactions
-
-Return a JSON object:
-{
-  "collection": "${collection || 'mixed'}",
-  "chain": "${chain}",
-  "generated_at": "ISO timestamp",
-  "whale_movements": [
-    {
-      "tx_hash": "0x...(realistic 66-char hex)",
-      "block_number": number,
-      "timestamp": "ISO timestamp",
-      "event_type": "buy" | "sell" | "transfer" | "mint",
-      "wallet_address": "0x...(42-char hex)",
-      "wallet_label": "Whale label or null (e.g. 'Franklin Templeton', 'Pranksy', 'Anonymous Whale')",
-      "wallet_rank": "top_10" | "top_50" | "top_100" | "emerging",
-      "collection_name": "string",
-      "contract_address": "0x...",
-      "token_id": "string",
-      "price_eth": number,
-      "price_usd": number,
-      "floor_price_eth": number,
-      "premium_over_floor_pct": number (can be negative for below-floor),
-      "is_blue_chip": boolean,
-      "signal_strength": "high" | "medium" | "low",
-      "signal_reason": "brief explanation"
-    }
-  ],
-  "summary": {
-    "total_volume_eth": number,
-    "total_volume_usd": number,
-    "net_whale_sentiment": "accumulating" | "distributing" | "neutral",
-    "most_active_wallet": "0x...",
-    "biggest_single_buy_eth": number,
-    "biggest_single_sell_eth": number,
-    "collections_touched": ["array of collection names"],
-    "bullish_signals": number,
-    "bearish_signals": number
-  },
-  "confidence": 0.0-1.0,
-  "data_freshness": "simulated"
-}`;
+  const prompt = `NFT whale movements for "${collection || 'blue-chip'}" on ${chain}. Return exactly 3 movements as compact JSON:
+{"collection":"${collection || 'mixed'}","chain":"${chain}","generated_at":"ISO timestamp","whale_movements":[{"tx_hash":"0x...","event_type":"buy|sell|transfer","wallet_label":"string","wallet_rank":"top_10|top_50|top_100","collection_name":"string","token_id":"string","price_eth":number,"floor_price_eth":number,"signal_strength":"high|medium|low","signal_reason":"string"},{"tx_hash":"0x...","event_type":"buy|sell|transfer","wallet_label":"string","wallet_rank":"top_10|top_50|top_100","collection_name":"string","token_id":"string","price_eth":number,"floor_price_eth":number,"signal_strength":"high|medium|low","signal_reason":"string"},{"tx_hash":"0x...","event_type":"buy|sell","wallet_label":"string","wallet_rank":"top_50|top_100","collection_name":"string","token_id":"string","price_eth":number,"floor_price_eth":number,"signal_strength":"high|medium|low","signal_reason":"string"}],"summary":{"net_whale_sentiment":"accumulating|distributing|neutral","bullish_signals":number,"bearish_signals":number},"confidence":0.82,"data_freshness":"simulated"}`;
 
   try {
     const raw = await callAI(prompt, undefined, 2000);

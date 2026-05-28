@@ -55,39 +55,8 @@ router.get('/', (_req: Request, res: Response) => {
 router.post('/scan', async (req: Request, res: Response) => {
   const { market = 'crypto', timeframe = '5m' } = req.body;
   try {
-    const raw = await callClaude(`Market inefficiency scan across ${market} markets at ${timeframe} timeframe as of ${new Date().toISOString()}. Detect price lags, orderbook imbalances, liquidity gaps, arbitrage windows, and wash trading distortions. Return JSON:
-{
-  "trace_id": "${traceId()}",
-  "computed_at": "${new Date().toISOString()}",
-  "success": true,
-  "market": "${market}",
-  "timeframe": "${timeframe}",
-  "inefficiency_signals": [
-    {
-      "type": "price_lag|orderbook_imbalance|liquidity_gap|arbitrage_window|wash_trading_distortion",
-      "symbol": "string",
-      "venue": "string",
-      "magnitude_pct": number,
-      "confidence_pct": number,
-      "estimated_duration_seconds": number,
-      "actionability": "immediate|building|fading",
-      "market_segment": "spot|perp|defi|nft",
-      "description": "string"
-    }
-  ],
-  "scan_summary": {
-    "total_signals": number,
-    "immediate_count": number,
-    "highest_magnitude_signal": "string",
-    "dominant_inefficiency_type": "string",
-    "market_efficiency_score": number
-  },
-  "financial_disclaimer": "For informational purposes only. Not financial advice.",
-  "paper_mode_recommended": true,
-  "confidence_per_section": {"signals": 0.74, "summary": 0.78},
-  "recommended_actions_priority_order": ["immediate actionability signals close fastest", "high confidence + high magnitude = highest priority", "wash_trading_distortion signals = avoid — they are artificial and will reverse suddenly"],
-  "chain_to": [{"api": "market-inefficiency-scanner-api", "reason": "deep lookup specific symbol for root cause and exploitation strategy"}, {"api": "dex-cex-arbitrage-api", "reason": "exploit price_lag signals between DEX and CEX venues"}],
-  "privacy": {"data_stored": false, "retention": "none"}
+    const raw = await callClaude(`Market inefficiency scan in ${market} at ${timeframe} as of ${new Date().toISOString()}. Return compact JSON:
+{"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"market":"${market}","timeframe":"${timeframe}","inefficiency_signals":[{"type":"price_lag|orderbook_imbalance|arbitrage_window","symbol":"string","venue":"string","magnitude_pct":number,"confidence_pct":number,"actionability":"immediate|building|fading","description":"string"},{"type":"price_lag|liquidity_gap|wash_trading_distortion","symbol":"string","venue":"string","magnitude_pct":number,"confidence_pct":number,"actionability":"immediate|building|fading","description":"string"},{"type":"arbitrage_window|orderbook_imbalance","symbol":"string","venue":"string","magnitude_pct":number,"confidence_pct":number,"actionability":"building|fading","description":"string"}],"scan_summary":{"total_signals":3,"immediate_count":number,"dominant_inefficiency_type":"string","market_efficiency_score":number},"financial_disclaimer":"For informational purposes only. Not financial advice.","paper_mode_recommended":true,"confidence_per_section":{"signals":0.74,"summary":0.78},"recommended_actions_priority_order":["immediate actionability signals close fastest","avoid wash_trading_distortion signals"],"chain_to":[{"api":"dex-cex-arbitrage-api","reason":"exploit price_lag signals"}],"privacy":{"data_stored":false,"retention":"none"}
 }`);
     res.json(parseJSON(raw));
   } catch (e: any) { res.status(500).json({ error: e.message }); }

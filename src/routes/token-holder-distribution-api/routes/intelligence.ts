@@ -48,36 +48,8 @@ router.post('/analyze', async (req: Request, res: Response) => {
   const { token, chain = 'ethereum' } = req.body;
   if (!token) return res.status(400).json({ error: 'token is required' });
   try {
-    const raw = await callClaude(`Token holder distribution analysis for ${token} on ${chain} as of ${new Date().toISOString()}. Return JSON:
-{
-  "trace_id": "${traceId()}",
-  "computed_at": "${new Date().toISOString()}",
-  "success": true,
-  "token": "${token}",
-  "chain": "${chain}",
-  "total_holders": number,
-  "distribution": {
-    "top_1_pct_supply": number,
-    "top_10_pct_supply": number,
-    "top_50_pct_supply": number,
-    "top_100_pct_supply": number,
-    "retail_holders_pct": number,
-    "exchange_held_pct": number,
-    "contract_held_pct": number,
-    "locked_pct": number
-  },
-  "top_holders": [
-    {
-      "rank": number,
-      "address": "string",
-      "label": "string (Exchange, Team, DAO, Unknown, etc.)",
-      "type": "exchange|team|dao|whale|retail|contract",
-      "balance": number,
-      "pct_supply": number,
-      "change_30d_pct": number,
-      "behavior": "accumulating|distributing|holding"
-    }
-  ],
+    const raw = await callClaude(`Token holder distribution for ${token} on ${chain} as of ${new Date().toISOString()}. Return compact JSON:
+{"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"token":"${token}","chain":"${chain}","total_holders":number,"distribution":{"top_1_pct_supply":number,"top_10_pct_supply":number,"top_100_pct_supply":number,"retail_holders_pct":number,"exchange_held_pct":number,"locked_pct":number},"top_holders":[{"rank":1,"address":"0x...","label":"string","type":"exchange|whale|dao|team|contract","pct_supply":number,"behavior":"accumulating|distributing|holding"},{"rank":2,"address":"0x...","label":"string","type":"exchange|whale","pct_supply":number,"behavior":"accumulating|distributing|holding"},{"rank":3,"address":"0x...","label":"string","type":"exchange|whale","pct_supply":number,"behavior":"accumulating|distributing|holding"}],
   "holder_segments": [
     {"range": "string (e.g. >1% supply)", "count": number, "pct_of_supply": number, "type": "whale|large|medium|small|micro"}
   ],
