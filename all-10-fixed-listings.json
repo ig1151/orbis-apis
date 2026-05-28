@@ -1,0 +1,820 @@
+[
+  {
+    "name": "Fear & Greed Index API",
+    "shortDescription": "Real-time crypto Fear & Greed Index with history, trend analysis, and contrarian trade signals",
+    "description": "Access the crypto Fear & Greed Index in real time, track 30-day history, detect sentiment extremes, and surface contrarian buy/sell opportunities. Built for trading agents, portfolio dashboards, and market timing workflows. Returns structured sentiment data with drivers, signals, and daily streak analysis.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/fear-greed",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/fear-greed/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/fear-greed/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "fear-greed",
+      "market-sentiment",
+      "crypto",
+      "trading-signals",
+      "contrarian",
+      "x402",
+      "coinbase-bazaar"
+    ],
+    "keywords": [
+      "fear and greed index api",
+      "crypto sentiment api",
+      "market sentiment indicator",
+      "crypto fear greed tracker",
+      "contrarian trading signal"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/current",
+            "pricePerCallUsdc": 0.002,
+            "description": "Real-time Fear & Greed index with drivers and sentiment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.003,
+            "description": "30-day index history with streaks and summary"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL full sentiment intelligence with contrarian signals"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/current",
+        "description": "Real-time Fear & Greed index with drivers"
+      },
+      {
+        "method": "POST",
+        "path": "/history",
+        "description": "30-day history with streaks and summary"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full sentiment intelligence"
+      }
+    ]
+  },
+  {
+    "name": "Top Movers API",
+    "shortDescription": "Real-time top crypto gainers, losers, and trending coins with momentum signals",
+    "description": "Get real-time top crypto gainers, losers, and trending coins ranked by percentage change, volume, and momentum. Built for trading agents, market scanners, and portfolio dashboards that need to act on momentum signals. Includes trade signals, recovery likelihood, trend drivers, and sector rotation data.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/top-movers",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/top-movers/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/top-movers/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "top-movers",
+      "crypto-gainers",
+      "crypto-losers",
+      "trending-coins",
+      "market-data",
+      "x402",
+      "coinbase-bazaar"
+    ],
+    "keywords": [
+      "top crypto gainers api",
+      "crypto top losers api",
+      "trending cryptocurrency api",
+      "market movers crypto api",
+      "momentum trading signals"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/gainers",
+            "pricePerCallUsdc": 0.002,
+            "description": "Top N crypto gainers by % change in timeframe"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/losers",
+            "pricePerCallUsdc": 0.002,
+            "description": "Top N crypto losers by % change in timeframe"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.002,
+            "description": "Trending coins by search volume, social, and on-chain activity"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL full market movers snapshot: gainers, losers, trending"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/gainers",
+        "description": "Top crypto gainers"
+      },
+      {
+        "method": "POST",
+        "path": "/losers",
+        "description": "Top crypto losers"
+      },
+      {
+        "method": "POST",
+        "path": "/trending",
+        "description": "Trending coins"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full market movers snapshot"
+      }
+    ]
+  },
+  {
+    "name": "Smart Money Flow API",
+    "shortDescription": "Track institutional and smart-money capital flows across crypto ecosystems",
+    "description": "Advanced smart money intelligence API for AI trading systems, hedge funds, and autonomous market agents. Analyze institutional capital flows, rotation patterns, accumulation zones, liquidity migration, and conviction scoring across chains, sectors, and assets.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/smart-money-flow",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/smart-money-flow/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/smart-money-flow/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/smart-money-flow.png",
+    "tags": [
+      "smart-money",
+      "capital-flows",
+      "institutional",
+      "on-chain",
+      "trading-signals",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "smart money flow api",
+      "institutional wallet flows",
+      "crypto sector rotation",
+      "top smart wallets",
+      "onchain capital flows"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50,
+        "requestsPerMonth": 1500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/flows",
+            "pricePerCallUsdc": 0.005,
+            "description": "Active capital flow map: sectors, chains, rotation signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/wallets",
+            "pricePerCallUsdc": 0.006,
+            "description": "Top smart-money wallet profiles with conviction scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL full smart money intelligence for an asset"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/flows",
+        "description": "Active capital flow map"
+      },
+      {
+        "method": "POST",
+        "path": "/wallets",
+        "description": "Top smart-money wallet profiles"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full smart money intelligence"
+      }
+    ]
+  },
+  {
+    "name": "Meme Coin Intelligence API",
+    "shortDescription": "Virality scoring, rugpull detection, momentum tracking, and meme coin social intelligence",
+    "description": "AI-powered meme coin intelligence API for traders, discovery engines, and autonomous crypto agents. Detect virality, momentum acceleration, social hype, rugpull risk, whale participation, and conviction signals before meme narratives peak.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/meme-coin-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/meme-coin-intelligence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/meme-coin-intelligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/meme-coin-intelligence.png",
+    "tags": [
+      "meme-coins",
+      "virality",
+      "rugpull-risk",
+      "social-sentiment",
+      "momentum",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "meme coin intelligence",
+      "rugpull risk api",
+      "meme coin virality score",
+      "trending meme coins",
+      "contract safety score"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50,
+        "requestsPerMonth": 1500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.004,
+            "description": "Virality + rugpull risk score for a specific token"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.005,
+            "description": "Trending meme coins ranked by momentum and social signal"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL full meme coin intelligence with whale and social data"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Virality and rugpull risk score"
+      },
+      {
+        "method": "POST",
+        "path": "/trending",
+        "description": "Trending meme coins by momentum"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full meme coin intelligence"
+      }
+    ]
+  },
+  {
+    "name": "Market Dominance API",
+    "shortDescription": "Track BTC, ETH, and altcoin dominance shifts with sector rotation intelligence",
+    "description": "Crypto market rotation intelligence API for portfolio managers, macro traders, and AI market agents. Analyze BTC dominance, ETH rotation, altseason probability, liquidity migration, and sector leadership shifts across crypto markets.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/market-dominance",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/market-dominance/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/market-dominance/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/market-dominance.png",
+    "tags": [
+      "market-dominance",
+      "btc-dominance",
+      "altseason",
+      "market-rotation",
+      "macro",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "btc dominance api",
+      "alt season indicator",
+      "crypto market phase",
+      "market dominance history",
+      "portfolio allocation signal"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/current",
+            "pricePerCallUsdc": 0.004,
+            "description": "Current BTC, ETH, and altcoin dominance with rotation signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.005,
+            "description": "Historical dominance data with trend and cycle analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL full market dominance intelligence with rotation plan"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/current",
+        "description": "Current dominance with rotation signals"
+      },
+      {
+        "method": "POST",
+        "path": "/history",
+        "description": "Historical dominance with trend analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full market dominance intelligence"
+      }
+    ]
+  },
+  {
+    "name": "Borrowing Rates API",
+    "shortDescription": "Optimize DeFi borrowing costs with liquidation and collateral risk analysis",
+    "description": "Advanced borrowing optimization API for DeFi traders, leveraged strategies, and autonomous portfolio systems. Compare variable and stable borrow APRs, collateral requirements, liquidation thresholds, and risk-adjusted borrowing strategies across major lending protocols.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/borrowing-rates",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/borrowing-rates/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/borrowing-rates/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/borrowing-rates.png",
+    "tags": [
+      "defi",
+      "borrowing",
+      "liquidation-risk",
+      "leverage",
+      "lending",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "defi borrowing rates api",
+      "crypto borrow cost api",
+      "aave compound borrow api",
+      "liquidation risk api",
+      "defi leverage strategy api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50,
+        "requestsPerMonth": 1500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rates",
+            "pricePerCallUsdc": 0.003,
+            "description": "Variable and stable borrow rates across major protocols"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize",
+            "pricePerCallUsdc": 0.005,
+            "description": "Best borrowing strategy given collateral and target amount"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL full borrowing intelligence with risk and liquidation analysis"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/rates",
+        "description": "Borrow rates across protocols"
+      },
+      {
+        "method": "POST",
+        "path": "/optimize",
+        "description": "Best borrowing strategy for collateral"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full borrowing intelligence"
+      }
+    ]
+  },
+  {
+    "name": "Honeypot Scanner API",
+    "shortDescription": "Detect honeypot contracts, rugpull risk, and malicious token behavior before trading",
+    "description": "Security-first smart contract analysis API for wallets, trading agents, and autonomous crypto workflows. Detect honeypots, blacklist functions, hidden sell restrictions, LP unlock risk, ownership risk, rugpull vectors, and contract safety signals before executing trades.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/honeypot-scanner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/honeypot-scanner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/honeypot-scanner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/honeypot-scanner.png",
+    "tags": [
+      "honeypot",
+      "rugpull",
+      "security",
+      "smart-contracts",
+      "token-safety",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "honeypot scanner api",
+      "token honeypot detector api",
+      "rugpull risk api",
+      "smart contract safety api",
+      "sell restriction detector api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50,
+        "requestsPerMonth": 1500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.005,
+            "description": "Full honeypot scan: sell restrictions, blacklist, LP lock status"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/risk",
+            "pricePerCallUsdc": 0.006,
+            "description": "Detailed rugpull risk breakdown with factor scores"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL full contract safety intelligence with execution gate"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Full honeypot scan"
+      },
+      {
+        "method": "POST",
+        "path": "/risk",
+        "description": "Rugpull risk breakdown"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full contract safety intelligence"
+      }
+    ]
+  },
+  {
+    "name": "NFT Sniper Alert API",
+    "shortDescription": "Detect below-floor NFT listings and instant flip opportunities with urgency scoring",
+    "description": "High-frequency NFT sniper intelligence API for traders, alpha groups, and autonomous NFT execution agents. Detect below-floor listings, rarity-adjusted discounts, instant flip opportunities, urgency levels, capital requirements, and real-time marketplace inefficiencies across OpenSea, Blur, and X2Y2. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/nft-sniper-alert",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/nft-sniper-alert/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-sniper-alert/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/nft-sniper-alert.png",
+    "tags": [
+      "nft",
+      "sniper-alert",
+      "below-floor",
+      "flip-opportunities",
+      "market-inefficiency",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "nft sniper api",
+      "below floor nft alerts",
+      "nft flip opportunities",
+      "nft alpha scanner",
+      "rarity adjusted nft pricing"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 20,
+        "requestsPerMonth": 600
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/listings",
+            "pricePerCallUsdc": 0.008,
+            "description": "Detect below-floor NFT listings with discount and urgency score"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/watchlist",
+            "pricePerCallUsdc": 0.006,
+            "description": "Monitor watchlist collections for sniper opportunities"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL full sniper intelligence for a specific token"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/listings",
+        "description": "Below-floor NFT listings with urgency scoring"
+      },
+      {
+        "method": "GET",
+        "path": "/watchlist",
+        "description": "Sniper opportunities across watchlist collections"
+      },
+      {
+        "method": "GET",
+        "path": "/lookup",
+        "description": "ONE-CALL sniper intelligence for a specific token"
+      }
+    ]
+  },
+  {
+    "name": "NFT Volume Heatmap API",
+    "shortDescription": "NFT trading volume heatmaps, volatility analysis, and optimal entry timing by day and hour",
+    "description": "NFT market timing API for trading agents, dashboards, and NFT analytics systems. Analyze collection-level and market-wide NFT volume trends, volatility, liquidity shifts, best entry windows, and optimal trading periods across major NFT marketplaces. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/nft-volume-heatmap",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/nft-volume-heatmap/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-volume-heatmap/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/nft-volume-heatmap.png",
+    "tags": [
+      "nft",
+      "volume-heatmap",
+      "market-timing",
+      "volatility",
+      "liquidity",
+      "x402",
+      "coinbase-bazaar"
+    ],
+    "keywords": [
+      "nft volume heatmap",
+      "nft liquidity api",
+      "nft market timing",
+      "nft volatility analysis",
+      "nft volume trends"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 20,
+        "requestsPerMonth": 600
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/collection",
+            "pricePerCallUsdc": 0.005,
+            "description": "Volume heatmap by day/hour for a specific NFT collection"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/market",
+            "pricePerCallUsdc": 0.004,
+            "description": "Market-wide NFT volume heatmap across all collections"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL volume intelligence with best entry timing windows"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/collection",
+        "description": "Collection volume heatmap by day and hour"
+      },
+      {
+        "method": "GET",
+        "path": "/market",
+        "description": "Market-wide NFT volume heatmap"
+      },
+      {
+        "method": "GET",
+        "path": "/lookup",
+        "description": "ONE-CALL volume intelligence with entry timing"
+      }
+    ]
+  },
+  {
+    "name": "NFT Arbitrage API",
+    "shortDescription": "Cross-marketplace NFT arbitrage with fee-adjusted P&L across OpenSea, Blur, and X2Y2",
+    "description": "NFT arbitrage intelligence API for NFT traders, market makers, and autonomous execution agents. Detect cross-marketplace NFT pricing discrepancies across OpenSea, Blur, and X2Y2 with net profitability after royalties, gas fees, marketplace fees, liquidity risk, and execution urgency. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+    "category": "crypto",
+    "baseUrl": "https://orbis-apis.onrender.com/nft-arbitrage",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/nft-arbitrage/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-arbitrage/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/nft-arbitrage.png",
+    "tags": [
+      "nft",
+      "arbitrage",
+      "cross-marketplace",
+      "opensea",
+      "blur",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "nft arbitrage api",
+      "cross marketplace nft pricing",
+      "blur opensea arbitrage",
+      "nft spread scanner",
+      "nft profitability analysis"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 20,
+        "requestsPerMonth": 600
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/opportunities",
+            "pricePerCallUsdc": 0.008,
+            "description": "Active cross-marketplace arbitrage opportunities with fee-adjusted P&L"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/market-spread",
+            "pricePerCallUsdc": 0.006,
+            "description": "Floor price spread analysis across all major NFT marketplaces"
+          },
+          {
+            "method": "GET",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL full arbitrage intelligence for a specific collection"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/opportunities",
+        "description": "Cross-marketplace arbitrage opportunities"
+      },
+      {
+        "method": "GET",
+        "path": "/market-spread",
+        "description": "Floor price spread across marketplaces"
+      },
+      {
+        "method": "GET",
+        "path": "/lookup",
+        "description": "ONE-CALL full arbitrage intelligence"
+      }
+    ]
+  }
+]
