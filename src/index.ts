@@ -495,8 +495,6 @@ import stablecoinArbitrageRouter from './routes/stablecoin-arbitrage-api/routes/
 import stablecoinArbitrageOpenapiRouter from './routes/stablecoin-arbitrage-api/routes/openapi';
 import crossChainArbitrageRouter from './routes/cross-chain-arbitrage-api/routes/intelligence';
 import crossChainArbitrageOpenapiRouter from './routes/cross-chain-arbitrage-api/routes/openapi';
-import nftArbitrageRouter from './routes/nft-arbitrage-api/routes/intelligence';
-import nftArbitrageOpenapiRouter from './routes/nft-arbitrage-api/routes/openapi';
 import gasAdjustedArbitrageRouter from './routes/gas-adjusted-arbitrage-api/routes/intelligence';
 import gasAdjustedArbitrageOpenapiRouter from './routes/gas-adjusted-arbitrage-api/routes/openapi';
 import flashLoanOpportunityRouter from './routes/flash-loan-opportunity-api/routes/intelligence';
@@ -889,6 +887,13 @@ import orchestrationDependencyMapperOpenapiRouter from './routes/orchestration-d
 // ─────────────────────────────────────────────────────────────────
 // Bootstrap
 // ─────────────────────────────────────────────────────────────────
+import { nftWhaleTrackerRouter } from './routes/nft-whale-tracker-api/routes/whales';
+import { nftRarityScoreRouter } from './routes/nft-rarity-score-api/routes/rarity';
+import { nftMintCalendarRouter } from './routes/nft-mint-calendar-api/routes/calendar';
+import { nftSniperAlertRouter } from './routes/nft-sniper-alert-api/routes/sniper';
+import { nftVolumeHeatmapRouter } from './routes/nft-volume-heatmap-api/routes/heatmap';
+import { nftInfluencerTrackingRouter } from './routes/nft-influencer-tracking-api/routes/influencers';
+import { nftArbitrageRouter } from './routes/nft-arbitrage-api/routes/arbitrage';
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
@@ -1065,7 +1070,6 @@ const routerMap: Record<string, import("express").Router> = {
   'triangular-arbitrage': triangularArbitrageRouter,
   'stablecoin-arbitrage': stablecoinArbitrageRouter,
   'cross-chain-arbitrage': crossChainArbitrageRouter,
-  'nft-arbitrage': nftArbitrageRouter,
   'gas-adjusted-arbitrage': gasAdjustedArbitrageRouter,
   'flash-loan-opportunity': flashLoanOpportunityRouter,
   'market-inefficiency-scanner': marketInefficiencyScannerRouter,
@@ -1413,7 +1417,6 @@ const openapiMap: Record<string, import("express").Router> = {
   'triangular-arbitrage': triangularArbitrageOpenapiRouter,
   'stablecoin-arbitrage': stablecoinArbitrageOpenapiRouter,
   'cross-chain-arbitrage': crossChainArbitrageOpenapiRouter,
-  'nft-arbitrage': nftArbitrageOpenapiRouter,
   'gas-adjusted-arbitrage': gasAdjustedArbitrageOpenapiRouter,
   'flash-loan-opportunity': flashLoanOpportunityOpenapiRouter,
   'market-inefficiency-scanner': marketInefficiencyScannerOpenapiRouter,
@@ -1647,6 +1650,13 @@ app.use('/:slug', (req, res, next) => {
 app.use('/api/unified-ai', unified_ai_docs);
 app.use('/api/unified-ai', unified_ai_router);
 
+app.use('/nft-whale-tracker', nftWhaleTrackerRouter);
+app.use('/nft-rarity-score', nftRarityScoreRouter);
+app.use('/nft-mint-calendar', nftMintCalendarRouter);
+app.use('/nft-sniper-alert', nftSniperAlertRouter);
+app.use('/nft-volume-heatmap', nftVolumeHeatmapRouter);
+app.use('/nft-influencer-tracking', nftInfluencerTrackingRouter);
+app.use('/nft-arbitrage', nftArbitrageRouter);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
