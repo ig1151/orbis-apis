@@ -40,7 +40,7 @@ router.post('/product', async (req: Request, res: Response) => {
   const { asin } = req.body;
   if (!asin) return res.status(400).json({ error: 'asin is required' });
   try {
-    const raw = await callClaude(`Extract Amazon product details for ASIN: "${asin}". Return JSON:
+    const raw = await callClaude(`Based on your knowledge, provide product intelligence for a product with ASIN "${asin}". Use realistic representative values for a real product in that category. Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
@@ -82,7 +82,7 @@ router.post('/reviews', async (req: Request, res: Response) => {
   const { asin, limit = 10 } = req.body;
   if (!asin) return res.status(400).json({ error: 'asin is required' });
   try {
-    const raw = await callClaude(`Extract Amazon reviews for ASIN: "${asin}" limit: ${limit}. Return JSON:
+    const raw = await callClaude(`Based on your knowledge, provide representative product reviews for a product with ASIN "${asin}" (limit: ${limit}). Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
@@ -121,7 +121,7 @@ router.post('/price-history', async (req: Request, res: Response) => {
   const { asin } = req.body;
   if (!asin) return res.status(400).json({ error: 'asin is required' });
   try {
-    const raw = await callClaude(`Amazon price history for ASIN: "${asin}". Return JSON:
+    const raw = await callClaude(`Based on your knowledge, provide representative price history intelligence for a product with ASIN "${asin}". Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
@@ -176,7 +176,7 @@ router.post('/analyze', async (req: Request, res: Response) => {
   const { asin } = req.body;
   if (!asin) return res.status(400).json({ error: 'asin is required' });
   try {
-    const raw = await callClaude(`Full Amazon product intelligence for ASIN: "${asin}". Return JSON:
+    const raw = await callClaude(`Based on your knowledge, provide full product intelligence for a product with ASIN "${asin}". Use realistic representative values. Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",

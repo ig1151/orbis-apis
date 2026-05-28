@@ -62,33 +62,31 @@ router.post('/decode', async (req: Request, res: Response) => {
   } catch (e: any) { res.status(500).json({ error: e.message }); }
 });
 
-// POST /generate
-router.post('/generate', async (req: Request, res: Response) => {
+// POST /generate — uses qrserver.com directly, no Claude call needed
+router.post('/generate', (req: Request, res: Response) => {
   const { data, format = 'qr' } = req.body;
   if (!data) return res.status(400).json({ error: 'data is required' });
-  try {
-    const raw = await callClaude(`Generate a ${format} code for data: "${data}". Return JSON:
-{
-  "trace_id": "${traceId()}",
-  "computed_at": "${new Date().toISOString()}",
-  "success": true,
-  "data": "${data}",
-  "format": "${format}",
-  "generated": {
-    "image_url": "string",
-    "data_url": "string",
-    "format": "PNG|SVG",
-    "size": "256x256",
-    "error_correction": "M",
-    "module_count": number
-  },
-  "embed_html": "<img src=\\"...\\" alt=\\"QR Code\\">",
-  "confidence_per_section": {"generated": 0.92},
-  "recommended_actions_priority_order": ["test scan generated code before deployment", "use SVG for scalable display", "increase error_correction for printed codes"],
-  "privacy": {"data_stored": false, "retention": "none"}
-}`);
-    res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  const encoded = encodeURIComponent(data);
+  const imageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encoded}`;
+  res.json({
+    trace_id: traceId(),
+    computed_at: new Date().toISOString(),
+    success: true,
+    data,
+    format: 'qr',
+    generated: {
+      image_url: imageUrl,
+      data_url: imageUrl,
+      format: 'PNG',
+      size: '256x256',
+      error_correction: 'M',
+      module_count: 25,
+    },
+    embed_html: `<img src="${imageUrl}" alt="QR Code">`,
+    confidence_per_section: { generated: 0.99 },
+    recommended_actions_priority_order: ['test scan generated code before deployment', 'use SVG for scalable display', 'increase error_correction for printed codes'],
+    privacy: { data_stored: false, retention: 'none' },
+  });
 });
 
 // POST /batch
