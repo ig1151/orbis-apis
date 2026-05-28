@@ -1,75 +1,81 @@
-[
-  {
-    "name": "Honeypot Scanner API",
-    "shortDescription": "Detect honeypot contracts, rug pull mechanisms, and sell restrictions before you trade any token",
-    "description": "Scan any EVM token contract for honeypot patterns, sell restrictions, and malicious flags before trading. Simulate buy and sell transactions to detect hidden traps. Analyze ownership risk, LP lock status, mint authority, blacklist functions, and 20+ rug pull vectors. Get a full ONE-CALL safety assessment with honeypot verdict, rug risk score, safety checklist, and trade recommendation. Built for trading agents, sniper bots, and risk-aware DeFi users on Ethereum, Base, BSC, and Polygon.",
-    "category": "financial-data",
-    "baseUrl": "https://orbis-apis.onrender.com/honeypot-scanner",
-    "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/honeypot-scanner/openapi.json",
-    "openApiSpecUrl": "https://orbis-apis.onrender.com/honeypot-scanner/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-    "tags": ["honeypot-detection", "rugpull-risk", "contract-safety", "crypto", "token-analysis"],
-    "keywords": [
-      "honeypot scanner api",
-      "token honeypot detector api",
-      "rugpull risk api",
-      "smart contract safety api",
-      "sell restriction detector api"
-    ],
-    "tiers": [
-      {
-        "name": "Free",
-        "isFree": true,
-        "requestsPerDay": 100,
-        "requestsPerMonth": 3000
-      },
-      {
-        "name": "Pay Per Call",
-        "isFree": false,
-        "pricingType": "per_call",
-        "pricePerCall": 0.008,
-        "requestsPerDay": 50000,
-        "requestsPerMonth": 1500000,
-        "endpointPricing": [
-          {
-            "method": "POST",
-            "pathPattern": "/scan",
-            "pricePerCallUsdc": 0.003,
-            "description": "Honeypot scan with sell restrictions and buy/sell simulation"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/risk",
-            "pricePerCallUsdc": 0.004,
-            "description": "Full risk score with ownership, LP lock, and rug pull vectors"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.008,
-            "description": "ONE-CALL: honeypot verdict + rug risk + safety checklist + trade recommendation"
-          }
-        ]
-      },
-      {
-        "name": "High Volume",
-        "isFree": false,
-        "pricingType": "per_call",
-        "pricePerCall": 0.004,
-        "requestsPerDay": 500000,
-        "requestsPerMonth": 15000000,
-        "endpointPricing": [
-          { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.0015, "description": "Scan (discounted)" },
-          { "method": "POST", "pathPattern": "/risk", "pricePerCallUsdc": 0.002, "description": "Risk (discounted)" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.004, "description": "Full lookup (discounted)" }
-        ]
-      }
-    ],
-    "endpoints": [
-      { "method": "POST", "path": "/scan", "description": "Honeypot detection — sell tax, buy tax, blacklist, max tx limit, buy/sell simulation result" },
-      { "method": "POST", "path": "/risk", "description": "Contract risk score — ownership, LP lock, burn %, mint authority, 20+ rug vectors" },
-      { "method": "POST", "path": "/lookup", "description": "ONE-CALL: honeypot verdict + rug risk score + safety checklist + safe/caution/avoid/do_not_buy verdict" }
-    ]
-  }
-]
+{
+  "name": "Honeypot Scanner API",
+  "shortDescription": "Detect honeypot contracts, rugpull risk, and malicious token behavior before trading",
+  "description": "Security-first smart contract analysis API for wallets, trading agents, and autonomous crypto workflows. Detect honeypots, blacklist functions, hidden sell restrictions, LP unlock risk, ownership risk, rugpull vectors, and contract safety signals before executing trades.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/honeypot-scanner",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/honeypot-scanner/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/honeypot-scanner/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/assets/honeypot-scanner.png",
+  "tags": [
+    "honeypot",
+    "rugpull",
+    "security",
+    "smart-contracts",
+    "token-safety",
+    "x402",
+    "coinbase-bazaar",
+    "agentic-market"
+  ],
+  "keywords": [
+    "honeypot scanner api",
+    "token honeypot detector api",
+    "rugpull risk api",
+    "smart contract safety api",
+    "sell restriction detector api"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 50,
+      "requestsPerMonth": 1500
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.01,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/scan",
+          "pricePerCallUsdc": 0.005,
+          "description": "Full honeypot scan: sell restrictions, blacklist, LP lock status"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/risk",
+          "pricePerCallUsdc": 0.006,
+          "description": "Detailed rugpull risk breakdown with factor scores"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.01,
+          "description": "ONE-CALL full contract safety intelligence with execution gate"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/scan",
+      "description": "Full honeypot scan"
+    },
+    {
+      "method": "POST",
+      "path": "/risk",
+      "description": "Rugpull risk breakdown"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full contract safety intelligence"
+    }
+  ]
+}

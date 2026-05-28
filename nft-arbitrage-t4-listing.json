@@ -1,0 +1,81 @@
+{
+  "name": "NFT Arbitrage API",
+  "shortDescription": "Cross-marketplace NFT arbitrage with fee-adjusted P&L across OpenSea, Blur, and X2Y2",
+  "description": "NFT arbitrage intelligence API for NFT traders, market makers, and autonomous execution agents. Detect cross-marketplace NFT pricing discrepancies across OpenSea, Blur, and X2Y2 with net profitability after royalties, gas fees, marketplace fees, liquidity risk, and execution urgency. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/nft-arbitrage",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/nft-arbitrage/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-arbitrage/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/assets/nft-arbitrage.png",
+  "tags": [
+    "nft",
+    "arbitrage",
+    "cross-marketplace",
+    "opensea",
+    "blur",
+    "x402",
+    "coinbase-bazaar",
+    "agentic-market"
+  ],
+  "keywords": [
+    "nft arbitrage api",
+    "cross marketplace nft pricing",
+    "blur opensea arbitrage",
+    "nft spread scanner",
+    "nft profitability analysis"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 20,
+      "requestsPerMonth": 600
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.012,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "GET",
+          "pathPattern": "/opportunities",
+          "pricePerCallUsdc": 0.008,
+          "description": "Active cross-marketplace arbitrage opportunities with fee-adjusted P&L"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/market-spread",
+          "pricePerCallUsdc": 0.006,
+          "description": "Floor price spread analysis across all major NFT marketplaces"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.012,
+          "description": "ONE-CALL full arbitrage intelligence for a specific collection"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/opportunities",
+      "description": "Cross-marketplace arbitrage opportunities"
+    },
+    {
+      "method": "GET",
+      "path": "/market-spread",
+      "description": "Floor price spread across marketplaces"
+    },
+    {
+      "method": "GET",
+      "path": "/lookup",
+      "description": "ONE-CALL full arbitrage intelligence"
+    }
+  ]
+}

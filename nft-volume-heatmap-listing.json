@@ -1,0 +1,80 @@
+{
+  "name": "NFT Volume Heatmap API",
+  "shortDescription": "NFT trading volume heatmaps, volatility analysis, and optimal entry timing by day and hour",
+  "description": "NFT market timing API for trading agents, dashboards, and NFT analytics systems. Analyze collection-level and market-wide NFT volume trends, volatility, liquidity shifts, best entry windows, and optimal trading periods across major NFT marketplaces. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/nft-volume-heatmap",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/nft-volume-heatmap/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-volume-heatmap/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/assets/nft-volume-heatmap.png",
+  "tags": [
+    "nft",
+    "volume-heatmap",
+    "market-timing",
+    "volatility",
+    "liquidity",
+    "x402",
+    "coinbase-bazaar"
+  ],
+  "keywords": [
+    "nft volume heatmap",
+    "nft liquidity api",
+    "nft market timing",
+    "nft volatility analysis",
+    "nft volume trends"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 20,
+      "requestsPerMonth": 600
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.008,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "GET",
+          "pathPattern": "/collection",
+          "pricePerCallUsdc": 0.005,
+          "description": "Volume heatmap by day/hour for a specific NFT collection"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/market",
+          "pricePerCallUsdc": 0.004,
+          "description": "Market-wide NFT volume heatmap across all collections"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.008,
+          "description": "ONE-CALL volume intelligence with best entry timing windows"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/collection",
+      "description": "Collection volume heatmap by day and hour"
+    },
+    {
+      "method": "GET",
+      "path": "/market",
+      "description": "Market-wide NFT volume heatmap"
+    },
+    {
+      "method": "GET",
+      "path": "/lookup",
+      "description": "ONE-CALL volume intelligence with entry timing"
+    }
+  ]
+}

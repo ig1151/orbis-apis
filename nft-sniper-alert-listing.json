@@ -1,0 +1,81 @@
+{
+  "name": "NFT Sniper Alert API",
+  "shortDescription": "Detect below-floor NFT listings and instant flip opportunities with urgency scoring",
+  "description": "High-frequency NFT sniper intelligence API for traders, alpha groups, and autonomous NFT execution agents. Detect below-floor listings, rarity-adjusted discounts, instant flip opportunities, urgency levels, capital requirements, and real-time marketplace inefficiencies across OpenSea, Blur, and X2Y2. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/nft-sniper-alert",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/nft-sniper-alert/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-sniper-alert/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/assets/nft-sniper-alert.png",
+  "tags": [
+    "nft",
+    "sniper-alert",
+    "below-floor",
+    "flip-opportunities",
+    "market-inefficiency",
+    "x402",
+    "coinbase-bazaar",
+    "agentic-market"
+  ],
+  "keywords": [
+    "nft sniper api",
+    "below floor nft alerts",
+    "nft flip opportunities",
+    "nft alpha scanner",
+    "rarity adjusted nft pricing"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 20,
+      "requestsPerMonth": 600
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.012,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "GET",
+          "pathPattern": "/listings",
+          "pricePerCallUsdc": 0.008,
+          "description": "Detect below-floor NFT listings with discount and urgency score"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/watchlist",
+          "pricePerCallUsdc": 0.006,
+          "description": "Monitor watchlist collections for sniper opportunities"
+        },
+        {
+          "method": "GET",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.012,
+          "description": "ONE-CALL full sniper intelligence for a specific token"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/listings",
+      "description": "Below-floor NFT listings with urgency scoring"
+    },
+    {
+      "method": "GET",
+      "path": "/watchlist",
+      "description": "Sniper opportunities across watchlist collections"
+    },
+    {
+      "method": "GET",
+      "path": "/lookup",
+      "description": "ONE-CALL sniper intelligence for a specific token"
+    }
+  ]
+}

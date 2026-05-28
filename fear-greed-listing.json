@@ -1,0 +1,80 @@
+{
+  "name": "Fear & Greed Index API",
+  "shortDescription": "Real-time crypto Fear & Greed Index with history, trend analysis, and contrarian trade signals",
+  "description": "Access the crypto Fear & Greed Index in real time, track 30-day history, detect sentiment extremes, and surface contrarian buy/sell opportunities. Built for trading agents, portfolio dashboards, and market timing workflows. Returns structured sentiment data with drivers, signals, and daily streak analysis.",
+  "category": "crypto",
+  "baseUrl": "https://orbis-apis.onrender.com/fear-greed",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/fear-greed/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/fear-greed/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "fear-greed",
+    "market-sentiment",
+    "crypto",
+    "trading-signals",
+    "contrarian",
+    "x402",
+    "coinbase-bazaar"
+  ],
+  "keywords": [
+    "fear and greed index api",
+    "crypto sentiment api",
+    "market sentiment indicator",
+    "crypto fear greed tracker",
+    "contrarian trading signal"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.005,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/current",
+          "pricePerCallUsdc": 0.002,
+          "description": "Real-time Fear & Greed index with drivers and sentiment"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/history",
+          "pricePerCallUsdc": 0.003,
+          "description": "30-day index history with streaks and summary"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.005,
+          "description": "ONE-CALL full sentiment intelligence with contrarian signals"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/current",
+      "description": "Real-time Fear & Greed index with drivers"
+    },
+    {
+      "method": "POST",
+      "path": "/history",
+      "description": "30-day history with streaks and summary"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL full sentiment intelligence"
+    }
+  ]
+}
