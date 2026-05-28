@@ -21,7 +21,18 @@ async function callClaude(prompt: string, maxTokens = 1200): Promise<Record<stri
   const data = await response.json() as { choices: { message: { content: string } }[] };
   try {
     const raw = data.choices[0].message.content ?? '{}';
-    return JSON.parse(raw.replace(/```json|```/g, '').trim());
+    const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  try { return JSON.parse(cleaned); } catch {}
+  const start = cleaned.indexOf('{');
+  if (start !== -1) {
+    let depth = 0, end = -1;
+    for (let i = start; i < cleaned.length; i++) {
+      if (cleaned[i] === '{') depth++;
+      else if (cleaned[i] === '}') { depth--; if (depth === 0) { end = i; break; } }
+    }
+    if (end !== -1) try { return JSON.parse(cleaned.slice(start, end + 1)); } catch {}
+  }
+  throw new Error(`Cannot parse as JSON: ${raw.slice(0, 100)}`);
   } catch { return { raw: data.choices[0].message.content }; }
 }
 
