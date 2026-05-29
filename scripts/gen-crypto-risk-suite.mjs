@@ -819,7 +819,7 @@ function genListing(api) {
     name: api.title,
     shortDescription: api.short,
     description: api.description,
-    category: api.category,
+    category: '',
     baseUrl: `${BASE}/${api.slug}`,
     websiteUrl: BASE,
     docsUrl: `${BASE}/${api.slug}/openapi.json`,
