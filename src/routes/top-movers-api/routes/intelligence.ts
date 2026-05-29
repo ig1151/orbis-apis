@@ -32,7 +32,7 @@ router.get('/', (_req: Request, res: Response) => {
 router.post('/gainers', async (req: Request, res: Response) => {
   const { limit = 10, timeframe = '24h', min_market_cap_usd = 0 } = req.body;
   try {
-    const raw = await callClaude(`Top ${limit} crypto gainers in the last ${timeframe} as of ${new Date().toISOString()}, min market cap $${min_market_cap_usd}. Return JSON:
+    const raw = await callClaude(`Based on your knowledge, provide representative top \${limit} crypto gainers for a \${timeframe} timeframe, min market cap $${min_market_cap_usd}. Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
@@ -67,7 +67,7 @@ router.post('/gainers', async (req: Request, res: Response) => {
 router.post('/losers', async (req: Request, res: Response) => {
   const { limit = 10, timeframe = '24h', min_market_cap_usd = 0 } = req.body;
   try {
-    const raw = await callClaude(`Top ${limit} crypto losers in the last ${timeframe} as of ${new Date().toISOString()}, min market cap $${min_market_cap_usd}. Return JSON:
+    const raw = await callClaude(`Based on your knowledge, provide representative top ${limit} crypto losers for a ${timeframe} timeframe, min market cap $${min_market_cap_usd}. Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
@@ -103,7 +103,7 @@ router.post('/losers', async (req: Request, res: Response) => {
 router.post('/trending', async (req: Request, res: Response) => {
   const { limit = 10 } = req.body;
   try {
-    const raw = await callClaude(`Top ${limit} trending crypto coins right now as of ${new Date().toISOString()} (by search volume, social mentions, on-chain activity). Return JSON:
+    const raw = await callClaude(`Based on your knowledge, provide representative top ${limit} trending crypto coins (by search volume, social mentions, on-chain activity). Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
@@ -136,7 +136,7 @@ router.post('/trending', async (req: Request, res: Response) => {
 router.post('/lookup', async (req: Request, res: Response) => {
   const { limit = 5, timeframe = '24h' } = req.body;
   try {
-    const raw = await callClaude(`Full market movers snapshot as of ${new Date().toISOString()}: top ${limit} gainers, losers, and trending in ${timeframe}. Return JSON:
+    const raw = await callClaude(`Based on your knowledge, provide a representative full market movers snapshot: top ${limit} gainers, losers, and trending in a ${timeframe} timeframe. Return JSON:
 {
   "trace_id": "${traceId()}",
   "computed_at": "${new Date().toISOString()}",
