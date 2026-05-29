@@ -1,0 +1,78 @@
+{
+  "name": "Position Sizing API",
+  "shortDescription": "Calculate risk-adjusted position size using volatility, stop loss, portfolio size, and confidence",
+  "description": "Calculates risk-adjusted position size from volatility, stop-loss distance, portfolio size, and confidence — including Kelly fraction, volatility-adjusted size, and risk-of-ruin estimate. Gates execution on sizing approval.",
+  "category": "risk",
+  "baseUrl": "https://orbis-apis.onrender.com/position-sizing",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/position-sizing/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/position-sizing/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "position-sizing",
+    "kelly",
+    "risk-of-ruin",
+    "volatility",
+    "money-management"
+  ],
+  "keywords": [
+    "position sizing api",
+    "kelly fraction api",
+    "risk of ruin",
+    "volatility adjusted size",
+    "stop loss sizing"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.018,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/calculate",
+          "pricePerCallUsdc": 0.005,
+          "description": "Risk-adjusted position size with Kelly fraction and risk of ruin"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/simulate",
+          "pricePerCallUsdc": 0.008,
+          "description": "Monte-Carlo-style scenario simulation of sizing outcomes"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.018,
+          "description": "ONE-CALL: recommended size + Kelly + volatility-adjusted + risk of ruin"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/calculate",
+      "description": "Risk-adjusted position size with Kelly fraction and risk of ruin"
+    },
+    {
+      "method": "POST",
+      "path": "/simulate",
+      "description": "Monte-Carlo-style scenario simulation of sizing outcomes"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: recommended size + Kelly + volatility-adjusted + risk of ruin"
+    }
+  ]
+}

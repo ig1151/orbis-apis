@@ -1,0 +1,78 @@
+{
+  "name": "AI Risk Manager API",
+  "shortDescription": "Score trade and portfolio risk before execution",
+  "description": "Scores trade and portfolio risk before execution: risk score, max-loss estimate, volatility context, correlation risk, exposure breakdown, and recommended position adjustments. Human approval is mandatory before acting.",
+  "category": "risk",
+  "baseUrl": "https://orbis-apis.onrender.com/ai-risk-manager",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/ai-risk-manager/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/ai-risk-manager/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "risk-management",
+    "portfolio-risk",
+    "trade-risk",
+    "pre-trade",
+    "execution-gate"
+  ],
+  "keywords": [
+    "ai risk manager api",
+    "trade risk score",
+    "portfolio risk api",
+    "max loss estimate",
+    "pre-trade risk check"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.02,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/trade",
+          "pricePerCallUsdc": 0.006,
+          "description": "Pre-trade risk score with max loss, volatility, and position adjustment"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/portfolio",
+          "pricePerCallUsdc": 0.01,
+          "description": "Portfolio health score with exposure breakdown and rebalancing actions"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.02,
+          "description": "ONE-CALL: trade + portfolio risk with full exposure and adjustment plan"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/trade",
+      "description": "Pre-trade risk score with max loss, volatility, and position adjustment"
+    },
+    {
+      "method": "POST",
+      "path": "/portfolio",
+      "description": "Portfolio health score with exposure breakdown and rebalancing actions"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: trade + portfolio risk with full exposure and adjustment plan"
+    }
+  ]
+}

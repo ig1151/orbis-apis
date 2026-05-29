@@ -1,0 +1,78 @@
+{
+  "name": "Open Interest Intelligence API",
+  "shortDescription": "Analyze open interest expansion, contraction, leverage buildup, and trend conviction",
+  "description": "Analyzes open interest expansion and contraction against price to interpret new longs/shorts vs covering, leverage buildup, and trend conviction. Returns liquidation-risk context for agents gating leveraged entries.",
+  "category": "derivatives",
+  "baseUrl": "https://orbis-apis.onrender.com/open-interest-intelligence",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/open-interest-intelligence/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/open-interest-intelligence/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "open-interest",
+    "leverage",
+    "derivatives",
+    "trend",
+    "perpetuals"
+  ],
+  "keywords": [
+    "open interest api",
+    "oi change api",
+    "leverage buildup",
+    "price vs oi",
+    "trend conviction crypto"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.015,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/oi",
+          "pricePerCallUsdc": 0.004,
+          "description": "Aggregate and per-exchange open interest snapshot"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/changes",
+          "pricePerCallUsdc": 0.006,
+          "description": "OI change vs price change with new-longs/shorts interpretation"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.015,
+          "description": "ONE-CALL: OI + change interpretation + leverage buildup + trend conviction"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/oi",
+      "description": "Aggregate and per-exchange open interest snapshot"
+    },
+    {
+      "method": "POST",
+      "path": "/changes",
+      "description": "OI change vs price change with new-longs/shorts interpretation"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: OI + change interpretation + leverage buildup + trend conviction"
+    }
+  ]
+}

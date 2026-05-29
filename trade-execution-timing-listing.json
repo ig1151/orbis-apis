@@ -1,0 +1,78 @@
+{
+  "name": "Trade Execution Timing API",
+  "shortDescription": "Find best timing windows for execution based on liquidity, volatility, spread, and slippage",
+  "description": "Finds the best execution window using liquidity, volatility, spread, and slippage forecasts — with an avoid-until signal and urgency score. Real-time latency tier; gates execution on timing approval.",
+  "category": "market-data",
+  "baseUrl": "https://orbis-apis.onrender.com/trade-execution-timing",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/trade-execution-timing/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/trade-execution-timing/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "execution",
+    "timing",
+    "slippage",
+    "liquidity",
+    "spread"
+  ],
+  "keywords": [
+    "trade execution timing api",
+    "best execution window",
+    "slippage forecast api",
+    "liquidity window",
+    "execution urgency"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.018,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/window",
+          "pricePerCallUsdc": 0.005,
+          "description": "Best execution window with avoid-until and urgency score"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/forecast",
+          "pricePerCallUsdc": 0.008,
+          "description": "Spread, slippage, volatility, and liquidity forecasts over the horizon"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.018,
+          "description": "ONE-CALL: best window + spread/slippage/volatility forecast + urgency"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/window",
+      "description": "Best execution window with avoid-until and urgency score"
+    },
+    {
+      "method": "POST",
+      "path": "/forecast",
+      "description": "Spread, slippage, volatility, and liquidity forecasts over the horizon"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: best window + spread/slippage/volatility forecast + urgency"
+    }
+  ]
+}

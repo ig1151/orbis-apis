@@ -1,0 +1,78 @@
+{
+  "name": "Funding Rate Divergence API",
+  "shortDescription": "Detect abnormal perp funding, spot/perp divergence, crowded positioning, and squeeze risk",
+  "description": "Detects abnormal perpetual funding, spot/perp basis divergence, crowded positioning, and squeeze probability across exchanges. Returns funding by exchange, historical percentile, crowding score, and long/short bias for squeeze-trade agents.",
+  "category": "derivatives",
+  "baseUrl": "https://orbis-apis.onrender.com/funding-rate-divergence",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/funding-rate-divergence/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/funding-rate-divergence/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "funding-rate",
+    "perpetuals",
+    "basis",
+    "squeeze",
+    "derivatives"
+  ],
+  "keywords": [
+    "funding rate api",
+    "spot perp basis api",
+    "funding divergence",
+    "squeeze probability",
+    "crowded positioning crypto"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.015,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/rates",
+          "pricePerCallUsdc": 0.004,
+          "description": "Funding rates by exchange with annualized rate and next funding window"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/divergence",
+          "pricePerCallUsdc": 0.007,
+          "description": "Spot/perp basis divergence with historical percentile and crowding score"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.015,
+          "description": "ONE-CALL: funding by exchange + divergence + crowding + squeeze probability"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/rates",
+      "description": "Funding rates by exchange with annualized rate and next funding window"
+    },
+    {
+      "method": "POST",
+      "path": "/divergence",
+      "description": "Spot/perp basis divergence with historical percentile and crowding score"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: funding by exchange + divergence + crowding + squeeze probability"
+    }
+  ]
+}

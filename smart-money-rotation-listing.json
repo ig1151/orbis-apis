@@ -1,0 +1,78 @@
+{
+  "name": "Smart Money Rotation API",
+  "shortDescription": "Track smart-money rotation across sectors, narratives, chains, and tokens",
+  "description": "Tracks smart-money rotation across sectors and narratives — inflow/outflow by sector, narrative rotation score, top accumulated tokens, smart-wallet participation, and rotation stage. For agents front-running capital rotation.",
+  "category": "on-chain",
+  "baseUrl": "https://orbis-apis.onrender.com/smart-money-rotation",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/smart-money-rotation/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/smart-money-rotation/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "smart-money",
+    "rotation",
+    "narratives",
+    "sectors",
+    "on-chain"
+  ],
+  "keywords": [
+    "smart money rotation api",
+    "sector rotation crypto",
+    "narrative rotation",
+    "smart wallet participation",
+    "capital flow api"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.018,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/sectors",
+          "pricePerCallUsdc": 0.006,
+          "description": "Inflow/outflow by sector with net rotation"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/narratives",
+          "pricePerCallUsdc": 0.008,
+          "description": "Narrative rotation score, momentum per narrative, and rotation stage"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.018,
+          "description": "ONE-CALL: sector flows + narrative rotation + top accumulated tokens + stage"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/sectors",
+      "description": "Inflow/outflow by sector with net rotation"
+    },
+    {
+      "method": "POST",
+      "path": "/narratives",
+      "description": "Narrative rotation score, momentum per narrative, and rotation stage"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: sector flows + narrative rotation + top accumulated tokens + stage"
+    }
+  ]
+}

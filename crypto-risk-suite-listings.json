@@ -1,0 +1,860 @@
+[
+  {
+    "name": "Liquidation Cascade API",
+    "shortDescription": "Detect liquidation clusters, cascade probability, and long/short liquidation risk",
+    "description": "Detects liquidation clusters across leverage bands, estimates cascade probability, and quantifies long vs short liquidation risk with price levels and expected cascade size. Built for trading agents that must gate execution against forced-liquidation risk.",
+    "category": "derivatives",
+    "baseUrl": "https://orbis-apis.onrender.com/liquidation-cascade",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/liquidation-cascade/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/liquidation-cascade/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "liquidation",
+      "cascade",
+      "derivatives",
+      "risk",
+      "perpetuals"
+    ],
+    "keywords": [
+      "liquidation cascade api",
+      "liquidation heatmap api",
+      "crypto liquidation risk",
+      "long short liquidation",
+      "cascade probability"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.018,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/clusters",
+            "pricePerCallUsdc": 0.006,
+            "description": "Liquidation cluster map across price levels and leverage bands"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/heatmap",
+            "pricePerCallUsdc": 0.008,
+            "description": "Liquidation heatmap with long/short intensity per price level"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.018,
+            "description": "ONE-CALL: cascade probability + long/short risk + cluster map + invalidation levels"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/clusters",
+        "description": "Liquidation cluster map across price levels and leverage bands"
+      },
+      {
+        "method": "POST",
+        "path": "/heatmap",
+        "description": "Liquidation heatmap with long/short intensity per price level"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: cascade probability + long/short risk + cluster map + invalidation levels"
+      }
+    ]
+  },
+  {
+    "name": "Funding Rate Divergence API",
+    "shortDescription": "Detect abnormal perp funding, spot/perp divergence, crowded positioning, and squeeze risk",
+    "description": "Detects abnormal perpetual funding, spot/perp basis divergence, crowded positioning, and squeeze probability across exchanges. Returns funding by exchange, historical percentile, crowding score, and long/short bias for squeeze-trade agents.",
+    "category": "derivatives",
+    "baseUrl": "https://orbis-apis.onrender.com/funding-rate-divergence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/funding-rate-divergence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/funding-rate-divergence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "funding-rate",
+      "perpetuals",
+      "basis",
+      "squeeze",
+      "derivatives"
+    ],
+    "keywords": [
+      "funding rate api",
+      "spot perp basis api",
+      "funding divergence",
+      "squeeze probability",
+      "crowded positioning crypto"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rates",
+            "pricePerCallUsdc": 0.004,
+            "description": "Funding rates by exchange with annualized rate and next funding window"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/divergence",
+            "pricePerCallUsdc": 0.007,
+            "description": "Spot/perp basis divergence with historical percentile and crowding score"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL: funding by exchange + divergence + crowding + squeeze probability"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/rates",
+        "description": "Funding rates by exchange with annualized rate and next funding window"
+      },
+      {
+        "method": "POST",
+        "path": "/divergence",
+        "description": "Spot/perp basis divergence with historical percentile and crowding score"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: funding by exchange + divergence + crowding + squeeze probability"
+      }
+    ]
+  },
+  {
+    "name": "Open Interest Intelligence API",
+    "shortDescription": "Analyze open interest expansion, contraction, leverage buildup, and trend conviction",
+    "description": "Analyzes open interest expansion and contraction against price to interpret new longs/shorts vs covering, leverage buildup, and trend conviction. Returns liquidation-risk context for agents gating leveraged entries.",
+    "category": "derivatives",
+    "baseUrl": "https://orbis-apis.onrender.com/open-interest-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/open-interest-intelligence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/open-interest-intelligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "open-interest",
+      "leverage",
+      "derivatives",
+      "trend",
+      "perpetuals"
+    ],
+    "keywords": [
+      "open interest api",
+      "oi change api",
+      "leverage buildup",
+      "price vs oi",
+      "trend conviction crypto"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/oi",
+            "pricePerCallUsdc": 0.004,
+            "description": "Aggregate and per-exchange open interest snapshot"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/changes",
+            "pricePerCallUsdc": 0.006,
+            "description": "OI change vs price change with new-longs/shorts interpretation"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL: OI + change interpretation + leverage buildup + trend conviction"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/oi",
+        "description": "Aggregate and per-exchange open interest snapshot"
+      },
+      {
+        "method": "POST",
+        "path": "/changes",
+        "description": "OI change vs price change with new-longs/shorts interpretation"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: OI + change interpretation + leverage buildup + trend conviction"
+      }
+    ]
+  },
+  {
+    "name": "Orderbook Imbalance API",
+    "shortDescription": "Detect bid/ask pressure, liquidity walls, spoof risk, and short-term directional pressure",
+    "description": "Detects bid/ask depth imbalance, liquidity walls, spoofing risk, and short-term directional pressure with slippage estimates. Real-time latency tier for execution-aware agents.",
+    "category": "market-data",
+    "baseUrl": "https://orbis-apis.onrender.com/orderbook-imbalance",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/orderbook-imbalance/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/orderbook-imbalance/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "orderbook",
+      "liquidity",
+      "imbalance",
+      "spoofing",
+      "market-microstructure"
+    ],
+    "keywords": [
+      "orderbook imbalance api",
+      "liquidity walls api",
+      "bid ask pressure",
+      "spoofing detection crypto",
+      "slippage estimate api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/depth",
+            "pricePerCallUsdc": 0.004,
+            "description": "Bid/ask depth with cumulative size per level and spread"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/imbalance",
+            "pricePerCallUsdc": 0.006,
+            "description": "Imbalance ratio, liquidity walls, spoofing risk, short-term bias"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL: depth + imbalance + walls + spoof risk + slippage estimates"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/depth",
+        "description": "Bid/ask depth with cumulative size per level and spread"
+      },
+      {
+        "method": "POST",
+        "path": "/imbalance",
+        "description": "Imbalance ratio, liquidity walls, spoofing risk, short-term bias"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: depth + imbalance + walls + spoof risk + slippage estimates"
+      }
+    ]
+  },
+  {
+    "name": "Stop Hunt Detection API",
+    "shortDescription": "Identify liquidity grabs, stop clusters, trap setups, and false breakout risk",
+    "description": "Identifies stop-loss clusters, liquidity-grab probability, trap direction, and false-breakout risk with recent wick analysis. Gates entries against manipulation-driven liquidity sweeps.",
+    "category": "market-data",
+    "baseUrl": "https://orbis-apis.onrender.com/stop-hunt-detection",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/stop-hunt-detection/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/stop-hunt-detection/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "stop-hunt",
+      "liquidity-grab",
+      "trap",
+      "false-breakout",
+      "market-microstructure"
+    ],
+    "keywords": [
+      "stop hunt detection api",
+      "liquidity grab api",
+      "bull trap bear trap",
+      "false breakout risk",
+      "stop cluster api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.016,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/clusters",
+            "pricePerCallUsdc": 0.005,
+            "description": "Stop-loss cluster levels by side with estimated size and distance"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.007,
+            "description": "Liquidity-grab probability, trap direction, false-breakout risk, wick analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.016,
+            "description": "ONE-CALL: stop clusters + grab probability + trap direction + breakout risk"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/clusters",
+        "description": "Stop-loss cluster levels by side with estimated size and distance"
+      },
+      {
+        "method": "POST",
+        "path": "/detect",
+        "description": "Liquidity-grab probability, trap direction, false-breakout risk, wick analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: stop clusters + grab probability + trap direction + breakout risk"
+      }
+    ]
+  },
+  {
+    "name": "AI Risk Manager API",
+    "shortDescription": "Score trade and portfolio risk before execution",
+    "description": "Scores trade and portfolio risk before execution: risk score, max-loss estimate, volatility context, correlation risk, exposure breakdown, and recommended position adjustments. Human approval is mandatory before acting.",
+    "category": "risk",
+    "baseUrl": "https://orbis-apis.onrender.com/ai-risk-manager",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ai-risk-manager/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ai-risk-manager/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "risk-management",
+      "portfolio-risk",
+      "trade-risk",
+      "pre-trade",
+      "execution-gate"
+    ],
+    "keywords": [
+      "ai risk manager api",
+      "trade risk score",
+      "portfolio risk api",
+      "max loss estimate",
+      "pre-trade risk check"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/trade",
+            "pricePerCallUsdc": 0.006,
+            "description": "Pre-trade risk score with max loss, volatility, and position adjustment"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/portfolio",
+            "pricePerCallUsdc": 0.01,
+            "description": "Portfolio health score with exposure breakdown and rebalancing actions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL: trade + portfolio risk with full exposure and adjustment plan"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/trade",
+        "description": "Pre-trade risk score with max loss, volatility, and position adjustment"
+      },
+      {
+        "method": "POST",
+        "path": "/portfolio",
+        "description": "Portfolio health score with exposure breakdown and rebalancing actions"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: trade + portfolio risk with full exposure and adjustment plan"
+      }
+    ]
+  },
+  {
+    "name": "Position Sizing API",
+    "shortDescription": "Calculate risk-adjusted position size using volatility, stop loss, portfolio size, and confidence",
+    "description": "Calculates risk-adjusted position size from volatility, stop-loss distance, portfolio size, and confidence — including Kelly fraction, volatility-adjusted size, and risk-of-ruin estimate. Gates execution on sizing approval.",
+    "category": "risk",
+    "baseUrl": "https://orbis-apis.onrender.com/position-sizing",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/position-sizing/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/position-sizing/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "position-sizing",
+      "kelly",
+      "risk-of-ruin",
+      "volatility",
+      "money-management"
+    ],
+    "keywords": [
+      "position sizing api",
+      "kelly fraction api",
+      "risk of ruin",
+      "volatility adjusted size",
+      "stop loss sizing"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.018,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/calculate",
+            "pricePerCallUsdc": 0.005,
+            "description": "Risk-adjusted position size with Kelly fraction and risk of ruin"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/simulate",
+            "pricePerCallUsdc": 0.008,
+            "description": "Monte-Carlo-style scenario simulation of sizing outcomes"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.018,
+            "description": "ONE-CALL: recommended size + Kelly + volatility-adjusted + risk of ruin"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/calculate",
+        "description": "Risk-adjusted position size with Kelly fraction and risk of ruin"
+      },
+      {
+        "method": "POST",
+        "path": "/simulate",
+        "description": "Monte-Carlo-style scenario simulation of sizing outcomes"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: recommended size + Kelly + volatility-adjusted + risk of ruin"
+      }
+    ]
+  },
+  {
+    "name": "AI Portfolio Hedging API",
+    "shortDescription": "Recommend portfolio hedges using correlation, volatility, beta, and drawdown risk",
+    "description": "Recommends portfolio hedges using beta, correlation, volatility, and drawdown risk — with hedge candidates, sizing, stablecoin allocation, and options/perps notes. Human approval required before executing hedges.",
+    "category": "risk",
+    "baseUrl": "https://orbis-apis.onrender.com/ai-portfolio-hedging",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ai-portfolio-hedging/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ai-portfolio-hedging/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "hedging",
+      "portfolio",
+      "beta",
+      "correlation",
+      "drawdown"
+    ],
+    "keywords": [
+      "portfolio hedging api",
+      "crypto hedge api",
+      "portfolio beta",
+      "correlation matrix",
+      "drawdown hedge"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.022,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.008,
+            "description": "Portfolio beta, correlation summary, and drawdown risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/hedges",
+            "pricePerCallUsdc": 0.01,
+            "description": "Hedge candidates with sizing, stablecoin allocation, and options/perps notes"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.022,
+            "description": "ONE-CALL: beta + correlation + drawdown + hedge plan + stablecoin allocation"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Portfolio beta, correlation summary, and drawdown risk"
+      },
+      {
+        "method": "POST",
+        "path": "/hedges",
+        "description": "Hedge candidates with sizing, stablecoin allocation, and options/perps notes"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: beta + correlation + drawdown + hedge plan + stablecoin allocation"
+      }
+    ]
+  },
+  {
+    "name": "Trade Execution Timing API",
+    "shortDescription": "Find best timing windows for execution based on liquidity, volatility, spread, and slippage",
+    "description": "Finds the best execution window using liquidity, volatility, spread, and slippage forecasts — with an avoid-until signal and urgency score. Real-time latency tier; gates execution on timing approval.",
+    "category": "market-data",
+    "baseUrl": "https://orbis-apis.onrender.com/trade-execution-timing",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/trade-execution-timing/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/trade-execution-timing/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "execution",
+      "timing",
+      "slippage",
+      "liquidity",
+      "spread"
+    ],
+    "keywords": [
+      "trade execution timing api",
+      "best execution window",
+      "slippage forecast api",
+      "liquidity window",
+      "execution urgency"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.018,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/window",
+            "pricePerCallUsdc": 0.005,
+            "description": "Best execution window with avoid-until and urgency score"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/forecast",
+            "pricePerCallUsdc": 0.008,
+            "description": "Spread, slippage, volatility, and liquidity forecasts over the horizon"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.018,
+            "description": "ONE-CALL: best window + spread/slippage/volatility forecast + urgency"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/window",
+        "description": "Best execution window with avoid-until and urgency score"
+      },
+      {
+        "method": "POST",
+        "path": "/forecast",
+        "description": "Spread, slippage, volatility, and liquidity forecasts over the horizon"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: best window + spread/slippage/volatility forecast + urgency"
+      }
+    ]
+  },
+  {
+    "name": "Smart Money Rotation API",
+    "shortDescription": "Track smart-money rotation across sectors, narratives, chains, and tokens",
+    "description": "Tracks smart-money rotation across sectors and narratives — inflow/outflow by sector, narrative rotation score, top accumulated tokens, smart-wallet participation, and rotation stage. For agents front-running capital rotation.",
+    "category": "on-chain",
+    "baseUrl": "https://orbis-apis.onrender.com/smart-money-rotation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/smart-money-rotation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/smart-money-rotation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "smart-money",
+      "rotation",
+      "narratives",
+      "sectors",
+      "on-chain"
+    ],
+    "keywords": [
+      "smart money rotation api",
+      "sector rotation crypto",
+      "narrative rotation",
+      "smart wallet participation",
+      "capital flow api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.018,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/sectors",
+            "pricePerCallUsdc": 0.006,
+            "description": "Inflow/outflow by sector with net rotation"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/narratives",
+            "pricePerCallUsdc": 0.008,
+            "description": "Narrative rotation score, momentum per narrative, and rotation stage"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.018,
+            "description": "ONE-CALL: sector flows + narrative rotation + top accumulated tokens + stage"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/sectors",
+        "description": "Inflow/outflow by sector with net rotation"
+      },
+      {
+        "method": "POST",
+        "path": "/narratives",
+        "description": "Narrative rotation score, momentum per narrative, and rotation stage"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: sector flows + narrative rotation + top accumulated tokens + stage"
+      }
+    ]
+  },
+  {
+    "name": "Yield Farming Optimizer API",
+    "shortDescription": "Rank DeFi yield opportunities by APY sustainability, protocol risk, liquidity, and withdrawal friction",
+    "description": "Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol and liquidity risk, withdrawal delay, and impermanent-loss risk — with a recommended action. Human approval required before acting on deposit recommendations.",
+    "category": "defi",
+    "baseUrl": "https://orbis-apis.onrender.com/yield-farming-optimizer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/yield-farming-optimizer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/yield-farming-optimizer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "yield-farming",
+      "defi",
+      "apy",
+      "sustainability",
+      "impermanent-loss"
+    ],
+    "keywords": [
+      "yield farming optimizer api",
+      "risk adjusted apy",
+      "defi yield api",
+      "apy sustainability",
+      "impermanent loss risk"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.018,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/opportunities",
+            "pricePerCallUsdc": 0.006,
+            "description": "Ranked yield opportunities by risk-adjusted APY and sustainability"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.008,
+            "description": "Side-by-side comparison with protocol/liquidity/IL risk and best pick"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.018,
+            "description": "ONE-CALL: APY + sustainability + protocol/liquidity/IL risk + recommended action"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/opportunities",
+        "description": "Ranked yield opportunities by risk-adjusted APY and sustainability"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Side-by-side comparison with protocol/liquidity/IL risk and best pick"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: APY + sustainability + protocol/liquidity/IL risk + recommended action"
+      }
+    ]
+  }
+]

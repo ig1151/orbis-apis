@@ -1,0 +1,78 @@
+{
+  "name": "Orderbook Imbalance API",
+  "shortDescription": "Detect bid/ask pressure, liquidity walls, spoof risk, and short-term directional pressure",
+  "description": "Detects bid/ask depth imbalance, liquidity walls, spoofing risk, and short-term directional pressure with slippage estimates. Real-time latency tier for execution-aware agents.",
+  "category": "market-data",
+  "baseUrl": "https://orbis-apis.onrender.com/orderbook-imbalance",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/orderbook-imbalance/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/orderbook-imbalance/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "orderbook",
+    "liquidity",
+    "imbalance",
+    "spoofing",
+    "market-microstructure"
+  ],
+  "keywords": [
+    "orderbook imbalance api",
+    "liquidity walls api",
+    "bid ask pressure",
+    "spoofing detection crypto",
+    "slippage estimate api"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.015,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/depth",
+          "pricePerCallUsdc": 0.004,
+          "description": "Bid/ask depth with cumulative size per level and spread"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/imbalance",
+          "pricePerCallUsdc": 0.006,
+          "description": "Imbalance ratio, liquidity walls, spoofing risk, short-term bias"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.015,
+          "description": "ONE-CALL: depth + imbalance + walls + spoof risk + slippage estimates"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/depth",
+      "description": "Bid/ask depth with cumulative size per level and spread"
+    },
+    {
+      "method": "POST",
+      "path": "/imbalance",
+      "description": "Imbalance ratio, liquidity walls, spoofing risk, short-term bias"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: depth + imbalance + walls + spoof risk + slippage estimates"
+    }
+  ]
+}

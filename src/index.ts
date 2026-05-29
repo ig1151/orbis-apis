@@ -441,6 +441,29 @@ import stablecoinDepegRouter from './routes/stablecoin-depeg-api/routes/intellig
 import stablecoinDepegOpenapiRouter from './routes/stablecoin-depeg-api/routes/openapi';
 import topMoversRouter from './routes/top-movers-api/routes/intelligence';
 import topMoversOpenapiRouter from './routes/top-movers-api/routes/openapi';
+// crypto-risk-suite imports
+import liquidationCascadeRouter from './routes/liquidation-cascade-api/routes/intelligence';
+import liquidationCascadeOpenapiRouter from './routes/liquidation-cascade-api/routes/openapi';
+import fundingRateDivergenceRouter from './routes/funding-rate-divergence-api/routes/intelligence';
+import fundingRateDivergenceOpenapiRouter from './routes/funding-rate-divergence-api/routes/openapi';
+import openInterestIntelligenceRouter from './routes/open-interest-intelligence-api/routes/intelligence';
+import openInterestIntelligenceOpenapiRouter from './routes/open-interest-intelligence-api/routes/openapi';
+import orderbookImbalanceRouter from './routes/orderbook-imbalance-api/routes/intelligence';
+import orderbookImbalanceOpenapiRouter from './routes/orderbook-imbalance-api/routes/openapi';
+import stopHuntDetectionRouter from './routes/stop-hunt-detection-api/routes/intelligence';
+import stopHuntDetectionOpenapiRouter from './routes/stop-hunt-detection-api/routes/openapi';
+import aiRiskManagerRouter from './routes/ai-risk-manager-api/routes/intelligence';
+import aiRiskManagerOpenapiRouter from './routes/ai-risk-manager-api/routes/openapi';
+import positionSizingRouter from './routes/position-sizing-api/routes/intelligence';
+import positionSizingOpenapiRouter from './routes/position-sizing-api/routes/openapi';
+import aiPortfolioHedgingRouter from './routes/ai-portfolio-hedging-api/routes/intelligence';
+import aiPortfolioHedgingOpenapiRouter from './routes/ai-portfolio-hedging-api/routes/openapi';
+import tradeExecutionTimingRouter from './routes/trade-execution-timing-api/routes/intelligence';
+import tradeExecutionTimingOpenapiRouter from './routes/trade-execution-timing-api/routes/openapi';
+import smartMoneyRotationRouter from './routes/smart-money-rotation-api/routes/intelligence';
+import smartMoneyRotationOpenapiRouter from './routes/smart-money-rotation-api/routes/openapi';
+import yieldFarmingOptimizerRouter from './routes/yield-farming-optimizer-api/routes/intelligence';
+import yieldFarmingOptimizerOpenapiRouter from './routes/yield-farming-optimizer-api/routes/openapi';
 import impermanentLossRouter from './routes/impermanent-loss-api/routes/intelligence';
 import impermanentLossOpenapiRouter from './routes/impermanent-loss-api/routes/openapi';
 import nftFloorPriceRouter from './routes/nft-floor-price-api/routes/intelligence';
@@ -1043,6 +1066,18 @@ const routerMap: Record<string, import("express").Router> = {
   'fear-greed': fearGreedRouter,
   'stablecoin-depeg': stablecoinDepegRouter,
   'top-movers': topMoversRouter,
+// crypto-risk-suite routers
+  'liquidation-cascade': liquidationCascadeRouter,
+  'funding-rate-divergence': fundingRateDivergenceRouter,
+  'open-interest-intelligence': openInterestIntelligenceRouter,
+  'orderbook-imbalance': orderbookImbalanceRouter,
+  'stop-hunt-detection': stopHuntDetectionRouter,
+  'ai-risk-manager': aiRiskManagerRouter,
+  'position-sizing': positionSizingRouter,
+  'ai-portfolio-hedging': aiPortfolioHedgingRouter,
+  'trade-execution-timing': tradeExecutionTimingRouter,
+  'smart-money-rotation': smartMoneyRotationRouter,
+  'yield-farming-optimizer': yieldFarmingOptimizerRouter,
   'impermanent-loss': impermanentLossRouter,
   'nft-floor-price': nftFloorPriceRouter,
   'staking-rewards': stakingRewardsRouter,
@@ -1390,6 +1425,18 @@ const openapiMap: Record<string, import("express").Router> = {
   'fear-greed': fearGreedOpenapiRouter,
   'stablecoin-depeg': stablecoinDepegOpenapiRouter,
   'top-movers': topMoversOpenapiRouter,
+// crypto-risk-suite openapi
+  'liquidation-cascade': liquidationCascadeOpenapiRouter,
+  'funding-rate-divergence': fundingRateDivergenceOpenapiRouter,
+  'open-interest-intelligence': openInterestIntelligenceOpenapiRouter,
+  'orderbook-imbalance': orderbookImbalanceOpenapiRouter,
+  'stop-hunt-detection': stopHuntDetectionOpenapiRouter,
+  'ai-risk-manager': aiRiskManagerOpenapiRouter,
+  'position-sizing': positionSizingOpenapiRouter,
+  'ai-portfolio-hedging': aiPortfolioHedgingOpenapiRouter,
+  'trade-execution-timing': tradeExecutionTimingOpenapiRouter,
+  'smart-money-rotation': smartMoneyRotationOpenapiRouter,
+  'yield-farming-optimizer': yieldFarmingOptimizerOpenapiRouter,
   'impermanent-loss': impermanentLossOpenapiRouter,
   'nft-floor-price': nftFloorPriceOpenapiRouter,
   'staking-rewards': stakingRewardsOpenapiRouter,

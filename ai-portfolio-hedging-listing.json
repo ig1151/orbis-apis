@@ -1,0 +1,78 @@
+{
+  "name": "AI Portfolio Hedging API",
+  "shortDescription": "Recommend portfolio hedges using correlation, volatility, beta, and drawdown risk",
+  "description": "Recommends portfolio hedges using beta, correlation, volatility, and drawdown risk — with hedge candidates, sizing, stablecoin allocation, and options/perps notes. Human approval required before executing hedges.",
+  "category": "risk",
+  "baseUrl": "https://orbis-apis.onrender.com/ai-portfolio-hedging",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/ai-portfolio-hedging/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/ai-portfolio-hedging/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "hedging",
+    "portfolio",
+    "beta",
+    "correlation",
+    "drawdown"
+  ],
+  "keywords": [
+    "portfolio hedging api",
+    "crypto hedge api",
+    "portfolio beta",
+    "correlation matrix",
+    "drawdown hedge"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.022,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/analyze",
+          "pricePerCallUsdc": 0.008,
+          "description": "Portfolio beta, correlation summary, and drawdown risk"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/hedges",
+          "pricePerCallUsdc": 0.01,
+          "description": "Hedge candidates with sizing, stablecoin allocation, and options/perps notes"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.022,
+          "description": "ONE-CALL: beta + correlation + drawdown + hedge plan + stablecoin allocation"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/analyze",
+      "description": "Portfolio beta, correlation summary, and drawdown risk"
+    },
+    {
+      "method": "POST",
+      "path": "/hedges",
+      "description": "Hedge candidates with sizing, stablecoin allocation, and options/perps notes"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: beta + correlation + drawdown + hedge plan + stablecoin allocation"
+    }
+  ]
+}

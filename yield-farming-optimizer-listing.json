@@ -1,0 +1,78 @@
+{
+  "name": "Yield Farming Optimizer API",
+  "shortDescription": "Rank DeFi yield opportunities by APY sustainability, protocol risk, liquidity, and withdrawal friction",
+  "description": "Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol and liquidity risk, withdrawal delay, and impermanent-loss risk — with a recommended action. Human approval required before acting on deposit recommendations.",
+  "category": "defi",
+  "baseUrl": "https://orbis-apis.onrender.com/yield-farming-optimizer",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/yield-farming-optimizer/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/yield-farming-optimizer/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "yield-farming",
+    "defi",
+    "apy",
+    "sustainability",
+    "impermanent-loss"
+  ],
+  "keywords": [
+    "yield farming optimizer api",
+    "risk adjusted apy",
+    "defi yield api",
+    "apy sustainability",
+    "impermanent loss risk"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.018,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/opportunities",
+          "pricePerCallUsdc": 0.006,
+          "description": "Ranked yield opportunities by risk-adjusted APY and sustainability"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/compare",
+          "pricePerCallUsdc": 0.008,
+          "description": "Side-by-side comparison with protocol/liquidity/IL risk and best pick"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.018,
+          "description": "ONE-CALL: APY + sustainability + protocol/liquidity/IL risk + recommended action"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/opportunities",
+      "description": "Ranked yield opportunities by risk-adjusted APY and sustainability"
+    },
+    {
+      "method": "POST",
+      "path": "/compare",
+      "description": "Side-by-side comparison with protocol/liquidity/IL risk and best pick"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: APY + sustainability + protocol/liquidity/IL risk + recommended action"
+    }
+  ]
+}

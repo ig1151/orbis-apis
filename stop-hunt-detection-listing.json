@@ -1,0 +1,78 @@
+{
+  "name": "Stop Hunt Detection API",
+  "shortDescription": "Identify liquidity grabs, stop clusters, trap setups, and false breakout risk",
+  "description": "Identifies stop-loss clusters, liquidity-grab probability, trap direction, and false-breakout risk with recent wick analysis. Gates entries against manipulation-driven liquidity sweeps.",
+  "category": "market-data",
+  "baseUrl": "https://orbis-apis.onrender.com/stop-hunt-detection",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/stop-hunt-detection/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/stop-hunt-detection/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "stop-hunt",
+    "liquidity-grab",
+    "trap",
+    "false-breakout",
+    "market-microstructure"
+  ],
+  "keywords": [
+    "stop hunt detection api",
+    "liquidity grab api",
+    "bull trap bear trap",
+    "false breakout risk",
+    "stop cluster api"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.016,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/clusters",
+          "pricePerCallUsdc": 0.005,
+          "description": "Stop-loss cluster levels by side with estimated size and distance"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/detect",
+          "pricePerCallUsdc": 0.007,
+          "description": "Liquidity-grab probability, trap direction, false-breakout risk, wick analysis"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.016,
+          "description": "ONE-CALL: stop clusters + grab probability + trap direction + breakout risk"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/clusters",
+      "description": "Stop-loss cluster levels by side with estimated size and distance"
+    },
+    {
+      "method": "POST",
+      "path": "/detect",
+      "description": "Liquidity-grab probability, trap direction, false-breakout risk, wick analysis"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: stop clusters + grab probability + trap direction + breakout risk"
+    }
+  ]
+}

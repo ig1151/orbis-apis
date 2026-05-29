@@ -1,0 +1,78 @@
+{
+  "name": "Liquidation Cascade API",
+  "shortDescription": "Detect liquidation clusters, cascade probability, and long/short liquidation risk",
+  "description": "Detects liquidation clusters across leverage bands, estimates cascade probability, and quantifies long vs short liquidation risk with price levels and expected cascade size. Built for trading agents that must gate execution against forced-liquidation risk.",
+  "category": "derivatives",
+  "baseUrl": "https://orbis-apis.onrender.com/liquidation-cascade",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/liquidation-cascade/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/liquidation-cascade/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "liquidation",
+    "cascade",
+    "derivatives",
+    "risk",
+    "perpetuals"
+  ],
+  "keywords": [
+    "liquidation cascade api",
+    "liquidation heatmap api",
+    "crypto liquidation risk",
+    "long short liquidation",
+    "cascade probability"
+  ],
+  "tiers": [
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 100,
+      "requestsPerMonth": 3000
+    },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.018,
+      "requestsPerDay": 50000,
+      "requestsPerMonth": 1500000,
+      "endpointPricing": [
+        {
+          "method": "POST",
+          "pathPattern": "/clusters",
+          "pricePerCallUsdc": 0.006,
+          "description": "Liquidation cluster map across price levels and leverage bands"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/heatmap",
+          "pricePerCallUsdc": 0.008,
+          "description": "Liquidation heatmap with long/short intensity per price level"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.018,
+          "description": "ONE-CALL: cascade probability + long/short risk + cluster map + invalidation levels"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/clusters",
+      "description": "Liquidation cluster map across price levels and leverage bands"
+    },
+    {
+      "method": "POST",
+      "path": "/heatmap",
+      "description": "Liquidation heatmap with long/short intensity per price level"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL: cascade probability + long/short risk + cluster map + invalidation levels"
+    }
+  ]
+}
