@@ -31,7 +31,7 @@ Please review for: schema completeness, agent/x402 readiness, pricing sanity, de
 
 Detects liquidation clusters across leverage bands, estimates cascade probability, and quantifies long vs short liquidation risk with price levels and expected cascade size. Built for trading agents that must gate execution against forced-liquidation risk.
 
-**Gating:** execution-gate-required, paper-mode-recommended
+**Gating:** execution-gate-required, human-approval-required, paper-mode-recommended
 
 ### Marketplace Listing (info)
 
@@ -144,6 +144,7 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
     "x-execution-gate-required": true,
+    "x-human-approval-required": true,
     "x-paper-mode-recommended": true
   },
   "servers": [
@@ -185,6 +186,15 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -216,6 +226,26 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -289,6 +319,37 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "liquidation_cluster_map": {
                       "type": "array",
                       "items": {
@@ -321,6 +382,20 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
                     },
                     "nearest_cluster_usd": {
                       "type": "number"
+                    },
+                    "exchange_breakdown": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "exchange": {
+                            "type": "string"
+                          },
+                          "liquidation_exposure_usd": {
+                            "type": "number"
+                          }
+                        }
+                      }
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -367,6 +442,9 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -473,6 +551,37 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "heatmap": {
                       "type": "array",
                       "items": {
@@ -558,6 +667,9 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -662,6 +774,37 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "cascade_probability_pct": {
                       "type": "number",
                       "minimum": 0,
@@ -754,6 +897,25 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
                         "neutral"
                       ]
                     },
+                    "exchange_breakdown": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "exchange": {
+                            "type": "string"
+                          },
+                          "liquidation_exposure_usd": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "liquidation_density_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
                     "confidence_per_section": {
                       "type": "object",
                       "properties": {
@@ -829,6 +991,9 @@ Detects liquidation clusters across leverage bands, estimates cascade probabilit
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -1059,6 +1224,15 @@ Detects abnormal perpetual funding, spot/perp basis divergence, crowded position
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -1090,6 +1264,26 @@ Detects abnormal perpetual funding, spot/perp basis divergence, crowded position
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -1154,6 +1348,37 @@ Detects abnormal perpetual funding, spot/perp basis divergence, crowded position
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "funding_by_exchange": {
                       "type": "array",
@@ -1331,6 +1556,37 @@ Detects abnormal perpetual funding, spot/perp basis divergence, crowded position
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "spot_perp_basis": {
                       "type": "number"
                     },
@@ -1361,6 +1617,17 @@ Detects abnormal perpetual funding, spot/perp basis divergence, crowded position
                         "long_crowded",
                         "short_crowded",
                         "balanced"
+                      ]
+                    },
+                    "basis_z_score": {
+                      "type": "number"
+                    },
+                    "funding_regime": {
+                      "type": "string",
+                      "enum": [
+                        "normal",
+                        "elevated",
+                        "extreme"
                       ]
                     },
                     "confidence_per_section": {
@@ -1511,6 +1778,37 @@ Detects abnormal perpetual funding, spot/perp basis divergence, crowded position
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "funding_by_exchange": {
                       "type": "array",
                       "items": {
@@ -1560,6 +1858,17 @@ Detects abnormal perpetual funding, spot/perp basis divergence, crowded position
                         "long_squeeze",
                         "short_squeeze",
                         "none"
+                      ]
+                    },
+                    "basis_z_score": {
+                      "type": "number"
+                    },
+                    "funding_regime": {
+                      "type": "string",
+                      "enum": [
+                        "normal",
+                        "elevated",
+                        "extreme"
                       ]
                     },
                     "confidence_per_section": {
@@ -1711,7 +2020,7 @@ Detects abnormal perpetual funding, spot/perp basis divergence, crowded position
 
 Analyzes open interest expansion and contraction against price to interpret new longs/shorts vs covering, leverage buildup, and trend conviction. Returns liquidation-risk context for agents gating leveraged entries.
 
-**Gating:** execution-gate-required, paper-mode-recommended
+**Gating:** execution-gate-required, human-approval-required, paper-mode-recommended
 
 ### Marketplace Listing (info)
 
@@ -1824,6 +2133,7 @@ Analyzes open interest expansion and contraction against price to interpret new 
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
     "x-execution-gate-required": true,
+    "x-human-approval-required": true,
     "x-paper-mode-recommended": true
   },
   "servers": [
@@ -1865,6 +2175,15 @@ Analyzes open interest expansion and contraction against price to interpret new 
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -1896,6 +2215,26 @@ Analyzes open interest expansion and contraction against price to interpret new 
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -1960,6 +2299,37 @@ Analyzes open interest expansion and contraction against price to interpret new 
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "open_interest_usd": {
                       "type": "number"
@@ -2029,6 +2399,9 @@ Analyzes open interest expansion and contraction against price to interpret new 
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -2138,6 +2511,37 @@ Analyzes open interest expansion and contraction against price to interpret new 
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "oi_change_pct": {
                       "type": "number"
                     },
@@ -2160,6 +2564,20 @@ Analyzes open interest expansion and contraction against price to interpret new 
                       "type": "number",
                       "minimum": 0,
                       "maximum": 100
+                    },
+                    "oi_percentile_90d": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "leveraged_positioning_regime": {
+                      "type": "string",
+                      "enum": [
+                        "underleveraged",
+                        "normal",
+                        "overleveraged",
+                        "extreme"
+                      ]
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -2211,6 +2629,9 @@ Analyzes open interest expansion and contraction against price to interpret new 
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -2321,6 +2742,37 @@ Analyzes open interest expansion and contraction against price to interpret new 
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "open_interest_usd": {
                       "type": "number"
                     },
@@ -2365,6 +2817,20 @@ Analyzes open interest expansion and contraction against price to interpret new 
                           "type": "string"
                         }
                       }
+                    },
+                    "oi_percentile_90d": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "leveraged_positioning_regime": {
+                      "type": "string",
+                      "enum": [
+                        "underleveraged",
+                        "normal",
+                        "overleveraged",
+                        "extreme"
+                      ]
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -2441,6 +2907,9 @@ Analyzes open interest expansion and contraction against price to interpret new 
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -2671,6 +3140,15 @@ Detects bid/ask depth imbalance, liquidity walls, spoofing risk, and short-term 
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -2702,6 +3180,26 @@ Detects bid/ask depth imbalance, liquidity walls, spoofing risk, and short-term 
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -2767,6 +3265,37 @@ Detects bid/ask depth imbalance, liquidity walls, spoofing risk, and short-term 
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "bid_depth_usd": {
                       "type": "number"
                     },
@@ -2801,9 +3330,6 @@ Detects bid/ask depth imbalance, liquidity walls, spoofing risk, and short-term 
                       "type": "number"
                     },
                     "spread_bps": {
-                      "type": "number"
-                    },
-                    "latency_ms": {
                       "type": "number"
                     },
                     "confidence_per_section": {
@@ -2951,6 +3477,37 @@ Detects bid/ask depth imbalance, liquidity walls, spoofing risk, and short-term 
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "imbalance_ratio": {
                       "type": "number"
                     },
@@ -3003,9 +3560,6 @@ Detects bid/ask depth imbalance, liquidity walls, spoofing risk, and short-term 
                         "bearish",
                         "neutral"
                       ]
-                    },
-                    "latency_ms": {
-                      "type": "number"
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -3169,6 +3723,37 @@ Detects bid/ask depth imbalance, liquidity walls, spoofing risk, and short-term 
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "bid_depth_usd": {
                       "type": "number"
                     },
@@ -3239,8 +3824,22 @@ Detects bid/ask depth imbalance, liquidity walls, spoofing risk, and short-term 
                         "neutral"
                       ]
                     },
-                    "latency_ms": {
-                      "type": "number"
+                    "market_impact_estimates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "order_size_usd": {
+                            "type": "number"
+                          },
+                          "impact_bps": {
+                            "type": "number"
+                          },
+                          "impact_usd": {
+                            "type": "number"
+                          }
+                        }
+                      }
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -3545,6 +4144,15 @@ Identifies stop-loss clusters, liquidity-grab probability, trap direction, and f
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -3576,6 +4184,26 @@ Identifies stop-loss clusters, liquidity-grab probability, trap direction, and f
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -3643,6 +4271,37 @@ Identifies stop-loss clusters, liquidity-grab probability, trap direction, and f
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "stop_cluster_levels": {
                       "type": "array",
@@ -3825,6 +4484,37 @@ Identifies stop-loss clusters, liquidity-grab probability, trap direction, and f
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "liquidity_grab_probability_pct": {
                       "type": "number",
                       "minimum": 0,
@@ -3869,6 +4559,16 @@ Identifies stop-loss clusters, liquidity-grab probability, trap direction, and f
                               "strong"
                             ]
                           }
+                        }
+                      }
+                    },
+                    "historical_accuracy": {
+                      "type": "object",
+                      "properties": {
+                        "stop_hunt_detection_accuracy_30d": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 100
                         }
                       }
                     },
@@ -4037,6 +4737,37 @@ Identifies stop-loss clusters, liquidity-grab probability, trap direction, and f
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "stop_cluster_levels": {
                       "type": "array",
                       "items": {
@@ -4105,6 +4836,16 @@ Identifies stop-loss clusters, liquidity-grab probability, trap direction, and f
                               "strong"
                             ]
                           }
+                        }
+                      }
+                    },
+                    "historical_accuracy": {
+                      "type": "object",
+                      "properties": {
+                        "stop_hunt_detection_accuracy_30d": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 100
                         }
                       }
                     },
@@ -4300,7 +5041,7 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
       "name": "Pay Per Call",
       "isFree": false,
       "pricingType": "per_call",
-      "pricePerCall": 0.02,
+      "pricePerCall": 0.025,
       "requestsPerDay": 50000,
       "requestsPerMonth": 1500000,
       "endpointPricing": [
@@ -4319,7 +5060,7 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
         {
           "method": "POST",
           "pathPattern": "/lookup",
-          "pricePerCallUsdc": 0.02,
+          "pricePerCallUsdc": 0.025,
           "description": "ONE-CALL: trade + portfolio risk with full exposure and adjustment plan"
         }
       ]
@@ -4368,7 +5109,7 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
       "pay_per_call": {
         "trade": "$0.006",
         "portfolio": "$0.010",
-        "lookup": "$0.020"
+        "lookup": "$0.025"
       }
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
@@ -4415,6 +5156,15 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -4446,6 +5196,26 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -4526,6 +5296,37 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "risk_score": {
                       "type": "number",
                       "minimum": 0,
@@ -4584,6 +5385,23 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
                         },
                         "rationale": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "risk_factor_breakdown": {
+                      "type": "object",
+                      "properties": {
+                        "volatility": {
+                          "type": "number"
+                        },
+                        "correlation": {
+                          "type": "number"
+                        },
+                        "liquidity": {
+                          "type": "number"
+                        },
+                        "concentration": {
+                          "type": "number"
                         }
                       }
                     },
@@ -4762,6 +5580,37 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "portfolio_health_score": {
                       "type": "number",
@@ -4945,7 +5794,7 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
         "operationId": "riskLookup",
         "summary": "ONE-CALL: trade + portfolio risk with full exposure and adjustment plan",
         "x-pricing": {
-          "price": "$0.020",
+          "price": "$0.025",
           "model": "per_call",
           "currency": "USDC"
         },
@@ -5003,6 +5852,37 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "risk_score": {
                       "type": "number",
@@ -5087,6 +5967,23 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
                           "target_weight_pct": {
                             "type": "number"
                           }
+                        }
+                      }
+                    },
+                    "risk_factor_breakdown": {
+                      "type": "object",
+                      "properties": {
+                        "volatility": {
+                          "type": "number"
+                        },
+                        "correlation": {
+                          "type": "number"
+                        },
+                        "liquidity": {
+                          "type": "number"
+                        },
+                        "concentration": {
+                          "type": "number"
                         }
                       }
                     },
@@ -5245,7 +6142,7 @@ Scores trade and portfolio risk before execution: risk score, max-loss estimate,
 
 Calculates risk-adjusted position size from volatility, stop-loss distance, portfolio size, and confidence — including Kelly fraction, volatility-adjusted size, and risk-of-ruin estimate. Gates execution on sizing approval.
 
-**Gating:** execution-gate-required, paper-mode-recommended
+**Gating:** execution-gate-required, human-approval-required, paper-mode-recommended
 
 ### Marketplace Listing (info)
 
@@ -5358,6 +6255,7 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
     "x-execution-gate-required": true,
+    "x-human-approval-required": true,
     "x-paper-mode-recommended": true
   },
   "servers": [
@@ -5399,6 +6297,15 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -5430,6 +6337,26 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -5509,6 +6436,37 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "recommended_size_usd": {
                       "type": "number"
                     },
@@ -5539,6 +6497,12 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
                       "type": "number",
                       "minimum": 0,
                       "maximum": 100
+                    },
+                    "capital_at_risk_usd": {
+                      "type": "number"
+                    },
+                    "expected_drawdown_pct": {
+                      "type": "number"
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -5595,6 +6559,9 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -5707,6 +6674,37 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "scenarios": {
                       "type": "array",
                       "items": {
@@ -5788,6 +6786,9 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -5904,6 +6905,37 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "recommended_size_usd": {
                       "type": "number"
                     },
@@ -5934,6 +6966,12 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
                       "type": "number",
                       "minimum": 0,
                       "maximum": 100
+                    },
+                    "capital_at_risk_usd": {
+                      "type": "number"
+                    },
+                    "expected_drawdown_pct": {
+                      "type": "number"
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -6010,6 +7048,9 @@ Calculates risk-adjusted position size from volatility, stop-loss distance, port
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -6127,7 +7168,7 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
       "name": "Pay Per Call",
       "isFree": false,
       "pricingType": "per_call",
-      "pricePerCall": 0.022,
+      "pricePerCall": 0.025,
       "requestsPerDay": 50000,
       "requestsPerMonth": 1500000,
       "endpointPricing": [
@@ -6146,7 +7187,7 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
         {
           "method": "POST",
           "pathPattern": "/lookup",
-          "pricePerCallUsdc": 0.022,
+          "pricePerCallUsdc": 0.025,
           "description": "ONE-CALL: beta + correlation + drawdown + hedge plan + stablecoin allocation"
         }
       ]
@@ -6195,7 +7236,7 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
       "pay_per_call": {
         "analyze": "$0.008",
         "hedges": "$0.010",
-        "lookup": "$0.022"
+        "lookup": "$0.025"
       }
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
@@ -6242,6 +7283,15 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -6273,6 +7323,26 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -6349,6 +7419,37 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "portfolio_beta": {
                       "type": "number"
@@ -6555,6 +7656,37 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "hedge_candidates": {
                       "type": "array",
                       "items": {
@@ -6611,6 +7743,14 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
                     },
                     "options_perps_notes": {
                       "type": "string"
+                    },
+                    "hedge_effectiveness_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "cost_of_hedge_pct": {
+                      "type": "number"
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -6725,7 +7865,7 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
         "operationId": "hedgingLookup",
         "summary": "ONE-CALL: beta + correlation + drawdown + hedge plan + stablecoin allocation",
         "x-pricing": {
-          "price": "$0.022",
+          "price": "$0.025",
           "model": "per_call",
           "currency": "USDC"
         },
@@ -6783,6 +7923,37 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "portfolio_beta": {
                       "type": "number"
@@ -6868,6 +8039,14 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
                     },
                     "options_perps_notes": {
                       "type": "string"
+                    },
+                    "hedge_effectiveness_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "cost_of_hedge_pct": {
+                      "type": "number"
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -7024,7 +8203,7 @@ Recommends portfolio hedges using beta, correlation, volatility, and drawdown ri
 
 Finds the best execution window using liquidity, volatility, spread, and slippage forecasts — with an avoid-until signal and urgency score. Real-time latency tier; gates execution on timing approval.
 
-**Gating:** execution-gate-required, paper-mode-recommended
+**Gating:** execution-gate-required, human-approval-required, paper-mode-recommended
 
 ### Marketplace Listing (info)
 
@@ -7137,6 +8316,7 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
     "x-execution-gate-required": true,
+    "x-human-approval-required": true,
     "x-paper-mode-recommended": true
   },
   "servers": [
@@ -7178,6 +8358,15 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -7209,6 +8398,26 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -7281,6 +8490,37 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "best_execution_window": {
                       "type": "object",
                       "properties": {
@@ -7305,8 +8545,10 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                       "minimum": 0,
                       "maximum": 100
                     },
-                    "latency_ms": {
-                      "type": "number"
+                    "execution_quality_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -7358,6 +8600,9 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -7464,6 +8709,37 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "spread_forecast": {
                       "type": "array",
                       "items": {
@@ -7516,9 +8792,6 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                           "type": "number"
                         }
                       }
-                    },
-                    "latency_ms": {
-                      "type": "number"
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -7575,6 +8848,9 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -7689,6 +8965,37 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "best_execution_window": {
                       "type": "object",
                       "properties": {
@@ -7766,8 +9073,10 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                       "minimum": 0,
                       "maximum": 100
                     },
-                    "latency_ms": {
-                      "type": "number"
+                    "execution_quality_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -7844,6 +9153,9 @@ Finds the best execution window using liquidity, volatility, spread, and slippag
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -8074,6 +9386,15 @@ Tracks smart-money rotation across sectors and narratives — inflow/outflow by 
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -8105,6 +9426,26 @@ Tracks smart-money rotation across sectors and narratives — inflow/outflow by 
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -8171,6 +9512,37 @@ Tracks smart-money rotation across sectors and narratives — inflow/outflow by 
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "inflow_by_sector": {
                       "type": "array",
@@ -8369,6 +9741,37 @@ Tracks smart-money rotation across sectors and narratives — inflow/outflow by 
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "narrative_rotation_score": {
                       "type": "number",
                       "minimum": 0,
@@ -8407,6 +9810,14 @@ Tracks smart-money rotation across sectors and narratives — inflow/outflow by 
                         "late",
                         "exhausted"
                       ]
+                    },
+                    "rotation_velocity": {
+                      "type": "number"
+                    },
+                    "smart_money_conviction": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -8558,6 +9969,37 @@ Tracks smart-money rotation across sectors and narratives — inflow/outflow by 
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "inflow_by_sector": {
                       "type": "array",
                       "items": {
@@ -8627,6 +10069,14 @@ Tracks smart-money rotation across sectors and narratives — inflow/outflow by 
                         "late",
                         "exhausted"
                       ]
+                    },
+                    "rotation_velocity": {
+                      "type": "number"
+                    },
+                    "smart_money_conviction": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -8817,7 +10267,7 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
       "name": "Pay Per Call",
       "isFree": false,
       "pricingType": "per_call",
-      "pricePerCall": 0.018,
+      "pricePerCall": 0.022,
       "requestsPerDay": 50000,
       "requestsPerMonth": 1500000,
       "endpointPricing": [
@@ -8836,7 +10286,7 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
         {
           "method": "POST",
           "pathPattern": "/lookup",
-          "pricePerCallUsdc": 0.018,
+          "pricePerCallUsdc": 0.022,
           "description": "ONE-CALL: APY + sustainability + protocol/liquidity/IL risk + recommended action"
         }
       ]
@@ -8885,7 +10335,7 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
       "pay_per_call": {
         "opportunities": "$0.006",
         "compare": "$0.008",
-        "lookup": "$0.018"
+        "lookup": "$0.022"
       }
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
@@ -8931,6 +10381,15 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -8962,6 +10421,26 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -9029,6 +10508,37 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "opportunities": {
                       "type": "array",
@@ -9223,6 +10733,37 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "comparison": {
                       "type": "array",
                       "items": {
@@ -9284,6 +10825,27 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
                           "type": "string"
                         }
                       }
+                    },
+                    "reward_token_sell_pressure": {
+                      "type": "string",
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                      ]
+                    },
+                    "apy_decay_probability": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "strategy_complexity": {
+                      "type": "string",
+                      "enum": [
+                        "simple",
+                        "moderate",
+                        "complex"
+                      ]
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -9395,7 +10957,7 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
         "operationId": "yieldLookup",
         "summary": "ONE-CALL: APY + sustainability + protocol/liquidity/IL risk + recommended action",
         "x-pricing": {
-          "price": "$0.018",
+          "price": "$0.022",
           "model": "per_call",
           "currency": "USDC"
         },
@@ -9441,6 +11003,37 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "raw_apy": {
                       "type": "number"
@@ -9496,6 +11089,27 @@ Ranks DeFi yield opportunities by risk-adjusted APY, sustainability, protocol an
                           "type": "string"
                         }
                       }
+                    },
+                    "reward_token_sell_pressure": {
+                      "type": "string",
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                      ]
+                    },
+                    "apy_decay_probability": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "strategy_complexity": {
+                      "type": "string",
+                      "enum": [
+                        "simple",
+                        "moderate",
+                        "complex"
+                      ]
                     },
                     "confidence_per_section": {
                       "type": "object",

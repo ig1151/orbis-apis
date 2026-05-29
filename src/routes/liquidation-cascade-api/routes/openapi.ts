@@ -27,6 +27,7 @@ const SPEC = {
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
     "x-execution-gate-required": true,
+    "x-human-approval-required": true,
     "x-paper-mode-recommended": true
   },
   "servers": [
@@ -68,6 +69,15 @@ const SPEC = {
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -99,6 +109,26 @@ const SPEC = {
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -172,6 +202,37 @@ const SPEC = {
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "liquidation_cluster_map": {
                       "type": "array",
                       "items": {
@@ -204,6 +265,20 @@ const SPEC = {
                     },
                     "nearest_cluster_usd": {
                       "type": "number"
+                    },
+                    "exchange_breakdown": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "exchange": {
+                            "type": "string"
+                          },
+                          "liquidation_exposure_usd": {
+                            "type": "number"
+                          }
+                        }
+                      }
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -250,6 +325,9 @@ const SPEC = {
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -356,6 +434,37 @@ const SPEC = {
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "heatmap": {
                       "type": "array",
                       "items": {
@@ -441,6 +550,9 @@ const SPEC = {
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -545,6 +657,37 @@ const SPEC = {
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "cascade_probability_pct": {
                       "type": "number",
                       "minimum": 0,
@@ -637,6 +780,25 @@ const SPEC = {
                         "neutral"
                       ]
                     },
+                    "exchange_breakdown": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "exchange": {
+                            "type": "string"
+                          },
+                          "liquidation_exposure_usd": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "liquidation_density_score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
                     "confidence_per_section": {
                       "type": "object",
                       "properties": {
@@ -712,6 +874,9 @@ const SPEC = {
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {

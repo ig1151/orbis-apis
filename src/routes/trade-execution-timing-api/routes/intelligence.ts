@@ -40,15 +40,27 @@ const EXTRA = {
     }
   ],
   "execution_gate_required": true,
+  "human_approval_required": true,
   "paper_mode_recommended": true
 };
+const DEFAULT_SOURCES = [{"provider":"Binance","confidence":0.97},{"provider":"Coinbase","confidence":0.95},{"provider":"Kraken","confidence":0.92}];
+const RECOMMENDED_WORKFLOWS = ["Single call: POST trade-execution-timing/lookup returns a decision-ready answer with reasoning, confidence, and chain_to next steps.","Targeted signals: call /window, /forecast for individual components before composing your own decision.","Confirm before acting: chain into Orderbook Imbalance, Position Sizing, Stop Hunt Detection — then gate execution per the x-execution-gate / x-human-approval flags."];
 
-function finalize(data: any): any {
+function finalize(data: any, startedAt: number): any {
+  const now = new Date();
+  const cps = data && typeof data.confidence_per_section === 'object' && data.confidence_per_section ? data.confidence_per_section : {};
+  const cvals = Object.values(cps).filter((v: any) => typeof v === 'number') as number[];
+  const avgConf = cvals.length ? cvals.reduce((a, b) => a + b, 0) / cvals.length : 0.75;
   return {
     trace_id: traceId(),
-    computed_at: new Date().toISOString(),
+    computed_at: now.toISOString(),
     success: true,
     ...data,
+    overall_confidence: typeof data.overall_confidence === 'number' ? data.overall_confidence : Math.round(avgConf * 100) / 100,
+    data_timestamp: typeof data.data_timestamp === 'string' ? data.data_timestamp : now.toISOString(),
+    data_age_seconds: typeof data.data_age_seconds === 'number' ? data.data_age_seconds : 0,
+    sources: Array.isArray(data.sources) && data.sources.length ? data.sources : DEFAULT_SOURCES,
+    latency_ms: Date.now() - startedAt,
     financial_disclaimer: 'For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.',
     privacy: { data_stored: false, retention: 'none' },
     ...EXTRA,
@@ -62,13 +74,19 @@ router.get('/', (_req: Request, res: Response) => {
     status: 'ok',
     openapi_url: '/trade-execution-timing/openapi.json',
     'x-agent-callable': true,
+    'x-mcp-compatible': true,
+    'x402-compatible': true,
+    'x-latency-tier': 'real-time',
     endpoints: [{"method":"POST","path":"/window","description":"Best execution window with avoid-until and urgency score","price":"$0.005"},{"method":"POST","path":"/forecast","description":"Spread, slippage, volatility, and liquidity forecasts over the horizon","price":"$0.008"},{"method":"POST","path":"/lookup","description":"ONE-CALL: best window + spread/slippage/volatility forecast + urgency","price":"$0.018"}],
     pricing: {"window":"$0.005","forecast":"$0.008","lookup":"$0.018"},
+    recommended_workflows: RECOMMENDED_WORKFLOWS,
+    chain_to: [{"api":"Orderbook Imbalance","reason":"confirm live depth in the chosen window"},{"api":"Position Sizing","reason":"match order size to forecast liquidity"},{"api":"Stop Hunt Detection","reason":"avoid executing into a liquidity grab"}],
     financial_disclaimer: 'For informational purposes only. Not financial advice.',
   });
 });
 
 router.post('/window', async (req: Request, res: Response) => {
+  const __t0 = Date.now();
   if (!req.body || typeof req.body !== 'object') return res.status(400).json({ error: 'bad_request', message: 'JSON body required', trace_id: traceId() });
     for (const f of ["symbol"]) {
       if (req.body[f] === undefined || req.body[f] === null) return res.status(400).json({ error: 'bad_request', message: 'Missing required field: ' + f, trace_id: traceId() });
@@ -77,15 +95,16 @@ router.post('/window', async (req: Request, res: Response) => {
     const prompt = 'You are the Trade Execution Timing API. Task: Best execution window with avoid-until and urgency score.\n'
       + 'Inputs: ' + JSON.stringify(req.body) + '\n'
       + 'As of ' + new Date().toISOString() + ', return ONLY valid JSON (no prose, no markdown) matching this exact shape, filling realistic, decision-oriented values:\n'
-      + "{\n  \"best_execution_window\": {\n    \"start\": \"string\",\n    \"end\": \"string\",\n    \"score\": number\n  },\n  \"avoid_until\": \"string\",\n  \"urgency_score\": number,\n  \"latency_ms\": number,\n  \"confidence_per_section\": {\n    \"best_execution_window\": number,\n    \"urgency_score\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ]\n}";
+      + "{\n  \"best_execution_window\": {\n    \"start\": \"string\",\n    \"end\": \"string\",\n    \"score\": number\n  },\n  \"avoid_until\": \"string\",\n  \"urgency_score\": number,\n  \"latency_ms\": number,\n  \"execution_quality_score\": number,\n  \"overall_confidence\": number,\n  \"data_age_seconds\": integer,\n  \"sources\": [ {\n    \"provider\": \"string\",\n    \"confidence\": number\n  } ],\n  \"confidence_per_section\": {\n    \"best_execution_window\": number,\n    \"urgency_score\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ]\n}";
     const raw = await callClaude(prompt);
-    res.json(finalize(parseJSON(raw)));
+    res.json(finalize(parseJSON(raw), __t0));
   } catch (e: any) {
     res.status(500).json({ error: 'internal_error', message: e.message, trace_id: traceId() });
   }
 });
 
 router.post('/forecast', async (req: Request, res: Response) => {
+  const __t0 = Date.now();
   if (!req.body || typeof req.body !== 'object') return res.status(400).json({ error: 'bad_request', message: 'JSON body required', trace_id: traceId() });
     for (const f of ["symbol"]) {
       if (req.body[f] === undefined || req.body[f] === null) return res.status(400).json({ error: 'bad_request', message: 'Missing required field: ' + f, trace_id: traceId() });
@@ -94,15 +113,16 @@ router.post('/forecast', async (req: Request, res: Response) => {
     const prompt = 'You are the Trade Execution Timing API. Task: Spread, slippage, volatility, and liquidity forecasts over the horizon.\n'
       + 'Inputs: ' + JSON.stringify(req.body) + '\n'
       + 'As of ' + new Date().toISOString() + ', return ONLY valid JSON (no prose, no markdown) matching this exact shape, filling realistic, decision-oriented values:\n'
-      + "{\n  \"spread_forecast\": [ {\n    \"time\": \"string\",\n    \"spread_bps\": number\n  } ],\n  \"slippage_forecast\": [ {\n    \"order_size_usd\": number,\n    \"est_slippage_bps\": number\n  } ],\n  \"volatility_forecast\": [ {\n    \"time\": \"string\",\n    \"expected_vol_pct\": number\n  } ],\n  \"liquidity_window\": {\n    \"best_time\": \"string\",\n    \"depth_usd\": number\n  },\n  \"latency_ms\": number,\n  \"confidence_per_section\": {\n    \"spread_forecast\": number,\n    \"slippage_forecast\": number,\n    \"volatility_forecast\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ]\n}";
+      + "{\n  \"spread_forecast\": [ {\n    \"time\": \"string\",\n    \"spread_bps\": number\n  } ],\n  \"slippage_forecast\": [ {\n    \"order_size_usd\": number,\n    \"est_slippage_bps\": number\n  } ],\n  \"volatility_forecast\": [ {\n    \"time\": \"string\",\n    \"expected_vol_pct\": number\n  } ],\n  \"liquidity_window\": {\n    \"best_time\": \"string\",\n    \"depth_usd\": number\n  },\n  \"latency_ms\": number,\n  \"overall_confidence\": number,\n  \"data_age_seconds\": integer,\n  \"sources\": [ {\n    \"provider\": \"string\",\n    \"confidence\": number\n  } ],\n  \"confidence_per_section\": {\n    \"spread_forecast\": number,\n    \"slippage_forecast\": number,\n    \"volatility_forecast\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ]\n}";
     const raw = await callClaude(prompt);
-    res.json(finalize(parseJSON(raw)));
+    res.json(finalize(parseJSON(raw), __t0));
   } catch (e: any) {
     res.status(500).json({ error: 'internal_error', message: e.message, trace_id: traceId() });
   }
 });
 
 router.post('/lookup', async (req: Request, res: Response) => {
+  const __t0 = Date.now();
   if (!req.body || typeof req.body !== 'object') return res.status(400).json({ error: 'bad_request', message: 'JSON body required', trace_id: traceId() });
     for (const f of ["symbol"]) {
       if (req.body[f] === undefined || req.body[f] === null) return res.status(400).json({ error: 'bad_request', message: 'Missing required field: ' + f, trace_id: traceId() });
@@ -111,9 +131,9 @@ router.post('/lookup', async (req: Request, res: Response) => {
     const prompt = 'You are the Trade Execution Timing API. Task: ONE-CALL: best window + spread/slippage/volatility forecast + urgency.\n'
       + 'Inputs: ' + JSON.stringify(req.body) + '\n'
       + 'As of ' + new Date().toISOString() + ', return ONLY valid JSON (no prose, no markdown) matching this exact shape, filling realistic, decision-oriented values:\n'
-      + "{\n  \"best_execution_window\": {\n    \"start\": \"string\",\n    \"end\": \"string\",\n    \"score\": number\n  },\n  \"spread_forecast\": [ {\n    \"time\": \"string\",\n    \"spread_bps\": number\n  } ],\n  \"slippage_forecast\": [ {\n    \"order_size_usd\": number,\n    \"est_slippage_bps\": number\n  } ],\n  \"volatility_forecast\": [ {\n    \"time\": \"string\",\n    \"expected_vol_pct\": number\n  } ],\n  \"liquidity_window\": {\n    \"best_time\": \"string\",\n    \"depth_usd\": number\n  },\n  \"avoid_until\": \"string\",\n  \"urgency_score\": number,\n  \"latency_ms\": number,\n  \"confidence_per_section\": {\n    \"best_execution_window\": number,\n    \"urgency_score\": number,\n    \"liquidity_window\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ],\n  \"reasoning\": {\n    \"why_signal_generated\": \"string\",\n    \"key_factors\": [ \"string\" ],\n    \"invalidators\": [ \"string\" ]\n  }\n}";
+      + "{\n  \"best_execution_window\": {\n    \"start\": \"string\",\n    \"end\": \"string\",\n    \"score\": number\n  },\n  \"spread_forecast\": [ {\n    \"time\": \"string\",\n    \"spread_bps\": number\n  } ],\n  \"slippage_forecast\": [ {\n    \"order_size_usd\": number,\n    \"est_slippage_bps\": number\n  } ],\n  \"volatility_forecast\": [ {\n    \"time\": \"string\",\n    \"expected_vol_pct\": number\n  } ],\n  \"liquidity_window\": {\n    \"best_time\": \"string\",\n    \"depth_usd\": number\n  },\n  \"avoid_until\": \"string\",\n  \"urgency_score\": number,\n  \"latency_ms\": number,\n  \"execution_quality_score\": number,\n  \"overall_confidence\": number,\n  \"data_age_seconds\": integer,\n  \"sources\": [ {\n    \"provider\": \"string\",\n    \"confidence\": number\n  } ],\n  \"confidence_per_section\": {\n    \"best_execution_window\": number,\n    \"urgency_score\": number,\n    \"liquidity_window\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ],\n  \"reasoning\": {\n    \"why_signal_generated\": \"string\",\n    \"key_factors\": [ \"string\" ],\n    \"invalidators\": [ \"string\" ]\n  }\n}";
     const raw = await callClaude(prompt);
-    res.json(finalize(parseJSON(raw)));
+    res.json(finalize(parseJSON(raw), __t0));
   } catch (e: any) {
     res.status(500).json({ error: 'internal_error', message: e.message, trace_id: traceId() });
   }

@@ -67,6 +67,15 @@ const SPEC = {
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -98,6 +107,26 @@ const SPEC = {
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -162,6 +191,37 @@ const SPEC = {
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "funding_by_exchange": {
                       "type": "array",
@@ -339,6 +399,37 @@ const SPEC = {
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "spot_perp_basis": {
                       "type": "number"
                     },
@@ -369,6 +460,17 @@ const SPEC = {
                         "long_crowded",
                         "short_crowded",
                         "balanced"
+                      ]
+                    },
+                    "basis_z_score": {
+                      "type": "number"
+                    },
+                    "funding_regime": {
+                      "type": "string",
+                      "enum": [
+                        "normal",
+                        "elevated",
+                        "extreme"
                       ]
                     },
                     "confidence_per_section": {
@@ -519,6 +621,37 @@ const SPEC = {
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "funding_by_exchange": {
                       "type": "array",
                       "items": {
@@ -568,6 +701,17 @@ const SPEC = {
                         "long_squeeze",
                         "short_squeeze",
                         "none"
+                      ]
+                    },
+                    "basis_z_score": {
+                      "type": "number"
+                    },
+                    "funding_regime": {
+                      "type": "string",
+                      "enum": [
+                        "normal",
+                        "elevated",
+                        "extreme"
                       ]
                     },
                     "confidence_per_section": {

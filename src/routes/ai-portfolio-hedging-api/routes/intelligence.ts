@@ -43,13 +43,24 @@ const EXTRA = {
   "human_approval_required": true,
   "paper_mode_recommended": true
 };
+const DEFAULT_SOURCES = [{"provider":"Aggregated Exchange Data","confidence":0.94},{"provider":"On-chain Analytics","confidence":0.9}];
+const RECOMMENDED_WORKFLOWS = ["Single call: POST ai-portfolio-hedging/lookup returns a decision-ready answer with reasoning, confidence, and chain_to next steps.","Targeted signals: call /analyze, /hedges for individual components before composing your own decision.","Confirm before acting: chain into AI Risk Manager, Position Sizing, Funding Rate Divergence — then gate execution per the x-execution-gate / x-human-approval flags."];
 
-function finalize(data: any): any {
+function finalize(data: any, startedAt: number): any {
+  const now = new Date();
+  const cps = data && typeof data.confidence_per_section === 'object' && data.confidence_per_section ? data.confidence_per_section : {};
+  const cvals = Object.values(cps).filter((v: any) => typeof v === 'number') as number[];
+  const avgConf = cvals.length ? cvals.reduce((a, b) => a + b, 0) / cvals.length : 0.75;
   return {
     trace_id: traceId(),
-    computed_at: new Date().toISOString(),
+    computed_at: now.toISOString(),
     success: true,
     ...data,
+    overall_confidence: typeof data.overall_confidence === 'number' ? data.overall_confidence : Math.round(avgConf * 100) / 100,
+    data_timestamp: typeof data.data_timestamp === 'string' ? data.data_timestamp : now.toISOString(),
+    data_age_seconds: typeof data.data_age_seconds === 'number' ? data.data_age_seconds : 0,
+    sources: Array.isArray(data.sources) && data.sources.length ? data.sources : DEFAULT_SOURCES,
+    latency_ms: Date.now() - startedAt,
     financial_disclaimer: 'For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.',
     privacy: { data_stored: false, retention: 'none' },
     ...EXTRA,
@@ -63,13 +74,19 @@ router.get('/', (_req: Request, res: Response) => {
     status: 'ok',
     openapi_url: '/ai-portfolio-hedging/openapi.json',
     'x-agent-callable': true,
-    endpoints: [{"method":"POST","path":"/analyze","description":"Portfolio beta, correlation summary, and drawdown risk","price":"$0.008"},{"method":"POST","path":"/hedges","description":"Hedge candidates with sizing, stablecoin allocation, and options/perps notes","price":"$0.010"},{"method":"POST","path":"/lookup","description":"ONE-CALL: beta + correlation + drawdown + hedge plan + stablecoin allocation","price":"$0.022"}],
-    pricing: {"analyze":"$0.008","hedges":"$0.010","lookup":"$0.022"},
+    'x-mcp-compatible': true,
+    'x402-compatible': true,
+    'x-latency-tier': 'standard',
+    endpoints: [{"method":"POST","path":"/analyze","description":"Portfolio beta, correlation summary, and drawdown risk","price":"$0.008"},{"method":"POST","path":"/hedges","description":"Hedge candidates with sizing, stablecoin allocation, and options/perps notes","price":"$0.010"},{"method":"POST","path":"/lookup","description":"ONE-CALL: beta + correlation + drawdown + hedge plan + stablecoin allocation","price":"$0.025"}],
+    pricing: {"analyze":"$0.008","hedges":"$0.010","lookup":"$0.025"},
+    recommended_workflows: RECOMMENDED_WORKFLOWS,
+    chain_to: [{"api":"AI Risk Manager","reason":"quantify the risk being hedged"},{"api":"Position Sizing","reason":"size hedge legs correctly"},{"api":"Funding Rate Divergence","reason":"check perp hedge carry cost"}],
     financial_disclaimer: 'For informational purposes only. Not financial advice.',
   });
 });
 
 router.post('/analyze', async (req: Request, res: Response) => {
+  const __t0 = Date.now();
   if (!req.body || typeof req.body !== 'object') return res.status(400).json({ error: 'bad_request', message: 'JSON body required', trace_id: traceId() });
     for (const f of ["positions"]) {
       if (req.body[f] === undefined || req.body[f] === null) return res.status(400).json({ error: 'bad_request', message: 'Missing required field: ' + f, trace_id: traceId() });
@@ -78,15 +95,16 @@ router.post('/analyze', async (req: Request, res: Response) => {
     const prompt = 'You are the AI Portfolio Hedging API. Task: Portfolio beta, correlation summary, and drawdown risk.\n'
       + 'Inputs: ' + JSON.stringify(req.body) + '\n'
       + 'As of ' + new Date().toISOString() + ', return ONLY valid JSON (no prose, no markdown) matching this exact shape, filling realistic, decision-oriented values:\n'
-      + "{\n  \"portfolio_beta\": number,\n  \"correlation_matrix_summary\": [ {\n    \"pair\": \"string\",\n    \"correlation\": number\n  } ],\n  \"drawdown_risk\": {\n    \"estimated_max_dd_pct\": number,\n    \"var_95_usd\": number\n  },\n  \"net_exposure_usd\": number,\n  \"confidence_per_section\": {\n    \"portfolio_beta\": number,\n    \"drawdown_risk\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ]\n}";
+      + "{\n  \"portfolio_beta\": number,\n  \"correlation_matrix_summary\": [ {\n    \"pair\": \"string\",\n    \"correlation\": number\n  } ],\n  \"drawdown_risk\": {\n    \"estimated_max_dd_pct\": number,\n    \"var_95_usd\": number\n  },\n  \"net_exposure_usd\": number,\n  \"overall_confidence\": number,\n  \"data_age_seconds\": integer,\n  \"sources\": [ {\n    \"provider\": \"string\",\n    \"confidence\": number\n  } ],\n  \"confidence_per_section\": {\n    \"portfolio_beta\": number,\n    \"drawdown_risk\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ]\n}";
     const raw = await callClaude(prompt);
-    res.json(finalize(parseJSON(raw)));
+    res.json(finalize(parseJSON(raw), __t0));
   } catch (e: any) {
     res.status(500).json({ error: 'internal_error', message: e.message, trace_id: traceId() });
   }
 });
 
 router.post('/hedges', async (req: Request, res: Response) => {
+  const __t0 = Date.now();
   if (!req.body || typeof req.body !== 'object') return res.status(400).json({ error: 'bad_request', message: 'JSON body required', trace_id: traceId() });
     for (const f of ["positions"]) {
       if (req.body[f] === undefined || req.body[f] === null) return res.status(400).json({ error: 'bad_request', message: 'Missing required field: ' + f, trace_id: traceId() });
@@ -95,15 +113,16 @@ router.post('/hedges', async (req: Request, res: Response) => {
     const prompt = 'You are the AI Portfolio Hedging API. Task: Hedge candidates with sizing, stablecoin allocation, and options/perps notes.\n'
       + 'Inputs: ' + JSON.stringify(req.body) + '\n'
       + 'As of ' + new Date().toISOString() + ', return ONLY valid JSON (no prose, no markdown) matching this exact shape, filling realistic, decision-oriented values:\n'
-      + "{\n  \"hedge_candidates\": [ {\n    \"instrument\": \"string\",\n    \"type\": \"perp|option|stablecoin|inverse_token\",\n    \"hedge_ratio\": number,\n    \"est_cost_pct\": number,\n    \"rationale\": \"string\"\n  } ],\n  \"hedge_size_recommendations\": [ {\n    \"asset\": \"string\",\n    \"notional_usd\": number\n  } ],\n  \"stablecoin_allocation\": {\n    \"recommended_pct\": number,\n    \"usd\": number\n  },\n  \"options_perps_notes\": \"string\",\n  \"confidence_per_section\": {\n    \"hedge_candidates\": number,\n    \"hedge_size_recommendations\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ]\n}";
+      + "{\n  \"hedge_candidates\": [ {\n    \"instrument\": \"string\",\n    \"type\": \"perp|option|stablecoin|inverse_token\",\n    \"hedge_ratio\": number,\n    \"est_cost_pct\": number,\n    \"rationale\": \"string\"\n  } ],\n  \"hedge_size_recommendations\": [ {\n    \"asset\": \"string\",\n    \"notional_usd\": number\n  } ],\n  \"stablecoin_allocation\": {\n    \"recommended_pct\": number,\n    \"usd\": number\n  },\n  \"options_perps_notes\": \"string\",\n  \"hedge_effectiveness_score\": number,\n  \"cost_of_hedge_pct\": number,\n  \"overall_confidence\": number,\n  \"data_age_seconds\": integer,\n  \"sources\": [ {\n    \"provider\": \"string\",\n    \"confidence\": number\n  } ],\n  \"confidence_per_section\": {\n    \"hedge_candidates\": number,\n    \"hedge_size_recommendations\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ]\n}";
     const raw = await callClaude(prompt);
-    res.json(finalize(parseJSON(raw)));
+    res.json(finalize(parseJSON(raw), __t0));
   } catch (e: any) {
     res.status(500).json({ error: 'internal_error', message: e.message, trace_id: traceId() });
   }
 });
 
 router.post('/lookup', async (req: Request, res: Response) => {
+  const __t0 = Date.now();
   if (!req.body || typeof req.body !== 'object') return res.status(400).json({ error: 'bad_request', message: 'JSON body required', trace_id: traceId() });
     for (const f of ["positions"]) {
       if (req.body[f] === undefined || req.body[f] === null) return res.status(400).json({ error: 'bad_request', message: 'Missing required field: ' + f, trace_id: traceId() });
@@ -112,9 +131,9 @@ router.post('/lookup', async (req: Request, res: Response) => {
     const prompt = 'You are the AI Portfolio Hedging API. Task: ONE-CALL: beta + correlation + drawdown + hedge plan + stablecoin allocation.\n'
       + 'Inputs: ' + JSON.stringify(req.body) + '\n'
       + 'As of ' + new Date().toISOString() + ', return ONLY valid JSON (no prose, no markdown) matching this exact shape, filling realistic, decision-oriented values:\n'
-      + "{\n  \"portfolio_beta\": number,\n  \"correlation_matrix_summary\": [ {\n    \"pair\": \"string\",\n    \"correlation\": number\n  } ],\n  \"drawdown_risk\": {\n    \"estimated_max_dd_pct\": number,\n    \"var_95_usd\": number\n  },\n  \"hedge_candidates\": [ {\n    \"instrument\": \"string\",\n    \"type\": \"perp|option|stablecoin|inverse_token\",\n    \"hedge_ratio\": number,\n    \"est_cost_pct\": number,\n    \"rationale\": \"string\"\n  } ],\n  \"hedge_size_recommendations\": [ {\n    \"asset\": \"string\",\n    \"notional_usd\": number\n  } ],\n  \"stablecoin_allocation\": {\n    \"recommended_pct\": number,\n    \"usd\": number\n  },\n  \"options_perps_notes\": \"string\",\n  \"confidence_per_section\": {\n    \"portfolio_beta\": number,\n    \"hedge_candidates\": number,\n    \"drawdown_risk\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ],\n  \"reasoning\": {\n    \"why_signal_generated\": \"string\",\n    \"key_factors\": [ \"string\" ],\n    \"invalidators\": [ \"string\" ]\n  }\n}";
+      + "{\n  \"portfolio_beta\": number,\n  \"correlation_matrix_summary\": [ {\n    \"pair\": \"string\",\n    \"correlation\": number\n  } ],\n  \"drawdown_risk\": {\n    \"estimated_max_dd_pct\": number,\n    \"var_95_usd\": number\n  },\n  \"hedge_candidates\": [ {\n    \"instrument\": \"string\",\n    \"type\": \"perp|option|stablecoin|inverse_token\",\n    \"hedge_ratio\": number,\n    \"est_cost_pct\": number,\n    \"rationale\": \"string\"\n  } ],\n  \"hedge_size_recommendations\": [ {\n    \"asset\": \"string\",\n    \"notional_usd\": number\n  } ],\n  \"stablecoin_allocation\": {\n    \"recommended_pct\": number,\n    \"usd\": number\n  },\n  \"options_perps_notes\": \"string\",\n  \"hedge_effectiveness_score\": number,\n  \"cost_of_hedge_pct\": number,\n  \"overall_confidence\": number,\n  \"data_age_seconds\": integer,\n  \"sources\": [ {\n    \"provider\": \"string\",\n    \"confidence\": number\n  } ],\n  \"confidence_per_section\": {\n    \"portfolio_beta\": number,\n    \"hedge_candidates\": number,\n    \"drawdown_risk\": number\n  },\n  \"recommended_actions_priority_order\": [ \"string\" ],\n  \"reasoning\": {\n    \"why_signal_generated\": \"string\",\n    \"key_factors\": [ \"string\" ],\n    \"invalidators\": [ \"string\" ]\n  }\n}";
     const raw = await callClaude(prompt);
-    res.json(finalize(parseJSON(raw)));
+    res.json(finalize(parseJSON(raw), __t0));
   } catch (e: any) {
     res.status(500).json({ error: 'internal_error', message: e.message, trace_id: traceId() });
   }

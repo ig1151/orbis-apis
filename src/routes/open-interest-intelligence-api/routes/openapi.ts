@@ -27,6 +27,7 @@ const SPEC = {
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
     "x-execution-gate-required": true,
+    "x-human-approval-required": true,
     "x-paper-mode-recommended": true
   },
   "servers": [
@@ -68,6 +69,15 @@ const SPEC = {
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -99,6 +109,26 @@ const SPEC = {
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -163,6 +193,37 @@ const SPEC = {
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "open_interest_usd": {
                       "type": "number"
@@ -232,6 +293,9 @@ const SPEC = {
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -341,6 +405,37 @@ const SPEC = {
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "oi_change_pct": {
                       "type": "number"
                     },
@@ -363,6 +458,20 @@ const SPEC = {
                       "type": "number",
                       "minimum": 0,
                       "maximum": 100
+                    },
+                    "oi_percentile_90d": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "leveraged_positioning_regime": {
+                      "type": "string",
+                      "enum": [
+                        "underleveraged",
+                        "normal",
+                        "overleveraged",
+                        "extreme"
+                      ]
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -414,6 +523,9 @@ const SPEC = {
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {
@@ -524,6 +636,37 @@ const SPEC = {
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "open_interest_usd": {
                       "type": "number"
                     },
@@ -568,6 +711,20 @@ const SPEC = {
                           "type": "string"
                         }
                       }
+                    },
+                    "oi_percentile_90d": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "leveraged_positioning_regime": {
+                      "type": "string",
+                      "enum": [
+                        "underleveraged",
+                        "normal",
+                        "overleveraged",
+                        "extreme"
+                      ]
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -644,6 +801,9 @@ const SPEC = {
                       }
                     },
                     "execution_gate_required": {
+                      "type": "boolean"
+                    },
+                    "human_approval_required": {
                       "type": "boolean"
                     },
                     "paper_mode_recommended": {

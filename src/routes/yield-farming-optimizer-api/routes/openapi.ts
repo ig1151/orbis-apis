@@ -22,7 +22,7 @@ const SPEC = {
       "pay_per_call": {
         "opportunities": "$0.006",
         "compare": "$0.008",
-        "lookup": "$0.018"
+        "lookup": "$0.022"
       }
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
@@ -68,6 +68,15 @@ const SPEC = {
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -99,6 +108,26 @@ const SPEC = {
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -166,6 +195,37 @@ const SPEC = {
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "opportunities": {
                       "type": "array",
@@ -360,6 +420,37 @@ const SPEC = {
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "comparison": {
                       "type": "array",
                       "items": {
@@ -421,6 +512,27 @@ const SPEC = {
                           "type": "string"
                         }
                       }
+                    },
+                    "reward_token_sell_pressure": {
+                      "type": "string",
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                      ]
+                    },
+                    "apy_decay_probability": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "strategy_complexity": {
+                      "type": "string",
+                      "enum": [
+                        "simple",
+                        "moderate",
+                        "complex"
+                      ]
                     },
                     "confidence_per_section": {
                       "type": "object",
@@ -532,7 +644,7 @@ const SPEC = {
         "operationId": "yieldLookup",
         "summary": "ONE-CALL: APY + sustainability + protocol/liquidity/IL risk + recommended action",
         "x-pricing": {
-          "price": "$0.018",
+          "price": "$0.022",
           "model": "per_call",
           "currency": "USDC"
         },
@@ -578,6 +690,37 @@ const SPEC = {
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "raw_apy": {
                       "type": "number"
@@ -633,6 +776,27 @@ const SPEC = {
                           "type": "string"
                         }
                       }
+                    },
+                    "reward_token_sell_pressure": {
+                      "type": "string",
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                      ]
+                    },
+                    "apy_decay_probability": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "strategy_complexity": {
+                      "type": "string",
+                      "enum": [
+                        "simple",
+                        "moderate",
+                        "complex"
+                      ]
                     },
                     "confidence_per_section": {
                       "type": "object",

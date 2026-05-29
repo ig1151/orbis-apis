@@ -22,7 +22,7 @@ const SPEC = {
       "pay_per_call": {
         "trade": "$0.006",
         "portfolio": "$0.010",
-        "lookup": "$0.020"
+        "lookup": "$0.025"
       }
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
@@ -69,6 +69,15 @@ const SPEC = {
                     "x-agent-callable": {
                       "type": "boolean"
                     },
+                    "x-mcp-compatible": {
+                      "type": "boolean"
+                    },
+                    "x402-compatible": {
+                      "type": "boolean"
+                    },
+                    "x-latency-tier": {
+                      "type": "string"
+                    },
                     "endpoints": {
                       "type": "array",
                       "items": {
@@ -100,6 +109,26 @@ const SPEC = {
                         },
                         "lookup": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "recommended_workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "chain_to": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "api": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -180,6 +209,37 @@ const SPEC = {
                     "success": {
                       "type": "boolean"
                     },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
+                    },
                     "risk_score": {
                       "type": "number",
                       "minimum": 0,
@@ -238,6 +298,23 @@ const SPEC = {
                         },
                         "rationale": {
                           "type": "string"
+                        }
+                      }
+                    },
+                    "risk_factor_breakdown": {
+                      "type": "object",
+                      "properties": {
+                        "volatility": {
+                          "type": "number"
+                        },
+                        "correlation": {
+                          "type": "number"
+                        },
+                        "liquidity": {
+                          "type": "number"
+                        },
+                        "concentration": {
+                          "type": "number"
                         }
                       }
                     },
@@ -416,6 +493,37 @@ const SPEC = {
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "portfolio_health_score": {
                       "type": "number",
@@ -599,7 +707,7 @@ const SPEC = {
         "operationId": "riskLookup",
         "summary": "ONE-CALL: trade + portfolio risk with full exposure and adjustment plan",
         "x-pricing": {
-          "price": "$0.020",
+          "price": "$0.025",
           "model": "per_call",
           "currency": "USDC"
         },
@@ -657,6 +765,37 @@ const SPEC = {
                     },
                     "success": {
                       "type": "boolean"
+                    },
+                    "overall_confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "data_timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "data_age_seconds": {
+                      "type": "integer"
+                    },
+                    "latency_ms": {
+                      "type": "number"
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          }
+                        }
+                      }
                     },
                     "risk_score": {
                       "type": "number",
@@ -741,6 +880,23 @@ const SPEC = {
                           "target_weight_pct": {
                             "type": "number"
                           }
+                        }
+                      }
+                    },
+                    "risk_factor_breakdown": {
+                      "type": "object",
+                      "properties": {
+                        "volatility": {
+                          "type": "number"
+                        },
+                        "correlation": {
+                          "type": "number"
+                        },
+                        "liquidity": {
+                          "type": "number"
+                        },
+                        "concentration": {
+                          "type": "number"
                         }
                       }
                     },
