@@ -587,8 +587,8 @@ function responseSchema(api, ep) {
   return obj(props);
 }
 
-// ── Generate openapi.ts ──────────────────────────────────────────────────────
-function genOpenapi(api) {
+// ── Build the OpenAPI 3.1 spec object for an API ────────────────────────────
+function buildSpec(api) {
   const pricingMap = {};
   for (const ep of api.endpoints) pricingMap[ep.path.slice(1)] = `$${ep.price.toFixed(3)}`;
 
@@ -646,7 +646,7 @@ function genOpenapi(api) {
     paths[ep.path] = { post: op };
   }
 
-  const spec = {
+  return {
     openapi: '3.1.0',
     info,
     servers: [{ url: `${BASE}/${api.slug}` }],
@@ -654,7 +654,11 @@ function genOpenapi(api) {
     paths,
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
   };
+}
 
+// ── Generate openapi.ts ──────────────────────────────────────────────────────
+function genOpenapi(api) {
+  const spec = buildSpec(api);
   return `import { Router, Request, Response } from 'express';
 const router = Router();
 
@@ -804,6 +808,56 @@ for (const api of APIS) {
 }
 fs.writeFileSync(path.join(ROOT, 'crypto-risk-suite-listings.json'), JSON.stringify(listings, null, 2));
 console.log(`\n✓ ${APIS.length} APIs generated. Combined listings → crypto-risk-suite-listings.json`);
+
+// ── Emit single combined review document (info + OpenAPI for all APIs) ──────
+let doc = `# Crypto Risk & Execution Suite — ${APIS.length} APIs for Review
+
+These are ${APIS.length} A+ Orbis-marketplace crypto APIs. Each API below has two parts:
+1. **Marketplace Listing (info)** — category, pricing, tags, endpoints.
+2. **OpenAPI 3.1 Specification** — full typed request/response schemas.
+
+Please review for: schema completeness, agent/x402 readiness, pricing sanity, decision-oriented outputs, risk/execution gating, and anything missing for an A+ rating.
+
+---
+
+## Table of Contents
+
+${APIS.map((a, i) => `${i + 1}. [${a.title}](#${i + 1}-${a.slug})`).join('\n')}
+
+---
+`;
+
+APIS.forEach((api, i) => {
+  const spec = buildSpec(api);
+  const listing = genListing(api);
+  doc += `
+## ${i + 1}. ${api.title}
+<a name="${i + 1}-${api.slug}"></a>
+
+**Slug:** \`${api.slug}\` · **Category:** ${api.category} · **Latency tier:** ${api.latency} · **Base URL:** ${BASE}/${api.slug}
+
+${api.description}
+
+**Gating:** ${[api.flags.execGate && 'execution-gate-required', api.flags.humanApproval && 'human-approval-required', api.flags.paper && 'paper-mode-recommended'].filter(Boolean).join(', ') || 'none'}
+
+### Marketplace Listing (info)
+
+\`\`\`json
+${JSON.stringify(listing, null, 2)}
+\`\`\`
+
+### OpenAPI 3.1 Specification
+
+\`\`\`json
+${JSON.stringify(spec, null, 2)}
+\`\`\`
+
+---
+`;
+});
+
+fs.writeFileSync(path.join(ROOT, 'CRYPTO-RISK-SUITE-REVIEW.md'), doc);
+console.log('✓ Combined review document → CRYPTO-RISK-SUITE-REVIEW.md');
 
 // ── Inject wiring into src/index.ts (idempotent) ────────────────────────────
 const indexPath = path.join(ROOT, 'src', 'index.ts');
