@@ -11,8 +11,7 @@ router.get('/', (_req: Request, res: Response) => {
       'x-mcp-compatible': true,
       'x-pricing': { '/balance': 0.001, '/tokens/{address}': 0.001, '/transactions/{address}': 0.001, '/portfolio/{address}': 0.002 },
       privacy: { data_stored: false, retention: 'none' },
-    
-    'x-human-approval-required': true,},
+    },
     servers: [{ url: 'https://orbis-apis.onrender.com/wallet' }],
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
