@@ -1619,7 +1619,7 @@ const openapiMap: Record<string, import("express").Router> = {
   // NOTE: Group A spec routers are registered higher up via openapiRouterFromRouter().
   // The previous entries here pointed at the base routers (which answer '/' with a
   // health stub, not a spec), which is why /openapi.json returned health JSON.
-  'unified-ai-completion': unifiedAiCompletionIndexRouter,
+  'unified-ai-completion': openapiRouterFromRouter(unifiedAiCompletionIndexRouter, { slug: 'api/unified-ai', title: 'Unified Multi-Provider Agent Completion API', description: 'Route chat completions across Claude, GPT-4, Gemini, Grok, Mistral and DeepSeek through one OpenAI-compatible endpoint with failover and cost-optimized routing.' }),
   'cdn-detector': cdnDetectorOpenapiRouter,
   'hosting-provider-detector': hostingProviderDetectorOpenapiRouter,
   'whois-lite': whoisLiteOpenapiRouter,
@@ -1710,6 +1710,9 @@ app.use('/:slug', (req, res, next) => {
 });
 
 // Unified AI special route
+// Serve a real OpenAPI spec at the URL the marketplace listings advertise.
+// Must be registered before the /api/unified-ai catch-all mounts below.
+app.use('/api/unified-ai/openapi.json', openapiRouterFromRouter(unified_ai_router, { slug: 'api/unified-ai', title: 'Unified Multi-Provider Agent Completion API', description: 'Route chat completions across Claude, GPT-4, Gemini, Grok, Mistral and DeepSeek through one OpenAI-compatible endpoint with failover and cost-optimized routing.' }));
 app.use('/api/unified-ai', unified_ai_docs);
 app.use('/api/unified-ai', unified_ai_router);
 
