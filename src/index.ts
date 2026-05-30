@@ -917,6 +917,9 @@ import { nftSniperAlertRouter } from './routes/nft-sniper-alert-api/routes/snipe
 import { nftVolumeHeatmapRouter } from './routes/nft-volume-heatmap-api/routes/heatmap';
 import { nftInfluencerTrackingRouter } from './routes/nft-influencer-tracking-api/routes/influencers';
 import { nftArbitrageRouter } from './routes/nft-arbitrage-api/routes/arbitrage';
+// OpenAPI back-fill: helper + nft-arbitrage's existing spec router
+import { openapiRouterFromRouter } from './shared/openapiFromRouter';
+import nftArbitrageOpenapiRouter from './routes/nft-arbitrage-api/routes/openapi';
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
@@ -1310,6 +1313,25 @@ const routerMap: Record<string, import("express").Router> = {
 };
 
 const openapiMap: Record<string, import("express").Router> = {
+  // --- OpenAPI back-fill for APIs that lacked a /openapi.json spec route ---
+  // Group A: were falling through to their health stub. Group B: were 404ing.
+  'contract-analyzer': openapiRouterFromRouter(contractAnalyzerAnalyzeRouter, { slug: 'contract-analyzer', title: 'Agent Smart Contract Risk & Due Diligence API', description: 'Smart contract risk analysis, scoring, vulnerability detection, comparison, monitoring and execution gating for autonomous agents.' }),
+  'decision-scorer': openapiRouterFromRouter(decisionScorerScoreRouter, { slug: 'decision-scorer', title: 'Decision Scorer API', description: 'AI-powered decision and risk scoring with pros, cons, risks and recommendations.' }),
+  'ens-resolver': openapiRouterFromRouter(ensResolverEnsRouter, { slug: 'ens-resolver', title: 'ENS Resolver API', description: 'Bidirectional ENS resolution: resolve ENS names to addresses and reverse-lookup Ethereum addresses.' }),
+  'nft-metadata': openapiRouterFromRouter(nftMetadataIndexRouter, { slug: 'nft-metadata', title: 'NFT Metadata API', description: 'NFT metadata, traits, collection stats, wallet holdings and transfer history via OpenSea.' }),
+  'onchain-news': openapiRouterFromRouter(onchainNewsNewsRouter, { slug: 'onchain-news', title: 'Onchain News API', description: 'Real-time crypto news and AI sentiment analysis with market impact scoring.' }),
+  'text-extractor': openapiRouterFromRouter(textExtractorExtractRouter, { slug: 'text-extractor', title: 'Text Extractor API', description: 'Extract structured data and named entities from unstructured text.' }),
+  'token-price-feed': openapiRouterFromRouter(tokenPriceFeedPriceRouter, { slug: 'token-price-feed', title: 'Token Price Feed API', description: 'Real-time crypto token prices, batch lookups, top tokens by chain and trending tokens.' }),
+  'wallet-reputation': openapiRouterFromRouter(walletReputationReputationRouter, { slug: 'wallet-reputation', title: 'Wallet Reputation API', description: 'Score any Ethereum wallet 0-100 from age, history, balance and activity signals.' }),
+  'web-researcher': openapiRouterFromRouter(webResearcherResearchRouter, { slug: 'web-researcher', title: 'Web Researcher API', description: 'AI-powered web research returning structured findings, sources and follow-up questions.' }),
+  'onchain-signal': openapiRouterFromRouter(onchainSignalWhaleRouter, { slug: 'onchain-signal', title: 'On-Chain Signal API', description: 'Whale movements, smart money flows and on-chain event signals for crypto assets.' }),
+  'nft-arbitrage': nftArbitrageOpenapiRouter,
+  'nft-whale-tracker': openapiRouterFromRouter(nftWhaleTrackerRouter, { slug: 'nft-whale-tracker', title: 'NFT Whale Tracker API', description: 'Track whale wallet movements, accumulation patterns and sentiment across blue-chip NFT collections.' }),
+  'nft-rarity-score': openapiRouterFromRouter(nftRarityScoreRouter, { slug: 'nft-rarity-score', title: 'NFT Rarity Score API', description: 'Trait rarity scoring, percentile ranking and rarity-adjusted valuation for any NFT.' }),
+  'nft-mint-calendar': openapiRouterFromRouter(nftMintCalendarRouter, { slug: 'nft-mint-calendar', title: 'NFT Mint Calendar API', description: 'Upcoming NFT mints with hype scoring, sellout probability and risk assessment.' }),
+  'nft-sniper-alert': openapiRouterFromRouter(nftSniperAlertRouter, { slug: 'nft-sniper-alert', title: 'NFT Sniper Alert API', description: 'Detect below-floor NFT listings and instant flip opportunities with urgency scoring.' }),
+  'nft-volume-heatmap': openapiRouterFromRouter(nftVolumeHeatmapRouter, { slug: 'nft-volume-heatmap', title: 'NFT Volume Heatmap API', description: 'NFT trading volume heatmaps, volatility analysis and optimal entry timing.' }),
+  'nft-influencer-tracking': openapiRouterFromRouter(nftInfluencerTrackingRouter, { slug: 'nft-influencer-tracking', title: 'NFT Influencer Tracking API', description: 'Track NFT influencer purchases, shills, market impact and win-rate history.' }),
   'agent-web-data-extraction': agent_web_data_extraction_docs,
   'market-correlation': market_correlation_docs,
   'yield-farming': yield_farming_docs,
@@ -1594,16 +1616,10 @@ const openapiMap: Record<string, import("express").Router> = {
   'website-tech-stack': websiteTechStackDetectorOpenapiRouter,
   'company-logo': companyLogoOpenapiRouter,
   'website-speed-lite': websiteSpeedLiteOpenapiRouter,
-  'contract-analyzer': contractAnalyzerAnalyzeRouter,
-  'decision-scorer': decisionScorerScoreRouter,
-  'ens-resolver': ensResolverEnsRouter,
-  'nft-metadata': nftMetadataIndexRouter,
-  'onchain-news': onchainNewsNewsRouter,
-  'text-extractor': textExtractorExtractRouter,
-  'token-price-feed': tokenPriceFeedPriceRouter,
+  // NOTE: Group A spec routers are registered higher up via openapiRouterFromRouter().
+  // The previous entries here pointed at the base routers (which answer '/' with a
+  // health stub, not a spec), which is why /openapi.json returned health JSON.
   'unified-ai-completion': unifiedAiCompletionIndexRouter,
-  'wallet-reputation': walletReputationReputationRouter,
-  'web-researcher': webResearcherResearchRouter,
   'cdn-detector': cdnDetectorOpenapiRouter,
   'hosting-provider-detector': hostingProviderDetectorOpenapiRouter,
   'whois-lite': whoisLiteOpenapiRouter,
