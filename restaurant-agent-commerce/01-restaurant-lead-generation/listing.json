@@ -1,0 +1,85 @@
+{
+  "name": "Restaurant Lead Generation API",
+  "slug": "restaurant-lead-generation",
+  "description": "Find restaurants that need marketing, review management, SEO, websites, online ordering, or operational help — then score, enrich, and prepare outreach. Agent-native pipeline for autonomous sales, marketing, and local-business agents that build qualified restaurant pipeline on every call.",
+  "category": "Sales & Lead Generation",
+  "subcategory": "Local Business / Restaurant Vertical",
+  "version": "1.0.0",
+  "openapi_url": "https://api.restaurant-agent-commerce.com/lead-generation/v1/openapi.yaml",
+  "base_url": "https://api.restaurant-agent-commerce.com/lead-generation/v1",
+  "one_call_workflow_endpoint": "POST /run-lead-pipeline",
+  "pricing_model": {
+    "type": "per_call",
+    "currency": "USD",
+    "billing": "prepaid_credits",
+    "free_tier": "GET / discovery is free; new keys include $5 trial credit."
+  },
+  "endpointPricing": {
+    "GET /": 0.0,
+    "POST /find-restaurant-leads": 0.5,
+    "POST /score-leads": 0.1,
+    "POST /enrich-lead": 0.75,
+    "POST /generate-outreach-angle": 0.15,
+    "POST /export-leads": 0.05,
+    "POST /contact-lead": 0.4,
+    "POST /run-lead-pipeline": 1.0
+  },
+  "useCases": [
+    "Build a list of 25 under-marketed Italian restaurants in Austin and rank them by likelihood to buy review-management services.",
+    "Enrich a shortlist of restaurant leads with owner contact data and tech stack before an outreach campaign.",
+    "Generate a tailored, pain-point-grounded outreach email for each qualified lead.",
+    "Export a qualified lead set directly into a HubSpot-ready CRM payload."
+  ],
+  "agentUseCases": [
+    { "agent": "sales_agent", "workflow": "Call /run-lead-pipeline nightly per territory, then queue /contact-lead for human approval each morning." },
+    { "agent": "marketing_agency_agent", "workflow": "Find leads, attach a Growth Opportunity audit via chain_to, and pitch the highest missed-revenue accounts first." },
+    { "agent": "local_business_agent", "workflow": "Score inbound restaurant prospects and route best_offer_type to the right service line." }
+  ],
+  "authentication": {
+    "type": "api_key",
+    "in": "header",
+    "header_name": "X-API-Key"
+  },
+  "privacy": {
+    "pii_handling": "minimized",
+    "contact_data_class": "business_contact_only",
+    "retention_days": 30,
+    "compliance": ["CAN-SPAM", "GDPR_legitimate_interest", "CCPA"],
+    "data_sources": ["public_business_listings", "public_review_platforms", "public_web_crawl", "licensed_firmographic_providers"]
+  },
+  "confidence": {
+    "provided": true,
+    "scope": "top_level_per_response",
+    "fields": ["score", "level", "rationale"]
+  },
+  "execution_gate_required": {
+    "POST /contact-lead": true
+  },
+  "human_approval_required": {
+    "POST /contact-lead": true,
+    "reason": "Outbound contact to a real business is an irreversible, outward-facing action requiring explicit human approval token."
+  },
+  "chain_to": [
+    { "api": "Restaurant Growth Opportunity API", "endpoint": "POST /analyze-growth-opportunity", "reason": "Quantify the revenue gap to strengthen the pitch." },
+    { "api": "Restaurant AI Consultant API", "endpoint": "POST /full-consulting-audit", "reason": "Produce a deliverable audit to attach to outreach." },
+    { "api": "Review Sentiment API", "endpoint": "POST /analyze-review-sentiment", "reason": "Back the review-pain angle with hard data." }
+  ],
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "Run /run-lead-pipeline for the target territory and ICP." },
+    { "priority": 2, "action": "Review qualified_leads sorted by lead_score; enrich any missing top-N." },
+    { "priority": 3, "action": "Generate or refine outreach angle per lead." },
+    { "priority": 4, "action": "Submit /contact-lead for human approval before any send." }
+  ],
+  "examplePrompts": [
+    "Find me 25 Italian restaurants in Austin that need review management and rank them.",
+    "Enrich the top 5 leads with owner contact info and draft a consultative outreach email each.",
+    "Export my qualified Austin restaurant leads as a HubSpot payload.",
+    "Which of these leads has the highest likelihood to buy online-ordering setup?"
+  ],
+  "metadata": {
+    "agent_callable": true,
+    "mcp_compatible": true,
+    "one_call_workflow": "POST /run-lead-pipeline",
+    "recurring_call_volume": "high"
+  }
+}

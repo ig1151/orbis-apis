@@ -1,0 +1,668 @@
+openapi: 3.1.0
+info:
+  title: Local Restaurant Discovery API
+  version: 1.0.0
+  summary: Discover and rank restaurants by location, intent, dietary need, occasion, budget, and quality with match scores and confidence.
+  description: >-
+    Agent-native discovery for the restaurant vertical. Given a location and an
+    intent (occasion, dietary needs, budget, party context), returns
+    ranked_restaurants with match_score, cuisine_match, distance, price_level,
+    review_summary, dietary_fit, and best_for. Built for assistant, concierge,
+    and local-business agents that make repeated discovery calls.
+  contact:
+    name: Restaurant Agent Commerce APIs
+    url: https://api.restaurant-agent-commerce.com
+  license:
+    name: Commercial
+    url: https://api.restaurant-agent-commerce.com/license
+
+x-agent-callable: true
+x-mcp-compatible: true
+x-pricing:
+  model: per_call
+  currency: USD
+  billing: prepaid_credits
+  free_endpoints:
+    - "GET /"
+  endpoint_pricing:
+    "GET /": 0.00
+    "POST /discover-restaurants": 0.02
+    "POST /rank-restaurants": 0.01
+    "POST /match-restaurant-to-intent": 0.03
+    "POST /compare-local-options": 0.03
+  notes: >-
+    Discovery-tier pricing for high-volume calls. match-restaurant-to-intent is
+    the one-call workflow returning ranked, intent-matched results.
+x-privacy:
+  pii_handling: none
+  user_query_logging: ephemeral
+  retention_days: 7
+  compliance:
+    - CCPA
+    - GDPR_legitimate_interest
+  data_sources:
+    - public_business_listings
+    - public_review_platforms
+    - public_menu_data
+    - geocoding
+x-chain-to:
+  - api: Reservation Intelligence API
+    endpoint: POST /find-availability
+    reason: Check open tables at the top-ranked match.
+  - api: Multi-Restaurant Ordering API
+    endpoint: POST /build-order
+    reason: Start an order from the discovered restaurant.
+  - api: Review Sentiment API
+    endpoint: POST /analyze-review-sentiment
+    reason: Validate the pick with deeper review intelligence.
+
+servers:
+  - url: https://api.restaurant-agent-commerce.com/discovery/v1
+    description: Production
+
+security:
+  - ApiKeyAuth: []
+
+tags:
+  - name: discovery
+  - name: ranking
+  - name: workflow
+
+paths:
+  /:
+    get:
+      operationId: getDiscovery
+      tags: [discovery]
+      summary: Service discovery and capability manifest.
+      description: Zero-cost capability manifest with endpoints, pricing, chaining, and envelope metadata.
+      security: []
+      x-pricing: { price: 0.00 }
+      responses:
+        "200":
+          description: Capability manifest.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DiscoveryResponse" }
+
+  /discover-restaurants:
+    post:
+      operationId: discoverRestaurants
+      tags: [discovery]
+      summary: Find restaurants matching basic location and filters.
+      description: Returns candidate restaurants for a location with light filtering. Cheap, high-volume.
+      x-pricing: { price: 0.02 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DiscoverRequest" }
+            example:
+              location: { city: Austin, state: TX, radius_miles: 5 }
+              cuisine: [italian, mexican]
+              price_level: [1, 2, 3]
+              open_now: true
+              limit: 20
+      responses:
+        "200":
+          description: Candidate restaurants.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DiscoverResponse" }
+              example:
+                request_id: req_7b21e0aa4c8d9f33
+                source_freshness:
+                  data_freshness_days: 1
+                  last_verified_at: '2026-06-04T09:15:00Z'
+                  source_urls:
+                  - https://public-listings.example.com/austin/restaurants
+                confidence:
+                  score: 0.86
+                  level: high
+                  rationale: Location resolved cleanly and open_now status verified against current hours data.
+                privacy:
+                  pii_included: false
+                  user_query_logging: ephemeral
+                  retention_days: 7
+                  compliance:
+                  - CCPA
+                  - GDPR_legitimate_interest
+                  data_sources:
+                  - public_business_listings
+                  - public_review_platforms
+                  - geocoding
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Rank these candidates by quality and fit before presenting to the user.
+                  rationale: Discovery returns unranked candidates; ranking improves relevance.
+                  chain_to_endpoint: POST /rank-restaurants
+                - priority: 2
+                  action: Start an order from a discovered restaurant.
+                  rationale: User may want to order directly from a nearby match.
+                  chain_to_endpoint: POST /build-order
+                chain_to:
+                - api: Multi-Restaurant Ordering API
+                  endpoint: POST /build-order
+                  reason: Start an order from the discovered restaurant.
+                - api: Reservation Intelligence API
+                  endpoint: POST /find-availability
+                  reason: Check open tables at the top-ranked match.
+                total_found: 2
+                restaurants:
+                - restaurant_id: r_austin_1042
+                  name: Trattoria Sole
+                  address: 1208 W 6th St, Austin, TX 78703
+                  cuisine:
+                  - italian
+                  - mediterranean
+                  match_score: 82.0
+                  cuisine_match: 1.0
+                  distance:
+                    miles: 1.4
+                    minutes_drive: 7
+                  price_level: 3
+                  review_summary:
+                    rating: 4.6
+                    review_count: 1287
+                    highlight: Handmade pasta and attentive service.
+                  dietary_fit:
+                    score: 0.9
+                    satisfied:
+                    - vegetarian_options
+                    unmet: []
+                  best_for:
+                  - casual
+                  - date_night
+                - restaurant_id: r_austin_2289
+                  name: El Patio Cantina
+                  address: 2900 Guadalupe St, Austin, TX 78705
+                  cuisine:
+                  - mexican
+                  match_score: 78.5
+                  cuisine_match: 1.0
+                  distance:
+                    miles: 3.1
+                    minutes_drive: 13
+                  price_level: 2
+                  review_summary:
+                    rating: 4.3
+                    review_count: 964
+                    highlight: Lively patio known for fresh tacos and house margaritas.
+                  dietary_fit:
+                    score: 0.75
+                    satisfied:
+                    - vegetarian_options
+                    unmet:
+                    - gluten_free
+                  best_for:
+                  - casual
+                  - group
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "402": { $ref: "#/components/responses/PaymentRequired" }
+
+  /rank-restaurants:
+    post:
+      operationId: rankRestaurants
+      tags: [ranking]
+      summary: Rank a candidate set by quality and fit.
+      description: Returns ranked_restaurants ordered by a composite quality/fit score.
+      x-pricing: { price: 0.01 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RankRequest" }
+            example:
+              restaurants:
+                - { restaurant_id: "r_1", name: "Trattoria Sole" }
+                - { restaurant_id: "r_2", name: "La Bottega" }
+              weight: { rating: 0.5, distance: 0.2, price: 0.3 }
+      responses:
+        "200":
+          description: Ranked restaurants.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RankResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "402": { $ref: "#/components/responses/PaymentRequired" }
+
+  /match-restaurant-to-intent:
+    post:
+      operationId: matchRestaurantToIntent
+      tags: [ranking, workflow]
+      summary: One-call workflow — discover and rank by full intent.
+      description: >-
+        Returns ranked_restaurants with match_score, cuisine_match, distance,
+        price_level, review_summary, dietary_fit, and best_for, matched to a
+        full intent (occasion, dietary, budget, party context).
+      x-pricing: { price: 0.03 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/IntentMatchRequest" }
+            example:
+              location: { city: Austin, state: TX, radius_miles: 5 }
+              intent:
+                occasion: date_night
+                dietary: [vegetarian_options, gluten_free]
+                budget_per_person_usd: 45
+                party_size: 2
+                vibe: [romantic, quiet]
+              limit: 10
+      responses:
+        "200":
+          description: Intent-matched ranked restaurants.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/IntentMatchResponse" }
+              example:
+                request_id: req_d3f8a1c2b9e74f60
+                source_freshness:
+                  data_freshness_days: 2
+                  last_verified_at: '2026-06-03T18:42:00Z'
+                  source_urls:
+                  - https://public-listings.example.com/austin/restaurants
+                  - https://reviews.example.com/austin
+                confidence:
+                  score: 0.91
+                  level: high
+                  rationale: Strong cuisine and dietary signal coverage for all top matches; budget and vibe well represented in local inventory.
+                privacy:
+                  pii_included: false
+                  user_query_logging: ephemeral
+                  retention_days: 7
+                  compliance:
+                  - CCPA
+                  - GDPR_legitimate_interest
+                  data_sources:
+                  - public_business_listings
+                  - public_review_platforms
+                  - public_menu_data
+                  - geocoding
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Check open tables at the top-ranked match for 2 at your preferred time.
+                  rationale: Highest match_score and best dietary fit for the date_night intent.
+                  chain_to_endpoint: POST /find-availability
+                - priority: 2
+                  action: Validate the pick with deeper review sentiment analysis.
+                  rationale: Confirm the romantic, quiet vibe holds up across recent reviews.
+                  chain_to_endpoint: POST /analyze-review-sentiment
+                chain_to:
+                - api: Reservation Intelligence API
+                  endpoint: POST /find-availability
+                  reason: Check open tables at the top-ranked match.
+                - api: Review Sentiment API
+                  endpoint: POST /analyze-review-sentiment
+                  reason: Validate the pick with deeper review intelligence.
+                ranked_restaurants:
+                - restaurant_id: r_austin_1042
+                  name: Trattoria Sole
+                  address: 1208 W 6th St, Austin, TX 78703
+                  cuisine:
+                  - italian
+                  - mediterranean
+                  match_score: 94.5
+                  cuisine_match: 0.97
+                  distance:
+                    miles: 1.4
+                    minutes_drive: 7
+                  price_level: 3
+                  review_summary:
+                    rating: 4.6
+                    review_count: 1287
+                    highlight: Intimate candlelit dining room praised for handmade pasta and attentive service.
+                  dietary_fit:
+                    score: 0.95
+                    satisfied:
+                    - vegetarian_options
+                    - gluten_free
+                    unmet: []
+                  best_for:
+                  - date_night
+                  - romantic
+                  - quiet
+                - restaurant_id: r_austin_0731
+                  name: La Bottega
+                  address: 455 S Lamar Blvd, Austin, TX 78704
+                  cuisine:
+                  - italian
+                  match_score: 88.2
+                  cuisine_match: 0.9
+                  distance:
+                    miles: 2.6
+                    minutes_drive: 11
+                  price_level: 3
+                  review_summary:
+                    rating: 4.4
+                    review_count: 842
+                    highlight: Cozy wine bar with a quiet back patio, strong gluten-free menu.
+                  dietary_fit:
+                    score: 0.82
+                    satisfied:
+                    - gluten_free
+                    unmet:
+                    - vegetarian_options
+                  best_for:
+                  - date_night
+                  - quiet
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "402": { $ref: "#/components/responses/PaymentRequired" }
+
+  /compare-local-options:
+    post:
+      operationId: compareLocalOptions
+      tags: [ranking]
+      summary: Head-to-head comparison of specific restaurants.
+      description: Returns a structured comparison matrix across selected dimensions.
+      x-pricing: { price: 0.03 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CompareRequest" }
+            example:
+              restaurant_ids: ["r_1", "r_2", "r_3"]
+              dimensions: [rating, price_level, dietary_fit, distance, wait_time]
+      responses:
+        "200":
+          description: Comparison matrix.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CompareResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "402": { $ref: "#/components/responses/PaymentRequired" }
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Per-agent API key. Bills against prepaid credits.
+
+  responses:
+    BadRequest:
+      description: Malformed or invalid request.
+      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+    Unauthorized:
+      description: Missing or invalid API key.
+      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+    PaymentRequired:
+      description: Insufficient prepaid credits.
+      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+
+  schemas:
+    Confidence:
+      type: object
+      additionalProperties: false
+      required: [score, level]
+      properties:
+        score: { type: number, minimum: 0, maximum: 1 }
+        level: { type: string, enum: [high, medium, low] }
+        rationale: { type: string }
+    Privacy:
+      type: object
+      additionalProperties: false
+      required: [pii_included, retention_days]
+      properties:
+        pii_included: { type: boolean }
+        user_query_logging: { type: string, enum: [ephemeral, none], default: ephemeral }
+        retention_days: { type: integer }
+        compliance: { type: array, items: { type: string } }
+        data_sources: { type: array, items: { type: string } }
+    RecommendedAction:
+      type: object
+      additionalProperties: false
+      required: [priority, action]
+      properties:
+        priority: { type: integer, minimum: 1 }
+        action: { type: string }
+        rationale: { type: string }
+        chain_to_endpoint: { type: string }
+    ChainTo:
+      type: object
+      additionalProperties: false
+      required: [api, endpoint, reason]
+      properties:
+        api: { type: string }
+        endpoint: { type: string }
+        reason: { type: string }
+    ResponseMeta:
+      description: Top-level envelope fields attached once per response (never nested).
+      type: object
+      required: [request_id, confidence, privacy, recommended_actions_priority_order, chain_to]
+      properties:
+        request_id: { type: string }
+        source_freshness:
+          type: object
+          description: Provenance/recency of the underlying data used in this response.
+          additionalProperties: false
+          properties:
+            data_freshness_days: { type: integer }
+            last_verified_at: { type: string, format: date-time }
+            source_urls: { type: array, items: { type: string, format: uri } }
+        confidence: { $ref: "#/components/schemas/Confidence" }
+        privacy: { $ref: "#/components/schemas/Privacy" }
+        recommended_actions_priority_order:
+          type: array
+          items: { $ref: "#/components/schemas/RecommendedAction" }
+        chain_to:
+          type: array
+          items: { $ref: "#/components/schemas/ChainTo" }
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            retriable: { type: boolean }
+    DiscoveryResponse:
+      type: object
+      additionalProperties: false
+      required: [service, version, agent_callable, mcp_compatible, auth, endpoints, one_call_workflow, confidence, privacy, recommended_actions_priority_order, chain_to]
+      properties:
+        confidence: { $ref: "#/components/schemas/Confidence" }
+        privacy: { $ref: "#/components/schemas/Privacy" }
+        recommended_actions_priority_order:
+          type: array
+          items: { $ref: "#/components/schemas/RecommendedAction" }
+        service: { type: string }
+        version: { type: string }
+        agent_callable: { type: boolean }
+        mcp_compatible: { type: boolean }
+        auth:
+          type: object
+          additionalProperties: false
+          properties:
+            type: { type: string }
+            header: { type: string }
+        endpoints:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              method: { type: string }
+              path: { type: string }
+              price_usd: { type: number }
+              gated: { type: boolean }
+        one_call_workflow: { type: string }
+        execution_gates: { type: array, items: { type: string } }
+        chain_to:
+          type: array
+          items: { $ref: "#/components/schemas/ChainTo" }
+
+    # ---------- domain ----------
+    Location:
+      type: object
+      additionalProperties: false
+      required: [city]
+      properties:
+        city: { type: string }
+        state: { type: string }
+        country: { type: string, default: US }
+        radius_miles: { type: number, default: 5 }
+        lat: { type: number }
+        lng: { type: number }
+    RankedRestaurant:
+      description: A ranked discovery result. Domain object — no envelope fields inside.
+      type: object
+      additionalProperties: false
+      required: [restaurant_id, name, match_score]
+      properties:
+        restaurant_id: { type: string }
+        name: { type: string }
+        address: { type: string }
+        cuisine: { type: array, items: { type: string } }
+        match_score: { type: number, minimum: 0, maximum: 100 }
+        cuisine_match: { type: number, minimum: 0, maximum: 1 }
+        distance:
+          type: object
+          additionalProperties: false
+          properties:
+            miles: { type: number }
+            minutes_drive: { type: number }
+        price_level: { type: integer, minimum: 1, maximum: 4 }
+        review_summary:
+          type: object
+          additionalProperties: false
+          properties:
+            rating: { type: number, minimum: 0, maximum: 5 }
+            review_count: { type: integer }
+            highlight: { type: string }
+        dietary_fit:
+          type: object
+          additionalProperties: false
+          properties:
+            score: { type: number, minimum: 0, maximum: 1 }
+            satisfied: { type: array, items: { type: string } }
+            unmet: { type: array, items: { type: string } }
+        best_for: { type: array, items: { type: string } }
+
+    DiscoverRequest:
+      type: object
+      additionalProperties: false
+      required: [location]
+      properties:
+        location: { $ref: "#/components/schemas/Location" }
+        cuisine: { type: array, items: { type: string } }
+        price_level: { type: array, items: { type: integer, minimum: 1, maximum: 4 } }
+        open_now: { type: boolean, default: false }
+        limit: { type: integer, default: 20, minimum: 1, maximum: 50 }
+    DiscoverResponse:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: "#/components/schemas/ResponseMeta"
+        - type: object
+          required: [restaurants, total_found]
+          properties:
+            total_found: { type: integer }
+            restaurants:
+              type: array
+              items: { $ref: "#/components/schemas/RankedRestaurant" }
+
+    RankRequest:
+      type: object
+      additionalProperties: false
+      required: [restaurants]
+      properties:
+        restaurants:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [restaurant_id, name]
+            properties:
+              restaurant_id: { type: string }
+              name: { type: string }
+        weight:
+          type: object
+          additionalProperties: false
+          properties:
+            rating: { type: number }
+            distance: { type: number }
+            price: { type: number }
+    RankResponse:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: "#/components/schemas/ResponseMeta"
+        - type: object
+          required: [ranked_restaurants]
+          properties:
+            ranked_restaurants:
+              type: array
+              items: { $ref: "#/components/schemas/RankedRestaurant" }
+
+    IntentMatchRequest:
+      type: object
+      additionalProperties: false
+      required: [location, intent]
+      properties:
+        location: { $ref: "#/components/schemas/Location" }
+        intent:
+          type: object
+          additionalProperties: false
+          properties:
+            occasion: { type: string, enum: [date_night, business_lunch, family, celebration, casual, solo, group] }
+            dietary: { type: array, items: { type: string } }
+            budget_per_person_usd: { type: number }
+            party_size: { type: integer }
+            vibe: { type: array, items: { type: string } }
+        limit: { type: integer, default: 10, minimum: 1, maximum: 50 }
+    IntentMatchResponse:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: "#/components/schemas/ResponseMeta"
+        - type: object
+          required: [ranked_restaurants]
+          properties:
+            ranked_restaurants:
+              type: array
+              items: { $ref: "#/components/schemas/RankedRestaurant" }
+
+    CompareRequest:
+      type: object
+      additionalProperties: false
+      required: [restaurant_ids, dimensions]
+      properties:
+        restaurant_ids: { type: array, items: { type: string } }
+        dimensions:
+          type: array
+          items: { type: string, enum: [rating, price_level, dietary_fit, distance, wait_time, cuisine_match] }
+    CompareResponse:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: "#/components/schemas/ResponseMeta"
+        - type: object
+          required: [comparison, winner]
+          properties:
+            winner:
+              type: object
+              additionalProperties: false
+              properties:
+                restaurant_id: { type: string }
+                reason: { type: string }
+            comparison:
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                required: [restaurant_id, name]
+                properties:
+                  restaurant_id: { type: string }
+                  name: { type: string }
+                  values:
+                    type: object
+                    additionalProperties: true
+                    description: Map of requested dimension -> value for this restaurant.

@@ -1,0 +1,73 @@
+{
+  "name": "Multi-Restaurant Ordering API",
+  "slug": "multi-restaurant-ordering",
+  "description": "Compare restaurants, build a multi-restaurant cart, estimate price with substitutions and dietary flags, prepare checkout, and place a human-approved order. /quick-order runs the full pipeline to a ready checkout in one call; /place-order is execution-gated. Built for concierge, assistant, and consumer-commerce agents.",
+  "category": "Commerce & Ordering",
+  "subcategory": "Food Delivery / Restaurant Vertical",
+  "version": "1.0.0",
+  "openapi_url": "https://api.restaurant-agent-commerce.com/ordering/v1/openapi.yaml",
+  "base_url": "https://api.restaurant-agent-commerce.com/ordering/v1",
+  "one_call_workflow_endpoint": "POST /quick-order",
+  "pricing_model": {
+    "type": "per_call",
+    "currency": "USD",
+    "billing": "prepaid_credits",
+    "free_tier": "GET / discovery is free; new keys include $5 trial credit."
+  },
+  "endpointPricing": {
+    "GET /": 0.0,
+    "POST /search-restaurants": 0.02,
+    "POST /build-order": 0.05,
+    "POST /price-order": 0.05,
+    "POST /prepare-checkout": 0.1,
+    "POST /place-order": 1.5,
+    "POST /quick-order": 0.2
+  },
+  "useCases": [
+    "Order Pad Thai from one restaurant and sushi from another in a single cart.",
+    "Price a cart with delivery fees, taxes, tip, and substitution options.",
+    "Prepare a checkout summary for a user to approve before paying.",
+    "Run a full quick-order pipeline and hand back a ready-to-approve checkout."
+  ],
+  "agentUseCases": [
+    { "agent": "concierge_agent", "workflow": "quick-order across cuisines, present checkout, then place-order on user approval." },
+    { "agent": "executive_assistant_agent", "workflow": "Combine team requests into one multi-restaurant cart with dietary flags." },
+    { "agent": "consumer_commerce_agent", "workflow": "Recurring household ordering with approval gating on payment." }
+  ],
+  "authentication": { "type": "api_key", "in": "header", "header_name": "X-API-Key" },
+  "privacy": {
+    "pii_handling": "minimized",
+    "delivery_address": "used_for_fulfillment_only",
+    "retention_days": 30,
+    "compliance": ["CCPA", "GDPR_legitimate_interest", "PCI_DSS_tokenized_payments"],
+    "data_sources": ["delivery_marketplace_apis", "public_menu_data", "geocoding"]
+  },
+  "confidence": { "provided": true, "scope": "top_level_per_response", "fields": ["score", "level", "rationale"] },
+  "execution_gate_required": { "POST /place-order": true },
+  "human_approval_required": {
+    "POST /place-order": true,
+    "reason": "Placing an order charges payment and is irreversible; an explicit human approval token is required before submission."
+  },
+  "chain_to": [
+    { "api": "Local Restaurant Discovery API", "endpoint": "POST /match-restaurant-to-intent", "reason": "Seed search with intent-matched restaurants." },
+    { "api": "Office Lunch Planner API", "endpoint": "POST /build-group-order", "reason": "Convert a team lunch into a multi-restaurant cart." },
+    { "api": "Reservation Intelligence API", "endpoint": "POST /find-availability", "reason": "Offer dine-in as an alternative to delivery." }
+  ],
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "Call /quick-order to assemble a ready checkout." },
+    { "priority": 2, "action": "Review total_cost, delivery_eta, and substitution_options." },
+    { "priority": 3, "action": "Place the order via gated /place-order after human approval." }
+  ],
+  "examplePrompts": [
+    "Order pad thai and a sushi platter from two places to one address.",
+    "What's the total with delivery and tip for this cart?",
+    "Build me a gluten-free dinner order from two restaurants.",
+    "Prepare checkout so I can approve before paying."
+  ],
+  "metadata": {
+    "agent_callable": true,
+    "mcp_compatible": true,
+    "one_call_workflow": "POST /quick-order",
+    "recurring_call_volume": "high"
+  }
+}

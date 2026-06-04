@@ -1,0 +1,72 @@
+{
+  "name": "Reservation Intelligence API",
+  "slug": "reservation-intelligence",
+  "description": "Find availability, recommend and optimize reservations, predict no-show risk, and prepare human-approved bookings. /recommend-reservation returns the best slot with availability, price_level, no_show_risk, and a recommendation_reason in one call; /prepare-reservation is execution-gated. Built for concierge, assistant, and restaurant-host agents.",
+  "category": "Commerce & Ordering",
+  "subcategory": "Reservations / Restaurant Vertical",
+  "version": "1.0.0",
+  "openapi_url": "https://api.restaurant-agent-commerce.com/reservations/v1/openapi.yaml",
+  "base_url": "https://api.restaurant-agent-commerce.com/reservations/v1",
+  "one_call_workflow_endpoint": "POST /recommend-reservation",
+  "pricing_model": {
+    "type": "per_call",
+    "currency": "USD",
+    "billing": "prepaid_credits",
+    "free_tier": "GET / discovery is free; new keys include $5 trial credit."
+  },
+  "endpointPricing": {
+    "GET /": 0.0,
+    "POST /find-availability": 0.03,
+    "POST /recommend-reservation": 0.15,
+    "POST /predict-no-show-risk": 0.1,
+    "POST /optimize-seating": 0.1,
+    "POST /prepare-reservation": 0.5
+  },
+  "useCases": [
+    "Find a table for 4 between 7 and 8:30 pm at an Italian spot tonight.",
+    "Recommend the best date-night reservation with a reason.",
+    "Predict no-show risk for a large party booked two weeks out.",
+    "Optimize tonight's table assignments to maximize covers."
+  ],
+  "agentUseCases": [
+    { "agent": "concierge_agent", "workflow": "recommend-reservation, confirm with the user, then prepare-reservation on approval." },
+    { "agent": "restaurant_host_agent", "workflow": "optimize-seating nightly and flag high no-show-risk bookings for deposits." },
+    { "agent": "executive_assistant_agent", "workflow": "Book business dinners with approval gating and deposit awareness." }
+  ],
+  "authentication": { "type": "api_key", "in": "header", "header_name": "X-API-Key" },
+  "privacy": {
+    "pii_handling": "minimized",
+    "guest_data": "name_and_party_only",
+    "retention_days": 30,
+    "compliance": ["CCPA", "GDPR_legitimate_interest"],
+    "data_sources": ["reservation_platform_apis", "public_business_listings", "caller_supplied_booking_details"]
+  },
+  "confidence": { "provided": true, "scope": "top_level_per_response", "fields": ["score", "level", "rationale"] },
+  "execution_gate_required": { "POST /prepare-reservation": true },
+  "human_approval_required": {
+    "POST /prepare-reservation": true,
+    "reason": "Making or modifying a reservation is outward-facing and may incur deposits/penalties; an explicit human approval token is required."
+  },
+  "chain_to": [
+    { "api": "Local Restaurant Discovery API", "endpoint": "POST /match-restaurant-to-intent", "reason": "Source candidate restaurants before checking availability." },
+    { "api": "Review Sentiment API", "endpoint": "POST /analyze-review-sentiment", "reason": "Validate a venue's reputation before booking." },
+    { "api": "Multi-Restaurant Ordering API", "endpoint": "POST /search-restaurants", "reason": "Offer delivery if no suitable table exists." }
+  ],
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "Call /recommend-reservation with party_size, occasion, time_window." },
+    { "priority": 2, "action": "Review no_show_risk and recommendation_reason; confirm with the user." },
+    { "priority": 3, "action": "Book via gated /prepare-reservation after human approval." }
+  ],
+  "examplePrompts": [
+    "Book a table for two for date night this Friday around 7.",
+    "What's the best Italian reservation near downtown tonight for 4?",
+    "How likely is this 6-top to no-show?",
+    "Optimize our table assignments for tonight's bookings."
+  ],
+  "metadata": {
+    "agent_callable": true,
+    "mcp_compatible": true,
+    "one_call_workflow": "POST /recommend-reservation",
+    "recurring_call_volume": "medium_high"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "name": "Review Sentiment API",
+  "slug": "review-sentiment",
+  "description": "Analyze restaurant reviews across Google, Yelp, TripAdvisor, DoorDash, and Uber Eats into a structured report: sentiment_score, review_velocity, complaint and praise themes, urgent_issues, fake_review_risk, recommended_responses, and reputation_score. Includes a cheap /monitor-review-risk endpoint for recurring reputation polling.",
+  "category": "Business Intelligence & Analytics",
+  "subcategory": "Reputation / Restaurant Vertical",
+  "version": "1.0.0",
+  "openapi_url": "https://api.restaurant-agent-commerce.com/review-sentiment/v1/openapi.yaml",
+  "base_url": "https://api.restaurant-agent-commerce.com/review-sentiment/v1",
+  "one_call_workflow_endpoint": "POST /analyze-review-sentiment",
+  "pricing_model": {
+    "type": "per_call",
+    "currency": "USD",
+    "billing": "prepaid_credits",
+    "free_tier": "GET / discovery is free; new keys include $5 trial credit."
+  },
+  "endpointPricing": {
+    "GET /": 0.0,
+    "POST /analyze-review-sentiment": 0.3,
+    "POST /detect-review-themes": 0.1,
+    "POST /identify-negative-review-drivers": 0.12,
+    "POST /generate-review-response-plan": 0.2,
+    "POST /monitor-review-risk": 0.05
+  },
+  "useCases": [
+    "Get a full structured reputation report for a restaurant in one call.",
+    "Poll review risk cheaply every day and alert when a critical issue or fake-review spike appears.",
+    "Identify the root drivers dragging down a restaurant's star rating.",
+    "Draft empathetic responses to recent negative reviews."
+  ],
+  "agentUseCases": [
+    { "agent": "reputation_agent", "workflow": "Run /monitor-review-risk daily; escalate to /analyze-review-sentiment when reputation_score drops or fake_review_risk rises." },
+    { "agent": "marketing_agent", "workflow": "Pull complaint_themes to brief content and promotions that counter the top objection." },
+    { "agent": "operator_agent", "workflow": "Use negative_drivers to fix the #1 operational issue, then re-measure in 30 days." }
+  ],
+  "authentication": { "type": "api_key", "in": "header", "header_name": "X-API-Key" },
+  "privacy": {
+    "pii_handling": "minimized",
+    "reviewer_identity": "anonymized",
+    "retention_days": 30,
+    "compliance": ["platform_tos_compliant", "CCPA", "GDPR_legitimate_interest"],
+    "data_sources": ["google_reviews_public", "yelp_public", "tripadvisor_public", "doordash_public", "ubereats_public"]
+  },
+  "confidence": { "provided": true, "scope": "top_level_per_response", "fields": ["score", "level", "rationale"] },
+  "execution_gate_required": {},
+  "human_approval_required": {
+    "_note": "Endpoints are read/analysis only and generate response DRAFTS, never posting to platforms; no execution gate required. Posting a response would be a separate gated action."
+  },
+  "chain_to": [
+    { "api": "Restaurant Growth Opportunity API", "endpoint": "POST /audit-reviews", "reason": "Fold review findings into a quantified growth analysis." },
+    { "api": "Restaurant Lead Generation API", "endpoint": "POST /generate-outreach-angle", "reason": "Use urgent_issues as a high-conviction outreach hook." },
+    { "api": "Restaurant AI Consultant API", "endpoint": "POST /full-consulting-audit", "reason": "Feed reputation_score into the consulting health score." }
+  ],
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "Run /analyze-review-sentiment for the full report." },
+    { "priority": 2, "action": "Triage urgent_issues by severity (critical first)." },
+    { "priority": 3, "action": "Generate response drafts for negative reviews." },
+    { "priority": 4, "action": "Schedule /monitor-review-risk for recurring alerts." }
+  ],
+  "examplePrompts": [
+    "What are people complaining about most for this restaurant across Google and Yelp?",
+    "Is this restaurant at risk of fake reviews right now?",
+    "Draft empathetic replies to the last 10 negative reviews.",
+    "Give me the reputation score and urgent issues for Trattoria Sole."
+  ],
+  "metadata": {
+    "agent_callable": true,
+    "mcp_compatible": true,
+    "one_call_workflow": "POST /analyze-review-sentiment",
+    "recurring_call_volume": "high"
+  }
+}

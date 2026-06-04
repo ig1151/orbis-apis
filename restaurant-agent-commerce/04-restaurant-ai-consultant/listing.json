@@ -1,0 +1,70 @@
+{
+  "name": "Restaurant AI Consultant API",
+  "slug": "restaurant-ai-consultant",
+  "description": "One-call full restaurant consulting audit. /full-consulting-audit returns an executive_summary, restaurant_health_score, revenue_risk_score, marketing/operations/review/competition sub-scores, a 90_day_action_plan, and an estimated_revenue_impact. Granular endpoints expose revenue-leak diagnosis, competitor benchmarking, and plan generation. Built for advisory, consultant, and operator agents.",
+  "category": "Business Intelligence & Analytics",
+  "subcategory": "Advisory / Restaurant Vertical",
+  "version": "1.0.0",
+  "openapi_url": "https://api.restaurant-agent-commerce.com/ai-consultant/v1/openapi.yaml",
+  "base_url": "https://api.restaurant-agent-commerce.com/ai-consultant/v1",
+  "one_call_workflow_endpoint": "POST /full-consulting-audit",
+  "pricing_model": {
+    "type": "per_call",
+    "currency": "USD",
+    "billing": "prepaid_credits",
+    "free_tier": "GET / discovery is free; new keys include $5 trial credit."
+  },
+  "endpointPricing": {
+    "GET /": 0.0,
+    "POST /full-consulting-audit": 5.0,
+    "POST /diagnose-revenue-leaks": 1.0,
+    "POST /benchmark-competitors": 0.75,
+    "POST /generate-90-day-plan": 2.0
+  },
+  "useCases": [
+    "Produce a complete, client-ready consulting audit for a restaurant in one call.",
+    "Quantify and rank where a restaurant is leaking revenue each month.",
+    "Benchmark a restaurant against its 5 nearest competitors.",
+    "Generate a phased 90-day turnaround plan with revenue impact per initiative."
+  ],
+  "agentUseCases": [
+    { "agent": "consultant_agent", "workflow": "Sell a fixed-fee audit; call /full-consulting-audit once per engagement and deliver the structured report." },
+    { "agent": "advisory_agent", "workflow": "Run /diagnose-revenue-leaks across a portfolio and prioritize the highest-loss locations." },
+    { "agent": "operator_agent", "workflow": "Quarterly self-audit; track health and risk scores over time." }
+  ],
+  "authentication": { "type": "api_key", "in": "header", "header_name": "X-API-Key" },
+  "privacy": {
+    "pii_handling": "none",
+    "data_subject": "business_entity_only",
+    "retention_days": 30,
+    "compliance": ["GDPR: business-data-focused; ensure lawful basis where personal data appears", "CCPA"],
+    "data_sources": ["public_business_listings", "public_review_platforms", "public_menu_data", "public_web_crawl", "local_market_data"]
+  },
+  "confidence": { "provided": true, "scope": "top_level_per_response_plus_field_level_on_estimates", "fields": ["score", "level", "rationale"] },
+  "execution_gate_required": {},
+  "human_approval_required": {
+    "_note": "Read/analysis only; no outward-facing or irreversible actions, so no execution gate required."
+  },
+  "chain_to": [
+    { "api": "Restaurant Growth Opportunity API", "endpoint": "POST /generate-growth-plan", "reason": "Drill into a single growth lever from the audit." },
+    { "api": "Review Sentiment API", "endpoint": "POST /analyze-review-sentiment", "reason": "Expand review_score with theme-level detail." },
+    { "api": "Restaurant Lead Generation API", "endpoint": "POST /generate-outreach-angle", "reason": "Package the audit as a pitch deliverable." }
+  ],
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "Run /full-consulting-audit for the restaurant." },
+    { "priority": 2, "action": "Address the highest revenue_risk_score driver first." },
+    { "priority": 3, "action": "Execute the 90_day_action_plan week_1 items and set KPIs." }
+  ],
+  "examplePrompts": [
+    "Give me a full consulting audit for Trattoria Sole with a 90-day plan.",
+    "Where is this restaurant leaking the most revenue each month?",
+    "Benchmark this restaurant against its 5 closest competitors.",
+    "What's this restaurant's health score and biggest risk?"
+  ],
+  "metadata": {
+    "agent_callable": true,
+    "mcp_compatible": true,
+    "one_call_workflow": "POST /full-consulting-audit",
+    "recurring_call_volume": "medium_high"
+  }
+}

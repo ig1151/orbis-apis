@@ -1,0 +1,70 @@
+{
+  "name": "Franchise Opportunity API",
+  "slug": "franchise-opportunity",
+  "description": "Identify, score, and produce due-diligence briefs for restaurant/franchise expansion and investment. /generate-investment-brief returns franchise_fit_score, market_demand_score, competition_intensity, estimated_startup_cost, payback_period_estimate, location_risks, and an opportunity_summary in one call. Built for investor, franchise-development, and advisory agents.",
+  "category": "Business Intelligence & Analytics",
+  "subcategory": "Investment / Restaurant Vertical",
+  "version": "1.0.0",
+  "openapi_url": "https://api.restaurant-agent-commerce.com/franchise/v1/openapi.yaml",
+  "base_url": "https://api.restaurant-agent-commerce.com/franchise/v1",
+  "one_call_workflow_endpoint": "POST /generate-investment-brief",
+  "pricing_model": {
+    "type": "per_call",
+    "currency": "USD",
+    "billing": "prepaid_credits",
+    "free_tier": "GET / discovery is free; new keys include $5 trial credit."
+  },
+  "endpointPricing": {
+    "GET /": 0.0,
+    "POST /analyze-franchise-opportunity": 1.0,
+    "POST /compare-franchise-markets": 0.75,
+    "POST /score-location-fit": 0.5,
+    "POST /generate-investment-brief": 8.0
+  },
+  "useCases": [
+    "Assess whether a fast-casual brand is a fit for the Austin market.",
+    "Compare Austin, Nashville, and Denver for a franchise rollout.",
+    "Score a specific storefront's fit and surface location risks.",
+    "Produce a full investment due-diligence brief with payback estimate."
+  ],
+  "agentUseCases": [
+    { "agent": "investor_agent", "workflow": "Compare markets, score the top site, then generate-investment-brief for the committee." },
+    { "agent": "franchise_development_agent", "workflow": "Screen inbound territories at scale with analyze-franchise-opportunity." },
+    { "agent": "advisory_agent", "workflow": "Bundle a paid due-diligence brief as a fixed-fee deliverable." }
+  ],
+  "authentication": { "type": "api_key", "in": "header", "header_name": "X-API-Key" },
+  "privacy": {
+    "pii_handling": "none",
+    "data_subject": "market_and_business_data_only",
+    "retention_days": 30,
+    "compliance": ["GDPR: business-data-focused; ensure lawful basis where personal data appears", "CCPA", "advisory_not_financial_advice"],
+    "data_sources": ["franchise_disclosure_documents_public", "census_and_demographic_data", "public_business_listings", "commercial_real_estate_data", "local_market_data"]
+  },
+  "confidence": { "provided": true, "scope": "top_level_per_response", "fields": ["score", "level", "rationale"] },
+  "execution_gate_required": {},
+  "human_approval_required": {
+    "_note": "All endpoints are analysis/advisory and output is explicitly not financial advice; no money is moved and no outward-facing action is taken, so no execution gate is required."
+  },
+  "chain_to": [
+    { "api": "Restaurant Growth Opportunity API", "endpoint": "POST /analyze-growth-opportunity", "reason": "Assess an existing unit's upside before acquiring." },
+    { "api": "Local Restaurant Discovery API", "endpoint": "POST /compare-local-options", "reason": "Map the competitive set around a candidate site." },
+    { "api": "Review Sentiment API", "endpoint": "POST /analyze-review-sentiment", "reason": "Gauge brand reputation in the target market." }
+  ],
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "Compare candidate markets with /compare-franchise-markets." },
+    { "priority": 2, "action": "Score the top site with /score-location-fit." },
+    { "priority": 3, "action": "Generate the full /generate-investment-brief for decision-makers." }
+  ],
+  "examplePrompts": [
+    "Is this fast-casual brand a good fit for Austin?",
+    "Compare Austin, Nashville, and Denver for a new franchise unit.",
+    "Score this storefront on South Lamar for the brand and list the risks.",
+    "Give me a full investment brief with startup cost and payback period."
+  ],
+  "metadata": {
+    "agent_callable": true,
+    "mcp_compatible": true,
+    "one_call_workflow": "POST /generate-investment-brief",
+    "recurring_call_volume": "medium"
+  }
+}

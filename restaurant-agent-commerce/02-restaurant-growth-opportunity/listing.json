@@ -1,0 +1,71 @@
+{
+  "name": "Restaurant Growth Opportunity API",
+  "slug": "restaurant-growth-opportunity",
+  "description": "Analyze any restaurant and get a quantified growth_score, missed_revenue_estimate, ranked top_opportunities, competitive_gaps, and a prioritized action plan. One-call /generate-growth-plan runs every audit and returns a deliverable roadmap. Built for marketing-agency, sales, and operator agents that diagnose accounts on every call.",
+  "category": "Business Intelligence & Analytics",
+  "subcategory": "Local Business / Restaurant Vertical",
+  "version": "1.0.0",
+  "openapi_url": "https://api.restaurant-agent-commerce.com/growth-opportunity/v1/openapi.yaml",
+  "base_url": "https://api.restaurant-agent-commerce.com/growth-opportunity/v1",
+  "one_call_workflow_endpoint": "POST /generate-growth-plan",
+  "pricing_model": {
+    "type": "per_call",
+    "currency": "USD",
+    "billing": "prepaid_credits",
+    "free_tier": "GET / discovery is free; new keys include $5 trial credit."
+  },
+  "endpointPricing": {
+    "GET /": 0.0,
+    "POST /analyze-growth-opportunity": 0.5,
+    "POST /audit-online-presence": 0.15,
+    "POST /audit-menu-pricing": 0.2,
+    "POST /audit-reviews": 0.15,
+    "POST /generate-growth-plan": 1.5
+  },
+  "useCases": [
+    "Quantify how much monthly revenue a restaurant is leaving on the table from weak local SEO and no online ordering.",
+    "Produce a 90-day prioritized growth plan a consultant can hand a client.",
+    "Benchmark a restaurant's review health and menu pricing against nearby competitors.",
+    "Generate the revenue-gap evidence that powers a sales pitch."
+  ],
+  "agentUseCases": [
+    { "agent": "marketing_agency_agent", "workflow": "Run /generate-growth-plan per prospect, lead the pitch with annual missed-revenue, and attach the phased plan." },
+    { "agent": "sales_agent", "workflow": "Chain from Lead Generation: analyze each qualified lead and prioritize outreach by missed_revenue_estimate." },
+    { "agent": "operator_agent", "workflow": "Self-audit monthly; track growth_score and execute the top-priority initiative." }
+  ],
+  "authentication": { "type": "api_key", "in": "header", "header_name": "X-API-Key" },
+  "privacy": {
+    "pii_handling": "none",
+    "data_subject": "business_entity_only",
+    "retention_days": 30,
+    "compliance": ["GDPR: business-data-focused; ensure lawful basis where personal data appears", "CCPA"],
+    "data_sources": ["public_business_listings", "public_review_platforms", "public_menu_data", "public_web_crawl", "local_search_serps"]
+  },
+  "confidence": { "provided": true, "scope": "top_level_per_response", "fields": ["score", "level", "rationale"] },
+  "execution_gate_required": {},
+  "human_approval_required": {
+    "_note": "No outward-facing or irreversible actions in this API; all endpoints are read/analysis only, so no execution gate is required."
+  },
+  "chain_to": [
+    { "api": "Restaurant Lead Generation API", "endpoint": "POST /generate-outreach-angle", "reason": "Convert quantified gaps into a tailored pitch." },
+    { "api": "Review Sentiment API", "endpoint": "POST /analyze-review-sentiment", "reason": "Deepen review_issues with theme-level sentiment." },
+    { "api": "Restaurant AI Consultant API", "endpoint": "POST /full-consulting-audit", "reason": "Escalate to a full consulting deliverable." }
+  ],
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "Run /generate-growth-plan for the restaurant." },
+    { "priority": 2, "action": "Sort plan initiatives by estimated_revenue_impact_usd." },
+    { "priority": 3, "action": "Execute the week_1 initiative first; re-audit in 30 days." }
+  ],
+  "examplePrompts": [
+    "How much revenue is Trattoria Sole missing each month and why?",
+    "Give me a 90-day growth plan for this restaurant ranked by revenue impact.",
+    "What are this restaurant's biggest competitive gaps within 3 miles?",
+    "Audit this restaurant's menu pricing and tell me what's underpriced."
+  ],
+  "metadata": {
+    "agent_callable": true,
+    "mcp_compatible": true,
+    "one_call_workflow": "POST /generate-growth-plan",
+    "recurring_call_volume": "high"
+  }
+}

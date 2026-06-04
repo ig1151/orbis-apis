@@ -1,0 +1,73 @@
+{
+  "name": "Office Lunch Planner API",
+  "slug": "office-lunch-planner",
+  "description": "Plan lunch for a team: collect preferences, build a group order, optimize to budget, and prepare a human-approved checkout. /plan-office-lunch returns suggested_order, per_person_cost, substitutions, delivery_eta, and approval_required in one call. Payment and order submission are execution-gated. Built for executive assistant and workplace-ops agents.",
+  "category": "Commerce & Ordering",
+  "subcategory": "Workplace / Restaurant Vertical",
+  "version": "1.0.0",
+  "openapi_url": "https://api.restaurant-agent-commerce.com/office-lunch/v1/openapi.yaml",
+  "base_url": "https://api.restaurant-agent-commerce.com/office-lunch/v1",
+  "one_call_workflow_endpoint": "POST /plan-office-lunch",
+  "pricing_model": {
+    "type": "per_call",
+    "currency": "USD",
+    "billing": "prepaid_credits",
+    "free_tier": "GET / discovery is free; new keys include $5 trial credit."
+  },
+  "endpointPricing": {
+    "GET /": 0.0,
+    "POST /plan-office-lunch": 0.25,
+    "POST /collect-preferences": 0.02,
+    "POST /build-group-order": 0.1,
+    "POST /optimize-budget": 0.05,
+    "POST /prepare-checkout": 0.1,
+    "POST /submit-order": 0.5
+  },
+  "useCases": [
+    "Plan a $240 lunch for 12 people with vegetarian, gluten-free, and nut-allergy constraints.",
+    "Optimize an over-budget group order down to a per-person cap.",
+    "Aggregate scattered team dietary preferences into a single order spec.",
+    "Prepare a checkout for manager approval before any payment."
+  ],
+  "agentUseCases": [
+    { "agent": "executive_assistant_agent", "workflow": "Weekly: /plan-office-lunch → present plan → /prepare-checkout for manager approval token." },
+    { "agent": "workplace_ops_agent", "workflow": "Recurring team-lunch automation with budget guardrails and approval gating." },
+    { "agent": "office_manager_agent", "workflow": "Collect RSVPs + diets, build the order, and route payment for sign-off." }
+  ],
+  "authentication": { "type": "api_key", "in": "header", "header_name": "X-API-Key" },
+  "privacy": {
+    "pii_handling": "minimized",
+    "attendee_data": "first_name_and_diet_only",
+    "retention_days": 14,
+    "compliance": ["CCPA", "GDPR_legitimate_interest"],
+    "data_sources": ["caller_supplied_preferences", "public_menu_data", "delivery_marketplace_apis"]
+  },
+  "confidence": { "provided": true, "scope": "top_level_per_response", "fields": ["score", "level", "rationale"] },
+  "execution_gate_required": { "POST /submit-order": true },
+  "human_approval_required": {
+    "POST /submit-order": true,
+    "reason": "Payment and final order submission move money and are irreversible; an explicit human approval token is required. /prepare-checkout is a no-charge-risk preview only."
+  },
+  "chain_to": [
+    { "api": "Local Restaurant Discovery API", "endpoint": "POST /match-restaurant-to-intent", "reason": "Source restaurants for the team's cuisine preferences." },
+    { "api": "Multi-Restaurant Ordering API", "endpoint": "POST /price-order", "reason": "Cross-check pricing across restaurants." },
+    { "api": "Catering Procurement API", "endpoint": "POST /source-catering-options", "reason": "Escalate large teams to catering." }
+  ],
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "Call /plan-office-lunch with people_count, budget, diets, cuisines." },
+    { "priority": 2, "action": "Review suggested_order, substitutions, and per_person_cost." },
+    { "priority": 3, "action": "Preview totals via /prepare-checkout, then submit /submit-order with a human approval token to pay." }
+  ],
+  "examplePrompts": [
+    "Plan lunch for 12 people, $240 budget, with vegetarian and gluten-free options.",
+    "Optimize this order to stay under $20 per person.",
+    "Build a Mediterranean group order for the team Thursday at noon.",
+    "Prepare checkout for my manager to approve."
+  ],
+  "metadata": {
+    "agent_callable": true,
+    "mcp_compatible": true,
+    "one_call_workflow": "POST /plan-office-lunch",
+    "recurring_call_volume": "high"
+  }
+}

@@ -1,0 +1,719 @@
+openapi: 3.1.0
+info:
+  title: Review Sentiment API
+  version: 1.0.0
+  summary: Analyze restaurant reviews across Google, Yelp, TripAdvisor, DoorDash, and Uber Eats into structured sentiment, themes, risks, and response plans.
+  description: >-
+    Agent-native review intelligence for restaurants. Aggregates reviews across
+    platforms and returns a sentiment_score, review_velocity, complaint and
+    praise themes, urgent_issues, fake_review_risk, recommended_responses, and a
+    reputation_score. Built for reputation, marketing, and operator agents that
+    monitor and act on review health repeatedly.
+  contact:
+    name: Restaurant Agent Commerce APIs
+    url: https://api.restaurant-agent-commerce.com
+  license:
+    name: Commercial
+    url: https://api.restaurant-agent-commerce.com/license
+
+x-agent-callable: true
+x-mcp-compatible: true
+x-pricing:
+  model: per_call
+  currency: USD
+  billing: prepaid_credits
+  free_endpoints:
+    - "GET /"
+  endpoint_pricing:
+    "GET /": 0.00
+    "POST /analyze-review-sentiment": 0.30
+    "POST /detect-review-themes": 0.10
+    "POST /identify-negative-review-drivers": 0.12
+    "POST /generate-review-response-plan": 0.20
+    "POST /monitor-review-risk": 0.05
+  notes: >-
+    analyze-review-sentiment is the one-call workflow returning the full
+    structured report; the others are granular drill-downs and a cheap monitor.
+x-privacy:
+  pii_handling: minimized
+  reviewer_identity: anonymized
+  retention_days: 30
+  compliance:
+    - platform_tos_compliant
+    - CCPA
+    - GDPR_legitimate_interest
+  data_sources:
+    - google_reviews_public
+    - yelp_public
+    - tripadvisor_public
+    - doordash_public
+    - ubereats_public
+x-chain-to:
+  - api: Restaurant Growth Opportunity API
+    endpoint: POST /audit-reviews
+    reason: Fold review findings into a quantified growth analysis.
+  - api: Restaurant Lead Generation API
+    endpoint: POST /generate-outreach-angle
+    reason: Use urgent_issues as a high-conviction outreach hook.
+  - api: Restaurant AI Consultant API
+    endpoint: POST /full-consulting-audit
+    reason: Feed reputation_score into the consulting health score.
+
+servers:
+  - url: https://api.restaurant-agent-commerce.com/review-sentiment/v1
+    description: Production
+
+security:
+  - ApiKeyAuth: []
+
+tags:
+  - name: discovery
+  - name: analysis
+  - name: monitoring
+  - name: workflow
+
+paths:
+  /:
+    get:
+      operationId: getDiscovery
+      tags: [discovery]
+      summary: Service discovery and capability manifest.
+      description: Zero-cost capability manifest with endpoints, pricing, chaining, and envelope metadata.
+      security: []
+      x-pricing: { price: 0.00 }
+      responses:
+        "200":
+          description: Capability manifest.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DiscoveryResponse" }
+
+  /analyze-review-sentiment:
+    post:
+      operationId: analyzeReviewSentiment
+      tags: [analysis, workflow]
+      summary: One-call workflow — full structured review report.
+      description: >-
+        Returns sentiment_score, review_velocity, complaint_themes,
+        praise_themes, urgent_issues, fake_review_risk, recommended_responses,
+        and reputation_score across all selected platforms in a single call.
+      x-pricing: { price: 0.30 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AnalyzeReviewsRequest" }
+            example:
+              restaurant: { name: "Trattoria Sole", city: Austin, state: TX }
+              platforms: [google, yelp, doordash]
+              lookback_days: 90
+      responses:
+        "200":
+          description: Full review sentiment report.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ReviewReportResponse" }
+              example:
+                request_id: req_rev_8f3a2c9d4e1b
+                source_freshness:
+                  data_freshness_days: 2
+                  last_verified_at: '2026-06-03T18:42:00Z'
+                  source_urls:
+                  - https://www.google.com/maps/place/Trattoria+Sole
+                  - https://www.yelp.com/biz/trattoria-sole-austin
+                  - https://www.doordash.com/store/trattoria-sole-austin
+                confidence:
+                  score: 0.86
+                  level: high
+                  rationale: 412 reviews aggregated across 3 platforms over a 90-day window; sample size and cross-platform agreement support high confidence.
+                privacy:
+                  pii_included: false
+                  reviewer_identity: anonymized
+                  retention_days: 30
+                  compliance:
+                  - platform_tos_compliant
+                  - CCPA
+                  - GDPR_legitimate_interest
+                  data_sources:
+                  - google_reviews_public
+                  - yelp_public
+                  - doordash_public
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Address recurring long-wait-time complaints during Friday and Saturday dinner service.
+                  rationale: Wait-time is the top complaint theme and is rising; it is the single largest drag on the sentiment score.
+                  chain_to_endpoint: POST /identify-negative-review-drivers
+                - priority: 2
+                  action: Draft and post empathetic responses to the 6 negative reviews from the last 14 days.
+                  rationale: Unanswered recent negatives compound reputational damage and signal disengagement to prospective diners.
+                  chain_to_endpoint: POST /generate-review-response-plan
+                - priority: 3
+                  action: Monitor for a coordinated 1-star burst flagged by the fake-review signals.
+                  rationale: A small cluster of low-detail 1-star reviews appeared within a 48-hour window and warrants ongoing watch.
+                  chain_to_endpoint: POST /monitor-review-risk
+                chain_to:
+                - api: Restaurant Growth Opportunity API
+                  endpoint: POST /audit-reviews
+                  reason: Fold review findings into a quantified growth analysis.
+                - api: Restaurant AI Consultant API
+                  endpoint: POST /full-consulting-audit
+                  reason: Feed reputation_score into the consulting health score.
+                sentiment_score: 0.42
+                reputation_score: 78
+                review_velocity:
+                  per_week: 11.3
+                  trend: rising
+                fake_review_risk:
+                  score: 0.31
+                  level: medium
+                  signals:
+                  - 3 one-star reviews posted within a 48-hour window
+                  - low-detail generic phrasing on flagged reviews
+                  - new reviewer accounts with no prior history
+                complaint_themes:
+                - theme: Long wait times on weekends
+                  mentions: 47
+                  sentiment: negative
+                  trend: rising
+                  example_quote: Waited 45 minutes past our reservation time on a Saturday night.
+                - theme: Inconsistent pasta portion sizes
+                  mentions: 22
+                  sentiment: negative
+                  trend: flat
+                  example_quote: The carbonara was half the size of what we got last visit for the same price.
+                - theme: DoorDash orders arriving cold
+                  mentions: 18
+                  sentiment: negative
+                  trend: rising
+                  example_quote: Delivery showed up lukewarm and the bread was soggy.
+                praise_themes:
+                - theme: Authentic handmade pasta
+                  mentions: 96
+                  sentiment: positive
+                  trend: flat
+                  example_quote: Best fresh pasta I've had outside of Italy, the ravioli is incredible.
+                - theme: Attentive and friendly service
+                  mentions: 64
+                  sentiment: positive
+                  trend: rising
+                  example_quote: Our server was warm, knowledgeable, and made great wine recommendations.
+                - theme: Cozy romantic atmosphere
+                  mentions: 41
+                  sentiment: positive
+                  trend: flat
+                  example_quote: Perfect ambiance for a date night, dim lighting and not too loud.
+                urgent_issues:
+                - issue: Multiple recent reports of undercooked chicken in the pollo dishes
+                  severity: critical
+                  platform: yelp
+                  first_seen: '2026-05-29T20:15:00Z'
+                  recommended_action: Investigate kitchen temperature controls immediately and respond publicly to affected reviewers.
+                - issue: Repeated billing discrepancies cited on weekend checks
+                  severity: high
+                  platform: google
+                  first_seen: '2026-05-25T13:30:00Z'
+                  recommended_action: Audit POS configuration and retrain weekend front-of-house staff.
+                recommended_responses:
+                - review_excerpt: Waited 45 minutes past our reservation time on a Saturday night.
+                  platform: google
+                  rating: 2
+                  draft_response: We're truly sorry your Saturday reservation was delayed. That falls short of the experience we want to provide, and we're adjusting our weekend seating flow. We'd love to make it right on your next visit.
+                  tone: empathetic
+                - review_excerpt: Delivery showed up lukewarm and the bread was soggy.
+                  platform: doordash
+                  rating: 2
+                  draft_response: Thank you for flagging this. Cold delivery is unacceptable to us, and we're reworking our packaging and handoff timing with couriers. Please reach out so we can make this right.
+                  tone: empathetic
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "402": { $ref: "#/components/responses/PaymentRequired" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /detect-review-themes:
+    post:
+      operationId: detectReviewThemes
+      tags: [analysis]
+      summary: Extract complaint and praise themes with volume and trend.
+      description: Returns complaint_themes and praise_themes with mention counts and trend direction.
+      x-pricing: { price: 0.10 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AnalyzeReviewsRequest" }
+            example:
+              restaurant: { name: "Trattoria Sole", city: Austin, state: TX }
+              platforms: [google, yelp]
+              lookback_days: 60
+      responses:
+        "200":
+          description: Detected themes.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ThemesResponse" }
+              example:
+                request_id: req_themes_2b71e6a90c4f
+                source_freshness:
+                  data_freshness_days: 1
+                  last_verified_at: '2026-06-04T09:10:00Z'
+                  source_urls:
+                  - https://www.google.com/maps/place/Trattoria+Sole
+                  - https://www.yelp.com/biz/trattoria-sole-austin
+                confidence:
+                  score: 0.81
+                  level: high
+                  rationale: 268 reviews across Google and Yelp over a 60-day window; theme clustering stable across both sources.
+                privacy:
+                  pii_included: false
+                  reviewer_identity: anonymized
+                  retention_days: 30
+                  compliance:
+                  - platform_tos_compliant
+                  - CCPA
+                  - GDPR_legitimate_interest
+                  data_sources:
+                  - google_reviews_public
+                  - yelp_public
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Prioritize the rising weekend wait-time complaint theme in operations review.
+                  rationale: It is the highest-volume negative theme and is trending upward.
+                  chain_to_endpoint: POST /identify-negative-review-drivers
+                - priority: 2
+                  action: Amplify the strong handmade-pasta praise theme in marketing copy.
+                  rationale: It is the dominant positive driver and a clear differentiator worth promoting.
+                  chain_to_endpoint: POST /analyze-review-sentiment
+                chain_to:
+                - api: Restaurant Growth Opportunity API
+                  endpoint: POST /audit-reviews
+                  reason: Fold review findings into a quantified growth analysis.
+                - api: Restaurant Lead Generation API
+                  endpoint: POST /generate-outreach-angle
+                  reason: Use urgent_issues as a high-conviction outreach hook.
+                complaint_themes:
+                - theme: Long wait times on weekends
+                  mentions: 38
+                  sentiment: negative
+                  trend: rising
+                  example_quote: Waited 45 minutes past our reservation time on a Saturday night.
+                - theme: Noise level too high when busy
+                  mentions: 19
+                  sentiment: negative
+                  trend: flat
+                  example_quote: Could barely hear my date once the dining room filled up.
+                - theme: Limited vegetarian options
+                  mentions: 12
+                  sentiment: mixed
+                  trend: flat
+                  example_quote: Great food but only two vegetarian mains to choose from.
+                praise_themes:
+                - theme: Authentic handmade pasta
+                  mentions: 88
+                  sentiment: positive
+                  trend: flat
+                  example_quote: Best fresh pasta I've had outside of Italy, the ravioli is incredible.
+                - theme: Attentive and friendly service
+                  mentions: 57
+                  sentiment: positive
+                  trend: rising
+                  example_quote: Our server was warm, knowledgeable, and made great wine recommendations.
+                - theme: Excellent wine list
+                  mentions: 33
+                  sentiment: positive
+                  trend: flat
+                  example_quote: The Italian wine selection is deep and the by-the-glass options are well chosen.
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "402": { $ref: "#/components/responses/PaymentRequired" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /identify-negative-review-drivers:
+    post:
+      operationId: identifyNegativeReviewDrivers
+      tags: [analysis]
+      summary: Rank the root drivers behind negative reviews.
+      description: Returns ranked negative drivers with impact on rating and example quotes.
+      x-pricing: { price: 0.12 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AnalyzeReviewsRequest" }
+            example:
+              restaurant: { name: "Trattoria Sole", city: Austin, state: TX }
+              platforms: [google, yelp, doordash]
+              lookback_days: 90
+      responses:
+        "200":
+          description: Ranked negative drivers.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/NegativeDriversResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "402": { $ref: "#/components/responses/PaymentRequired" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /generate-review-response-plan:
+    post:
+      operationId: generateReviewResponsePlan
+      tags: [analysis]
+      summary: Draft recommended responses for recent/negative reviews.
+      description: >-
+        Produces recommended_responses (drafts only — not posted). Posting to a
+        platform is out of scope and would require a separate gated action.
+      x-pricing: { price: 0.20 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ResponsePlanRequest" }
+            example:
+              restaurant: { name: "Trattoria Sole", city: Austin, state: TX }
+              target: negative_only
+              tone: empathetic
+              max_responses: 10
+      responses:
+        "200":
+          description: Recommended response drafts.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ResponsePlanResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "402": { $ref: "#/components/responses/PaymentRequired" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /monitor-review-risk:
+    post:
+      operationId: monitorReviewRisk
+      tags: [monitoring]
+      summary: Cheap recurring risk check for reputation alerts.
+      description: >-
+        Low-cost endpoint for repeated polling. Returns reputation_score,
+        review_velocity, fake_review_risk, and any new urgent_issues since a
+        provided checkpoint.
+      x-pricing: { price: 0.05 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MonitorRequest" }
+            example:
+              restaurant: { name: "Trattoria Sole", city: Austin, state: TX }
+              since: "2026-05-28T00:00:00Z"
+      responses:
+        "200":
+          description: Current risk snapshot.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MonitorResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "402": { $ref: "#/components/responses/PaymentRequired" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Per-agent API key. Bills against prepaid credits.
+
+  responses:
+    BadRequest:
+      description: Malformed or invalid request.
+      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+    Unauthorized:
+      description: Missing or invalid API key.
+      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+    PaymentRequired:
+      description: Insufficient prepaid credits.
+      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+    NotFound:
+      description: Restaurant could not be resolved.
+      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+
+  schemas:
+    Confidence:
+      type: object
+      additionalProperties: false
+      required: [score, level]
+      properties:
+        score: { type: number, minimum: 0, maximum: 1 }
+        level: { type: string, enum: [high, medium, low] }
+        rationale: { type: string }
+    Privacy:
+      type: object
+      additionalProperties: false
+      required: [pii_included, retention_days]
+      properties:
+        pii_included: { type: boolean }
+        reviewer_identity: { type: string, enum: [anonymized, none], default: anonymized }
+        retention_days: { type: integer }
+        compliance: { type: array, items: { type: string } }
+        data_sources: { type: array, items: { type: string } }
+    RecommendedAction:
+      type: object
+      additionalProperties: false
+      required: [priority, action]
+      properties:
+        priority: { type: integer, minimum: 1 }
+        action: { type: string }
+        rationale: { type: string }
+        chain_to_endpoint: { type: string }
+    ChainTo:
+      type: object
+      additionalProperties: false
+      required: [api, endpoint, reason]
+      properties:
+        api: { type: string }
+        endpoint: { type: string }
+        reason: { type: string }
+    ResponseMeta:
+      description: Top-level envelope fields attached once per response (never nested).
+      type: object
+      required: [request_id, confidence, privacy, recommended_actions_priority_order, chain_to]
+      properties:
+        request_id: { type: string }
+        source_freshness:
+          type: object
+          description: Provenance/recency of the underlying data used in this response.
+          additionalProperties: false
+          properties:
+            data_freshness_days: { type: integer }
+            last_verified_at: { type: string, format: date-time }
+            source_urls: { type: array, items: { type: string, format: uri } }
+        confidence: { $ref: "#/components/schemas/Confidence" }
+        privacy: { $ref: "#/components/schemas/Privacy" }
+        recommended_actions_priority_order:
+          type: array
+          items: { $ref: "#/components/schemas/RecommendedAction" }
+        chain_to:
+          type: array
+          items: { $ref: "#/components/schemas/ChainTo" }
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            retriable: { type: boolean }
+    DiscoveryResponse:
+      type: object
+      additionalProperties: false
+      required: [service, version, agent_callable, mcp_compatible, auth, endpoints, one_call_workflow, confidence, privacy, recommended_actions_priority_order, chain_to]
+      properties:
+        confidence: { $ref: "#/components/schemas/Confidence" }
+        privacy: { $ref: "#/components/schemas/Privacy" }
+        recommended_actions_priority_order:
+          type: array
+          items: { $ref: "#/components/schemas/RecommendedAction" }
+        service: { type: string }
+        version: { type: string }
+        agent_callable: { type: boolean }
+        mcp_compatible: { type: boolean }
+        auth:
+          type: object
+          additionalProperties: false
+          properties:
+            type: { type: string }
+            header: { type: string }
+        endpoints:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              method: { type: string }
+              path: { type: string }
+              price_usd: { type: number }
+              gated: { type: boolean }
+        one_call_workflow: { type: string }
+        execution_gates: { type: array, items: { type: string } }
+        chain_to:
+          type: array
+          items: { $ref: "#/components/schemas/ChainTo" }
+
+    # ---------- domain ----------
+    RestaurantRef:
+      type: object
+      additionalProperties: false
+      required: [name]
+      properties:
+        name: { type: string }
+        place_id: { type: string }
+        city: { type: string }
+        state: { type: string }
+        country: { type: string, default: US }
+    Theme:
+      type: object
+      additionalProperties: false
+      required: [theme, mentions, sentiment]
+      properties:
+        theme: { type: string }
+        mentions: { type: integer }
+        sentiment: { type: string, enum: [positive, negative, mixed] }
+        trend: { type: string, enum: [rising, flat, declining] }
+        example_quote: { type: string }
+    UrgentIssue:
+      type: object
+      additionalProperties: false
+      required: [issue, severity]
+      properties:
+        issue: { type: string }
+        severity: { type: string, enum: [high, critical] }
+        platform: { type: string }
+        first_seen: { type: string, format: date-time }
+        recommended_action: { type: string }
+    RecommendedResponse:
+      type: object
+      additionalProperties: false
+      required: [review_excerpt, draft_response]
+      properties:
+        review_excerpt: { type: string }
+        platform: { type: string }
+        rating: { type: number, minimum: 0, maximum: 5 }
+        draft_response: { type: string }
+        tone: { type: string }
+    AnalyzeReviewsRequest:
+      type: object
+      additionalProperties: false
+      required: [restaurant]
+      properties:
+        restaurant: { $ref: "#/components/schemas/RestaurantRef" }
+        platforms:
+          type: array
+          items: { type: string, enum: [google, yelp, tripadvisor, doordash, ubereats] }
+        lookback_days: { type: integer, default: 90 }
+
+    # ---------- analyze-review-sentiment (one-call workflow) ----------
+    ReviewReportResponse:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: "#/components/schemas/ResponseMeta"
+        - type: object
+          required: [sentiment_score, review_velocity, complaint_themes, praise_themes, urgent_issues, fake_review_risk, recommended_responses, reputation_score]
+          properties:
+            sentiment_score: { type: number, minimum: -1, maximum: 1, description: Net sentiment from -1 (negative) to +1 (positive). }
+            reputation_score: { type: number, minimum: 0, maximum: 100 }
+            review_velocity:
+              type: object
+              additionalProperties: false
+              required: [per_week, trend]
+              properties:
+                per_week: { type: number }
+                trend: { type: string, enum: [rising, flat, declining] }
+            fake_review_risk:
+              type: object
+              additionalProperties: false
+              required: [score, level]
+              properties:
+                score: { type: number, minimum: 0, maximum: 1 }
+                level: { type: string, enum: [low, medium, high] }
+                signals: { type: array, items: { type: string } }
+            complaint_themes:
+              type: array
+              items: { $ref: "#/components/schemas/Theme" }
+            praise_themes:
+              type: array
+              items: { $ref: "#/components/schemas/Theme" }
+            urgent_issues:
+              type: array
+              items: { $ref: "#/components/schemas/UrgentIssue" }
+            recommended_responses:
+              type: array
+              items: { $ref: "#/components/schemas/RecommendedResponse" }
+
+    ThemesResponse:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: "#/components/schemas/ResponseMeta"
+        - type: object
+          required: [complaint_themes, praise_themes]
+          properties:
+            complaint_themes:
+              type: array
+              items: { $ref: "#/components/schemas/Theme" }
+            praise_themes:
+              type: array
+              items: { $ref: "#/components/schemas/Theme" }
+
+    NegativeDriversResponse:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: "#/components/schemas/ResponseMeta"
+        - type: object
+          required: [negative_drivers]
+          properties:
+            negative_drivers:
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                required: [driver, rating_impact, mentions]
+                properties:
+                  driver: { type: string }
+                  rating_impact: { type: number, description: Estimated star impact on average rating. }
+                  mentions: { type: integer }
+                  example_quote: { type: string }
+
+    ResponsePlanRequest:
+      type: object
+      additionalProperties: false
+      required: [restaurant]
+      properties:
+        restaurant: { $ref: "#/components/schemas/RestaurantRef" }
+        target: { type: string, enum: [negative_only, recent, all], default: negative_only }
+        tone: { type: string, enum: [empathetic, professional, friendly], default: empathetic }
+        max_responses: { type: integer, default: 10, minimum: 1, maximum: 50 }
+    ResponsePlanResponse:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: "#/components/schemas/ResponseMeta"
+        - type: object
+          required: [recommended_responses]
+          properties:
+            recommended_responses:
+              type: array
+              items: { $ref: "#/components/schemas/RecommendedResponse" }
+
+    MonitorRequest:
+      type: object
+      additionalProperties: false
+      required: [restaurant]
+      properties:
+        restaurant: { $ref: "#/components/schemas/RestaurantRef" }
+        since: { type: string, format: date-time }
+    MonitorResponse:
+      unevaluatedProperties: false
+      allOf:
+        - $ref: "#/components/schemas/ResponseMeta"
+        - type: object
+          required: [reputation_score, review_velocity, fake_review_risk, new_urgent_issues]
+          properties:
+            reputation_score: { type: number, minimum: 0, maximum: 100 }
+            review_velocity:
+              type: object
+              additionalProperties: false
+              required: [per_week, trend]
+              properties:
+                per_week: { type: number }
+                trend: { type: string, enum: [rising, flat, declining] }
+            fake_review_risk:
+              type: object
+              additionalProperties: false
+              required: [score, level]
+              properties:
+                score: { type: number, minimum: 0, maximum: 1 }
+                level: { type: string, enum: [low, medium, high] }
+            new_urgent_issues:
+              type: array
+              items: { $ref: "#/components/schemas/UrgentIssue" }

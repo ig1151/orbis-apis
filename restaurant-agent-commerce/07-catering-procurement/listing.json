@@ -1,0 +1,72 @@
+{
+  "name": "Catering Procurement API",
+  "slug": "catering-procurement",
+  "description": "Source, compare, plan, and (human-approved) order catering for meetings, offices, events, and groups. /generate-catering-plan returns vendor_options and a recommended_order sized to attendee_count and budget in one call. Final vendor contact and ordering are execution-gated. Built for executive assistant, events, and workplace-ops agents.",
+  "category": "Commerce & Ordering",
+  "subcategory": "Catering / Restaurant Vertical",
+  "version": "1.0.0",
+  "openapi_url": "https://api.restaurant-agent-commerce.com/catering/v1/openapi.yaml",
+  "base_url": "https://api.restaurant-agent-commerce.com/catering/v1",
+  "one_call_workflow_endpoint": "POST /generate-catering-plan",
+  "pricing_model": {
+    "type": "per_call",
+    "currency": "USD",
+    "billing": "prepaid_credits",
+    "free_tier": "GET / discovery is free; new keys include $5 trial credit."
+  },
+  "endpointPricing": {
+    "GET /": 0.0,
+    "POST /source-catering-options": 0.05,
+    "POST /compare-catering-vendors": 0.1,
+    "POST /generate-catering-plan": 0.5,
+    "POST /prepare-catering-order": 0.15,
+    "POST /submit-catering-request": 1.0
+  },
+  "useCases": [
+    "Source catering for 40 people with vegetarian and halal needs under $20/head.",
+    "Compare three caterers on price, rating, lead time, and dietary coverage.",
+    "Generate a full catering plan with a recommended order for an event.",
+    "Prepare a catering order for sign-off before contacting the vendor."
+  ],
+  "agentUseCases": [
+    { "agent": "events_agent", "workflow": "Generate a plan, vet the top vendor's reviews, then submit for human approval." },
+    { "agent": "executive_assistant_agent", "workflow": "Recurring board-lunch catering with budget caps and approval gating." },
+    { "agent": "workplace_ops_agent", "workflow": "Compare vendors across offices and standardize on the best-fit caterer." }
+  ],
+  "authentication": { "type": "api_key", "in": "header", "header_name": "X-API-Key" },
+  "privacy": {
+    "pii_handling": "minimized",
+    "attendee_data": "aggregate_counts_and_diet_only",
+    "retention_days": 30,
+    "compliance": ["CCPA", "GDPR_legitimate_interest"],
+    "data_sources": ["catering_marketplace_apis", "public_menu_data", "caller_supplied_event_details"]
+  },
+  "confidence": { "provided": true, "scope": "top_level_per_response", "fields": ["score", "level", "rationale"] },
+  "execution_gate_required": { "POST /submit-catering-request": true },
+  "human_approval_required": {
+    "POST /submit-catering-request": true,
+    "reason": "Submitting an order or contacting a vendor is outward-facing and money-moving; an explicit human approval token is required."
+  },
+  "chain_to": [
+    { "api": "Office Lunch Planner API", "endpoint": "POST /plan-office-lunch", "reason": "Downscale a small event to a simple group order." },
+    { "api": "Local Restaurant Discovery API", "endpoint": "POST /discover-restaurants", "reason": "Find additional vendor candidates by cuisine." },
+    { "api": "Review Sentiment API", "endpoint": "POST /analyze-review-sentiment", "reason": "Vet a caterer's reputation before ordering." }
+  ],
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "Call /generate-catering-plan with attendee_count, budget, diets, cuisines, window." },
+    { "priority": 2, "action": "Vet the recommended vendor's reputation (chain to Review Sentiment)." },
+    { "priority": 3, "action": "Prepare the order, then submit /submit-catering-request for human approval." }
+  ],
+  "examplePrompts": [
+    "Find catering for 40 people, halal and vegetarian, under $20 a head for next Thursday.",
+    "Compare these three caterers on price and lead time.",
+    "Build me a catering plan for an all-hands lunch.",
+    "Prepare the catering order so my director can approve it."
+  ],
+  "metadata": {
+    "agent_callable": true,
+    "mcp_compatible": true,
+    "one_call_workflow": "POST /generate-catering-plan",
+    "recurring_call_volume": "medium"
+  }
+}

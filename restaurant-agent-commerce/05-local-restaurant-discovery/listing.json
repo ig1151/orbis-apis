@@ -1,0 +1,70 @@
+{
+  "name": "Local Restaurant Discovery API",
+  "slug": "local-restaurant-discovery",
+  "description": "Discover and rank restaurants by location, intent, dietary need, occasion, budget, and quality. /match-restaurant-to-intent returns ranked_restaurants with match_score, cuisine_match, distance, price_level, review_summary, dietary_fit, and best_for in one call. Cheap, high-volume discovery-tier pricing for assistant and concierge agents.",
+  "category": "Search & Discovery",
+  "subcategory": "Local Business / Restaurant Vertical",
+  "version": "1.0.0",
+  "openapi_url": "https://api.restaurant-agent-commerce.com/discovery/v1/openapi.yaml",
+  "base_url": "https://api.restaurant-agent-commerce.com/discovery/v1",
+  "one_call_workflow_endpoint": "POST /match-restaurant-to-intent",
+  "pricing_model": {
+    "type": "per_call",
+    "currency": "USD",
+    "billing": "prepaid_credits",
+    "free_tier": "GET / discovery is free; new keys include $5 trial credit."
+  },
+  "endpointPricing": {
+    "GET /": 0.0,
+    "POST /discover-restaurants": 0.02,
+    "POST /rank-restaurants": 0.01,
+    "POST /match-restaurant-to-intent": 0.03,
+    "POST /compare-local-options": 0.03
+  },
+  "useCases": [
+    "Find the best romantic, gluten-free-friendly Italian spot within 5 miles under $45/person.",
+    "Rank a set of candidate restaurants by a custom weighting of rating, price, and distance.",
+    "Compare three restaurants head-to-head before booking.",
+    "Power an assistant that recommends where to eat based on a natural-language request."
+  ],
+  "agentUseCases": [
+    { "agent": "executive_assistant_agent", "workflow": "Match intent → check availability via Reservation Intelligence → prepare a booking for approval." },
+    { "agent": "concierge_agent", "workflow": "Discover + compare options and present a ranked shortlist with reasons." },
+    { "agent": "local_business_agent", "workflow": "Use discovery as the top of a funnel into ordering or reservation chains." }
+  ],
+  "authentication": { "type": "api_key", "in": "header", "header_name": "X-API-Key" },
+  "privacy": {
+    "pii_handling": "none",
+    "user_query_logging": "ephemeral",
+    "retention_days": 7,
+    "compliance": ["CCPA", "GDPR_legitimate_interest"],
+    "data_sources": ["public_business_listings", "public_review_platforms", "public_menu_data", "geocoding"]
+  },
+  "confidence": { "provided": true, "scope": "top_level_per_response", "fields": ["score", "level", "rationale"] },
+  "execution_gate_required": {},
+  "human_approval_required": {
+    "_note": "Read-only discovery; no outward-facing actions. Booking/ordering happen in chained gated APIs (Reservation Intelligence, Multi-Restaurant Ordering)."
+  },
+  "chain_to": [
+    { "api": "Reservation Intelligence API", "endpoint": "POST /find-availability", "reason": "Check open tables at the top match." },
+    { "api": "Multi-Restaurant Ordering API", "endpoint": "POST /build-order", "reason": "Start an order from the discovered restaurant." },
+    { "api": "Review Sentiment API", "endpoint": "POST /analyze-review-sentiment", "reason": "Validate the pick with deeper review data." }
+  ],
+  "recommended_actions_priority_order": [
+    { "priority": 1, "action": "Call /match-restaurant-to-intent with the full intent object." },
+    { "priority": 2, "action": "Present the top 3 by match_score with best_for reasons." },
+    { "priority": 3, "action": "Chain to availability or ordering for the chosen restaurant." }
+  ],
+  "examplePrompts": [
+    "Find a romantic gluten-free Italian place near downtown Austin under $45 a head.",
+    "Compare these three restaurants on rating, price, and dietary fit.",
+    "Rank these spots for a casual family dinner within 10 minutes.",
+    "Where should two people go for date night tonight near me?"
+  ],
+  "metadata": {
+    "agent_callable": true,
+    "mcp_compatible": true,
+    "one_call_workflow": "POST /match-restaurant-to-intent",
+    "recurring_call_volume": "very_high"
+  }
+}
