@@ -162,6 +162,7 @@ import coldOutreachApiRouter from './routes/cold-outreach-api/routes/intelligenc
 import coldOutreachApiOpenapiRouter from './routes/cold-outreach-api/routes/openapi';
 import leadScoringRouter from './routes/lead-scoring-api/routes/intelligence';
 import leadScoringOpenapiRouter from './routes/lead-scoring-api/routes/openapi';
+import { restaurantRouterMap, restaurantOpenapiMap } from './routes/restaurant-suite';
 import emailIntelligenceRouter from './routes/email-intelligence-api/routes/intelligence';
 import emailIntelligenceOpenapiRouter from './routes/email-intelligence-api/routes/openapi';
 import pdfExtractionRouter from './routes/pdf-extraction-api/routes/intelligence';
@@ -1684,6 +1685,10 @@ const openapiMap: Record<string, import("express").Router> = {
   'agent-workflow-validator': agentWorkflowValidatorOpenapiRouter,
   'orchestration-dependency-mapper': orchestrationDependencyMapperOpenapiRouter,
 };
+
+// Restaurant Agent Commerce suite — register 10 AI-backed APIs into the dispatcher maps.
+Object.assign(routerMap, restaurantRouterMap);
+Object.assign(openapiMap, restaurantOpenapiMap);
 
 
 // Route dispatcher — O(1) lookup instead of O(906) chain walk

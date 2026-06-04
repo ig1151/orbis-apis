@@ -1,0 +1,2112 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Restaurant Lead Generation API",
+  "version": "1.0.0",
+  "summary": "Find, score, enrich, and prepare outreach to restaurants that need marketing, reviews, SEO, web, delivery, or ops help.",
+  "description": "Agent-native lead generation for the restaurant vertical. Given a geography and an ideal-customer profile, the API discovers restaurants exhibiting buying signals (poor reviews, weak web presence, no online ordering, stale menus, low local-SEO visibility), scores them, enriches owner/contact data, and produces a ready-to-use outreach angle and best-offer recommendation. Built for autonomous sales, marketing, and local-business agents that call repeatedly to build and qualify pipeline.",
+  "contact": {
+   "name": "Restaurant Agent Commerce APIs",
+   "url": "https://api.restaurant-agent-commerce.com"
+  },
+  "license": {
+   "name": "Commercial",
+   "url": "https://api.restaurant-agent-commerce.com/license"
+  }
+ },
+ "x-agent-callable": true,
+ "x-mcp-compatible": true,
+ "x-pricing": {
+  "model": "per_call",
+  "currency": "USD",
+  "billing": "prepaid_credits",
+  "free_endpoints": [
+   "GET /"
+  ],
+  "endpoint_pricing": {
+   "GET /": 0.0,
+   "POST /find-restaurant-leads": 0.5,
+   "POST /score-leads": 0.1,
+   "POST /enrich-lead": 0.75,
+   "POST /generate-outreach-angle": 0.15,
+   "POST /export-leads": 0.05,
+   "POST /contact-lead": 0.4,
+   "POST /run-lead-pipeline": 1.0
+  },
+  "notes": "Pipeline endpoint bundles find+score+enrich+angle at a discount vs calling each step. /contact-lead is gated and bills only on approved execution."
+ },
+ "x-privacy": {
+  "pii_handling": "minimized",
+  "owner_contact_data": "business_contact_only",
+  "retention_days": 30,
+  "compliance": [
+   "CAN-SPAM",
+   "GDPR_legitimate_interest",
+   "CCPA"
+  ],
+  "data_sources": [
+   "public_business_listings",
+   "public_review_platforms",
+   "public_web_crawl",
+   "licensed_firmographic_providers"
+  ]
+ },
+ "x-chain-to": [
+  {
+   "api": "Restaurant Growth Opportunity API",
+   "endpoint": "POST /analyze-growth-opportunity",
+   "reason": "Turn a qualified lead into a quantified revenue-gap pitch."
+  },
+  {
+   "api": "Restaurant AI Consultant API",
+   "endpoint": "POST /full-consulting-audit",
+   "reason": "Produce a deliverable audit to attach to outreach."
+  },
+  {
+   "api": "Review Sentiment API",
+   "endpoint": "POST /analyze-review-sentiment",
+   "reason": "Back the \"review pain\" angle with hard sentiment data."
+  }
+ ],
+ "servers": [
+  {
+   "url": "https://orbis-apis.onrender.com/restaurant-lead-generation",
+   "description": "Orbis hosted"
+  }
+ ],
+ "security": [
+  {
+   "ApiKeyAuth": []
+  }
+ ],
+ "tags": [
+  {
+   "name": "discovery",
+   "description": "Service metadata and capability discovery."
+  },
+  {
+   "name": "leads",
+   "description": "Find, score, and enrich restaurant leads."
+  },
+  {
+   "name": "outreach",
+   "description": "Generate angles and (gated) contact leads."
+  },
+  {
+   "name": "workflow",
+   "description": "One-call orchestrated pipelines."
+  }
+ ],
+ "paths": {
+  "/": {
+   "get": {
+    "operationId": "getDiscovery",
+    "tags": [
+     "discovery"
+    ],
+    "summary": "Service discovery and capability manifest.",
+    "description": "Zero-cost discovery endpoint. Returns capabilities, endpoint catalog, pricing, auth requirements, execution-gate map, and chaining hints so an agent can plan calls without prior knowledge.",
+    "security": [],
+    "x-pricing": {
+     "price": 0.0
+    },
+    "responses": {
+     "200": {
+      "description": "Capability manifest.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DiscoveryResponse"
+        },
+        "example": {
+         "service": "Restaurant Lead Generation API",
+         "version": "1.0.0",
+         "agent_callable": true,
+         "mcp_compatible": true,
+         "auth": {
+          "type": "api_key",
+          "header": "X-API-Key"
+         },
+         "endpoints": [
+          {
+           "method": "POST",
+           "path": "/find-restaurant-leads",
+           "price_usd": 0.5,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/score-leads",
+           "price_usd": 0.1,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/enrich-lead",
+           "price_usd": 0.75,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/generate-outreach-angle",
+           "price_usd": 0.15,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/export-leads",
+           "price_usd": 0.05,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/contact-lead",
+           "price_usd": 0.4,
+           "gated": true
+          },
+          {
+           "method": "POST",
+           "path": "/run-lead-pipeline",
+           "price_usd": 1.0,
+           "gated": false
+          }
+         ],
+         "one_call_workflow": "POST /run-lead-pipeline",
+         "execution_gates": [
+          "POST /contact-lead"
+         ],
+         "confidence": {
+          "score": 1.0,
+          "level": "high",
+          "rationale": "Static capability manifest; deterministic."
+         },
+         "privacy": {
+          "pii_included": false,
+          "contact_data_class": "none",
+          "retention_days": 30,
+          "compliance": [
+           "CAN-SPAM",
+           "GDPR_legitimate_interest",
+           "CCPA"
+          ],
+          "data_sources": [
+           "public_business_listings"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Call /run-lead-pipeline to find, score, enrich, and draft outreach in one call.",
+           "rationale": "Bundled pipeline is the fastest path from geography+ICP to ready leads.",
+           "chain_to_endpoint": "POST /run-lead-pipeline"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Growth Opportunity API",
+           "endpoint": "POST /analyze-growth-opportunity",
+           "reason": "Turn a qualified lead into a quantified revenue-gap pitch."
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/find-restaurant-leads": {
+   "post": {
+    "operationId": "findRestaurantLeads",
+    "tags": [
+     "leads"
+    ],
+    "summary": "Discover restaurants exhibiting buying signals.",
+    "description": "Returns restaurants in a target geography/ICP that show pain signals (weak web, poor reviews, no online ordering, low local SEO). Each lead carries a preliminary signal set; call /score-leads to rank.",
+    "x-pricing": {
+     "price": 0.5
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FindLeadsRequest"
+       },
+       "example": {
+        "location": {
+         "city": "Austin",
+         "state": "TX",
+         "radius_miles": 10
+        },
+        "icp": {
+         "cuisine": [
+          "italian",
+          "american"
+         ],
+         "price_level": [
+          2,
+          3
+         ],
+         "min_signals": 2,
+         "exclude_chains": true
+        },
+        "signals_of_interest": [
+         "poor_reviews",
+         "no_online_ordering",
+         "weak_website",
+         "low_local_seo"
+        ],
+        "limit": 25
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Discovered leads with preliminary signals.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FindLeadsResponse"
+        },
+        "example": {
+         "request_id": "req_lg_find_2a6d90f4",
+         "confidence": {
+          "score": 0.71,
+          "level": "medium",
+          "rationale": "Preliminary signals from review and web-crawl sources; firmographic enrichment not yet applied, so scores are indicative only."
+         },
+         "privacy": {
+          "pii_included": false,
+          "contact_data_class": "none",
+          "retention_days": 30,
+          "compliance": [
+           "CAN-SPAM",
+           "GDPR_legitimate_interest",
+           "CCPA"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms",
+           "public_web_crawl"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Call /score-leads to rank these leads by fit and likelihood to buy.",
+           "rationale": "Discovered leads carry preliminary signals only; scoring orders the pipeline.",
+           "chain_to_endpoint": "POST /score-leads"
+          },
+          {
+           "priority": 2,
+           "action": "Enrich the top-ranked leads with owner contact and firmographics.",
+           "rationale": "Outreach requires verified business-contact data not present at discovery time.",
+           "chain_to_endpoint": "POST /enrich-lead"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Growth Opportunity API",
+           "endpoint": "POST /analyze-growth-opportunity",
+           "reason": "Turn a qualified lead into a quantified revenue-gap pitch."
+          }
+         ],
+         "total_found": 3,
+         "leads": [
+          {
+           "lead_id": "lead_8f2",
+           "name": "Trattoria Sole",
+           "address": "412 Guadalupe St, Austin, TX 78701",
+           "cuisine": [
+            "italian"
+           ],
+           "price_level": 3,
+           "signals": [
+            "poor_reviews",
+            "no_online_ordering",
+            "low_local_seo"
+           ],
+           "data_freshness_days": 4,
+           "last_verified_at": "2026-05-31T14:22:00Z",
+           "source_urls": [
+            "https://maps.google.com/place/trattoria-sole-austin",
+            "https://www.yelp.com/biz/trattoria-sole-austin"
+           ]
+          },
+          {
+           "lead_id": "lead_91a",
+           "name": "Lupo Osteria",
+           "address": "1900 S Lamar Blvd, Austin, TX 78704",
+           "cuisine": [
+            "italian"
+           ],
+           "price_level": 2,
+           "signals": [
+            "weak_website",
+            "no_online_ordering",
+            "stale_menu"
+           ],
+           "data_freshness_days": 6,
+           "last_verified_at": "2026-05-29T09:10:00Z",
+           "source_urls": [
+            "https://maps.google.com/place/lupo-osteria-austin"
+           ]
+          },
+          {
+           "lead_id": "lead_a37",
+           "name": "Brick & Vine Tavern",
+           "address": "701 W 6th St, Austin, TX 78701",
+           "cuisine": [
+            "american"
+           ],
+           "price_level": 3,
+           "signals": [
+            "declining_review_velocity",
+            "no_social_presence",
+            "low_local_seo"
+           ],
+           "data_freshness_days": 9,
+           "last_verified_at": "2026-05-26T17:45:00Z",
+           "source_urls": [
+            "https://maps.google.com/place/brick-and-vine-austin"
+           ]
+          }
+         ]
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "429": {
+      "$ref": "#/components/responses/RateLimited"
+     }
+    }
+   }
+  },
+  "/score-leads": {
+   "post": {
+    "operationId": "scoreLeads",
+    "tags": [
+     "leads"
+    ],
+    "summary": "Score and rank leads by fit and likelihood to buy.",
+    "description": "Accepts leads (from /find-restaurant-leads or caller-supplied) and returns lead_score, pain_points, estimated_budget, and best_offer_type.",
+    "x-pricing": {
+     "price": 0.1
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScoreLeadsRequest"
+       },
+       "example": {
+        "leads": [
+         {
+          "lead_id": "lead_8f2",
+          "name": "Trattoria Sole",
+          "signals": [
+           "poor_reviews",
+           "no_online_ordering"
+          ]
+         }
+        ],
+        "offer_catalog": [
+         "review_management",
+         "online_ordering",
+         "local_seo",
+         "website_rebuild"
+        ]
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Scored and ranked leads.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScoreLeadsResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/enrich-lead": {
+   "post": {
+    "operationId": "enrichLead",
+    "tags": [
+     "leads"
+    ],
+    "summary": "Enrich a single lead with firmographics and contact confidence.",
+    "description": "Adds owner/decision-maker contact data (business-contact only), firmographics, tech stack, and owner_contact_confidence to one lead.",
+    "x-pricing": {
+     "price": 0.75
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EnrichLeadRequest"
+       },
+       "example": {
+        "lead_id": "lead_8f2",
+        "name": "Trattoria Sole",
+        "location": {
+         "city": "Austin",
+         "state": "TX"
+        },
+        "want": [
+         "owner_contact",
+         "tech_stack",
+         "firmographics"
+        ]
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Enriched lead record.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/EnrichLeadResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "404": {
+      "$ref": "#/components/responses/NotFound"
+     }
+    }
+   }
+  },
+  "/generate-outreach-angle": {
+   "post": {
+    "operationId": "generateOutreachAngle",
+    "tags": [
+     "outreach"
+    ],
+    "summary": "Generate a tailored outreach angle and message draft.",
+    "description": "Produces an outreach_angle, channel recommendation, and message draft grounded in the lead's specific pain_points and best_offer_type.",
+    "x-pricing": {
+     "price": 0.15
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/OutreachAngleRequest"
+       },
+       "example": {
+        "lead_id": "lead_8f2",
+        "pain_points": [
+         "poor_reviews",
+         "no_online_ordering"
+        ],
+        "best_offer_type": "review_management",
+        "tone": "consultative",
+        "channel": "email"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Outreach angle and drafted message.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OutreachAngleResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/export-leads": {
+   "post": {
+    "operationId": "exportLeads",
+    "tags": [
+     "leads"
+    ],
+    "summary": "Export a lead set to a structured payload or CRM-ready format.",
+    "description": "Serializes a lead set into the requested format (json, csv_base64, or crm_payload) for downstream ingestion. No external delivery occurs.",
+    "x-pricing": {
+     "price": 0.05
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ExportLeadsRequest"
+       },
+       "example": {
+        "lead_ids": [
+         "lead_8f2",
+         "lead_91a"
+        ],
+        "format": "crm_payload",
+        "crm": "hubspot"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Exported lead payload.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ExportLeadsResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/contact-lead": {
+   "post": {
+    "operationId": "contactLead",
+    "tags": [
+     "outreach"
+    ],
+    "summary": "[GATED] Send outreach to a lead. Requires human approval.",
+    "description": "Executes outbound contact (email/SMS) to a lead. This is a risky, outward-facing action: it requires an explicit approval token issued by a human. Without an approval_token the call returns 200 with execution_gate.status=pending_approval and performs NO send.",
+    "x-pricing": {
+     "price": 0.4
+    },
+    "x-execution-gate": true,
+    "x-human-approval-required": true,
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ContactLeadRequest"
+       },
+       "example": {
+        "lead_id": "lead_8f2",
+        "channel": "email",
+        "to": "owner@trattoriasole.example",
+        "subject": "Quick idea to lift your Google rating",
+        "body": "Hi — noticed your last 20 reviews mention slow service...",
+        "approval_token": null
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Either a pending-approval gate (no send performed) or a confirmed send (when a valid approval_token is supplied).",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ContactLeadResponse"
+        },
+        "example": {
+         "request_id": "req_lg_contact_4471be2d",
+         "confidence": {
+          "score": 0.9,
+          "level": "high",
+          "rationale": "Recipient address verified against firmographic source; gate logic deterministic."
+         },
+         "privacy": {
+          "pii_included": true,
+          "contact_data_class": "business_contact_only",
+          "retention_days": 30,
+          "compliance": [
+           "CAN-SPAM",
+           "GDPR_legitimate_interest",
+           "CCPA"
+          ],
+          "data_sources": [
+           "licensed_firmographic_providers",
+           "public_business_listings"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Obtain a human approval_token and re-call /contact-lead to authorize the send.",
+           "rationale": "This outbound contact is an irreversible, outward-facing action and is gated pending approval.",
+           "chain_to_endpoint": "POST /contact-lead"
+          },
+          {
+           "priority": 2,
+           "action": "Review the message preview for CAN-SPAM compliance before approving.",
+           "rationale": "Email sends require an unsubscribe mechanism; confirm it is present before dispatch."
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Back the 'review pain' angle with hard sentiment data before sending."
+          }
+         ],
+         "approval_required": true,
+         "execution_gate": {
+          "required": true,
+          "status": "pending_approval",
+          "approval_token_hint": "Submit this draft to a human approver; re-call /contact-lead with the issued approval_token to authorize the send.",
+          "expires_at": "2026-06-05T14:30:00Z",
+          "irreversible": true
+         },
+         "dispatched": false,
+         "message_id": null,
+         "compliance": {
+          "consent_basis": "legitimate_interest",
+          "suppression_checked": true,
+          "unsubscribe_required": true,
+          "contact_policy": "Max 3 touches per 30 days; quiet hours 9pm-8am local; email only, no SMS without prior opt-in."
+         },
+         "preview": {
+          "to": "owner@trattoriasole.example",
+          "channel": "email",
+          "subject": "Quick idea to lift your Google rating",
+          "body": "Hi — noticed your last 20 reviews mention slow service at peak hours. We help Austin restaurants respond to reviews and recover their Google rating within about 60 days. Worth a 10-minute call? Reply STOP or use the unsubscribe link to opt out."
+         }
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "403": {
+      "description": "Approval token invalid, expired, or revoked.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/run-lead-pipeline": {
+   "post": {
+    "operationId": "runLeadPipeline",
+    "tags": [
+     "workflow"
+    ],
+    "summary": "One-call workflow — find, score, enrich, and draft outreach.",
+    "description": "Orchestrates find-restaurant-leads → score-leads → enrich-lead (top N) → generate-outreach-angle in a single call. Does NOT contact anyone; contacting still requires the gated /contact-lead step.",
+    "x-pricing": {
+     "price": 1.0
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RunPipelineRequest"
+       },
+       "example": {
+        "location": {
+         "city": "Austin",
+         "state": "TX",
+         "radius_miles": 10
+        },
+        "icp": {
+         "cuisine": [
+          "italian"
+         ],
+         "price_level": [
+          2,
+          3
+         ],
+         "exclude_chains": true
+        },
+        "enrich_top_n": 5,
+        "offer_catalog": [
+         "review_management",
+         "online_ordering",
+         "local_seo"
+        ],
+        "tone": "consultative"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Fully qualified, enriched, outreach-ready lead set.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RunPipelineResponse"
+        },
+        "example": {
+         "request_id": "req_lg_9c3f1a08",
+         "confidence": {
+          "score": 0.84,
+          "level": "high",
+          "rationale": "Signals corroborated across review platform, web crawl, and licensed firmographics for 18 of 22 qualified leads."
+         },
+         "privacy": {
+          "pii_included": true,
+          "contact_data_class": "business_contact_only",
+          "retention_days": 30,
+          "compliance": [
+           "CAN-SPAM",
+           "GDPR_legitimate_interest",
+           "CCPA"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms",
+           "public_web_crawl",
+           "licensed_firmographic_providers"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Run /contact-lead for the top 3 qualified leads after human approval of drafted messages.",
+           "rationale": "Highest lead_score and verified business email; gated send requires approval token.",
+           "chain_to_endpoint": "POST /contact-lead"
+          },
+          {
+           "priority": 2,
+           "action": "Quantify the revenue gap for Trattoria Sole before outreach.",
+           "rationale": "A dollar-figure pitch lifts response rate for review-pain angles.",
+           "chain_to_endpoint": "POST /analyze-growth-opportunity"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Growth Opportunity API",
+           "endpoint": "POST /analyze-growth-opportunity",
+           "reason": "Turn a qualified lead into a quantified revenue-gap pitch."
+          },
+          {
+           "api": "Restaurant AI Consultant API",
+           "endpoint": "POST /full-consulting-audit",
+           "reason": "Produce a deliverable audit to attach to outreach."
+          }
+         ],
+         "total_found": 22,
+         "qualified_leads": [
+          {
+           "lead_id": "lead_8f2",
+           "name": "Trattoria Sole",
+           "address": "412 Guadalupe St, Austin, TX 78701",
+           "cuisine": [
+            "italian"
+           ],
+           "price_level": 3,
+           "signals": [
+            "poor_reviews",
+            "no_online_ordering",
+            "low_local_seo"
+           ],
+           "lead_score": 87,
+           "pain_points": [
+            "3.6-star average dragged down by service-speed complaints",
+            "No online ordering on website or third-party apps",
+            "Not ranking in local pack for 'italian restaurant austin'"
+           ],
+           "estimated_budget": {
+            "currency": "USD",
+            "monthly_low": 1200,
+            "monthly_high": 2800
+           },
+           "owner_contact_confidence": 0.78,
+           "best_offer_type": "review_management",
+           "outreach_angle": "Your last 20 Google reviews mention slow service — a structured review-response program can lift your rating within 60 days.",
+           "data_freshness_days": 4,
+           "last_verified_at": "2026-05-31T14:22:00Z",
+           "source_urls": [
+            "https://maps.google.com/place/trattoria-sole-austin",
+            "https://www.yelp.com/biz/trattoria-sole-austin"
+           ],
+           "owner_name": "Maria Conti",
+           "owner_role": "Owner / General Manager",
+           "business_email": "maria@trattoriasole.example",
+           "business_phone": "+1-512-555-0142",
+           "website": "https://trattoriasole.example",
+           "email_confidence": 0.81,
+           "phone_confidence": 0.74,
+           "decision_maker_confidence": 0.85,
+           "tech_stack": [
+            "Squarespace",
+            "OpenTable",
+            "Square POS"
+           ],
+           "firmographics": {
+            "est_seats": 64,
+            "est_annual_revenue_usd": 1450000,
+            "years_in_business": 11,
+            "locations": 1
+           },
+           "drafted_subject": "Quick idea to lift your Google rating",
+           "drafted_message": "Hi Maria — I noticed your last 20 reviews keep mentioning slow service at peak hours. We help Austin restaurants like Trattoria Sole respond to reviews and recover their rating within about 60 days. Worth a 10-minute call?"
+          },
+          {
+           "lead_id": "lead_91a",
+           "name": "Lupo Osteria",
+           "address": "1900 S Lamar Blvd, Austin, TX 78704",
+           "cuisine": [
+            "italian"
+           ],
+           "price_level": 2,
+           "signals": [
+            "weak_website",
+            "no_online_ordering",
+            "stale_menu"
+           ],
+           "lead_score": 79,
+           "pain_points": [
+            "Website not mobile-responsive",
+            "Menu PDF last updated 14 months ago",
+            "No direct online ordering"
+           ],
+           "estimated_budget": {
+            "currency": "USD",
+            "monthly_low": 900,
+            "monthly_high": 2100
+           },
+           "owner_contact_confidence": 0.62,
+           "best_offer_type": "online_ordering",
+           "outreach_angle": "Customers can't order from you online — adding direct ordering can recapture 8-12% of delivery-app margin.",
+           "data_freshness_days": 6,
+           "last_verified_at": "2026-05-29T09:10:00Z",
+           "source_urls": [
+            "https://maps.google.com/place/lupo-osteria-austin"
+           ],
+           "owner_name": "David Russo",
+           "owner_role": "Owner",
+           "business_email": "david@lupoosteria.example",
+           "business_phone": "+1-512-555-0188",
+           "website": "https://lupoosteria.example",
+           "email_confidence": 0.68,
+           "phone_confidence": 0.7,
+           "decision_maker_confidence": 0.72,
+           "tech_stack": [
+            "Wix",
+            "Toast POS"
+           ],
+           "firmographics": {
+            "est_seats": 48,
+            "est_annual_revenue_usd": 980000,
+            "years_in_business": 6,
+            "locations": 1
+           },
+           "drafted_subject": "Recapture delivery margin at Lupo Osteria",
+           "drafted_message": "Hi David — right now guests can't order directly from Lupo Osteria online, so every delivery order pays third-party commission. We can stand up commission-free direct ordering on your existing site. Open to a quick look?"
+          }
+         ],
+         "next_step": {
+          "description": "Two leads exceed score 75 with verified business emails. Review the drafted messages, then approve and dispatch via the gated contact endpoint.",
+          "gated_endpoint": "POST /contact-lead"
+         }
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "429": {
+      "$ref": "#/components/responses/RateLimited"
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "securitySchemes": {
+   "ApiKeyAuth": {
+    "type": "apiKey",
+    "in": "header",
+    "name": "X-API-Key",
+    "description": "Per-agent API key. Bills against prepaid credits."
+   }
+  },
+  "responses": {
+   "BadRequest": {
+    "description": "Malformed or invalid request.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "Unauthorized": {
+    "description": "Missing or invalid API key.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "PaymentRequired": {
+    "description": "Insufficient prepaid credits.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "NotFound": {
+    "description": "Referenced resource not found.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "RateLimited": {
+    "description": "Rate limit exceeded.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   }
+  },
+  "schemas": {
+   "Confidence": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "score",
+     "level"
+    ],
+    "properties": {
+     "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Calibrated confidence 0-1."
+     },
+     "level": {
+      "type": "string",
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ]
+     },
+     "rationale": {
+      "type": "string"
+     }
+    }
+   },
+   "Privacy": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "pii_included",
+     "retention_days"
+    ],
+    "properties": {
+     "pii_included": {
+      "type": "boolean"
+     },
+     "contact_data_class": {
+      "type": "string",
+      "enum": [
+       "business_contact_only",
+       "none"
+      ],
+      "default": "business_contact_only"
+     },
+     "retention_days": {
+      "type": "integer"
+     },
+     "compliance": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "data_sources": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "RecommendedAction": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "priority",
+     "action"
+    ],
+    "properties": {
+     "priority": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1 = do first."
+     },
+     "action": {
+      "type": "string"
+     },
+     "rationale": {
+      "type": "string"
+     },
+     "chain_to_endpoint": {
+      "type": "string"
+     }
+    }
+   },
+   "ChainTo": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "api",
+     "endpoint",
+     "reason"
+    ],
+    "properties": {
+     "api": {
+      "type": "string"
+     },
+     "endpoint": {
+      "type": "string"
+     },
+     "reason": {
+      "type": "string"
+     }
+    }
+   },
+   "ExecutionGate": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "required",
+     "status"
+    ],
+    "properties": {
+     "required": {
+      "type": "boolean"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "not_required",
+       "pending_approval",
+       "approved",
+       "executed",
+       "rejected"
+      ]
+     },
+     "approval_token_hint": {
+      "type": "string",
+      "description": "How to obtain/supply an approval token."
+     },
+     "expires_at": {
+      "type": "string",
+      "format": "date-time"
+     },
+     "irreversible": {
+      "type": "boolean"
+     }
+    }
+   },
+   "ResponseMeta": {
+    "description": "Top-level envelope fields attached once per response (not per nested object).",
+    "type": "object",
+    "required": [
+     "request_id",
+     "confidence",
+     "privacy",
+     "recommended_actions_priority_order",
+     "chain_to"
+    ],
+    "properties": {
+     "request_id": {
+      "type": "string"
+     },
+     "confidence": {
+      "$ref": "#/components/schemas/Confidence"
+     },
+     "privacy": {
+      "$ref": "#/components/schemas/Privacy"
+     },
+     "recommended_actions_priority_order": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedAction"
+      }
+     },
+     "chain_to": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ChainTo"
+      }
+     }
+    }
+   },
+   "ErrorResponse": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "error"
+    ],
+    "properties": {
+     "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "code",
+       "message"
+      ],
+      "properties": {
+       "code": {
+        "type": "string"
+       },
+       "message": {
+        "type": "string"
+       },
+       "retriable": {
+        "type": "boolean"
+       }
+      }
+     }
+    }
+   },
+   "DiscoveryResponse": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "service",
+     "version",
+     "agent_callable",
+     "mcp_compatible",
+     "auth",
+     "endpoints",
+     "one_call_workflow",
+     "confidence",
+     "privacy",
+     "recommended_actions_priority_order",
+     "chain_to"
+    ],
+    "properties": {
+     "confidence": {
+      "$ref": "#/components/schemas/Confidence"
+     },
+     "privacy": {
+      "$ref": "#/components/schemas/Privacy"
+     },
+     "recommended_actions_priority_order": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedAction"
+      }
+     },
+     "service": {
+      "type": "string"
+     },
+     "version": {
+      "type": "string"
+     },
+     "agent_callable": {
+      "type": "boolean"
+     },
+     "mcp_compatible": {
+      "type": "boolean"
+     },
+     "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+       "type": {
+        "type": "string"
+       },
+       "header": {
+        "type": "string"
+       }
+      }
+     },
+     "endpoints": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "properties": {
+        "method": {
+         "type": "string"
+        },
+        "path": {
+         "type": "string"
+        },
+        "price_usd": {
+         "type": "number"
+        },
+        "gated": {
+         "type": "boolean"
+        }
+       }
+      }
+     },
+     "one_call_workflow": {
+      "type": "string"
+     },
+     "execution_gates": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "chain_to": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ChainTo"
+      }
+     }
+    }
+   },
+   "Location": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "city"
+    ],
+    "properties": {
+     "city": {
+      "type": "string"
+     },
+     "state": {
+      "type": "string"
+     },
+     "country": {
+      "type": "string",
+      "default": "US"
+     },
+     "radius_miles": {
+      "type": "number",
+      "default": 10
+     },
+     "lat": {
+      "type": "number"
+     },
+     "lng": {
+      "type": "number"
+     }
+    }
+   },
+   "ICP": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+     "cuisine": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "price_level": {
+      "type": "array",
+      "items": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 4
+      }
+     },
+     "min_signals": {
+      "type": "integer",
+      "default": 1
+     },
+     "exclude_chains": {
+      "type": "boolean",
+      "default": true
+     }
+    }
+   },
+   "LeadBase": {
+    "description": "Open base for a restaurant lead so it can be safely extended via allOf (e.g. EnrichedLead). Closed variants compose this and add unevaluatedProperties:false at the wrapper.",
+    "type": "object",
+    "required": [
+     "lead_id",
+     "name"
+    ],
+    "properties": {
+     "lead_id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "address": {
+      "type": "string"
+     },
+     "cuisine": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "price_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+     },
+     "signals": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "enum": [
+        "poor_reviews",
+        "no_online_ordering",
+        "weak_website",
+        "low_local_seo",
+        "stale_menu",
+        "no_reservations",
+        "declining_review_velocity",
+        "no_social_presence"
+       ]
+      }
+     },
+     "lead_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+     },
+     "pain_points": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "estimated_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+       "currency": {
+        "type": "string",
+        "default": "USD"
+       },
+       "monthly_low": {
+        "type": "number"
+       },
+       "monthly_high": {
+        "type": "number"
+       }
+      }
+     },
+     "owner_contact_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+     },
+     "best_offer_type": {
+      "type": "string",
+      "enum": [
+       "review_management",
+       "online_ordering",
+       "local_seo",
+       "website_rebuild",
+       "social_media",
+       "delivery_setup",
+       "reputation_repair",
+       "full_service"
+      ]
+     },
+     "outreach_angle": {
+      "type": "string"
+     },
+     "data_freshness_days": {
+      "type": "integer",
+      "description": "Age in days of the freshest underlying source for this lead."
+     },
+     "last_verified_at": {
+      "type": "string",
+      "format": "date-time"
+     },
+     "source_urls": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "format": "uri"
+      }
+     }
+    }
+   },
+   "Lead": {
+    "description": "A discovered/scored restaurant lead. Domain object — no envelope fields inside. Closed standalone via unevaluatedProperties.",
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/LeadBase"
+     }
+    ]
+   },
+   "EnrichedFields": {
+    "description": "Open fragment of contact/firmographic enrichment fields. Composed via allOf; closed at the consuming wrapper.",
+    "type": "object",
+    "properties": {
+     "owner_name": {
+      "type": "string"
+     },
+     "owner_role": {
+      "type": "string"
+     },
+     "business_email": {
+      "type": "string",
+      "format": "email"
+     },
+     "business_phone": {
+      "type": "string"
+     },
+     "website": {
+      "type": "string"
+     },
+     "email_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+     },
+     "phone_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+     },
+     "decision_maker_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence that owner_name is the actual buying decision-maker."
+     },
+     "tech_stack": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "firmographics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+       "est_seats": {
+        "type": "integer"
+       },
+       "est_annual_revenue_usd": {
+        "type": "number"
+       },
+       "years_in_business": {
+        "type": "number"
+       },
+       "locations": {
+        "type": "integer"
+       }
+      }
+     }
+    }
+   },
+   "EnrichedLead": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/LeadBase"
+     },
+     {
+      "$ref": "#/components/schemas/EnrichedFields"
+     }
+    ]
+   },
+   "FindLeadsRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "location"
+    ],
+    "properties": {
+     "location": {
+      "$ref": "#/components/schemas/Location"
+     },
+     "icp": {
+      "$ref": "#/components/schemas/ICP"
+     },
+     "signals_of_interest": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "limit": {
+      "type": "integer",
+      "default": 25,
+      "minimum": 1,
+      "maximum": 100
+     }
+    }
+   },
+   "FindLeadsResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "leads",
+       "total_found"
+      ],
+      "properties": {
+       "total_found": {
+        "type": "integer"
+       },
+       "leads": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/Lead"
+        }
+       }
+      }
+     }
+    ]
+   },
+   "ScoreLeadsRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "leads"
+    ],
+    "properties": {
+     "leads": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Lead"
+      }
+     },
+     "offer_catalog": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "ScoreLeadsResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "ranked_leads"
+      ],
+      "properties": {
+       "ranked_leads": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/Lead"
+        }
+       }
+      }
+     }
+    ]
+   },
+   "EnrichLeadRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "lead_id",
+     "name"
+    ],
+    "properties": {
+     "lead_id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "location": {
+      "$ref": "#/components/schemas/Location"
+     },
+     "want": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "enum": [
+        "owner_contact",
+        "tech_stack",
+        "firmographics"
+       ]
+      }
+     }
+    }
+   },
+   "EnrichLeadResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "lead"
+      ],
+      "properties": {
+       "lead": {
+        "$ref": "#/components/schemas/EnrichedLead"
+       }
+      }
+     }
+    ]
+   },
+   "OutreachAngleRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "lead_id",
+     "pain_points"
+    ],
+    "properties": {
+     "lead_id": {
+      "type": "string"
+     },
+     "pain_points": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "best_offer_type": {
+      "type": "string"
+     },
+     "tone": {
+      "type": "string",
+      "enum": [
+       "consultative",
+       "direct",
+       "friendly",
+       "data_driven"
+      ],
+      "default": "consultative"
+     },
+     "channel": {
+      "type": "string",
+      "enum": [
+       "email",
+       "sms",
+       "linkedin",
+       "call_script"
+      ],
+      "default": "email"
+     }
+    }
+   },
+   "OutreachAngleResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "outreach_angle",
+       "message_draft",
+       "channel"
+      ],
+      "properties": {
+       "outreach_angle": {
+        "type": "string"
+       },
+       "channel": {
+        "type": "string"
+       },
+       "subject": {
+        "type": "string"
+       },
+       "message_draft": {
+        "type": "string"
+       },
+       "predicted_response_rate": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       }
+      }
+     }
+    ]
+   },
+   "ExportLeadsRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "lead_ids",
+     "format"
+    ],
+    "properties": {
+     "lead_ids": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "format": {
+      "type": "string",
+      "enum": [
+       "json",
+       "csv_base64",
+       "crm_payload"
+      ]
+     },
+     "crm": {
+      "type": "string",
+      "enum": [
+       "hubspot",
+       "salesforce",
+       "pipedrive",
+       "generic"
+      ]
+     }
+    }
+   },
+   "ExportLeadsResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "format",
+       "record_count",
+       "payload"
+      ],
+      "properties": {
+       "format": {
+        "type": "string"
+       },
+       "record_count": {
+        "type": "integer"
+       },
+       "payload": {
+        "description": "Format-dependent payload (object for json/crm_payload, base64 string for csv_base64).",
+        "oneOf": [
+         {
+          "type": "object"
+         },
+         {
+          "type": "string"
+         }
+        ]
+       }
+      }
+     }
+    ]
+   },
+   "ContactLeadRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "lead_id",
+     "channel"
+    ],
+    "properties": {
+     "lead_id": {
+      "type": "string"
+     },
+     "channel": {
+      "type": "string",
+      "enum": [
+       "email",
+       "sms"
+      ]
+     },
+     "to": {
+      "type": "string"
+     },
+     "subject": {
+      "type": "string"
+     },
+     "body": {
+      "type": "string"
+     },
+     "consent_basis": {
+      "type": "string",
+      "enum": [
+       "legitimate_interest",
+       "prior_relationship",
+       "opt_in",
+       "explicit_consent"
+      ],
+      "description": "Lawful basis asserted by the caller for this outbound contact."
+     },
+     "approval_token": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no send occurs."
+     }
+    }
+   },
+   "ContactLeadResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "execution_gate",
+       "approval_required",
+       "dispatched",
+       "compliance"
+      ],
+      "properties": {
+       "approval_required": {
+        "type": "boolean"
+       },
+       "execution_gate": {
+        "$ref": "#/components/schemas/ExecutionGate"
+       },
+       "dispatched": {
+        "type": "boolean",
+        "description": "True only when a valid approval_token was supplied and send executed."
+       },
+       "message_id": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "compliance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "suppression_checked",
+         "unsubscribe_required"
+        ],
+        "properties": {
+         "consent_basis": {
+          "type": "string",
+          "enum": [
+           "legitimate_interest",
+           "prior_relationship",
+           "opt_in",
+           "explicit_consent"
+          ]
+         },
+         "suppression_checked": {
+          "type": "boolean",
+          "description": "Whether the recipient was checked against suppression/do-not-contact lists."
+         },
+         "unsubscribe_required": {
+          "type": "boolean",
+          "description": "Whether an unsubscribe mechanism must be included (true for email under CAN-SPAM)."
+         },
+         "contact_policy": {
+          "type": "string",
+          "description": "Human-readable policy applied (e.g. max touches",
+          "quiet hours": null,
+          "channel rules).": null
+         }
+        }
+       },
+       "preview": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+         "to": {
+          "type": "string"
+         },
+         "channel": {
+          "type": "string"
+         },
+         "subject": {
+          "type": "string"
+         },
+         "body": {
+          "type": "string"
+         }
+        }
+       }
+      }
+     }
+    ]
+   },
+   "RunPipelineRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "location"
+    ],
+    "properties": {
+     "location": {
+      "$ref": "#/components/schemas/Location"
+     },
+     "icp": {
+      "$ref": "#/components/schemas/ICP"
+     },
+     "enrich_top_n": {
+      "type": "integer",
+      "default": 5,
+      "minimum": 0,
+      "maximum": 25
+     },
+     "offer_catalog": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "tone": {
+      "type": "string",
+      "enum": [
+       "consultative",
+       "direct",
+       "friendly",
+       "data_driven"
+      ],
+      "default": "consultative"
+     }
+    }
+   },
+   "RunPipelineResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "total_found",
+       "qualified_leads"
+      ],
+      "properties": {
+       "total_found": {
+        "type": "integer"
+       },
+       "qualified_leads": {
+        "type": "array",
+        "description": "Scored + (top-N) enriched leads, each with an outreach_angle attached.",
+        "items": {
+         "unevaluatedProperties": false,
+         "allOf": [
+          {
+           "$ref": "#/components/schemas/LeadBase"
+          },
+          {
+           "$ref": "#/components/schemas/EnrichedFields"
+          },
+          {
+           "type": "object",
+           "properties": {
+            "drafted_subject": {
+             "type": "string"
+            },
+            "drafted_message": {
+             "type": "string"
+            }
+           }
+          }
+         ]
+        }
+       },
+       "next_step": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+         "description": {
+          "type": "string"
+         },
+         "gated_endpoint": {
+          "type": "string"
+         }
+        }
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+}

@@ -1,0 +1,1321 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Franchise Opportunity API",
+  "version": "1.0.0",
+  "summary": "Identify, score, and produce due-diligence briefs for restaurant/franchise expansion and investment opportunities.",
+  "description": "Agent-native franchise and expansion intelligence. Analyze a franchise opportunity, compare candidate markets, score a specific location's fit, and generate an investment brief with franchise_fit_score, market_demand_score, competition_intensity, estimated_startup_cost, payback_period_estimate, location_risks, and an opportunity_summary. Built for investor, franchise- development, and advisory agents.",
+  "contact": {
+   "name": "Restaurant Agent Commerce APIs",
+   "url": "https://api.restaurant-agent-commerce.com"
+  },
+  "license": {
+   "name": "Commercial",
+   "url": "https://api.restaurant-agent-commerce.com/license"
+  }
+ },
+ "x-agent-callable": true,
+ "x-mcp-compatible": true,
+ "x-pricing": {
+  "model": "per_call",
+  "currency": "USD",
+  "billing": "prepaid_credits",
+  "free_endpoints": [
+   "GET /"
+  ],
+  "endpoint_pricing": {
+   "GET /": 0.0,
+   "POST /analyze-franchise-opportunity": 1.0,
+   "POST /compare-franchise-markets": 0.75,
+   "POST /score-location-fit": 0.5,
+   "POST /generate-investment-brief": 8.0
+  },
+  "notes": "generate-investment-brief is the one-call due-diligence workflow (premium tier). All endpoints are analysis/advisory; none move money or take outward-facing action, so no execution gate is required."
+ },
+ "x-privacy": {
+  "pii_handling": "none",
+  "data_subject": "market_and_business_data_only",
+  "retention_days": 30,
+  "compliance": [
+   "GDPR: business-data-focused; ensure lawful basis where personal data appears",
+   "CCPA",
+   "advisory_not_financial_advice"
+  ],
+  "data_sources": [
+   "franchise_disclosure_documents_public",
+   "census_and_demographic_data",
+   "public_business_listings",
+   "commercial_real_estate_data",
+   "local_market_data"
+  ]
+ },
+ "x-chain-to": [
+  {
+   "api": "Restaurant Growth Opportunity API",
+   "endpoint": "POST /analyze-growth-opportunity",
+   "reason": "Assess an existing unit's upside before acquiring."
+  },
+  {
+   "api": "Local Restaurant Discovery API",
+   "endpoint": "POST /compare-local-options",
+   "reason": "Map the competitive set around a candidate site."
+  },
+  {
+   "api": "Review Sentiment API",
+   "endpoint": "POST /analyze-review-sentiment",
+   "reason": "Gauge brand reputation in the target market."
+  }
+ ],
+ "servers": [
+  {
+   "url": "https://orbis-apis.onrender.com/franchise-opportunity",
+   "description": "Orbis hosted"
+  }
+ ],
+ "security": [
+  {
+   "ApiKeyAuth": []
+  }
+ ],
+ "tags": [
+  {
+   "name": "discovery"
+  },
+  {
+   "name": "analysis"
+  },
+  {
+   "name": "workflow"
+  }
+ ],
+ "paths": {
+  "/": {
+   "get": {
+    "operationId": "getDiscovery",
+    "tags": [
+     "discovery"
+    ],
+    "summary": "Service discovery and capability manifest.",
+    "description": "Zero-cost capability manifest with endpoints, pricing, chaining, and envelope metadata.",
+    "security": [],
+    "x-pricing": {
+     "price": 0.0
+    },
+    "responses": {
+     "200": {
+      "description": "Capability manifest.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DiscoveryResponse"
+        },
+        "example": {
+         "service": "Franchise Opportunity API",
+         "version": "1.0.0",
+         "agent_callable": true,
+         "mcp_compatible": true,
+         "auth": {
+          "type": "api_key",
+          "header": "X-API-Key"
+         },
+         "endpoints": [
+          {
+           "method": "POST",
+           "path": "/analyze-franchise-opportunity",
+           "price_usd": 1.0,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/compare-franchise-markets",
+           "price_usd": 0.75,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/score-location-fit",
+           "price_usd": 0.5,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/generate-investment-brief",
+           "price_usd": 8.0,
+           "gated": false
+          }
+         ],
+         "one_call_workflow": "POST /generate-investment-brief",
+         "execution_gates": [],
+         "confidence": {
+          "score": 1.0,
+          "level": "high",
+          "rationale": "Static capability manifest; deterministic."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "GDPR: business-data-focused; ensure lawful basis where personal data appears",
+           "CCPA",
+           "advisory_not_financial_advice"
+          ],
+          "data_sources": [
+           "franchise_disclosure_documents_public",
+           "census_and_demographic_data",
+           "public_business_listings",
+           "commercial_real_estate_data",
+           "local_market_data"
+          ],
+          "data_subject": "market_and_business_data_only"
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Call POST /generate-investment-brief to run the full workflow in a single call.",
+           "rationale": "The bundled workflow is the fastest path to a complete result."
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Growth Opportunity API",
+           "endpoint": "POST /analyze-growth-opportunity",
+           "reason": "Assess an existing unit's upside before acquiring."
+          },
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /compare-local-options",
+           "reason": "Map the competitive set around a candidate site."
+          },
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Gauge brand reputation in the target market."
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/analyze-franchise-opportunity": {
+   "post": {
+    "operationId": "analyzeFranchiseOpportunity",
+    "tags": [
+     "analysis"
+    ],
+    "summary": "Analyze a franchise brand opportunity.",
+    "description": "Returns franchise_fit_score, market_demand_score, competition_intensity, and an opportunity_summary.",
+    "x-pricing": {
+     "price": 1.0
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AnalyzeFranchiseRequest"
+       },
+       "example": {
+        "brand": "Fast Casual Bowls Co.",
+        "market": {
+         "city": "Austin",
+         "state": "TX"
+        },
+        "investor_profile": {
+         "capital_usd": 500000,
+         "experience": "multi_unit"
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Franchise opportunity analysis.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnalyzeFranchiseResponse"
+        },
+        "example": {
+         "request_id": "req_fr_3f7d12a9c4b8e601",
+         "source_freshness": {
+          "data_freshness_days": 18,
+          "last_verified_at": "2026-05-30T09:15:00Z",
+          "source_urls": [
+           "https://franchise.org/fdd/fast-casual-bowls-co",
+           "https://data.census.gov/profile/Austin_city_Texas"
+          ]
+         },
+         "confidence": {
+          "score": 0.79,
+          "level": "high",
+          "rationale": "Derived from the brand's public FDD and Austin MSA demand indicators; competition intensity reflects current public business listings."
+         },
+         "privacy": {
+          "pii_included": false,
+          "data_subject": "market_and_business_data_only",
+          "retention_days": 30,
+          "compliance": [
+           "GDPR: business-data-focused; ensure lawful basis where personal data appears",
+           "CCPA",
+           "advisory_not_financial_advice"
+          ],
+          "data_sources": [
+           "franchise_disclosure_documents_public",
+           "census_and_demographic_data",
+           "public_business_listings",
+           "local_market_data"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Run a full investment brief to size startup cost and payback for a specific site.",
+           "rationale": "This analysis confirms market fit; the brief adds site-level cost and risk detail.",
+           "chain_to_endpoint": "POST /generate-investment-brief"
+          },
+          {
+           "priority": 2,
+           "action": "Compare Austin against adjacent candidate markets before committing.",
+           "rationale": "High local competition may make a secondary market more attractive on a risk-adjusted basis.",
+           "chain_to_endpoint": "POST /compare-franchise-markets"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /compare-local-options",
+           "reason": "Map the competitive set around a candidate site."
+          },
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Gauge brand reputation in the target market."
+          }
+         ],
+         "franchise_fit_score": 76,
+         "market_demand_score": 84,
+         "competition_intensity": "high",
+         "opportunity_summary": "Fast Casual Bowls Co. is a strong demographic fit for Austin, TX (demand 84/100, fit 76/100), with a fast-growing, affluent, health-conscious population that aligns with the brand's positioning. The primary constraint is high competitive intensity in the fast-casual bowl segment. Recommended next step is a site-specific investment brief to quantify startup cost, payback, and location risk."
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "404": {
+      "$ref": "#/components/responses/NotFound"
+     }
+    }
+   }
+  },
+  "/compare-franchise-markets": {
+   "post": {
+    "operationId": "compareFranchiseMarkets",
+    "tags": [
+     "analysis"
+    ],
+    "summary": "Compare candidate markets for a brand.",
+    "description": "Returns ranked markets with demand, competition, and cost signals.",
+    "x-pricing": {
+     "price": 0.75
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CompareMarketsRequest"
+       },
+       "example": {
+        "brand": "Fast Casual Bowls Co.",
+        "markets": [
+         {
+          "city": "Austin",
+          "state": "TX"
+         },
+         {
+          "city": "Nashville",
+          "state": "TN"
+         },
+         {
+          "city": "Denver",
+          "state": "CO"
+         }
+        ]
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Ranked market comparison.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CompareMarketsResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/score-location-fit": {
+   "post": {
+    "operationId": "scoreLocationFit",
+    "tags": [
+     "analysis"
+    ],
+    "summary": "Score a specific site's fit for a brand.",
+    "description": "Returns a franchise_fit_score for a site plus location_risks and demand drivers.",
+    "x-pricing": {
+     "price": 0.5
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScoreLocationRequest"
+       },
+       "example": {
+        "brand": "Fast Casual Bowls Co.",
+        "site": {
+         "address": "1200 S Lamar Blvd, Austin, TX",
+         "sqft": 2200,
+         "rent_monthly_usd": 9500
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Location-fit score.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScoreLocationResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/generate-investment-brief": {
+   "post": {
+    "operationId": "generateInvestmentBrief",
+    "tags": [
+     "workflow"
+    ],
+    "summary": "One-call workflow — full investment due-diligence brief.",
+    "description": "Orchestrates opportunity analysis, market comparison, and location-fit scoring into a complete investment brief with franchise_fit_score, market_demand_score, competition_intensity, estimated_startup_cost, payback_period_estimate, location_risks, and opportunity_summary. Advisory output — not financial advice; no action is executed.",
+    "x-pricing": {
+     "price": 8.0
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/InvestmentBriefRequest"
+       },
+       "example": {
+        "brand": "Fast Casual Bowls Co.",
+        "market": {
+         "city": "Austin",
+         "state": "TX"
+        },
+        "site": {
+         "address": "1200 S Lamar Blvd, Austin, TX",
+         "sqft": 2200,
+         "rent_monthly_usd": 9500
+        },
+        "investor_profile": {
+         "capital_usd": 500000,
+         "experience": "multi_unit"
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Full investment brief.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/InvestmentBriefResponse"
+        },
+        "example": {
+         "request_id": "req_fr_8b21c9d4e7a04f12",
+         "source_freshness": {
+          "data_freshness_days": 21,
+          "last_verified_at": "2026-05-28T14:32:00Z",
+          "source_urls": [
+           "https://franchise.org/fdd/fast-casual-bowls-co",
+           "https://data.census.gov/profile/Austin_city_Texas"
+          ]
+         },
+         "confidence": {
+          "score": 0.82,
+          "level": "high",
+          "rationale": "Based on current FDD Item 7 ranges, census demographics for the Austin MSA, and comparable-site rent data; site-level financials are estimates."
+         },
+         "privacy": {
+          "pii_included": false,
+          "data_subject": "market_and_business_data_only",
+          "retention_days": 30,
+          "compliance": [
+           "GDPR: business-data-focused; ensure lawful basis where personal data appears",
+           "CCPA",
+           "advisory_not_financial_advice"
+          ],
+          "data_sources": [
+           "franchise_disclosure_documents_public",
+           "census_and_demographic_data",
+           "commercial_real_estate_data",
+           "local_market_data"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Request the brand's most recent Franchise Disclosure Document and validate Item 19 financial performance representations.",
+           "rationale": "Startup cost and payback estimates depend on brand-provided unit economics that should be independently confirmed.",
+           "chain_to_endpoint": "POST /score-location-fit"
+          },
+          {
+           "priority": 2,
+           "action": "Map the competitive set within a 1-mile radius of the candidate site.",
+           "rationale": "Competition intensity materially affects ramp-up time and steady-state revenue.",
+           "chain_to_endpoint": "POST /compare-franchise-markets"
+          },
+          {
+           "priority": 3,
+           "action": "Engage a commercial broker to verify the quoted rent against current South Lamar comps.",
+           "rationale": "Rent is the largest fixed cost and the quoted figure sits at the top of the local range."
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Growth Opportunity API",
+           "endpoint": "POST /analyze-growth-opportunity",
+           "reason": "Assess an existing unit's upside before acquiring."
+          },
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /compare-local-options",
+           "reason": "Map the competitive set around a candidate site."
+          },
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Gauge brand reputation in the target market."
+          }
+         ],
+         "franchise_fit_score": 78,
+         "market_demand_score": 84,
+         "competition_intensity": "high",
+         "estimated_startup_cost": {
+          "low_usd": 410000,
+          "high_usd": 685000,
+          "franchise_fee_usd": 45000,
+          "buildout_usd": 320000,
+          "working_capital_usd": 90000
+         },
+         "payback_period_estimate": {
+          "years_low": 3.2,
+          "years_high": 5.5,
+          "assumptions": "Assumes steady-state unit revenue of $1.4M-$1.7M, ~14% EBITDA margin after royalties, and full ramp by month 9."
+         },
+         "location_risks": [
+          {
+           "risk": "Above-market rent",
+           "severity": "medium",
+           "detail": "Quoted $9,500/month ($4.32/sqft) sits at the upper end of the South Lamar corridor for 2,200 sqft second-generation space.",
+           "mitigation": "Negotiate a tenant-improvement allowance or graduated rent abatement for the first 6-9 months."
+          },
+          {
+           "risk": "Competitive saturation",
+           "severity": "high",
+           "detail": "Austin's fast-casual bowl segment is crowded, with multiple national and regional concepts within a 2-mile radius.",
+           "mitigation": "Differentiate on menu, delivery-channel mix, and a strong local-loyalty program at launch."
+          },
+          {
+           "risk": "Construction cost volatility",
+           "severity": "medium",
+           "detail": "Buildout estimates can swing 15-20% given regional contractor demand and permitting timelines.",
+           "mitigation": "Lock a fixed-price GC contract and budget a 15% contingency reserve."
+          }
+         ],
+         "opportunity_summary": "Fast Casual Bowls Co. in Austin, TX scores as an above-average opportunity (fit 78/100) driven by strong demographic demand (84/100), but tempered by high competitive intensity and top-of-range rent at the South Lamar site. Estimated all-in startup cost of $410K-$685K is within the investor's $500K capital profile if financed conservatively, with a projected 3.2-5.5 year payback under steady-state assumptions. Suited to the investor's multi-unit experience, contingent on FDD validation and rent negotiation.",
+         "disclaimer": "Advisory output only; not financial advice. Validate all figures against the brand's current FDD and independent professional counsel before investing."
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "404": {
+      "$ref": "#/components/responses/NotFound"
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "securitySchemes": {
+   "ApiKeyAuth": {
+    "type": "apiKey",
+    "in": "header",
+    "name": "X-API-Key",
+    "description": "Per-agent API key. Bills against prepaid credits."
+   }
+  },
+  "responses": {
+   "BadRequest": {
+    "description": "Malformed or invalid request.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "Unauthorized": {
+    "description": "Missing or invalid API key.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "PaymentRequired": {
+    "description": "Insufficient prepaid credits.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "NotFound": {
+    "description": "Brand or market could not be resolved.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   }
+  },
+  "schemas": {
+   "Confidence": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "score",
+     "level"
+    ],
+    "properties": {
+     "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+     },
+     "level": {
+      "type": "string",
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ]
+     },
+     "rationale": {
+      "type": "string"
+     }
+    }
+   },
+   "Privacy": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "pii_included",
+     "retention_days"
+    ],
+    "properties": {
+     "pii_included": {
+      "type": "boolean"
+     },
+     "data_subject": {
+      "type": "string",
+      "enum": [
+       "market_and_business_data_only",
+       "none"
+      ],
+      "default": "market_and_business_data_only"
+     },
+     "retention_days": {
+      "type": "integer"
+     },
+     "compliance": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "data_sources": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "RecommendedAction": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "priority",
+     "action"
+    ],
+    "properties": {
+     "priority": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "action": {
+      "type": "string"
+     },
+     "rationale": {
+      "type": "string"
+     },
+     "chain_to_endpoint": {
+      "type": "string"
+     }
+    }
+   },
+   "ChainTo": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "api",
+     "endpoint",
+     "reason"
+    ],
+    "properties": {
+     "api": {
+      "type": "string"
+     },
+     "endpoint": {
+      "type": "string"
+     },
+     "reason": {
+      "type": "string"
+     }
+    }
+   },
+   "ResponseMeta": {
+    "description": "Top-level envelope fields attached once per response (never nested).",
+    "type": "object",
+    "required": [
+     "request_id",
+     "confidence",
+     "privacy",
+     "recommended_actions_priority_order",
+     "chain_to"
+    ],
+    "properties": {
+     "request_id": {
+      "type": "string"
+     },
+     "source_freshness": {
+      "type": "object",
+      "description": "Provenance/recency of the underlying data used in this response.",
+      "additionalProperties": false,
+      "properties": {
+       "data_freshness_days": {
+        "type": "integer"
+       },
+       "last_verified_at": {
+        "type": "string",
+        "format": "date-time"
+       },
+       "source_urls": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "format": "uri"
+        }
+       }
+      }
+     },
+     "confidence": {
+      "$ref": "#/components/schemas/Confidence"
+     },
+     "privacy": {
+      "$ref": "#/components/schemas/Privacy"
+     },
+     "recommended_actions_priority_order": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedAction"
+      }
+     },
+     "chain_to": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ChainTo"
+      }
+     }
+    }
+   },
+   "ErrorResponse": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "error"
+    ],
+    "properties": {
+     "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "code",
+       "message"
+      ],
+      "properties": {
+       "code": {
+        "type": "string"
+       },
+       "message": {
+        "type": "string"
+       },
+       "retriable": {
+        "type": "boolean"
+       }
+      }
+     }
+    }
+   },
+   "DiscoveryResponse": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "service",
+     "version",
+     "agent_callable",
+     "mcp_compatible",
+     "auth",
+     "endpoints",
+     "one_call_workflow",
+     "confidence",
+     "privacy",
+     "recommended_actions_priority_order",
+     "chain_to"
+    ],
+    "properties": {
+     "confidence": {
+      "$ref": "#/components/schemas/Confidence"
+     },
+     "privacy": {
+      "$ref": "#/components/schemas/Privacy"
+     },
+     "recommended_actions_priority_order": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedAction"
+      }
+     },
+     "service": {
+      "type": "string"
+     },
+     "version": {
+      "type": "string"
+     },
+     "agent_callable": {
+      "type": "boolean"
+     },
+     "mcp_compatible": {
+      "type": "boolean"
+     },
+     "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+       "type": {
+        "type": "string"
+       },
+       "header": {
+        "type": "string"
+       }
+      }
+     },
+     "endpoints": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "properties": {
+        "method": {
+         "type": "string"
+        },
+        "path": {
+         "type": "string"
+        },
+        "price_usd": {
+         "type": "number"
+        },
+        "gated": {
+         "type": "boolean"
+        }
+       }
+      }
+     },
+     "one_call_workflow": {
+      "type": "string"
+     },
+     "execution_gates": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "chain_to": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ChainTo"
+      }
+     }
+    }
+   },
+   "Market": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "city"
+    ],
+    "properties": {
+     "city": {
+      "type": "string"
+     },
+     "state": {
+      "type": "string"
+     },
+     "country": {
+      "type": "string",
+      "default": "US"
+     }
+    }
+   },
+   "Site": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+     "address": {
+      "type": "string"
+     },
+     "sqft": {
+      "type": "number"
+     },
+     "rent_monthly_usd": {
+      "type": "number"
+     }
+    }
+   },
+   "InvestorProfile": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+     "capital_usd": {
+      "type": "number"
+     },
+     "experience": {
+      "type": "string",
+      "enum": [
+       "first_time",
+       "single_unit",
+       "multi_unit",
+       "institutional"
+      ]
+     }
+    }
+   },
+   "StartupCost": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "low_usd",
+     "high_usd"
+    ],
+    "properties": {
+     "low_usd": {
+      "type": "number"
+     },
+     "high_usd": {
+      "type": "number"
+     },
+     "franchise_fee_usd": {
+      "type": "number"
+     },
+     "buildout_usd": {
+      "type": "number"
+     },
+     "working_capital_usd": {
+      "type": "number"
+     }
+    }
+   },
+   "PaybackEstimate": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "years_low",
+     "years_high"
+    ],
+    "properties": {
+     "years_low": {
+      "type": "number"
+     },
+     "years_high": {
+      "type": "number"
+     },
+     "assumptions": {
+      "type": "string"
+     }
+    }
+   },
+   "LocationRisk": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "risk",
+     "severity"
+    ],
+    "properties": {
+     "risk": {
+      "type": "string"
+     },
+     "severity": {
+      "type": "string",
+      "enum": [
+       "low",
+       "medium",
+       "high"
+      ]
+     },
+     "detail": {
+      "type": "string"
+     },
+     "mitigation": {
+      "type": "string"
+     }
+    }
+   },
+   "AnalyzeFranchiseRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "brand",
+     "market"
+    ],
+    "properties": {
+     "brand": {
+      "type": "string"
+     },
+     "market": {
+      "$ref": "#/components/schemas/Market"
+     },
+     "investor_profile": {
+      "$ref": "#/components/schemas/InvestorProfile"
+     }
+    }
+   },
+   "AnalyzeFranchiseResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "franchise_fit_score",
+       "market_demand_score",
+       "competition_intensity",
+       "opportunity_summary"
+      ],
+      "properties": {
+       "franchise_fit_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "market_demand_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "competition_intensity": {
+        "type": "string",
+        "enum": [
+         "low",
+         "moderate",
+         "high",
+         "saturated"
+        ]
+       },
+       "opportunity_summary": {
+        "type": "string"
+       }
+      }
+     }
+    ]
+   },
+   "CompareMarketsRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "brand",
+     "markets"
+    ],
+    "properties": {
+     "brand": {
+      "type": "string"
+     },
+     "markets": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Market"
+      }
+     }
+    }
+   },
+   "CompareMarketsResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "ranked_markets"
+      ],
+      "properties": {
+       "ranked_markets": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "market",
+          "market_demand_score",
+          "competition_intensity"
+         ],
+         "properties": {
+          "market": {
+           "$ref": "#/components/schemas/Market"
+          },
+          "market_demand_score": {
+           "type": "number",
+           "minimum": 0,
+           "maximum": 100
+          },
+          "competition_intensity": {
+           "type": "string",
+           "enum": [
+            "low",
+            "moderate",
+            "high",
+            "saturated"
+           ]
+          },
+          "est_startup_cost": {
+           "$ref": "#/components/schemas/StartupCost"
+          }
+         }
+        }
+       }
+      }
+     }
+    ]
+   },
+   "ScoreLocationRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "brand",
+     "site"
+    ],
+    "properties": {
+     "brand": {
+      "type": "string"
+     },
+     "site": {
+      "$ref": "#/components/schemas/Site"
+     }
+    }
+   },
+   "ScoreLocationResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "franchise_fit_score",
+       "location_risks"
+      ],
+      "properties": {
+       "franchise_fit_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "demand_drivers": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "location_risks": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/LocationRisk"
+        }
+       }
+      }
+     }
+    ]
+   },
+   "InvestmentBriefRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "brand",
+     "market"
+    ],
+    "properties": {
+     "brand": {
+      "type": "string"
+     },
+     "market": {
+      "$ref": "#/components/schemas/Market"
+     },
+     "site": {
+      "$ref": "#/components/schemas/Site"
+     },
+     "investor_profile": {
+      "$ref": "#/components/schemas/InvestorProfile"
+     }
+    }
+   },
+   "InvestmentBriefResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "franchise_fit_score",
+       "market_demand_score",
+       "competition_intensity",
+       "estimated_startup_cost",
+       "payback_period_estimate",
+       "location_risks",
+       "opportunity_summary"
+      ],
+      "properties": {
+       "franchise_fit_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "market_demand_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "competition_intensity": {
+        "type": "string",
+        "enum": [
+         "low",
+         "moderate",
+         "high",
+         "saturated"
+        ]
+       },
+       "estimated_startup_cost": {
+        "$ref": "#/components/schemas/StartupCost"
+       },
+       "payback_period_estimate": {
+        "$ref": "#/components/schemas/PaybackEstimate"
+       },
+       "location_risks": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/LocationRisk"
+        }
+       },
+       "opportunity_summary": {
+        "type": "string"
+       },
+       "disclaimer": {
+        "type": "string",
+        "description": "Advisory output; not financial advice."
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+}

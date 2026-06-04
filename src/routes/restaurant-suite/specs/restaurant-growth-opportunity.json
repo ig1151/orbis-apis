@@ -1,0 +1,1530 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Restaurant Growth Opportunity API",
+  "version": "1.0.0",
+  "summary": "Analyze a restaurant and return specific, quantified revenue-growth opportunities with a prioritized action plan.",
+  "description": "Agent-native growth diagnostics for a single restaurant. Given a restaurant identity (name + location or place_id), the API audits online presence, menu pricing, and reviews, then returns a growth_score, a missed_revenue_estimate, ranked top_opportunities, competitive_gaps, and a prioritized action plan. Built for marketing-agency, sales, and operator agents that repeatedly diagnose accounts to build pitches and roadmaps.",
+  "contact": {
+   "name": "Restaurant Agent Commerce APIs",
+   "url": "https://api.restaurant-agent-commerce.com"
+  },
+  "license": {
+   "name": "Commercial",
+   "url": "https://api.restaurant-agent-commerce.com/license"
+  }
+ },
+ "x-agent-callable": true,
+ "x-mcp-compatible": true,
+ "x-pricing": {
+  "model": "per_call",
+  "currency": "USD",
+  "billing": "prepaid_credits",
+  "free_endpoints": [
+   "GET /"
+  ],
+  "endpoint_pricing": {
+   "GET /": 0.0,
+   "POST /analyze-growth-opportunity": 0.5,
+   "POST /audit-online-presence": 0.15,
+   "POST /audit-menu-pricing": 0.2,
+   "POST /audit-reviews": 0.15,
+   "POST /generate-growth-plan": 1.5
+  },
+  "notes": "generate-growth-plan is the one-call workflow: it runs all three audits plus analysis and returns a deliverable plan at a discount vs separate calls."
+ },
+ "x-privacy": {
+  "pii_handling": "none",
+  "data_subject": "business_entity_only",
+  "retention_days": 30,
+  "compliance": [
+   "GDPR: business-data-focused; ensure lawful basis where personal data appears",
+   "CCPA"
+  ],
+  "data_sources": [
+   "public_business_listings",
+   "public_review_platforms",
+   "public_menu_data",
+   "public_web_crawl",
+   "local_search_serps"
+  ]
+ },
+ "x-chain-to": [
+  {
+   "api": "Restaurant Lead Generation API",
+   "endpoint": "POST /generate-outreach-angle",
+   "reason": "Convert quantified gaps into a tailored pitch."
+  },
+  {
+   "api": "Review Sentiment API",
+   "endpoint": "POST /analyze-review-sentiment",
+   "reason": "Deepen the review-issues findings with theme-level sentiment."
+  },
+  {
+   "api": "Restaurant AI Consultant API",
+   "endpoint": "POST /full-consulting-audit",
+   "reason": "Escalate from growth gaps to a full consulting deliverable."
+  }
+ ],
+ "servers": [
+  {
+   "url": "https://orbis-apis.onrender.com/restaurant-growth-opportunity",
+   "description": "Orbis hosted"
+  }
+ ],
+ "security": [
+  {
+   "ApiKeyAuth": []
+  }
+ ],
+ "tags": [
+  {
+   "name": "discovery"
+  },
+  {
+   "name": "analysis"
+  },
+  {
+   "name": "audit"
+  },
+  {
+   "name": "workflow"
+  }
+ ],
+ "paths": {
+  "/": {
+   "get": {
+    "operationId": "getDiscovery",
+    "tags": [
+     "discovery"
+    ],
+    "summary": "Service discovery and capability manifest.",
+    "description": "Zero-cost capability manifest including endpoints, pricing, chaining, and envelope metadata.",
+    "security": [],
+    "x-pricing": {
+     "price": 0.0
+    },
+    "responses": {
+     "200": {
+      "description": "Capability manifest.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DiscoveryResponse"
+        },
+        "example": {
+         "service": "Restaurant Growth Opportunity API",
+         "version": "1.0.0",
+         "agent_callable": true,
+         "mcp_compatible": true,
+         "auth": {
+          "type": "api_key",
+          "header": "X-API-Key"
+         },
+         "endpoints": [
+          {
+           "method": "POST",
+           "path": "/analyze-growth-opportunity",
+           "price_usd": 0.5,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/audit-online-presence",
+           "price_usd": 0.15,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/audit-menu-pricing",
+           "price_usd": 0.2,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/audit-reviews",
+           "price_usd": 0.15,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/generate-growth-plan",
+           "price_usd": 1.5,
+           "gated": false
+          }
+         ],
+         "one_call_workflow": "POST /generate-growth-plan",
+         "execution_gates": [],
+         "confidence": {
+          "score": 1.0,
+          "level": "high",
+          "rationale": "Static capability manifest; deterministic."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "GDPR: business-data-focused; ensure lawful basis where personal data appears",
+           "CCPA"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms",
+           "public_menu_data",
+           "public_web_crawl",
+           "local_search_serps"
+          ],
+          "data_subject": "business_entity_only"
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Call POST /generate-growth-plan to run the full workflow in a single call.",
+           "rationale": "The bundled workflow is the fastest path to a complete result."
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Lead Generation API",
+           "endpoint": "POST /generate-outreach-angle",
+           "reason": "Convert quantified gaps into a tailored pitch."
+          },
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Deepen the review-issues findings with theme-level sentiment."
+          },
+          {
+           "api": "Restaurant AI Consultant API",
+           "endpoint": "POST /full-consulting-audit",
+           "reason": "Escalate from growth gaps to a full consulting deliverable."
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/analyze-growth-opportunity": {
+   "post": {
+    "operationId": "analyzeGrowthOpportunity",
+    "tags": [
+     "analysis"
+    ],
+    "summary": "Full growth analysis with score, missed revenue, and ranked opportunities.",
+    "description": "Returns growth_score, missed_revenue_estimate, top_opportunities, competitive_gaps, local_seo_issues, review_issues, and menu_pricing_issues for one restaurant.",
+    "x-pricing": {
+     "price": 0.5
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AnalyzeRequest"
+       },
+       "example": {
+        "restaurant": {
+         "name": "Trattoria Sole",
+         "city": "Austin",
+         "state": "TX"
+        },
+        "competitors_radius_miles": 3,
+        "include": [
+         "online_presence",
+         "menu_pricing",
+         "reviews"
+        ]
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Quantified growth analysis.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/GrowthAnalysisResponse"
+        },
+        "example": {
+         "request_id": "req_ga_2c7b94e1f0a8",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-03T09:15:00Z",
+          "source_urls": [
+           "https://www.google.com/maps/place/trattoria-sole-austin",
+           "https://www.yelp.com/biz/trattoria-sole-austin"
+          ]
+         },
+         "confidence": {
+          "score": 0.78,
+          "level": "high",
+          "rationale": "Online presence and review data verified within 24 hours; menu pricing inferred from a partial menu crawl, lowering certainty on the pricing component."
+         },
+         "privacy": {
+          "pii_included": false,
+          "data_subject": "business_entity_only",
+          "retention_days": 30,
+          "compliance": [
+           "GDPR: business-data-focused; ensure lawful basis where personal data appears",
+           "CCPA"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms",
+           "public_menu_data",
+           "local_search_serps"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Complete the Google Business Profile and add weekly photo posts",
+           "rationale": "Missing hours and zero recent photos are limiting local pack impressions.",
+           "estimated_revenue_impact_usd": 2400,
+           "chain_to_endpoint": "POST /audit-online-presence"
+          },
+          {
+           "priority": 2,
+           "action": "Increase review response rate and request reviews from recent guests",
+           "rationale": "Low response rate and a flat rating trend cap conversion from listing views.",
+           "estimated_revenue_impact_usd": 1800,
+           "chain_to_endpoint": "POST /audit-reviews"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Lead Generation API",
+           "endpoint": "POST /generate-outreach-angle",
+           "reason": "Convert quantified gaps into a tailored pitch."
+          },
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Deepen the review-issues findings with theme-level sentiment."
+          }
+         ],
+         "growth_score": 61,
+         "missed_revenue_estimate": {
+          "monthly_usd": 6800,
+          "annual_usd": 81600,
+          "method": "Modeled from local search demand, current listing conversion rate, average ticket of $42, and a benchmarked uplift versus the top-quartile local competitor."
+         },
+         "top_opportunities": [
+          {
+           "opportunity": "Capture local pack visibility by completing and optimizing Google Business Profile",
+           "category": "online_presence",
+           "estimated_revenue_impact_usd": 2400,
+           "effort": "low",
+           "time_to_impact_days": 14
+          },
+          {
+           "opportunity": "Lift average rating from 4.1 to 4.4 through review solicitation and response",
+           "category": "reviews",
+           "estimated_revenue_impact_usd": 1800,
+           "effort": "medium",
+           "time_to_impact_days": 30
+          },
+          {
+           "opportunity": "Reprice underpriced signature dishes toward local market band",
+           "category": "menu_pricing",
+           "estimated_revenue_impact_usd": 1500,
+           "effort": "medium",
+           "time_to_impact_days": 21
+          }
+         ],
+         "competitive_gaps": [
+          {
+           "gap": "No online ordering on owned channel",
+           "competitor_advantage": "Top 3 nearby Italian venues offer first-party online ordering",
+           "you_vs_market": "0 of your channels vs market median of 2"
+          },
+          {
+           "gap": "Sparse and outdated listing photos",
+           "competitor_advantage": "Leading competitor has 120+ recent photos",
+           "you_vs_market": "8 photos vs market median of 65"
+          }
+         ],
+         "local_seo_issues": [
+          {
+           "issue": "Incomplete Google Business Profile",
+           "severity": "high",
+           "detail": "Hours, attributes, and menu link are missing or outdated.",
+           "estimated_revenue_impact_usd": 2400,
+           "fix": "Complete all profile fields and link the live menu."
+          },
+          {
+           "issue": "Inconsistent NAP across directories",
+           "severity": "medium",
+           "detail": "Phone number differs between Yelp and Apple Maps.",
+           "estimated_revenue_impact_usd": 600,
+           "fix": "Standardize name, address, and phone across all major directories."
+          }
+         ],
+         "review_issues": [
+          {
+           "issue": "Low review response rate",
+           "severity": "high",
+           "detail": "Only 12% of reviews receive a response versus a 55% local benchmark.",
+           "estimated_revenue_impact_usd": 1800,
+           "fix": "Respond to all reviews within 48 hours."
+          },
+          {
+           "issue": "Flat review velocity",
+           "severity": "medium",
+           "detail": "Averaging 2 new reviews per month over the trailing quarter.",
+           "estimated_revenue_impact_usd": 700,
+           "fix": "Add a post-visit review request via receipt QR code."
+          }
+         ],
+         "menu_pricing_issues": [
+          {
+           "issue": "Underpriced signature entrees",
+           "severity": "medium",
+           "detail": "Six pasta and appetizer items sit 14-18% below the local market band.",
+           "estimated_revenue_impact_usd": 1500,
+           "fix": "Reprice toward the market median and test elasticity."
+          }
+         ]
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "404": {
+      "$ref": "#/components/responses/NotFound"
+     }
+    }
+   }
+  },
+  "/audit-online-presence": {
+   "post": {
+    "operationId": "auditOnlinePresence",
+    "tags": [
+     "audit"
+    ],
+    "summary": "Audit website, local SEO, listings, and social presence.",
+    "description": "Returns local_seo_issues, listing accuracy, website health, and social presence gaps.",
+    "x-pricing": {
+     "price": 0.15
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RestaurantRefRequest"
+       },
+       "example": {
+        "restaurant": {
+         "name": "Trattoria Sole",
+         "city": "Austin",
+         "state": "TX"
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Online presence audit.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OnlinePresenceAuditResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "404": {
+      "$ref": "#/components/responses/NotFound"
+     }
+    }
+   }
+  },
+  "/audit-menu-pricing": {
+   "post": {
+    "operationId": "auditMenuPricing",
+    "tags": [
+     "audit"
+    ],
+    "summary": "Audit menu pricing vs local market and elasticity.",
+    "description": "Returns menu_pricing_issues, underpriced/overpriced items, and price-optimization upside.",
+    "x-pricing": {
+     "price": 0.2
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RestaurantRefRequest"
+       },
+       "example": {
+        "restaurant": {
+         "name": "Trattoria Sole",
+         "city": "Austin",
+         "state": "TX"
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Menu pricing audit.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MenuPricingAuditResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "404": {
+      "$ref": "#/components/responses/NotFound"
+     }
+    }
+   }
+  },
+  "/audit-reviews": {
+   "post": {
+    "operationId": "auditReviews",
+    "tags": [
+     "audit"
+    ],
+    "summary": "Audit review health across platforms.",
+    "description": "Returns review_issues, rating trend, response rate, and velocity flags.",
+    "x-pricing": {
+     "price": 0.15
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RestaurantRefRequest"
+       },
+       "example": {
+        "restaurant": {
+         "name": "Trattoria Sole",
+         "city": "Austin",
+         "state": "TX"
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Review audit.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReviewAuditResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "404": {
+      "$ref": "#/components/responses/NotFound"
+     }
+    }
+   }
+  },
+  "/generate-growth-plan": {
+   "post": {
+    "operationId": "generateGrowthPlan",
+    "tags": [
+     "workflow"
+    ],
+    "summary": "One-call workflow — run all audits + analysis and return a prioritized growth plan.",
+    "description": "Orchestrates audit-online-presence + audit-menu-pricing + audit-reviews + analyze-growth-opportunity, then synthesizes a phased, prioritized growth plan with revenue impact per initiative.",
+    "x-pricing": {
+     "price": 1.5
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/GrowthPlanRequest"
+       },
+       "example": {
+        "restaurant": {
+         "name": "Trattoria Sole",
+         "city": "Austin",
+         "state": "TX"
+        },
+        "competitors_radius_miles": 3,
+        "horizon_days": 90
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Prioritized growth plan with quantified impact.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/GrowthPlanResponse"
+        },
+        "example": {
+         "request_id": "req_gp_8f3a21c9d4e7",
+         "source_freshness": {
+          "data_freshness_days": 2,
+          "last_verified_at": "2026-06-02T14:30:00Z",
+          "source_urls": [
+           "https://www.google.com/maps/place/trattoria-sole-austin",
+           "https://www.yelp.com/biz/trattoria-sole-austin",
+           "https://trattoriasole.com"
+          ]
+         },
+         "confidence": {
+          "score": 0.82,
+          "level": "high",
+          "rationale": "Based on verified Google Business Profile, Yelp listing, and live menu crawl; competitor set drawn from 7 Italian restaurants within 3 miles."
+         },
+         "privacy": {
+          "pii_included": false,
+          "data_subject": "business_entity_only",
+          "retention_days": 30,
+          "compliance": [
+           "GDPR: business-data-focused; ensure lawful basis where personal data appears",
+           "CCPA"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms",
+           "public_menu_data",
+           "public_web_crawl",
+           "local_search_serps"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Claim and fully complete the Google Business Profile with hours, photos, and menu link",
+           "rationale": "Incomplete profile is suppressing local pack visibility for high-intent 'italian restaurant near me' queries.",
+           "estimated_revenue_impact_usd": 2400,
+           "chain_to_endpoint": "POST /audit-online-presence"
+          },
+          {
+           "priority": 2,
+           "action": "Launch a review-response and solicitation workflow to lift rating from 4.1 to 4.4+",
+           "rationale": "Response rate of 12% trails the local market average of 55%; rating directly correlates with conversion.",
+           "estimated_revenue_impact_usd": 1800,
+           "chain_to_endpoint": "POST /audit-reviews"
+          },
+          {
+           "priority": 3,
+           "action": "Reprice 6 underpriced signature pasta and appetizer items toward market band",
+           "rationale": "Entrees priced 14-18% below comparable local Italian venues with no quality justification.",
+           "estimated_revenue_impact_usd": 1500
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Lead Generation API",
+           "endpoint": "POST /generate-outreach-angle",
+           "reason": "Convert quantified gaps into a tailored pitch."
+          },
+          {
+           "api": "Restaurant AI Consultant API",
+           "endpoint": "POST /full-consulting-audit",
+           "reason": "Escalate from growth gaps to a full consulting deliverable."
+          }
+         ],
+         "growth_score": 58,
+         "missed_revenue_estimate": {
+          "monthly_usd": 7200,
+          "annual_usd": 86400
+         },
+         "plan": [
+          {
+           "phase": "week_1",
+           "initiative": "Claim and optimize Google Business Profile; fix NAP inconsistencies across Yelp, Apple Maps, and TripAdvisor",
+           "category": "online_presence",
+           "effort": "low",
+           "estimated_revenue_impact_usd": 2400
+          },
+          {
+           "phase": "weeks_2_4",
+           "initiative": "Stand up review-response cadence and post-visit review solicitation via QR codes on receipts",
+           "category": "reviews",
+           "effort": "medium",
+           "estimated_revenue_impact_usd": 1800
+          },
+          {
+           "phase": "weeks_5_8",
+           "initiative": "Reprice underpriced menu items and introduce two higher-margin prix-fixe options",
+           "category": "menu_pricing",
+           "effort": "medium",
+           "estimated_revenue_impact_usd": 1500
+          },
+          {
+           "phase": "weeks_9_12",
+           "initiative": "Launch first-party online ordering and weekday lunch delivery promotion",
+           "category": "delivery",
+           "effort": "high",
+           "estimated_revenue_impact_usd": 1500
+          }
+         ],
+         "total_estimated_annual_impact_usd": 86400
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "404": {
+      "$ref": "#/components/responses/NotFound"
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "securitySchemes": {
+   "ApiKeyAuth": {
+    "type": "apiKey",
+    "in": "header",
+    "name": "X-API-Key",
+    "description": "Per-agent API key. Bills against prepaid credits."
+   }
+  },
+  "responses": {
+   "BadRequest": {
+    "description": "Malformed or invalid request.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "Unauthorized": {
+    "description": "Missing or invalid API key.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "PaymentRequired": {
+    "description": "Insufficient prepaid credits.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "NotFound": {
+    "description": "Restaurant could not be resolved.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   }
+  },
+  "schemas": {
+   "Confidence": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "score",
+     "level"
+    ],
+    "properties": {
+     "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+     },
+     "level": {
+      "type": "string",
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ]
+     },
+     "rationale": {
+      "type": "string"
+     }
+    }
+   },
+   "Privacy": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "pii_included",
+     "retention_days"
+    ],
+    "properties": {
+     "pii_included": {
+      "type": "boolean"
+     },
+     "data_subject": {
+      "type": "string",
+      "enum": [
+       "business_entity_only",
+       "none"
+      ],
+      "default": "business_entity_only"
+     },
+     "retention_days": {
+      "type": "integer"
+     },
+     "compliance": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "data_sources": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "RecommendedAction": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "priority",
+     "action"
+    ],
+    "properties": {
+     "priority": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "action": {
+      "type": "string"
+     },
+     "rationale": {
+      "type": "string"
+     },
+     "estimated_revenue_impact_usd": {
+      "type": "number"
+     },
+     "chain_to_endpoint": {
+      "type": "string"
+     }
+    }
+   },
+   "ChainTo": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "api",
+     "endpoint",
+     "reason"
+    ],
+    "properties": {
+     "api": {
+      "type": "string"
+     },
+     "endpoint": {
+      "type": "string"
+     },
+     "reason": {
+      "type": "string"
+     }
+    }
+   },
+   "ResponseMeta": {
+    "description": "Top-level envelope fields attached once per response (never nested).",
+    "type": "object",
+    "required": [
+     "request_id",
+     "confidence",
+     "privacy",
+     "recommended_actions_priority_order",
+     "chain_to"
+    ],
+    "properties": {
+     "request_id": {
+      "type": "string"
+     },
+     "source_freshness": {
+      "type": "object",
+      "description": "Provenance/recency of the underlying data used in this response.",
+      "additionalProperties": false,
+      "properties": {
+       "data_freshness_days": {
+        "type": "integer"
+       },
+       "last_verified_at": {
+        "type": "string",
+        "format": "date-time"
+       },
+       "source_urls": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "format": "uri"
+        }
+       }
+      }
+     },
+     "confidence": {
+      "$ref": "#/components/schemas/Confidence"
+     },
+     "privacy": {
+      "$ref": "#/components/schemas/Privacy"
+     },
+     "recommended_actions_priority_order": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedAction"
+      }
+     },
+     "chain_to": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ChainTo"
+      }
+     }
+    }
+   },
+   "ErrorResponse": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "error"
+    ],
+    "properties": {
+     "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "code",
+       "message"
+      ],
+      "properties": {
+       "code": {
+        "type": "string"
+       },
+       "message": {
+        "type": "string"
+       },
+       "retriable": {
+        "type": "boolean"
+       }
+      }
+     }
+    }
+   },
+   "DiscoveryResponse": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "service",
+     "version",
+     "agent_callable",
+     "mcp_compatible",
+     "auth",
+     "endpoints",
+     "one_call_workflow",
+     "confidence",
+     "privacy",
+     "recommended_actions_priority_order",
+     "chain_to"
+    ],
+    "properties": {
+     "confidence": {
+      "$ref": "#/components/schemas/Confidence"
+     },
+     "privacy": {
+      "$ref": "#/components/schemas/Privacy"
+     },
+     "recommended_actions_priority_order": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedAction"
+      }
+     },
+     "service": {
+      "type": "string"
+     },
+     "version": {
+      "type": "string"
+     },
+     "agent_callable": {
+      "type": "boolean"
+     },
+     "mcp_compatible": {
+      "type": "boolean"
+     },
+     "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+       "type": {
+        "type": "string"
+       },
+       "header": {
+        "type": "string"
+       }
+      }
+     },
+     "endpoints": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "properties": {
+        "method": {
+         "type": "string"
+        },
+        "path": {
+         "type": "string"
+        },
+        "price_usd": {
+         "type": "number"
+        },
+        "gated": {
+         "type": "boolean"
+        }
+       }
+      }
+     },
+     "one_call_workflow": {
+      "type": "string"
+     },
+     "execution_gates": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "chain_to": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ChainTo"
+      }
+     }
+    }
+   },
+   "RestaurantRef": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "name"
+    ],
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "place_id": {
+      "type": "string"
+     },
+     "address": {
+      "type": "string"
+     },
+     "city": {
+      "type": "string"
+     },
+     "state": {
+      "type": "string"
+     },
+     "country": {
+      "type": "string",
+      "default": "US"
+     }
+    }
+   },
+   "RestaurantRefRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "restaurant"
+    ],
+    "properties": {
+     "restaurant": {
+      "$ref": "#/components/schemas/RestaurantRef"
+     }
+    }
+   },
+   "Issue": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "issue",
+     "severity"
+    ],
+    "properties": {
+     "issue": {
+      "type": "string"
+     },
+     "severity": {
+      "type": "string",
+      "enum": [
+       "low",
+       "medium",
+       "high",
+       "critical"
+      ]
+     },
+     "detail": {
+      "type": "string"
+     },
+     "estimated_revenue_impact_usd": {
+      "type": "number"
+     },
+     "fix": {
+      "type": "string"
+     }
+    }
+   },
+   "Opportunity": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "opportunity",
+     "estimated_revenue_impact_usd"
+    ],
+    "properties": {
+     "opportunity": {
+      "type": "string"
+     },
+     "category": {
+      "type": "string",
+      "enum": [
+       "online_presence",
+       "menu_pricing",
+       "reviews",
+       "delivery",
+       "marketing",
+       "operations"
+      ]
+     },
+     "estimated_revenue_impact_usd": {
+      "type": "number"
+     },
+     "effort": {
+      "type": "string",
+      "enum": [
+       "low",
+       "medium",
+       "high"
+      ]
+     },
+     "time_to_impact_days": {
+      "type": "integer"
+     }
+    }
+   },
+   "CompetitiveGap": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "gap"
+    ],
+    "properties": {
+     "gap": {
+      "type": "string"
+     },
+     "competitor_advantage": {
+      "type": "string"
+     },
+     "you_vs_market": {
+      "type": "string"
+     }
+    }
+   },
+   "AnalyzeRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "restaurant"
+    ],
+    "properties": {
+     "restaurant": {
+      "$ref": "#/components/schemas/RestaurantRef"
+     },
+     "competitors_radius_miles": {
+      "type": "number",
+      "default": 3
+     },
+     "include": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "enum": [
+        "online_presence",
+        "menu_pricing",
+        "reviews"
+       ]
+      }
+     }
+    }
+   },
+   "GrowthAnalysisResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "growth_score",
+       "missed_revenue_estimate",
+       "top_opportunities",
+       "competitive_gaps",
+       "local_seo_issues",
+       "review_issues",
+       "menu_pricing_issues"
+      ],
+      "properties": {
+       "growth_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "missed_revenue_estimate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "monthly_usd",
+         "annual_usd"
+        ],
+        "properties": {
+         "monthly_usd": {
+          "type": "number"
+         },
+         "annual_usd": {
+          "type": "number"
+         },
+         "method": {
+          "type": "string"
+         }
+        }
+       },
+       "top_opportunities": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/Opportunity"
+        }
+       },
+       "competitive_gaps": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/CompetitiveGap"
+        }
+       },
+       "local_seo_issues": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/Issue"
+        }
+       },
+       "review_issues": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/Issue"
+        }
+       },
+       "menu_pricing_issues": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/Issue"
+        }
+       }
+      }
+     }
+    ]
+   },
+   "OnlinePresenceAuditResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "local_seo_issues",
+       "website_health_score",
+       "listing_accuracy_score"
+      ],
+      "properties": {
+       "website_health_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "listing_accuracy_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "social_presence_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "local_seo_issues": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/Issue"
+        }
+       }
+      }
+     }
+    ]
+   },
+   "MenuPricingAuditResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "menu_pricing_issues",
+       "price_optimization_upside_usd"
+      ],
+      "properties": {
+       "price_optimization_upside_usd": {
+        "type": "number"
+       },
+       "underpriced_items": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "additionalProperties": false,
+         "properties": {
+          "item": {
+           "type": "string"
+          },
+          "current_price_usd": {
+           "type": "number"
+          },
+          "suggested_price_usd": {
+           "type": "number"
+          }
+         }
+        }
+       },
+       "menu_pricing_issues": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/Issue"
+        }
+       }
+      }
+     }
+    ]
+   },
+   "ReviewAuditResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "review_issues",
+       "average_rating",
+       "response_rate"
+      ],
+      "properties": {
+       "average_rating": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 5
+       },
+       "review_count": {
+        "type": "integer"
+       },
+       "response_rate": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "rating_trend": {
+        "type": "string",
+        "enum": [
+         "rising",
+         "flat",
+         "declining"
+        ]
+       },
+       "review_issues": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/Issue"
+        }
+       }
+      }
+     }
+    ]
+   },
+   "GrowthPlanRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "restaurant"
+    ],
+    "properties": {
+     "restaurant": {
+      "$ref": "#/components/schemas/RestaurantRef"
+     },
+     "competitors_radius_miles": {
+      "type": "number",
+      "default": 3
+     },
+     "horizon_days": {
+      "type": "integer",
+      "default": 90
+     }
+    }
+   },
+   "GrowthPlanResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "growth_score",
+       "missed_revenue_estimate",
+       "plan"
+      ],
+      "properties": {
+       "growth_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100
+       },
+       "missed_revenue_estimate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "monthly_usd",
+         "annual_usd"
+        ],
+        "properties": {
+         "monthly_usd": {
+          "type": "number"
+         },
+         "annual_usd": {
+          "type": "number"
+         }
+        }
+       },
+       "plan": {
+        "type": "array",
+        "description": "Phased initiatives in execution order.",
+        "items": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "phase",
+          "initiative",
+          "estimated_revenue_impact_usd"
+         ],
+         "properties": {
+          "phase": {
+           "type": "string",
+           "enum": [
+            "week_1",
+            "weeks_2_4",
+            "weeks_5_8",
+            "weeks_9_12"
+           ]
+          },
+          "initiative": {
+           "type": "string"
+          },
+          "category": {
+           "type": "string"
+          },
+          "effort": {
+           "type": "string",
+           "enum": [
+            "low",
+            "medium",
+            "high"
+           ]
+          },
+          "estimated_revenue_impact_usd": {
+           "type": "number"
+          }
+         }
+        }
+       },
+       "total_estimated_annual_impact_usd": {
+        "type": "number"
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+}

@@ -1,0 +1,1644 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Catering Procurement API",
+  "version": "1.0.0",
+  "summary": "Source, compare, plan, and (human-approved) order catering for meetings, offices, events, and groups.",
+  "description": "Agent-native catering procurement. Given attendee_count, budget, dietary_restrictions, cuisine_preferences, and a delivery_window, returns vendor_options and a recommended_order, then prepares and (on human approval) submits a catering request. Final ordering and any direct vendor contact are execution-gated. Built for executive assistant, events, and workplace-ops agents.",
+  "contact": {
+   "name": "Restaurant Agent Commerce APIs",
+   "url": "https://api.restaurant-agent-commerce.com"
+  },
+  "license": {
+   "name": "Commercial",
+   "url": "https://api.restaurant-agent-commerce.com/license"
+  }
+ },
+ "x-agent-callable": true,
+ "x-mcp-compatible": true,
+ "x-pricing": {
+  "model": "per_call",
+  "currency": "USD",
+  "billing": "prepaid_credits",
+  "free_endpoints": [
+   "GET /"
+  ],
+  "endpoint_pricing": {
+   "GET /": 0.0,
+   "POST /source-catering-options": 0.05,
+   "POST /compare-catering-vendors": 0.1,
+   "POST /generate-catering-plan": 0.5,
+   "POST /prepare-catering-order": 0.15,
+   "POST /submit-catering-request": 1.0
+  },
+  "notes": "generate-catering-plan is the one-call workflow. submit-catering-request is execution-gated (vendor contact / order) and bills only on approved execution."
+ },
+ "x-privacy": {
+  "pii_handling": "minimized",
+  "attendee_data": "aggregate_counts_and_diet_only",
+  "retention_days": 30,
+  "compliance": [
+   "CCPA",
+   "GDPR_legitimate_interest"
+  ],
+  "data_sources": [
+   "catering_marketplace_apis",
+   "public_menu_data",
+   "caller_supplied_event_details"
+  ]
+ },
+ "x-chain-to": [
+  {
+   "api": "Office Lunch Planner API",
+   "endpoint": "POST /plan-office-lunch",
+   "reason": "Downscale a small event to a simple group order."
+  },
+  {
+   "api": "Local Restaurant Discovery API",
+   "endpoint": "POST /discover-restaurants",
+   "reason": "Find additional vendor candidates by cuisine."
+  },
+  {
+   "api": "Review Sentiment API",
+   "endpoint": "POST /analyze-review-sentiment",
+   "reason": "Vet a shortlisted caterer's reputation before ordering."
+  }
+ ],
+ "servers": [
+  {
+   "url": "https://orbis-apis.onrender.com/catering-procurement",
+   "description": "Orbis hosted"
+  }
+ ],
+ "security": [
+  {
+   "ApiKeyAuth": []
+  }
+ ],
+ "tags": [
+  {
+   "name": "discovery"
+  },
+  {
+   "name": "sourcing"
+  },
+  {
+   "name": "ordering"
+  }
+ ],
+ "paths": {
+  "/": {
+   "get": {
+    "operationId": "getDiscovery",
+    "tags": [
+     "discovery"
+    ],
+    "summary": "Service discovery and capability manifest.",
+    "description": "Zero-cost capability manifest with endpoints, pricing, execution gates, chaining, and envelope metadata.",
+    "security": [],
+    "x-pricing": {
+     "price": 0.0
+    },
+    "responses": {
+     "200": {
+      "description": "Capability manifest.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DiscoveryResponse"
+        },
+        "example": {
+         "service": "Catering Procurement API",
+         "version": "1.0.0",
+         "agent_callable": true,
+         "mcp_compatible": true,
+         "auth": {
+          "type": "api_key",
+          "header": "X-API-Key"
+         },
+         "endpoints": [
+          {
+           "method": "POST",
+           "path": "/source-catering-options",
+           "price_usd": 0.05,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/compare-catering-vendors",
+           "price_usd": 0.1,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/generate-catering-plan",
+           "price_usd": 0.5,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/prepare-catering-order",
+           "price_usd": 0.15,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/submit-catering-request",
+           "price_usd": 1.0,
+           "gated": true
+          }
+         ],
+         "one_call_workflow": "POST /generate-catering-plan",
+         "execution_gates": [
+          "POST /submit-catering-request"
+         ],
+         "confidence": {
+          "score": 1.0,
+          "level": "high",
+          "rationale": "Static capability manifest; deterministic."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "catering_marketplace_apis",
+           "public_menu_data",
+           "caller_supplied_event_details"
+          ],
+          "attendee_data": "aggregate_counts_and_diet_only"
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Call POST /generate-catering-plan to run the full workflow in a single call.",
+           "rationale": "The bundled workflow is the fastest path to a complete result."
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Office Lunch Planner API",
+           "endpoint": "POST /plan-office-lunch",
+           "reason": "Downscale a small event to a simple group order."
+          },
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /discover-restaurants",
+           "reason": "Find additional vendor candidates by cuisine."
+          },
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Vet a shortlisted caterer's reputation before ordering."
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/source-catering-options": {
+   "post": {
+    "operationId": "sourceCateringOptions",
+    "tags": [
+     "sourcing"
+    ],
+    "summary": "Find catering vendors matching the event spec.",
+    "description": "Returns vendor_options matching attendee_count, budget, diet, cuisine, and delivery_window.",
+    "x-pricing": {
+     "price": 0.05
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SourceRequest"
+       },
+       "example": {
+        "attendee_count": 40,
+        "budget": {
+         "total_usd": 800,
+         "per_person_cap_usd": 20
+        },
+        "dietary_restrictions": [
+         "vegetarian",
+         "halal"
+        ],
+        "cuisine_preferences": [
+         "mediterranean",
+         "indian"
+        ],
+        "delivery_window": {
+         "date": "2026-06-18",
+         "earliest": "11:30",
+         "latest": "12:00"
+        },
+        "location": {
+         "city": "Austin",
+         "state": "TX",
+         "address": "300 Congress Ave"
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Matching vendor options.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SourceResponse"
+        },
+        "example": {
+         "request_id": "req_5d2b81fa37c4",
+         "confidence": {
+          "score": 0.84,
+          "level": "high",
+          "rationale": "Multiple vendors matched the attendee count, budget cap, dietary restrictions, and delivery window."
+         },
+         "privacy": {
+          "pii_included": false,
+          "attendee_data": "aggregate_counts_and_diet_only",
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "catering_marketplace_apis",
+           "public_menu_data",
+           "caller_supplied_event_details"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Compare the shortlisted vendors head-to-head before selecting one.",
+           "rationale": "Several vendors are close on price and rating.",
+           "chain_to_endpoint": "POST /compare-catering-vendors"
+          },
+          {
+           "priority": 2,
+           "action": "Generate a full catering plan with a recommended order.",
+           "chain_to_endpoint": "POST /generate-catering-plan"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /discover-restaurants",
+           "reason": "Find additional vendor candidates by cuisine."
+          }
+         ],
+         "attendee_count": 40,
+         "vendor_options": [
+          {
+           "vendor_id": "v_1",
+           "name": "Olive & Cedar Mediterranean Catering",
+           "cuisine": [
+            "mediterranean"
+           ],
+           "rating": 4.7,
+           "est_total_usd": 760.0,
+           "per_person_usd": 19.0,
+           "lead_time_hours": 24,
+           "dietary_coverage": [
+            "vegetarian",
+            "halal",
+            "vegan"
+           ],
+           "min_order_people": 20
+          },
+          {
+           "vendor_id": "v_2",
+           "name": "Saffron Table Catering",
+           "cuisine": [
+            "mediterranean",
+            "indian"
+           ],
+           "rating": 4.5,
+           "est_total_usd": 720.0,
+           "per_person_usd": 18.0,
+           "lead_time_hours": 36,
+           "dietary_coverage": [
+            "vegetarian",
+            "halal"
+           ],
+           "min_order_people": 25
+          },
+          {
+           "vendor_id": "v_3",
+           "name": "Levant Kitchen",
+           "cuisine": [
+            "mediterranean"
+           ],
+           "rating": 4.3,
+           "est_total_usd": 788.0,
+           "per_person_usd": 19.7,
+           "lead_time_hours": 18,
+           "dietary_coverage": [
+            "vegetarian",
+            "halal"
+           ],
+           "min_order_people": 15
+          }
+         ]
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/compare-catering-vendors": {
+   "post": {
+    "operationId": "compareCateringVendors",
+    "tags": [
+     "sourcing"
+    ],
+    "summary": "Compare shortlisted vendors head-to-head.",
+    "description": "Returns a structured comparison across price, rating, lead time, and dietary coverage.",
+    "x-pricing": {
+     "price": 0.1
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CompareVendorsRequest"
+       },
+       "example": {
+        "vendor_ids": [
+         "v_1",
+         "v_2",
+         "v_3"
+        ],
+        "dimensions": [
+         "price",
+         "rating",
+         "lead_time",
+         "dietary_coverage"
+        ]
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Vendor comparison.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CompareVendorsResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/generate-catering-plan": {
+   "post": {
+    "operationId": "generateCateringPlan",
+    "tags": [
+     "sourcing"
+    ],
+    "summary": "One-call workflow — source, compare, and recommend a catering plan.",
+    "description": "Orchestrates sourcing + comparison and returns vendor_options and a recommended_order sized to attendee_count and budget. Does NOT contact vendors or order — that requires the gated /submit-catering-request.",
+    "x-pricing": {
+     "price": 0.5
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SourceRequest"
+       },
+       "example": {
+        "attendee_count": 40,
+        "budget": {
+         "total_usd": 800,
+         "per_person_cap_usd": 20
+        },
+        "dietary_restrictions": [
+         "vegetarian",
+         "halal"
+        ],
+        "cuisine_preferences": [
+         "mediterranean"
+        ],
+        "delivery_window": {
+         "date": "2026-06-18",
+         "earliest": "11:30",
+         "latest": "12:00"
+        },
+        "location": {
+         "city": "Austin",
+         "state": "TX",
+         "address": "300 Congress Ave"
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Catering plan with recommended order.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CateringPlanResponse"
+        },
+        "example": {
+         "request_id": "req_8f3a2c1e9b7d",
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Three vendors meet budget, diet, and delivery-window constraints with strong ratings and verified lead times."
+         },
+         "privacy": {
+          "pii_included": false,
+          "attendee_data": "aggregate_counts_and_diet_only",
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "catering_marketplace_apis",
+           "public_menu_data",
+           "caller_supplied_event_details"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Prepare the recommended order for human review before any vendor contact.",
+           "rationale": "Vendor contact and ordering are execution-gated.",
+           "chain_to_endpoint": "POST /prepare-catering-order"
+          },
+          {
+           "priority": 2,
+           "action": "Submit the catering request once a human approval token is issued.",
+           "rationale": "Money-moving, outward-facing action requires approval.",
+           "chain_to_endpoint": "POST /submit-catering-request"
+          },
+          {
+           "priority": 3,
+           "action": "Vet the recommended caterer's reputation before ordering.",
+           "chain_to_endpoint": "POST /analyze-review-sentiment"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /discover-restaurants",
+           "reason": "Find additional vendor candidates by cuisine."
+          },
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Vet a shortlisted caterer's reputation before ordering."
+          }
+         ],
+         "attendee_count": 40,
+         "vendor_options": [
+          {
+           "vendor_id": "v_1",
+           "name": "Olive & Cedar Mediterranean Catering",
+           "cuisine": [
+            "mediterranean"
+           ],
+           "rating": 4.7,
+           "est_total_usd": 760.0,
+           "per_person_usd": 19.0,
+           "lead_time_hours": 24,
+           "dietary_coverage": [
+            "vegetarian",
+            "halal",
+            "vegan"
+           ],
+           "min_order_people": 20
+          },
+          {
+           "vendor_id": "v_2",
+           "name": "Saffron Table Catering",
+           "cuisine": [
+            "mediterranean",
+            "indian"
+           ],
+           "rating": 4.5,
+           "est_total_usd": 720.0,
+           "per_person_usd": 18.0,
+           "lead_time_hours": 36,
+           "dietary_coverage": [
+            "vegetarian",
+            "halal"
+           ],
+           "min_order_people": 25
+          },
+          {
+           "vendor_id": "v_3",
+           "name": "Levant Kitchen",
+           "cuisine": [
+            "mediterranean"
+           ],
+           "rating": 4.3,
+           "est_total_usd": 788.0,
+           "per_person_usd": 19.7,
+           "lead_time_hours": 18,
+           "dietary_coverage": [
+            "vegetarian",
+            "halal"
+           ],
+           "min_order_people": 15
+          }
+         ],
+         "recommended_order": {
+          "recommended_order_id": "rec_9",
+          "vendor_id": "v_1",
+          "items": [
+           {
+            "item": "Mediterranean Mezze Platter (serves 10)",
+            "quantity": 4,
+            "serves": 40,
+            "unit_price_usd": 89.0,
+            "dietary_tags": [
+             "vegetarian",
+             "halal"
+            ]
+           },
+           {
+            "item": "Halal Chicken Shawarma Tray (serves 10)",
+            "quantity": 2,
+            "serves": 20,
+            "unit_price_usd": 110.0,
+            "dietary_tags": [
+             "halal"
+            ]
+           },
+           {
+            "item": "Falafel & Hummus Tray (serves 10)",
+            "quantity": 2,
+            "serves": 20,
+            "unit_price_usd": 75.0,
+            "dietary_tags": [
+             "vegetarian",
+             "vegan",
+             "halal"
+            ]
+           },
+           {
+            "item": "Pita & Mixed Greens Salad (serves 20)",
+            "quantity": 2,
+            "serves": 40,
+            "unit_price_usd": 45.0,
+            "dietary_tags": [
+             "vegetarian",
+             "halal"
+            ]
+           }
+          ],
+          "subtotal_usd": 666.0,
+          "delivery_fee_usd": 35.0,
+          "tax_usd": 59.0,
+          "total_usd": 760.0,
+          "per_person_usd": 19.0
+         },
+         "approval_required": true,
+         "next_step": {
+          "description": "Recommended order is ready. Prepare and submit it for human approval before any vendor contact or payment occurs.",
+          "gated_endpoint": "POST /submit-catering-request"
+         }
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/prepare-catering-order": {
+   "post": {
+    "operationId": "prepareCateringOrder",
+    "tags": [
+     "ordering"
+    ],
+    "summary": "Assemble a final catering order for review.",
+    "description": "Returns a fully-priced order_summary and approval_required flag. No vendor contact or payment occurs here.",
+    "x-pricing": {
+     "price": 0.15
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PrepareOrderRequest"
+       },
+       "example": {
+        "vendor_id": "v_1",
+        "recommended_order_id": "rec_9",
+        "delivery_window": {
+         "date": "2026-06-18",
+         "earliest": "11:30",
+         "latest": "12:00"
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Prepared catering order.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PrepareOrderResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/submit-catering-request": {
+   "post": {
+    "operationId": "submitCateringRequest",
+    "tags": [
+     "ordering"
+    ],
+    "summary": "[GATED] Contact vendor / submit catering order. Requires human approval.",
+    "description": "Submits the order to the vendor (and/or initiates direct vendor contact). Risky, outward-facing, money-moving: with no approval_token it returns approval_required=true and execution_gate.status=pending_approval and performs NO contact or payment. With a valid approval_token it executes.",
+    "x-pricing": {
+     "price": 1.0
+    },
+    "x-execution-gate": true,
+    "x-human-approval-required": true,
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SubmitRequest"
+       },
+       "example": {
+        "order_id": "ord_77",
+        "payment_method_token": "pm_***",
+        "contact_vendor": true,
+        "approval_token": null
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Pending-approval gate (no contact/payment) or confirmed submission (with valid token).",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SubmitResponse"
+        },
+        "example": {
+         "request_id": "req_a17c93f0e482",
+         "confidence": {
+          "score": 0.95,
+          "level": "high",
+          "rationale": "Order is complete and valid; the only blocker to execution is the missing human approval token."
+         },
+         "privacy": {
+          "pii_included": false,
+          "attendee_data": "aggregate_counts_and_diet_only",
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "caller_supplied_event_details"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Obtain a human-issued approval token and resubmit to execute the order.",
+           "rationale": "Vendor contact and payment are execution-gated and were NOT performed.",
+           "chain_to_endpoint": "POST /submit-catering-request"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Vet a shortlisted caterer's reputation before ordering."
+          }
+         ],
+         "approval_required": true,
+         "execution_gate": {
+          "required": true,
+          "status": "pending_approval",
+          "approval_token_hint": "Provide a human-issued approval_token to authorize vendor contact and payment.",
+          "irreversible": true
+         },
+         "submitted": false,
+         "vendor_confirmation_id": null,
+         "order_summary": {
+          "order_id": "ord_77",
+          "total_usd": 760.0,
+          "delivery_window": {
+           "date": "2026-06-18",
+           "earliest": "11:30",
+           "latest": "12:00"
+          }
+         }
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "403": {
+      "description": "Approval token invalid, expired, or revoked.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "securitySchemes": {
+   "ApiKeyAuth": {
+    "type": "apiKey",
+    "in": "header",
+    "name": "X-API-Key",
+    "description": "Per-agent API key. Bills against prepaid credits."
+   }
+  },
+  "responses": {
+   "BadRequest": {
+    "description": "Malformed or invalid request.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "Unauthorized": {
+    "description": "Missing or invalid API key.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "PaymentRequired": {
+    "description": "Insufficient prepaid credits.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   }
+  },
+  "schemas": {
+   "Confidence": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "score",
+     "level"
+    ],
+    "properties": {
+     "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+     },
+     "level": {
+      "type": "string",
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ]
+     },
+     "rationale": {
+      "type": "string"
+     }
+    }
+   },
+   "Privacy": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "pii_included",
+     "retention_days"
+    ],
+    "properties": {
+     "pii_included": {
+      "type": "boolean"
+     },
+     "attendee_data": {
+      "type": "string",
+      "enum": [
+       "aggregate_counts_and_diet_only",
+       "none"
+      ],
+      "default": "aggregate_counts_and_diet_only"
+     },
+     "retention_days": {
+      "type": "integer"
+     },
+     "compliance": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "data_sources": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "RecommendedAction": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "priority",
+     "action"
+    ],
+    "properties": {
+     "priority": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "action": {
+      "type": "string"
+     },
+     "rationale": {
+      "type": "string"
+     },
+     "chain_to_endpoint": {
+      "type": "string"
+     }
+    }
+   },
+   "ChainTo": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "api",
+     "endpoint",
+     "reason"
+    ],
+    "properties": {
+     "api": {
+      "type": "string"
+     },
+     "endpoint": {
+      "type": "string"
+     },
+     "reason": {
+      "type": "string"
+     }
+    }
+   },
+   "ExecutionGate": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "required",
+     "status"
+    ],
+    "properties": {
+     "required": {
+      "type": "boolean"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "not_required",
+       "pending_approval",
+       "approved",
+       "executed",
+       "rejected"
+      ]
+     },
+     "approval_token_hint": {
+      "type": "string"
+     },
+     "expires_at": {
+      "type": "string",
+      "format": "date-time"
+     },
+     "irreversible": {
+      "type": "boolean"
+     }
+    }
+   },
+   "ResponseMeta": {
+    "description": "Top-level envelope fields attached once per response (never nested).",
+    "type": "object",
+    "required": [
+     "request_id",
+     "confidence",
+     "privacy",
+     "recommended_actions_priority_order",
+     "chain_to"
+    ],
+    "properties": {
+     "request_id": {
+      "type": "string"
+     },
+     "confidence": {
+      "$ref": "#/components/schemas/Confidence"
+     },
+     "privacy": {
+      "$ref": "#/components/schemas/Privacy"
+     },
+     "recommended_actions_priority_order": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedAction"
+      }
+     },
+     "chain_to": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ChainTo"
+      }
+     }
+    }
+   },
+   "ErrorResponse": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "error"
+    ],
+    "properties": {
+     "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "code",
+       "message"
+      ],
+      "properties": {
+       "code": {
+        "type": "string"
+       },
+       "message": {
+        "type": "string"
+       },
+       "retriable": {
+        "type": "boolean"
+       }
+      }
+     }
+    }
+   },
+   "DiscoveryResponse": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "service",
+     "version",
+     "agent_callable",
+     "mcp_compatible",
+     "auth",
+     "endpoints",
+     "one_call_workflow",
+     "confidence",
+     "privacy",
+     "recommended_actions_priority_order",
+     "chain_to"
+    ],
+    "properties": {
+     "confidence": {
+      "$ref": "#/components/schemas/Confidence"
+     },
+     "privacy": {
+      "$ref": "#/components/schemas/Privacy"
+     },
+     "recommended_actions_priority_order": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedAction"
+      }
+     },
+     "service": {
+      "type": "string"
+     },
+     "version": {
+      "type": "string"
+     },
+     "agent_callable": {
+      "type": "boolean"
+     },
+     "mcp_compatible": {
+      "type": "boolean"
+     },
+     "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+       "type": {
+        "type": "string"
+       },
+       "header": {
+        "type": "string"
+       }
+      }
+     },
+     "endpoints": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "properties": {
+        "method": {
+         "type": "string"
+        },
+        "path": {
+         "type": "string"
+        },
+        "price_usd": {
+         "type": "number"
+        },
+        "gated": {
+         "type": "boolean"
+        }
+       }
+      }
+     },
+     "one_call_workflow": {
+      "type": "string"
+     },
+     "execution_gates": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "chain_to": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ChainTo"
+      }
+     }
+    }
+   },
+   "Budget": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+     "total_usd": {
+      "type": "number"
+     },
+     "per_person_cap_usd": {
+      "type": "number"
+     },
+     "currency": {
+      "type": "string",
+      "default": "USD"
+     }
+    }
+   },
+   "DeliveryWindow": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+     "date": {
+      "type": "string",
+      "format": "date"
+     },
+     "earliest": {
+      "type": "string"
+     },
+     "latest": {
+      "type": "string"
+     }
+    }
+   },
+   "Location": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "city"
+    ],
+    "properties": {
+     "city": {
+      "type": "string"
+     },
+     "state": {
+      "type": "string"
+     },
+     "address": {
+      "type": "string"
+     }
+    }
+   },
+   "VendorOption": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "vendor_id",
+     "name",
+     "est_total_usd"
+    ],
+    "properties": {
+     "vendor_id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "cuisine": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "rating": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5
+     },
+     "est_total_usd": {
+      "type": "number"
+     },
+     "per_person_usd": {
+      "type": "number"
+     },
+     "lead_time_hours": {
+      "type": "number"
+     },
+     "dietary_coverage": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "min_order_people": {
+      "type": "integer"
+     }
+    }
+   },
+   "RecommendedOrderItem": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "item",
+     "quantity",
+     "serves"
+    ],
+    "properties": {
+     "item": {
+      "type": "string"
+     },
+     "quantity": {
+      "type": "integer"
+     },
+     "serves": {
+      "type": "integer"
+     },
+     "unit_price_usd": {
+      "type": "number"
+     },
+     "dietary_tags": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "RecommendedOrder": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "recommended_order_id",
+     "vendor_id",
+     "items",
+     "total_usd"
+    ],
+    "properties": {
+     "recommended_order_id": {
+      "type": "string"
+     },
+     "vendor_id": {
+      "type": "string"
+     },
+     "items": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedOrderItem"
+      }
+     },
+     "subtotal_usd": {
+      "type": "number"
+     },
+     "delivery_fee_usd": {
+      "type": "number"
+     },
+     "tax_usd": {
+      "type": "number"
+     },
+     "total_usd": {
+      "type": "number"
+     },
+     "per_person_usd": {
+      "type": "number"
+     }
+    }
+   },
+   "SourceRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "attendee_count",
+     "budget"
+    ],
+    "properties": {
+     "attendee_count": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "budget": {
+      "$ref": "#/components/schemas/Budget"
+     },
+     "dietary_restrictions": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "cuisine_preferences": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "delivery_window": {
+      "$ref": "#/components/schemas/DeliveryWindow"
+     },
+     "location": {
+      "$ref": "#/components/schemas/Location"
+     }
+    }
+   },
+   "SourceResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "attendee_count",
+       "vendor_options"
+      ],
+      "properties": {
+       "attendee_count": {
+        "type": "integer"
+       },
+       "vendor_options": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/VendorOption"
+        }
+       }
+      }
+     }
+    ]
+   },
+   "CompareVendorsRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "vendor_ids",
+     "dimensions"
+    ],
+    "properties": {
+     "vendor_ids": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "dimensions": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "enum": [
+        "price",
+        "rating",
+        "lead_time",
+        "dietary_coverage",
+        "min_order"
+       ]
+      }
+     }
+    }
+   },
+   "CompareVendorsResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "comparison",
+       "recommended_vendor_id"
+      ],
+      "properties": {
+       "recommended_vendor_id": {
+        "type": "string"
+       },
+       "comparison": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "vendor_id",
+          "name"
+         ],
+         "properties": {
+          "vendor_id": {
+           "type": "string"
+          },
+          "name": {
+           "type": "string"
+          },
+          "values": {
+           "type": "object",
+           "additionalProperties": true
+          }
+         }
+        }
+       }
+      }
+     }
+    ]
+   },
+   "CateringPlanResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "attendee_count",
+       "vendor_options",
+       "recommended_order",
+       "approval_required"
+      ],
+      "properties": {
+       "attendee_count": {
+        "type": "integer"
+       },
+       "vendor_options": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/VendorOption"
+        }
+       },
+       "recommended_order": {
+        "$ref": "#/components/schemas/RecommendedOrder"
+       },
+       "approval_required": {
+        "type": "boolean",
+        "description": "True — vendor contact/order requires gated /submit-catering-request."
+       },
+       "next_step": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+         "description": {
+          "type": "string"
+         },
+         "gated_endpoint": {
+          "type": "string"
+         }
+        }
+       }
+      }
+     }
+    ]
+   },
+   "PrepareOrderRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "vendor_id",
+     "recommended_order_id"
+    ],
+    "properties": {
+     "vendor_id": {
+      "type": "string"
+     },
+     "recommended_order_id": {
+      "type": "string"
+     },
+     "delivery_window": {
+      "$ref": "#/components/schemas/DeliveryWindow"
+     }
+    }
+   },
+   "PrepareOrderResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "order_summary",
+       "approval_required"
+      ],
+      "properties": {
+       "approval_required": {
+        "type": "boolean"
+       },
+       "order_summary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "order_id",
+         "total_usd",
+         "per_person_usd"
+        ],
+        "properties": {
+         "order_id": {
+          "type": "string"
+         },
+         "vendor_id": {
+          "type": "string"
+         },
+         "total_usd": {
+          "type": "number"
+         },
+         "per_person_usd": {
+          "type": "number"
+         },
+         "delivery_window": {
+          "$ref": "#/components/schemas/DeliveryWindow"
+         }
+        }
+       }
+      }
+     }
+    ]
+   },
+   "SubmitRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "order_id"
+    ],
+    "properties": {
+     "order_id": {
+      "type": "string"
+     },
+     "payment_method_token": {
+      "type": "string"
+     },
+     "contact_vendor": {
+      "type": "boolean",
+      "default": true
+     },
+     "approval_token": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no contact/payment occurs."
+     }
+    }
+   },
+   "SubmitResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "approval_required",
+       "execution_gate",
+       "submitted"
+      ],
+      "properties": {
+       "approval_required": {
+        "type": "boolean"
+       },
+       "execution_gate": {
+        "$ref": "#/components/schemas/ExecutionGate"
+       },
+       "submitted": {
+        "type": "boolean",
+        "description": "True only when a valid approval_token was supplied and the request executed."
+       },
+       "vendor_confirmation_id": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "order_summary": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+         "order_id": {
+          "type": "string"
+         },
+         "total_usd": {
+          "type": "number"
+         },
+         "delivery_window": {
+          "$ref": "#/components/schemas/DeliveryWindow"
+         }
+        }
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+}

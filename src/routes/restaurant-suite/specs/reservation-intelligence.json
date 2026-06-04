@@ -1,0 +1,1563 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Reservation Intelligence API",
+  "version": "1.0.0",
+  "summary": "Find availability, recommend and optimize reservations, predict no-show risk, and prepare (human-approved) bookings.",
+  "description": "Agent-native reservation intelligence. Find availability by party_size, time_window, and cuisine; recommend the best slot with a recommendation_reason; predict no_show_risk; optimize seating; and prepare a booking. Making or modifying a reservation is execution-gated and requires explicit human approval. Built for concierge, assistant, and restaurant-host agents.",
+  "contact": {
+   "name": "Restaurant Agent Commerce APIs",
+   "url": "https://api.restaurant-agent-commerce.com"
+  },
+  "license": {
+   "name": "Commercial",
+   "url": "https://api.restaurant-agent-commerce.com/license"
+  }
+ },
+ "x-agent-callable": true,
+ "x-mcp-compatible": true,
+ "x-pricing": {
+  "model": "per_call",
+  "currency": "USD",
+  "billing": "prepaid_credits",
+  "free_endpoints": [
+   "GET /"
+  ],
+  "endpoint_pricing": {
+   "GET /": 0.0,
+   "POST /find-availability": 0.03,
+   "POST /recommend-reservation": 0.15,
+   "POST /predict-no-show-risk": 0.1,
+   "POST /optimize-seating": 0.1,
+   "POST /prepare-reservation": 0.5
+  },
+  "notes": "recommend-reservation is the one-call workflow (availability + no-show + recommendation). prepare-reservation is execution-gated (book/modify) and bills only on approved execution."
+ },
+ "x-privacy": {
+  "pii_handling": "minimized",
+  "guest_data": "name_and_party_only",
+  "retention_days": 30,
+  "compliance": [
+   "CCPA",
+   "GDPR_legitimate_interest"
+  ],
+  "data_sources": [
+   "reservation_platform_apis",
+   "public_business_listings",
+   "caller_supplied_booking_details"
+  ]
+ },
+ "x-chain-to": [
+  {
+   "api": "Local Restaurant Discovery API",
+   "endpoint": "POST /match-restaurant-to-intent",
+   "reason": "Source candidate restaurants before checking availability."
+  },
+  {
+   "api": "Review Sentiment API",
+   "endpoint": "POST /analyze-review-sentiment",
+   "reason": "Validate a venue's reputation before booking."
+  },
+  {
+   "api": "Multi-Restaurant Ordering API",
+   "endpoint": "POST /search-restaurants",
+   "reason": "Offer delivery if no suitable table is available."
+  }
+ ],
+ "servers": [
+  {
+   "url": "https://orbis-apis.onrender.com/reservation-intelligence",
+   "description": "Orbis hosted"
+  }
+ ],
+ "security": [
+  {
+   "ApiKeyAuth": []
+  }
+ ],
+ "tags": [
+  {
+   "name": "discovery"
+  },
+  {
+   "name": "availability"
+  },
+  {
+   "name": "intelligence"
+  },
+  {
+   "name": "booking"
+  }
+ ],
+ "paths": {
+  "/": {
+   "get": {
+    "operationId": "getDiscovery",
+    "tags": [
+     "discovery"
+    ],
+    "summary": "Service discovery and capability manifest.",
+    "description": "Zero-cost capability manifest with endpoints, pricing, execution gates, chaining, and envelope metadata.",
+    "security": [],
+    "x-pricing": {
+     "price": 0.0
+    },
+    "responses": {
+     "200": {
+      "description": "Capability manifest.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DiscoveryResponse"
+        },
+        "example": {
+         "service": "Reservation Intelligence API",
+         "version": "1.0.0",
+         "agent_callable": true,
+         "mcp_compatible": true,
+         "auth": {
+          "type": "api_key",
+          "header": "X-API-Key"
+         },
+         "endpoints": [
+          {
+           "method": "POST",
+           "path": "/find-availability",
+           "price_usd": 0.03,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/recommend-reservation",
+           "price_usd": 0.15,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/predict-no-show-risk",
+           "price_usd": 0.1,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/optimize-seating",
+           "price_usd": 0.1,
+           "gated": false
+          },
+          {
+           "method": "POST",
+           "path": "/prepare-reservation",
+           "price_usd": 0.5,
+           "gated": true
+          }
+         ],
+         "one_call_workflow": "POST /recommend-reservation",
+         "execution_gates": [
+          "POST /prepare-reservation"
+         ],
+         "confidence": {
+          "score": 1.0,
+          "level": "high",
+          "rationale": "Static capability manifest; deterministic."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "reservation_platform_apis",
+           "public_business_listings",
+           "caller_supplied_booking_details"
+          ],
+          "guest_data": "name_and_party_only"
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Call POST /recommend-reservation to run the full workflow in a single call.",
+           "rationale": "The bundled workflow is the fastest path to a complete result."
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /match-restaurant-to-intent",
+           "reason": "Source candidate restaurants before checking availability."
+          },
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Validate a venue's reputation before booking."
+          },
+          {
+           "api": "Multi-Restaurant Ordering API",
+           "endpoint": "POST /search-restaurants",
+           "reason": "Offer delivery if no suitable table is available."
+          }
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/find-availability": {
+   "post": {
+    "operationId": "findAvailability",
+    "tags": [
+     "availability"
+    ],
+    "summary": "Find open reservation slots.",
+    "description": "Returns availability slots by party_size, time_window, cuisine, and price_level.",
+    "x-pricing": {
+     "price": 0.03
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AvailabilityRequest"
+       },
+       "example": {
+        "location": {
+         "city": "Austin",
+         "state": "TX"
+        },
+        "party_size": 4,
+        "time_window": {
+         "date": "2026-06-12",
+         "earliest": "19:00",
+         "latest": "20:30"
+        },
+        "cuisine": [
+         "italian"
+        ],
+        "price_level": [
+         2,
+         3
+        ]
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Availability slots.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AvailabilityResponse"
+        },
+        "example": {
+         "request_id": "req_avail_0a1b2c3d4e",
+         "confidence": {
+          "score": 0.82,
+          "level": "high",
+          "rationale": "Live availability pulled from reservation platform within the requested window; minor uncertainty from sub-minute slot churn."
+         },
+         "privacy": {
+          "pii_included": false,
+          "guest_data": "none",
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "reservation_platform_apis",
+           "public_business_listings"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Rank the returned slots for the guest's occasion and party size.",
+           "rationale": "Multiple slots match; intelligence ranking surfaces the best fit.",
+           "chain_to_endpoint": "POST /recommend-reservation"
+          },
+          {
+           "priority": 2,
+           "action": "Prepare a booking for the chosen slot once confirmed by the guest.",
+           "rationale": "Booking is execution-gated and requires human approval.",
+           "chain_to_endpoint": "POST /prepare-reservation"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /match-restaurant-to-intent",
+           "reason": "Source candidate restaurants before checking availability."
+          },
+          {
+           "api": "Multi-Restaurant Ordering API",
+           "endpoint": "POST /search-restaurants",
+           "reason": "Offer delivery if no suitable table is available."
+          }
+         ],
+         "availability": [
+          {
+           "slot_id": "slot_190000_r412",
+           "restaurant_id": "r_412",
+           "restaurant_name": "Trattoria Sole",
+           "time": "2026-06-12T19:00:00-05:00",
+           "party_size": 4,
+           "price_level": 3,
+           "seating_area": "indoor",
+           "deposit_required": false
+          },
+          {
+           "slot_id": "slot_194500_r412",
+           "restaurant_id": "r_412",
+           "restaurant_name": "Trattoria Sole",
+           "time": "2026-06-12T19:45:00-05:00",
+           "party_size": 4,
+           "price_level": 3,
+           "seating_area": "patio",
+           "deposit_required": true
+          },
+          {
+           "slot_id": "slot_201500_r256",
+           "restaurant_id": "r_256",
+           "restaurant_name": "Vinoteca Lupo",
+           "time": "2026-06-12T20:15:00-05:00",
+           "party_size": 4,
+           "price_level": 2,
+           "seating_area": "private",
+           "deposit_required": false
+          }
+         ]
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/recommend-reservation": {
+   "post": {
+    "operationId": "recommendReservation",
+    "tags": [
+     "intelligence",
+     "booking"
+    ],
+    "summary": "One-call workflow — recommend the best reservation.",
+    "description": "Orchestrates find-availability + predict-no-show-risk and returns a recommended slot with availability, price_level, no_show_risk, and a recommendation_reason. Does NOT book — that requires gated /prepare-reservation.",
+    "x-pricing": {
+     "price": 0.15
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RecommendRequest"
+       },
+       "example": {
+        "location": {
+         "city": "Austin",
+         "state": "TX"
+        },
+        "party_size": 2,
+        "occasion": "date_night",
+        "time_window": {
+         "date": "2026-06-12",
+         "earliest": "19:00",
+         "latest": "21:00"
+        },
+        "cuisine": [
+         "italian"
+        ]
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Recommended reservation.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RecommendResponse"
+        },
+        "example": {
+         "request_id": "req_recmd_a1b2c3d4e5",
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Strong availability match for party of 2 within the requested window; venue has low historical no-show rate for date_night bookings."
+         },
+         "privacy": {
+          "pii_included": false,
+          "guest_data": "none",
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "reservation_platform_apis",
+           "public_business_listings"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Confirm the recommended 19:30 patio slot with the guest before booking.",
+           "rationale": "Patio seating best fits a date_night occasion and the slot falls mid-window.",
+           "chain_to_endpoint": "POST /prepare-reservation"
+          },
+          {
+           "priority": 2,
+           "action": "Validate the venue's recent reputation before committing.",
+           "rationale": "Sentiment check reduces risk of a poor experience for a special occasion.",
+           "chain_to_endpoint": "POST /analyze-review-sentiment"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Validate a venue's reputation before booking."
+          },
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /match-restaurant-to-intent",
+           "reason": "Source additional candidate restaurants if the guest declines this slot."
+          }
+         ],
+         "recommended_slot": {
+          "slot_id": "slot_193000_r412",
+          "restaurant_id": "r_412",
+          "restaurant_name": "Trattoria Sole",
+          "time": "2026-06-12T19:30:00-05:00",
+          "party_size": 2,
+          "price_level": 3,
+          "seating_area": "patio",
+          "deposit_required": false
+         },
+         "alternatives": [
+          {
+           "slot_id": "slot_200000_r412",
+           "restaurant_id": "r_412",
+           "restaurant_name": "Trattoria Sole",
+           "time": "2026-06-12T20:00:00-05:00",
+           "party_size": 2,
+           "price_level": 3,
+           "seating_area": "indoor",
+           "deposit_required": false
+          },
+          {
+           "slot_id": "slot_191500_r087",
+           "restaurant_id": "r_087",
+           "restaurant_name": "Osteria Nord",
+           "time": "2026-06-12T19:15:00-05:00",
+           "party_size": 2,
+           "price_level": 2,
+           "seating_area": "indoor",
+           "deposit_required": false
+          }
+         ],
+         "no_show_risk": {
+          "score": 0.12,
+          "level": "low"
+         },
+         "recommendation_reason": "Trattoria Sole's 19:30 patio table best matches a 2-guest date_night within the 19:00-21:00 window, pairs an Italian menu with a low no-show risk, and requires no deposit."
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/predict-no-show-risk": {
+   "post": {
+    "operationId": "predictNoShowRisk",
+    "tags": [
+     "intelligence"
+    ],
+    "summary": "Predict no-show risk for a booking context.",
+    "description": "Returns a no_show_risk score with contributing factors.",
+    "x-pricing": {
+     "price": 0.1
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/NoShowRequest"
+       },
+       "example": {
+        "party_size": 6,
+        "time": "2026-06-12T19:00:00Z",
+        "lead_time_days": 14,
+        "deposit": false
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "No-show risk prediction.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/NoShowResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/optimize-seating": {
+   "post": {
+    "operationId": "optimizeSeating",
+    "tags": [
+     "intelligence"
+    ],
+    "summary": "Optimize seating/table assignment for a set of bookings.",
+    "description": "Returns an optimized seating plan maximizing covers and turn efficiency.",
+    "x-pricing": {
+     "price": 0.1
+    },
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SeatingRequest"
+       },
+       "example": {
+        "tables": [
+         {
+          "table_id": "t1",
+          "seats": 2
+         },
+         {
+          "table_id": "t2",
+          "seats": 4
+         }
+        ],
+        "bookings": [
+         {
+          "booking_id": "b1",
+          "party_size": 2,
+          "time": "19:00"
+         },
+         {
+          "booking_id": "b2",
+          "party_size": 4,
+          "time": "19:30"
+         }
+        ],
+        "turn_minutes": 90
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Optimized seating plan.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SeatingResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     }
+    }
+   }
+  },
+  "/prepare-reservation": {
+   "post": {
+    "operationId": "prepareReservation",
+    "tags": [
+     "booking"
+    ],
+    "summary": "[GATED] Book or modify a reservation. Requires human approval.",
+    "description": "Creates or modifies a reservation at the venue. Risky, outward-facing, and may incur deposits/penalties: with no approval_token it returns approval_required=true and execution_gate.status=pending_approval and performs NO booking or modification. With a valid approval_token it executes.",
+    "x-pricing": {
+     "price": 0.5
+    },
+    "x-execution-gate": true,
+    "x-human-approval-required": true,
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PrepareReservationRequest"
+       },
+       "example": {
+        "restaurant_id": "r_1",
+        "slot_id": "slot_19_00",
+        "party_size": 2,
+        "guest_name": "A. Smith",
+        "action": "create",
+        "approval_token": null
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Pending-approval gate (no booking) or confirmed booking (with valid token).",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PrepareReservationResponse"
+        },
+        "example": {
+         "request_id": "req_prep_f9e8d7c6b5",
+         "confidence": {
+          "score": 0.95,
+          "level": "high",
+          "rationale": "Slot and party details are valid and the venue is reachable; awaiting human approval before any booking is made."
+         },
+         "privacy": {
+          "pii_included": true,
+          "guest_data": "name_and_party_only",
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "caller_supplied_booking_details",
+           "reservation_platform_apis"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Obtain explicit human approval, then resubmit this request with the issued approval_token.",
+           "rationale": "Booking is execution-gated, outward-facing, and may incur deposit or cancellation penalties.",
+           "chain_to_endpoint": "POST /prepare-reservation"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Validate a venue's reputation before booking."
+          }
+         ],
+         "approval_required": true,
+         "execution_gate": {
+          "required": true,
+          "status": "pending_approval",
+          "approval_token_hint": "Resubmit with a human-issued approval_token to execute the create action.",
+          "expires_at": "2026-06-12T18:00:00-05:00",
+          "irreversible": false
+         },
+         "booked": false,
+         "reservation_confirmation_id": null,
+         "reservation_summary": {
+          "restaurant_id": "r_412",
+          "time": "2026-06-12T19:30:00-05:00",
+          "party_size": 2,
+          "action": "create",
+          "deposit_required": false
+         }
+        }
+       }
+      }
+     },
+     "400": {
+      "$ref": "#/components/responses/BadRequest"
+     },
+     "401": {
+      "$ref": "#/components/responses/Unauthorized"
+     },
+     "402": {
+      "$ref": "#/components/responses/PaymentRequired"
+     },
+     "403": {
+      "description": "Approval token invalid, expired, or revoked.",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "securitySchemes": {
+   "ApiKeyAuth": {
+    "type": "apiKey",
+    "in": "header",
+    "name": "X-API-Key",
+    "description": "Per-agent API key. Bills against prepaid credits."
+   }
+  },
+  "responses": {
+   "BadRequest": {
+    "description": "Malformed or invalid request.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "Unauthorized": {
+    "description": "Missing or invalid API key.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "PaymentRequired": {
+    "description": "Insufficient prepaid credits.",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   }
+  },
+  "schemas": {
+   "Confidence": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "score",
+     "level"
+    ],
+    "properties": {
+     "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+     },
+     "level": {
+      "type": "string",
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ]
+     },
+     "rationale": {
+      "type": "string"
+     }
+    }
+   },
+   "Privacy": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "pii_included",
+     "retention_days"
+    ],
+    "properties": {
+     "pii_included": {
+      "type": "boolean"
+     },
+     "guest_data": {
+      "type": "string",
+      "enum": [
+       "name_and_party_only",
+       "none"
+      ],
+      "default": "name_and_party_only"
+     },
+     "retention_days": {
+      "type": "integer"
+     },
+     "compliance": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "data_sources": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "RecommendedAction": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "priority",
+     "action"
+    ],
+    "properties": {
+     "priority": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "action": {
+      "type": "string"
+     },
+     "rationale": {
+      "type": "string"
+     },
+     "chain_to_endpoint": {
+      "type": "string"
+     }
+    }
+   },
+   "ChainTo": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "api",
+     "endpoint",
+     "reason"
+    ],
+    "properties": {
+     "api": {
+      "type": "string"
+     },
+     "endpoint": {
+      "type": "string"
+     },
+     "reason": {
+      "type": "string"
+     }
+    }
+   },
+   "ExecutionGate": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "required",
+     "status"
+    ],
+    "properties": {
+     "required": {
+      "type": "boolean"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "not_required",
+       "pending_approval",
+       "approved",
+       "executed",
+       "rejected"
+      ]
+     },
+     "approval_token_hint": {
+      "type": "string"
+     },
+     "expires_at": {
+      "type": "string",
+      "format": "date-time"
+     },
+     "irreversible": {
+      "type": "boolean"
+     }
+    }
+   },
+   "ResponseMeta": {
+    "description": "Top-level envelope fields attached once per response (never nested).",
+    "type": "object",
+    "required": [
+     "request_id",
+     "confidence",
+     "privacy",
+     "recommended_actions_priority_order",
+     "chain_to"
+    ],
+    "properties": {
+     "request_id": {
+      "type": "string"
+     },
+     "confidence": {
+      "$ref": "#/components/schemas/Confidence"
+     },
+     "privacy": {
+      "$ref": "#/components/schemas/Privacy"
+     },
+     "recommended_actions_priority_order": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedAction"
+      }
+     },
+     "chain_to": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ChainTo"
+      }
+     }
+    }
+   },
+   "ErrorResponse": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "error"
+    ],
+    "properties": {
+     "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "code",
+       "message"
+      ],
+      "properties": {
+       "code": {
+        "type": "string"
+       },
+       "message": {
+        "type": "string"
+       },
+       "retriable": {
+        "type": "boolean"
+       }
+      }
+     }
+    }
+   },
+   "DiscoveryResponse": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "service",
+     "version",
+     "agent_callable",
+     "mcp_compatible",
+     "auth",
+     "endpoints",
+     "one_call_workflow",
+     "confidence",
+     "privacy",
+     "recommended_actions_priority_order",
+     "chain_to"
+    ],
+    "properties": {
+     "confidence": {
+      "$ref": "#/components/schemas/Confidence"
+     },
+     "privacy": {
+      "$ref": "#/components/schemas/Privacy"
+     },
+     "recommended_actions_priority_order": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/RecommendedAction"
+      }
+     },
+     "service": {
+      "type": "string"
+     },
+     "version": {
+      "type": "string"
+     },
+     "agent_callable": {
+      "type": "boolean"
+     },
+     "mcp_compatible": {
+      "type": "boolean"
+     },
+     "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+       "type": {
+        "type": "string"
+       },
+       "header": {
+        "type": "string"
+       }
+      }
+     },
+     "endpoints": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "properties": {
+        "method": {
+         "type": "string"
+        },
+        "path": {
+         "type": "string"
+        },
+        "price_usd": {
+         "type": "number"
+        },
+        "gated": {
+         "type": "boolean"
+        }
+       }
+      }
+     },
+     "one_call_workflow": {
+      "type": "string"
+     },
+     "execution_gates": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "chain_to": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ChainTo"
+      }
+     }
+    }
+   },
+   "Location": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "city"
+    ],
+    "properties": {
+     "city": {
+      "type": "string"
+     },
+     "state": {
+      "type": "string"
+     }
+    }
+   },
+   "TimeWindow": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+     "date": {
+      "type": "string",
+      "format": "date"
+     },
+     "earliest": {
+      "type": "string"
+     },
+     "latest": {
+      "type": "string"
+     }
+    }
+   },
+   "AvailabilitySlot": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "slot_id",
+     "restaurant_id",
+     "time"
+    ],
+    "properties": {
+     "slot_id": {
+      "type": "string"
+     },
+     "restaurant_id": {
+      "type": "string"
+     },
+     "restaurant_name": {
+      "type": "string"
+     },
+     "time": {
+      "type": "string"
+     },
+     "party_size": {
+      "type": "integer"
+     },
+     "price_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+     },
+     "seating_area": {
+      "type": "string",
+      "enum": [
+       "indoor",
+       "patio",
+       "bar",
+       "private"
+      ]
+     },
+     "deposit_required": {
+      "type": "boolean"
+     }
+    }
+   },
+   "AvailabilityRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "location",
+     "party_size",
+     "time_window"
+    ],
+    "properties": {
+     "location": {
+      "$ref": "#/components/schemas/Location"
+     },
+     "party_size": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "time_window": {
+      "$ref": "#/components/schemas/TimeWindow"
+     },
+     "cuisine": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "price_level": {
+      "type": "array",
+      "items": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 4
+      }
+     }
+    }
+   },
+   "AvailabilityResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "availability"
+      ],
+      "properties": {
+       "availability": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/AvailabilitySlot"
+        }
+       }
+      }
+     }
+    ]
+   },
+   "RecommendRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "location",
+     "party_size",
+     "time_window"
+    ],
+    "properties": {
+     "location": {
+      "$ref": "#/components/schemas/Location"
+     },
+     "party_size": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "occasion": {
+      "type": "string",
+      "enum": [
+       "date_night",
+       "business",
+       "family",
+       "celebration",
+       "casual",
+       "group"
+      ]
+     },
+     "time_window": {
+      "$ref": "#/components/schemas/TimeWindow"
+     },
+     "cuisine": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   },
+   "RecommendResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "recommended_slot",
+       "alternatives",
+       "no_show_risk",
+       "recommendation_reason"
+      ],
+      "properties": {
+       "recommended_slot": {
+        "$ref": "#/components/schemas/AvailabilitySlot"
+       },
+       "alternatives": {
+        "type": "array",
+        "items": {
+         "$ref": "#/components/schemas/AvailabilitySlot"
+        }
+       },
+       "no_show_risk": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "score",
+         "level"
+        ],
+        "properties": {
+         "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+         },
+         "level": {
+          "type": "string",
+          "enum": [
+           "low",
+           "medium",
+           "high"
+          ]
+         }
+        }
+       },
+       "recommendation_reason": {
+        "type": "string"
+       }
+      }
+     }
+    ]
+   },
+   "NoShowRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "party_size",
+     "time"
+    ],
+    "properties": {
+     "party_size": {
+      "type": "integer"
+     },
+     "time": {
+      "type": "string",
+      "format": "date-time"
+     },
+     "lead_time_days": {
+      "type": "number"
+     },
+     "deposit": {
+      "type": "boolean",
+      "default": false
+     }
+    }
+   },
+   "NoShowResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "no_show_risk"
+      ],
+      "properties": {
+       "no_show_risk": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+         "score",
+         "level",
+         "factors"
+        ],
+        "properties": {
+         "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+         },
+         "level": {
+          "type": "string",
+          "enum": [
+           "low",
+           "medium",
+           "high"
+          ]
+         },
+         "factors": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         },
+         "mitigation": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        }
+       }
+      }
+     }
+    ]
+   },
+   "SeatingRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "tables",
+     "bookings"
+    ],
+    "properties": {
+     "tables": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "table_id",
+        "seats"
+       ],
+       "properties": {
+        "table_id": {
+         "type": "string"
+        },
+        "seats": {
+         "type": "integer"
+        }
+       }
+      }
+     },
+     "bookings": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "booking_id",
+        "party_size",
+        "time"
+       ],
+       "properties": {
+        "booking_id": {
+         "type": "string"
+        },
+        "party_size": {
+         "type": "integer"
+        },
+        "time": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "turn_minutes": {
+      "type": "integer",
+      "default": 90
+     }
+    }
+   },
+   "SeatingResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "seating_plan",
+       "projected_covers"
+      ],
+      "properties": {
+       "projected_covers": {
+        "type": "integer"
+       },
+       "utilization": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+       },
+       "seating_plan": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "additionalProperties": false,
+         "required": [
+          "booking_id",
+          "table_id"
+         ],
+         "properties": {
+          "booking_id": {
+           "type": "string"
+          },
+          "table_id": {
+           "type": "string"
+          },
+          "seated_time": {
+           "type": "string"
+          }
+         }
+        }
+       }
+      }
+     }
+    ]
+   },
+   "PrepareReservationRequest": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "restaurant_id",
+     "slot_id",
+     "party_size",
+     "action"
+    ],
+    "properties": {
+     "restaurant_id": {
+      "type": "string"
+     },
+     "slot_id": {
+      "type": "string"
+     },
+     "party_size": {
+      "type": "integer"
+     },
+     "guest_name": {
+      "type": "string"
+     },
+     "action": {
+      "type": "string",
+      "enum": [
+       "create",
+       "modify",
+       "cancel"
+      ]
+     },
+     "approval_token": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no booking/modification occurs."
+     }
+    }
+   },
+   "PrepareReservationResponse": {
+    "unevaluatedProperties": false,
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ResponseMeta"
+     },
+     {
+      "type": "object",
+      "required": [
+       "approval_required",
+       "execution_gate",
+       "booked"
+      ],
+      "properties": {
+       "approval_required": {
+        "type": "boolean"
+       },
+       "execution_gate": {
+        "$ref": "#/components/schemas/ExecutionGate"
+       },
+       "booked": {
+        "type": "boolean",
+        "description": "True only when a valid approval_token was supplied and the booking/modification executed."
+       },
+       "reservation_confirmation_id": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "reservation_summary": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+         "restaurant_id": {
+          "type": "string"
+         },
+         "time": {
+          "type": "string"
+         },
+         "party_size": {
+          "type": "integer"
+         },
+         "action": {
+          "type": "string"
+         },
+         "deposit_required": {
+          "type": "boolean"
+         }
+        }
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+}
