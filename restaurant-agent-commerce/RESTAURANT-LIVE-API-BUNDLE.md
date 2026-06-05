@@ -133,11 +133,10 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
     "description": "Agent-native lead generation for the restaurant vertical. Given a geography and an ideal-customer profile, the API discovers restaurants exhibiting buying signals (poor reviews, weak web presence, no online ordering, stale menus, low local-SEO visibility), scores them, enriches owner/contact data, and produces a ready-to-use outreach angle and best-offer recommendation. Built for autonomous sales, marketing, and local-business agents that call repeatedly to build and qualify pipeline.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
-      "url": "https://api.restaurant-agent-commerce.com"
+      "url": "https://orbis-apis.onrender.com/restaurant-lead-generation"
     },
     "license": {
-      "name": "Commercial",
-      "url": "https://api.restaurant-agent-commerce.com/license"
+      "name": "Commercial"
     }
   },
   "x-agent-callable": true,
@@ -2623,11 +2622,10 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
     "description": "Agent-native growth diagnostics for a single restaurant. Given a restaurant identity (name + location or place_id), the API audits online presence, menu pricing, and reviews, then returns a growth_score, a missed_revenue_estimate, ranked top_opportunities, competitive_gaps, and a prioritized action plan. Built for marketing-agency, sales, and operator agents that repeatedly diagnose accounts to build pitches and roadmaps.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
-      "url": "https://api.restaurant-agent-commerce.com"
+      "url": "https://orbis-apis.onrender.com/restaurant-growth-opportunity"
     },
     "license": {
-      "name": "Commercial",
-      "url": "https://api.restaurant-agent-commerce.com/license"
+      "name": "Commercial"
     }
   },
   "x-agent-callable": true,
@@ -4428,11 +4426,10 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
     "description": "Agent-native review intelligence for restaurants. Aggregates reviews across platforms and returns a sentiment_score, review_velocity, complaint and praise themes, urgent_issues, fake_review_risk, recommended_responses, and a reputation_score. Built for reputation, marketing, and operator agents that monitor and act on review health repeatedly.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
-      "url": "https://api.restaurant-agent-commerce.com"
+      "url": "https://orbis-apis.onrender.com/review-sentiment"
     },
     "license": {
-      "name": "Commercial",
-      "url": "https://api.restaurant-agent-commerce.com/license"
+      "name": "Commercial"
     }
   },
   "x-agent-callable": true,
@@ -6261,11 +6258,10 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
     "description": "Agent-native consulting engine. A single call to /full-consulting-audit returns an executive_summary, a restaurant_health_score, sub-scores for revenue risk, marketing, operations, reviews, and competition, a 90_day_action_plan, and an estimated_revenue_impact. Granular endpoints expose revenue-leak diagnosis, competitor benchmarking, and plan generation. Built for consultant, advisory, and operator agents.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
-      "url": "https://api.restaurant-agent-commerce.com"
+      "url": "https://orbis-apis.onrender.com/restaurant-ai-consultant"
     },
     "license": {
-      "name": "Commercial",
-      "url": "https://api.restaurant-agent-commerce.com/license"
+      "name": "Commercial"
     }
   },
   "x-agent-callable": true,
@@ -7844,11 +7840,10 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
     "description": "Agent-native discovery for the restaurant vertical. Given a location and an intent (occasion, dietary needs, budget, party context), returns ranked_restaurants with match_score, cuisine_match, distance, price_level, review_summary, dietary_fit, and best_for. Built for assistant, concierge, and local-business agents that make repeated discovery calls.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
-      "url": "https://api.restaurant-agent-commerce.com"
+      "url": "https://orbis-apis.onrender.com/local-restaurant-discovery"
     },
     "license": {
-      "name": "Commercial",
-      "url": "https://api.restaurant-agent-commerce.com/license"
+      "name": "Commercial"
     }
   },
   "x-agent-callable": true,
@@ -9519,11 +9514,10 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
     "description": "Agent-native group-lunch planning for workplaces. Given people_count, budget, dietary_restrictions, and cuisine_preferences, returns a suggested_order, per_person_cost, substitutions, and delivery_eta. The final /prepare-checkout step is execution-gated and requires explicit human approval before any payment or order submission. Built for executive assistant and workplace-ops agents.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
-      "url": "https://api.restaurant-agent-commerce.com"
+      "url": "https://orbis-apis.onrender.com/office-lunch-planner"
     },
     "license": {
-      "name": "Commercial",
-      "url": "https://api.restaurant-agent-commerce.com/license"
+      "name": "Commercial"
     }
   },
   "x-agent-callable": true,
@@ -11599,11 +11593,10 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
     "description": "Agent-native catering procurement. Given attendee_count, budget, dietary_restrictions, cuisine_preferences, and a delivery_window, returns vendor_options and a recommended_order, then prepares and (on human approval) submits a catering request. Final ordering and any direct vendor contact are execution-gated. Built for executive assistant, events, and workplace-ops agents.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
-      "url": "https://api.restaurant-agent-commerce.com"
+      "url": "https://orbis-apis.onrender.com/catering-procurement"
     },
     "license": {
-      "name": "Commercial",
-      "url": "https://api.restaurant-agent-commerce.com/license"
+      "name": "Commercial"
     }
   },
   "x-agent-callable": true,
@@ -13481,11 +13474,10 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
     "description": "Agent-native ordering across multiple restaurants. Search and compare, build a multi-restaurant cart, price it with substitution_options and dietary_flags, prepare checkout, and place the order. Order placement is execution-gated and requires explicit human approval before any payment or final submission. Built for concierge, assistant, and consumer-commerce agents.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
-      "url": "https://api.restaurant-agent-commerce.com"
+      "url": "https://orbis-apis.onrender.com/multi-restaurant-ordering"
     },
     "license": {
-      "name": "Commercial",
-      "url": "https://api.restaurant-agent-commerce.com/license"
+      "name": "Commercial"
     }
   },
   "x-agent-callable": true,
@@ -15607,11 +15599,10 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
     "description": "Agent-native reservation intelligence. Find availability by party_size, time_window, and cuisine; recommend the best slot with a recommendation_reason; predict no_show_risk; optimize seating; and prepare a booking. Making or modifying a reservation is execution-gated and requires explicit human approval. Built for concierge, assistant, and restaurant-host agents.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
-      "url": "https://api.restaurant-agent-commerce.com"
+      "url": "https://orbis-apis.onrender.com/reservation-intelligence"
     },
     "license": {
-      "name": "Commercial",
-      "url": "https://api.restaurant-agent-commerce.com/license"
+      "name": "Commercial"
     }
   },
   "x-agent-callable": true,
@@ -17395,11 +17386,10 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
     "description": "Agent-native franchise and expansion intelligence. Analyze a franchise opportunity, compare candidate markets, score a specific location's fit, and generate an investment brief with franchise_fit_score, market_demand_score, competition_intensity, estimated_startup_cost, payback_period_estimate, location_risks, and an opportunity_summary. Built for investor, franchise- development, and advisory agents.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
-      "url": "https://api.restaurant-agent-commerce.com"
+      "url": "https://orbis-apis.onrender.com/franchise-opportunity"
     },
     "license": {
-      "name": "Commercial",
-      "url": "https://api.restaurant-agent-commerce.com/license"
+      "name": "Commercial"
     }
   },
   "x-agent-callable": true,
