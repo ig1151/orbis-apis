@@ -425,6 +425,82 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/RankResponse"
+        },
+        "example": {
+         "request_id": "req_6bcdf525421be819",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'rank a candidate set by quality and fit'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /discover-restaurants.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /discover-restaurants"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /discover-restaurants",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "ranked_restaurants": [
+          {
+           "restaurant_id": "r_c04574",
+           "name": "Mercantile Dining & Provision",
+           "address": "1500 Wynkoop St, Denver, CO 80202",
+           "cuisine": [
+            "american"
+           ],
+           "match_score": 0.88,
+           "cuisine_match": 0.5,
+           "distance": {
+            "miles": 1.2,
+            "minutes_drive": 0.5
+           },
+           "price_level": 3,
+           "review_summary": {
+            "rating": 2.5,
+            "review_count": 128,
+            "highlight": "Derived from current data; specific, realistic, and consistent with the request."
+           },
+           "dietary_fit": {
+            "score": 0.5,
+            "satisfied": [
+             "vegetarian_options"
+            ],
+            "unmet": [
+             "gluten_free"
+            ]
+           },
+           "best_for": [
+            "date_night"
+           ]
+          }
+         ]
         }
        }
       }
@@ -448,7 +524,7 @@
      "ranking",
      "workflow"
     ],
-    "summary": "One-call workflow — discover and rank by full intent.",
+    "summary": "One-call workflow \u2014 discover and rank by full intent.",
     "description": "Returns ranked_restaurants with match_score, cuisine_match, distance, price_level, review_summary, dietary_fit, and best_for, matched to a full intent (occasion, dietary, budget, party context).",
     "x-pricing": {
      "price": 0.03
@@ -675,6 +751,59 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/CompareResponse"
+        },
+        "example": {
+         "request_id": "req_88ea48ead16dbb0e",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'head-to-head comparison of specific restaurants'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /discover-restaurants.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /discover-restaurants"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Local Restaurant Discovery API",
+           "endpoint": "POST /discover-restaurants",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "winner": {
+          "restaurant_id": "r_53530d",
+          "reason": "Derived from current data; specific, realistic, and consistent with the request."
+         },
+         "comparison": [
+          {
+           "restaurant_id": "r_b2dcb8",
+           "name": "Mercantile Dining & Provision",
+           "values": {}
+          }
+         ]
         }
        }
       }
@@ -1043,7 +1172,7 @@
     }
    },
    "RankedRestaurant": {
-    "description": "A ranked discovery result. Domain object — no envelope fields inside.",
+    "description": "A ranked discovery result. Domain object \u2014 no envelope fields inside.",
     "type": "object",
     "additionalProperties": false,
     "required": [

@@ -3,7 +3,7 @@
  "info": {
   "title": "Restaurant AI Consultant API",
   "version": "1.0.0",
-  "summary": "One-call full restaurant consulting audit — health, revenue risk, marketing, operations, reviews, competition, and a 90-day action plan.",
+  "summary": "One-call full restaurant consulting audit \u2014 health, revenue risk, marketing, operations, reviews, competition, and a 90-day action plan.",
   "description": "Agent-native consulting engine. A single call to /full-consulting-audit returns an executive_summary, a restaurant_health_score, sub-scores for revenue risk, marketing, operations, reviews, and competition, a 90_day_action_plan, and an estimated_revenue_impact. Granular endpoints expose revenue-leak diagnosis, competitor benchmarking, and plan generation. Built for consultant, advisory, and operator agents.",
   "contact": {
    "name": "Restaurant Agent Commerce APIs",
@@ -204,7 +204,7 @@
      "consulting",
      "workflow"
     ],
-    "summary": "One-call workflow — complete consulting audit deliverable.",
+    "summary": "One-call workflow \u2014 complete consulting audit deliverable.",
     "description": "Returns executive_summary, restaurant_health_score, revenue_risk_score, marketing_score, operations_score, review_score, competition_score, 90_day_action_plan, and estimated_revenue_impact.",
     "x-pricing": {
      "price": 5.0
@@ -548,6 +548,63 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/BenchmarkResponse"
+        },
+        "example": {
+         "request_id": "req_adf79c393cd7ae77",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'benchmark the restaurant against nearby competitors'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /full-consulting-audit.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /full-consulting-audit"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant AI Consultant API",
+           "endpoint": "POST /full-consulting-audit",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "competition_score": 0.88,
+         "competitors": [
+          {
+           "name": "Mercantile Dining & Provision",
+           "rating": 2.5,
+           "price_level": 3,
+           "review_count": 128,
+           "advantage_over_you": [
+            "trending"
+           ],
+           "you_advantage_over_them": [
+            "trending"
+           ]
+          }
+         ]
         }
        }
       }
@@ -607,6 +664,62 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/PlanResponse"
+        },
+        "example": {
+         "request_id": "req_49b27a4470a30581",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'generate a phased 90-day action plan'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /full-consulting-audit.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /full-consulting-audit"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant AI Consultant API",
+           "endpoint": "POST /full-consulting-audit",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "90_day_action_plan": [
+          {
+           "phase": "week_1",
+           "initiative": "general",
+           "owner_role": "general",
+           "effort": "low",
+           "estimated_revenue_impact_usd": 1850.0,
+           "kpi": "general"
+          }
+         ],
+         "estimated_revenue_impact": {
+          "monthly_usd": 1850.0,
+          "annual_usd": 1850.0
+         }
         }
        }
       }

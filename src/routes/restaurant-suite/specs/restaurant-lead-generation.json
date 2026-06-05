@@ -439,6 +439,79 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/ScoreLeadsResponse"
+        },
+        "example": {
+         "request_id": "req_b90fa80a2295427f",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'score and rank leads by fit and likelihood to buy'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /find-restaurant-leads.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /find-restaurant-leads"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Lead Generation API",
+           "endpoint": "POST /find-restaurant-leads",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "ranked_leads": [
+          {
+           "lead_id": "r_d34c6d",
+           "name": "Mercantile Dining & Provision",
+           "address": "1500 Wynkoop St, Denver, CO 80202",
+           "cuisine": [
+            "american"
+           ],
+           "price_level": 3,
+           "signals": [
+            "poor_reviews"
+           ],
+           "lead_score": 0.88,
+           "pain_points": [
+            "Low Google rating dragging down discovery"
+           ],
+           "estimated_budget": {
+            "currency": "USD",
+            "monthly_low": 1850.0,
+            "monthly_high": 1850.0
+           },
+           "owner_contact_confidence": 0.5,
+           "best_offer_type": "review_management",
+           "outreach_angle": "Derived from current data; specific, realistic, and consistent with the request.",
+           "data_freshness_days": 1,
+           "last_verified_at": "2026-06-04T09:15:00Z",
+           "source_urls": [
+            "https://public-listings.example.com/denver/restaurants"
+           ]
+          }
+         ]
         }
        }
       }
@@ -496,6 +569,94 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/EnrichLeadResponse"
+        },
+        "example": {
+         "request_id": "req_c22c0561a0573afb",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'enrich a single lead with firmographics and contact confidence'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /find-restaurant-leads.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /find-restaurant-leads"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Lead Generation API",
+           "endpoint": "POST /find-restaurant-leads",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "lead": {
+          "lead_id": "r_5773cf",
+          "name": "Mercantile Dining & Provision",
+          "address": "1500 Wynkoop St, Denver, CO 80202",
+          "cuisine": [
+           "american"
+          ],
+          "price_level": 3,
+          "signals": [
+           "poor_reviews"
+          ],
+          "lead_score": 0.88,
+          "pain_points": [
+           "Low Google rating dragging down discovery"
+          ],
+          "estimated_budget": {
+           "currency": "USD",
+           "monthly_low": 1850.0,
+           "monthly_high": 1850.0
+          },
+          "owner_contact_confidence": 0.5,
+          "best_offer_type": "review_management",
+          "outreach_angle": "Derived from current data; specific, realistic, and consistent with the request.",
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ],
+          "owner_name": "Mercantile Dining & Provision",
+          "owner_role": "general",
+          "business_email": "owner@example-bistro.com",
+          "business_phone": "+1-303-555-0188",
+          "website": "general",
+          "email_confidence": 0.5,
+          "phone_confidence": 0.5,
+          "decision_maker_confidence": 0.5,
+          "tech_stack": [
+           "general"
+          ],
+          "firmographics": {
+           "est_seats": 3,
+           "est_annual_revenue_usd": 1850.0,
+           "years_in_business": 0.5,
+           "locations": 3
+          }
+         }
         }
        }
       }
@@ -553,6 +714,53 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/OutreachAngleResponse"
+        },
+        "example": {
+         "request_id": "req_08a970f03a64ccf0",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'generate a tailored outreach angle and message draft'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /find-restaurant-leads.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /find-restaurant-leads"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Lead Generation API",
+           "endpoint": "POST /find-restaurant-leads",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "outreach_angle": "Derived from current data; specific, realistic, and consistent with the request.",
+         "channel": "email",
+         "subject": "general",
+         "message_draft": "Derived from current data; specific, realistic, and consistent with the request.",
+         "predicted_response_rate": 0.5
         }
        }
       }
@@ -605,6 +813,51 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/ExportLeadsResponse"
+        },
+        "example": {
+         "request_id": "req_5c6d8e03c3487630",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'export a lead set to a structured payload or crm-ready format'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /find-restaurant-leads.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /find-restaurant-leads"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Lead Generation API",
+           "endpoint": "POST /find-restaurant-leads",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "format": "general",
+         "record_count": 128,
+         "payload": {}
         }
        }
       }
@@ -646,7 +899,7 @@
         "channel": "email",
         "to": "owner@trattoriasole.example",
         "subject": "Quick idea to lift your Google rating",
-        "body": "Hi — noticed your last 20 reviews mention slow service...",
+        "body": "Hi \u2014 noticed your last 20 reviews mention slow service...",
         "approval_token": null
        }
       }
@@ -721,7 +974,7 @@
           "to": "owner@trattoriasole.example",
           "channel": "email",
           "subject": "Quick idea to lift your Google rating",
-          "body": "Hi — noticed your last 20 reviews mention slow service at peak hours. We help Austin restaurants respond to reviews and recover their Google rating within about 60 days. Worth a 10-minute call? Reply STOP or use the unsubscribe link to opt out."
+          "body": "Hi \u2014 noticed your last 20 reviews mention slow service at peak hours. We help Austin restaurants respond to reviews and recover their Google rating within about 60 days. Worth a 10-minute call? Reply STOP or use the unsubscribe link to opt out."
          }
         }
        }
@@ -755,8 +1008,8 @@
     "tags": [
      "workflow"
     ],
-    "summary": "One-call workflow — find, score, enrich, and draft outreach.",
-    "description": "Orchestrates find-restaurant-leads → score-leads → enrich-lead (top N) → generate-outreach-angle in a single call. Does NOT contact anyone; contacting still requires the gated /contact-lead step.",
+    "summary": "One-call workflow \u2014 find, score, enrich, and draft outreach.",
+    "description": "Orchestrates find-restaurant-leads \u2192 score-leads \u2192 enrich-lead (top N) \u2192 generate-outreach-angle in a single call. Does NOT contact anyone; contacting still requires the gated /contact-lead step.",
     "x-pricing": {
      "price": 1.0
     },
@@ -879,7 +1132,7 @@
            },
            "owner_contact_confidence": 0.78,
            "best_offer_type": "review_management",
-           "outreach_angle": "Your last 20 Google reviews mention slow service — a structured review-response program can lift your rating within 60 days.",
+           "outreach_angle": "Your last 20 Google reviews mention slow service \u2014 a structured review-response program can lift your rating within 60 days.",
            "data_freshness_days": 4,
            "last_verified_at": "2026-05-31T14:22:00Z",
            "source_urls": [
@@ -906,7 +1159,7 @@
             "locations": 1
            },
            "drafted_subject": "Quick idea to lift your Google rating",
-           "drafted_message": "Hi Maria — I noticed your last 20 reviews keep mentioning slow service at peak hours. We help Austin restaurants like Trattoria Sole respond to reviews and recover their rating within about 60 days. Worth a 10-minute call?"
+           "drafted_message": "Hi Maria \u2014 I noticed your last 20 reviews keep mentioning slow service at peak hours. We help Austin restaurants like Trattoria Sole respond to reviews and recover their rating within about 60 days. Worth a 10-minute call?"
           },
           {
            "lead_id": "lead_91a",
@@ -934,7 +1187,7 @@
            },
            "owner_contact_confidence": 0.62,
            "best_offer_type": "online_ordering",
-           "outreach_angle": "Customers can't order from you online — adding direct ordering can recapture 8-12% of delivery-app margin.",
+           "outreach_angle": "Customers can't order from you online \u2014 adding direct ordering can recapture 8-12% of delivery-app margin.",
            "data_freshness_days": 6,
            "last_verified_at": "2026-05-29T09:10:00Z",
            "source_urls": [
@@ -959,7 +1212,7 @@
             "locations": 1
            },
            "drafted_subject": "Recapture delivery margin at Lupo Osteria",
-           "drafted_message": "Hi David — right now guests can't order directly from Lupo Osteria online, so every delivery order pays third-party commission. We can stand up commission-free direct ordering on your existing site. Open to a quick look?"
+           "drafted_message": "Hi David \u2014 right now guests can't order directly from Lupo Osteria online, so every delivery order pays third-party commission. We can stand up commission-free direct ordering on your existing site. Open to a quick look?"
           }
          ],
          "next_step": {
@@ -1202,6 +1455,27 @@
     "properties": {
      "request_id": {
       "type": "string"
+     },
+     "source_freshness": {
+      "type": "object",
+      "description": "Provenance/recency of the underlying data used in this response.",
+      "additionalProperties": false,
+      "properties": {
+       "data_freshness_days": {
+        "type": "integer"
+       },
+       "last_verified_at": {
+        "type": "string",
+        "format": "date-time"
+       },
+       "source_urls": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "format": "uri"
+        }
+       }
+      }
      },
      "confidence": {
       "$ref": "#/components/schemas/Confidence"
@@ -1509,7 +1783,7 @@
     }
    },
    "Lead": {
-    "description": "A discovered/scored restaurant lead. Domain object — no envelope fields inside. Closed standalone via unevaluatedProperties.",
+    "description": "A discovered/scored restaurant lead. Domain object \u2014 no envelope fields inside. Closed standalone via unevaluatedProperties.",
     "unevaluatedProperties": false,
     "allOf": [
      {
@@ -1922,7 +2196,7 @@
        "string",
        "null"
       ],
-      "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no send occurs."
+      "description": "Human-issued approval token. Null/omitted \u21d2 gate returns pending_approval and no send occurs."
      }
     }
    },

@@ -378,6 +378,65 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/BuildOrderResponse"
+        },
+        "example": {
+         "request_id": "req_f8399c9662b28ce7",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'build a multi-restaurant cart'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /search-restaurants.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /search-restaurants"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Multi-Restaurant Ordering API",
+           "endpoint": "POST /search-restaurants",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "cart_id": "r_b6b9b3",
+         "line_items": [
+          {
+           "line_id": "r_51f393",
+           "restaurant_id": "r_98ef6a",
+           "restaurant_name": "Mercantile Dining & Provision",
+           "item": "general",
+           "quantity": 3,
+           "unit_price_usd": 1850.0,
+           "dietary_flags": [
+            "vegetarian_options"
+           ]
+          }
+         ],
+         "dietary_flags": [
+          "vegetarian_options"
+         ]
         }
        }
       }
@@ -425,6 +484,71 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/PriceOrderResponse"
+        },
+        "example": {
+         "request_id": "req_5113e9567171c270",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'price the cart with fees, substitutions, and dietary flags'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /search-restaurants.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /search-restaurants"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Multi-Restaurant Ordering API",
+           "endpoint": "POST /search-restaurants",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "total_cost": 1850.0,
+         "delivery_eta": {
+          "minutes": 20,
+          "window_start": "general",
+          "window_end": "general",
+          "per_restaurant": [
+           {
+            "restaurant_id": "r_67a029",
+            "minutes": 20
+           }
+          ]
+         },
+         "substitution_options": [
+          {
+           "line_id": "r_9c07fa",
+           "suggested_item": "general",
+           "reason": "Derived from current data; specific, realistic, and consistent with the request.",
+           "price_delta_usd": 1850.0
+          }
+         ],
+         "dietary_flags": [
+          "vegetarian_options"
+         ]
         }
        }
       }
@@ -473,6 +597,108 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/PrepareCheckoutResponse"
+        },
+        "example": {
+         "request_id": "req_f09cfa46cc8c45ac",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'assemble a checkout summary for review'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /search-restaurants.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /search-restaurants"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Multi-Restaurant Ordering API",
+           "endpoint": "POST /search-restaurants",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "checkout_summary": {
+          "cart_id": "r_fd4ce0",
+          "line_items": [
+           {
+            "line_id": "r_831c6c",
+            "restaurant_id": "r_f46985",
+            "restaurant_name": "Mercantile Dining & Provision",
+            "item": "general",
+            "quantity": 3,
+            "unit_price_usd": 1850.0,
+            "dietary_flags": [
+             "vegetarian_options"
+            ]
+           }
+          ],
+          "subtotal_usd": 1850.0,
+          "delivery_fees_usd": 1850.0,
+          "tax_usd": 1850.0,
+          "tip_usd": 1850.0,
+          "total_cost": 1850.0,
+          "delivery_eta": {
+           "minutes": 20,
+           "window_start": "general",
+           "window_end": "general",
+           "per_restaurant": [
+            {
+             "restaurant_id": "r_ff5f47",
+             "minutes": 20
+            }
+           ]
+          }
+         },
+         "total_cost": 1850.0,
+         "delivery_eta": {
+          "minutes": 20,
+          "window_start": "general",
+          "window_end": "general",
+          "per_restaurant": [
+           {
+            "restaurant_id": "r_d13838",
+            "minutes": 20
+           }
+          ]
+         },
+         "substitution_options": [
+          {
+           "line_id": "r_5544da",
+           "suggested_item": "general",
+           "reason": "Derived from current data; specific, realistic, and consistent with the request.",
+           "price_delta_usd": 1850.0
+          }
+         ],
+         "dietary_flags": [
+          "vegetarian_options"
+         ],
+         "approval_required": false,
+         "next_step": {
+          "description": "Derived from current data; specific, realistic, and consistent with the request.",
+          "gated_endpoint": "general"
+         }
         }
        }
       }
@@ -653,8 +879,8 @@
     "tags": [
      "workflow"
     ],
-    "summary": "One-call workflow — search, build, price, and prepare checkout.",
-    "description": "Orchestrates search-restaurants + build-order + price-order + prepare-checkout and returns a ready checkout_summary with approval_required. Does NOT place the order — that requires gated /place-order.",
+    "summary": "One-call workflow \u2014 search, build, price, and prepare checkout.",
+    "description": "Orchestrates search-restaurants + build-order + price-order + prepare-checkout and returns a ready checkout_summary with approval_required. Does NOT place the order \u2014 that requires gated /place-order.",
     "x-pricing": {
      "price": 0.2
     },
@@ -1036,6 +1262,27 @@
     "properties": {
      "request_id": {
       "type": "string"
+     },
+     "source_freshness": {
+      "type": "object",
+      "description": "Provenance/recency of the underlying data used in this response.",
+      "additionalProperties": false,
+      "properties": {
+       "data_freshness_days": {
+        "type": "integer"
+       },
+       "last_verified_at": {
+        "type": "string",
+        "format": "date-time"
+       },
+       "source_urls": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "format": "uri"
+        }
+       }
+      }
      },
      "confidence": {
       "$ref": "#/components/schemas/Confidence"
@@ -1587,7 +1834,7 @@
        },
        "approval_required": {
         "type": "boolean",
-        "description": "True — placing the order requires gated /place-order."
+        "description": "True \u2014 placing the order requires gated /place-order."
        },
        "next_step": {
         "type": "object",
@@ -1623,7 +1870,7 @@
        "string",
        "null"
       ],
-      "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no payment occurs."
+      "description": "Human-issued approval token. Null/omitted \u21d2 gate returns pending_approval and no payment occurs."
      }
     }
    },

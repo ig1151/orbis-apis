@@ -354,8 +354,8 @@
      "intelligence",
      "booking"
     ],
-    "summary": "One-call workflow — recommend the best reservation.",
-    "description": "Orchestrates find-availability + predict-no-show-risk and returns a recommended slot with availability, price_level, no_show_risk, and a recommendation_reason. Does NOT book — that requires gated /prepare-reservation.",
+    "summary": "One-call workflow \u2014 recommend the best reservation.",
+    "description": "Orchestrates find-availability + predict-no-show-risk and returns a recommended slot with availability, price_level, no_show_risk, and a recommendation_reason. Does NOT book \u2014 that requires gated /prepare-reservation.",
     "x-pricing": {
      "price": 0.15
     },
@@ -526,6 +526,58 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/NoShowResponse"
+        },
+        "example": {
+         "request_id": "req_0c17dd6d367164f3",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'predict no-show risk for a booking context'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /find-availability.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /find-availability"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Reservation Intelligence API",
+           "endpoint": "POST /find-availability",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "no_show_risk": {
+          "score": 0.5,
+          "level": "low",
+          "factors": [
+           "general"
+          ],
+          "mitigation": [
+           "general"
+          ]
+         }
         }
        }
       }
@@ -595,6 +647,57 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/SeatingResponse"
+        },
+        "example": {
+         "request_id": "req_418e6415bc541b87",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'optimize seating/table assignment for a set of bookings'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /find-availability.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /find-availability"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Reservation Intelligence API",
+           "endpoint": "POST /find-availability",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "projected_covers": 3,
+         "utilization": 0.5,
+         "seating_plan": [
+          {
+           "booking_id": "r_aa986b",
+           "table_id": "r_aa154e",
+           "seated_time": "general"
+          }
+         ]
         }
        }
       }
@@ -922,6 +1025,27 @@
     "properties": {
      "request_id": {
       "type": "string"
+     },
+     "source_freshness": {
+      "type": "object",
+      "description": "Provenance/recency of the underlying data used in this response.",
+      "additionalProperties": false,
+      "properties": {
+       "data_freshness_days": {
+        "type": "integer"
+       },
+       "last_verified_at": {
+        "type": "string",
+        "format": "date-time"
+       },
+       "source_urls": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "format": "uri"
+        }
+       }
+      }
      },
      "confidence": {
       "$ref": "#/components/schemas/Confidence"
@@ -1499,7 +1623,7 @@
        "string",
        "null"
       ],
-      "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no booking/modification occurs."
+      "description": "Human-issued approval token. Null/omitted \u21d2 gate returns pending_approval and no booking/modification occurs."
      }
     }
    },

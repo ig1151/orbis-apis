@@ -216,7 +216,7 @@
      "analysis",
      "workflow"
     ],
-    "summary": "One-call workflow — full structured review report.",
+    "summary": "One-call workflow \u2014 full structured review report.",
     "description": "Returns sentiment_score, review_velocity, complaint_themes, praise_themes, urgent_issues, fake_review_risk, recommended_responses, and reputation_score across all selected platforms in a single call.",
     "x-pricing": {
      "price": 0.3
@@ -629,6 +629,56 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/NegativeDriversResponse"
+        },
+        "example": {
+         "request_id": "req_b4521585622b96a9",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'rank the root drivers behind negative reviews'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /analyze-review-sentiment.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /analyze-review-sentiment"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "negative_drivers": [
+          {
+           "driver": "Slow service during peak hours",
+           "rating_impact": 4.6,
+           "mentions": 3,
+           "example_quote": "general"
+          }
+         ]
         }
        }
       }
@@ -655,7 +705,7 @@
      "analysis"
     ],
     "summary": "Draft recommended responses for recent/negative reviews.",
-    "description": "Produces recommended_responses (drafts only — not posted). Posting to a platform is out of scope and would require a separate gated action.",
+    "description": "Produces recommended_responses (drafts only \u2014 not posted). Posting to a platform is out of scope and would require a separate gated action.",
     "x-pricing": {
      "price": 0.2
     },
@@ -686,6 +736,57 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/ResponsePlanResponse"
+        },
+        "example": {
+         "request_id": "req_540fad1aaa7316ed",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'draft recommended responses for recent/negative reviews'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /analyze-review-sentiment.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /analyze-review-sentiment"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "recommended_responses": [
+          {
+           "review_excerpt": "general",
+           "platform": "general",
+           "rating": 2.5,
+           "draft_response": "general",
+           "tone": "general"
+          }
+         ]
         }
        }
       }
@@ -741,6 +842,66 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/MonitorResponse"
+        },
+        "example": {
+         "request_id": "req_d15d2748a290bc6b",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'cheap recurring risk check for reputation alerts'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /analyze-review-sentiment.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /analyze-review-sentiment"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Review Sentiment API",
+           "endpoint": "POST /analyze-review-sentiment",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "reputation_score": 0.88,
+         "review_velocity": {
+          "per_week": 0.5,
+          "trend": "rising"
+         },
+         "fake_review_risk": {
+          "score": 0.5,
+          "level": "low"
+         },
+         "new_urgent_issues": [
+          {
+           "issue": "general",
+           "severity": "high",
+           "platform": "general",
+           "first_seen": "2026-06-04T09:15:00Z",
+           "recommended_action": "Derived from current data; specific, realistic, and consistent with the request."
+          }
+         ]
         }
        }
       }

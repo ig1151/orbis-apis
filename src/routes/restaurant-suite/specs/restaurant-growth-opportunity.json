@@ -443,6 +443,60 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/OnlinePresenceAuditResponse"
+        },
+        "example": {
+         "request_id": "req_33a5bae0fde7d6aa",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'audit website, local seo, listings, and social presence'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /analyze-growth-opportunity.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /analyze-growth-opportunity"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Growth Opportunity API",
+           "endpoint": "POST /analyze-growth-opportunity",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "website_health_score": 0.88,
+         "listing_accuracy_score": 0.88,
+         "social_presence_score": 0.88,
+         "local_seo_issues": [
+          {
+           "issue": "general",
+           "severity": "low",
+           "detail": "general",
+           "estimated_revenue_impact_usd": 1850.0,
+           "fix": "general"
+          }
+         ]
         }
        }
       }
@@ -497,6 +551,65 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/MenuPricingAuditResponse"
+        },
+        "example": {
+         "request_id": "req_aecb07281bceefdc",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'audit menu pricing vs local market and elasticity'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /analyze-growth-opportunity.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /analyze-growth-opportunity"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Growth Opportunity API",
+           "endpoint": "POST /analyze-growth-opportunity",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "price_optimization_upside_usd": 1850.0,
+         "underpriced_items": [
+          {
+           "item": "general",
+           "current_price_usd": 1850.0,
+           "suggested_price_usd": 1850.0
+          }
+         ],
+         "menu_pricing_issues": [
+          {
+           "issue": "general",
+           "severity": "low",
+           "detail": "general",
+           "estimated_revenue_impact_usd": 1850.0,
+           "fix": "general"
+          }
+         ]
         }
        }
       }
@@ -551,6 +664,61 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/ReviewAuditResponse"
+        },
+        "example": {
+         "request_id": "req_1caa77fdc9b43315",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'audit review health across platforms'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /analyze-growth-opportunity.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /analyze-growth-opportunity"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Restaurant Growth Opportunity API",
+           "endpoint": "POST /analyze-growth-opportunity",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "average_rating": 2.5,
+         "review_count": 128,
+         "response_rate": 0.5,
+         "rating_trend": "rising",
+         "review_issues": [
+          {
+           "issue": "general",
+           "severity": "low",
+           "detail": "general",
+           "estimated_revenue_impact_usd": 1850.0,
+           "fix": "general"
+          }
+         ]
         }
        }
       }
@@ -576,7 +744,7 @@
     "tags": [
      "workflow"
     ],
-    "summary": "One-call workflow — run all audits + analysis and return a prioritized growth plan.",
+    "summary": "One-call workflow \u2014 run all audits + analysis and return a prioritized growth plan.",
     "description": "Orchestrates audit-online-presence + audit-menu-pricing + audit-reviews + analyze-growth-opportunity, then synthesizes a phased, prioritized growth plan with revenue impact per initiative.",
     "x-pricing": {
      "price": 1.5

@@ -364,6 +364,66 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/CompareMarketsResponse"
+        },
+        "example": {
+         "request_id": "req_93eb64a52a8101a3",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'compare candidate markets for a brand'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /analyze-franchise-opportunity.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /analyze-franchise-opportunity"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Franchise Opportunity API",
+           "endpoint": "POST /analyze-franchise-opportunity",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "ranked_markets": [
+          {
+           "market": {
+            "city": "Denver",
+            "state": "CO",
+            "country": "US"
+           },
+           "market_demand_score": 0.88,
+           "competition_intensity": "low",
+           "est_startup_cost": {
+            "low_usd": 1850.0,
+            "high_usd": 1850.0,
+            "franchise_fee_usd": 1850.0,
+            "buildout_usd": 1850.0,
+            "working_capital_usd": 1850.0
+           }
+          }
+         ]
         }
        }
       }
@@ -416,6 +476,60 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/ScoreLocationResponse"
+        },
+        "example": {
+         "request_id": "req_a1192df33624661e",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'score a specific site's fit for a brand'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /analyze-franchise-opportunity.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /analyze-franchise-opportunity"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Franchise Opportunity API",
+           "endpoint": "POST /analyze-franchise-opportunity",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "franchise_fit_score": 0.88,
+         "demand_drivers": [
+          "Slow service during peak hours"
+         ],
+         "location_risks": [
+          {
+           "risk": "general",
+           "severity": "low",
+           "detail": "general",
+           "mitigation": "general"
+          }
+         ]
         }
        }
       }
@@ -438,8 +552,8 @@
     "tags": [
      "workflow"
     ],
-    "summary": "One-call workflow — full investment due-diligence brief.",
-    "description": "Orchestrates opportunity analysis, market comparison, and location-fit scoring into a complete investment brief with franchise_fit_score, market_demand_score, competition_intensity, estimated_startup_cost, payback_period_estimate, location_risks, and opportunity_summary. Advisory output — not financial advice; no action is executed.",
+    "summary": "One-call workflow \u2014 full investment due-diligence brief.",
+    "description": "Orchestrates opportunity analysis, market comparison, and location-fit scoring into a complete investment brief with franchise_fit_score, market_demand_score, competition_intensity, estimated_startup_cost, payback_period_estimate, location_risks, and opportunity_summary. Advisory output \u2014 not financial advice; no action is executed.",
     "x-pricing": {
      "price": 8.0
     },

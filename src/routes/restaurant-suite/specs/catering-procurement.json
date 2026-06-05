@@ -407,6 +407,56 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/CompareVendorsResponse"
+        },
+        "example": {
+         "request_id": "req_b41d0a24c4238cd1",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'compare shortlisted vendors head-to-head'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /source-catering-options.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /source-catering-options"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Catering Procurement API",
+           "endpoint": "POST /source-catering-options",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "recommended_vendor_id": "r_80dd9e",
+         "comparison": [
+          {
+           "vendor_id": "r_437521",
+           "name": "Mercantile Dining & Provision",
+           "values": {}
+          }
+         ]
         }
        }
       }
@@ -429,8 +479,8 @@
     "tags": [
      "sourcing"
     ],
-    "summary": "One-call workflow — source, compare, and recommend a catering plan.",
-    "description": "Orchestrates sourcing + comparison and returns vendor_options and a recommended_order sized to attendee_count and budget. Does NOT contact vendors or order — that requires the gated /submit-catering-request.",
+    "summary": "One-call workflow \u2014 source, compare, and recommend a catering plan.",
+    "description": "Orchestrates sourcing + comparison and returns vendor_options and a recommended_order sized to attendee_count and budget. Does NOT contact vendors or order \u2014 that requires the gated /submit-catering-request.",
     "x-pricing": {
      "price": 0.5
     },
@@ -690,6 +740,60 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/PrepareOrderResponse"
+        },
+        "example": {
+         "request_id": "req_ff5eb558782c1cbd",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'assemble a final catering order for review'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /source-catering-options.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /source-catering-options"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Catering Procurement API",
+           "endpoint": "POST /source-catering-options",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "approval_required": false,
+         "order_summary": {
+          "order_id": "r_4d7a42",
+          "vendor_id": "r_07526b",
+          "total_usd": 1850.0,
+          "per_person_usd": 1850.0,
+          "delivery_window": {
+           "date": "2026-06-12",
+           "earliest": "general",
+           "latest": "general"
+          }
+         }
         }
        }
       }
@@ -1015,6 +1119,27 @@
     "properties": {
      "request_id": {
       "type": "string"
+     },
+     "source_freshness": {
+      "type": "object",
+      "description": "Provenance/recency of the underlying data used in this response.",
+      "additionalProperties": false,
+      "properties": {
+       "data_freshness_days": {
+        "type": "integer"
+       },
+       "last_verified_at": {
+        "type": "string",
+        "format": "date-time"
+       },
+       "source_urls": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "format": "uri"
+        }
+       }
+      }
      },
      "confidence": {
       "$ref": "#/components/schemas/Confidence"
@@ -1481,7 +1606,7 @@
        },
        "approval_required": {
         "type": "boolean",
-        "description": "True — vendor contact/order requires gated /submit-catering-request."
+        "description": "True \u2014 vendor contact/order requires gated /submit-catering-request."
        },
        "next_step": {
         "type": "object",
@@ -1586,7 +1711,7 @@
        "string",
        "null"
       ],
-      "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no contact/payment occurs."
+      "description": "Human-issued approval token. Null/omitted \u21d2 gate returns pending_approval and no contact/payment occurs."
      }
     }
    },

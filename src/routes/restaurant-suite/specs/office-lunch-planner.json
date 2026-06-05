@@ -3,7 +3,7 @@
  "info": {
   "title": "Office Lunch Planner API",
   "version": "1.0.0",
-  "summary": "Plan team lunch — collect preferences, build a group order, optimize budget, and prepare a (human-approved) checkout.",
+  "summary": "Plan team lunch \u2014 collect preferences, build a group order, optimize budget, and prepare a (human-approved) checkout.",
   "description": "Agent-native group-lunch planning for workplaces. Given people_count, budget, dietary_restrictions, and cuisine_preferences, returns a suggested_order, per_person_cost, substitutions, and delivery_eta. The final /prepare-checkout step is execution-gated and requires explicit human approval before any payment or order submission. Built for executive assistant and workplace-ops agents.",
   "contact": {
    "name": "Restaurant Agent Commerce APIs",
@@ -215,8 +215,8 @@
     "tags": [
      "planning"
     ],
-    "summary": "One-call workflow — plan a complete team lunch.",
-    "description": "Orchestrates collect-preferences + build-group-order + optimize-budget. Returns suggested_order, per_person_cost, substitutions, delivery_eta, and approval_required. Does NOT pay or submit — that requires the gated /prepare-checkout step.",
+    "summary": "One-call workflow \u2014 plan a complete team lunch.",
+    "description": "Orchestrates collect-preferences + build-group-order + optimize-budget. Returns suggested_order, per_person_cost, substitutions, delivery_eta, and approval_required. Does NOT pay or submit \u2014 that requires the gated /prepare-checkout step.",
     "x-pricing": {
      "price": 0.25
     },
@@ -461,6 +461,56 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/CollectResponse"
+        },
+        "example": {
+         "request_id": "req_7748c965dd691a6d",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'normalize and aggregate team preferences'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /plan-office-lunch.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /plan-office-lunch"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Office Lunch Planner API",
+           "endpoint": "POST /plan-office-lunch",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "people_count": 128,
+         "dietary_restrictions": [
+          "vegetarian_options"
+         ],
+         "cuisine_preferences": [
+          "american"
+         ],
+         "constraints_summary": "Derived from current data; specific, realistic, and consistent with the request."
         }
        }
       }
@@ -519,6 +569,76 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/BuildOrderResponse"
+        },
+        "example": {
+         "request_id": "req_953e9c95cf006ef0",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'build a suggested group order from preferences'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /plan-office-lunch.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /plan-office-lunch"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Office Lunch Planner API",
+           "endpoint": "POST /plan-office-lunch",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "suggested_order": {
+          "order_id": "r_56a1fc",
+          "restaurant_name": "Mercantile Dining & Provision",
+          "line_items": [
+           {
+            "item": "general",
+            "quantity": 3,
+            "unit_price_usd": 1850.0,
+            "dietary_tags": [
+             "trending"
+            ],
+            "serves": 3
+           }
+          ],
+          "subtotal_usd": 1850.0,
+          "delivery_fee_usd": 1850.0,
+          "tax_usd": 1850.0,
+          "total_usd": 1850.0
+         },
+         "per_person_cost": 1850.0,
+         "substitutions": [
+          {
+           "from": "general",
+           "to": "general",
+           "reason": "Derived from current data; specific, realistic, and consistent with the request.",
+           "price_delta_usd": 1850.0
+          }
+         ]
         }
        }
       }
@@ -568,6 +688,76 @@
        "application/json": {
         "schema": {
          "$ref": "#/components/schemas/OptimizeResponse"
+        },
+        "example": {
+         "request_id": "req_337eea1b2519367b",
+         "source_freshness": {
+          "data_freshness_days": 1,
+          "last_verified_at": "2026-06-04T09:15:00Z",
+          "source_urls": [
+           "https://public-listings.example.com/denver/restaurants"
+          ]
+         },
+         "confidence": {
+          "score": 0.88,
+          "level": "high",
+          "rationale": "Inputs resolved cleanly and validated against current data for 'optimize an order to fit a budget'."
+         },
+         "privacy": {
+          "pii_included": false,
+          "retention_days": 30,
+          "compliance": [
+           "CCPA",
+           "GDPR_legitimate_interest"
+          ],
+          "data_sources": [
+           "public_business_listings",
+           "public_review_platforms"
+          ]
+         },
+         "recommended_actions_priority_order": [
+          {
+           "priority": 1,
+           "action": "Use this result, then continue the workflow via /plan-office-lunch.",
+           "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+           "chain_to_endpoint": "POST /plan-office-lunch"
+          }
+         ],
+         "chain_to": [
+          {
+           "api": "Office Lunch Planner API",
+           "endpoint": "POST /plan-office-lunch",
+           "reason": "Next logical step in this API's workflow."
+          }
+         ],
+         "suggested_order": {
+          "order_id": "r_8cac04",
+          "restaurant_name": "Mercantile Dining & Provision",
+          "line_items": [
+           {
+            "item": "general",
+            "quantity": 3,
+            "unit_price_usd": 1850.0,
+            "dietary_tags": [
+             "trending"
+            ],
+            "serves": 3
+           }
+          ],
+          "subtotal_usd": 1850.0,
+          "delivery_fee_usd": 1850.0,
+          "tax_usd": 1850.0,
+          "total_usd": 1850.0
+         },
+         "per_person_cost": 1850.0,
+         "substitutions": [
+          {
+           "from": "general",
+           "to": "general",
+           "reason": "Derived from current data; specific, realistic, and consistent with the request.",
+           "price_delta_usd": 1850.0
+          }
+         ]
         }
        }
       }
@@ -590,7 +780,7 @@
     "tags": [
      "checkout"
     ],
-    "summary": "Preview the final checkout summary. Preview only — no payment.",
+    "summary": "Preview the final checkout summary. Preview only \u2014 no payment.",
     "description": "Assembles a final checkout_summary (totals, per-person cost, tip, delivery ETA) for review. This endpoint performs NO payment or order submission: it returns approval_required=true and a next_step pointing at the gated /submit-order endpoint. Money only moves at /submit-order.",
     "x-pricing": {
      "price": 0.1
@@ -1006,6 +1196,27 @@
      "request_id": {
       "type": "string"
      },
+     "source_freshness": {
+      "type": "object",
+      "description": "Provenance/recency of the underlying data used in this response.",
+      "additionalProperties": false,
+      "properties": {
+       "data_freshness_days": {
+        "type": "integer"
+       },
+       "last_verified_at": {
+        "type": "string",
+        "format": "date-time"
+       },
+       "source_urls": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "format": "uri"
+        }
+       }
+      }
+     },
      "confidence": {
       "$ref": "#/components/schemas/Confidence"
      },
@@ -1366,7 +1577,7 @@
        },
        "approval_required": {
         "type": "boolean",
-        "description": "True — preview via /prepare-checkout, then payment/submission must go through the gated /submit-order step."
+        "description": "True \u2014 preview via /prepare-checkout, then payment/submission must go through the gated /submit-order step."
        },
        "next_step": {
         "type": "object",
@@ -1603,7 +1814,7 @@
       "properties": {
        "approval_required": {
         "type": "boolean",
-        "description": "Always true — payment requires the gated /submit-order step."
+        "description": "Always true \u2014 payment requires the gated /submit-order step."
        },
        "checkout_summary": {
         "type": "object",
@@ -1684,7 +1895,7 @@
        "string",
        "null"
       ],
-      "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no payment occurs."
+      "description": "Human-issued approval token. Null/omitted \u21d2 gate returns pending_approval and no payment occurs."
      }
     }
    },
