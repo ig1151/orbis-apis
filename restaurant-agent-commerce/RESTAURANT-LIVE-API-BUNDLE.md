@@ -1,27 +1,29 @@
 # Restaurant Agent Commerce Suite — Live API Bundle (info + openapi.json)
 
-10 agent-native APIs served by the orbis-apis service. For each API below: the **info/discovery manifest** (returned by `GET https://orbis-apis.onrender.com/<slug>/`) and the full **OpenAPI 3.1 spec** (served at `GET https://orbis-apis.onrender.com/<slug>/openapi.json`).
+Single-file review bundle for ChatGPT. For each of the 10 agent-native APIs: the free discovery/info manifest (`GET /<slug>`) followed by the full OpenAPI 3.1 spec (`GET /<slug>/openapi.json`). All content captured live from `https://orbis-apis.onrender.com`.
 
-Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, execution-gate safety, pricing sanity, discovery completeness, and chaining coherence.
+Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. Execution-gated write endpoints hold (return `pending_approval`) until a human `approval_token` is supplied.
 
 ## Table of Contents
 
-- 01. Restaurant Lead Generation API — `/restaurant-lead-generation`
-- 02. Restaurant Growth Opportunity API — `/restaurant-growth-opportunity`
-- 03. Review Sentiment API — `/review-sentiment`
-- 04. Restaurant AI Consultant API — `/restaurant-ai-consultant`
-- 05. Local Restaurant Discovery API — `/local-restaurant-discovery`
-- 06. Office Lunch Planner API — `/office-lunch-planner`
-- 07. Catering Procurement API — `/catering-procurement`
-- 08. Multi-Restaurant Ordering API — `/multi-restaurant-ordering`
-- 09. Reservation Intelligence API — `/reservation-intelligence`
-- 10. Franchise Opportunity API — `/franchise-opportunity`
+01. [Restaurant Lead Generation API](#01-restaurant-lead-generation)  —  `/restaurant-lead-generation`
+02. [Restaurant Growth Opportunity API](#02-restaurant-growth-opportunity)  —  `/restaurant-growth-opportunity`
+03. [Review Sentiment API](#03-review-sentiment)  —  `/review-sentiment`
+04. [Restaurant AI Consultant API](#04-restaurant-ai-consultant)  —  `/restaurant-ai-consultant`
+05. [Local Restaurant Discovery API](#05-local-restaurant-discovery)  —  `/local-restaurant-discovery`
+06. [Office Lunch Planner API](#06-office-lunch-planner)  —  `/office-lunch-planner`
+07. [Catering Procurement API](#07-catering-procurement)  —  `/catering-procurement`
+08. [Multi-Restaurant Ordering API](#08-multi-restaurant-ordering)  —  `/multi-restaurant-ordering`
+09. [Reservation Intelligence API](#09-reservation-intelligence)  —  `/reservation-intelligence`
+10. [Franchise Opportunity API](#10-franchise-opportunity)  —  `/franchise-opportunity`
+
 
 ---
 
 # 01. Restaurant Lead Generation API  (`/restaurant-lead-generation`)
 
-**Base URL:** `https://orbis-apis.onrender.com/restaurant-lead-generation`  ·  **openapi.json:** `https://orbis-apis.onrender.com/restaurant-lead-generation/openapi.json`  ·  **info/discovery:** `GET https://orbis-apis.onrender.com/restaurant-lead-generation/`
+- Base URL: `https://orbis-apis.onrender.com/restaurant-lead-generation`
+- Info: `GET https://orbis-apis.onrender.com/restaurant-lead-generation`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/restaurant-lead-generation/openapi.json`
 
 ## 01.1 Info / Discovery manifest (`GET /`)
 
@@ -75,7 +77,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     {
       "method": "POST",
       "path": "/run-lead-pipeline",
-      "price_usd": 1.0,
+      "price_usd": 1,
       "gated": false
     }
   ],
@@ -84,7 +86,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     "POST /contact-lead"
   ],
   "confidence": {
-    "score": 1.0,
+    "score": 1,
     "level": "high",
     "rationale": "Static capability manifest; deterministic."
   },
@@ -148,14 +150,14 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
       "GET /"
     ],
     "endpoint_pricing": {
-      "GET /": 0.0,
+      "GET /": 0,
       "POST /find-restaurant-leads": 0.5,
       "POST /score-leads": 0.1,
       "POST /enrich-lead": 0.75,
       "POST /generate-outreach-angle": 0.15,
       "POST /export-leads": 0.05,
       "POST /contact-lead": 0.4,
-      "POST /run-lead-pipeline": 1.0
+      "POST /run-lead-pipeline": 1
     },
     "notes": "Pipeline endpoint bundles find+score+enrich+angle at a discount vs calling each step. /contact-lead is gated and bills only on approved execution."
   },
@@ -232,7 +234,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "description": "Zero-cost discovery endpoint. Returns capabilities, endpoint catalog, pricing, auth requirements, execution-gate map, and chaining hints so an agent can plan calls without prior knowledge.",
         "security": [],
         "x-pricing": {
-          "price": 0.0
+          "price": 0
         },
         "responses": {
           "200": {
@@ -291,7 +293,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     {
                       "method": "POST",
                       "path": "/run-lead-pipeline",
-                      "price_usd": 1.0,
+                      "price_usd": 1,
                       "gated": false
                     }
                   ],
@@ -300,7 +302,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     "POST /contact-lead"
                   ],
                   "confidence": {
-                    "score": 1.0,
+                    "score": 1,
                     "level": "high",
                     "rationale": "Static capability manifest; deterministic."
                   },
@@ -770,7 +772,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                 "channel": "email",
                 "to": "owner@trattoriasole.example",
                 "subject": "Quick idea to lift your Google rating",
-                "body": "Hi — noticed your last 20 reviews mention slow service...",
+                "body": "Hi \u2014 noticed your last 20 reviews mention slow service...",
                 "approval_token": null
               }
             }
@@ -845,7 +847,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     "to": "owner@trattoriasole.example",
                     "channel": "email",
                     "subject": "Quick idea to lift your Google rating",
-                    "body": "Hi — noticed your last 20 reviews mention slow service at peak hours. We help Austin restaurants respond to reviews and recover their Google rating within about 60 days. Worth a 10-minute call? Reply STOP or use the unsubscribe link to opt out."
+                    "body": "Hi \u2014 noticed your last 20 reviews mention slow service at peak hours. We help Austin restaurants respond to reviews and recover their Google rating within about 60 days. Worth a 10-minute call? Reply STOP or use the unsubscribe link to opt out."
                   }
                 }
               }
@@ -879,10 +881,10 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "tags": [
           "workflow"
         ],
-        "summary": "One-call workflow — find, score, enrich, and draft outreach.",
-        "description": "Orchestrates find-restaurant-leads → score-leads → enrich-lead (top N) → generate-outreach-angle in a single call. Does NOT contact anyone; contacting still requires the gated /contact-lead step.",
+        "summary": "One-call workflow \u2014 find, score, enrich, and draft outreach.",
+        "description": "Orchestrates find-restaurant-leads \u2192 score-leads \u2192 enrich-lead (top N) \u2192 generate-outreach-angle in a single call. Does NOT contact anyone; contacting still requires the gated /contact-lead step.",
         "x-pricing": {
-          "price": 1.0
+          "price": 1
         },
         "requestBody": {
           "required": true,
@@ -1003,7 +1005,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                       },
                       "owner_contact_confidence": 0.78,
                       "best_offer_type": "review_management",
-                      "outreach_angle": "Your last 20 Google reviews mention slow service — a structured review-response program can lift your rating within 60 days.",
+                      "outreach_angle": "Your last 20 Google reviews mention slow service \u2014 a structured review-response program can lift your rating within 60 days.",
                       "data_freshness_days": 4,
                       "last_verified_at": "2026-05-31T14:22:00Z",
                       "source_urls": [
@@ -1030,7 +1032,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "locations": 1
                       },
                       "drafted_subject": "Quick idea to lift your Google rating",
-                      "drafted_message": "Hi Maria — I noticed your last 20 reviews keep mentioning slow service at peak hours. We help Austin restaurants like Trattoria Sole respond to reviews and recover their rating within about 60 days. Worth a 10-minute call?"
+                      "drafted_message": "Hi Maria \u2014 I noticed your last 20 reviews keep mentioning slow service at peak hours. We help Austin restaurants like Trattoria Sole respond to reviews and recover their rating within about 60 days. Worth a 10-minute call?"
                     },
                     {
                       "lead_id": "lead_91a",
@@ -1058,7 +1060,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                       },
                       "owner_contact_confidence": 0.62,
                       "best_offer_type": "online_ordering",
-                      "outreach_angle": "Customers can't order from you online — adding direct ordering can recapture 8-12% of delivery-app margin.",
+                      "outreach_angle": "Customers can't order from you online \u2014 adding direct ordering can recapture 8-12% of delivery-app margin.",
                       "data_freshness_days": 6,
                       "last_verified_at": "2026-05-29T09:10:00Z",
                       "source_urls": [
@@ -1083,7 +1085,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "locations": 1
                       },
                       "drafted_subject": "Recapture delivery margin at Lupo Osteria",
-                      "drafted_message": "Hi David — right now guests can't order directly from Lupo Osteria online, so every delivery order pays third-party commission. We can stand up commission-free direct ordering on your existing site. Open to a quick look?"
+                      "drafted_message": "Hi David \u2014 right now guests can't order directly from Lupo Osteria online, so every delivery order pays third-party commission. We can stand up commission-free direct ordering on your existing site. Open to a quick look?"
                     }
                   ],
                   "next_step": {
@@ -1633,7 +1635,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         }
       },
       "Lead": {
-        "description": "A discovered/scored restaurant lead. Domain object — no envelope fields inside. Closed standalone via unevaluatedProperties.",
+        "description": "A discovered/scored restaurant lead. Domain object \u2014 no envelope fields inside. Closed standalone via unevaluatedProperties.",
         "unevaluatedProperties": false,
         "allOf": [
           {
@@ -2046,7 +2048,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
               "string",
               "null"
             ],
-            "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no send occurs."
+            "description": "Human-issued approval token. Null/omitted \u21d2 gate returns pending_approval and no send occurs."
           }
         }
       },
@@ -2108,9 +2110,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                   },
                   "contact_policy": {
                     "type": "string",
-                    "description": "Human-readable policy applied (e.g. max touches",
-                    "quiet hours": null,
-                    "channel rules).": null
+                    "description": "Human-readable policy applied (e.g. max touches, quiet hours, channel rules)."
                   }
                 }
               },
@@ -2236,9 +2236,12 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
 }
 ```
 
+---
+
 # 02. Restaurant Growth Opportunity API  (`/restaurant-growth-opportunity`)
 
-**Base URL:** `https://orbis-apis.onrender.com/restaurant-growth-opportunity`  ·  **openapi.json:** `https://orbis-apis.onrender.com/restaurant-growth-opportunity/openapi.json`  ·  **info/discovery:** `GET https://orbis-apis.onrender.com/restaurant-growth-opportunity/`
+- Base URL: `https://orbis-apis.onrender.com/restaurant-growth-opportunity`
+- Info: `GET https://orbis-apis.onrender.com/restaurant-growth-opportunity`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/restaurant-growth-opportunity/openapi.json`
 
 ## 02.1 Info / Discovery manifest (`GET /`)
 
@@ -2287,7 +2290,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
   "one_call_workflow": "POST /generate-growth-plan",
   "execution_gates": [],
   "confidence": {
-    "score": 1.0,
+    "score": 1,
     "level": "high",
     "rationale": "Static capability manifest; deterministic."
   },
@@ -2363,7 +2366,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
       "GET /"
     ],
     "endpoint_pricing": {
-      "GET /": 0.0,
+      "GET /": 0,
       "POST /analyze-growth-opportunity": 0.5,
       "POST /audit-online-presence": 0.15,
       "POST /audit-menu-pricing": 0.2,
@@ -2441,7 +2444,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "description": "Zero-cost capability manifest including endpoints, pricing, chaining, and envelope metadata.",
         "security": [],
         "x-pricing": {
-          "price": 0.0
+          "price": 0
         },
         "responses": {
           "200": {
@@ -2495,7 +2498,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                   "one_call_workflow": "POST /generate-growth-plan",
                   "execution_gates": [],
                   "confidence": {
-                    "score": 1.0,
+                    "score": 1,
                     "level": "high",
                     "rationale": "Static capability manifest; deterministic."
                   },
@@ -2915,7 +2918,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "tags": [
           "workflow"
         ],
-        "summary": "One-call workflow — run all audits + analysis and return a prioritized growth plan.",
+        "summary": "One-call workflow \u2014 run all audits + analysis and return a prioritized growth plan.",
         "description": "Orchestrates audit-online-presence + audit-menu-pricing + audit-reviews + analyze-growth-opportunity, then synthesizes a phased, prioritized growth plan with revenue impact per initiative.",
         "x-pricing": {
           "price": 1.5
@@ -3869,9 +3872,12 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
 }
 ```
 
+---
+
 # 03. Review Sentiment API  (`/review-sentiment`)
 
-**Base URL:** `https://orbis-apis.onrender.com/review-sentiment`  ·  **openapi.json:** `https://orbis-apis.onrender.com/review-sentiment/openapi.json`  ·  **info/discovery:** `GET https://orbis-apis.onrender.com/review-sentiment/`
+- Base URL: `https://orbis-apis.onrender.com/review-sentiment`
+- Info: `GET https://orbis-apis.onrender.com/review-sentiment`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/review-sentiment/openapi.json`
 
 ## 03.1 Info / Discovery manifest (`GET /`)
 
@@ -3920,7 +3926,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
   "one_call_workflow": "POST /analyze-review-sentiment",
   "execution_gates": [],
   "confidence": {
-    "score": 1.0,
+    "score": 1,
     "level": "high",
     "rationale": "Static capability manifest; deterministic."
   },
@@ -3997,7 +4003,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
       "GET /"
     ],
     "endpoint_pricing": {
-      "GET /": 0.0,
+      "GET /": 0,
       "POST /analyze-review-sentiment": 0.3,
       "POST /detect-review-themes": 0.1,
       "POST /identify-negative-review-drivers": 0.12,
@@ -4076,7 +4082,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "description": "Zero-cost capability manifest with endpoints, pricing, chaining, and envelope metadata.",
         "security": [],
         "x-pricing": {
-          "price": 0.0
+          "price": 0
         },
         "responses": {
           "200": {
@@ -4130,7 +4136,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                   "one_call_workflow": "POST /analyze-review-sentiment",
                   "execution_gates": [],
                   "confidence": {
-                    "score": 1.0,
+                    "score": 1,
                     "level": "high",
                     "rationale": "Static capability manifest; deterministic."
                   },
@@ -4189,7 +4195,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
           "analysis",
           "workflow"
         ],
-        "summary": "One-call workflow — full structured review report.",
+        "summary": "One-call workflow \u2014 full structured review report.",
         "description": "Returns sentiment_score, review_velocity, complaint_themes, praise_themes, urgent_issues, fake_review_risk, recommended_responses, and reputation_score across all selected platforms in a single call.",
         "x-pricing": {
           "price": 0.3
@@ -4628,7 +4634,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
           "analysis"
         ],
         "summary": "Draft recommended responses for recent/negative reviews.",
-        "description": "Produces recommended_responses (drafts only — not posted). Posting to a platform is out of scope and would require a separate gated action.",
+        "description": "Produces recommended_responses (drafts only \u2014 not posted). Posting to a platform is out of scope and would require a separate gated action.",
         "x-pricing": {
           "price": 0.2
         },
@@ -5545,9 +5551,12 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
 }
 ```
 
+---
+
 # 04. Restaurant AI Consultant API  (`/restaurant-ai-consultant`)
 
-**Base URL:** `https://orbis-apis.onrender.com/restaurant-ai-consultant`  ·  **openapi.json:** `https://orbis-apis.onrender.com/restaurant-ai-consultant/openapi.json`  ·  **info/discovery:** `GET https://orbis-apis.onrender.com/restaurant-ai-consultant/`
+- Base URL: `https://orbis-apis.onrender.com/restaurant-ai-consultant`
+- Info: `GET https://orbis-apis.onrender.com/restaurant-ai-consultant`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/restaurant-ai-consultant/openapi.json`
 
 ## 04.1 Info / Discovery manifest (`GET /`)
 
@@ -5565,13 +5574,13 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     {
       "method": "POST",
       "path": "/full-consulting-audit",
-      "price_usd": 5.0,
+      "price_usd": 5,
       "gated": false
     },
     {
       "method": "POST",
       "path": "/diagnose-revenue-leaks",
-      "price_usd": 1.0,
+      "price_usd": 1,
       "gated": false
     },
     {
@@ -5583,14 +5592,14 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     {
       "method": "POST",
       "path": "/generate-90-day-plan",
-      "price_usd": 2.0,
+      "price_usd": 2,
       "gated": false
     }
   ],
   "one_call_workflow": "POST /full-consulting-audit",
   "execution_gates": [],
   "confidence": {
-    "score": 1.0,
+    "score": 1,
     "level": "high",
     "rationale": "Static capability manifest; deterministic."
   },
@@ -5645,7 +5654,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
   "info": {
     "title": "Restaurant AI Consultant API",
     "version": "1.0.0",
-    "summary": "One-call full restaurant consulting audit — health, revenue risk, marketing, operations, reviews, competition, and a 90-day action plan.",
+    "summary": "One-call full restaurant consulting audit \u2014 health, revenue risk, marketing, operations, reviews, competition, and a 90-day action plan.",
     "description": "Agent-native consulting engine. A single call to /full-consulting-audit returns an executive_summary, a restaurant_health_score, sub-scores for revenue risk, marketing, operations, reviews, and competition, a 90_day_action_plan, and an estimated_revenue_impact. Granular endpoints expose revenue-leak diagnosis, competitor benchmarking, and plan generation. Built for consultant, advisory, and operator agents.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
@@ -5666,11 +5675,11 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
       "GET /"
     ],
     "endpoint_pricing": {
-      "GET /": 0.0,
-      "POST /full-consulting-audit": 5.0,
-      "POST /diagnose-revenue-leaks": 1.0,
+      "GET /": 0,
+      "POST /full-consulting-audit": 5,
+      "POST /diagnose-revenue-leaks": 1,
       "POST /benchmark-competitors": 0.75,
-      "POST /generate-90-day-plan": 2.0
+      "POST /generate-90-day-plan": 2
     },
     "notes": "full-consulting-audit is the one-call workflow (due-diligence tier). It runs leak diagnosis, competitor benchmarking, and plan generation in one pass."
   },
@@ -5740,7 +5749,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "description": "Zero-cost capability manifest with endpoints, pricing, chaining, and envelope metadata.",
         "security": [],
         "x-pricing": {
-          "price": 0.0
+          "price": 0
         },
         "responses": {
           "200": {
@@ -5763,13 +5772,13 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     {
                       "method": "POST",
                       "path": "/full-consulting-audit",
-                      "price_usd": 5.0,
+                      "price_usd": 5,
                       "gated": false
                     },
                     {
                       "method": "POST",
                       "path": "/diagnose-revenue-leaks",
-                      "price_usd": 1.0,
+                      "price_usd": 1,
                       "gated": false
                     },
                     {
@@ -5781,14 +5790,14 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     {
                       "method": "POST",
                       "path": "/generate-90-day-plan",
-                      "price_usd": 2.0,
+                      "price_usd": 2,
                       "gated": false
                     }
                   ],
                   "one_call_workflow": "POST /full-consulting-audit",
                   "execution_gates": [],
                   "confidence": {
-                    "score": 1.0,
+                    "score": 1,
                     "level": "high",
                     "rationale": "Static capability manifest; deterministic."
                   },
@@ -5846,10 +5855,10 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
           "consulting",
           "workflow"
         ],
-        "summary": "One-call workflow — complete consulting audit deliverable.",
+        "summary": "One-call workflow \u2014 complete consulting audit deliverable.",
         "description": "Returns executive_summary, restaurant_health_score, revenue_risk_score, marketing_score, operations_score, review_score, competition_score, 90_day_action_plan, and estimated_revenue_impact.",
         "x-pricing": {
-          "price": 5.0
+          "price": 5
         },
         "requestBody": {
           "required": true,
@@ -6018,7 +6027,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "summary": "Identify and quantify revenue leaks.",
         "description": "Returns ranked revenue_leaks with monthly_loss_usd and a revenue_risk_score.",
         "x-pricing": {
-          "price": 1.0
+          "price": 1
         },
         "requestBody": {
           "required": true,
@@ -6218,7 +6227,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "summary": "Generate a phased 90-day action plan.",
         "description": "Returns a 90_day_action_plan with phased initiatives and estimated_revenue_impact.",
         "x-pricing": {
-          "price": 2.0
+          "price": 2
         },
         "requestBody": {
           "required": true,
@@ -7013,9 +7022,12 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
 }
 ```
 
+---
+
 # 05. Local Restaurant Discovery API  (`/local-restaurant-discovery`)
 
-**Base URL:** `https://orbis-apis.onrender.com/local-restaurant-discovery`  ·  **openapi.json:** `https://orbis-apis.onrender.com/local-restaurant-discovery/openapi.json`  ·  **info/discovery:** `GET https://orbis-apis.onrender.com/local-restaurant-discovery/`
+- Base URL: `https://orbis-apis.onrender.com/local-restaurant-discovery`
+- Info: `GET https://orbis-apis.onrender.com/local-restaurant-discovery`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/local-restaurant-discovery/openapi.json`
 
 ## 05.1 Info / Discovery manifest (`GET /`)
 
@@ -7058,7 +7070,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
   "one_call_workflow": "POST /match-restaurant-to-intent",
   "execution_gates": [],
   "confidence": {
-    "score": 1.0,
+    "score": 1,
     "level": "high",
     "rationale": "Static capability manifest; deterministic."
   },
@@ -7133,7 +7145,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
       "GET /"
     ],
     "endpoint_pricing": {
-      "GET /": 0.0,
+      "GET /": 0,
       "POST /discover-restaurants": 0.02,
       "POST /rank-restaurants": 0.01,
       "POST /match-restaurant-to-intent": 0.03,
@@ -7206,7 +7218,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "description": "Zero-cost capability manifest with endpoints, pricing, chaining, and envelope metadata.",
         "security": [],
         "x-pricing": {
-          "price": 0.0
+          "price": 0
         },
         "responses": {
           "200": {
@@ -7254,7 +7266,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                   "one_call_workflow": "POST /match-restaurant-to-intent",
                   "execution_gates": [],
                   "confidence": {
-                    "score": 1.0,
+                    "score": 1,
                     "level": "high",
                     "rationale": "Static capability manifest; deterministic."
                   },
@@ -7415,8 +7427,8 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "italian",
                         "mediterranean"
                       ],
-                      "match_score": 82.0,
-                      "cuisine_match": 1.0,
+                      "match_score": 82,
+                      "cuisine_match": 1,
                       "distance": {
                         "miles": 1.4,
                         "minutes_drive": 7
@@ -7447,7 +7459,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "mexican"
                       ],
                       "match_score": 78.5,
-                      "cuisine_match": 1.0,
+                      "cuisine_match": 1,
                       "distance": {
                         "miles": 3.1,
                         "minutes_drive": 13
@@ -7557,7 +7569,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
           "ranking",
           "workflow"
         ],
-        "summary": "One-call workflow — discover and rank by full intent.",
+        "summary": "One-call workflow \u2014 discover and rank by full intent.",
         "description": "Returns ranked_restaurants with match_score, cuisine_match, distance, price_level, review_summary, dietary_fit, and best_for, matched to a full intent (occasion, dietary, budget, party context).",
         "x-pricing": {
           "price": 0.03
@@ -8152,7 +8164,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         }
       },
       "RankedRestaurant": {
-        "description": "A ranked discovery result. Domain object — no envelope fields inside.",
+        "description": "A ranked discovery result. Domain object \u2014 no envelope fields inside.",
         "type": "object",
         "additionalProperties": false,
         "required": [
@@ -8543,9 +8555,12 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
 }
 ```
 
+---
+
 # 06. Office Lunch Planner API  (`/office-lunch-planner`)
 
-**Base URL:** `https://orbis-apis.onrender.com/office-lunch-planner`  ·  **openapi.json:** `https://orbis-apis.onrender.com/office-lunch-planner/openapi.json`  ·  **info/discovery:** `GET https://orbis-apis.onrender.com/office-lunch-planner/`
+- Base URL: `https://orbis-apis.onrender.com/office-lunch-planner`
+- Info: `GET https://orbis-apis.onrender.com/office-lunch-planner`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/office-lunch-planner/openapi.json`
 
 ## 06.1 Info / Discovery manifest (`GET /`)
 
@@ -8602,7 +8617,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     "POST /submit-order"
   ],
   "confidence": {
-    "score": 1.0,
+    "score": 1,
     "level": "high",
     "rationale": "Static capability manifest; deterministic."
   },
@@ -8655,7 +8670,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
   "info": {
     "title": "Office Lunch Planner API",
     "version": "1.0.0",
-    "summary": "Plan team lunch — collect preferences, build a group order, optimize budget, and prepare a (human-approved) checkout.",
+    "summary": "Plan team lunch \u2014 collect preferences, build a group order, optimize budget, and prepare a (human-approved) checkout.",
     "description": "Agent-native group-lunch planning for workplaces. Given people_count, budget, dietary_restrictions, and cuisine_preferences, returns a suggested_order, per_person_cost, substitutions, and delivery_eta. The final /prepare-checkout step is execution-gated and requires explicit human approval before any payment or order submission. Built for executive assistant and workplace-ops agents.",
     "contact": {
       "name": "Restaurant Agent Commerce APIs",
@@ -8676,7 +8691,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
       "GET /"
     ],
     "endpoint_pricing": {
-      "GET /": 0.0,
+      "GET /": 0,
       "POST /plan-office-lunch": 0.25,
       "POST /collect-preferences": 0.02,
       "POST /build-group-order": 0.1,
@@ -8750,7 +8765,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "description": "Zero-cost capability manifest with endpoints, pricing, execution gates, chaining, and envelope metadata.",
         "security": [],
         "x-pricing": {
-          "price": 0.0
+          "price": 0
         },
         "responses": {
           "200": {
@@ -8812,7 +8827,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     "POST /submit-order"
                   ],
                   "confidence": {
-                    "score": 1.0,
+                    "score": 1,
                     "level": "high",
                     "rationale": "Static capability manifest; deterministic."
                   },
@@ -8867,8 +8882,8 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "tags": [
           "planning"
         ],
-        "summary": "One-call workflow — plan a complete team lunch.",
-        "description": "Orchestrates collect-preferences + build-group-order + optimize-budget. Returns suggested_order, per_person_cost, substitutions, delivery_eta, and approval_required. Does NOT pay or submit — that requires the gated /prepare-checkout step.",
+        "summary": "One-call workflow \u2014 plan a complete team lunch.",
+        "description": "Orchestrates collect-preferences + build-group-order + optimize-budget. Returns suggested_order, per_person_cost, substitutions, delivery_eta, and approval_required. Does NOT pay or submit \u2014 that requires the gated /prepare-checkout step.",
         "x-pricing": {
           "price": 0.25
         },
@@ -8976,7 +8991,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                       {
                         "item": "Falafel Mezze Platter (serves 4)",
                         "quantity": 2,
-                        "unit_price_usd": 38.0,
+                        "unit_price_usd": 38,
                         "dietary_tags": [
                           "vegetarian",
                           "vegan",
@@ -8997,7 +9012,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                       {
                         "item": "Gluten-Free Veggie Quesadilla",
                         "quantity": 3,
-                        "unit_price_usd": 11.0,
+                        "unit_price_usd": 11,
                         "dietary_tags": [
                           "vegetarian",
                           "gluten_free",
@@ -9008,7 +9023,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                       {
                         "item": "Mixed Greens & Hummus Tray (serves 6)",
                         "quantity": 1,
-                        "unit_price_usd": 24.0,
+                        "unit_price_usd": 24,
                         "dietary_tags": [
                           "vegetarian",
                           "vegan",
@@ -9018,7 +9033,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "serves": 6
                       }
                     ],
-                    "subtotal_usd": 187.0,
+                    "subtotal_usd": 187,
                     "delivery_fee_usd": 8.99,
                     "tax_usd": 15.44,
                     "total_usd": 211.43
@@ -9029,7 +9044,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                       "from": "Mixed Nut Baklava Tray",
                       "to": "Mixed Greens & Hummus Tray (serves 6)",
                       "reason": "Removed to honor the nut_allergy restriction.",
-                      "price_delta_usd": -6.0
+                      "price_delta_usd": -6
                     },
                     {
                       "from": "Flour Tortilla Quesadilla",
@@ -9242,7 +9257,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "tags": [
           "checkout"
         ],
-        "summary": "Preview the final checkout summary. Preview only — no payment.",
+        "summary": "Preview the final checkout summary. Preview only \u2014 no payment.",
         "description": "Assembles a final checkout_summary (totals, per-person cost, tip, delivery ETA) for review. This endpoint performs NO payment or order submission: it returns approval_required=true and a next_step pointing at the gated /submit-order endpoint. Money only moves at /submit-order.",
         "x-pricing": {
           "price": 0.1
@@ -10018,7 +10033,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
               },
               "approval_required": {
                 "type": "boolean",
-                "description": "True — preview via /prepare-checkout, then payment/submission must go through the gated /submit-order step."
+                "description": "True \u2014 preview via /prepare-checkout, then payment/submission must go through the gated /submit-order step."
               },
               "next_step": {
                 "type": "object",
@@ -10255,7 +10270,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
             "properties": {
               "approval_required": {
                 "type": "boolean",
-                "description": "Always true — payment requires the gated /submit-order step."
+                "description": "Always true \u2014 payment requires the gated /submit-order step."
               },
               "checkout_summary": {
                 "type": "object",
@@ -10336,7 +10351,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
               "string",
               "null"
             ],
-            "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no payment occurs."
+            "description": "Human-issued approval token. Null/omitted \u21d2 gate returns pending_approval and no payment occurs."
           }
         }
       },
@@ -10415,9 +10430,12 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
 }
 ```
 
+---
+
 # 07. Catering Procurement API  (`/catering-procurement`)
 
-**Base URL:** `https://orbis-apis.onrender.com/catering-procurement`  ·  **openapi.json:** `https://orbis-apis.onrender.com/catering-procurement/openapi.json`  ·  **info/discovery:** `GET https://orbis-apis.onrender.com/catering-procurement/`
+- Base URL: `https://orbis-apis.onrender.com/catering-procurement`
+- Info: `GET https://orbis-apis.onrender.com/catering-procurement`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/catering-procurement/openapi.json`
 
 ## 07.1 Info / Discovery manifest (`GET /`)
 
@@ -10459,7 +10477,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     {
       "method": "POST",
       "path": "/submit-catering-request",
-      "price_usd": 1.0,
+      "price_usd": 1,
       "gated": true
     }
   ],
@@ -10468,7 +10486,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     "POST /submit-catering-request"
   ],
   "confidence": {
-    "score": 1.0,
+    "score": 1,
     "level": "high",
     "rationale": "Static capability manifest; deterministic."
   },
@@ -10542,12 +10560,12 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
       "GET /"
     ],
     "endpoint_pricing": {
-      "GET /": 0.0,
+      "GET /": 0,
       "POST /source-catering-options": 0.05,
       "POST /compare-catering-vendors": 0.1,
       "POST /generate-catering-plan": 0.5,
       "POST /prepare-catering-order": 0.15,
-      "POST /submit-catering-request": 1.0
+      "POST /submit-catering-request": 1
     },
     "notes": "generate-catering-plan is the one-call workflow. submit-catering-request is execution-gated (vendor contact / order) and bills only on approved execution."
   },
@@ -10615,7 +10633,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "description": "Zero-cost capability manifest with endpoints, pricing, execution gates, chaining, and envelope metadata.",
         "security": [],
         "x-pricing": {
-          "price": 0.0
+          "price": 0
         },
         "responses": {
           "200": {
@@ -10662,7 +10680,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     {
                       "method": "POST",
                       "path": "/submit-catering-request",
-                      "price_usd": 1.0,
+                      "price_usd": 1,
                       "gated": true
                     }
                   ],
@@ -10671,7 +10689,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     "POST /submit-catering-request"
                   ],
                   "confidence": {
-                    "score": 1.0,
+                    "score": 1,
                     "level": "high",
                     "rationale": "Static capability manifest; deterministic."
                   },
@@ -10824,8 +10842,8 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "mediterranean"
                       ],
                       "rating": 4.7,
-                      "est_total_usd": 760.0,
-                      "per_person_usd": 19.0,
+                      "est_total_usd": 760,
+                      "per_person_usd": 19,
                       "lead_time_hours": 24,
                       "dietary_coverage": [
                         "vegetarian",
@@ -10842,8 +10860,8 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "indian"
                       ],
                       "rating": 4.5,
-                      "est_total_usd": 720.0,
-                      "per_person_usd": 18.0,
+                      "est_total_usd": 720,
+                      "per_person_usd": 18,
                       "lead_time_hours": 36,
                       "dietary_coverage": [
                         "vegetarian",
@@ -10858,7 +10876,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "mediterranean"
                       ],
                       "rating": 4.3,
-                      "est_total_usd": 788.0,
+                      "est_total_usd": 788,
                       "per_person_usd": 19.7,
                       "lead_time_hours": 18,
                       "dietary_coverage": [
@@ -10947,8 +10965,8 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "tags": [
           "sourcing"
         ],
-        "summary": "One-call workflow — source, compare, and recommend a catering plan.",
-        "description": "Orchestrates sourcing + comparison and returns vendor_options and a recommended_order sized to attendee_count and budget. Does NOT contact vendors or order — that requires the gated /submit-catering-request.",
+        "summary": "One-call workflow \u2014 source, compare, and recommend a catering plan.",
+        "description": "Orchestrates sourcing + comparison and returns vendor_options and a recommended_order sized to attendee_count and budget. Does NOT contact vendors or order \u2014 that requires the gated /submit-catering-request.",
         "x-pricing": {
           "price": 0.5
         },
@@ -11055,8 +11073,8 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "mediterranean"
                       ],
                       "rating": 4.7,
-                      "est_total_usd": 760.0,
-                      "per_person_usd": 19.0,
+                      "est_total_usd": 760,
+                      "per_person_usd": 19,
                       "lead_time_hours": 24,
                       "dietary_coverage": [
                         "vegetarian",
@@ -11073,8 +11091,8 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "indian"
                       ],
                       "rating": 4.5,
-                      "est_total_usd": 720.0,
-                      "per_person_usd": 18.0,
+                      "est_total_usd": 720,
+                      "per_person_usd": 18,
                       "lead_time_hours": 36,
                       "dietary_coverage": [
                         "vegetarian",
@@ -11089,7 +11107,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "mediterranean"
                       ],
                       "rating": 4.3,
-                      "est_total_usd": 788.0,
+                      "est_total_usd": 788,
                       "per_person_usd": 19.7,
                       "lead_time_hours": 18,
                       "dietary_coverage": [
@@ -11107,7 +11125,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "item": "Mediterranean Mezze Platter (serves 10)",
                         "quantity": 4,
                         "serves": 40,
-                        "unit_price_usd": 89.0,
+                        "unit_price_usd": 89,
                         "dietary_tags": [
                           "vegetarian",
                           "halal"
@@ -11117,7 +11135,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "item": "Halal Chicken Shawarma Tray (serves 10)",
                         "quantity": 2,
                         "serves": 20,
-                        "unit_price_usd": 110.0,
+                        "unit_price_usd": 110,
                         "dietary_tags": [
                           "halal"
                         ]
@@ -11126,7 +11144,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "item": "Falafel & Hummus Tray (serves 10)",
                         "quantity": 2,
                         "serves": 20,
-                        "unit_price_usd": 75.0,
+                        "unit_price_usd": 75,
                         "dietary_tags": [
                           "vegetarian",
                           "vegan",
@@ -11137,18 +11155,18 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                         "item": "Pita & Mixed Greens Salad (serves 20)",
                         "quantity": 2,
                         "serves": 40,
-                        "unit_price_usd": 45.0,
+                        "unit_price_usd": 45,
                         "dietary_tags": [
                           "vegetarian",
                           "halal"
                         ]
                       }
                     ],
-                    "subtotal_usd": 666.0,
-                    "delivery_fee_usd": 35.0,
-                    "tax_usd": 59.0,
-                    "total_usd": 760.0,
-                    "per_person_usd": 19.0
+                    "subtotal_usd": 666,
+                    "delivery_fee_usd": 35,
+                    "tax_usd": 59,
+                    "total_usd": 760,
+                    "per_person_usd": 19
                   },
                   "approval_required": true,
                   "next_step": {
@@ -11233,7 +11251,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "summary": "[GATED] Contact vendor / submit catering order. Requires human approval.",
         "description": "Submits the order to the vendor (and/or initiates direct vendor contact). Risky, outward-facing, money-moving: with no approval_token it returns approval_required=true and execution_gate.status=pending_approval and performs NO contact or payment. With a valid approval_token it executes.",
         "x-pricing": {
-          "price": 1.0
+          "price": 1
         },
         "x-execution-gate": true,
         "x-human-approval-required": true,
@@ -11306,7 +11324,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                   "vendor_confirmation_id": null,
                   "order_summary": {
                     "order_id": "ord_77",
-                    "total_usd": 760.0,
+                    "total_usd": 760,
                     "delivery_window": {
                       "date": "2026-06-18",
                       "earliest": "11:30",
@@ -11999,7 +12017,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
               },
               "approval_required": {
                 "type": "boolean",
-                "description": "True — vendor contact/order requires gated /submit-catering-request."
+                "description": "True \u2014 vendor contact/order requires gated /submit-catering-request."
               },
               "next_step": {
                 "type": "object",
@@ -12104,7 +12122,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
               "string",
               "null"
             ],
-            "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no contact/payment occurs."
+            "description": "Human-issued approval token. Null/omitted \u21d2 gate returns pending_approval and no contact/payment occurs."
           }
         }
       },
@@ -12162,9 +12180,12 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
 }
 ```
 
+---
+
 # 08. Multi-Restaurant Ordering API  (`/multi-restaurant-ordering`)
 
-**Base URL:** `https://orbis-apis.onrender.com/multi-restaurant-ordering`  ·  **openapi.json:** `https://orbis-apis.onrender.com/multi-restaurant-ordering/openapi.json`  ·  **info/discovery:** `GET https://orbis-apis.onrender.com/multi-restaurant-ordering/`
+- Base URL: `https://orbis-apis.onrender.com/multi-restaurant-ordering`
+- Info: `GET https://orbis-apis.onrender.com/multi-restaurant-ordering`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/multi-restaurant-ordering/openapi.json`
 
 ## 08.1 Info / Discovery manifest (`GET /`)
 
@@ -12221,7 +12242,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     "POST /place-order"
   ],
   "confidence": {
-    "score": 1.0,
+    "score": 1,
     "level": "high",
     "rationale": "Static capability manifest; deterministic."
   },
@@ -12296,7 +12317,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
       "GET /"
     ],
     "endpoint_pricing": {
-      "GET /": 0.0,
+      "GET /": 0,
       "POST /search-restaurants": 0.02,
       "POST /build-order": 0.05,
       "POST /price-order": 0.05,
@@ -12374,7 +12395,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "description": "Zero-cost capability manifest with endpoints, pricing, execution gates, chaining, and envelope metadata.",
         "security": [],
         "x-pricing": {
-          "price": 0.0
+          "price": 0
         },
         "responses": {
           "200": {
@@ -12436,7 +12457,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     "POST /place-order"
                   ],
                   "confidence": {
-                    "score": 1.0,
+                    "score": 1,
                     "level": "high",
                     "rationale": "Static capability manifest; deterministic."
                   },
@@ -12574,7 +12595,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                       "rating": 4.6,
                       "delivery_available": true,
                       "delivery_eta_minutes": 38,
-                      "min_order_usd": 15.0
+                      "min_order_usd": 15
                     },
                     {
                       "restaurant_id": "r_sushi_18",
@@ -12586,7 +12607,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                       "rating": 4.8,
                       "delivery_available": true,
                       "delivery_eta_minutes": 45,
-                      "min_order_usd": 20.0
+                      "min_order_usd": 20
                     }
                   ]
                 }
@@ -12925,8 +12946,8 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "tags": [
           "workflow"
         ],
-        "summary": "One-call workflow — search, build, price, and prepare checkout.",
-        "description": "Orchestrates search-restaurants + build-order + price-order + prepare-checkout and returns a ready checkout_summary with approval_required. Does NOT place the order — that requires gated /place-order.",
+        "summary": "One-call workflow \u2014 search, build, price, and prepare checkout.",
+        "description": "Orchestrates search-restaurants + build-order + price-order + prepare-checkout and returns a ready checkout_summary with approval_required. Does NOT place the order \u2014 that requires gated /place-order.",
         "x-pricing": {
           "price": 0.2
         },
@@ -13859,7 +13880,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
               },
               "approval_required": {
                 "type": "boolean",
-                "description": "True — placing the order requires gated /place-order."
+                "description": "True \u2014 placing the order requires gated /place-order."
               },
               "next_step": {
                 "type": "object",
@@ -13895,7 +13916,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
               "string",
               "null"
             ],
-            "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no payment occurs."
+            "description": "Human-issued approval token. Null/omitted \u21d2 gate returns pending_approval and no payment occurs."
           }
         }
       },
@@ -14045,9 +14066,12 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
 }
 ```
 
+---
+
 # 09. Reservation Intelligence API  (`/reservation-intelligence`)
 
-**Base URL:** `https://orbis-apis.onrender.com/reservation-intelligence`  ·  **openapi.json:** `https://orbis-apis.onrender.com/reservation-intelligence/openapi.json`  ·  **info/discovery:** `GET https://orbis-apis.onrender.com/reservation-intelligence/`
+- Base URL: `https://orbis-apis.onrender.com/reservation-intelligence`
+- Info: `GET https://orbis-apis.onrender.com/reservation-intelligence`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/reservation-intelligence/openapi.json`
 
 ## 09.1 Info / Discovery manifest (`GET /`)
 
@@ -14098,7 +14122,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     "POST /prepare-reservation"
   ],
   "confidence": {
-    "score": 1.0,
+    "score": 1,
     "level": "high",
     "rationale": "Static capability manifest; deterministic."
   },
@@ -14172,7 +14196,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
       "GET /"
     ],
     "endpoint_pricing": {
-      "GET /": 0.0,
+      "GET /": 0,
       "POST /find-availability": 0.03,
       "POST /recommend-reservation": 0.15,
       "POST /predict-no-show-risk": 0.1,
@@ -14248,7 +14272,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "description": "Zero-cost capability manifest with endpoints, pricing, execution gates, chaining, and envelope metadata.",
         "security": [],
         "x-pricing": {
-          "price": 0.0
+          "price": 0
         },
         "responses": {
           "200": {
@@ -14304,7 +14328,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     "POST /prepare-reservation"
                   ],
                   "confidence": {
-                    "score": 1.0,
+                    "score": 1,
                     "level": "high",
                     "rationale": "Static capability manifest; deterministic."
                   },
@@ -14502,8 +14526,8 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
           "intelligence",
           "booking"
         ],
-        "summary": "One-call workflow — recommend the best reservation.",
-        "description": "Orchestrates find-availability + predict-no-show-risk and returns a recommended slot with availability, price_level, no_show_risk, and a recommendation_reason. Does NOT book — that requires gated /prepare-reservation.",
+        "summary": "One-call workflow \u2014 recommend the best reservation.",
+        "description": "Orchestrates find-availability + predict-no-show-risk and returns a recommended slot with availability, price_level, no_show_risk, and a recommendation_reason. Does NOT book \u2014 that requires gated /prepare-reservation.",
         "x-pricing": {
           "price": 0.15
         },
@@ -15647,7 +15671,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
               "string",
               "null"
             ],
-            "description": "Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no booking/modification occurs."
+            "description": "Human-issued approval token. Null/omitted \u21d2 gate returns pending_approval and no booking/modification occurs."
           }
         }
       },
@@ -15711,9 +15735,12 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
 }
 ```
 
+---
+
 # 10. Franchise Opportunity API  (`/franchise-opportunity`)
 
-**Base URL:** `https://orbis-apis.onrender.com/franchise-opportunity`  ·  **openapi.json:** `https://orbis-apis.onrender.com/franchise-opportunity/openapi.json`  ·  **info/discovery:** `GET https://orbis-apis.onrender.com/franchise-opportunity/`
+- Base URL: `https://orbis-apis.onrender.com/franchise-opportunity`
+- Info: `GET https://orbis-apis.onrender.com/franchise-opportunity`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/franchise-opportunity/openapi.json`
 
 ## 10.1 Info / Discovery manifest (`GET /`)
 
@@ -15731,7 +15758,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     {
       "method": "POST",
       "path": "/analyze-franchise-opportunity",
-      "price_usd": 1.0,
+      "price_usd": 1,
       "gated": false
     },
     {
@@ -15749,14 +15776,14 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
     {
       "method": "POST",
       "path": "/generate-investment-brief",
-      "price_usd": 8.0,
+      "price_usd": 8,
       "gated": false
     }
   ],
   "one_call_workflow": "POST /generate-investment-brief",
   "execution_gates": [],
   "confidence": {
-    "score": 1.0,
+    "score": 1,
     "level": "high",
     "rationale": "Static capability manifest; deterministic."
   },
@@ -15833,11 +15860,11 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
       "GET /"
     ],
     "endpoint_pricing": {
-      "GET /": 0.0,
-      "POST /analyze-franchise-opportunity": 1.0,
+      "GET /": 0,
+      "POST /analyze-franchise-opportunity": 1,
       "POST /compare-franchise-markets": 0.75,
       "POST /score-location-fit": 0.5,
-      "POST /generate-investment-brief": 8.0
+      "POST /generate-investment-brief": 8
     },
     "notes": "generate-investment-brief is the one-call due-diligence workflow (premium tier). All endpoints are analysis/advisory; none move money or take outward-facing action, so no execution gate is required."
   },
@@ -15908,7 +15935,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "description": "Zero-cost capability manifest with endpoints, pricing, chaining, and envelope metadata.",
         "security": [],
         "x-pricing": {
-          "price": 0.0
+          "price": 0
         },
         "responses": {
           "200": {
@@ -15931,7 +15958,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     {
                       "method": "POST",
                       "path": "/analyze-franchise-opportunity",
-                      "price_usd": 1.0,
+                      "price_usd": 1,
                       "gated": false
                     },
                     {
@@ -15949,14 +15976,14 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
                     {
                       "method": "POST",
                       "path": "/generate-investment-brief",
-                      "price_usd": 8.0,
+                      "price_usd": 8,
                       "gated": false
                     }
                   ],
                   "one_call_workflow": "POST /generate-investment-brief",
                   "execution_gates": [],
                   "confidence": {
-                    "score": 1.0,
+                    "score": 1,
                     "level": "high",
                     "rationale": "Static capability manifest; deterministic."
                   },
@@ -16017,7 +16044,7 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "summary": "Analyze a franchise brand opportunity.",
         "description": "Returns franchise_fit_score, market_demand_score, competition_intensity, and an opportunity_summary.",
         "x-pricing": {
-          "price": 1.0
+          "price": 1
         },
         "requestBody": {
           "required": true,
@@ -16247,10 +16274,10 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
         "tags": [
           "workflow"
         ],
-        "summary": "One-call workflow — full investment due-diligence brief.",
-        "description": "Orchestrates opportunity analysis, market comparison, and location-fit scoring into a complete investment brief with franchise_fit_score, market_demand_score, competition_intensity, estimated_startup_cost, payback_period_estimate, location_risks, and opportunity_summary. Advisory output — not financial advice; no action is executed.",
+        "summary": "One-call workflow \u2014 full investment due-diligence brief.",
+        "description": "Orchestrates opportunity analysis, market comparison, and location-fit scoring into a complete investment brief with franchise_fit_score, market_demand_score, competition_intensity, estimated_startup_cost, payback_period_estimate, location_risks, and opportunity_summary. Advisory output \u2014 not financial advice; no action is executed.",
         "x-pricing": {
-          "price": 8.0
+          "price": 8
         },
         "requestBody": {
           "required": true,
@@ -17129,4 +17156,3 @@ Please review for: OpenAPI 3.1 correctness, agent-callability, schema typing, ex
   }
 }
 ```
-
