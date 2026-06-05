@@ -1,22 +1,22 @@
+# OpenAPI 3.1 spec for the Restaurant AI Consultant API.
+# Generated from the deployed JSON spec (src/routes/restaurant-suite/specs/restaurant-ai-consultant.json) —
+# the JSON is the source of truth served live at https://orbis-apis.onrender.com/restaurant-ai-consultant.
+
 openapi: 3.1.0
 info:
   title: Restaurant AI Consultant API
   version: 1.0.0
-  summary: One-call full restaurant consulting audit — health, revenue risk, marketing, operations, reviews, competition, and a 90-day action plan.
-  description: >-
-    Agent-native consulting engine. A single call to /full-consulting-audit
-    returns an executive_summary, a restaurant_health_score, sub-scores for
-    revenue risk, marketing, operations, reviews, and competition, a
-    90_day_action_plan, and an estimated_revenue_impact. Granular endpoints
-    expose revenue-leak diagnosis, competitor benchmarking, and plan
-    generation. Built for consultant, advisory, and operator agents.
+  summary: One-call full restaurant consulting audit — health, revenue risk, marketing, operations, reviews,
+    competition, and a 90-day action plan.
+  description: Agent-native consulting engine. A single call to /full-consulting-audit returns an executive_summary,
+    a restaurant_health_score, sub-scores for revenue risk, marketing, operations, reviews, and competition,
+    a 90_day_action_plan, and an estimated_revenue_impact. Granular endpoints expose revenue-leak diagnosis,
+    competitor benchmarking, and plan generation. Built for consultant, advisory, and operator agents.
   contact:
     name: Restaurant Agent Commerce APIs
-    url: https://api.restaurant-agent-commerce.com
+    url: https://orbis-apis.onrender.com/restaurant-ai-consultant
   license:
     name: Commercial
-    url: https://api.restaurant-agent-commerce.com/license
-
 x-agent-callable: true
 x-mcp-compatible: true
 x-pricing:
@@ -24,93 +24,154 @@ x-pricing:
   currency: USD
   billing: prepaid_credits
   free_endpoints:
-    - "GET /"
+  - GET /
   endpoint_pricing:
-    "GET /": 0.00
-    "POST /full-consulting-audit": 5.00
-    "POST /diagnose-revenue-leaks": 1.00
-    "POST /benchmark-competitors": 0.75
-    "POST /generate-90-day-plan": 2.00
-  notes: >-
-    full-consulting-audit is the one-call workflow (due-diligence tier). It runs
-    leak diagnosis, competitor benchmarking, and plan generation in one pass.
+    GET /: 0.0
+    POST /full-consulting-audit: 5.0
+    POST /diagnose-revenue-leaks: 1.0
+    POST /benchmark-competitors: 0.75
+    POST /generate-90-day-plan: 2.0
+  notes: full-consulting-audit is the one-call workflow (due-diligence tier). It runs leak diagnosis,
+    competitor benchmarking, and plan generation in one pass.
 x-privacy:
   pii_handling: none
   data_subject: business_entity_only
   retention_days: 30
   compliance:
-    - "GDPR: business-data-focused; ensure lawful basis where personal data appears"
-    - CCPA
+  - 'GDPR: business-data-focused; ensure lawful basis where personal data appears'
+  - CCPA
   data_sources:
-    - public_business_listings
-    - public_review_platforms
-    - public_menu_data
-    - public_web_crawl
-    - local_market_data
+  - public_business_listings
+  - public_review_platforms
+  - public_menu_data
+  - public_web_crawl
+  - local_market_data
 x-chain-to:
-  - api: Restaurant Growth Opportunity API
-    endpoint: POST /generate-growth-plan
-    reason: Drill into a single growth lever surfaced by the audit.
-  - api: Review Sentiment API
-    endpoint: POST /analyze-review-sentiment
-    reason: Expand the review_score with theme-level detail.
-  - api: Restaurant Lead Generation API
-    endpoint: POST /generate-outreach-angle
-    reason: Package the audit as a pitch deliverable for a prospect.
-
+- api: Restaurant Growth Opportunity API
+  endpoint: POST /generate-growth-plan
+  reason: Drill into a single growth lever surfaced by the audit.
+- api: Review Sentiment API
+  endpoint: POST /analyze-review-sentiment
+  reason: Expand the review_score with theme-level detail.
+- api: Restaurant Lead Generation API
+  endpoint: POST /generate-outreach-angle
+  reason: Package the audit as a pitch deliverable for a prospect.
 servers:
-  - url: https://api.restaurant-agent-commerce.com/ai-consultant/v1
-    description: Production
-
+- url: https://orbis-apis.onrender.com/restaurant-ai-consultant
+  description: Orbis hosted
 security:
-  - ApiKeyAuth: []
-
+- ApiKeyAuth: []
 tags:
-  - name: discovery
-  - name: consulting
-  - name: workflow
-
+- name: discovery
+- name: consulting
+- name: workflow
 paths:
   /:
     get:
       operationId: getDiscovery
-      tags: [discovery]
+      tags:
+      - discovery
       summary: Service discovery and capability manifest.
       description: Zero-cost capability manifest with endpoints, pricing, chaining, and envelope metadata.
       security: []
-      x-pricing: { price: 0.00 }
+      x-pricing:
+        price: 0.0
       responses:
-        "200":
+        '200':
           description: Capability manifest.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/DiscoveryResponse" }
-
+              schema:
+                $ref: '#/components/schemas/DiscoveryResponse'
+              example:
+                service: Restaurant AI Consultant API
+                version: 1.0.0
+                agent_callable: true
+                mcp_compatible: true
+                auth:
+                  type: api_key
+                  header: X-API-Key
+                endpoints:
+                - method: POST
+                  path: /full-consulting-audit
+                  price_usd: 5.0
+                  gated: false
+                - method: POST
+                  path: /diagnose-revenue-leaks
+                  price_usd: 1.0
+                  gated: false
+                - method: POST
+                  path: /benchmark-competitors
+                  price_usd: 0.75
+                  gated: false
+                - method: POST
+                  path: /generate-90-day-plan
+                  price_usd: 2.0
+                  gated: false
+                one_call_workflow: POST /full-consulting-audit
+                execution_gates: []
+                confidence:
+                  score: 1.0
+                  level: high
+                  rationale: Static capability manifest; deterministic.
+                privacy:
+                  pii_included: false
+                  retention_days: 30
+                  compliance:
+                  - 'GDPR: business-data-focused; ensure lawful basis where personal data appears'
+                  - CCPA
+                  data_sources:
+                  - public_business_listings
+                  - public_review_platforms
+                  - public_menu_data
+                  - public_web_crawl
+                  - local_market_data
+                  data_subject: business_entity_only
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Call POST /full-consulting-audit to run the full workflow in a single call.
+                  rationale: The bundled workflow is the fastest path to a complete result.
+                chain_to:
+                - api: Restaurant Growth Opportunity API
+                  endpoint: POST /generate-growth-plan
+                  reason: Drill into a single growth lever surfaced by the audit.
+                - api: Review Sentiment API
+                  endpoint: POST /analyze-review-sentiment
+                  reason: Expand the review_score with theme-level detail.
+                - api: Restaurant Lead Generation API
+                  endpoint: POST /generate-outreach-angle
+                  reason: Package the audit as a pitch deliverable for a prospect.
   /full-consulting-audit:
     post:
       operationId: fullConsultingAudit
-      tags: [consulting, workflow]
+      tags:
+      - consulting
+      - workflow
       summary: One-call workflow — complete consulting audit deliverable.
-      description: >-
-        Returns executive_summary, restaurant_health_score, revenue_risk_score,
-        marketing_score, operations_score, review_score, competition_score,
-        90_day_action_plan, and estimated_revenue_impact.
-      x-pricing: { price: 5.00 }
+      description: Returns executive_summary, restaurant_health_score, revenue_risk_score, marketing_score,
+        operations_score, review_score, competition_score, 90_day_action_plan, and estimated_revenue_impact.
+      x-pricing:
+        price: 5.0
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/AuditRequest" }
+            schema:
+              $ref: '#/components/schemas/AuditRequest'
             example:
-              restaurant: { name: "Trattoria Sole", city: Austin, state: TX }
+              restaurant:
+                name: Trattoria Sole
+                city: Austin
+                state: TX
               competitors_radius_miles: 3
               depth: full
       responses:
-        "200":
+        '200':
           description: Full consulting audit.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/ConsultingAuditResponse" }
+              schema:
+                $ref: '#/components/schemas/ConsultingAuditResponse'
               example:
                 request_id: req_audit_8f3c1a7e9b2d4c6a
                 source_freshness:
@@ -123,7 +184,9 @@ paths:
                 confidence:
                   score: 0.82
                   level: high
-                  rationale: Synthesized from 4 public review platforms, current menu data, and local market comps within a 3-mile radius; revenue figures are modeled estimates from observed traffic and pricing signals.
+                  rationale: Synthesized from 4 public review platforms, current menu data, and local
+                    market comps within a 3-mile radius; revenue figures are modeled estimates from observed
+                    traffic and pricing signals.
                 privacy:
                   pii_included: false
                   data_subject: business_entity_only
@@ -139,18 +202,24 @@ paths:
                   - local_market_data
                 recommended_actions_priority_order:
                 - priority: 1
-                  action: Claim and optimize the Google Business Profile with updated hours, menu links, and weekly photo uploads.
-                  rationale: Profile is unclaimed and missing online ordering links, suppressing local discovery and click-to-order conversions.
+                  action: Claim and optimize the Google Business Profile with updated hours, menu links,
+                    and weekly photo uploads.
+                  rationale: Profile is unclaimed and missing online ordering links, suppressing local
+                    discovery and click-to-order conversions.
                   estimated_revenue_impact_usd: 3200
                   chain_to_endpoint: POST /generate-90-day-plan
                 - priority: 2
-                  action: Launch a structured review-response and solicitation program targeting the 18 unanswered negative reviews.
-                  rationale: Unaddressed 1-2 star reviews citing slow service are depressing the rating below the local median of 4.3.
+                  action: Launch a structured review-response and solicitation program targeting the 18
+                    unanswered negative reviews.
+                  rationale: Unaddressed 1-2 star reviews citing slow service are depressing the rating
+                    below the local median of 4.3.
                   estimated_revenue_impact_usd: 2100
                   chain_to_endpoint: POST /diagnose-revenue-leaks
                 - priority: 3
-                  action: Renegotiate third-party delivery commission tiers and add a first-party online ordering channel.
-                  rationale: Delivery marketplace commissions of ~28% are eroding margin on a growing share of orders.
+                  action: Renegotiate third-party delivery commission tiers and add a first-party online
+                    ordering channel.
+                  rationale: Delivery marketplace commissions of ~28% are eroding margin on a growing
+                    share of orders.
                   estimated_revenue_impact_usd: 1800
                 chain_to:
                 - api: Restaurant Growth Opportunity API
@@ -159,7 +228,12 @@ paths:
                 - api: Review Sentiment API
                   endpoint: POST /analyze-review-sentiment
                   reason: Expand the review_score with theme-level detail.
-                executive_summary: Trattoria Sole is a well-regarded neighborhood Italian restaurant with strong food sentiment but meaningful operational and digital gaps. Its restaurant health score of 68 is dragged down by an unclaimed Google Business Profile, slow review response, and high third-party delivery commissions. Closing these gaps over 90 days could recover an estimated $7,100/month in lost revenue, with the highest-leverage move being local-search optimization.
+                executive_summary: Trattoria Sole is a well-regarded neighborhood Italian restaurant with
+                  strong food sentiment but meaningful operational and digital gaps. Its restaurant health
+                  score of 68 is dragged down by an unclaimed Google Business Profile, slow review response,
+                  and high third-party delivery commissions. Closing these gaps over 90 days could recover
+                  an estimated $7,100/month in lost revenue, with the highest-leverage move being local-search
+                  optimization.
                 restaurant_health_score: 68
                 revenue_risk_score: 54
                 marketing_score: 61
@@ -168,25 +242,29 @@ paths:
                 competition_score: 70
                 90_day_action_plan:
                 - phase: week_1
-                  initiative: Claim and fully complete the Google Business Profile, add online ordering link, and audit listing accuracy across Yelp and TripAdvisor.
+                  initiative: Claim and fully complete the Google Business Profile, add online ordering
+                    link, and audit listing accuracy across Yelp and TripAdvisor.
                   owner_role: Owner/Manager
                   effort: low
                   estimated_revenue_impact_usd: 3200
                   kpi: Profile views and direction requests per week
                 - phase: weeks_2_4
-                  initiative: Implement a review-response SOP and reply to all outstanding reviews within 48 hours; launch table-side QR review solicitation.
+                  initiative: Implement a review-response SOP and reply to all outstanding reviews within
+                    48 hours; launch table-side QR review solicitation.
                   owner_role: Front-of-house Lead
                   effort: medium
                   estimated_revenue_impact_usd: 2100
                   kpi: Average star rating and monthly review volume
                 - phase: weeks_5_8
-                  initiative: Stand up a commission-free first-party online ordering page and shift loyal customers to it via receipt and email prompts.
+                  initiative: Stand up a commission-free first-party online ordering page and shift loyal
+                    customers to it via receipt and email prompts.
                   owner_role: Marketing/Operations
                   effort: high
                   estimated_revenue_impact_usd: 1800
                   kpi: Share of orders on first-party channel vs. marketplaces
                 - phase: weeks_9_12
-                  initiative: Re-engineer the menu with high-margin item placement and introduce a Tuesday-Wednesday off-peak prix-fixe to lift slow-night covers.
+                  initiative: Re-engineer the menu with high-margin item placement and introduce a Tuesday-Wednesday
+                    off-peak prix-fixe to lift slow-night covers.
                   owner_role: Owner/Chef
                   effort: medium
                   estimated_revenue_impact_usd: 1400
@@ -195,31 +273,41 @@ paths:
                   monthly_usd: 7100
                   annual_usd: 85200
                   confidence: 0.78
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "402": { $ref: "#/components/responses/PaymentRequired" }
-        "404": { $ref: "#/components/responses/NotFound" }
-
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /diagnose-revenue-leaks:
     post:
       operationId: diagnoseRevenueLeaks
-      tags: [consulting]
+      tags:
+      - consulting
       summary: Identify and quantify revenue leaks.
       description: Returns ranked revenue_leaks with monthly_loss_usd and a revenue_risk_score.
-      x-pricing: { price: 1.00 }
+      x-pricing:
+        price: 1.0
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/RestaurantRefRequest" }
+            schema:
+              $ref: '#/components/schemas/RestaurantRefRequest'
             example:
-              restaurant: { name: "Trattoria Sole", city: Austin, state: TX }
+              restaurant:
+                name: Trattoria Sole
+                city: Austin
+                state: TX
       responses:
-        "200":
+        '200':
           description: Revenue-leak diagnosis.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/RevenueLeaksResponse" }
+              schema:
+                $ref: '#/components/schemas/RevenueLeaksResponse'
               example:
                 request_id: req_leaks_2a9d7f1c4e6b8a30
                 source_freshness:
@@ -231,7 +319,9 @@ paths:
                 confidence:
                   score: 0.74
                   level: medium
-                  rationale: Leak estimates derived from observed delivery pricing, public review patterns, and category benchmarks for comparable Austin Italian restaurants; individual figures are modeled and should be validated against POS data.
+                  rationale: Leak estimates derived from observed delivery pricing, public review patterns,
+                    and category benchmarks for comparable Austin Italian restaurants; individual figures
+                    are modeled and should be validated against POS data.
                 privacy:
                   pii_included: false
                   data_subject: business_entity_only
@@ -252,7 +342,8 @@ paths:
                   chain_to_endpoint: POST /generate-90-day-plan
                 - priority: 2
                   action: Introduce a deposit or card-hold policy for parties of six or more to curb no-shows.
-                  rationale: Friday and Saturday large-party no-shows leave premium tables empty during peak demand.
+                  rationale: Friday and Saturday large-party no-shows leave premium tables empty during
+                    peak demand.
                   estimated_revenue_impact_usd: 950
                 chain_to:
                 - api: Restaurant Growth Opportunity API
@@ -267,7 +358,8 @@ paths:
                 - leak: High third-party delivery commissions on a growing share of orders
                   category: delivery
                   monthly_loss_usd: 1800
-                  fix: Launch a first-party online ordering page and incentivize direct orders via receipts and loyalty perks.
+                  fix: Launch a first-party online ordering page and incentivize direct orders via receipts
+                    and loyalty perks.
                   confidence: 0.8
                 - leak: Weekend large-party no-shows leaving premium tables idle at peak
                   category: no_shows
@@ -284,64 +376,171 @@ paths:
                   monthly_loss_usd: 550
                   fix: Respond to all reviews within 48 hours and run table-side review solicitation.
                   confidence: 0.6
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "402": { $ref: "#/components/responses/PaymentRequired" }
-        "404": { $ref: "#/components/responses/NotFound" }
-
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /benchmark-competitors:
     post:
       operationId: benchmarkCompetitors
-      tags: [consulting]
+      tags:
+      - consulting
       summary: Benchmark the restaurant against nearby competitors.
-      description: Returns a competition_score and per-competitor comparison across price, rating, and presence.
-      x-pricing: { price: 0.75 }
+      description: Returns a competition_score and per-competitor comparison across price, rating, and
+        presence.
+      x-pricing:
+        price: 0.75
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/BenchmarkRequest" }
+            schema:
+              $ref: '#/components/schemas/BenchmarkRequest'
             example:
-              restaurant: { name: "Trattoria Sole", city: Austin, state: TX }
+              restaurant:
+                name: Trattoria Sole
+                city: Austin
+                state: TX
               radius_miles: 3
               max_competitors: 5
       responses:
-        "200":
+        '200':
           description: Competitor benchmark.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/BenchmarkResponse" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "402": { $ref: "#/components/responses/PaymentRequired" }
-        "404": { $ref: "#/components/responses/NotFound" }
-
+              schema:
+                $ref: '#/components/schemas/BenchmarkResponse'
+              example:
+                request_id: req_adf79c393cd7ae77
+                source_freshness:
+                  data_freshness_days: 1
+                  last_verified_at: '2026-06-04T09:15:00Z'
+                  source_urls:
+                  - https://public-listings.example.com/denver/restaurants
+                confidence:
+                  score: 0.88
+                  level: high
+                  rationale: Inputs resolved cleanly and validated against current data for 'benchmark
+                    the restaurant against nearby competitors'.
+                privacy:
+                  pii_included: false
+                  retention_days: 30
+                  compliance:
+                  - CCPA
+                  - GDPR_legitimate_interest
+                  data_sources:
+                  - public_business_listings
+                  - public_review_platforms
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Use this result, then continue the workflow via /full-consulting-audit.
+                  rationale: Chaining the next step turns this output into an end-to-end outcome.
+                  chain_to_endpoint: POST /full-consulting-audit
+                chain_to:
+                - api: Restaurant AI Consultant API
+                  endpoint: POST /full-consulting-audit
+                  reason: Next logical step in this API's workflow.
+                competition_score: 0.88
+                competitors:
+                - name: Mercantile Dining & Provision
+                  rating: 2.5
+                  price_level: 3
+                  review_count: 128
+                  advantage_over_you:
+                  - trending
+                  you_advantage_over_them:
+                  - trending
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /generate-90-day-plan:
     post:
       operationId: generate90DayPlan
-      tags: [consulting]
+      tags:
+      - consulting
       summary: Generate a phased 90-day action plan.
       description: Returns a 90_day_action_plan with phased initiatives and estimated_revenue_impact.
-      x-pricing: { price: 2.00 }
+      x-pricing:
+        price: 2.0
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/PlanRequest" }
+            schema:
+              $ref: '#/components/schemas/PlanRequest'
             example:
-              restaurant: { name: "Trattoria Sole", city: Austin, state: TX }
-              focus: [reviews, online_ordering, local_seo]
+              restaurant:
+                name: Trattoria Sole
+                city: Austin
+                state: TX
+              focus:
+              - reviews
+              - online_ordering
+              - local_seo
       responses:
-        "200":
+        '200':
           description: 90-day action plan.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/PlanResponse" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "402": { $ref: "#/components/responses/PaymentRequired" }
-        "404": { $ref: "#/components/responses/NotFound" }
-
+              schema:
+                $ref: '#/components/schemas/PlanResponse'
+              example:
+                request_id: req_49b27a4470a30581
+                source_freshness:
+                  data_freshness_days: 1
+                  last_verified_at: '2026-06-04T09:15:00Z'
+                  source_urls:
+                  - https://public-listings.example.com/denver/restaurants
+                confidence:
+                  score: 0.88
+                  level: high
+                  rationale: Inputs resolved cleanly and validated against current data for 'generate
+                    a phased 90-day action plan'.
+                privacy:
+                  pii_included: false
+                  retention_days: 30
+                  compliance:
+                  - CCPA
+                  - GDPR_legitimate_interest
+                  data_sources:
+                  - public_business_listings
+                  - public_review_platforms
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Use this result, then continue the workflow via /full-consulting-audit.
+                  rationale: Chaining the next step turns this output into an end-to-end outcome.
+                  chain_to_endpoint: POST /full-consulting-audit
+                chain_to:
+                - api: Restaurant AI Consultant API
+                  endpoint: POST /full-consulting-audit
+                  reason: Next logical step in this API's workflow.
+                90_day_action_plan:
+                - phase: week_1
+                  initiative: general
+                  owner_role: general
+                  effort: low
+                  estimated_revenue_impact_usd: 1850.0
+                  kpi: general
+                estimated_revenue_impact:
+                  monthly_usd: 1850.0
+                  annual_usd: 1850.0
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -349,272 +548,509 @@ components:
       in: header
       name: X-API-Key
       description: Per-agent API key. Bills against prepaid credits.
-
   responses:
     BadRequest:
       description: Malformed or invalid request.
-      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
       description: Missing or invalid API key.
-      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     PaymentRequired:
       description: Insufficient prepaid credits.
-      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     NotFound:
       description: Restaurant could not be resolved.
-      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
-
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
     Confidence:
       type: object
       additionalProperties: false
-      required: [score, level]
+      required:
+      - score
+      - level
       properties:
-        score: { type: number, minimum: 0, maximum: 1 }
-        level: { type: string, enum: [high, medium, low] }
-        rationale: { type: string }
+        score:
+          type: number
+          minimum: 0
+          maximum: 1
+        level:
+          type: string
+          enum:
+          - high
+          - medium
+          - low
+        rationale:
+          type: string
     Privacy:
       type: object
       additionalProperties: false
-      required: [pii_included, retention_days]
+      required:
+      - pii_included
+      - retention_days
       properties:
-        pii_included: { type: boolean }
-        data_subject: { type: string, enum: [business_entity_only, none], default: business_entity_only }
-        retention_days: { type: integer }
-        compliance: { type: array, items: { type: string } }
-        data_sources: { type: array, items: { type: string } }
+        pii_included:
+          type: boolean
+        data_subject:
+          type: string
+          enum:
+          - business_entity_only
+          - none
+          default: business_entity_only
+        retention_days:
+          type: integer
+        compliance:
+          type: array
+          items:
+            type: string
+        data_sources:
+          type: array
+          items:
+            type: string
     RecommendedAction:
       type: object
       additionalProperties: false
-      required: [priority, action]
+      required:
+      - priority
+      - action
       properties:
-        priority: { type: integer, minimum: 1 }
-        action: { type: string }
-        rationale: { type: string }
-        estimated_revenue_impact_usd: { type: number }
-        chain_to_endpoint: { type: string }
+        priority:
+          type: integer
+          minimum: 1
+        action:
+          type: string
+        rationale:
+          type: string
+        estimated_revenue_impact_usd:
+          type: number
+        chain_to_endpoint:
+          type: string
     ChainTo:
       type: object
       additionalProperties: false
-      required: [api, endpoint, reason]
+      required:
+      - api
+      - endpoint
+      - reason
       properties:
-        api: { type: string }
-        endpoint: { type: string }
-        reason: { type: string }
+        api:
+          type: string
+        endpoint:
+          type: string
+        reason:
+          type: string
     ResponseMeta:
       description: Top-level envelope fields attached once per response (never nested).
       type: object
-      required: [request_id, confidence, privacy, recommended_actions_priority_order, chain_to]
+      required:
+      - request_id
+      - confidence
+      - privacy
+      - recommended_actions_priority_order
+      - chain_to
       properties:
-        request_id: { type: string }
+        request_id:
+          type: string
         source_freshness:
           type: object
           description: Provenance/recency of the underlying data used in this response.
           additionalProperties: false
           properties:
-            data_freshness_days: { type: integer }
-            last_verified_at: { type: string, format: date-time }
-            source_urls: { type: array, items: { type: string, format: uri } }
-        confidence: { $ref: "#/components/schemas/Confidence" }
-        privacy: { $ref: "#/components/schemas/Privacy" }
+            data_freshness_days:
+              type: integer
+            last_verified_at:
+              type: string
+              format: date-time
+            source_urls:
+              type: array
+              items:
+                type: string
+                format: uri
+        confidence:
+          $ref: '#/components/schemas/Confidence'
+        privacy:
+          $ref: '#/components/schemas/Privacy'
         recommended_actions_priority_order:
           type: array
-          items: { $ref: "#/components/schemas/RecommendedAction" }
+          items:
+            $ref: '#/components/schemas/RecommendedAction'
         chain_to:
           type: array
-          items: { $ref: "#/components/schemas/ChainTo" }
+          items:
+            $ref: '#/components/schemas/ChainTo'
     ErrorResponse:
       type: object
       additionalProperties: false
-      required: [error]
+      required:
+      - error
       properties:
         error:
           type: object
           additionalProperties: false
-          required: [code, message]
+          required:
+          - code
+          - message
           properties:
-            code: { type: string }
-            message: { type: string }
-            retriable: { type: boolean }
+            code:
+              type: string
+            message:
+              type: string
+            retriable:
+              type: boolean
     DiscoveryResponse:
       type: object
       additionalProperties: false
-      required: [service, version, agent_callable, mcp_compatible, auth, endpoints, one_call_workflow, confidence, privacy, recommended_actions_priority_order, chain_to]
+      required:
+      - service
+      - version
+      - agent_callable
+      - mcp_compatible
+      - auth
+      - endpoints
+      - one_call_workflow
+      - confidence
+      - privacy
+      - recommended_actions_priority_order
+      - chain_to
       properties:
-        confidence: { $ref: "#/components/schemas/Confidence" }
-        privacy: { $ref: "#/components/schemas/Privacy" }
+        confidence:
+          $ref: '#/components/schemas/Confidence'
+        privacy:
+          $ref: '#/components/schemas/Privacy'
         recommended_actions_priority_order:
           type: array
-          items: { $ref: "#/components/schemas/RecommendedAction" }
-        service: { type: string }
-        version: { type: string }
-        agent_callable: { type: boolean }
-        mcp_compatible: { type: boolean }
+          items:
+            $ref: '#/components/schemas/RecommendedAction'
+        service:
+          type: string
+        version:
+          type: string
+        agent_callable:
+          type: boolean
+        mcp_compatible:
+          type: boolean
         auth:
           type: object
           additionalProperties: false
           properties:
-            type: { type: string }
-            header: { type: string }
+            type:
+              type: string
+            header:
+              type: string
         endpoints:
           type: array
           items:
             type: object
             additionalProperties: false
             properties:
-              method: { type: string }
-              path: { type: string }
-              price_usd: { type: number }
-              gated: { type: boolean }
-        one_call_workflow: { type: string }
-        execution_gates: { type: array, items: { type: string } }
+              method:
+                type: string
+              path:
+                type: string
+              price_usd:
+                type: number
+              gated:
+                type: boolean
+        one_call_workflow:
+          type: string
+        execution_gates:
+          type: array
+          items:
+            type: string
         chain_to:
           type: array
-          items: { $ref: "#/components/schemas/ChainTo" }
-
-    # ---------- domain ----------
+          items:
+            $ref: '#/components/schemas/ChainTo'
     RestaurantRef:
       type: object
       additionalProperties: false
-      required: [name]
+      required:
+      - name
       properties:
-        name: { type: string }
-        place_id: { type: string }
-        city: { type: string }
-        state: { type: string }
-        country: { type: string, default: US }
+        name:
+          type: string
+        place_id:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+          default: US
     RestaurantRefRequest:
       type: object
       additionalProperties: false
-      required: [restaurant]
+      required:
+      - restaurant
       properties:
-        restaurant: { $ref: "#/components/schemas/RestaurantRef" }
+        restaurant:
+          $ref: '#/components/schemas/RestaurantRef'
     PlanInitiative:
       type: object
       additionalProperties: false
-      required: [phase, initiative, estimated_revenue_impact_usd]
+      required:
+      - phase
+      - initiative
+      - estimated_revenue_impact_usd
       properties:
-        phase: { type: string, enum: [week_1, weeks_2_4, weeks_5_8, weeks_9_12] }
-        initiative: { type: string }
-        owner_role: { type: string }
-        effort: { type: string, enum: [low, medium, high] }
-        estimated_revenue_impact_usd: { type: number }
-        kpi: { type: string }
+        phase:
+          type: string
+          enum:
+          - week_1
+          - weeks_2_4
+          - weeks_5_8
+          - weeks_9_12
+        initiative:
+          type: string
+        owner_role:
+          type: string
+        effort:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+        estimated_revenue_impact_usd:
+          type: number
+        kpi:
+          type: string
     RevenueLeak:
       type: object
       additionalProperties: false
-      required: [leak, monthly_loss_usd]
+      required:
+      - leak
+      - monthly_loss_usd
       properties:
-        leak: { type: string }
-        category: { type: string, enum: [pricing, delivery, no_shows, online_presence, reviews, labor, waste] }
-        monthly_loss_usd: { type: number }
-        fix: { type: string }
-        confidence: { type: number, minimum: 0, maximum: 1, description: Field-level confidence for this specific leak estimate. }
-
-    # ---------- full-consulting-audit (one-call workflow) ----------
+        leak:
+          type: string
+        category:
+          type: string
+          enum:
+          - pricing
+          - delivery
+          - no_shows
+          - online_presence
+          - reviews
+          - labor
+          - waste
+        monthly_loss_usd:
+          type: number
+        fix:
+          type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Field-level confidence for this specific leak estimate.
     AuditRequest:
       type: object
       additionalProperties: false
-      required: [restaurant]
+      required:
+      - restaurant
       properties:
-        restaurant: { $ref: "#/components/schemas/RestaurantRef" }
-        competitors_radius_miles: { type: number, default: 3 }
-        depth: { type: string, enum: [standard, full], default: full }
+        restaurant:
+          $ref: '#/components/schemas/RestaurantRef'
+        competitors_radius_miles:
+          type: number
+          default: 3
+        depth:
+          type: string
+          enum:
+          - standard
+          - full
+          default: full
     ConsultingAuditResponse:
       unevaluatedProperties: false
       allOf:
-        - $ref: "#/components/schemas/ResponseMeta"
-        - type: object
-          required: [executive_summary, restaurant_health_score, revenue_risk_score, marketing_score, operations_score, review_score, competition_score, 90_day_action_plan, estimated_revenue_impact]
-          properties:
-            executive_summary: { type: string }
-            restaurant_health_score: { type: number, minimum: 0, maximum: 100 }
-            revenue_risk_score: { type: number, minimum: 0, maximum: 100, description: Higher = more revenue at risk. }
-            marketing_score: { type: number, minimum: 0, maximum: 100 }
-            operations_score: { type: number, minimum: 0, maximum: 100 }
-            review_score: { type: number, minimum: 0, maximum: 100 }
-            competition_score: { type: number, minimum: 0, maximum: 100 }
-            90_day_action_plan:
-              type: array
-              items: { $ref: "#/components/schemas/PlanInitiative" }
-            estimated_revenue_impact:
-              type: object
-              additionalProperties: false
-              required: [monthly_usd, annual_usd]
-              properties:
-                monthly_usd: { type: number }
-                annual_usd: { type: number }
-                confidence: { type: number, minimum: 0, maximum: 1 }
-
-    # ---------- diagnose-revenue-leaks ----------
+      - $ref: '#/components/schemas/ResponseMeta'
+      - type: object
+        required:
+        - executive_summary
+        - restaurant_health_score
+        - revenue_risk_score
+        - marketing_score
+        - operations_score
+        - review_score
+        - competition_score
+        - 90_day_action_plan
+        - estimated_revenue_impact
+        properties:
+          executive_summary:
+            type: string
+          restaurant_health_score:
+            type: number
+            minimum: 0
+            maximum: 100
+          revenue_risk_score:
+            type: number
+            minimum: 0
+            maximum: 100
+            description: Higher = more revenue at risk.
+          marketing_score:
+            type: number
+            minimum: 0
+            maximum: 100
+          operations_score:
+            type: number
+            minimum: 0
+            maximum: 100
+          review_score:
+            type: number
+            minimum: 0
+            maximum: 100
+          competition_score:
+            type: number
+            minimum: 0
+            maximum: 100
+          90_day_action_plan:
+            type: array
+            items:
+              $ref: '#/components/schemas/PlanInitiative'
+          estimated_revenue_impact:
+            type: object
+            additionalProperties: false
+            required:
+            - monthly_usd
+            - annual_usd
+            properties:
+              monthly_usd:
+                type: number
+              annual_usd:
+                type: number
+              confidence:
+                type: number
+                minimum: 0
+                maximum: 1
     RevenueLeaksResponse:
       unevaluatedProperties: false
       allOf:
-        - $ref: "#/components/schemas/ResponseMeta"
-        - type: object
-          required: [revenue_risk_score, revenue_leaks, total_monthly_loss_usd]
-          properties:
-            revenue_risk_score: { type: number, minimum: 0, maximum: 100 }
-            total_monthly_loss_usd: { type: number }
-            revenue_leaks:
-              type: array
-              items: { $ref: "#/components/schemas/RevenueLeak" }
-
-    # ---------- benchmark-competitors ----------
+      - $ref: '#/components/schemas/ResponseMeta'
+      - type: object
+        required:
+        - revenue_risk_score
+        - revenue_leaks
+        - total_monthly_loss_usd
+        properties:
+          revenue_risk_score:
+            type: number
+            minimum: 0
+            maximum: 100
+          total_monthly_loss_usd:
+            type: number
+          revenue_leaks:
+            type: array
+            items:
+              $ref: '#/components/schemas/RevenueLeak'
     BenchmarkRequest:
       type: object
       additionalProperties: false
-      required: [restaurant]
+      required:
+      - restaurant
       properties:
-        restaurant: { $ref: "#/components/schemas/RestaurantRef" }
-        radius_miles: { type: number, default: 3 }
-        max_competitors: { type: integer, default: 5, minimum: 1, maximum: 20 }
+        restaurant:
+          $ref: '#/components/schemas/RestaurantRef'
+        radius_miles:
+          type: number
+          default: 3
+        max_competitors:
+          type: integer
+          default: 5
+          minimum: 1
+          maximum: 20
     BenchmarkResponse:
       unevaluatedProperties: false
       allOf:
-        - $ref: "#/components/schemas/ResponseMeta"
-        - type: object
-          required: [competition_score, competitors]
-          properties:
-            competition_score: { type: number, minimum: 0, maximum: 100 }
-            competitors:
-              type: array
-              items:
-                type: object
-                additionalProperties: false
-                required: [name]
-                properties:
-                  name: { type: string }
-                  rating: { type: number, minimum: 0, maximum: 5 }
-                  price_level: { type: integer, minimum: 1, maximum: 4 }
-                  review_count: { type: integer }
-                  advantage_over_you: { type: array, items: { type: string } }
-                  you_advantage_over_them: { type: array, items: { type: string } }
-
-    # ---------- generate-90-day-plan ----------
+      - $ref: '#/components/schemas/ResponseMeta'
+      - type: object
+        required:
+        - competition_score
+        - competitors
+        properties:
+          competition_score:
+            type: number
+            minimum: 0
+            maximum: 100
+          competitors:
+            type: array
+            items:
+              type: object
+              additionalProperties: false
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                rating:
+                  type: number
+                  minimum: 0
+                  maximum: 5
+                price_level:
+                  type: integer
+                  minimum: 1
+                  maximum: 4
+                review_count:
+                  type: integer
+                advantage_over_you:
+                  type: array
+                  items:
+                    type: string
+                you_advantage_over_them:
+                  type: array
+                  items:
+                    type: string
     PlanRequest:
       type: object
       additionalProperties: false
-      required: [restaurant]
+      required:
+      - restaurant
       properties:
-        restaurant: { $ref: "#/components/schemas/RestaurantRef" }
+        restaurant:
+          $ref: '#/components/schemas/RestaurantRef'
         focus:
           type: array
-          items: { type: string, enum: [reviews, online_ordering, local_seo, menu_pricing, marketing, operations, delivery] }
+          items:
+            type: string
+            enum:
+            - reviews
+            - online_ordering
+            - local_seo
+            - menu_pricing
+            - marketing
+            - operations
+            - delivery
     PlanResponse:
       unevaluatedProperties: false
       allOf:
-        - $ref: "#/components/schemas/ResponseMeta"
-        - type: object
-          required: [90_day_action_plan, estimated_revenue_impact]
-          properties:
-            90_day_action_plan:
-              type: array
-              items: { $ref: "#/components/schemas/PlanInitiative" }
-            estimated_revenue_impact:
-              type: object
-              additionalProperties: false
-              required: [monthly_usd, annual_usd]
-              properties:
-                monthly_usd: { type: number }
-                annual_usd: { type: number }
+      - $ref: '#/components/schemas/ResponseMeta'
+      - type: object
+        required:
+        - 90_day_action_plan
+        - estimated_revenue_impact
+        properties:
+          90_day_action_plan:
+            type: array
+            items:
+              $ref: '#/components/schemas/PlanInitiative'
+          estimated_revenue_impact:
+            type: object
+            additionalProperties: false
+            required:
+            - monthly_usd
+            - annual_usd
+            properties:
+              monthly_usd:
+                type: number
+              annual_usd:
+                type: number

@@ -1,21 +1,22 @@
+# OpenAPI 3.1 spec for the Multi-Restaurant Ordering API.
+# Generated from the deployed JSON spec (src/routes/restaurant-suite/specs/multi-restaurant-ordering.json) —
+# the JSON is the source of truth served live at https://orbis-apis.onrender.com/multi-restaurant-ordering.
+
 openapi: 3.1.0
 info:
   title: Multi-Restaurant Ordering API
   version: 1.0.0
-  summary: Compare restaurants, build a cart, estimate price, and place a (human-approved) order across multiple restaurants.
-  description: >-
-    Agent-native ordering across multiple restaurants. Search and compare,
-    build a multi-restaurant cart, price it with substitution_options and
-    dietary_flags, prepare checkout, and place the order. Order placement is
-    execution-gated and requires explicit human approval before any payment or
-    final submission. Built for concierge, assistant, and consumer-commerce agents.
+  summary: Compare restaurants, build a cart, estimate price, and place a (human-approved) order across
+    multiple restaurants.
+  description: Agent-native ordering across multiple restaurants. Search and compare, build a multi-restaurant
+    cart, price it with substitution_options and dietary_flags, prepare checkout, and place the order.
+    Order placement is execution-gated and requires explicit human approval before any payment or final
+    submission. Built for concierge, assistant, and consumer-commerce agents.
   contact:
     name: Restaurant Agent Commerce APIs
-    url: https://api.restaurant-agent-commerce.com
+    url: https://orbis-apis.onrender.com/multi-restaurant-ordering
   license:
     name: Commercial
-    url: https://api.restaurant-agent-commerce.com/license
-
 x-agent-callable: true
 x-mcp-compatible: true
 x-pricing:
@@ -23,99 +24,173 @@ x-pricing:
   currency: USD
   billing: prepaid_credits
   free_endpoints:
-    - "GET /"
+  - GET /
   endpoint_pricing:
-    "GET /": 0.00
-    "POST /search-restaurants": 0.02
-    "POST /build-order": 0.05
-    "POST /price-order": 0.05
-    "POST /prepare-checkout": 0.10
-    "POST /place-order": 1.50
-    "POST /quick-order": 0.20
-  notes: >-
-    quick-order is the one-call workflow (search+build+price+prepare). place-order
-    is execution-gated and bills only on approved execution.
+    GET /: 0.0
+    POST /search-restaurants: 0.02
+    POST /build-order: 0.05
+    POST /price-order: 0.05
+    POST /prepare-checkout: 0.1
+    POST /place-order: 1.5
+    POST /quick-order: 0.2
+  notes: quick-order is the one-call workflow (search+build+price+prepare). place-order is execution-gated
+    and bills only on approved execution.
 x-privacy:
   pii_handling: minimized
   delivery_address: used_for_fulfillment_only
   retention_days: 30
   compliance:
-    - CCPA
-    - GDPR_legitimate_interest
-    - PCI_DSS_tokenized_payments
+  - CCPA
+  - GDPR_legitimate_interest
+  - PCI_DSS_tokenized_payments
   data_sources:
-    - delivery_marketplace_apis
-    - public_menu_data
-    - geocoding
+  - delivery_marketplace_apis
+  - public_menu_data
+  - geocoding
 x-chain-to:
-  - api: Local Restaurant Discovery API
-    endpoint: POST /match-restaurant-to-intent
-    reason: Seed the search with intent-matched restaurants.
-  - api: Office Lunch Planner API
-    endpoint: POST /build-group-order
-    reason: Convert a team lunch into a multi-restaurant cart.
-  - api: Reservation Intelligence API
-    endpoint: POST /find-availability
-    reason: Offer dine-in as an alternative to delivery.
-
+- api: Local Restaurant Discovery API
+  endpoint: POST /match-restaurant-to-intent
+  reason: Seed the search with intent-matched restaurants.
+- api: Office Lunch Planner API
+  endpoint: POST /build-group-order
+  reason: Convert a team lunch into a multi-restaurant cart.
+- api: Reservation Intelligence API
+  endpoint: POST /find-availability
+  reason: Offer dine-in as an alternative to delivery.
 servers:
-  - url: https://api.restaurant-agent-commerce.com/ordering/v1
-    description: Production
-
+- url: https://orbis-apis.onrender.com/multi-restaurant-ordering
+  description: Orbis hosted
 security:
-  - ApiKeyAuth: []
-
+- ApiKeyAuth: []
 tags:
-  - name: discovery
-  - name: cart
-  - name: checkout
-  - name: workflow
-
+- name: discovery
+- name: cart
+- name: checkout
+- name: workflow
 paths:
   /:
     get:
       operationId: getDiscovery
-      tags: [discovery]
+      tags:
+      - discovery
       summary: Service discovery and capability manifest.
-      description: Zero-cost capability manifest with endpoints, pricing, execution gates, chaining, and envelope metadata.
+      description: Zero-cost capability manifest with endpoints, pricing, execution gates, chaining, and
+        envelope metadata.
       security: []
-      x-pricing: { price: 0.00 }
+      x-pricing:
+        price: 0.0
       responses:
-        "200":
+        '200':
           description: Capability manifest.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/DiscoveryResponse" }
-
+              schema:
+                $ref: '#/components/schemas/DiscoveryResponse'
+              example:
+                service: Multi-Restaurant Ordering API
+                version: 1.0.0
+                agent_callable: true
+                mcp_compatible: true
+                auth:
+                  type: api_key
+                  header: X-API-Key
+                endpoints:
+                - method: POST
+                  path: /search-restaurants
+                  price_usd: 0.02
+                  gated: false
+                - method: POST
+                  path: /build-order
+                  price_usd: 0.05
+                  gated: false
+                - method: POST
+                  path: /price-order
+                  price_usd: 0.05
+                  gated: false
+                - method: POST
+                  path: /prepare-checkout
+                  price_usd: 0.1
+                  gated: false
+                - method: POST
+                  path: /place-order
+                  price_usd: 1.5
+                  gated: true
+                - method: POST
+                  path: /quick-order
+                  price_usd: 0.2
+                  gated: false
+                one_call_workflow: POST /quick-order
+                execution_gates:
+                - POST /place-order
+                confidence:
+                  score: 1.0
+                  level: high
+                  rationale: Static capability manifest; deterministic.
+                privacy:
+                  pii_included: false
+                  retention_days: 30
+                  compliance:
+                  - CCPA
+                  - GDPR_legitimate_interest
+                  - PCI_DSS_tokenized_payments
+                  data_sources:
+                  - delivery_marketplace_apis
+                  - public_menu_data
+                  - geocoding
+                  delivery_address: used_for_fulfillment_only
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Call POST /quick-order to run the full workflow in a single call.
+                  rationale: The bundled workflow is the fastest path to a complete result.
+                chain_to:
+                - api: Local Restaurant Discovery API
+                  endpoint: POST /match-restaurant-to-intent
+                  reason: Seed the search with intent-matched restaurants.
+                - api: Office Lunch Planner API
+                  endpoint: POST /build-group-order
+                  reason: Convert a team lunch into a multi-restaurant cart.
+                - api: Reservation Intelligence API
+                  endpoint: POST /find-availability
+                  reason: Offer dine-in as an alternative to delivery.
   /search-restaurants:
     post:
       operationId: searchRestaurants
-      tags: [cart]
+      tags:
+      - cart
       summary: Search restaurants available for ordering.
       description: Returns orderable restaurants with delivery availability and ETA.
-      x-pricing: { price: 0.02 }
+      x-pricing:
+        price: 0.02
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/SearchRequest" }
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
             example:
-              location: { city: Austin, state: TX, address: "300 Congress Ave" }
-              cuisine: [thai, sushi]
+              location:
+                city: Austin
+                state: TX
+                address: 300 Congress Ave
+              cuisine:
+              - thai
+              - sushi
               fulfillment: delivery
               open_now: true
       responses:
-        "200":
+        '200':
           description: Orderable restaurants.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/SearchResponse" }
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
               example:
                 request_id: req_3e7a5d1908cb42f6
                 confidence:
                   score: 0.88
                   level: high
-                  rationale: Restaurants matched on requested cuisines, confirmed open and delivery-available to the supplied address.
+                  rationale: Restaurants matched on requested cuisines, confirmed open and delivery-available
+                    to the supplied address.
                 privacy:
                   pii_included: false
                   delivery_address: used_for_fulfillment_only
@@ -130,7 +205,8 @@ paths:
                 recommended_actions_priority_order:
                 - priority: 1
                   action: Build a multi-restaurant cart from the matched restaurants.
-                  rationale: Two open, delivery-available restaurants cover the requested thai and sushi cuisines.
+                  rationale: Two open, delivery-available restaurants cover the requested thai and sushi
+                    cuisines.
                   chain_to_endpoint: POST /build-order
                 chain_to:
                 - api: Local Restaurant Discovery API
@@ -154,120 +230,309 @@ paths:
                   delivery_available: true
                   delivery_eta_minutes: 45
                   min_order_usd: 20.0
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "402": { $ref: "#/components/responses/PaymentRequired" }
-
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
   /build-order:
     post:
       operationId: buildOrder
-      tags: [cart]
+      tags:
+      - cart
       summary: Build a multi-restaurant cart.
       description: Returns a cart spanning one or more restaurants with dietary_flags per line.
-      x-pricing: { price: 0.05 }
+      x-pricing:
+        price: 0.05
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/BuildOrderRequest" }
+            schema:
+              $ref: '#/components/schemas/BuildOrderRequest'
             example:
               items:
-                - { restaurant_id: "r_1", item: "Pad Thai", quantity: 2 }
-                - { restaurant_id: "r_2", item: "Salmon Roll", quantity: 3 }
-              dietary_requirements: [gluten_free]
+              - restaurant_id: r_1
+                item: Pad Thai
+                quantity: 2
+              - restaurant_id: r_2
+                item: Salmon Roll
+                quantity: 3
+              dietary_requirements:
+              - gluten_free
       responses:
-        "200":
+        '200':
           description: Built cart.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/BuildOrderResponse" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "402": { $ref: "#/components/responses/PaymentRequired" }
-
+              schema:
+                $ref: '#/components/schemas/BuildOrderResponse'
+              example:
+                request_id: req_f8399c9662b28ce7
+                source_freshness:
+                  data_freshness_days: 1
+                  last_verified_at: '2026-06-04T09:15:00Z'
+                  source_urls:
+                  - https://public-listings.example.com/denver/restaurants
+                confidence:
+                  score: 0.88
+                  level: high
+                  rationale: Inputs resolved cleanly and validated against current data for 'build a multi-restaurant
+                    cart'.
+                privacy:
+                  pii_included: false
+                  retention_days: 30
+                  compliance:
+                  - CCPA
+                  - GDPR_legitimate_interest
+                  data_sources:
+                  - public_business_listings
+                  - public_review_platforms
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Use this result, then continue the workflow via /search-restaurants.
+                  rationale: Chaining the next step turns this output into an end-to-end outcome.
+                  chain_to_endpoint: POST /search-restaurants
+                chain_to:
+                - api: Multi-Restaurant Ordering API
+                  endpoint: POST /search-restaurants
+                  reason: Next logical step in this API's workflow.
+                cart_id: r_b6b9b3
+                line_items:
+                - line_id: r_51f393
+                  restaurant_id: r_98ef6a
+                  restaurant_name: Mercantile Dining & Provision
+                  item: general
+                  quantity: 3
+                  unit_price_usd: 1850.0
+                  dietary_flags:
+                  - vegetarian_options
+                dietary_flags:
+                - vegetarian_options
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
   /price-order:
     post:
       operationId: priceOrder
-      tags: [cart]
+      tags:
+      - cart
       summary: Price the cart with fees, substitutions, and dietary flags.
       description: Returns total_cost, delivery_eta, substitution_options, and dietary_flags.
-      x-pricing: { price: 0.05 }
+      x-pricing:
+        price: 0.05
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/PriceOrderRequest" }
+            schema:
+              $ref: '#/components/schemas/PriceOrderRequest'
             example:
-              cart_id: "cart_31"
+              cart_id: cart_31
       responses:
-        "200":
+        '200':
           description: Priced cart.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/PriceOrderResponse" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "402": { $ref: "#/components/responses/PaymentRequired" }
-
+              schema:
+                $ref: '#/components/schemas/PriceOrderResponse'
+              example:
+                request_id: req_5113e9567171c270
+                source_freshness:
+                  data_freshness_days: 1
+                  last_verified_at: '2026-06-04T09:15:00Z'
+                  source_urls:
+                  - https://public-listings.example.com/denver/restaurants
+                confidence:
+                  score: 0.88
+                  level: high
+                  rationale: Inputs resolved cleanly and validated against current data for 'price the
+                    cart with fees, substitutions, and dietary flags'.
+                privacy:
+                  pii_included: false
+                  retention_days: 30
+                  compliance:
+                  - CCPA
+                  - GDPR_legitimate_interest
+                  data_sources:
+                  - public_business_listings
+                  - public_review_platforms
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Use this result, then continue the workflow via /search-restaurants.
+                  rationale: Chaining the next step turns this output into an end-to-end outcome.
+                  chain_to_endpoint: POST /search-restaurants
+                chain_to:
+                - api: Multi-Restaurant Ordering API
+                  endpoint: POST /search-restaurants
+                  reason: Next logical step in this API's workflow.
+                total_cost: 1850.0
+                delivery_eta:
+                  minutes: 20
+                  window_start: general
+                  window_end: general
+                  per_restaurant:
+                  - restaurant_id: r_67a029
+                    minutes: 20
+                substitution_options:
+                - line_id: r_9c07fa
+                  suggested_item: general
+                  reason: Derived from current data; specific, realistic, and consistent with the request.
+                  price_delta_usd: 1850.0
+                dietary_flags:
+                - vegetarian_options
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
   /prepare-checkout:
     post:
       operationId: prepareCheckout
-      tags: [checkout]
+      tags:
+      - checkout
       summary: Assemble a checkout summary for review.
-      description: Returns checkout_summary, total_cost, delivery_eta, and approval_required. No payment occurs.
-      x-pricing: { price: 0.10 }
+      description: Returns checkout_summary, total_cost, delivery_eta, and approval_required. No payment
+        occurs.
+      x-pricing:
+        price: 0.1
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/PrepareCheckoutRequest" }
+            schema:
+              $ref: '#/components/schemas/PrepareCheckoutRequest'
             example:
-              cart_id: "cart_31"
+              cart_id: cart_31
               tip_percent: 18
       responses:
-        "200":
+        '200':
           description: Prepared checkout.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/PrepareCheckoutResponse" }
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "402": { $ref: "#/components/responses/PaymentRequired" }
-
+              schema:
+                $ref: '#/components/schemas/PrepareCheckoutResponse'
+              example:
+                request_id: req_f09cfa46cc8c45ac
+                source_freshness:
+                  data_freshness_days: 1
+                  last_verified_at: '2026-06-04T09:15:00Z'
+                  source_urls:
+                  - https://public-listings.example.com/denver/restaurants
+                confidence:
+                  score: 0.88
+                  level: high
+                  rationale: Inputs resolved cleanly and validated against current data for 'assemble
+                    a checkout summary for review'.
+                privacy:
+                  pii_included: false
+                  retention_days: 30
+                  compliance:
+                  - CCPA
+                  - GDPR_legitimate_interest
+                  data_sources:
+                  - public_business_listings
+                  - public_review_platforms
+                recommended_actions_priority_order:
+                - priority: 1
+                  action: Use this result, then continue the workflow via /search-restaurants.
+                  rationale: Chaining the next step turns this output into an end-to-end outcome.
+                  chain_to_endpoint: POST /search-restaurants
+                chain_to:
+                - api: Multi-Restaurant Ordering API
+                  endpoint: POST /search-restaurants
+                  reason: Next logical step in this API's workflow.
+                checkout_summary:
+                  cart_id: r_fd4ce0
+                  line_items:
+                  - line_id: r_831c6c
+                    restaurant_id: r_f46985
+                    restaurant_name: Mercantile Dining & Provision
+                    item: general
+                    quantity: 3
+                    unit_price_usd: 1850.0
+                    dietary_flags:
+                    - vegetarian_options
+                  subtotal_usd: 1850.0
+                  delivery_fees_usd: 1850.0
+                  tax_usd: 1850.0
+                  tip_usd: 1850.0
+                  total_cost: 1850.0
+                  delivery_eta:
+                    minutes: 20
+                    window_start: general
+                    window_end: general
+                    per_restaurant:
+                    - restaurant_id: r_ff5f47
+                      minutes: 20
+                total_cost: 1850.0
+                delivery_eta:
+                  minutes: 20
+                  window_start: general
+                  window_end: general
+                  per_restaurant:
+                  - restaurant_id: r_d13838
+                    minutes: 20
+                substitution_options:
+                - line_id: r_5544da
+                  suggested_item: general
+                  reason: Derived from current data; specific, realistic, and consistent with the request.
+                  price_delta_usd: 1850.0
+                dietary_flags:
+                - vegetarian_options
+                approval_required: false
+                next_step:
+                  description: Derived from current data; specific, realistic, and consistent with the
+                    request.
+                  gated_endpoint: general
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
   /place-order:
     post:
       operationId: placeOrder
-      tags: [checkout]
-      summary: "[GATED] Place the order. Payment/submission requires human approval."
-      description: >-
-        Submits the order and charges payment. Risky, irreversible, money-moving:
-        with no approval_token it returns approval_required=true and
-        execution_gate.status=pending_approval and performs NO payment or
-        submission. With a valid approval_token it executes.
-      x-pricing: { price: 1.50 }
+      tags:
+      - checkout
+      summary: '[GATED] Place the order. Payment/submission requires human approval.'
+      description: 'Submits the order and charges payment. Risky, irreversible, money-moving: with no
+        approval_token it returns approval_required=true and execution_gate.status=pending_approval and
+        performs NO payment or submission. With a valid approval_token it executes.'
+      x-pricing:
+        price: 1.5
       x-execution-gate: true
       x-human-approval-required: true
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/PlaceOrderRequest" }
+            schema:
+              $ref: '#/components/schemas/PlaceOrderRequest'
             example:
-              cart_id: "cart_31"
-              payment_method_token: "pm_***"
+              cart_id: cart_31
+              payment_method_token: pm_***
               approval_token: null
       responses:
-        "200":
+        '200':
           description: Pending-approval gate (no payment) or confirmed order (with valid token).
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/PlaceOrderResponse" }
+              schema:
+                $ref: '#/components/schemas/PlaceOrderResponse'
               example:
                 request_id: req_b41d8e02a6f74c39
                 confidence:
                   score: 0.99
                   level: high
-                  rationale: Cart resolved and priced; payment and submission withheld pending human approval per execution gate.
+                  rationale: Cart resolved and priced; payment and submission withheld pending human approval
+                    per execution gate.
                 privacy:
                   pii_included: true
                   delivery_address: used_for_fulfillment_only
@@ -282,7 +547,8 @@ paths:
                   - geocoding
                 recommended_actions_priority_order:
                 - priority: 1
-                  action: Obtain a human-issued approval_token and re-call /place-order to execute payment and submission.
+                  action: Obtain a human-issued approval_token and re-call /place-order to execute payment
+                    and submission.
                   rationale: This action is irreversible and money-moving; no charge has been made.
                   chain_to_endpoint: POST /place-order
                 chain_to:
@@ -333,50 +599,64 @@ paths:
                       minutes: 38
                     - restaurant_id: r_sushi_18
                       minutes: 45
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "402": { $ref: "#/components/responses/PaymentRequired" }
-        "403":
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
+        '403':
           description: Approval token invalid, expired, or revoked.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/ErrorResponse" }
-
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /quick-order:
     post:
       operationId: quickOrder
-      tags: [workflow]
+      tags:
+      - workflow
       summary: One-call workflow — search, build, price, and prepare checkout.
-      description: >-
-        Orchestrates search-restaurants + build-order + price-order +
-        prepare-checkout and returns a ready checkout_summary with
-        approval_required. Does NOT place the order — that requires gated
-        /place-order.
-      x-pricing: { price: 0.20 }
+      description: Orchestrates search-restaurants + build-order + price-order + prepare-checkout and
+        returns a ready checkout_summary with approval_required. Does NOT place the order — that requires
+        gated /place-order.
+      x-pricing:
+        price: 0.2
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: "#/components/schemas/QuickOrderRequest" }
+            schema:
+              $ref: '#/components/schemas/QuickOrderRequest'
             example:
-              location: { city: Austin, state: TX, address: "300 Congress Ave" }
+              location:
+                city: Austin
+                state: TX
+                address: 300 Congress Ave
               requests:
-                - { cuisine: thai, item_hint: "pad thai", quantity: 2 }
-                - { cuisine: sushi, item_hint: "salmon roll", quantity: 3 }
-              dietary_requirements: [gluten_free]
+              - cuisine: thai
+                item_hint: pad thai
+                quantity: 2
+              - cuisine: sushi
+                item_hint: salmon roll
+                quantity: 3
+              dietary_requirements:
+              - gluten_free
               tip_percent: 18
       responses:
-        "200":
+        '200':
           description: Ready-to-approve checkout across restaurants.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/QuickOrderResponse" }
+              schema:
+                $ref: '#/components/schemas/QuickOrderResponse'
               example:
                 request_id: req_9f3a2c1e7b8d4a51
                 confidence:
                   score: 0.92
                   level: high
-                  rationale: All requested items matched in-stock menu items at open, delivery-available restaurants within range.
+                  rationale: All requested items matched in-stock menu items at open, delivery-available
+                    restaurants within range.
                 privacy:
                   pii_included: true
                   delivery_address: used_for_fulfillment_only
@@ -392,7 +672,8 @@ paths:
                 recommended_actions_priority_order:
                 - priority: 1
                   action: Review the checkout summary and dietary flags, then approve to place the order.
-                  rationale: Order is priced and ready; placement is execution-gated and requires human approval.
+                  rationale: Order is priced and ready; placement is execution-gated and requires human
+                    approval.
                   chain_to_endpoint: POST /place-order
                 - priority: 2
                   action: Consider the suggested gluten-free substitution for the Pad Thai line.
@@ -459,12 +740,15 @@ paths:
                 - gluten_free
                 approval_required: true
                 next_step:
-                  description: Order is priced and ready. Call the gated /place-order endpoint with a human-issued approval_token to submit and charge.
+                  description: Order is priced and ready. Call the gated /place-order endpoint with a
+                    human-issued approval_token to submit and charge.
                   gated_endpoint: POST /place-order
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "402": { $ref: "#/components/responses/PaymentRequired" }
-
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '402':
+          $ref: '#/components/responses/PaymentRequired'
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -472,359 +756,635 @@ components:
       in: header
       name: X-API-Key
       description: Per-agent API key. Bills against prepaid credits.
-
   responses:
     BadRequest:
       description: Malformed or invalid request.
-      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
       description: Missing or invalid API key.
-      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     PaymentRequired:
       description: Insufficient prepaid credits.
-      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorResponse" } } }
-
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
     Confidence:
       type: object
       additionalProperties: false
-      required: [score, level]
+      required:
+      - score
+      - level
       properties:
-        score: { type: number, minimum: 0, maximum: 1 }
-        level: { type: string, enum: [high, medium, low] }
-        rationale: { type: string }
+        score:
+          type: number
+          minimum: 0
+          maximum: 1
+        level:
+          type: string
+          enum:
+          - high
+          - medium
+          - low
+        rationale:
+          type: string
     Privacy:
       type: object
       additionalProperties: false
-      required: [pii_included, retention_days]
+      required:
+      - pii_included
+      - retention_days
       properties:
-        pii_included: { type: boolean }
-        delivery_address: { type: string, enum: [used_for_fulfillment_only, none], default: used_for_fulfillment_only }
-        retention_days: { type: integer }
-        compliance: { type: array, items: { type: string } }
-        data_sources: { type: array, items: { type: string } }
+        pii_included:
+          type: boolean
+        delivery_address:
+          type: string
+          enum:
+          - used_for_fulfillment_only
+          - none
+          default: used_for_fulfillment_only
+        retention_days:
+          type: integer
+        compliance:
+          type: array
+          items:
+            type: string
+        data_sources:
+          type: array
+          items:
+            type: string
     RecommendedAction:
       type: object
       additionalProperties: false
-      required: [priority, action]
+      required:
+      - priority
+      - action
       properties:
-        priority: { type: integer, minimum: 1 }
-        action: { type: string }
-        rationale: { type: string }
-        chain_to_endpoint: { type: string }
+        priority:
+          type: integer
+          minimum: 1
+        action:
+          type: string
+        rationale:
+          type: string
+        chain_to_endpoint:
+          type: string
     ChainTo:
       type: object
       additionalProperties: false
-      required: [api, endpoint, reason]
+      required:
+      - api
+      - endpoint
+      - reason
       properties:
-        api: { type: string }
-        endpoint: { type: string }
-        reason: { type: string }
+        api:
+          type: string
+        endpoint:
+          type: string
+        reason:
+          type: string
     ExecutionGate:
       type: object
       additionalProperties: false
-      required: [required, status]
+      required:
+      - required
+      - status
       properties:
-        required: { type: boolean }
-        status: { type: string, enum: [not_required, pending_approval, approved, executed, rejected] }
-        approval_token_hint: { type: string }
-        expires_at: { type: string, format: date-time }
-        irreversible: { type: boolean }
+        required:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - not_required
+          - pending_approval
+          - approved
+          - executed
+          - rejected
+        approval_token_hint:
+          type: string
+        expires_at:
+          type: string
+          format: date-time
+        irreversible:
+          type: boolean
     ResponseMeta:
       description: Top-level envelope fields attached once per response (never nested).
       type: object
-      required: [request_id, confidence, privacy, recommended_actions_priority_order, chain_to]
+      required:
+      - request_id
+      - confidence
+      - privacy
+      - recommended_actions_priority_order
+      - chain_to
       properties:
-        request_id: { type: string }
-        confidence: { $ref: "#/components/schemas/Confidence" }
-        privacy: { $ref: "#/components/schemas/Privacy" }
+        request_id:
+          type: string
+        source_freshness:
+          type: object
+          description: Provenance/recency of the underlying data used in this response.
+          additionalProperties: false
+          properties:
+            data_freshness_days:
+              type: integer
+            last_verified_at:
+              type: string
+              format: date-time
+            source_urls:
+              type: array
+              items:
+                type: string
+                format: uri
+        confidence:
+          $ref: '#/components/schemas/Confidence'
+        privacy:
+          $ref: '#/components/schemas/Privacy'
         recommended_actions_priority_order:
           type: array
-          items: { $ref: "#/components/schemas/RecommendedAction" }
+          items:
+            $ref: '#/components/schemas/RecommendedAction'
         chain_to:
           type: array
-          items: { $ref: "#/components/schemas/ChainTo" }
+          items:
+            $ref: '#/components/schemas/ChainTo'
     ErrorResponse:
       type: object
       additionalProperties: false
-      required: [error]
+      required:
+      - error
       properties:
         error:
           type: object
           additionalProperties: false
-          required: [code, message]
+          required:
+          - code
+          - message
           properties:
-            code: { type: string }
-            message: { type: string }
-            retriable: { type: boolean }
+            code:
+              type: string
+            message:
+              type: string
+            retriable:
+              type: boolean
     DiscoveryResponse:
       type: object
       additionalProperties: false
-      required: [service, version, agent_callable, mcp_compatible, auth, endpoints, one_call_workflow, confidence, privacy, recommended_actions_priority_order, chain_to]
+      required:
+      - service
+      - version
+      - agent_callable
+      - mcp_compatible
+      - auth
+      - endpoints
+      - one_call_workflow
+      - confidence
+      - privacy
+      - recommended_actions_priority_order
+      - chain_to
       properties:
-        confidence: { $ref: "#/components/schemas/Confidence" }
-        privacy: { $ref: "#/components/schemas/Privacy" }
+        confidence:
+          $ref: '#/components/schemas/Confidence'
+        privacy:
+          $ref: '#/components/schemas/Privacy'
         recommended_actions_priority_order:
           type: array
-          items: { $ref: "#/components/schemas/RecommendedAction" }
-        service: { type: string }
-        version: { type: string }
-        agent_callable: { type: boolean }
-        mcp_compatible: { type: boolean }
+          items:
+            $ref: '#/components/schemas/RecommendedAction'
+        service:
+          type: string
+        version:
+          type: string
+        agent_callable:
+          type: boolean
+        mcp_compatible:
+          type: boolean
         auth:
           type: object
           additionalProperties: false
           properties:
-            type: { type: string }
-            header: { type: string }
+            type:
+              type: string
+            header:
+              type: string
         endpoints:
           type: array
           items:
             type: object
             additionalProperties: false
             properties:
-              method: { type: string }
-              path: { type: string }
-              price_usd: { type: number }
-              gated: { type: boolean }
-        one_call_workflow: { type: string }
-        execution_gates: { type: array, items: { type: string } }
+              method:
+                type: string
+              path:
+                type: string
+              price_usd:
+                type: number
+              gated:
+                type: boolean
+        one_call_workflow:
+          type: string
+        execution_gates:
+          type: array
+          items:
+            type: string
         chain_to:
           type: array
-          items: { $ref: "#/components/schemas/ChainTo" }
-
-    # ---------- domain ----------
+          items:
+            $ref: '#/components/schemas/ChainTo'
     Location:
       type: object
       additionalProperties: false
-      required: [city]
+      required:
+      - city
       properties:
-        city: { type: string }
-        state: { type: string }
-        address: { type: string }
-        lat: { type: number }
-        lng: { type: number }
+        city:
+          type: string
+        state:
+          type: string
+        address:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
     OrderableRestaurant:
       type: object
       additionalProperties: false
-      required: [restaurant_id, name]
+      required:
+      - restaurant_id
+      - name
       properties:
-        restaurant_id: { type: string }
-        name: { type: string }
-        cuisine: { type: array, items: { type: string } }
-        rating: { type: number, minimum: 0, maximum: 5 }
-        delivery_available: { type: boolean }
-        delivery_eta_minutes: { type: integer }
-        min_order_usd: { type: number }
+        restaurant_id:
+          type: string
+        name:
+          type: string
+        cuisine:
+          type: array
+          items:
+            type: string
+        rating:
+          type: number
+          minimum: 0
+          maximum: 5
+        delivery_available:
+          type: boolean
+        delivery_eta_minutes:
+          type: integer
+        min_order_usd:
+          type: number
     CartLine:
       type: object
       additionalProperties: false
-      required: [restaurant_id, item, quantity]
+      required:
+      - restaurant_id
+      - item
+      - quantity
       properties:
-        line_id: { type: string }
-        restaurant_id: { type: string }
-        restaurant_name: { type: string }
-        item: { type: string }
-        quantity: { type: integer }
-        unit_price_usd: { type: number }
-        dietary_flags: { type: array, items: { type: string } }
+        line_id:
+          type: string
+        restaurant_id:
+          type: string
+        restaurant_name:
+          type: string
+        item:
+          type: string
+        quantity:
+          type: integer
+        unit_price_usd:
+          type: number
+        dietary_flags:
+          type: array
+          items:
+            type: string
     SubstitutionOption:
       type: object
       additionalProperties: false
-      required: [line_id, suggested_item, reason]
+      required:
+      - line_id
+      - suggested_item
+      - reason
       properties:
-        line_id: { type: string }
-        suggested_item: { type: string }
-        reason: { type: string }
-        price_delta_usd: { type: number }
+        line_id:
+          type: string
+        suggested_item:
+          type: string
+        reason:
+          type: string
+        price_delta_usd:
+          type: number
     DeliveryEta:
       type: object
       additionalProperties: false
       properties:
-        minutes: { type: integer }
-        window_start: { type: string }
-        window_end: { type: string }
+        minutes:
+          type: integer
+        window_start:
+          type: string
+        window_end:
+          type: string
         per_restaurant:
           type: array
           items:
             type: object
             additionalProperties: false
             properties:
-              restaurant_id: { type: string }
-              minutes: { type: integer }
+              restaurant_id:
+                type: string
+              minutes:
+                type: integer
     CheckoutSummary:
       type: object
       additionalProperties: false
-      required: [total_cost, delivery_eta]
+      required:
+      - total_cost
+      - delivery_eta
       properties:
-        cart_id: { type: string }
+        cart_id:
+          type: string
         line_items:
           type: array
-          items: { $ref: "#/components/schemas/CartLine" }
-        subtotal_usd: { type: number }
-        delivery_fees_usd: { type: number }
-        tax_usd: { type: number }
-        tip_usd: { type: number }
-        total_cost: { type: number }
-        delivery_eta: { $ref: "#/components/schemas/DeliveryEta" }
-
+          items:
+            $ref: '#/components/schemas/CartLine'
+        subtotal_usd:
+          type: number
+        delivery_fees_usd:
+          type: number
+        tax_usd:
+          type: number
+        tip_usd:
+          type: number
+        total_cost:
+          type: number
+        delivery_eta:
+          $ref: '#/components/schemas/DeliveryEta'
     SearchRequest:
       type: object
       additionalProperties: false
-      required: [location]
+      required:
+      - location
       properties:
-        location: { $ref: "#/components/schemas/Location" }
-        cuisine: { type: array, items: { type: string } }
-        fulfillment: { type: string, enum: [delivery, pickup], default: delivery }
-        open_now: { type: boolean, default: true }
+        location:
+          $ref: '#/components/schemas/Location'
+        cuisine:
+          type: array
+          items:
+            type: string
+        fulfillment:
+          type: string
+          enum:
+          - delivery
+          - pickup
+          default: delivery
+        open_now:
+          type: boolean
+          default: true
     SearchResponse:
       unevaluatedProperties: false
       allOf:
-        - $ref: "#/components/schemas/ResponseMeta"
-        - type: object
-          required: [restaurants]
-          properties:
-            restaurants:
-              type: array
-              items: { $ref: "#/components/schemas/OrderableRestaurant" }
-
+      - $ref: '#/components/schemas/ResponseMeta'
+      - type: object
+        required:
+        - restaurants
+        properties:
+          restaurants:
+            type: array
+            items:
+              $ref: '#/components/schemas/OrderableRestaurant'
     BuildOrderRequest:
       type: object
       additionalProperties: false
-      required: [items]
+      required:
+      - items
       properties:
         items:
           type: array
           items:
             type: object
             additionalProperties: false
-            required: [restaurant_id, item, quantity]
+            required:
+            - restaurant_id
+            - item
+            - quantity
             properties:
-              restaurant_id: { type: string }
-              item: { type: string }
-              quantity: { type: integer }
-        dietary_requirements: { type: array, items: { type: string } }
+              restaurant_id:
+                type: string
+              item:
+                type: string
+              quantity:
+                type: integer
+        dietary_requirements:
+          type: array
+          items:
+            type: string
     BuildOrderResponse:
       unevaluatedProperties: false
       allOf:
-        - $ref: "#/components/schemas/ResponseMeta"
-        - type: object
-          required: [cart_id, line_items, dietary_flags]
-          properties:
-            cart_id: { type: string }
-            line_items:
-              type: array
-              items: { $ref: "#/components/schemas/CartLine" }
-            dietary_flags: { type: array, items: { type: string } }
-
+      - $ref: '#/components/schemas/ResponseMeta'
+      - type: object
+        required:
+        - cart_id
+        - line_items
+        - dietary_flags
+        properties:
+          cart_id:
+            type: string
+          line_items:
+            type: array
+            items:
+              $ref: '#/components/schemas/CartLine'
+          dietary_flags:
+            type: array
+            items:
+              type: string
     PriceOrderRequest:
       type: object
       additionalProperties: false
-      required: [cart_id]
+      required:
+      - cart_id
       properties:
-        cart_id: { type: string }
+        cart_id:
+          type: string
     PriceOrderResponse:
       unevaluatedProperties: false
       allOf:
-        - $ref: "#/components/schemas/ResponseMeta"
-        - type: object
-          required: [total_cost, delivery_eta, substitution_options, dietary_flags]
-          properties:
-            total_cost: { type: number }
-            delivery_eta: { $ref: "#/components/schemas/DeliveryEta" }
-            substitution_options:
-              type: array
-              items: { $ref: "#/components/schemas/SubstitutionOption" }
-            dietary_flags: { type: array, items: { type: string } }
-
+      - $ref: '#/components/schemas/ResponseMeta'
+      - type: object
+        required:
+        - total_cost
+        - delivery_eta
+        - substitution_options
+        - dietary_flags
+        properties:
+          total_cost:
+            type: number
+          delivery_eta:
+            $ref: '#/components/schemas/DeliveryEta'
+          substitution_options:
+            type: array
+            items:
+              $ref: '#/components/schemas/SubstitutionOption'
+          dietary_flags:
+            type: array
+            items:
+              type: string
     PrepareCheckoutRequest:
       type: object
       additionalProperties: false
-      required: [cart_id]
+      required:
+      - cart_id
       properties:
-        cart_id: { type: string }
-        tip_percent: { type: number, default: 15 }
+        cart_id:
+          type: string
+        tip_percent:
+          type: number
+          default: 15
     PrepareCheckoutResponse:
       unevaluatedProperties: false
       allOf:
-        - $ref: "#/components/schemas/ResponseMeta"
-        - type: object
-          required: [checkout_summary, total_cost, delivery_eta, approval_required]
-          properties:
-            checkout_summary: { $ref: "#/components/schemas/CheckoutSummary" }
-            total_cost: { type: number }
-            delivery_eta: { $ref: "#/components/schemas/DeliveryEta" }
-            substitution_options:
-              type: array
-              items: { $ref: "#/components/schemas/SubstitutionOption" }
-            dietary_flags: { type: array, items: { type: string } }
-            approval_required: { type: boolean, description: True — placing the order requires gated /place-order. }
-            next_step:
-              type: object
-              additionalProperties: false
-              properties:
-                description: { type: string }
-                gated_endpoint: { type: string }
-
+      - $ref: '#/components/schemas/ResponseMeta'
+      - type: object
+        required:
+        - checkout_summary
+        - total_cost
+        - delivery_eta
+        - approval_required
+        properties:
+          checkout_summary:
+            $ref: '#/components/schemas/CheckoutSummary'
+          total_cost:
+            type: number
+          delivery_eta:
+            $ref: '#/components/schemas/DeliveryEta'
+          substitution_options:
+            type: array
+            items:
+              $ref: '#/components/schemas/SubstitutionOption'
+          dietary_flags:
+            type: array
+            items:
+              type: string
+          approval_required:
+            type: boolean
+            description: True — placing the order requires gated /place-order.
+          next_step:
+            type: object
+            additionalProperties: false
+            properties:
+              description:
+                type: string
+              gated_endpoint:
+                type: string
     PlaceOrderRequest:
       type: object
       additionalProperties: false
-      required: [cart_id]
+      required:
+      - cart_id
       properties:
-        cart_id: { type: string }
-        payment_method_token: { type: string }
+        cart_id:
+          type: string
+        payment_method_token:
+          type: string
         approval_token:
-          type: [string, "null"]
-          description: Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no payment occurs.
+          type:
+          - string
+          - 'null'
+          description: Human-issued approval token. Null/omitted ⇒ gate returns pending_approval and no
+            payment occurs.
     PlaceOrderResponse:
       unevaluatedProperties: false
       allOf:
-        - $ref: "#/components/schemas/ResponseMeta"
-        - type: object
-          required: [approval_required, execution_gate, placed, checkout_summary]
-          properties:
-            approval_required: { type: boolean }
-            execution_gate: { $ref: "#/components/schemas/ExecutionGate" }
-            placed: { type: boolean, description: True only when a valid approval_token was supplied and the order was placed. }
-            order_confirmation_id: { type: [string, "null"] }
-            checkout_summary: { $ref: "#/components/schemas/CheckoutSummary" }
-
+      - $ref: '#/components/schemas/ResponseMeta'
+      - type: object
+        required:
+        - approval_required
+        - execution_gate
+        - placed
+        - checkout_summary
+        properties:
+          approval_required:
+            type: boolean
+          execution_gate:
+            $ref: '#/components/schemas/ExecutionGate'
+          placed:
+            type: boolean
+            description: True only when a valid approval_token was supplied and the order was placed.
+          order_confirmation_id:
+            type:
+            - string
+            - 'null'
+          checkout_summary:
+            $ref: '#/components/schemas/CheckoutSummary'
     QuickOrderRequest:
       type: object
       additionalProperties: false
-      required: [location, requests]
+      required:
+      - location
+      - requests
       properties:
-        location: { $ref: "#/components/schemas/Location" }
+        location:
+          $ref: '#/components/schemas/Location'
         requests:
           type: array
           items:
             type: object
             additionalProperties: false
-            required: [cuisine, item_hint, quantity]
+            required:
+            - cuisine
+            - item_hint
+            - quantity
             properties:
-              cuisine: { type: string }
-              item_hint: { type: string }
-              quantity: { type: integer }
-        dietary_requirements: { type: array, items: { type: string } }
-        tip_percent: { type: number, default: 15 }
+              cuisine:
+                type: string
+              item_hint:
+                type: string
+              quantity:
+                type: integer
+        dietary_requirements:
+          type: array
+          items:
+            type: string
+        tip_percent:
+          type: number
+          default: 15
     QuickOrderResponse:
       unevaluatedProperties: false
       allOf:
-        - $ref: "#/components/schemas/ResponseMeta"
-        - type: object
-          required: [checkout_summary, total_cost, delivery_eta, substitution_options, dietary_flags, approval_required]
-          properties:
-            checkout_summary: { $ref: "#/components/schemas/CheckoutSummary" }
-            total_cost: { type: number }
-            delivery_eta: { $ref: "#/components/schemas/DeliveryEta" }
-            substitution_options:
-              type: array
-              items: { $ref: "#/components/schemas/SubstitutionOption" }
-            dietary_flags: { type: array, items: { type: string } }
-            approval_required: { type: boolean }
-            next_step:
-              type: object
-              additionalProperties: false
-              properties:
-                description: { type: string }
-                gated_endpoint: { type: string }
+      - $ref: '#/components/schemas/ResponseMeta'
+      - type: object
+        required:
+        - checkout_summary
+        - total_cost
+        - delivery_eta
+        - substitution_options
+        - dietary_flags
+        - approval_required
+        properties:
+          checkout_summary:
+            $ref: '#/components/schemas/CheckoutSummary'
+          total_cost:
+            type: number
+          delivery_eta:
+            $ref: '#/components/schemas/DeliveryEta'
+          substitution_options:
+            type: array
+            items:
+              $ref: '#/components/schemas/SubstitutionOption'
+          dietary_flags:
+            type: array
+            items:
+              type: string
+          approval_required:
+            type: boolean
+          next_step:
+            type: object
+            additionalProperties: false
+            properties:
+              description:
+                type: string
+              gated_endpoint:
+                type: string
