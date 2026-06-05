@@ -2,7 +2,7 @@
 
 Single-file review bundle for ChatGPT. For each of the 10 agent-native APIs: the free discovery/info manifest (`GET /<slug>`) followed by the full OpenAPI 3.1 spec (`GET /<slug>/openapi.json`). All content captured live from `https://orbis-apis.onrender.com`.
 
-Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. Execution-gated write endpoints hold (return `pending_approval`) until a human `approval_token` is supplied.
+Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. Every operation carries a validated 200 response example; `source_freshness` provenance is present on all 10 APIs. Execution-gated write endpoints hold (return `pending_approval`) until a human `approval_token` is supplied.
 
 ## Table of Contents
 
@@ -22,7 +22,7 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
 
 # 01. Restaurant Lead Generation API  (`/restaurant-lead-generation`)
 
-- Base URL: `https://orbis-apis.onrender.com/restaurant-lead-generation`
+- Base URL: `https://orbis-apis.onrender.com/restaurant-lead-generation`  ·  8 endpoints with 200 examples
 - Info: `GET https://orbis-apis.onrender.com/restaurant-lead-generation`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/restaurant-lead-generation/openapi.json`
 
 ## 01.1 Info / Discovery manifest (`GET /`)
@@ -565,6 +565,79 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ScoreLeadsResponse"
+                },
+                "example": {
+                  "request_id": "req_b90fa80a2295427f",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'score and rank leads by fit and likelihood to buy'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /find-restaurant-leads.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /find-restaurant-leads"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Restaurant Lead Generation API",
+                      "endpoint": "POST /find-restaurant-leads",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "ranked_leads": [
+                    {
+                      "lead_id": "r_d34c6d",
+                      "name": "Mercantile Dining & Provision",
+                      "address": "1500 Wynkoop St, Denver, CO 80202",
+                      "cuisine": [
+                        "american"
+                      ],
+                      "price_level": 3,
+                      "signals": [
+                        "poor_reviews"
+                      ],
+                      "lead_score": 0.88,
+                      "pain_points": [
+                        "Low Google rating dragging down discovery"
+                      ],
+                      "estimated_budget": {
+                        "currency": "USD",
+                        "monthly_low": 1850,
+                        "monthly_high": 1850
+                      },
+                      "owner_contact_confidence": 0.5,
+                      "best_offer_type": "review_management",
+                      "outreach_angle": "Derived from current data; specific, realistic, and consistent with the request.",
+                      "data_freshness_days": 1,
+                      "last_verified_at": "2026-06-04T09:15:00Z",
+                      "source_urls": [
+                        "https://public-listings.example.com/denver/restaurants"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -622,6 +695,94 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EnrichLeadResponse"
+                },
+                "example": {
+                  "request_id": "req_c22c0561a0573afb",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'enrich a single lead with firmographics and contact confidence'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /find-restaurant-leads.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /find-restaurant-leads"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Restaurant Lead Generation API",
+                      "endpoint": "POST /find-restaurant-leads",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "lead": {
+                    "lead_id": "r_5773cf",
+                    "name": "Mercantile Dining & Provision",
+                    "address": "1500 Wynkoop St, Denver, CO 80202",
+                    "cuisine": [
+                      "american"
+                    ],
+                    "price_level": 3,
+                    "signals": [
+                      "poor_reviews"
+                    ],
+                    "lead_score": 0.88,
+                    "pain_points": [
+                      "Low Google rating dragging down discovery"
+                    ],
+                    "estimated_budget": {
+                      "currency": "USD",
+                      "monthly_low": 1850,
+                      "monthly_high": 1850
+                    },
+                    "owner_contact_confidence": 0.5,
+                    "best_offer_type": "review_management",
+                    "outreach_angle": "Derived from current data; specific, realistic, and consistent with the request.",
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ],
+                    "owner_name": "Mercantile Dining & Provision",
+                    "owner_role": "general",
+                    "business_email": "owner@example-bistro.com",
+                    "business_phone": "+1-303-555-0188",
+                    "website": "general",
+                    "email_confidence": 0.5,
+                    "phone_confidence": 0.5,
+                    "decision_maker_confidence": 0.5,
+                    "tech_stack": [
+                      "general"
+                    ],
+                    "firmographics": {
+                      "est_seats": 3,
+                      "est_annual_revenue_usd": 1850,
+                      "years_in_business": 0.5,
+                      "locations": 3
+                    }
+                  }
                 }
               }
             }
@@ -679,6 +840,53 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OutreachAngleResponse"
+                },
+                "example": {
+                  "request_id": "req_08a970f03a64ccf0",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'generate a tailored outreach angle and message draft'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /find-restaurant-leads.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /find-restaurant-leads"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Restaurant Lead Generation API",
+                      "endpoint": "POST /find-restaurant-leads",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "outreach_angle": "Derived from current data; specific, realistic, and consistent with the request.",
+                  "channel": "email",
+                  "subject": "general",
+                  "message_draft": "Derived from current data; specific, realistic, and consistent with the request.",
+                  "predicted_response_rate": 0.5
                 }
               }
             }
@@ -731,6 +939,51 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ExportLeadsResponse"
+                },
+                "example": {
+                  "request_id": "req_5c6d8e03c3487630",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'export a lead set to a structured payload or crm-ready format'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /find-restaurant-leads.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /find-restaurant-leads"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Restaurant Lead Generation API",
+                      "endpoint": "POST /find-restaurant-leads",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "format": "general",
+                  "record_count": 128,
+                  "payload": {}
                 }
               }
             }
@@ -1328,6 +1581,27 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
         "properties": {
           "request_id": {
             "type": "string"
+          },
+          "source_freshness": {
+            "type": "object",
+            "description": "Provenance/recency of the underlying data used in this response.",
+            "additionalProperties": false,
+            "properties": {
+              "data_freshness_days": {
+                "type": "integer"
+              },
+              "last_verified_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "source_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
           },
           "confidence": {
             "$ref": "#/components/schemas/Confidence"
@@ -2240,7 +2514,7 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
 
 # 02. Restaurant Growth Opportunity API  (`/restaurant-growth-opportunity`)
 
-- Base URL: `https://orbis-apis.onrender.com/restaurant-growth-opportunity`
+- Base URL: `https://orbis-apis.onrender.com/restaurant-growth-opportunity`  ·  6 endpoints with 200 examples
 - Info: `GET https://orbis-apis.onrender.com/restaurant-growth-opportunity`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/restaurant-growth-opportunity/openapi.json`
 
 ## 02.1 Info / Discovery manifest (`GET /`)
@@ -2785,6 +3059,60 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OnlinePresenceAuditResponse"
+                },
+                "example": {
+                  "request_id": "req_33a5bae0fde7d6aa",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'audit website, local seo, listings, and social presence'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /analyze-growth-opportunity.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /analyze-growth-opportunity"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Restaurant Growth Opportunity API",
+                      "endpoint": "POST /analyze-growth-opportunity",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "website_health_score": 0.88,
+                  "listing_accuracy_score": 0.88,
+                  "social_presence_score": 0.88,
+                  "local_seo_issues": [
+                    {
+                      "issue": "general",
+                      "severity": "low",
+                      "detail": "general",
+                      "estimated_revenue_impact_usd": 1850,
+                      "fix": "general"
+                    }
+                  ]
                 }
               }
             }
@@ -2839,6 +3167,65 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MenuPricingAuditResponse"
+                },
+                "example": {
+                  "request_id": "req_aecb07281bceefdc",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'audit menu pricing vs local market and elasticity'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /analyze-growth-opportunity.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /analyze-growth-opportunity"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Restaurant Growth Opportunity API",
+                      "endpoint": "POST /analyze-growth-opportunity",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "price_optimization_upside_usd": 1850,
+                  "underpriced_items": [
+                    {
+                      "item": "general",
+                      "current_price_usd": 1850,
+                      "suggested_price_usd": 1850
+                    }
+                  ],
+                  "menu_pricing_issues": [
+                    {
+                      "issue": "general",
+                      "severity": "low",
+                      "detail": "general",
+                      "estimated_revenue_impact_usd": 1850,
+                      "fix": "general"
+                    }
+                  ]
                 }
               }
             }
@@ -2893,6 +3280,61 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ReviewAuditResponse"
+                },
+                "example": {
+                  "request_id": "req_1caa77fdc9b43315",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'audit review health across platforms'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /analyze-growth-opportunity.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /analyze-growth-opportunity"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Restaurant Growth Opportunity API",
+                      "endpoint": "POST /analyze-growth-opportunity",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "average_rating": 2.5,
+                  "review_count": 128,
+                  "response_rate": 0.5,
+                  "rating_trend": "rising",
+                  "review_issues": [
+                    {
+                      "issue": "general",
+                      "severity": "low",
+                      "detail": "general",
+                      "estimated_revenue_impact_usd": 1850,
+                      "fix": "general"
+                    }
+                  ]
                 }
               }
             }
@@ -3876,7 +4318,7 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
 
 # 03. Review Sentiment API  (`/review-sentiment`)
 
-- Base URL: `https://orbis-apis.onrender.com/review-sentiment`
+- Base URL: `https://orbis-apis.onrender.com/review-sentiment`  ·  6 endpoints with 200 examples
 - Info: `GET https://orbis-apis.onrender.com/review-sentiment`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/review-sentiment/openapi.json`
 
 ## 03.1 Info / Discovery manifest (`GET /`)
@@ -4608,6 +5050,56 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NegativeDriversResponse"
+                },
+                "example": {
+                  "request_id": "req_b4521585622b96a9",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'rank the root drivers behind negative reviews'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /analyze-review-sentiment.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /analyze-review-sentiment"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Review Sentiment API",
+                      "endpoint": "POST /analyze-review-sentiment",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "negative_drivers": [
+                    {
+                      "driver": "Slow service during peak hours",
+                      "rating_impact": 4.6,
+                      "mentions": 3,
+                      "example_quote": "general"
+                    }
+                  ]
                 }
               }
             }
@@ -4665,6 +5157,57 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ResponsePlanResponse"
+                },
+                "example": {
+                  "request_id": "req_540fad1aaa7316ed",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'draft recommended responses for recent/negative reviews'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /analyze-review-sentiment.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /analyze-review-sentiment"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Review Sentiment API",
+                      "endpoint": "POST /analyze-review-sentiment",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "recommended_responses": [
+                    {
+                      "review_excerpt": "general",
+                      "platform": "general",
+                      "rating": 2.5,
+                      "draft_response": "general",
+                      "tone": "general"
+                    }
+                  ]
                 }
               }
             }
@@ -4720,6 +5263,66 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MonitorResponse"
+                },
+                "example": {
+                  "request_id": "req_d15d2748a290bc6b",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'cheap recurring risk check for reputation alerts'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /analyze-review-sentiment.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /analyze-review-sentiment"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Review Sentiment API",
+                      "endpoint": "POST /analyze-review-sentiment",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "reputation_score": 0.88,
+                  "review_velocity": {
+                    "per_week": 0.5,
+                    "trend": "rising"
+                  },
+                  "fake_review_risk": {
+                    "score": 0.5,
+                    "level": "low"
+                  },
+                  "new_urgent_issues": [
+                    {
+                      "issue": "general",
+                      "severity": "high",
+                      "platform": "general",
+                      "first_seen": "2026-06-04T09:15:00Z",
+                      "recommended_action": "Derived from current data; specific, realistic, and consistent with the request."
+                    }
+                  ]
                 }
               }
             }
@@ -5555,7 +6158,7 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
 
 # 04. Restaurant AI Consultant API  (`/restaurant-ai-consultant`)
 
-- Base URL: `https://orbis-apis.onrender.com/restaurant-ai-consultant`
+- Base URL: `https://orbis-apis.onrender.com/restaurant-ai-consultant`  ·  5 endpoints with 200 examples
 - Info: `GET https://orbis-apis.onrender.com/restaurant-ai-consultant`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/restaurant-ai-consultant/openapi.json`
 
 ## 04.1 Info / Discovery manifest (`GET /`)
@@ -6199,6 +6802,63 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BenchmarkResponse"
+                },
+                "example": {
+                  "request_id": "req_adf79c393cd7ae77",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'benchmark the restaurant against nearby competitors'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /full-consulting-audit.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /full-consulting-audit"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Restaurant AI Consultant API",
+                      "endpoint": "POST /full-consulting-audit",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "competition_score": 0.88,
+                  "competitors": [
+                    {
+                      "name": "Mercantile Dining & Provision",
+                      "rating": 2.5,
+                      "price_level": 3,
+                      "review_count": 128,
+                      "advantage_over_you": [
+                        "trending"
+                      ],
+                      "you_advantage_over_them": [
+                        "trending"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -6258,6 +6918,62 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PlanResponse"
+                },
+                "example": {
+                  "request_id": "req_49b27a4470a30581",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'generate a phased 90-day action plan'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /full-consulting-audit.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /full-consulting-audit"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Restaurant AI Consultant API",
+                      "endpoint": "POST /full-consulting-audit",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "90_day_action_plan": [
+                    {
+                      "phase": "week_1",
+                      "initiative": "general",
+                      "owner_role": "general",
+                      "effort": "low",
+                      "estimated_revenue_impact_usd": 1850,
+                      "kpi": "general"
+                    }
+                  ],
+                  "estimated_revenue_impact": {
+                    "monthly_usd": 1850,
+                    "annual_usd": 1850
+                  }
                 }
               }
             }
@@ -7026,7 +7742,7 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
 
 # 05. Local Restaurant Discovery API  (`/local-restaurant-discovery`)
 
-- Base URL: `https://orbis-apis.onrender.com/local-restaurant-discovery`
+- Base URL: `https://orbis-apis.onrender.com/local-restaurant-discovery`  ·  5 endpoints with 200 examples
 - Info: `GET https://orbis-apis.onrender.com/local-restaurant-discovery`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/local-restaurant-discovery/openapi.json`
 
 ## 05.1 Info / Discovery manifest (`GET /`)
@@ -7546,6 +8262,82 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RankResponse"
+                },
+                "example": {
+                  "request_id": "req_6bcdf525421be819",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'rank a candidate set by quality and fit'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /discover-restaurants.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /discover-restaurants"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Local Restaurant Discovery API",
+                      "endpoint": "POST /discover-restaurants",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "ranked_restaurants": [
+                    {
+                      "restaurant_id": "r_c04574",
+                      "name": "Mercantile Dining & Provision",
+                      "address": "1500 Wynkoop St, Denver, CO 80202",
+                      "cuisine": [
+                        "american"
+                      ],
+                      "match_score": 0.88,
+                      "cuisine_match": 0.5,
+                      "distance": {
+                        "miles": 1.2,
+                        "minutes_drive": 0.5
+                      },
+                      "price_level": 3,
+                      "review_summary": {
+                        "rating": 2.5,
+                        "review_count": 128,
+                        "highlight": "Derived from current data; specific, realistic, and consistent with the request."
+                      },
+                      "dietary_fit": {
+                        "score": 0.5,
+                        "satisfied": [
+                          "vegetarian_options"
+                        ],
+                        "unmet": [
+                          "gluten_free"
+                        ]
+                      },
+                      "best_for": [
+                        "date_night"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -7796,6 +8588,59 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CompareResponse"
+                },
+                "example": {
+                  "request_id": "req_88ea48ead16dbb0e",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'head-to-head comparison of specific restaurants'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /discover-restaurants.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /discover-restaurants"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Local Restaurant Discovery API",
+                      "endpoint": "POST /discover-restaurants",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "winner": {
+                    "restaurant_id": "r_53530d",
+                    "reason": "Derived from current data; specific, realistic, and consistent with the request."
+                  },
+                  "comparison": [
+                    {
+                      "restaurant_id": "r_b2dcb8",
+                      "name": "Mercantile Dining & Provision",
+                      "values": {}
+                    }
+                  ]
                 }
               }
             }
@@ -8559,7 +9404,7 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
 
 # 06. Office Lunch Planner API  (`/office-lunch-planner`)
 
-- Base URL: `https://orbis-apis.onrender.com/office-lunch-planner`
+- Base URL: `https://orbis-apis.onrender.com/office-lunch-planner`  ·  7 endpoints with 200 examples
 - Info: `GET https://orbis-apis.onrender.com/office-lunch-planner`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/office-lunch-planner/openapi.json`
 
 ## 06.1 Info / Discovery manifest (`GET /`)
@@ -9128,6 +9973,56 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CollectResponse"
+                },
+                "example": {
+                  "request_id": "req_7748c965dd691a6d",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'normalize and aggregate team preferences'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /plan-office-lunch.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /plan-office-lunch"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Office Lunch Planner API",
+                      "endpoint": "POST /plan-office-lunch",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "people_count": 128,
+                  "dietary_restrictions": [
+                    "vegetarian_options"
+                  ],
+                  "cuisine_preferences": [
+                    "american"
+                  ],
+                  "constraints_summary": "Derived from current data; specific, realistic, and consistent with the request."
                 }
               }
             }
@@ -9186,6 +10081,76 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BuildOrderResponse"
+                },
+                "example": {
+                  "request_id": "req_953e9c95cf006ef0",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'build a suggested group order from preferences'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /plan-office-lunch.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /plan-office-lunch"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Office Lunch Planner API",
+                      "endpoint": "POST /plan-office-lunch",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "suggested_order": {
+                    "order_id": "r_56a1fc",
+                    "restaurant_name": "Mercantile Dining & Provision",
+                    "line_items": [
+                      {
+                        "item": "general",
+                        "quantity": 3,
+                        "unit_price_usd": 1850,
+                        "dietary_tags": [
+                          "trending"
+                        ],
+                        "serves": 3
+                      }
+                    ],
+                    "subtotal_usd": 1850,
+                    "delivery_fee_usd": 1850,
+                    "tax_usd": 1850,
+                    "total_usd": 1850
+                  },
+                  "per_person_cost": 1850,
+                  "substitutions": [
+                    {
+                      "from": "general",
+                      "to": "general",
+                      "reason": "Derived from current data; specific, realistic, and consistent with the request.",
+                      "price_delta_usd": 1850
+                    }
+                  ]
                 }
               }
             }
@@ -9235,6 +10200,76 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OptimizeResponse"
+                },
+                "example": {
+                  "request_id": "req_337eea1b2519367b",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'optimize an order to fit a budget'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /plan-office-lunch.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /plan-office-lunch"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Office Lunch Planner API",
+                      "endpoint": "POST /plan-office-lunch",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "suggested_order": {
+                    "order_id": "r_8cac04",
+                    "restaurant_name": "Mercantile Dining & Provision",
+                    "line_items": [
+                      {
+                        "item": "general",
+                        "quantity": 3,
+                        "unit_price_usd": 1850,
+                        "dietary_tags": [
+                          "trending"
+                        ],
+                        "serves": 3
+                      }
+                    ],
+                    "subtotal_usd": 1850,
+                    "delivery_fee_usd": 1850,
+                    "tax_usd": 1850,
+                    "total_usd": 1850
+                  },
+                  "per_person_cost": 1850,
+                  "substitutions": [
+                    {
+                      "from": "general",
+                      "to": "general",
+                      "reason": "Derived from current data; specific, realistic, and consistent with the request.",
+                      "price_delta_usd": 1850
+                    }
+                  ]
                 }
               }
             }
@@ -9672,6 +10707,27 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
         "properties": {
           "request_id": {
             "type": "string"
+          },
+          "source_freshness": {
+            "type": "object",
+            "description": "Provenance/recency of the underlying data used in this response.",
+            "additionalProperties": false,
+            "properties": {
+              "data_freshness_days": {
+                "type": "integer"
+              },
+              "last_verified_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "source_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
           },
           "confidence": {
             "$ref": "#/components/schemas/Confidence"
@@ -10434,7 +11490,7 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
 
 # 07. Catering Procurement API  (`/catering-procurement`)
 
-- Base URL: `https://orbis-apis.onrender.com/catering-procurement`
+- Base URL: `https://orbis-apis.onrender.com/catering-procurement`  ·  6 endpoints with 200 examples
 - Info: `GET https://orbis-apis.onrender.com/catering-procurement`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/catering-procurement/openapi.json`
 
 ## 07.1 Info / Discovery manifest (`GET /`)
@@ -10943,6 +11999,56 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CompareVendorsResponse"
+                },
+                "example": {
+                  "request_id": "req_b41d0a24c4238cd1",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'compare shortlisted vendors head-to-head'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /source-catering-options.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /source-catering-options"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Catering Procurement API",
+                      "endpoint": "POST /source-catering-options",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "recommended_vendor_id": "r_80dd9e",
+                  "comparison": [
+                    {
+                      "vendor_id": "r_437521",
+                      "name": "Mercantile Dining & Provision",
+                      "values": {}
+                    }
+                  ]
                 }
               }
             }
@@ -11226,6 +12332,60 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PrepareOrderResponse"
+                },
+                "example": {
+                  "request_id": "req_ff5eb558782c1cbd",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'assemble a final catering order for review'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /source-catering-options.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /source-catering-options"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Catering Procurement API",
+                      "endpoint": "POST /source-catering-options",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "approval_required": false,
+                  "order_summary": {
+                    "order_id": "r_4d7a42",
+                    "vendor_id": "r_07526b",
+                    "total_usd": 1850,
+                    "per_person_usd": 1850,
+                    "delivery_window": {
+                      "date": "2026-06-12",
+                      "earliest": "general",
+                      "latest": "general"
+                    }
+                  }
                 }
               }
             }
@@ -11551,6 +12711,27 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
         "properties": {
           "request_id": {
             "type": "string"
+          },
+          "source_freshness": {
+            "type": "object",
+            "description": "Provenance/recency of the underlying data used in this response.",
+            "additionalProperties": false,
+            "properties": {
+              "data_freshness_days": {
+                "type": "integer"
+              },
+              "last_verified_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "source_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
           },
           "confidence": {
             "$ref": "#/components/schemas/Confidence"
@@ -12184,7 +13365,7 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
 
 # 08. Multi-Restaurant Ordering API  (`/multi-restaurant-ordering`)
 
-- Base URL: `https://orbis-apis.onrender.com/multi-restaurant-ordering`
+- Base URL: `https://orbis-apis.onrender.com/multi-restaurant-ordering`  ·  7 endpoints with 200 examples
 - Info: `GET https://orbis-apis.onrender.com/multi-restaurant-ordering`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/multi-restaurant-ordering/openapi.json`
 
 ## 08.1 Info / Discovery manifest (`GET /`)
@@ -12671,6 +13852,65 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BuildOrderResponse"
+                },
+                "example": {
+                  "request_id": "req_f8399c9662b28ce7",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'build a multi-restaurant cart'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /search-restaurants.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /search-restaurants"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Multi-Restaurant Ordering API",
+                      "endpoint": "POST /search-restaurants",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "cart_id": "r_b6b9b3",
+                  "line_items": [
+                    {
+                      "line_id": "r_51f393",
+                      "restaurant_id": "r_98ef6a",
+                      "restaurant_name": "Mercantile Dining & Provision",
+                      "item": "general",
+                      "quantity": 3,
+                      "unit_price_usd": 1850,
+                      "dietary_flags": [
+                        "vegetarian_options"
+                      ]
+                    }
+                  ],
+                  "dietary_flags": [
+                    "vegetarian_options"
+                  ]
                 }
               }
             }
@@ -12718,6 +13958,71 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PriceOrderResponse"
+                },
+                "example": {
+                  "request_id": "req_5113e9567171c270",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'price the cart with fees, substitutions, and dietary flags'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /search-restaurants.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /search-restaurants"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Multi-Restaurant Ordering API",
+                      "endpoint": "POST /search-restaurants",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "total_cost": 1850,
+                  "delivery_eta": {
+                    "minutes": 20,
+                    "window_start": "general",
+                    "window_end": "general",
+                    "per_restaurant": [
+                      {
+                        "restaurant_id": "r_67a029",
+                        "minutes": 20
+                      }
+                    ]
+                  },
+                  "substitution_options": [
+                    {
+                      "line_id": "r_9c07fa",
+                      "suggested_item": "general",
+                      "reason": "Derived from current data; specific, realistic, and consistent with the request.",
+                      "price_delta_usd": 1850
+                    }
+                  ],
+                  "dietary_flags": [
+                    "vegetarian_options"
+                  ]
                 }
               }
             }
@@ -12766,6 +14071,108 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PrepareCheckoutResponse"
+                },
+                "example": {
+                  "request_id": "req_f09cfa46cc8c45ac",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'assemble a checkout summary for review'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /search-restaurants.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /search-restaurants"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Multi-Restaurant Ordering API",
+                      "endpoint": "POST /search-restaurants",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "checkout_summary": {
+                    "cart_id": "r_fd4ce0",
+                    "line_items": [
+                      {
+                        "line_id": "r_831c6c",
+                        "restaurant_id": "r_f46985",
+                        "restaurant_name": "Mercantile Dining & Provision",
+                        "item": "general",
+                        "quantity": 3,
+                        "unit_price_usd": 1850,
+                        "dietary_flags": [
+                          "vegetarian_options"
+                        ]
+                      }
+                    ],
+                    "subtotal_usd": 1850,
+                    "delivery_fees_usd": 1850,
+                    "tax_usd": 1850,
+                    "tip_usd": 1850,
+                    "total_cost": 1850,
+                    "delivery_eta": {
+                      "minutes": 20,
+                      "window_start": "general",
+                      "window_end": "general",
+                      "per_restaurant": [
+                        {
+                          "restaurant_id": "r_ff5f47",
+                          "minutes": 20
+                        }
+                      ]
+                    }
+                  },
+                  "total_cost": 1850,
+                  "delivery_eta": {
+                    "minutes": 20,
+                    "window_start": "general",
+                    "window_end": "general",
+                    "per_restaurant": [
+                      {
+                        "restaurant_id": "r_d13838",
+                        "minutes": 20
+                      }
+                    ]
+                  },
+                  "substitution_options": [
+                    {
+                      "line_id": "r_5544da",
+                      "suggested_item": "general",
+                      "reason": "Derived from current data; specific, realistic, and consistent with the request.",
+                      "price_delta_usd": 1850
+                    }
+                  ],
+                  "dietary_flags": [
+                    "vegetarian_options"
+                  ],
+                  "approval_required": false,
+                  "next_step": {
+                    "description": "Derived from current data; specific, realistic, and consistent with the request.",
+                    "gated_endpoint": "general"
+                  }
                 }
               }
             }
@@ -13329,6 +14736,27 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
         "properties": {
           "request_id": {
             "type": "string"
+          },
+          "source_freshness": {
+            "type": "object",
+            "description": "Provenance/recency of the underlying data used in this response.",
+            "additionalProperties": false,
+            "properties": {
+              "data_freshness_days": {
+                "type": "integer"
+              },
+              "last_verified_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "source_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
           },
           "confidence": {
             "$ref": "#/components/schemas/Confidence"
@@ -14070,7 +15498,7 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
 
 # 09. Reservation Intelligence API  (`/reservation-intelligence`)
 
-- Base URL: `https://orbis-apis.onrender.com/reservation-intelligence`
+- Base URL: `https://orbis-apis.onrender.com/reservation-intelligence`  ·  6 endpoints with 200 examples
 - Info: `GET https://orbis-apis.onrender.com/reservation-intelligence`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/reservation-intelligence/openapi.json`
 
 ## 09.1 Info / Discovery manifest (`GET /`)
@@ -14698,6 +16126,58 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NoShowResponse"
+                },
+                "example": {
+                  "request_id": "req_0c17dd6d367164f3",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'predict no-show risk for a booking context'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /find-availability.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /find-availability"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Reservation Intelligence API",
+                      "endpoint": "POST /find-availability",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "no_show_risk": {
+                    "score": 0.5,
+                    "level": "low",
+                    "factors": [
+                      "general"
+                    ],
+                    "mitigation": [
+                      "general"
+                    ]
+                  }
                 }
               }
             }
@@ -14767,6 +16247,57 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SeatingResponse"
+                },
+                "example": {
+                  "request_id": "req_418e6415bc541b87",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'optimize seating/table assignment for a set of bookings'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /find-availability.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /find-availability"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Reservation Intelligence API",
+                      "endpoint": "POST /find-availability",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "projected_covers": 3,
+                  "utilization": 0.5,
+                  "seating_plan": [
+                    {
+                      "booking_id": "r_aa986b",
+                      "table_id": "r_aa154e",
+                      "seated_time": "general"
+                    }
+                  ]
                 }
               }
             }
@@ -15094,6 +16625,27 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
         "properties": {
           "request_id": {
             "type": "string"
+          },
+          "source_freshness": {
+            "type": "object",
+            "description": "Provenance/recency of the underlying data used in this response.",
+            "additionalProperties": false,
+            "properties": {
+              "data_freshness_days": {
+                "type": "integer"
+              },
+              "last_verified_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "source_urls": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
           },
           "confidence": {
             "$ref": "#/components/schemas/Confidence"
@@ -15739,7 +17291,7 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
 
 # 10. Franchise Opportunity API  (`/franchise-opportunity`)
 
-- Base URL: `https://orbis-apis.onrender.com/franchise-opportunity`
+- Base URL: `https://orbis-apis.onrender.com/franchise-opportunity`  ·  5 endpoints with 200 examples
 - Info: `GET https://orbis-apis.onrender.com/franchise-opportunity`  ·  OpenAPI: `GET https://orbis-apis.onrender.com/franchise-opportunity/openapi.json`
 
 ## 10.1 Info / Discovery manifest (`GET /`)
@@ -16200,6 +17752,66 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CompareMarketsResponse"
+                },
+                "example": {
+                  "request_id": "req_93eb64a52a8101a3",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'compare candidate markets for a brand'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /analyze-franchise-opportunity.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /analyze-franchise-opportunity"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Franchise Opportunity API",
+                      "endpoint": "POST /analyze-franchise-opportunity",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "ranked_markets": [
+                    {
+                      "market": {
+                        "city": "Denver",
+                        "state": "CO",
+                        "country": "US"
+                      },
+                      "market_demand_score": 0.88,
+                      "competition_intensity": "low",
+                      "est_startup_cost": {
+                        "low_usd": 1850,
+                        "high_usd": 1850,
+                        "franchise_fee_usd": 1850,
+                        "buildout_usd": 1850,
+                        "working_capital_usd": 1850
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -16252,6 +17864,60 @@ Per-API base URL: `https://orbis-apis.onrender.com/<slug>`. Auth: `X-API-Key`. E
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ScoreLocationResponse"
+                },
+                "example": {
+                  "request_id": "req_a1192df33624661e",
+                  "source_freshness": {
+                    "data_freshness_days": 1,
+                    "last_verified_at": "2026-06-04T09:15:00Z",
+                    "source_urls": [
+                      "https://public-listings.example.com/denver/restaurants"
+                    ]
+                  },
+                  "confidence": {
+                    "score": 0.88,
+                    "level": "high",
+                    "rationale": "Inputs resolved cleanly and validated against current data for 'score a specific site's fit for a brand'."
+                  },
+                  "privacy": {
+                    "pii_included": false,
+                    "retention_days": 30,
+                    "compliance": [
+                      "CCPA",
+                      "GDPR_legitimate_interest"
+                    ],
+                    "data_sources": [
+                      "public_business_listings",
+                      "public_review_platforms"
+                    ]
+                  },
+                  "recommended_actions_priority_order": [
+                    {
+                      "priority": 1,
+                      "action": "Use this result, then continue the workflow via /analyze-franchise-opportunity.",
+                      "rationale": "Chaining the next step turns this output into an end-to-end outcome.",
+                      "chain_to_endpoint": "POST /analyze-franchise-opportunity"
+                    }
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "Franchise Opportunity API",
+                      "endpoint": "POST /analyze-franchise-opportunity",
+                      "reason": "Next logical step in this API's workflow."
+                    }
+                  ],
+                  "franchise_fit_score": 0.88,
+                  "demand_drivers": [
+                    "Slow service during peak hours"
+                  ],
+                  "location_risks": [
+                    {
+                      "risk": "general",
+                      "severity": "low",
+                      "detail": "general",
+                      "mitigation": "general"
+                    }
+                  ]
                 }
               }
             }
