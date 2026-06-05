@@ -1,0 +1,1599 @@
+[
+  {
+    "name": "Restaurant Lead Generation API",
+    "shortDescription": "Find, score, enrich, and prepare outreach to restaurants that need marketing, reviews, SEO, web, delivery, or ops help.",
+    "description": "Agent-native lead generation for the restaurant vertical. Given a geography and an ideal-customer profile, the API discovers restaurants exhibiting buying signals (poor reviews, weak web presence, no online ordering, stale menus, low local-SEO visibility), scores them, enriches owner/contact data, and produces a ready-to-use outreach angle and best-offer recommendation. Built for autonomous sales, marketing, and local-business agents that call repeatedly to build and qualify pipeline.",
+    "category": "business",
+    "baseUrl": "https://orbis-apis.onrender.com/restaurant-lead-generation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/restaurant-lead-generation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/restaurant-lead-generation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurant",
+      "lead-generation",
+      "sales",
+      "local-business",
+      "agent-native"
+    ],
+    "keywords": [
+      "find restaurant leads",
+      "score restaurant leads",
+      "restaurant sales prospects",
+      "local business lead generation",
+      "restaurant outreach",
+      "review management leads"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 25,
+        "requestsPerMonth": 750
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.4214,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/find-restaurant-leads",
+            "pricePerCallUsdc": 0.5,
+            "description": "Discover restaurants exhibiting buying signals."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-leads",
+            "pricePerCallUsdc": 0.1,
+            "description": "Score and rank leads by fit and likelihood to buy."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enrich-lead",
+            "pricePerCallUsdc": 0.75,
+            "description": "Enrich a single lead with firmographics and contact confidence."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-outreach-angle",
+            "pricePerCallUsdc": 0.15,
+            "description": "Generate a tailored outreach angle and message draft."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/export-leads",
+            "pricePerCallUsdc": 0.05,
+            "description": "Export a lead set to a structured payload or CRM-ready format."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/contact-lead",
+            "pricePerCallUsdc": 0.4,
+            "description": "[GATED] Send outreach to a lead. Requires human approval."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/run-lead-pipeline",
+            "pricePerCallUsdc": 1.0,
+            "description": "One-call workflow — find, score, enrich, and draft outreach."
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.2528,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/find-restaurant-leads",
+            "pricePerCallUsdc": 0.3,
+            "description": "Discover restaurants exhibiting buying signals."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-leads",
+            "pricePerCallUsdc": 0.06,
+            "description": "Score and rank leads by fit and likelihood to buy."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/enrich-lead",
+            "pricePerCallUsdc": 0.45,
+            "description": "Enrich a single lead with firmographics and contact confidence."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-outreach-angle",
+            "pricePerCallUsdc": 0.09,
+            "description": "Generate a tailored outreach angle and message draft."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/export-leads",
+            "pricePerCallUsdc": 0.03,
+            "description": "Export a lead set to a structured payload or CRM-ready format."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/contact-lead",
+            "pricePerCallUsdc": 0.24,
+            "description": "[GATED] Send outreach to a lead. Requires human approval."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/run-lead-pipeline",
+            "pricePerCallUsdc": 0.6,
+            "description": "One-call workflow — find, score, enrich, and draft outreach."
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "description": "Service discovery and capability manifest."
+      },
+      {
+        "method": "POST",
+        "path": "/find-restaurant-leads",
+        "description": "Discover restaurants exhibiting buying signals."
+      },
+      {
+        "method": "POST",
+        "path": "/score-leads",
+        "description": "Score and rank leads by fit and likelihood to buy."
+      },
+      {
+        "method": "POST",
+        "path": "/enrich-lead",
+        "description": "Enrich a single lead with firmographics and contact confidence."
+      },
+      {
+        "method": "POST",
+        "path": "/generate-outreach-angle",
+        "description": "Generate a tailored outreach angle and message draft."
+      },
+      {
+        "method": "POST",
+        "path": "/export-leads",
+        "description": "Export a lead set to a structured payload or CRM-ready format."
+      },
+      {
+        "method": "POST",
+        "path": "/contact-lead",
+        "description": "[GATED] Send outreach to a lead. Requires human approval."
+      },
+      {
+        "method": "POST",
+        "path": "/run-lead-pipeline",
+        "description": "One-call workflow — find, score, enrich, and draft outreach."
+      }
+    ]
+  },
+  {
+    "name": "Restaurant Growth Opportunity API",
+    "shortDescription": "Analyze a restaurant and return specific, quantified revenue-growth opportunities with a prioritized action plan.",
+    "description": "Agent-native growth diagnostics for a single restaurant. Given a restaurant identity (name + location or place_id), the API audits online presence, menu pricing, and reviews, then returns a growth_score, a missed_revenue_estimate, ranked top_opportunities, competitive_gaps, and a prioritized action plan. Built for marketing-agency, sales, and operator agents that repeatedly diagnose accounts to build pitches and roadmaps.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/restaurant-growth-opportunity",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/restaurant-growth-opportunity/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/restaurant-growth-opportunity/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurant",
+      "growth",
+      "audit",
+      "local-seo",
+      "agent-native"
+    ],
+    "keywords": [
+      "restaurant growth audit",
+      "missed revenue estimate",
+      "local SEO restaurant audit",
+      "menu pricing audit",
+      "restaurant growth plan",
+      "restaurant revenue opportunities"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 25,
+        "requestsPerMonth": 750
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.5,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-growth-opportunity",
+            "pricePerCallUsdc": 0.5,
+            "description": "Full growth analysis with score, missed revenue, and ranked opportunities."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/audit-online-presence",
+            "pricePerCallUsdc": 0.15,
+            "description": "Audit website, local SEO, listings, and social presence."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/audit-menu-pricing",
+            "pricePerCallUsdc": 0.2,
+            "description": "Audit menu pricing vs local market and elasticity."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/audit-reviews",
+            "pricePerCallUsdc": 0.15,
+            "description": "Audit review health across platforms."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-growth-plan",
+            "pricePerCallUsdc": 1.5,
+            "description": "One-call workflow — run all audits + analysis and return a prioritized growth plan."
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.3,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-growth-opportunity",
+            "pricePerCallUsdc": 0.3,
+            "description": "Full growth analysis with score, missed revenue, and ranked opportunities."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/audit-online-presence",
+            "pricePerCallUsdc": 0.09,
+            "description": "Audit website, local SEO, listings, and social presence."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/audit-menu-pricing",
+            "pricePerCallUsdc": 0.12,
+            "description": "Audit menu pricing vs local market and elasticity."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/audit-reviews",
+            "pricePerCallUsdc": 0.09,
+            "description": "Audit review health across platforms."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-growth-plan",
+            "pricePerCallUsdc": 0.9,
+            "description": "One-call workflow — run all audits + analysis and return a prioritized growth plan."
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "description": "Service discovery and capability manifest."
+      },
+      {
+        "method": "POST",
+        "path": "/analyze-growth-opportunity",
+        "description": "Full growth analysis with score, missed revenue, and ranked opportunities."
+      },
+      {
+        "method": "POST",
+        "path": "/audit-online-presence",
+        "description": "Audit website, local SEO, listings, and social presence."
+      },
+      {
+        "method": "POST",
+        "path": "/audit-menu-pricing",
+        "description": "Audit menu pricing vs local market and elasticity."
+      },
+      {
+        "method": "POST",
+        "path": "/audit-reviews",
+        "description": "Audit review health across platforms."
+      },
+      {
+        "method": "POST",
+        "path": "/generate-growth-plan",
+        "description": "One-call workflow — run all audits + analysis and return a prioritized growth plan."
+      }
+    ]
+  },
+  {
+    "name": "Review Sentiment API",
+    "shortDescription": "Analyze restaurant reviews across Google, Yelp, TripAdvisor, DoorDash, and Uber Eats into structured sentiment, themes, risks, and response plans.",
+    "description": "Agent-native review intelligence for restaurants. Aggregates reviews across platforms and returns a sentiment_score, review_velocity, complaint and praise themes, urgent_issues, fake_review_risk, recommended_responses, and a reputation_score. Built for reputation, marketing, and operator agents that monitor and act on review health repeatedly.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/review-sentiment",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/review-sentiment/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/review-sentiment/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurant",
+      "reviews",
+      "sentiment",
+      "reputation",
+      "agent-native"
+    ],
+    "keywords": [
+      "restaurant review sentiment",
+      "analyze Google reviews",
+      "Yelp sentiment analysis",
+      "review response plan",
+      "reputation score",
+      "fake review risk"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 25,
+        "requestsPerMonth": 750
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.154,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-review-sentiment",
+            "pricePerCallUsdc": 0.3,
+            "description": "One-call workflow — full structured review report."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-review-themes",
+            "pricePerCallUsdc": 0.1,
+            "description": "Extract complaint and praise themes with volume and trend."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/identify-negative-review-drivers",
+            "pricePerCallUsdc": 0.12,
+            "description": "Rank the root drivers behind negative reviews."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-review-response-plan",
+            "pricePerCallUsdc": 0.2,
+            "description": "Draft recommended responses for recent/negative reviews."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor-review-risk",
+            "pricePerCallUsdc": 0.05,
+            "description": "Cheap recurring risk check for reputation alerts."
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0924,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-review-sentiment",
+            "pricePerCallUsdc": 0.18,
+            "description": "One-call workflow — full structured review report."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/detect-review-themes",
+            "pricePerCallUsdc": 0.06,
+            "description": "Extract complaint and praise themes with volume and trend."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/identify-negative-review-drivers",
+            "pricePerCallUsdc": 0.072,
+            "description": "Rank the root drivers behind negative reviews."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-review-response-plan",
+            "pricePerCallUsdc": 0.12,
+            "description": "Draft recommended responses for recent/negative reviews."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor-review-risk",
+            "pricePerCallUsdc": 0.03,
+            "description": "Cheap recurring risk check for reputation alerts."
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "description": "Service discovery and capability manifest."
+      },
+      {
+        "method": "POST",
+        "path": "/analyze-review-sentiment",
+        "description": "One-call workflow — full structured review report."
+      },
+      {
+        "method": "POST",
+        "path": "/detect-review-themes",
+        "description": "Extract complaint and praise themes with volume and trend."
+      },
+      {
+        "method": "POST",
+        "path": "/identify-negative-review-drivers",
+        "description": "Rank the root drivers behind negative reviews."
+      },
+      {
+        "method": "POST",
+        "path": "/generate-review-response-plan",
+        "description": "Draft recommended responses for recent/negative reviews."
+      },
+      {
+        "method": "POST",
+        "path": "/monitor-review-risk",
+        "description": "Cheap recurring risk check for reputation alerts."
+      }
+    ]
+  },
+  {
+    "name": "Restaurant AI Consultant API",
+    "shortDescription": "One-call full restaurant consulting audit — health, revenue risk, marketing, operations, reviews, competition, and a 90-day action plan.",
+    "description": "Agent-native consulting engine. A single call to /full-consulting-audit returns an executive_summary, a restaurant_health_score, sub-scores for revenue risk, marketing, operations, reviews, and competition, a 90_day_action_plan, and an estimated_revenue_impact. Granular endpoints expose revenue-leak diagnosis, competitor benchmarking, and plan generation. Built for consultant, advisory, and operator agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/restaurant-ai-consultant",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/restaurant-ai-consultant/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/restaurant-ai-consultant/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurant",
+      "consulting",
+      "business-intelligence",
+      "audit",
+      "agent-native"
+    ],
+    "keywords": [
+      "restaurant consulting audit",
+      "restaurant health score",
+      "90 day restaurant plan",
+      "revenue leak diagnosis",
+      "competitor benchmark",
+      "restaurant advisor"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 25,
+        "requestsPerMonth": 750
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 2.1875,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/full-consulting-audit",
+            "pricePerCallUsdc": 5.0,
+            "description": "One-call workflow — complete consulting audit deliverable."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/diagnose-revenue-leaks",
+            "pricePerCallUsdc": 1.0,
+            "description": "Identify and quantify revenue leaks."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/benchmark-competitors",
+            "pricePerCallUsdc": 0.75,
+            "description": "Benchmark the restaurant against nearby competitors."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-90-day-plan",
+            "pricePerCallUsdc": 2.0,
+            "description": "Generate a phased 90-day action plan."
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 1.3125,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/full-consulting-audit",
+            "pricePerCallUsdc": 3.0,
+            "description": "One-call workflow — complete consulting audit deliverable."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/diagnose-revenue-leaks",
+            "pricePerCallUsdc": 0.6,
+            "description": "Identify and quantify revenue leaks."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/benchmark-competitors",
+            "pricePerCallUsdc": 0.45,
+            "description": "Benchmark the restaurant against nearby competitors."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-90-day-plan",
+            "pricePerCallUsdc": 1.2,
+            "description": "Generate a phased 90-day action plan."
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "description": "Service discovery and capability manifest."
+      },
+      {
+        "method": "POST",
+        "path": "/full-consulting-audit",
+        "description": "One-call workflow — complete consulting audit deliverable."
+      },
+      {
+        "method": "POST",
+        "path": "/diagnose-revenue-leaks",
+        "description": "Identify and quantify revenue leaks."
+      },
+      {
+        "method": "POST",
+        "path": "/benchmark-competitors",
+        "description": "Benchmark the restaurant against nearby competitors."
+      },
+      {
+        "method": "POST",
+        "path": "/generate-90-day-plan",
+        "description": "Generate a phased 90-day action plan."
+      }
+    ]
+  },
+  {
+    "name": "Local Restaurant Discovery API",
+    "shortDescription": "Discover and rank restaurants by location, intent, dietary need, occasion, budget, and quality with match scores and confidence.",
+    "description": "Agent-native discovery for the restaurant vertical. Given a location and an intent (occasion, dietary needs, budget, party context), returns ranked_restaurants with match_score, cuisine_match, distance, price_level, review_summary, dietary_fit, and best_for. Built for assistant, concierge, and local-business agents that make repeated discovery calls.",
+    "category": "search",
+    "baseUrl": "https://orbis-apis.onrender.com/local-restaurant-discovery",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/local-restaurant-discovery/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/local-restaurant-discovery/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurant",
+      "discovery",
+      "search",
+      "local",
+      "agent-native"
+    ],
+    "keywords": [
+      "find restaurants nearby",
+      "restaurant discovery",
+      "rank restaurants",
+      "dietary restaurant match",
+      "restaurant recommendation",
+      "compare restaurants"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 25,
+        "requestsPerMonth": 750
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0225,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/discover-restaurants",
+            "pricePerCallUsdc": 0.02,
+            "description": "Find restaurants matching basic location and filters."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/rank-restaurants",
+            "pricePerCallUsdc": 0.01,
+            "description": "Rank a candidate set by quality and fit."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/match-restaurant-to-intent",
+            "pricePerCallUsdc": 0.03,
+            "description": "One-call workflow — discover and rank by full intent."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-local-options",
+            "pricePerCallUsdc": 0.03,
+            "description": "Head-to-head comparison of specific restaurants."
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0135,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/discover-restaurants",
+            "pricePerCallUsdc": 0.012,
+            "description": "Find restaurants matching basic location and filters."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/rank-restaurants",
+            "pricePerCallUsdc": 0.006,
+            "description": "Rank a candidate set by quality and fit."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/match-restaurant-to-intent",
+            "pricePerCallUsdc": 0.018,
+            "description": "One-call workflow — discover and rank by full intent."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-local-options",
+            "pricePerCallUsdc": 0.018,
+            "description": "Head-to-head comparison of specific restaurants."
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "description": "Service discovery and capability manifest."
+      },
+      {
+        "method": "POST",
+        "path": "/discover-restaurants",
+        "description": "Find restaurants matching basic location and filters."
+      },
+      {
+        "method": "POST",
+        "path": "/rank-restaurants",
+        "description": "Rank a candidate set by quality and fit."
+      },
+      {
+        "method": "POST",
+        "path": "/match-restaurant-to-intent",
+        "description": "One-call workflow — discover and rank by full intent."
+      },
+      {
+        "method": "POST",
+        "path": "/compare-local-options",
+        "description": "Head-to-head comparison of specific restaurants."
+      }
+    ]
+  },
+  {
+    "name": "Office Lunch Planner API",
+    "shortDescription": "Plan team lunch — collect preferences, build a group order, optimize budget, and prepare a (human-approved) checkout.",
+    "description": "Agent-native group-lunch planning for workplaces. Given people_count, budget, dietary_restrictions, and cuisine_preferences, returns a suggested_order, per_person_cost, substitutions, and delivery_eta. The final /prepare-checkout step is execution-gated and requires explicit human approval before any payment or order submission. Built for executive assistant and workplace-ops agents.",
+    "category": "ecommerce",
+    "baseUrl": "https://orbis-apis.onrender.com/office-lunch-planner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/office-lunch-planner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/office-lunch-planner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurant",
+      "office-lunch",
+      "workplace",
+      "ordering",
+      "agent-native"
+    ],
+    "keywords": [
+      "plan office lunch",
+      "team lunch ordering",
+      "group food order",
+      "office meal planner",
+      "dietary restrictions lunch",
+      "workplace lunch"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 25,
+        "requestsPerMonth": 750
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.17,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/plan-office-lunch",
+            "pricePerCallUsdc": 0.25,
+            "description": "One-call workflow — plan a complete team lunch."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/collect-preferences",
+            "pricePerCallUsdc": 0.02,
+            "description": "Normalize and aggregate team preferences."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/build-group-order",
+            "pricePerCallUsdc": 0.1,
+            "description": "Build a suggested group order from preferences."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize-budget",
+            "pricePerCallUsdc": 0.05,
+            "description": "Optimize an order to fit a budget."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/prepare-checkout",
+            "pricePerCallUsdc": 0.1,
+            "description": "Preview the final checkout summary. Preview only — no payment."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/submit-order",
+            "pricePerCallUsdc": 0.5,
+            "description": "[GATED] Submit and pay for the order. Requires human approval."
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.102,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/plan-office-lunch",
+            "pricePerCallUsdc": 0.15,
+            "description": "One-call workflow — plan a complete team lunch."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/collect-preferences",
+            "pricePerCallUsdc": 0.012,
+            "description": "Normalize and aggregate team preferences."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/build-group-order",
+            "pricePerCallUsdc": 0.06,
+            "description": "Build a suggested group order from preferences."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize-budget",
+            "pricePerCallUsdc": 0.03,
+            "description": "Optimize an order to fit a budget."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/prepare-checkout",
+            "pricePerCallUsdc": 0.06,
+            "description": "Preview the final checkout summary. Preview only — no payment."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/submit-order",
+            "pricePerCallUsdc": 0.3,
+            "description": "[GATED] Submit and pay for the order. Requires human approval."
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "description": "Service discovery and capability manifest."
+      },
+      {
+        "method": "POST",
+        "path": "/plan-office-lunch",
+        "description": "One-call workflow — plan a complete team lunch."
+      },
+      {
+        "method": "POST",
+        "path": "/collect-preferences",
+        "description": "Normalize and aggregate team preferences."
+      },
+      {
+        "method": "POST",
+        "path": "/build-group-order",
+        "description": "Build a suggested group order from preferences."
+      },
+      {
+        "method": "POST",
+        "path": "/optimize-budget",
+        "description": "Optimize an order to fit a budget."
+      },
+      {
+        "method": "POST",
+        "path": "/prepare-checkout",
+        "description": "Preview the final checkout summary. Preview only — no payment."
+      },
+      {
+        "method": "POST",
+        "path": "/submit-order",
+        "description": "[GATED] Submit and pay for the order. Requires human approval."
+      }
+    ]
+  },
+  {
+    "name": "Catering Procurement API",
+    "shortDescription": "Source, compare, plan, and (human-approved) order catering for meetings, offices, events, and groups.",
+    "description": "Agent-native catering procurement. Given attendee_count, budget, dietary_restrictions, cuisine_preferences, and a delivery_window, returns vendor_options and a recommended_order, then prepares and (on human approval) submits a catering request. Final ordering and any direct vendor contact are execution-gated. Built for executive assistant, events, and workplace-ops agents.",
+    "category": "ecommerce",
+    "baseUrl": "https://orbis-apis.onrender.com/catering-procurement",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/catering-procurement/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/catering-procurement/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurant",
+      "catering",
+      "events",
+      "procurement",
+      "agent-native"
+    ],
+    "keywords": [
+      "source catering",
+      "compare catering vendors",
+      "event catering plan",
+      "office catering",
+      "catering procurement",
+      "submit catering request"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 25,
+        "requestsPerMonth": 750
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.36,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/source-catering-options",
+            "pricePerCallUsdc": 0.05,
+            "description": "Find catering vendors matching the event spec."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-catering-vendors",
+            "pricePerCallUsdc": 0.1,
+            "description": "Compare shortlisted vendors head-to-head."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-catering-plan",
+            "pricePerCallUsdc": 0.5,
+            "description": "One-call workflow — source, compare, and recommend a catering plan."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/prepare-catering-order",
+            "pricePerCallUsdc": 0.15,
+            "description": "Assemble a final catering order for review."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/submit-catering-request",
+            "pricePerCallUsdc": 1.0,
+            "description": "[GATED] Contact vendor / submit catering order. Requires human approval."
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.216,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/source-catering-options",
+            "pricePerCallUsdc": 0.03,
+            "description": "Find catering vendors matching the event spec."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-catering-vendors",
+            "pricePerCallUsdc": 0.06,
+            "description": "Compare shortlisted vendors head-to-head."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-catering-plan",
+            "pricePerCallUsdc": 0.3,
+            "description": "One-call workflow — source, compare, and recommend a catering plan."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/prepare-catering-order",
+            "pricePerCallUsdc": 0.09,
+            "description": "Assemble a final catering order for review."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/submit-catering-request",
+            "pricePerCallUsdc": 0.6,
+            "description": "[GATED] Contact vendor / submit catering order. Requires human approval."
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "description": "Service discovery and capability manifest."
+      },
+      {
+        "method": "POST",
+        "path": "/source-catering-options",
+        "description": "Find catering vendors matching the event spec."
+      },
+      {
+        "method": "POST",
+        "path": "/compare-catering-vendors",
+        "description": "Compare shortlisted vendors head-to-head."
+      },
+      {
+        "method": "POST",
+        "path": "/generate-catering-plan",
+        "description": "One-call workflow — source, compare, and recommend a catering plan."
+      },
+      {
+        "method": "POST",
+        "path": "/prepare-catering-order",
+        "description": "Assemble a final catering order for review."
+      },
+      {
+        "method": "POST",
+        "path": "/submit-catering-request",
+        "description": "[GATED] Contact vendor / submit catering order. Requires human approval."
+      }
+    ]
+  },
+  {
+    "name": "Multi-Restaurant Ordering API",
+    "shortDescription": "Compare restaurants, build a cart, estimate price, and place a (human-approved) order across multiple restaurants.",
+    "description": "Agent-native ordering across multiple restaurants. Search and compare, build a multi-restaurant cart, price it with substitution_options and dietary_flags, prepare checkout, and place the order. Order placement is execution-gated and requires explicit human approval before any payment or final submission. Built for concierge, assistant, and consumer-commerce agents.",
+    "category": "ecommerce",
+    "baseUrl": "https://orbis-apis.onrender.com/multi-restaurant-ordering",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/multi-restaurant-ordering/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/multi-restaurant-ordering/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurant",
+      "ordering",
+      "checkout",
+      "commerce",
+      "agent-native"
+    ],
+    "keywords": [
+      "multi restaurant ordering",
+      "build food order",
+      "price restaurant order",
+      "prepare checkout",
+      "place food order",
+      "agent food ordering"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 25,
+        "requestsPerMonth": 750
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.32,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/search-restaurants",
+            "pricePerCallUsdc": 0.02,
+            "description": "Search restaurants available for ordering."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/build-order",
+            "pricePerCallUsdc": 0.05,
+            "description": "Build a multi-restaurant cart."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/price-order",
+            "pricePerCallUsdc": 0.05,
+            "description": "Price the cart with fees, substitutions, and dietary flags."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/prepare-checkout",
+            "pricePerCallUsdc": 0.1,
+            "description": "Assemble a checkout summary for review."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/place-order",
+            "pricePerCallUsdc": 1.5,
+            "description": "[GATED] Place the order. Payment/submission requires human approval."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/quick-order",
+            "pricePerCallUsdc": 0.2,
+            "description": "One-call workflow — search, build, price, and prepare checkout."
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.192,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/search-restaurants",
+            "pricePerCallUsdc": 0.012,
+            "description": "Search restaurants available for ordering."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/build-order",
+            "pricePerCallUsdc": 0.03,
+            "description": "Build a multi-restaurant cart."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/price-order",
+            "pricePerCallUsdc": 0.03,
+            "description": "Price the cart with fees, substitutions, and dietary flags."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/prepare-checkout",
+            "pricePerCallUsdc": 0.06,
+            "description": "Assemble a checkout summary for review."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/place-order",
+            "pricePerCallUsdc": 0.9,
+            "description": "[GATED] Place the order. Payment/submission requires human approval."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/quick-order",
+            "pricePerCallUsdc": 0.12,
+            "description": "One-call workflow — search, build, price, and prepare checkout."
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "description": "Service discovery and capability manifest."
+      },
+      {
+        "method": "POST",
+        "path": "/search-restaurants",
+        "description": "Search restaurants available for ordering."
+      },
+      {
+        "method": "POST",
+        "path": "/build-order",
+        "description": "Build a multi-restaurant cart."
+      },
+      {
+        "method": "POST",
+        "path": "/price-order",
+        "description": "Price the cart with fees, substitutions, and dietary flags."
+      },
+      {
+        "method": "POST",
+        "path": "/prepare-checkout",
+        "description": "Assemble a checkout summary for review."
+      },
+      {
+        "method": "POST",
+        "path": "/place-order",
+        "description": "[GATED] Place the order. Payment/submission requires human approval."
+      },
+      {
+        "method": "POST",
+        "path": "/quick-order",
+        "description": "One-call workflow — search, build, price, and prepare checkout."
+      }
+    ]
+  },
+  {
+    "name": "Reservation Intelligence API",
+    "shortDescription": "Find availability, recommend and optimize reservations, predict no-show risk, and prepare (human-approved) bookings.",
+    "description": "Agent-native reservation intelligence. Find availability by party_size, time_window, and cuisine; recommend the best slot with a recommendation_reason; predict no_show_risk; optimize seating; and prepare a booking. Making or modifying a reservation is execution-gated and requires explicit human approval. Built for concierge, assistant, and restaurant-host agents.",
+    "category": "ecommerce",
+    "baseUrl": "https://orbis-apis.onrender.com/reservation-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/reservation-intelligence/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/reservation-intelligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurant",
+      "reservations",
+      "availability",
+      "booking",
+      "agent-native"
+    ],
+    "keywords": [
+      "restaurant reservation availability",
+      "recommend reservation",
+      "no show risk",
+      "optimize seating",
+      "prepare reservation",
+      "book restaurant table"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 25,
+        "requestsPerMonth": 750
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.176,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/find-availability",
+            "pricePerCallUsdc": 0.03,
+            "description": "Find open reservation slots."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/recommend-reservation",
+            "pricePerCallUsdc": 0.15,
+            "description": "One-call workflow — recommend the best reservation."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/predict-no-show-risk",
+            "pricePerCallUsdc": 0.1,
+            "description": "Predict no-show risk for a booking context."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize-seating",
+            "pricePerCallUsdc": 0.1,
+            "description": "Optimize seating/table assignment for a set of bookings."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/prepare-reservation",
+            "pricePerCallUsdc": 0.5,
+            "description": "[GATED] Book or modify a reservation. Requires human approval."
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.1056,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/find-availability",
+            "pricePerCallUsdc": 0.018,
+            "description": "Find open reservation slots."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/recommend-reservation",
+            "pricePerCallUsdc": 0.09,
+            "description": "One-call workflow — recommend the best reservation."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/predict-no-show-risk",
+            "pricePerCallUsdc": 0.06,
+            "description": "Predict no-show risk for a booking context."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/optimize-seating",
+            "pricePerCallUsdc": 0.06,
+            "description": "Optimize seating/table assignment for a set of bookings."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/prepare-reservation",
+            "pricePerCallUsdc": 0.3,
+            "description": "[GATED] Book or modify a reservation. Requires human approval."
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "description": "Service discovery and capability manifest."
+      },
+      {
+        "method": "POST",
+        "path": "/find-availability",
+        "description": "Find open reservation slots."
+      },
+      {
+        "method": "POST",
+        "path": "/recommend-reservation",
+        "description": "One-call workflow — recommend the best reservation."
+      },
+      {
+        "method": "POST",
+        "path": "/predict-no-show-risk",
+        "description": "Predict no-show risk for a booking context."
+      },
+      {
+        "method": "POST",
+        "path": "/optimize-seating",
+        "description": "Optimize seating/table assignment for a set of bookings."
+      },
+      {
+        "method": "POST",
+        "path": "/prepare-reservation",
+        "description": "[GATED] Book or modify a reservation. Requires human approval."
+      }
+    ]
+  },
+  {
+    "name": "Franchise Opportunity API",
+    "shortDescription": "Identify, score, and produce due-diligence briefs for restaurant/franchise expansion and investment opportunities.",
+    "description": "Agent-native franchise and expansion intelligence. Analyze a franchise opportunity, compare candidate markets, score a specific location's fit, and generate an investment brief with franchise_fit_score, market_demand_score, competition_intensity, estimated_startup_cost, payback_period_estimate, location_risks, and an opportunity_summary. Built for investor, franchise-development, and advisory agents.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/franchise-opportunity",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/franchise-opportunity/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/franchise-opportunity/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "restaurant",
+      "franchise",
+      "investment",
+      "site-selection",
+      "agent-native"
+    ],
+    "keywords": [
+      "restaurant franchise opportunity",
+      "franchise market analysis",
+      "score location fit",
+      "franchise investment brief",
+      "restaurant expansion",
+      "site selection"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 25,
+        "requestsPerMonth": 750
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 2.5625,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-franchise-opportunity",
+            "pricePerCallUsdc": 1.0,
+            "description": "Analyze a franchise brand opportunity."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-franchise-markets",
+            "pricePerCallUsdc": 0.75,
+            "description": "Compare candidate markets for a brand."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-location-fit",
+            "pricePerCallUsdc": 0.5,
+            "description": "Score a specific site's fit for a brand."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-investment-brief",
+            "pricePerCallUsdc": 8.0,
+            "description": "One-call workflow — full investment due-diligence brief."
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 1.5375,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/",
+            "pricePerCallUsdc": 0.0,
+            "description": "Service discovery and capability manifest."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/analyze-franchise-opportunity",
+            "pricePerCallUsdc": 0.6,
+            "description": "Analyze a franchise brand opportunity."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare-franchise-markets",
+            "pricePerCallUsdc": 0.45,
+            "description": "Compare candidate markets for a brand."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/score-location-fit",
+            "pricePerCallUsdc": 0.3,
+            "description": "Score a specific site's fit for a brand."
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/generate-investment-brief",
+            "pricePerCallUsdc": 4.8,
+            "description": "One-call workflow — full investment due-diligence brief."
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/",
+        "description": "Service discovery and capability manifest."
+      },
+      {
+        "method": "POST",
+        "path": "/analyze-franchise-opportunity",
+        "description": "Analyze a franchise brand opportunity."
+      },
+      {
+        "method": "POST",
+        "path": "/compare-franchise-markets",
+        "description": "Compare candidate markets for a brand."
+      },
+      {
+        "method": "POST",
+        "path": "/score-location-fit",
+        "description": "Score a specific site's fit for a brand."
+      },
+      {
+        "method": "POST",
+        "path": "/generate-investment-brief",
+        "description": "One-call workflow — full investment due-diligence brief."
+      }
+    ]
+  }
+]
