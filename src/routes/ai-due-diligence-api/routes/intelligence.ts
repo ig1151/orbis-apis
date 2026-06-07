@@ -8,7 +8,7 @@ const MODEL = 'anthropic/claude-sonnet-4-5';
 async function callClaude(prompt: string): Promise<string> {
   const res = await axios.post(
     'https://openrouter.ai/api/v1/chat/completions',
-    { model: MODEL, messages: [{ role: 'user', content: prompt }] },
+    { model: MODEL, temperature: 0, messages: [{ role: 'user', content: prompt }] },
     { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' } }
   );
   return res.data.choices[0].message.content;
