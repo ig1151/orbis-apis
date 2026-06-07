@@ -494,6 +494,14 @@ import honeypotScannerOpenapiRouter from './routes/honeypot-scanner-api/routes/o
 import aiDueDiligenceRouter from './routes/ai-due-diligence-api/routes/intelligence';
 import ipSubnetCalculatorRouter from './routes/ip-subnet-calculator-api/routes/intelligence';
 import ipSubnetCalculatorOpenapiRouter from './routes/ip-subnet-calculator-api/routes/openapi';
+import uuidUlidRouter from './routes/uuid-ulid-generator-api/routes/intelligence';
+import uuidUlidOpenapiRouter from './routes/uuid-ulid-generator-api/routes/openapi';
+import colorContrastRouter from './routes/color-contrast-evaluator-api/routes/intelligence';
+import colorContrastOpenapiRouter from './routes/color-contrast-evaluator-api/routes/openapi';
+import geoCoordinateRouter from './routes/geo-coordinate-calculator-api/routes/intelligence';
+import geoCoordinateOpenapiRouter from './routes/geo-coordinate-calculator-api/routes/openapi';
+import timezoneHarmonizerRouter from './routes/timezone-harmonizer-api/routes/intelligence';
+import timezoneHarmonizerOpenapiRouter from './routes/timezone-harmonizer-api/routes/openapi';
 import nftCollectionAnalyticsRouter from './routes/nft-collection-analytics-api/routes/intelligence';
 import nftCollectionAnalyticsOpenapiRouter from './routes/nft-collection-analytics-api/routes/openapi';
 import aiTradeConfidenceRouter from './routes/ai-trade-confidence-api/routes/intelligence';
@@ -1100,6 +1108,10 @@ const routerMap: Record<string, import("express").Router> = {
   'honeypot-scanner': honeypotScannerRouter,
   'ai-due-diligence': aiDueDiligenceRouter,
   'ip-subnet-calculator': ipSubnetCalculatorRouter,
+  'uuid-ulid-generator': uuidUlidRouter,
+  'color-contrast-evaluator': colorContrastRouter,
+  'geo-coordinate-calculator': geoCoordinateRouter,
+  'timezone-harmonizer': timezoneHarmonizerRouter,
   'nft-collection-analytics': nftCollectionAnalyticsRouter,
   'ai-trade-confidence': aiTradeConfidenceRouter,
   'ohlcv-candlestick': ohlcvCandlestickRouter,
@@ -1480,6 +1492,10 @@ const openapiMap: Record<string, import("express").Router> = {
   'honeypot-scanner': honeypotScannerOpenapiRouter,
   'ai-due-diligence': openapiRouterFromRouter(aiDueDiligenceRouter, { slug: 'ai-due-diligence', title: 'AI Due Diligence API', description: 'One-call token investment due diligence: composite investment_score with fundamental, on-chain, liquidity and contract-safety sub-scores, red flags, bull/bear case and confidence.' }),
   'ip-subnet-calculator': ipSubnetCalculatorOpenapiRouter,
+  'uuid-ulid-generator': uuidUlidOpenapiRouter,
+  'color-contrast-evaluator': colorContrastOpenapiRouter,
+  'geo-coordinate-calculator': geoCoordinateOpenapiRouter,
+  'timezone-harmonizer': timezoneHarmonizerOpenapiRouter,
   'nft-collection-analytics': nftCollectionAnalyticsOpenapiRouter,
   'ai-trade-confidence': aiTradeConfidenceOpenapiRouter,
   'ohlcv-candlestick': ohlcvCandlestickOpenapiRouter,

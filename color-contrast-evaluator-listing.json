@@ -1,0 +1,33 @@
+{
+  "name": "Color Palette Contrast Evaluator API",
+  "shortDescription": "Deterministic WCAG 2.1 contrast ratios, AA/AAA pass-fail, and accessible alternatives for agents",
+  "description": "Agent-native accessibility evaluation. /contrast returns the exact WCAG 2.1 contrast ratio for a foreground/background pair with AA and AAA pass-fail for normal and large text. /palette recommends the optimal text color (black or white) and contrast for each swatch. The one-call /lookup adds accessible alternatives and a reasoning object. Real relative-luminance math — never estimated, confidence always 1.0. Ideal for design, UI-generation, and content agents enforcing accessibility before shipping.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json",
+  "tags": ["color", "contrast", "wcag", "accessibility", "a11y", "design", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["wcag contrast ratio api", "color contrast checker api", "aa aaa contrast api", "accessible color palette api", "text color contrast api", "a11y contrast evaluator"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 300, "requestsPerMonth": 9000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.003,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/contrast", "pricePerCallUsdc": 0.001, "description": "WCAG contrast ratio + AA/AAA pass-fail" },
+        { "method": "POST", "pathPattern": "/palette", "pricePerCallUsdc": 0.002, "description": "Per-color best text color + contrast" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL contrast + ratings + accessible alternatives" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/contrast", "description": "Contrast ratio + AA/AAA" },
+    { "method": "POST", "path": "/palette", "description": "Palette text-color recommendations" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL contrast workflow" }
+  ]
+}

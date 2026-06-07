@@ -1,0 +1,49 @@
+{
+  "name": "Timezone Offset Harmonizer API",
+  "version": "1.0.0",
+  "description": "Deterministic timezone conversion from absolute instants using the IANA/ICU database: normalize to UTC and express wall-clock time + offset in any zone. Real tz data — confidence 1.0.",
+  "openapi_url": "https://orbis-apis.onrender.com/timezone-harmonizer/openapi.json",
+  "auth": {
+    "type": "apiKey",
+    "header": "X-API-Key"
+  },
+  "notes": "Inputs must be absolute instants (ISO 8601 with Z/offset, or epoch ms). Naive local times are rejected to guarantee correctness.",
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/normalize",
+      "summary": "Normalize an absolute instant to UTC + epoch",
+      "price_usdc": 0.001
+    },
+    {
+      "method": "POST",
+      "path": "/convert",
+      "summary": "Express an instant in a target timezone (wall-clock + offset)",
+      "price_usdc": 0.002
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "summary": "ONE-CALL: UTC + many target zones + meeting-friendly view",
+      "price_usdc": 0.003
+    }
+  ],
+  "pricing": [
+    {
+      "path": "/normalize",
+      "price_usdc": 0.001,
+      "currency": "USDC"
+    },
+    {
+      "path": "/convert",
+      "price_usdc": 0.002,
+      "currency": "USDC"
+    },
+    {
+      "path": "/lookup",
+      "price_usdc": 0.003,
+      "currency": "USDC"
+    }
+  ],
+  "x402_compatible": true
+}

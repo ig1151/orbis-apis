@@ -1,0 +1,769 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Color Palette Contrast Evaluator API",
+    "version": "1.0.0",
+    "description": "Deterministic WCAG 2.1 contrast evaluation: AA/AAA pass-fail for text pairs, per-color text recommendations across a palette, and accessible alternatives. Real luminance math; confidence always 1.0.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/color-contrast-evaluator"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Service discovery",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contrast": {
+      "post": {
+        "operationId": "contrast",
+        "summary": "WCAG contrast ratio + AA/AAA pass-fail",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContrastResponse"
+                },
+                "example": {
+                  "trace_id": "c1-1780000000000",
+                  "computed_at": "2026-06-07T19:30:00.000Z",
+                  "success": true,
+                  "latency_ms": 0,
+                  "input": {
+                    "foreground": "#777777",
+                    "background": "#FFFFFF"
+                  },
+                  "contrast_ratio": 4.48,
+                  "ratings": {
+                    "aa_normal": false,
+                    "aa_large": true,
+                    "aaa_normal": false,
+                    "aaa_large": false,
+                    "highest_level": "AA Large only"
+                  },
+                  "confidence_score": 1,
+                  "recommended_actions_priority_order": [
+                    "Fails AA for normal text — darken/lighten one color or reserve for large text only."
+                  ],
+                  "chain_to": [],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ColorPair"
+              },
+              "example": {
+                "foreground": "#777777",
+                "background": "#FFFFFF"
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.001,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/palette": {
+      "post": {
+        "operationId": "palette",
+        "summary": "Per-color best text color + contrast",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaletteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaletteRequest"
+              },
+              "example": {
+                "colors": [
+                  "#1A2B3C",
+                  "#FFD700",
+                  "#0A0A0A"
+                ]
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.002,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL contrast + ratings + accessible alternatives",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ColorPair"
+              },
+              "example": {
+                "foreground": "#888888",
+                "background": "#FFFFFF"
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.003,
+          "currency": "USDC"
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "ChainTo": {
+        "type": "object",
+        "required": [
+          "api",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "api": {
+            "type": "string",
+            "description": "Slug of a recommended next API to call."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why an agent would chain to this API next."
+          }
+        }
+      },
+      "Reasoning": {
+        "type": "object",
+        "required": [
+          "why_result_generated",
+          "key_factors",
+          "invalidators"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "why_result_generated": {
+            "type": "string"
+          },
+          "key_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invalidators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Conditions that would change or invalidate this result."
+          }
+        }
+      },
+      "Privacy": {
+        "type": "object",
+        "required": [
+          "data_stored",
+          "retention"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data_stored": {
+            "type": "boolean"
+          },
+          "retention": {
+            "type": "string",
+            "description": "Retention policy, e.g. \"none\"."
+          }
+        }
+      },
+      "EnvelopeError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "description": "Optional machine-readable error context."
+          }
+        }
+      },
+      "Error400": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms",
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "latency_ms": {
+            "type": "integer"
+          },
+          "error": {
+            "$ref": "#/components/schemas/EnvelopeError"
+          }
+        }
+      },
+      "Error500": {
+        "$ref": "#/components/schemas/Error400"
+      },
+      "EnvelopeOk": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "latency_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "Tail": {
+        "type": "object",
+        "required": [
+          "confidence_score",
+          "recommended_actions_priority_order",
+          "chain_to",
+          "privacy"
+        ],
+        "properties": {
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "recommended_actions_priority_order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "chain_to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChainTo"
+            }
+          },
+          "privacy": {
+            "$ref": "#/components/schemas/Privacy"
+          }
+        }
+      },
+      "Ratings": {
+        "type": "object",
+        "required": [
+          "aa_normal",
+          "aa_large",
+          "aaa_normal",
+          "aaa_large",
+          "highest_level"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "aa_normal": {
+            "type": "boolean"
+          },
+          "aa_large": {
+            "type": "boolean"
+          },
+          "aaa_normal": {
+            "type": "boolean"
+          },
+          "aaa_large": {
+            "type": "boolean"
+          },
+          "highest_level": {
+            "type": "string",
+            "enum": [
+              "AAA",
+              "AA",
+              "AA Large only",
+              "Fail"
+            ]
+          }
+        }
+      },
+      "ColorPair": {
+        "type": "object",
+        "required": [
+          "foreground",
+          "background"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "foreground": {
+            "type": "string",
+            "example": "#777777"
+          },
+          "background": {
+            "type": "string",
+            "example": "#FFFFFF"
+          }
+        }
+      },
+      "PaletteItem": {
+        "type": "object",
+        "required": [
+          "color",
+          "recommended_text_color",
+          "text_contrast_ratio",
+          "text_meets_aa"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "color": {
+            "type": "string"
+          },
+          "recommended_text_color": {
+            "type": "string",
+            "enum": [
+              "#000000",
+              "#FFFFFF"
+            ]
+          },
+          "text_contrast_ratio": {
+            "type": "number"
+          },
+          "text_meets_aa": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Alternative": {
+        "type": "object",
+        "required": [
+          "suggestion",
+          "resulting_ratio",
+          "meets_aa"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "suggestion": {
+            "type": "string"
+          },
+          "resulting_ratio": {
+            "type": "number"
+          },
+          "meets_aa": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PaletteRequest": {
+        "type": "object",
+        "required": [
+          "colors"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "colors": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "#1A2B3C",
+              "#FFD700",
+              "#0A0A0A"
+            ]
+          }
+        }
+      },
+      "DiscoveryResponse": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "description",
+          "openapi_url",
+          "auth",
+          "endpoints",
+          "pricing",
+          "x402_compatible"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "openapi_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "auth": {
+            "type": "object",
+            "required": [
+              "type",
+              "header"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "header": {
+                "type": "string"
+              }
+            }
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "method",
+                "path",
+                "summary",
+                "price_usdc"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "pricing": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "price_usdc",
+                "currency"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                },
+                "currency": {
+                  "type": "string",
+                  "enum": [
+                    "USDC"
+                  ]
+                }
+              }
+            }
+          },
+          "x402_compatible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ContrastResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "type": "object",
+            "required": [
+              "input",
+              "contrast_ratio",
+              "ratings"
+            ],
+            "properties": {
+              "input": {
+                "$ref": "#/components/schemas/ColorPair"
+              },
+              "contrast_ratio": {
+                "type": "number"
+              },
+              "ratings": {
+                "$ref": "#/components/schemas/Ratings"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Tail"
+          }
+        ]
+      },
+      "PaletteResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "type": "object",
+            "required": [
+              "count",
+              "colors"
+            ],
+            "properties": {
+              "count": {
+                "type": "integer"
+              },
+              "colors": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PaletteItem"
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Tail"
+          }
+        ]
+      },
+      "LookupResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "type": "object",
+            "required": [
+              "input",
+              "contrast_ratio",
+              "ratings",
+              "accessible_alternatives",
+              "reasoning"
+            ],
+            "properties": {
+              "input": {
+                "$ref": "#/components/schemas/ColorPair"
+              },
+              "contrast_ratio": {
+                "type": "number"
+              },
+              "ratings": {
+                "$ref": "#/components/schemas/Ratings"
+              },
+              "accessible_alternatives": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Alternative"
+                }
+              },
+              "reasoning": {
+                "$ref": "#/components/schemas/Reasoning"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Tail"
+          }
+        ]
+      }
+    }
+  }
+}

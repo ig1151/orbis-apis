@@ -1,0 +1,749 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Timezone Offset Harmonizer API",
+    "version": "1.0.0",
+    "description": "Deterministic timezone conversion from absolute instants via the IANA/ICU database: normalize to UTC/epoch and express wall-clock time + offset + abbreviation in any zone. Naive local times are rejected to guarantee correctness. Confidence always 1.0.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/timezone-harmonizer"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Service discovery",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/normalize": {
+      "post": {
+        "operationId": "normalize",
+        "summary": "Normalize an absolute instant to UTC + epoch",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NormalizeResponse"
+                },
+                "example": {
+                  "trace_id": "t1-1780000000000",
+                  "computed_at": "2026-06-07T19:30:00.000Z",
+                  "success": true,
+                  "latency_ms": 0,
+                  "input": {
+                    "datetime": "2026-06-07T12:30:00-07:00"
+                  },
+                  "utc_iso": "2026-06-07T19:30:00.000Z",
+                  "epoch_ms": 1780860600000,
+                  "confidence_score": 1,
+                  "recommended_actions_priority_order": [
+                    "Store as UTC/epoch; convert to local only for display."
+                  ],
+                  "chain_to": [],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NormalizeRequest"
+              },
+              "example": {
+                "datetime": "2026-06-07T12:30:00-07:00"
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.001,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/convert": {
+      "post": {
+        "operationId": "convert",
+        "summary": "Express an instant in a target timezone",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConvertResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConvertRequest"
+              },
+              "example": {
+                "datetime": "2026-06-07T19:30:00Z",
+                "to_tz": "Asia/Tokyo"
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.002,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL UTC + many target zones",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LookupRequest"
+              },
+              "example": {
+                "datetime": "2026-06-07T19:30:00Z",
+                "to_tzs": [
+                  "America/Los_Angeles",
+                  "Europe/London",
+                  "Asia/Tokyo"
+                ]
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.003,
+          "currency": "USDC"
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "ChainTo": {
+        "type": "object",
+        "required": [
+          "api",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "api": {
+            "type": "string",
+            "description": "Slug of a recommended next API to call."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why an agent would chain to this API next."
+          }
+        }
+      },
+      "Reasoning": {
+        "type": "object",
+        "required": [
+          "why_result_generated",
+          "key_factors",
+          "invalidators"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "why_result_generated": {
+            "type": "string"
+          },
+          "key_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invalidators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Conditions that would change or invalidate this result."
+          }
+        }
+      },
+      "Privacy": {
+        "type": "object",
+        "required": [
+          "data_stored",
+          "retention"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data_stored": {
+            "type": "boolean"
+          },
+          "retention": {
+            "type": "string",
+            "description": "Retention policy, e.g. \"none\"."
+          }
+        }
+      },
+      "EnvelopeError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "description": "Optional machine-readable error context."
+          }
+        }
+      },
+      "Error400": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms",
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "latency_ms": {
+            "type": "integer"
+          },
+          "error": {
+            "$ref": "#/components/schemas/EnvelopeError"
+          }
+        }
+      },
+      "Error500": {
+        "$ref": "#/components/schemas/Error400"
+      },
+      "EnvelopeOk": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "latency_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "Tail": {
+        "type": "object",
+        "required": [
+          "confidence_score",
+          "recommended_actions_priority_order",
+          "chain_to",
+          "privacy"
+        ],
+        "properties": {
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "recommended_actions_priority_order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "chain_to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChainTo"
+            }
+          },
+          "privacy": {
+            "$ref": "#/components/schemas/Privacy"
+          }
+        }
+      },
+      "ZoneTime": {
+        "type": "object",
+        "required": [
+          "timezone",
+          "local_time",
+          "offset_minutes",
+          "offset_label",
+          "abbreviation"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "timezone": {
+            "type": "string"
+          },
+          "local_time": {
+            "type": "string",
+            "description": "Wall-clock ISO (no offset) in this zone."
+          },
+          "offset_minutes": {
+            "type": "integer"
+          },
+          "offset_label": {
+            "type": "string",
+            "example": "-07:00"
+          },
+          "abbreviation": {
+            "type": "string",
+            "example": "PDT"
+          }
+        }
+      },
+      "NormalizeRequest": {
+        "type": "object",
+        "required": [
+          "datetime"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "datetime": {
+            "type": [
+              "string",
+              "integer"
+            ],
+            "description": "Absolute instant: ISO 8601 with Z/offset, or epoch milliseconds.",
+            "example": "2026-06-07T19:30:00Z"
+          }
+        }
+      },
+      "ConvertRequest": {
+        "type": "object",
+        "required": [
+          "datetime",
+          "to_tz"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "datetime": {
+            "type": [
+              "string",
+              "integer"
+            ],
+            "description": "Absolute instant: ISO 8601 with Z/offset, or epoch milliseconds.",
+            "example": "2026-06-07T19:30:00Z"
+          },
+          "to_tz": {
+            "type": "string",
+            "example": "America/Los_Angeles"
+          }
+        }
+      },
+      "LookupRequest": {
+        "type": "object",
+        "required": [
+          "datetime",
+          "to_tzs"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "datetime": {
+            "type": [
+              "string",
+              "integer"
+            ],
+            "description": "Absolute instant: ISO 8601 with Z/offset, or epoch milliseconds.",
+            "example": "2026-06-07T19:30:00Z"
+          },
+          "to_tzs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 25,
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "America/Los_Angeles",
+              "Europe/London",
+              "Asia/Tokyo"
+            ]
+          }
+        }
+      },
+      "DiscoveryResponse": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "description",
+          "openapi_url",
+          "auth",
+          "notes",
+          "endpoints",
+          "pricing",
+          "x402_compatible"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "openapi_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "auth": {
+            "type": "object",
+            "required": [
+              "type",
+              "header"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "header": {
+                "type": "string"
+              }
+            }
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "method",
+                "path",
+                "summary",
+                "price_usdc"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "pricing": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "price_usdc",
+                "currency"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                },
+                "currency": {
+                  "type": "string",
+                  "enum": [
+                    "USDC"
+                  ]
+                }
+              }
+            }
+          },
+          "x402_compatible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NormalizeResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "type": "object",
+            "required": [
+              "input",
+              "utc_iso",
+              "epoch_ms"
+            ],
+            "properties": {
+              "input": {
+                "$ref": "#/components/schemas/NormalizeRequest"
+              },
+              "utc_iso": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "epoch_ms": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Tail"
+          }
+        ]
+      },
+      "ConvertResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "type": "object",
+            "required": [
+              "input",
+              "utc_iso",
+              "converted"
+            ],
+            "properties": {
+              "input": {
+                "$ref": "#/components/schemas/ConvertRequest"
+              },
+              "utc_iso": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "converted": {
+                "$ref": "#/components/schemas/ZoneTime"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Tail"
+          }
+        ]
+      },
+      "LookupResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "type": "object",
+            "required": [
+              "input",
+              "utc_iso",
+              "epoch_ms",
+              "zones",
+              "reasoning"
+            ],
+            "properties": {
+              "input": {
+                "$ref": "#/components/schemas/LookupRequest"
+              },
+              "utc_iso": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "epoch_ms": {
+                "type": "integer"
+              },
+              "zones": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ZoneTime"
+                }
+              },
+              "reasoning": {
+                "$ref": "#/components/schemas/Reasoning"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Tail"
+          }
+        ]
+      }
+    }
+  }
+}

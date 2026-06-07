@@ -1,0 +1,33 @@
+{
+  "name": "Timezone Offset Harmonizer API",
+  "shortDescription": "Deterministic timezone conversion and UTC normalization from absolute instants for agents",
+  "description": "Agent-native timezone math backed by the IANA/ICU database. /normalize converts any absolute instant (ISO 8601 with Z/offset, or epoch ms) to UTC and epoch. /convert expresses that instant as wall-clock time, UTC offset, and zone abbreviation (DST-correct, e.g. PST vs PDT) in a target timezone. The one-call /lookup harmonizes one instant across up to 25 zones for meeting scheduling, with a reasoning object. Naive local times are rejected to guarantee correctness — never guessed, confidence always 1.0.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/timezone-harmonizer",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/timezone-harmonizer/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/timezone-harmonizer/openapi.json",
+  "tags": ["timezone", "utc", "dst", "scheduling", "datetime", "developer-tools", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["timezone converter api", "utc normalization api", "iana timezone api", "dst offset api", "meeting timezone harmonizer", "convert time between zones api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 300, "requestsPerMonth": 9000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.003,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/normalize", "pricePerCallUsdc": 0.001, "description": "Normalize an absolute instant to UTC + epoch" },
+        { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.002, "description": "Express an instant in a target timezone" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL UTC + many target zones + meeting-friendly view" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/normalize", "description": "Normalize to UTC/epoch" },
+    { "method": "POST", "path": "/convert", "description": "Convert to a timezone" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL multi-zone harmonize" }
+  ]
+}
