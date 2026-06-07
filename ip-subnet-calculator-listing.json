@@ -1,0 +1,33 @@
+{
+  "name": "IP Subnet Calculator API",
+  "shortDescription": "Deterministic IPv4 CIDR math — subnet boundaries, usable host ranges, and overlap detection for network agents",
+  "description": "Agent-native IPv4 subnet workflow. Given a CIDR, returns network and broadcast addresses, netmask and wildcard mask, usable host range, total/usable counts, and RFC1918 private-range detection — computed in real bitmask arithmetic (confidence always 1.0, never estimated). /overlap detects disjoint/identical/containment/partial relationships between two blocks for conflict-free allocation. The one-call /lookup combines a full subnet breakdown with an optional overlap check, a reasoning object, prioritized recommended actions, and chain_to pointers to IP geolocation and IP intelligence for per-host follow-up. Atomic, fast, and cheap for autonomous networking and IPAM agents.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/ip-subnet-calculator",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/ip-subnet-calculator/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/ip-subnet-calculator/openapi.json",
+  "tags": ["ip", "subnet", "cidr", "networking", "ipam", "developer-tools", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["ip subnet calculator api", "cidr calculator api", "subnet mask api", "cidr overlap detection", "usable host range api", "rfc1918 private ip check"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.003,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/calculate", "pricePerCallUsdc": 0.001, "description": "CIDR → network, broadcast, mask, usable host range" },
+        { "method": "POST", "pathPattern": "/overlap", "pricePerCallUsdc": 0.002, "description": "Overlap/containment detection between two CIDR blocks" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL full subnet breakdown + optional overlap + recommendations" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/calculate", "description": "CIDR subnet breakdown" },
+    { "method": "POST", "path": "/overlap", "description": "Two-CIDR overlap/containment detection" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL subnet + overlap workflow" }
+  ]
+}
