@@ -1,0 +1,48 @@
+{
+  "name": "IP Subnet Calculator API",
+  "version": "1.0.0",
+  "description": "Deterministic IPv4 CIDR math for network-aware agents: subnet boundaries, usable host ranges, mask conversion, and overlap detection. Real computation — no estimation.",
+  "openapi_url": "https://orbis-apis.onrender.com/ip-subnet-calculator/openapi.json",
+  "auth": {
+    "type": "apiKey",
+    "header": "X-API-Key"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/calculate",
+      "summary": "CIDR → network, broadcast, mask, usable host range",
+      "price_usdc": 0.001
+    },
+    {
+      "method": "POST",
+      "path": "/overlap",
+      "summary": "Detect overlap/containment between two CIDR blocks",
+      "price_usdc": 0.002
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "summary": "ONE-CALL: full subnet breakdown + optional overlap + recommendations",
+      "price_usdc": 0.003
+    }
+  ],
+  "pricing": [
+    {
+      "path": "/calculate",
+      "price_usdc": 0.001,
+      "currency": "USDC"
+    },
+    {
+      "path": "/overlap",
+      "price_usdc": 0.002,
+      "currency": "USDC"
+    },
+    {
+      "path": "/lookup",
+      "price_usdc": 0.003,
+      "currency": "USDC"
+    }
+  ],
+  "x402_compatible": true
+}

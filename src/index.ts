@@ -492,6 +492,8 @@ import tvlAnalyticsOpenapiRouter from './routes/tvl-analytics-api/routes/openapi
 import honeypotScannerRouter from './routes/honeypot-scanner-api/routes/intelligence';
 import honeypotScannerOpenapiRouter from './routes/honeypot-scanner-api/routes/openapi';
 import aiDueDiligenceRouter from './routes/ai-due-diligence-api/routes/intelligence';
+import ipSubnetCalculatorRouter from './routes/ip-subnet-calculator-api/routes/intelligence';
+import ipSubnetCalculatorOpenapiRouter from './routes/ip-subnet-calculator-api/routes/openapi';
 import nftCollectionAnalyticsRouter from './routes/nft-collection-analytics-api/routes/intelligence';
 import nftCollectionAnalyticsOpenapiRouter from './routes/nft-collection-analytics-api/routes/openapi';
 import aiTradeConfidenceRouter from './routes/ai-trade-confidence-api/routes/intelligence';
@@ -1097,6 +1099,7 @@ const routerMap: Record<string, import("express").Router> = {
   'tvl-analytics': tvlAnalyticsRouter,
   'honeypot-scanner': honeypotScannerRouter,
   'ai-due-diligence': aiDueDiligenceRouter,
+  'ip-subnet-calculator': ipSubnetCalculatorRouter,
   'nft-collection-analytics': nftCollectionAnalyticsRouter,
   'ai-trade-confidence': aiTradeConfidenceRouter,
   'ohlcv-candlestick': ohlcvCandlestickRouter,
@@ -1476,6 +1479,7 @@ const openapiMap: Record<string, import("express").Router> = {
   'tvl-analytics': tvlAnalyticsOpenapiRouter,
   'honeypot-scanner': honeypotScannerOpenapiRouter,
   'ai-due-diligence': openapiRouterFromRouter(aiDueDiligenceRouter, { slug: 'ai-due-diligence', title: 'AI Due Diligence API', description: 'One-call token investment due diligence: composite investment_score with fundamental, on-chain, liquidity and contract-safety sub-scores, red flags, bull/bear case and confidence.' }),
+  'ip-subnet-calculator': ipSubnetCalculatorOpenapiRouter,
   'nft-collection-analytics': nftCollectionAnalyticsOpenapiRouter,
   'ai-trade-confidence': aiTradeConfidenceOpenapiRouter,
   'ohlcv-candlestick': ohlcvCandlestickOpenapiRouter,
