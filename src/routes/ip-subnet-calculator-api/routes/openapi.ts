@@ -18,7 +18,7 @@ const SubnetCore = {
     'netmask', 'wildcard_mask', 'first_usable_host', 'last_usable_host',
     'total_addresses', 'usable_hosts', 'is_private',
   ],
-  additionalProperties: false,
+  // allOf branch — strictness via unevaluatedProperties:false on composites.
   properties: {
     input: {
       type: 'object', required: ['cidr'], additionalProperties: false,
@@ -41,7 +41,7 @@ const SubnetCore = {
 const OverlapCore = {
   type: 'object',
   required: ['overlaps', 'relationship', 'overlap_address_count', 'overlap_start', 'overlap_end'],
-  additionalProperties: false,
+  // allOf branch — strictness via unevaluatedProperties:false on composites.
   properties: {
     overlaps: { type: 'boolean' },
     relationship: { type: 'string', enum: ['disjoint', 'identical', 'a_contains_b', 'b_contains_a', 'partial'] },
@@ -72,6 +72,7 @@ const schemas = {
       { type: 'object', required: ['input'], properties: { input: { $ref: '#/components/schemas/OverlapRequest' } } },
       { $ref: '#/components/schemas/OverlapCore' },
     ],
+    unevaluatedProperties: false,
   },
   CidrRequest: {
     type: 'object', required: ['cidr'], additionalProperties: false,
@@ -115,7 +116,7 @@ const schemas = {
       x402_compatible: { type: 'boolean' },
     },
   },
-  CalculateResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/SubnetCore' }, { $ref: '#/components/schemas/_Tail' }] },
+  CalculateResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/SubnetCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   OverlapResponse: {
     allOf: [
       { $ref: '#/components/schemas/EnvelopeOk' },
@@ -123,6 +124,7 @@ const schemas = {
       { $ref: '#/components/schemas/OverlapCore' },
       { $ref: '#/components/schemas/_Tail' },
     ],
+    unevaluatedProperties: false,
   },
   LookupResponse: {
     allOf: [
@@ -138,6 +140,7 @@ const schemas = {
       },
       { $ref: '#/components/schemas/_Tail' },
     ],
+    unevaluatedProperties: false,
   },
   _Tail: Tail,
 };

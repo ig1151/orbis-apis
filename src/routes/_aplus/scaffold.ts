@@ -60,6 +60,7 @@ export interface AplusEndpoint {
   responseSchemaRef: string;     // component schema name for the 200 payload
   requestExample?: unknown;      // example request body (rendered in the spec)
   responseExample?: unknown;     // example 200 payload (rendered in the spec)
+  oneCall?: boolean;             // marks an aggregating one-call endpoint (x-one-call: true)
   // optional safety extensions
   executionGateRequired?: boolean;
   humanApprovalRequired?: boolean;
@@ -180,6 +181,7 @@ export function buildAplusSpec(meta: AplusSpecMeta): Record<string, unknown> {
     if (ep.priceUsdc && ep.priceUsdc > 0) {
       op['x-pricing'] = { model: 'per_call', price_usdc: ep.priceUsdc, currency: 'USDC' };
     }
+    if (ep.oneCall) op['x-one-call'] = true;
     if (ep.executionGateRequired) op['x-execution-gate-required'] = true;
     if (ep.humanApprovalRequired) op['x-human-approval-required'] = true;
     if (ep.paperModeRecommended) op['x-paper-mode-recommended'] = true;

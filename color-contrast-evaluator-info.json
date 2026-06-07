@@ -1,0 +1,48 @@
+{
+  "name": "Color Palette Contrast Evaluator API",
+  "version": "1.0.0",
+  "description": "Deterministic WCAG 2.1 contrast-ratio evaluation: AA/AAA pass-fail for text, palette text-color recommendations, and accessible alternatives. Real luminance math — confidence 1.0.",
+  "openapi_url": "https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json",
+  "auth": {
+    "type": "apiKey",
+    "header": "X-API-Key"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/contrast",
+      "summary": "WCAG contrast ratio + AA/AAA pass-fail for a fg/bg pair",
+      "price_usdc": 0.005
+    },
+    {
+      "method": "POST",
+      "path": "/palette",
+      "summary": "Per-color best text color + contrast for a palette",
+      "price_usdc": 0.008
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "summary": "ONE-CALL: contrast + ratings + accessible alternatives",
+      "price_usdc": 0.015
+    }
+  ],
+  "pricing": [
+    {
+      "path": "/contrast",
+      "price_usdc": 0.005,
+      "currency": "USDC"
+    },
+    {
+      "path": "/palette",
+      "price_usdc": 0.008,
+      "currency": "USDC"
+    },
+    {
+      "path": "/lookup",
+      "price_usdc": 0.015,
+      "currency": "USDC"
+    }
+  ],
+  "x402_compatible": true
+}

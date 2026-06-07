@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "IP Subnet Calculator API",
+    "title": "Geospatial Coordinate Calculator API",
     "version": "1.0.0",
-    "description": "Deterministic IPv4 CIDR math for network-aware agents: subnet boundaries, usable host ranges, mask conversion, and overlap/containment detection. Real bitmask computation — no estimation, confidence always 1.0.",
+    "description": "Deterministic great-circle geometry: Haversine distance (km/mi/m/nmi), initial bearing with cardinal direction, and midpoint between two coordinates. Real spherical math; confidence always 1.0.",
     "x-agent-callable": true,
     "x-mcp-compatible": true,
     "x402-compatible": true,
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "https://orbis-apis.onrender.com/ip-subnet-calculator"
+      "url": "https://orbis-apis.onrender.com/geo-coordinate-calculator"
     }
   ],
   "security": [
@@ -59,50 +59,51 @@
         }
       }
     },
-    "/calculate": {
+    "/distance": {
       "post": {
-        "operationId": "calculate",
-        "summary": "CIDR → network/broadcast/mask/usable host range",
+        "operationId": "distance",
+        "summary": "Great-circle distance + bearing",
         "responses": {
           "200": {
             "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CalculateResponse"
+                  "$ref": "#/components/schemas/DistanceResponse"
                 },
                 "example": {
-                  "trace_id": "a1b2c3d4-1780000000000",
+                  "trace_id": "g1-1780000000000",
                   "computed_at": "2026-06-07T19:30:00.000Z",
                   "success": true,
                   "latency_ms": 0,
                   "input": {
-                    "cidr": "192.168.1.0/24"
+                    "from": {
+                      "lat": 40.7128,
+                      "lon": -74.006
+                    },
+                    "to": {
+                      "lat": 34.0522,
+                      "lon": -118.2437
+                    },
+                    "unit": "km"
                   },
-                  "ip_version": "IPv4",
-                  "cidr_prefix": 24,
-                  "network_address": "192.168.1.0",
-                  "broadcast_address": "192.168.1.255",
-                  "netmask": "255.255.255.0",
-                  "wildcard_mask": "0.0.0.255",
-                  "first_usable_host": "192.168.1.1",
-                  "last_usable_host": "192.168.1.254",
-                  "total_addresses": 256,
-                  "usable_hosts": 254,
-                  "is_private": true,
+                  "distance": 3935.746,
+                  "unit": "km",
+                  "method": "haversine",
+                  "initial_bearing_deg": 273.65,
+                  "cardinal_direction": "W",
                   "confidence_score": 1,
                   "recommended_actions_priority_order": [
-                    "Allocate hosts between 192.168.1.1 and 192.168.1.254.",
-                    "Private (RFC1918) range — not internet-routable."
+                    "Bearing W — heading from origin to destination."
                   ],
                   "chain_to": [
                     {
-                      "api": "ip-geolocation",
-                      "reason": "Geolocate specific hosts discovered within this subnet."
+                      "api": "timezone-harmonizer",
+                      "reason": "Get the local time at the destination coordinates."
                     },
                     {
-                      "api": "ip-intelligence",
-                      "reason": "Threat-score and detect VPN/proxy on hosts in this range."
+                      "api": "local-business",
+                      "reason": "Find businesses near these coordinates."
                     }
                   ],
                   "privacy": {
@@ -139,66 +140,40 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CidrRequest"
+                "$ref": "#/components/schemas/DistanceRequest"
               },
               "example": {
-                "cidr": "192.168.1.0/24"
+                "from": {
+                  "lat": 40.7128,
+                  "lon": -74.006
+                },
+                "to": {
+                  "lat": 34.0522,
+                  "lon": -118.2437
+                },
+                "unit": "km"
               }
             }
           }
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.001,
+          "price_usdc": 0.005,
           "currency": "USDC"
         }
       }
     },
-    "/overlap": {
+    "/batch": {
       "post": {
-        "operationId": "overlap",
-        "summary": "Detect overlap/containment between two CIDR blocks",
+        "operationId": "batch",
+        "summary": "Distances/bearings for many pairs",
         "responses": {
           "200": {
             "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OverlapResponse"
-                },
-                "example": {
-                  "trace_id": "b2c3d4e5-1780000000000",
-                  "computed_at": "2026-06-07T19:30:00.000Z",
-                  "success": true,
-                  "latency_ms": 0,
-                  "input": {
-                    "cidr_a": "10.0.0.0/16",
-                    "cidr_b": "10.0.5.0/24"
-                  },
-                  "overlaps": true,
-                  "relationship": "a_contains_b",
-                  "overlap_address_count": 256,
-                  "overlap_start": "10.0.5.0",
-                  "overlap_end": "10.0.5.255",
-                  "confidence_score": 1,
-                  "recommended_actions_priority_order": [
-                    "Resolve the address conflict before assigning either block.",
-                    "Relationship: a_contains_b."
-                  ],
-                  "chain_to": [
-                    {
-                      "api": "ip-geolocation",
-                      "reason": "Geolocate specific hosts discovered within this subnet."
-                    },
-                    {
-                      "api": "ip-intelligence",
-                      "reason": "Threat-score and detect VPN/proxy on hosts in this range."
-                    }
-                  ],
-                  "privacy": {
-                    "data_stored": false,
-                    "retention": "none"
-                  }
+                  "$ref": "#/components/schemas/BatchResponse"
                 }
               }
             }
@@ -229,18 +204,29 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OverlapRequest"
+                "$ref": "#/components/schemas/BatchRequest"
               },
               "example": {
-                "cidr_a": "10.0.0.0/16",
-                "cidr_b": "10.0.5.0/24"
+                "pairs": [
+                  {
+                    "from": {
+                      "lat": 51.5074,
+                      "lon": -0.1278
+                    },
+                    "to": {
+                      "lat": 48.8566,
+                      "lon": 2.3522
+                    }
+                  }
+                ],
+                "unit": "km"
               }
             }
           }
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.002,
+          "price_usdc": 0.01,
           "currency": "USDC"
         }
       }
@@ -248,7 +234,7 @@
     "/lookup": {
       "post": {
         "operationId": "lookup",
-        "summary": "ONE-CALL full subnet breakdown + optional overlap",
+        "summary": "ONE-CALL distance + bearing + midpoint",
         "responses": {
           "200": {
             "description": "Successful response",
@@ -256,71 +242,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LookupResponse"
-                },
-                "example": {
-                  "trace_id": "c3d4e5f6-1780000000000",
-                  "computed_at": "2026-06-07T19:30:00.000Z",
-                  "success": true,
-                  "latency_ms": 0,
-                  "subnet": {
-                    "input": {
-                      "cidr": "10.0.0.0/24"
-                    },
-                    "ip_version": "IPv4",
-                    "cidr_prefix": 24,
-                    "network_address": "10.0.0.0",
-                    "broadcast_address": "10.0.0.255",
-                    "netmask": "255.255.255.0",
-                    "wildcard_mask": "0.0.0.255",
-                    "first_usable_host": "10.0.0.1",
-                    "last_usable_host": "10.0.0.254",
-                    "total_addresses": 256,
-                    "usable_hosts": 254,
-                    "is_private": true
-                  },
-                  "overlap": {
-                    "input": {
-                      "cidr_a": "10.0.0.0/24",
-                      "cidr_b": "10.0.0.128/25"
-                    },
-                    "overlaps": true,
-                    "relationship": "a_contains_b",
-                    "overlap_address_count": 128,
-                    "overlap_start": "10.0.0.128",
-                    "overlap_end": "10.0.0.255"
-                  },
-                  "reasoning": {
-                    "why_result_generated": "Computed directly from the CIDR using deterministic IPv4 bitmask arithmetic.",
-                    "key_factors": [
-                      "prefix /24",
-                      "254 usable hosts",
-                      "RFC1918 private"
-                    ],
-                    "invalidators": [
-                      "Input is IPv6 (not supported).",
-                      "CIDR prefix or octets out of range."
-                    ]
-                  },
-                  "confidence_score": 1,
-                  "recommended_actions_priority_order": [
-                    "Usable host pool: 10.0.0.1 – 10.0.0.254 (254).",
-                    "Overlaps other_cidr (a_contains_b) — resolve before assignment.",
-                    "Private range — add NAT/route policy for egress."
-                  ],
-                  "chain_to": [
-                    {
-                      "api": "ip-geolocation",
-                      "reason": "Geolocate specific hosts discovered within this subnet."
-                    },
-                    {
-                      "api": "ip-intelligence",
-                      "reason": "Threat-score and detect VPN/proxy on hosts in this range."
-                    }
-                  ],
-                  "privacy": {
-                    "data_stored": false,
-                    "retention": "none"
-                  }
                 }
               }
             }
@@ -351,20 +272,28 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LookupRequest"
+                "$ref": "#/components/schemas/DistanceRequest"
               },
               "example": {
-                "cidr": "10.0.0.0/24",
-                "other_cidr": "10.0.0.128/25"
+                "from": {
+                  "lat": 35.6762,
+                  "lon": 139.6503
+                },
+                "to": {
+                  "lat": 1.3521,
+                  "lon": 103.8198
+                },
+                "unit": "km"
               }
             }
           }
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.003,
+          "price_usdc": 0.015,
           "currency": "USDC"
-        }
+        },
+        "x-one-call": true
       }
     }
   },
@@ -521,196 +450,150 @@
           }
         }
       },
-      "SubnetCore": {
+      "Tail": {
         "type": "object",
         "required": [
-          "input",
-          "ip_version",
-          "cidr_prefix",
-          "network_address",
-          "broadcast_address",
-          "netmask",
-          "wildcard_mask",
-          "first_usable_host",
-          "last_usable_host",
-          "total_addresses",
-          "usable_hosts",
-          "is_private"
+          "confidence_score",
+          "recommended_actions_priority_order",
+          "chain_to",
+          "privacy"
         ],
         "properties": {
-          "input": {
-            "type": "object",
-            "required": [
-              "cidr"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "cidr": {
-                "type": "string",
-                "example": "10.0.0.0/24"
-              }
-            }
-          },
-          "ip_version": {
-            "type": "string",
-            "enum": [
-              "IPv4"
-            ]
-          },
-          "cidr_prefix": {
-            "type": "integer",
+          "confidence_score": {
+            "type": "number",
             "minimum": 0,
-            "maximum": 32
+            "maximum": 1
           },
-          "network_address": {
-            "type": "string"
+          "recommended_actions_priority_order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
-          "broadcast_address": {
-            "type": "string"
+          "chain_to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChainTo"
+            }
           },
-          "netmask": {
-            "type": "string"
-          },
-          "wildcard_mask": {
-            "type": "string"
-          },
-          "first_usable_host": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "last_usable_host": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "total_addresses": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "usable_hosts": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "is_private": {
-            "type": "boolean"
+          "privacy": {
+            "$ref": "#/components/schemas/Privacy"
           }
         }
       },
-      "OverlapCore": {
+      "Point": {
         "type": "object",
         "required": [
-          "overlaps",
-          "relationship",
-          "overlap_address_count",
-          "overlap_start",
-          "overlap_end"
+          "lat",
+          "lon"
         ],
+        "additionalProperties": false,
         "properties": {
-          "overlaps": {
-            "type": "boolean"
+          "lat": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
           },
-          "relationship": {
-            "type": "string",
-            "enum": [
-              "disjoint",
-              "identical",
-              "a_contains_b",
-              "b_contains_a",
-              "partial"
-            ]
-          },
-          "overlap_address_count": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "overlap_start": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "overlap_end": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "lon": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
           }
         }
       },
-      "OverlapResult": {
-        "allOf": [
-          {
-            "type": "object",
-            "required": [
-              "input"
+      "DistanceRequest": {
+        "type": "object",
+        "required": [
+          "from",
+          "to"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "to": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "km",
+              "mi",
+              "m",
+              "nmi"
             ],
-            "properties": {
-              "input": {
-                "$ref": "#/components/schemas/OverlapRequest"
+            "default": "km"
+          }
+        }
+      },
+      "BatchRequest": {
+        "type": "object",
+        "required": [
+          "pairs"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "pairs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "required": [
+                "from",
+                "to"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "from": {
+                  "$ref": "#/components/schemas/Point"
+                },
+                "to": {
+                  "$ref": "#/components/schemas/Point"
+                }
               }
             }
           },
-          {
-            "$ref": "#/components/schemas/OverlapCore"
-          }
-        ],
-        "unevaluatedProperties": false
-      },
-      "CidrRequest": {
-        "type": "object",
-        "required": [
-          "cidr"
-        ],
-        "additionalProperties": false,
-        "properties": {
-          "cidr": {
+          "unit": {
             "type": "string",
-            "description": "IPv4 CIDR, e.g. 192.168.1.0/24",
-            "example": "192.168.1.0/24"
+            "enum": [
+              "km",
+              "mi",
+              "m",
+              "nmi"
+            ],
+            "default": "km"
           }
         }
       },
-      "OverlapRequest": {
+      "BatchItem": {
         "type": "object",
         "required": [
-          "cidr_a",
-          "cidr_b"
+          "index",
+          "distance",
+          "initial_bearing_deg",
+          "cardinal_direction"
         ],
         "additionalProperties": false,
         "properties": {
-          "cidr_a": {
-            "type": "string",
-            "example": "10.0.0.0/16"
+          "index": {
+            "type": "integer"
           },
-          "cidr_b": {
-            "type": "string",
-            "example": "10.0.5.0/24"
-          }
-        }
-      },
-      "LookupRequest": {
-        "type": "object",
-        "required": [
-          "cidr"
-        ],
-        "additionalProperties": false,
-        "properties": {
-          "cidr": {
-            "type": "string",
-            "example": "10.0.0.0/24"
+          "distance": {
+            "type": "number"
           },
-          "other_cidr": {
-            "type": "string",
-            "description": "Optional second CIDR to overlap-check against.",
-            "example": "10.0.0.128/25"
+          "initial_bearing_deg": {
+            "type": "number"
+          },
+          "cardinal_direction": {
+            "type": "string"
           }
         }
       },
       "DiscoveryResponse": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "name",
           "version",
@@ -809,21 +692,7 @@
           }
         }
       },
-      "CalculateResponse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EnvelopeOk"
-          },
-          {
-            "$ref": "#/components/schemas/SubnetCore"
-          },
-          {
-            "$ref": "#/components/schemas/_Tail"
-          }
-        ],
-        "unevaluatedProperties": false
-      },
-      "OverlapResponse": {
+      "DistanceResponse": {
         "allOf": [
           {
             "$ref": "#/components/schemas/EnvelopeOk"
@@ -831,19 +700,109 @@
           {
             "type": "object",
             "required": [
-              "input"
+              "input",
+              "distance",
+              "unit",
+              "method",
+              "initial_bearing_deg",
+              "cardinal_direction"
             ],
             "properties": {
               "input": {
-                "$ref": "#/components/schemas/OverlapRequest"
+                "type": "object",
+                "required": [
+                  "from",
+                  "to",
+                  "unit"
+                ],
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/Point"
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/Point"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "enum": [
+                      "km",
+                      "mi",
+                      "m",
+                      "nmi"
+                    ],
+                    "default": "km"
+                  }
+                }
+              },
+              "distance": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "km",
+                  "mi",
+                  "m",
+                  "nmi"
+                ],
+                "default": "km"
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "haversine"
+                ]
+              },
+              "initial_bearing_deg": {
+                "type": "number"
+              },
+              "cardinal_direction": {
+                "type": "string"
               }
             }
           },
           {
-            "$ref": "#/components/schemas/OverlapCore"
+            "$ref": "#/components/schemas/Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "BatchResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
           },
           {
-            "$ref": "#/components/schemas/_Tail"
+            "type": "object",
+            "required": [
+              "unit",
+              "count",
+              "results"
+            ],
+            "properties": {
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "km",
+                  "mi",
+                  "m",
+                  "nmi"
+                ],
+                "default": "km"
+              },
+              "count": {
+                "type": "integer"
+              },
+              "results": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/BatchItem"
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Tail"
           }
         ],
         "unevaluatedProperties": false
@@ -856,23 +815,69 @@
           {
             "type": "object",
             "required": [
-              "subnet",
-              "overlap",
+              "input",
+              "distance",
+              "unit",
+              "method",
+              "initial_bearing_deg",
+              "cardinal_direction",
+              "midpoint",
               "reasoning"
             ],
             "properties": {
-              "subnet": {
-                "$ref": "#/components/schemas/SubnetCore"
-              },
-              "overlap": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/OverlapResult"
+              "input": {
+                "type": "object",
+                "required": [
+                  "from",
+                  "to",
+                  "unit"
+                ],
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/Point"
                   },
-                  {
-                    "type": "null"
+                  "to": {
+                    "$ref": "#/components/schemas/Point"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "enum": [
+                      "km",
+                      "mi",
+                      "m",
+                      "nmi"
+                    ],
+                    "default": "km"
                   }
+                }
+              },
+              "distance": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "km",
+                  "mi",
+                  "m",
+                  "nmi"
+                ],
+                "default": "km"
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "haversine"
                 ]
+              },
+              "initial_bearing_deg": {
+                "type": "number"
+              },
+              "cardinal_direction": {
+                "type": "string"
+              },
+              "midpoint": {
+                "$ref": "#/components/schemas/Point"
               },
               "reasoning": {
                 "$ref": "#/components/schemas/Reasoning"
@@ -880,41 +885,10 @@
             }
           },
           {
-            "$ref": "#/components/schemas/_Tail"
+            "$ref": "#/components/schemas/Tail"
           }
         ],
         "unevaluatedProperties": false
-      },
-      "_Tail": {
-        "type": "object",
-        "required": [
-          "confidence_score",
-          "recommended_actions_priority_order",
-          "chain_to",
-          "privacy"
-        ],
-        "properties": {
-          "confidence_score": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "recommended_actions_priority_order": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "chain_to": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ChainTo"
-            }
-          },
-          "privacy": {
-            "$ref": "#/components/schemas/Privacy"
-          }
-        }
       }
     }
   }

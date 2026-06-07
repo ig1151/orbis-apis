@@ -1,0 +1,48 @@
+{
+  "name": "Geospatial Coordinate Calculator API",
+  "version": "1.0.0",
+  "description": "Deterministic great-circle geometry: distance (Haversine), initial bearing, and midpoint between coordinates. Real spherical math — confidence 1.0.",
+  "openapi_url": "https://orbis-apis.onrender.com/geo-coordinate-calculator/openapi.json",
+  "auth": {
+    "type": "apiKey",
+    "header": "X-API-Key"
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/distance",
+      "summary": "Great-circle distance + bearing between two points",
+      "price_usdc": 0.005
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "summary": "Distances/bearings for many coordinate pairs",
+      "price_usdc": 0.01
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "summary": "ONE-CALL: distance + bearing + midpoint + direction",
+      "price_usdc": 0.015
+    }
+  ],
+  "pricing": [
+    {
+      "path": "/distance",
+      "price_usdc": 0.005,
+      "currency": "USDC"
+    },
+    {
+      "path": "/batch",
+      "price_usdc": 0.01,
+      "currency": "USDC"
+    },
+    {
+      "path": "/lookup",
+      "price_usdc": 0.015,
+      "currency": "USDC"
+    }
+  ],
+  "x402_compatible": true
+}
