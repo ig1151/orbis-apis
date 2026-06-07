@@ -7,27 +7,77 @@
   "websiteUrl": "https://orbis-apis.onrender.com",
   "docsUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json",
   "openApiSpecUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json",
-  "tags": ["color", "contrast", "wcag", "accessibility", "a11y", "design", "x402", "coinbase-bazaar", "agentic-market"],
-  "keywords": ["wcag contrast ratio api", "color contrast checker api", "aa aaa contrast api", "accessible color palette api", "text color contrast api", "a11y contrast evaluator"],
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "color",
+    "contrast",
+    "wcag",
+    "accessibility",
+    "a11y",
+    "design",
+    "x402",
+    "coinbase-bazaar",
+    "agentic-market"
+  ],
+  "keywords": [
+    "wcag contrast ratio api",
+    "color contrast checker api",
+    "aa aaa contrast api",
+    "accessible color palette api",
+    "text color contrast api",
+    "a11y contrast evaluator"
+  ],
   "tiers": [
-    { "name": "Free", "isFree": true, "requestsPerDay": 300, "requestsPerMonth": 9000 },
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 300,
+      "requestsPerMonth": 9000
+    },
     {
       "name": "Pay Per Call",
       "isFree": false,
       "pricingType": "per_call",
-      "pricePerCall": 0.003,
+      "pricePerCall": 0.015,
       "requestsPerDay": 100000,
       "requestsPerMonth": 3000000,
       "endpointPricing": [
-        { "method": "POST", "pathPattern": "/contrast", "pricePerCallUsdc": 0.001, "description": "WCAG contrast ratio + AA/AAA pass-fail" },
-        { "method": "POST", "pathPattern": "/palette", "pricePerCallUsdc": 0.002, "description": "Per-color best text color + contrast" },
-        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL contrast + ratings + accessible alternatives" }
+        {
+          "method": "POST",
+          "pathPattern": "/contrast",
+          "pricePerCallUsdc": 0.005,
+          "description": "WCAG contrast ratio + AA/AAA pass-fail"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/palette",
+          "pricePerCallUsdc": 0.008,
+          "description": "Per-color best text color + contrast"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.015,
+          "description": "ONE-CALL contrast + ratings + accessible alternatives"
+        }
       ]
     }
   ],
   "endpoints": [
-    { "method": "POST", "path": "/contrast", "description": "Contrast ratio + AA/AAA" },
-    { "method": "POST", "path": "/palette", "description": "Palette text-color recommendations" },
-    { "method": "POST", "path": "/lookup", "description": "ONE-CALL contrast workflow" }
+    {
+      "method": "POST",
+      "path": "/contrast",
+      "description": "Contrast ratio + AA/AAA"
+    },
+    {
+      "method": "POST",
+      "path": "/palette",
+      "description": "Palette text-color recommendations"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL contrast workflow"
+    }
   ]
 }

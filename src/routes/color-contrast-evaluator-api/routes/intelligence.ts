@@ -39,14 +39,14 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/contrast', summary: 'WCAG contrast ratio + AA/AAA pass-fail for a fg/bg pair', price_usdc: 0.001 },
-      { method: 'POST', path: '/palette', summary: 'Per-color best text color + contrast for a palette', price_usdc: 0.002 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: contrast + ratings + accessible alternatives', price_usdc: 0.003 },
+      { method: 'POST', path: '/contrast', summary: 'WCAG contrast ratio + AA/AAA pass-fail for a fg/bg pair', price_usdc: 0.005 },
+      { method: 'POST', path: '/palette', summary: 'Per-color best text color + contrast for a palette', price_usdc: 0.008 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: contrast + ratings + accessible alternatives', price_usdc: 0.015 },
     ],
     pricing: [
-      { path: '/contrast', price_usdc: 0.001, currency: 'USDC' },
-      { path: '/palette', price_usdc: 0.002, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.003, currency: 'USDC' },
+      { path: '/contrast', price_usdc: 0.005, currency: 'USDC' },
+      { path: '/palette', price_usdc: 0.008, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
     ],
     x402_compatible: true,
   });
@@ -65,7 +65,9 @@ router.post('/contrast', (req: Request, res: Response) => {
     recommended_actions_priority_order: ratings(r).aa_normal
       ? ['Passes WCAG AA for normal text — safe for body copy.']
       : ['Fails AA for normal text — darken/lighten one color or reserve for large text only.'],
-    chain_to: [],
+    chain_to: [
+      { api: 'website-screenshot', reason: 'Capture a rendered preview to verify contrast in real context.' },
+    ],
     privacy: PRIVACY,
   });
 });
@@ -90,7 +92,9 @@ router.post('/palette', (req: Request, res: Response) => {
       'Use each color\'s recommended_text_color for legible labels.',
       evaluated.every((e) => e.text_meets_aa) ? 'All swatches support AA text.' : 'Some swatches only support large text — adjust or restrict usage.',
     ],
-    chain_to: [],
+    chain_to: [
+      { api: 'website-screenshot', reason: 'Capture a rendered preview to verify contrast in real context.' },
+    ],
     privacy: PRIVACY,
   });
 });
@@ -119,7 +123,9 @@ router.post('/lookup', (req: Request, res: Response) => {
       rt.aa_normal ? 'Pair passes AA for body text.' : `Pair fails AA — switch text to ${alt.color} (ratio ${alt.ratio}:1).`,
       rt.aaa_normal ? 'Also meets the stricter AAA bar.' : 'For AAA compliance increase contrast to ≥7:1.',
     ],
-    chain_to: [],
+    chain_to: [
+      { api: 'website-screenshot', reason: 'Capture a rendered preview to verify contrast in real context.' },
+    ],
     privacy: PRIVACY,
   });
 });

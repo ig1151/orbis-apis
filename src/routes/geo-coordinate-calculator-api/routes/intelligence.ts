@@ -48,14 +48,14 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/geo-coordinate-calculator/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/distance', summary: 'Great-circle distance + bearing between two points', price_usdc: 0.001 },
-      { method: 'POST', path: '/batch', summary: 'Distances/bearings for many coordinate pairs', price_usdc: 0.002 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: distance + bearing + midpoint + direction', price_usdc: 0.003 },
+      { method: 'POST', path: '/distance', summary: 'Great-circle distance + bearing between two points', price_usdc: 0.005 },
+      { method: 'POST', path: '/batch', summary: 'Distances/bearings for many coordinate pairs', price_usdc: 0.010 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: distance + bearing + midpoint + direction', price_usdc: 0.015 },
     ],
     pricing: [
-      { path: '/distance', price_usdc: 0.001, currency: 'USDC' },
-      { path: '/batch', price_usdc: 0.002, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.003, currency: 'USDC' },
+      { path: '/distance', price_usdc: 0.005, currency: 'USDC' },
+      { path: '/batch', price_usdc: 0.010, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
     ],
     x402_compatible: true,
   });
@@ -75,7 +75,10 @@ router.post('/distance', (req: Request, res: Response) => {
     cardinal_direction: cardinal(bearing(from, to)),
     confidence_score: 1.0,
     recommended_actions_priority_order: [`Bearing ${cardinal(bearing(from, to))} — heading from origin to destination.`],
-    chain_to: [],
+    chain_to: [
+      { api: 'timezone-harmonizer', reason: 'Get the local time at the destination coordinates.' },
+      { api: 'local-business', reason: 'Find businesses near these coordinates.' },
+    ],
     privacy: PRIVACY,
   });
 });
@@ -98,7 +101,10 @@ router.post('/batch', (req: Request, res: Response) => {
     unit, count: results.length, results,
     confidence_score: 1.0,
     recommended_actions_priority_order: ['Use per-pair distances for routing/clustering.'],
-    chain_to: [],
+    chain_to: [
+      { api: 'timezone-harmonizer', reason: 'Get the local time at the destination coordinates.' },
+      { api: 'local-business', reason: 'Find businesses near these coordinates.' },
+    ],
     privacy: PRIVACY,
   });
 });
@@ -127,7 +133,10 @@ router.post('/lookup', (req: Request, res: Response) => {
       `Travel ${convert(km, unit)} ${unit} heading ${cardinal(brg)} (${Math.round(brg)}°).`,
       'For sub-meter precision use a geodesic (Vincenty) method instead.',
     ],
-    chain_to: [],
+    chain_to: [
+      { api: 'timezone-harmonizer', reason: 'Get the local time at the destination coordinates.' },
+      { api: 'local-business', reason: 'Find businesses near these coordinates.' },
+    ],
     privacy: PRIVACY,
   });
 });

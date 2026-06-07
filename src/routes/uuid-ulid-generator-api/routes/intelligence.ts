@@ -38,14 +38,14 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/uuid-ulid-generator/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/uuid', summary: 'Generate a batch of UUID v4', price_usdc: 0.0005 },
-      { method: 'POST', path: '/ulid', summary: 'Generate a batch of sortable ULIDs', price_usdc: 0.0005 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: generate by format with metadata + recommendations', price_usdc: 0.001 },
+      { method: 'POST', path: '/uuid', summary: 'Generate a batch of UUID v4', price_usdc: 0.002 },
+      { method: 'POST', path: '/ulid', summary: 'Generate a batch of sortable ULIDs', price_usdc: 0.002 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: generate by format with metadata + recommendations', price_usdc: 0.005 },
     ],
     pricing: [
-      { path: '/uuid', price_usdc: 0.0005, currency: 'USDC' },
-      { path: '/ulid', price_usdc: 0.0005, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.001, currency: 'USDC' },
+      { path: '/uuid', price_usdc: 0.002, currency: 'USDC' },
+      { path: '/ulid', price_usdc: 0.002, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.005, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

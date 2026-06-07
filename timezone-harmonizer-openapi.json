@@ -85,7 +85,16 @@
                   "recommended_actions_priority_order": [
                     "Store as UTC/epoch; convert to local only for display."
                   ],
-                  "chain_to": [],
+                  "chain_to": [
+                    {
+                      "api": "calendar-scheduling",
+                      "reason": "Schedule a meeting across the harmonized time zones."
+                    },
+                    {
+                      "api": "geo-coordinate-calculator",
+                      "reason": "Compute distances between the locations in each zone."
+                    }
+                  ],
                   "privacy": {
                     "data_stored": false,
                     "retention": "none"
@@ -130,7 +139,7 @@
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.001,
+          "price_usdc": 0.005,
           "currency": "USDC"
         }
       }
@@ -187,7 +196,7 @@
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.002,
+          "price_usdc": 0.008,
           "currency": "USDC"
         }
       }
@@ -248,9 +257,10 @@
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.003,
+          "price_usdc": 0.015,
           "currency": "USDC"
-        }
+        },
+        "x-one-call": true
       }
     }
   },
@@ -541,6 +551,7 @@
       },
       "DiscoveryResponse": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "name",
           "version",
@@ -671,7 +682,8 @@
           {
             "$ref": "#/components/schemas/Tail"
           }
-        ]
+        ],
+        "unevaluatedProperties": false
       },
       "ConvertResponse": {
         "allOf": [
@@ -701,7 +713,8 @@
           {
             "$ref": "#/components/schemas/Tail"
           }
-        ]
+        ],
+        "unevaluatedProperties": false
       },
       "LookupResponse": {
         "allOf": [
@@ -742,7 +755,8 @@
           {
             "$ref": "#/components/schemas/Tail"
           }
-        ]
+        ],
+        "unevaluatedProperties": false
       }
     }
   }

@@ -21,9 +21,11 @@ const Tail = {
   },
 };
 const IdBatchCore = {
+  // NOTE: used as an allOf branch — must NOT set additionalProperties:false
+  // (that would reject envelope/tail props from sibling branches). Strictness
+  // is enforced by unevaluatedProperties:false on the composite responses.
   type: 'object',
   required: ['format', 'version', 'count', 'ids', 'sortable', 'collision_note'],
-  additionalProperties: false,
   properties: {
     format: { type: 'string', enum: ['uuid', 'ulid'] },
     version: { type: 'string', enum: ['v4', 'ulid'] },
@@ -49,6 +51,7 @@ const schemas = {
   },
   DiscoveryResponse: {
     type: 'object',
+    additionalProperties: false,
     required: ['name', 'version', 'description', 'openapi_url', 'auth', 'endpoints', 'pricing', 'x402_compatible'],
     properties: {
       name: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
@@ -59,7 +62,7 @@ const schemas = {
       x402_compatible: { type: 'boolean' },
     },
   },
-  BatchResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/IdBatchCore' }, { $ref: '#/components/schemas/Tail' }] },
+  BatchResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/IdBatchCore' }, { $ref: '#/components/schemas/Tail' }], unevaluatedProperties: false },
   LookupResponse: {
     allOf: [
       { $ref: '#/components/schemas/EnvelopeOk' },
@@ -67,6 +70,7 @@ const schemas = {
       { type: 'object', required: ['reasoning'], properties: { reasoning: { $ref: '#/components/schemas/Reasoning' } } },
       { $ref: '#/components/schemas/Tail' },
     ],
+    unevaluatedProperties: false,
   },
 };
 
@@ -74,7 +78,7 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/uuid', summary: 'Generate a batch of UUID v4', operationId: 'uuid',
-    priceUsdc: 0.0005, requestSchemaRef: 'CountRequest', responseSchemaRef: 'BatchResponse',
+    priceUsdc: 0.002, requestSchemaRef: 'CountRequest', responseSchemaRef: 'BatchResponse',
     requestExample: { count: 3 },
     responseExample: {
       trace_id: 'u1-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
@@ -87,7 +91,7 @@ const endpoints: AplusEndpoint[] = [
   },
   {
     method: 'post', path: '/ulid', summary: 'Generate a batch of sortable ULIDs', operationId: 'ulid',
-    priceUsdc: 0.0005, requestSchemaRef: 'CountRequest', responseSchemaRef: 'BatchResponse',
+    priceUsdc: 0.002, requestSchemaRef: 'CountRequest', responseSchemaRef: 'BatchResponse',
     requestExample: { count: 2 },
     responseExample: {
       trace_id: 'l1-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
@@ -100,7 +104,7 @@ const endpoints: AplusEndpoint[] = [
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL generate by format with metadata', operationId: 'lookup',
-    priceUsdc: 0.001, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
+    priceUsdc: 0.005, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
     requestExample: { format: 'ulid', count: 5 },
   },
 ];

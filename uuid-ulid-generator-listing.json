@@ -7,27 +7,76 @@
   "websiteUrl": "https://orbis-apis.onrender.com",
   "docsUrl": "https://orbis-apis.onrender.com/uuid-ulid-generator/openapi.json",
   "openApiSpecUrl": "https://orbis-apis.onrender.com/uuid-ulid-generator/openapi.json",
-  "tags": ["uuid", "ulid", "identifiers", "developer-tools", "generator", "x402", "coinbase-bazaar", "agentic-market"],
-  "keywords": ["uuid generator api", "ulid generator api", "batch id generation", "sortable unique id", "idempotency key generator", "crypto random id api"],
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "uuid",
+    "ulid",
+    "identifiers",
+    "developer-tools",
+    "generator",
+    "x402",
+    "coinbase-bazaar",
+    "agentic-market"
+  ],
+  "keywords": [
+    "uuid generator api",
+    "ulid generator api",
+    "batch id generation",
+    "sortable unique id",
+    "idempotency key generator",
+    "crypto random id api"
+  ],
   "tiers": [
-    { "name": "Free", "isFree": true, "requestsPerDay": 500, "requestsPerMonth": 15000 },
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 500,
+      "requestsPerMonth": 15000
+    },
     {
       "name": "Pay Per Call",
       "isFree": false,
       "pricingType": "per_call",
-      "pricePerCall": 0.001,
+      "pricePerCall": 0.005,
       "requestsPerDay": 200000,
       "requestsPerMonth": 6000000,
       "endpointPricing": [
-        { "method": "POST", "pathPattern": "/uuid", "pricePerCallUsdc": 0.0005, "description": "Batch of UUID v4" },
-        { "method": "POST", "pathPattern": "/ulid", "pricePerCallUsdc": 0.0005, "description": "Batch of sortable ULIDs" },
-        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.001, "description": "ONE-CALL generate by format with metadata + recommendations" }
+        {
+          "method": "POST",
+          "pathPattern": "/uuid",
+          "pricePerCallUsdc": 0.002,
+          "description": "Batch of UUID v4"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/ulid",
+          "pricePerCallUsdc": 0.002,
+          "description": "Batch of sortable ULIDs"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.005,
+          "description": "ONE-CALL generate by format with metadata + recommendations"
+        }
       ]
     }
   ],
   "endpoints": [
-    { "method": "POST", "path": "/uuid", "description": "Generate UUID v4 batch" },
-    { "method": "POST", "path": "/ulid", "description": "Generate sortable ULID batch" },
-    { "method": "POST", "path": "/lookup", "description": "ONE-CALL generation workflow" }
+    {
+      "method": "POST",
+      "path": "/uuid",
+      "description": "Generate UUID v4 batch"
+    },
+    {
+      "method": "POST",
+      "path": "/ulid",
+      "description": "Generate sortable ULID batch"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL generation workflow"
+    }
   ]
 }

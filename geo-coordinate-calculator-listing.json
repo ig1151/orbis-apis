@@ -7,27 +7,77 @@
   "websiteUrl": "https://orbis-apis.onrender.com",
   "docsUrl": "https://orbis-apis.onrender.com/geo-coordinate-calculator/openapi.json",
   "openApiSpecUrl": "https://orbis-apis.onrender.com/geo-coordinate-calculator/openapi.json",
-  "tags": ["geospatial", "distance", "haversine", "bearing", "coordinates", "logistics", "x402", "coinbase-bazaar", "agentic-market"],
-  "keywords": ["haversine distance api", "great circle distance api", "coordinate distance calculator", "bearing between coordinates api", "geo midpoint api", "lat lon distance api"],
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "geospatial",
+    "distance",
+    "haversine",
+    "bearing",
+    "coordinates",
+    "logistics",
+    "x402",
+    "coinbase-bazaar",
+    "agentic-market"
+  ],
+  "keywords": [
+    "haversine distance api",
+    "great circle distance api",
+    "coordinate distance calculator",
+    "bearing between coordinates api",
+    "geo midpoint api",
+    "lat lon distance api"
+  ],
   "tiers": [
-    { "name": "Free", "isFree": true, "requestsPerDay": 300, "requestsPerMonth": 9000 },
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 300,
+      "requestsPerMonth": 9000
+    },
     {
       "name": "Pay Per Call",
       "isFree": false,
       "pricingType": "per_call",
-      "pricePerCall": 0.003,
+      "pricePerCall": 0.015,
       "requestsPerDay": 100000,
       "requestsPerMonth": 3000000,
       "endpointPricing": [
-        { "method": "POST", "pathPattern": "/distance", "pricePerCallUsdc": 0.001, "description": "Great-circle distance + bearing" },
-        { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.002, "description": "Distances/bearings for many pairs" },
-        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL distance + bearing + midpoint + direction" }
+        {
+          "method": "POST",
+          "pathPattern": "/distance",
+          "pricePerCallUsdc": 0.005,
+          "description": "Great-circle distance + bearing"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/batch",
+          "pricePerCallUsdc": 0.01,
+          "description": "Distances/bearings for many pairs"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.015,
+          "description": "ONE-CALL distance + bearing + midpoint + direction"
+        }
       ]
     }
   ],
   "endpoints": [
-    { "method": "POST", "path": "/distance", "description": "Distance + bearing" },
-    { "method": "POST", "path": "/batch", "description": "Batch distances" },
-    { "method": "POST", "path": "/lookup", "description": "ONE-CALL geo workflow" }
+    {
+      "method": "POST",
+      "path": "/distance",
+      "description": "Distance + bearing"
+    },
+    {
+      "method": "POST",
+      "path": "/batch",
+      "description": "Batch distances"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL geo workflow"
+    }
   ]
 }

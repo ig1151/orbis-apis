@@ -49,7 +49,7 @@ const schemas = {
     properties: { colors: { type: 'array', minItems: 1, maxItems: 50, items: { type: 'string' }, example: ['#1A2B3C', '#FFD700', '#0A0A0A'] } },
   },
   DiscoveryResponse: {
-    type: 'object', required: ['name', 'version', 'description', 'openapi_url', 'auth', 'endpoints', 'pricing', 'x402_compatible'],
+    type: 'object', additionalProperties: false, required: ['name', 'version', 'description', 'openapi_url', 'auth', 'endpoints', 'pricing', 'x402_compatible'],
     properties: {
       name: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
       openapi_url: { type: 'string', format: 'uri' },
@@ -65,6 +65,7 @@ const schemas = {
       { type: 'object', required: ['input', 'contrast_ratio', 'ratings'], properties: { input: { $ref: '#/components/schemas/ColorPair' }, contrast_ratio: { type: 'number' }, ratings: { $ref: '#/components/schemas/Ratings' } } },
       { $ref: '#/components/schemas/Tail' },
     ],
+    unevaluatedProperties: false,
   },
   PaletteResponse: {
     allOf: [
@@ -72,6 +73,7 @@ const schemas = {
       { type: 'object', required: ['count', 'colors'], properties: { count: { type: 'integer' }, colors: { type: 'array', items: { $ref: '#/components/schemas/PaletteItem' } } } },
       { $ref: '#/components/schemas/Tail' },
     ],
+    unevaluatedProperties: false,
   },
   LookupResponse: {
     allOf: [
@@ -86,6 +88,7 @@ const schemas = {
       },
       { $ref: '#/components/schemas/Tail' },
     ],
+    unevaluatedProperties: false,
   },
 };
 
@@ -93,7 +96,7 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/contrast', summary: 'WCAG contrast ratio + AA/AAA pass-fail', operationId: 'contrast',
-    priceUsdc: 0.001, requestSchemaRef: 'ColorPair', responseSchemaRef: 'ContrastResponse',
+    priceUsdc: 0.005, requestSchemaRef: 'ColorPair', responseSchemaRef: 'ContrastResponse',
     requestExample: { foreground: '#777777', background: '#FFFFFF' },
     responseExample: {
       trace_id: 'c1-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
@@ -105,12 +108,12 @@ const endpoints: AplusEndpoint[] = [
   },
   {
     method: 'post', path: '/palette', summary: 'Per-color best text color + contrast', operationId: 'palette',
-    priceUsdc: 0.002, requestSchemaRef: 'PaletteRequest', responseSchemaRef: 'PaletteResponse',
+    priceUsdc: 0.008, requestSchemaRef: 'PaletteRequest', responseSchemaRef: 'PaletteResponse',
     requestExample: { colors: ['#1A2B3C', '#FFD700', '#0A0A0A'] },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL contrast + ratings + accessible alternatives', operationId: 'lookup',
-    priceUsdc: 0.003, requestSchemaRef: 'ColorPair', responseSchemaRef: 'LookupResponse',
+    priceUsdc: 0.015, oneCall: true, requestSchemaRef: 'ColorPair', responseSchemaRef: 'LookupResponse',
     requestExample: { foreground: '#888888', background: '#FFFFFF' },
   },
 ];

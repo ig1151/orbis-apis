@@ -40,7 +40,7 @@ const schemas = {
     properties: { index: { type: 'integer' }, distance: { type: 'number' }, initial_bearing_deg: { type: 'number' }, cardinal_direction: { type: 'string' } },
   },
   DiscoveryResponse: {
-    type: 'object', required: ['name', 'version', 'description', 'openapi_url', 'auth', 'endpoints', 'pricing', 'x402_compatible'],
+    type: 'object', additionalProperties: false, required: ['name', 'version', 'description', 'openapi_url', 'auth', 'endpoints', 'pricing', 'x402_compatible'],
     properties: {
       name: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
       openapi_url: { type: 'string', format: 'uri' },
@@ -63,6 +63,7 @@ const schemas = {
       },
       { $ref: '#/components/schemas/Tail' },
     ],
+    unevaluatedProperties: false,
   },
   BatchResponse: {
     allOf: [
@@ -70,6 +71,7 @@ const schemas = {
       { type: 'object', required: ['unit', 'count', 'results'], properties: { unit: Unit, count: { type: 'integer' }, results: { type: 'array', items: { $ref: '#/components/schemas/BatchItem' } } } },
       { $ref: '#/components/schemas/Tail' },
     ],
+    unevaluatedProperties: false,
   },
   LookupResponse: {
     allOf: [
@@ -85,6 +87,7 @@ const schemas = {
       },
       { $ref: '#/components/schemas/Tail' },
     ],
+    unevaluatedProperties: false,
   },
 };
 
@@ -92,24 +95,25 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/distance', summary: 'Great-circle distance + bearing', operationId: 'distance',
-    priceUsdc: 0.001, requestSchemaRef: 'DistanceRequest', responseSchemaRef: 'DistanceResponse',
+    priceUsdc: 0.005, requestSchemaRef: 'DistanceRequest', responseSchemaRef: 'DistanceResponse',
     requestExample: { from: { lat: 40.7128, lon: -74.006 }, to: { lat: 34.0522, lon: -118.2437 }, unit: 'km' },
     responseExample: {
       trace_id: 'g1-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
       input: { from: { lat: 40.7128, lon: -74.006 }, to: { lat: 34.0522, lon: -118.2437 }, unit: 'km' },
       distance: 3935.746, unit: 'km', method: 'haversine', initial_bearing_deg: 273.65, cardinal_direction: 'W',
       confidence_score: 1.0, recommended_actions_priority_order: ['Bearing W — heading from origin to destination.'],
-      chain_to: [], privacy: { data_stored: false, retention: 'none' },
+      chain_to: [{ api: 'timezone-harmonizer', reason: 'Get the local time at the destination coordinates.' }, { api: 'local-business', reason: 'Find businesses near these coordinates.' }],
+      privacy: { data_stored: false, retention: 'none' },
     },
   },
   {
     method: 'post', path: '/batch', summary: 'Distances/bearings for many pairs', operationId: 'batch',
-    priceUsdc: 0.002, requestSchemaRef: 'BatchRequest', responseSchemaRef: 'BatchResponse',
+    priceUsdc: 0.010, requestSchemaRef: 'BatchRequest', responseSchemaRef: 'BatchResponse',
     requestExample: { pairs: [{ from: { lat: 51.5074, lon: -0.1278 }, to: { lat: 48.8566, lon: 2.3522 } }], unit: 'km' },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL distance + bearing + midpoint', operationId: 'lookup',
-    priceUsdc: 0.003, requestSchemaRef: 'DistanceRequest', responseSchemaRef: 'LookupResponse',
+    priceUsdc: 0.015, oneCall: true, requestSchemaRef: 'DistanceRequest', responseSchemaRef: 'LookupResponse',
     requestExample: { from: { lat: 35.6762, lon: 139.6503 }, to: { lat: 1.3521, lon: 103.8198 }, unit: 'km' },
   },
 ];

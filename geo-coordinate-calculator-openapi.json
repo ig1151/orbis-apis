@@ -96,7 +96,16 @@
                   "recommended_actions_priority_order": [
                     "Bearing W — heading from origin to destination."
                   ],
-                  "chain_to": [],
+                  "chain_to": [
+                    {
+                      "api": "timezone-harmonizer",
+                      "reason": "Get the local time at the destination coordinates."
+                    },
+                    {
+                      "api": "local-business",
+                      "reason": "Find businesses near these coordinates."
+                    }
+                  ],
                   "privacy": {
                     "data_stored": false,
                     "retention": "none"
@@ -149,7 +158,7 @@
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.001,
+          "price_usdc": 0.005,
           "currency": "USDC"
         }
       }
@@ -217,7 +226,7 @@
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.002,
+          "price_usdc": 0.01,
           "currency": "USDC"
         }
       }
@@ -281,9 +290,10 @@
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.003,
+          "price_usdc": 0.015,
           "currency": "USDC"
-        }
+        },
+        "x-one-call": true
       }
     }
   },
@@ -583,6 +593,7 @@
       },
       "DiscoveryResponse": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "name",
           "version",
@@ -753,7 +764,8 @@
           {
             "$ref": "#/components/schemas/Tail"
           }
-        ]
+        ],
+        "unevaluatedProperties": false
       },
       "BatchResponse": {
         "allOf": [
@@ -792,7 +804,8 @@
           {
             "$ref": "#/components/schemas/Tail"
           }
-        ]
+        ],
+        "unevaluatedProperties": false
       },
       "LookupResponse": {
         "allOf": [
@@ -874,7 +887,8 @@
           {
             "$ref": "#/components/schemas/Tail"
           }
-        ]
+        ],
+        "unevaluatedProperties": false
       }
     }
   }

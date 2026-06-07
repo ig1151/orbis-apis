@@ -7,27 +7,77 @@
   "websiteUrl": "https://orbis-apis.onrender.com",
   "docsUrl": "https://orbis-apis.onrender.com/timezone-harmonizer/openapi.json",
   "openApiSpecUrl": "https://orbis-apis.onrender.com/timezone-harmonizer/openapi.json",
-  "tags": ["timezone", "utc", "dst", "scheduling", "datetime", "developer-tools", "x402", "coinbase-bazaar", "agentic-market"],
-  "keywords": ["timezone converter api", "utc normalization api", "iana timezone api", "dst offset api", "meeting timezone harmonizer", "convert time between zones api"],
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": [
+    "timezone",
+    "utc",
+    "dst",
+    "scheduling",
+    "datetime",
+    "developer-tools",
+    "x402",
+    "coinbase-bazaar",
+    "agentic-market"
+  ],
+  "keywords": [
+    "timezone converter api",
+    "utc normalization api",
+    "iana timezone api",
+    "dst offset api",
+    "meeting timezone harmonizer",
+    "convert time between zones api"
+  ],
   "tiers": [
-    { "name": "Free", "isFree": true, "requestsPerDay": 300, "requestsPerMonth": 9000 },
+    {
+      "name": "Free",
+      "isFree": true,
+      "requestsPerDay": 300,
+      "requestsPerMonth": 9000
+    },
     {
       "name": "Pay Per Call",
       "isFree": false,
       "pricingType": "per_call",
-      "pricePerCall": 0.003,
+      "pricePerCall": 0.015,
       "requestsPerDay": 100000,
       "requestsPerMonth": 3000000,
       "endpointPricing": [
-        { "method": "POST", "pathPattern": "/normalize", "pricePerCallUsdc": 0.001, "description": "Normalize an absolute instant to UTC + epoch" },
-        { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.002, "description": "Express an instant in a target timezone" },
-        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.003, "description": "ONE-CALL UTC + many target zones + meeting-friendly view" }
+        {
+          "method": "POST",
+          "pathPattern": "/normalize",
+          "pricePerCallUsdc": 0.005,
+          "description": "Normalize an absolute instant to UTC + epoch"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/convert",
+          "pricePerCallUsdc": 0.008,
+          "description": "Express an instant in a target timezone"
+        },
+        {
+          "method": "POST",
+          "pathPattern": "/lookup",
+          "pricePerCallUsdc": 0.015,
+          "description": "ONE-CALL UTC + many target zones + meeting-friendly view"
+        }
       ]
     }
   ],
   "endpoints": [
-    { "method": "POST", "path": "/normalize", "description": "Normalize to UTC/epoch" },
-    { "method": "POST", "path": "/convert", "description": "Convert to a timezone" },
-    { "method": "POST", "path": "/lookup", "description": "ONE-CALL multi-zone harmonize" }
+    {
+      "method": "POST",
+      "path": "/normalize",
+      "description": "Normalize to UTC/epoch"
+    },
+    {
+      "method": "POST",
+      "path": "/convert",
+      "description": "Convert to a timezone"
+    },
+    {
+      "method": "POST",
+      "path": "/lookup",
+      "description": "ONE-CALL multi-zone harmonize"
+    }
   ]
 }

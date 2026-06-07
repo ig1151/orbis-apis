@@ -50,14 +50,14 @@ router.get('/', (_req: Request, res: Response) => {
     auth: { type: 'apiKey', header: 'X-API-Key' },
     notes: 'Inputs must be absolute instants (ISO 8601 with Z/offset, or epoch ms). Naive local times are rejected to guarantee correctness.',
     endpoints: [
-      { method: 'POST', path: '/normalize', summary: 'Normalize an absolute instant to UTC + epoch', price_usdc: 0.001 },
-      { method: 'POST', path: '/convert', summary: 'Express an instant in a target timezone (wall-clock + offset)', price_usdc: 0.002 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: UTC + many target zones + meeting-friendly view', price_usdc: 0.003 },
+      { method: 'POST', path: '/normalize', summary: 'Normalize an absolute instant to UTC + epoch', price_usdc: 0.005 },
+      { method: 'POST', path: '/convert', summary: 'Express an instant in a target timezone (wall-clock + offset)', price_usdc: 0.008 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: UTC + many target zones + meeting-friendly view', price_usdc: 0.015 },
     ],
     pricing: [
-      { path: '/normalize', price_usdc: 0.001, currency: 'USDC' },
-      { path: '/convert', price_usdc: 0.002, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.003, currency: 'USDC' },
+      { path: '/normalize', price_usdc: 0.005, currency: 'USDC' },
+      { path: '/convert', price_usdc: 0.008, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
     ],
     x402_compatible: true,
   });
@@ -72,7 +72,10 @@ router.post('/normalize', (req: Request, res: Response) => {
     utc_iso: d.toISOString(), epoch_ms: d.getTime(),
     confidence_score: 1.0,
     recommended_actions_priority_order: ['Store as UTC/epoch; convert to local only for display.'],
-    chain_to: [],
+    chain_to: [
+      { api: 'calendar-scheduling', reason: 'Schedule a meeting across the harmonized time zones.' },
+      { api: 'geo-coordinate-calculator', reason: 'Compute distances between the locations in each zone.' },
+    ],
     privacy: PRIVACY,
   });
 });
@@ -88,7 +91,10 @@ router.post('/convert', (req: Request, res: Response) => {
     converted: inZone(d, req.body.to_tz),
     confidence_score: 1.0,
     recommended_actions_priority_order: [`Local wall-clock in ${req.body.to_tz} is ${inZone(d, req.body.to_tz).local_time} (${inZone(d, req.body.to_tz).offset_label}).`],
-    chain_to: [],
+    chain_to: [
+      { api: 'calendar-scheduling', reason: 'Schedule a meeting across the harmonized time zones.' },
+      { api: 'geo-coordinate-calculator', reason: 'Compute distances between the locations in each zone.' },
+    ],
     privacy: PRIVACY,
   });
 });
@@ -117,7 +123,10 @@ router.post('/lookup', (req: Request, res: Response) => {
       'Compare offset_label across zones to find overlapping working hours.',
       'Use abbreviation (e.g. PST vs PDT) to communicate the active DST state.',
     ],
-    chain_to: [],
+    chain_to: [
+      { api: 'calendar-scheduling', reason: 'Schedule a meeting across the harmonized time zones.' },
+      { api: 'geo-coordinate-calculator', reason: 'Compute distances between the locations in each zone.' },
+    ],
     privacy: PRIVACY,
   });
 });

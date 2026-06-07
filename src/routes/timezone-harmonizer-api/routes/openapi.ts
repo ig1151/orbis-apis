@@ -35,7 +35,7 @@ const schemas = {
     properties: { datetime: InstantString, to_tzs: { type: 'array', minItems: 1, maxItems: 25, items: { type: 'string' }, example: ['America/Los_Angeles', 'Europe/London', 'Asia/Tokyo'] } },
   },
   DiscoveryResponse: {
-    type: 'object', required: ['name', 'version', 'description', 'openapi_url', 'auth', 'notes', 'endpoints', 'pricing', 'x402_compatible'],
+    type: 'object', additionalProperties: false, required: ['name', 'version', 'description', 'openapi_url', 'auth', 'notes', 'endpoints', 'pricing', 'x402_compatible'],
     properties: {
       name: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' }, notes: { type: 'string' },
       openapi_url: { type: 'string', format: 'uri' },
@@ -51,6 +51,7 @@ const schemas = {
       { type: 'object', required: ['input', 'utc_iso', 'epoch_ms'], properties: { input: { $ref: '#/components/schemas/NormalizeRequest' }, utc_iso: { type: 'string', format: 'date-time' }, epoch_ms: { type: 'integer' } } },
       { $ref: '#/components/schemas/Tail' },
     ],
+    unevaluatedProperties: false,
   },
   ConvertResponse: {
     allOf: [
@@ -58,6 +59,7 @@ const schemas = {
       { type: 'object', required: ['input', 'utc_iso', 'converted'], properties: { input: { $ref: '#/components/schemas/ConvertRequest' }, utc_iso: { type: 'string', format: 'date-time' }, converted: { $ref: '#/components/schemas/ZoneTime' } } },
       { $ref: '#/components/schemas/Tail' },
     ],
+    unevaluatedProperties: false,
   },
   LookupResponse: {
     allOf: [
@@ -71,6 +73,7 @@ const schemas = {
       },
       { $ref: '#/components/schemas/Tail' },
     ],
+    unevaluatedProperties: false,
   },
 };
 
@@ -78,23 +81,24 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/normalize', summary: 'Normalize an absolute instant to UTC + epoch', operationId: 'normalize',
-    priceUsdc: 0.001, requestSchemaRef: 'NormalizeRequest', responseSchemaRef: 'NormalizeResponse',
+    priceUsdc: 0.005, requestSchemaRef: 'NormalizeRequest', responseSchemaRef: 'NormalizeResponse',
     requestExample: { datetime: '2026-06-07T12:30:00-07:00' },
     responseExample: {
       trace_id: 't1-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
       input: { datetime: '2026-06-07T12:30:00-07:00' }, utc_iso: '2026-06-07T19:30:00.000Z', epoch_ms: 1780860600000,
       confidence_score: 1.0, recommended_actions_priority_order: ['Store as UTC/epoch; convert to local only for display.'],
-      chain_to: [], privacy: { data_stored: false, retention: 'none' },
+      chain_to: [{ api: 'calendar-scheduling', reason: 'Schedule a meeting across the harmonized time zones.' }, { api: 'geo-coordinate-calculator', reason: 'Compute distances between the locations in each zone.' }],
+      privacy: { data_stored: false, retention: 'none' },
     },
   },
   {
     method: 'post', path: '/convert', summary: 'Express an instant in a target timezone', operationId: 'convert',
-    priceUsdc: 0.002, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse',
+    priceUsdc: 0.008, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse',
     requestExample: { datetime: '2026-06-07T19:30:00Z', to_tz: 'Asia/Tokyo' },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL UTC + many target zones', operationId: 'lookup',
-    priceUsdc: 0.003, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
+    priceUsdc: 0.015, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
     requestExample: { datetime: '2026-06-07T19:30:00Z', to_tzs: ['America/Los_Angeles', 'Europe/London', 'Asia/Tokyo'] },
   },
 ];

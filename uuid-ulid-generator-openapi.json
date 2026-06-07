@@ -135,7 +135,7 @@
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.0005,
+          "price_usdc": 0.002,
           "currency": "USDC"
         }
       }
@@ -215,7 +215,7 @@
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.0005,
+          "price_usdc": 0.002,
           "currency": "USDC"
         }
       }
@@ -272,9 +272,10 @@
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.001,
+          "price_usdc": 0.005,
           "currency": "USDC"
-        }
+        },
+        "x-one-call": true
       }
     }
   },
@@ -472,7 +473,6 @@
           "sortable",
           "collision_note"
         ],
-        "additionalProperties": false,
         "properties": {
           "format": {
             "type": "string",
@@ -542,6 +542,7 @@
       },
       "DiscoveryResponse": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "name",
           "version",
@@ -651,7 +652,8 @@
           {
             "$ref": "#/components/schemas/Tail"
           }
-        ]
+        ],
+        "unevaluatedProperties": false
       },
       "LookupResponse": {
         "allOf": [
@@ -675,7 +677,8 @@
           {
             "$ref": "#/components/schemas/Tail"
           }
-        ]
+        ],
+        "unevaluatedProperties": false
       }
     }
   }
