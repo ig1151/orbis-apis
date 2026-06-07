@@ -120,6 +120,11 @@ router.get('/', (_req: Request, res: Response) => {
       { method: 'POST', path: '/overlap', summary: 'Detect overlap/containment between two CIDR blocks', price_usdc: 0.002 },
       { method: 'POST', path: '/lookup', summary: 'ONE-CALL: full subnet breakdown + optional overlap + recommendations', price_usdc: 0.003 },
     ],
+    pricing: [
+      { path: '/calculate', price_usdc: 0.001, currency: 'USDC' },
+      { path: '/overlap', price_usdc: 0.002, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.003, currency: 'USDC' },
+    ],
     x402_compatible: true,
   });
 });

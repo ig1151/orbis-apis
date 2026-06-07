@@ -66,6 +66,13 @@ const schemas = {
   EnvelopeOk,
   SubnetCore,
   OverlapCore,
+  // Envelope-free overlap result used when nested inside /lookup.
+  OverlapResult: {
+    allOf: [
+      { type: 'object', required: ['input'], properties: { input: { $ref: '#/components/schemas/OverlapRequest' } } },
+      { $ref: '#/components/schemas/OverlapCore' },
+    ],
+  },
   CidrRequest: {
     type: 'object', required: ['cidr'], additionalProperties: false,
     properties: { cidr: { type: 'string', description: 'IPv4 CIDR, e.g. 192.168.1.0/24', example: '192.168.1.0/24' } },
@@ -83,7 +90,7 @@ const schemas = {
   },
   DiscoveryResponse: {
     type: 'object',
-    required: ['name', 'version', 'description', 'openapi_url', 'auth', 'endpoints', 'x402_compatible'],
+    required: ['name', 'version', 'description', 'openapi_url', 'auth', 'endpoints', 'pricing', 'x402_compatible'],
     properties: {
       name: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
       openapi_url: { type: 'string', format: 'uri' },
@@ -96,6 +103,13 @@ const schemas = {
         items: {
           type: 'object', required: ['method', 'path', 'summary', 'price_usdc'], additionalProperties: false,
           properties: { method: { type: 'string' }, path: { type: 'string' }, summary: { type: 'string' }, price_usdc: { type: 'number' } },
+        },
+      },
+      pricing: {
+        type: 'array',
+        items: {
+          type: 'object', required: ['path', 'price_usdc', 'currency'], additionalProperties: false,
+          properties: { path: { type: 'string' }, price_usdc: { type: 'number' }, currency: { type: 'string', enum: ['USDC'] } },
         },
       },
       x402_compatible: { type: 'boolean' },
@@ -118,7 +132,7 @@ const schemas = {
         required: ['subnet', 'overlap', 'reasoning'],
         properties: {
           subnet: { $ref: '#/components/schemas/SubnetCore' },
-          overlap: { oneOf: [{ $ref: '#/components/schemas/OverlapResponse' }, { type: 'null' }] },
+          overlap: { oneOf: [{ $ref: '#/components/schemas/OverlapResult' }, { type: 'null' }] },
           reasoning: { $ref: '#/components/schemas/Reasoning' },
         },
       },
@@ -128,11 +142,68 @@ const schemas = {
   _Tail: Tail,
 };
 
+const TAIL_EXAMPLE = {
+  confidence_score: 1.0,
+  recommended_actions_priority_order: ['Allocate hosts between 192.168.1.1 and 192.168.1.254.', 'Private (RFC1918) range — not internet-routable.'],
+  chain_to: [
+    { api: 'ip-geolocation', reason: 'Geolocate specific hosts discovered within this subnet.' },
+    { api: 'ip-intelligence', reason: 'Threat-score and detect VPN/proxy on hosts in this range.' },
+  ],
+  privacy: { data_stored: false, retention: 'none' },
+};
+
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
-  { method: 'post', path: '/calculate', summary: 'CIDR → network/broadcast/mask/usable host range', operationId: 'calculate', priceUsdc: 0.001, requestSchemaRef: 'CidrRequest', responseSchemaRef: 'CalculateResponse' },
-  { method: 'post', path: '/overlap', summary: 'Detect overlap/containment between two CIDR blocks', operationId: 'overlap', priceUsdc: 0.002, requestSchemaRef: 'OverlapRequest', responseSchemaRef: 'OverlapResponse' },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL full subnet breakdown + optional overlap', operationId: 'lookup', priceUsdc: 0.003, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse' },
+  {
+    method: 'post', path: '/calculate', summary: 'CIDR → network/broadcast/mask/usable host range', operationId: 'calculate',
+    priceUsdc: 0.001, requestSchemaRef: 'CidrRequest', responseSchemaRef: 'CalculateResponse',
+    requestExample: { cidr: '192.168.1.0/24' },
+    responseExample: {
+      trace_id: 'a1b2c3d4-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
+      input: { cidr: '192.168.1.0/24' }, ip_version: 'IPv4', cidr_prefix: 24,
+      network_address: '192.168.1.0', broadcast_address: '192.168.1.255', netmask: '255.255.255.0', wildcard_mask: '0.0.0.255',
+      first_usable_host: '192.168.1.1', last_usable_host: '192.168.1.254', total_addresses: 256, usable_hosts: 254, is_private: true,
+      ...TAIL_EXAMPLE,
+    },
+  },
+  {
+    method: 'post', path: '/overlap', summary: 'Detect overlap/containment between two CIDR blocks', operationId: 'overlap',
+    priceUsdc: 0.002, requestSchemaRef: 'OverlapRequest', responseSchemaRef: 'OverlapResponse',
+    requestExample: { cidr_a: '10.0.0.0/16', cidr_b: '10.0.5.0/24' },
+    responseExample: {
+      trace_id: 'b2c3d4e5-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
+      input: { cidr_a: '10.0.0.0/16', cidr_b: '10.0.5.0/24' },
+      overlaps: true, relationship: 'a_contains_b', overlap_address_count: 256, overlap_start: '10.0.5.0', overlap_end: '10.0.5.255',
+      confidence_score: 1.0,
+      recommended_actions_priority_order: ['Resolve the address conflict before assigning either block.', 'Relationship: a_contains_b.'],
+      chain_to: TAIL_EXAMPLE.chain_to, privacy: TAIL_EXAMPLE.privacy,
+    },
+  },
+  {
+    method: 'post', path: '/lookup', summary: 'ONE-CALL full subnet breakdown + optional overlap', operationId: 'lookup',
+    priceUsdc: 0.003, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
+    requestExample: { cidr: '10.0.0.0/24', other_cidr: '10.0.0.128/25' },
+    responseExample: {
+      trace_id: 'c3d4e5f6-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
+      subnet: {
+        input: { cidr: '10.0.0.0/24' }, ip_version: 'IPv4', cidr_prefix: 24,
+        network_address: '10.0.0.0', broadcast_address: '10.0.0.255', netmask: '255.255.255.0', wildcard_mask: '0.0.0.255',
+        first_usable_host: '10.0.0.1', last_usable_host: '10.0.0.254', total_addresses: 256, usable_hosts: 254, is_private: true,
+      },
+      overlap: {
+        input: { cidr_a: '10.0.0.0/24', cidr_b: '10.0.0.128/25' },
+        overlaps: true, relationship: 'a_contains_b', overlap_address_count: 128, overlap_start: '10.0.0.128', overlap_end: '10.0.0.255',
+      },
+      reasoning: {
+        why_result_generated: 'Computed directly from the CIDR using deterministic IPv4 bitmask arithmetic.',
+        key_factors: ['prefix /24', '254 usable hosts', 'RFC1918 private'],
+        invalidators: ['Input is IPv6 (not supported).', 'CIDR prefix or octets out of range.'],
+      },
+      confidence_score: 1.0,
+      recommended_actions_priority_order: ['Usable host pool: 10.0.0.1 – 10.0.0.254 (254).', 'Overlaps other_cidr (a_contains_b) — resolve before assignment.', 'Private range — add NAT/route policy for egress.'],
+      chain_to: TAIL_EXAMPLE.chain_to, privacy: TAIL_EXAMPLE.privacy,
+    },
+  },
 ];
 
 const spec = buildAplusSpec({

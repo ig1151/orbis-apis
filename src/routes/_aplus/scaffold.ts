@@ -58,6 +58,8 @@ export interface AplusEndpoint {
   priceUsdc?: number;            // omit/0 for free endpoints (e.g. GET /)
   requestSchemaRef?: string;     // component schema name for the request body
   responseSchemaRef: string;     // component schema name for the 200 payload
+  requestExample?: unknown;      // example request body (rendered in the spec)
+  responseExample?: unknown;     // example 200 payload (rendered in the spec)
   // optional safety extensions
   executionGateRequired?: boolean;
   humanApprovalRequired?: boolean;
@@ -147,7 +149,12 @@ export function buildAplusSpec(meta: AplusSpecMeta): Record<string, unknown> {
       responses: {
         '200': {
           description: 'Successful response',
-          content: { 'application/json': { schema: { $ref: `#/components/schemas/${ep.responseSchemaRef}` } } },
+          content: {
+            'application/json': {
+              schema: { $ref: `#/components/schemas/${ep.responseSchemaRef}` },
+              ...(ep.responseExample !== undefined ? { example: ep.responseExample } : {}),
+            },
+          },
         },
         '400': {
           description: 'Invalid request',
@@ -162,7 +169,12 @@ export function buildAplusSpec(meta: AplusSpecMeta): Record<string, unknown> {
     if (ep.requestSchemaRef) {
       op.requestBody = {
         required: true,
-        content: { 'application/json': { schema: { $ref: `#/components/schemas/${ep.requestSchemaRef}` } } },
+        content: {
+          'application/json': {
+            schema: { $ref: `#/components/schemas/${ep.requestSchemaRef}` },
+            ...(ep.requestExample !== undefined ? { example: ep.requestExample } : {}),
+          },
+        },
       };
     }
     if (ep.priceUsdc && ep.priceUsdc > 0) {
