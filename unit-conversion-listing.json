@@ -1,7 +1,7 @@
 {
   "name": "Unit Conversion API",
   "shortDescription": "Deterministic unit conversion across 8 measurement categories for agents — exact SI math, never estimated",
-  "description": "Agent-native measurement conversion computed in real code (not by a language model). /convert converts a value between any two units of the same category — length, mass, volume, area, speed, time, digital data, or temperature — using exact SI factors. /batch converts up to 100 value/unit pairs in one call with per-item success flags. The one-call /lookup returns the conversion plus the same value expressed in every unit of the category, a reasoning object, and prioritized recommendations. Confidence is always 1.0 because nothing is estimated. Accepts both from/to and legacy from_unit/to_unit field names.",
+  "description": "Agent-native measurement conversion computed in real code (not by a language model). The free /supported-units endpoint lists every supported unit symbol per category, so agents can discover what's convertible. /convert converts a value between any two units of the same category — length, mass, volume, area, speed, time, digital data, or temperature — using exact SI factors. /batch converts up to 100 value/unit pairs in one call with per-item success flags. The one-call /lookup returns the conversion plus the same value expressed in every unit of the category, a reasoning object, and prioritized recommendations. Confidence is always 1.0 because nothing is estimated. Accepts both from/to and legacy from_unit/to_unit field names.",
   "category": "developer-tools",
   "baseUrl": "https://orbis-apis.onrender.com/unit-conversion",
   "websiteUrl": "https://orbis-apis.onrender.com",
@@ -9,24 +9,26 @@
   "openApiSpecUrl": "https://orbis-apis.onrender.com/unit-conversion/openapi.json",
   "logoUrl": "https://orbis-apis.onrender.com/logo.png",
   "tags": ["units", "conversion", "measurement", "developer-tools", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
-  "keywords": ["unit conversion api", "kg to lbs converter api", "metric imperial conversion", "temperature converter api", "data size converter api", "batch unit conversion"],
+  "keywords": ["unit conversion api", "kg to lbs converter api", "metric imperial conversion", "temperature converter api", "data size converter api", "batch unit conversion", "supported units api", "unit catalog api"],
   "tiers": [
     { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
     {
       "name": "Pay Per Call",
       "isFree": false,
       "pricingType": "per_call",
-      "pricePerCall": 0.008,
+      "pricePerCall": 0.015,
       "requestsPerDay": 200000,
       "requestsPerMonth": 6000000,
       "endpointPricing": [
-        { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.003, "description": "Convert a value between two units of the same category" },
-        { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.005, "description": "Convert up to 100 value/unit pairs in one call" },
-        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL convert + all sibling-unit equivalents + reasoning" }
+        { "method": "GET", "pathPattern": "/supported-units", "pricePerCallUsdc": 0, "description": "List every supported unit symbol per category (free)" },
+        { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.005, "description": "Convert a value between two units of the same category" },
+        { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.01, "description": "Convert up to 100 value/unit pairs in one call" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "ONE-CALL convert + all sibling-unit equivalents + reasoning" }
       ]
     }
   ],
   "endpoints": [
+    { "method": "GET", "path": "/supported-units", "description": "List all supported units (free)" },
     { "method": "POST", "path": "/convert", "description": "Single unit conversion" },
     { "method": "POST", "path": "/batch", "description": "Batch convert up to 100 pairs" },
     { "method": "POST", "path": "/lookup", "description": "ONE-CALL conversion + all equivalents" }

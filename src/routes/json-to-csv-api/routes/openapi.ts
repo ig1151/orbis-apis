@@ -13,14 +13,15 @@ const EnvelopeOk = {
 
 const CsvCore = {
   type: 'object',
-  required: ['csv', 'row_count', 'column_count', 'columns', 'delimiter'],
+  required: ['output', 'output_format', 'row_count', 'column_count', 'columns', 'delimiter'],
   // allOf branch — strictness via unevaluatedProperties:false on the composite.
   properties: {
-    csv: { type: 'string' },
+    output: { type: 'string', description: 'Serialized data in the requested format: RFC 4180 CSV, a JSON array, or newline-delimited JSON (JSONL).' },
+    output_format: { type: 'string', enum: ['csv', 'json', 'jsonl'], description: 'The format of the "output" field.' },
     row_count: { type: 'integer', minimum: 0 },
     column_count: { type: 'integer', minimum: 0 },
     columns: { type: 'array', items: { type: 'string' } },
-    delimiter: { type: 'string' },
+    delimiter: { type: 'string', description: 'Field delimiter (applies to CSV output).' },
   },
 };
 
@@ -42,9 +43,10 @@ const ConvertRequest = {
       description: 'A JSON object or an array of JSON objects (max 10000 rows).',
       oneOf: [{ type: 'object' }, { type: 'array', items: { type: 'object' } }],
     },
-    delimiter: { type: 'string', minLength: 1, maxLength: 1, default: ',', description: 'Single-character field delimiter.' },
-    include_header: { type: 'boolean', default: true },
+    delimiter: { type: 'string', minLength: 1, maxLength: 1, default: ',', description: 'Single-character field delimiter (CSV only).' },
+    include_header: { type: 'boolean', default: true, description: 'Emit a header row (CSV only).' },
     flatten: { type: 'boolean', default: true, description: 'Flatten nested objects with dot-notation keys.' },
+    output: { type: 'string', enum: ['csv', 'json', 'jsonl'], default: 'csv', description: 'Output wire format: CSV (RFC 4180), a JSON array, or newline-delimited JSON (JSONL).' },
   },
 };
 
@@ -111,32 +113,32 @@ const schemas = {
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
-    method: 'post', path: '/convert', summary: 'Convert a JSON array of objects to CSV', operationId: 'convert',
-    priceUsdc: 0.003, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse',
-    requestExample: { data: [{ id: 1, user: { name: 'Ada' } }, { id: 2, user: { name: 'Lin' } }] },
+    method: 'post', path: '/convert', summary: 'Convert a JSON array of objects to CSV, JSON, or JSONL', operationId: 'convert',
+    priceUsdc: 0.005, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse',
+    requestExample: { data: [{ id: 1, user: { name: 'Ada' } }, { id: 2, user: { name: 'Lin' } }], output: 'csv' },
     responseExample: {
       trace_id: 'j1-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
-      csv: 'id,user.name\n1,Ada\n2,Lin', row_count: 2, column_count: 2, columns: ['id', 'user.name'], delimiter: ',',
+      output: 'id,user.name\n1,Ada\n2,Lin', output_format: 'csv', row_count: 2, column_count: 2, columns: ['id', 'user.name'], delimiter: ',',
       confidence_score: 1.0,
-      recommended_actions_priority_order: ['Converted 2 row(s) across 2 column(s).', 'Use /lookup to also receive inferred column types.'],
+      recommended_actions_priority_order: ['Converted 2 row(s) across 2 column(s) to CSV.', 'Use /lookup to also receive inferred column types.'],
       chain_to: [], privacy: { data_stored: false, retention: 'none' },
     },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL convert + column type inference + reasoning', operationId: 'lookup',
-    priceUsdc: 0.008, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
-    requestExample: { data: [{ id: 1, active: true }, { id: 2, active: false }] },
+    priceUsdc: 0.015, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
+    requestExample: { data: [{ id: 1, active: true }, { id: 2, active: false }], output: 'jsonl' },
     responseExample: {
       trace_id: 'j2-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
-      csv: 'id,active\n1,true\n2,false', row_count: 2, column_count: 2, columns: ['id', 'active'], delimiter: ',',
+      output: '{"id":1,"active":true}\n{"id":2,"active":false}', output_format: 'jsonl', row_count: 2, column_count: 2, columns: ['id', 'active'], delimiter: ',',
       column_types: { id: 'number', active: 'boolean' },
       reasoning: {
-        why_result_generated: 'Flattened 2 object(s), unioned 2 column(s), and serialized to RFC 4180 CSV.',
-        key_factors: ['nested objects flattened with dot notation', 'arrays serialized as JSON strings', 'delimiter ","'],
+        why_result_generated: 'Flattened 2 object(s), unioned 2 column(s), and serialized to JSONL.',
+        key_factors: ['nested objects flattened with dot notation', 'arrays serialized as JSON strings', 'output format jsonl'],
         invalidators: ['Rows that are not JSON objects.', 'Expecting a non-dot flattening convention.'],
       },
       confidence_score: 1.0,
-      recommended_actions_priority_order: ['Converted 2 row(s) across 2 column(s).', 'Map column_types to your destination schema before import.'],
+      recommended_actions_priority_order: ['Converted 2 row(s) across 2 column(s) to JSONL.', 'Map column_types to your destination schema before import.'],
       chain_to: [], privacy: { data_stored: false, retention: 'none' },
     },
   },
@@ -145,7 +147,8 @@ const endpoints: AplusEndpoint[] = [
 export const spec = buildAplusSpec({
   slug: 'json-to-csv',
   title: 'JSON to CSV API',
-  description: 'Deterministic JSON-array to CSV conversion with nested-object flattening (dot notation), RFC 4180 quoting, and per-column type inference. Pure code; deterministic schemas; confidence always 1.0.',
+  version: '1.1.0',
+  description: 'Deterministic JSON-array conversion to CSV (RFC 4180), JSON, or JSONL with nested-object flattening (dot notation) and per-column type inference. Pure code; deterministic schemas; confidence always 1.0.',
   endpoints,
   schemas,
 });

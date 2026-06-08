@@ -136,6 +136,25 @@ const schemas = {
     ],
     unevaluatedProperties: false,
   },
+  SupportedUnitsResponse: {
+    allOf: [
+      { $ref: '#/components/schemas/EnvelopeOk' },
+      {
+        type: 'object',
+        required: ['categories', 'total_units'],
+        properties: {
+          categories: {
+            type: 'object',
+            additionalProperties: { type: 'array', items: { type: 'string' } },
+            description: 'Map of category name to the unit symbols it supports.',
+          },
+          total_units: { type: 'integer', minimum: 0 },
+        },
+      },
+      { $ref: '#/components/schemas/_Tail' },
+    ],
+    unevaluatedProperties: false,
+  },
 };
 
 const TAIL_EXAMPLE = {
@@ -148,8 +167,24 @@ const TAIL_EXAMPLE = {
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
+    method: 'get', path: '/supported-units', summary: 'List every supported unit symbol per category', operationId: 'supportedUnits',
+    responseSchemaRef: 'SupportedUnitsResponse',
+    responseExample: {
+      trace_id: 'u0-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
+      categories: {
+        length: ['m', 'km', 'cm', 'mm', 'um', 'nm', 'mi', 'yd', 'ft', 'in', 'nmi'],
+        temperature: ['C', 'F', 'K'],
+      },
+      total_units: 58,
+      confidence_score: 1.0,
+      recommended_actions_priority_order: ['58 unit symbols across 8 categories.', 'Pass any two symbols from the same category to /convert.'],
+      chain_to: [{ api: 'unit-conversion', reason: 'Convert between any two of these units via /convert.' }],
+      privacy: { data_stored: false, retention: 'none' },
+    },
+  },
+  {
     method: 'post', path: '/convert', summary: 'Convert a value between two units of the same category', operationId: 'convert',
-    priceUsdc: 0.003, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse',
+    priceUsdc: 0.005, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse',
     requestExample: { value: 10, from: 'km', to: 'mi' },
     responseExample: {
       trace_id: 'u1-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
@@ -159,7 +194,7 @@ const endpoints: AplusEndpoint[] = [
   },
   {
     method: 'post', path: '/batch', summary: 'Convert up to 100 value/unit pairs in one call', operationId: 'batch',
-    priceUsdc: 0.005, requestSchemaRef: 'BatchRequest', responseSchemaRef: 'BatchResponse',
+    priceUsdc: 0.01, requestSchemaRef: 'BatchRequest', responseSchemaRef: 'BatchResponse',
     requestExample: { conversions: [{ value: 100, from: 'C', to: 'F' }, { value: 1, from: 'GB', to: 'MiB' }] },
     responseExample: {
       trace_id: 'u2-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
@@ -175,7 +210,7 @@ const endpoints: AplusEndpoint[] = [
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL convert + all sibling-unit equivalents + reasoning', operationId: 'lookup',
-    priceUsdc: 0.008, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
+    priceUsdc: 0.015, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
     requestExample: { value: 100, from: 'C', to: 'F' },
     responseExample: {
       trace_id: 'u3-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
@@ -196,8 +231,8 @@ const endpoints: AplusEndpoint[] = [
 export const spec = buildAplusSpec({
   slug: 'unit-conversion',
   title: 'Unit Conversion API',
-  description: 'Deterministic measurement conversion across length, mass, volume, area, speed, time, digital data, and temperature. Exact SI factors computed in real code; deterministic schemas; confidence always 1.0.',
-  version: '2.0.0',
+  description: 'Deterministic measurement conversion across length, mass, volume, area, speed, time, digital data, and temperature. Exact SI factors computed in real code; deterministic schemas; confidence always 1.0. Includes a free /supported-units catalog endpoint.',
+  version: '2.1.0',
   endpoints,
   schemas,
 });

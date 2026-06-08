@@ -90,7 +90,7 @@ function parseCron(expr: string): Parsed {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-function describe(p: Parsed): string {
+function describe(p: Parsed, tzLabel = 'UTC'): string {
   const { fields, sets } = p;
   const parts: string[] = [];
   // time-of-day
@@ -105,10 +105,13 @@ function describe(p: Parsed): string {
   if (fields.month !== '*') parts.push(`in ${sets.month.map((m) => MONTHS[m - 1]).join(', ')}`);
   if (p.dowRestricted) parts.push(`on ${sets.day_of_week.map((d) => DAYS[d]).join(', ')}`);
   const s = parts.join(', ');
-  return s.charAt(0).toUpperCase() + s.slice(1) + ' (UTC).';
+  return s.charAt(0).toUpperCase() + s.slice(1) + ` (${tzLabel}).`;
 }
 
-function matches(p: Parsed, d: Date): boolean {
+const MAX_ITERS = 1_500_000; // ~2.8 years of minutes; safety bound for sparse schedules
+
+// --- UTC fast path (default; pure getUTC* arithmetic) ---------------------
+function matchesUtc(p: Parsed, d: Date): boolean {
   if (!p.sets.minute.includes(d.getUTCMinutes())) return false;
   if (!p.sets.hour.includes(d.getUTCHours())) return false;
   if (!p.sets.month.includes(d.getUTCMonth() + 1)) return false;
@@ -121,31 +124,94 @@ function matches(p: Parsed, d: Date): boolean {
   return true;
 }
 
-const MAX_ITERS = 1_500_000; // ~2.8 years of minutes; safety bound for sparse schedules
-
-function nextRuns(p: Parsed, fromMs: number, count: number): string[] {
+function nextRunsUtc(p: Parsed, fromMs: number, count: number): string[] {
   const out: string[] = [];
   let ms = Math.ceil(fromMs / 60000) * 60000 + 60000; // strictly after `from`, aligned to minute
   for (let i = 0; i < MAX_ITERS && out.length < count; i++, ms += 60000) {
     const d = new Date(ms);
-    if (matches(p, d)) out.push(d.toISOString().replace(/\.\d{3}Z$/, 'Z'));
+    if (matchesUtc(p, d)) out.push(d.toISOString().replace(/\.\d{3}Z$/, 'Z'));
+  }
+  return out;
+}
+
+// --- Timezone-aware path (DST-correct via Intl, zero dependencies) --------
+// We iterate UTC minutes and interpret each instant's WALL-CLOCK time in the
+// target IANA zone, so DST transitions are handled by the ICU tz database:
+// a skipped local minute (spring-forward) simply never matches; a repeated
+// local minute (fall-back) matches at both real instants.
+const fmtCache = new Map<string, Intl.DateTimeFormat>();
+function getFmt(tz: string): Intl.DateTimeFormat {
+  let f = fmtCache.get(tz);
+  if (!f) {
+    f = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, hourCycle: 'h23',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      timeZoneName: 'longOffset',
+    });
+    fmtCache.set(tz, f);
+  }
+  return f;
+}
+
+export function isValidTimezone(tz: string): boolean {
+  try { new Intl.DateTimeFormat('en-US', { timeZone: tz }); return true; } catch { return false; }
+}
+
+interface WallClock { year: number; month: number; day: number; hour: number; minute: number; offset: string; }
+
+function wallClock(ms: number, fmt: Intl.DateTimeFormat): WallClock {
+  const parts = fmt.formatToParts(new Date(ms));
+  const get = (t: string) => parts.find((x) => x.type === t)?.value ?? '';
+  const raw = get('timeZoneName'); // "GMT-04:00", "GMT+05:30", or "GMT"/"UTC"
+  let offset = 'Z';
+  const m = raw.match(/GMT([+-]\d{2}):?(\d{2})?/);
+  if (m) offset = `${m[1]}:${m[2] ?? '00'}`;
+  let hour = Number(get('hour'));
+  if (hour === 24) hour = 0; // h23 guard
+  return { year: Number(get('year')), month: Number(get('month')), day: Number(get('day')), hour, minute: Number(get('minute')), offset };
+}
+
+function matchesWall(p: Parsed, wc: WallClock): boolean {
+  if (!p.sets.minute.includes(wc.minute)) return false;
+  if (!p.sets.hour.includes(wc.hour)) return false;
+  if (!p.sets.month.includes(wc.month)) return false;
+  const dow = new Date(Date.UTC(wc.year, wc.month - 1, wc.day)).getUTCDay(); // weekday of that calendar date
+  const domHit = p.sets.day_of_month.includes(wc.day);
+  const dowHit = p.sets.day_of_week.includes(dow);
+  if (p.domRestricted && p.dowRestricted) return domHit || dowHit;
+  if (p.domRestricted) return domHit;
+  if (p.dowRestricted) return dowHit;
+  return true;
+}
+
+function nextRuns(p: Parsed, fromMs: number, count: number, tz: string): string[] {
+  if (tz === 'UTC') return nextRunsUtc(p, fromMs, count);
+  const fmt = getFmt(tz);
+  const out: string[] = [];
+  let ms = Math.ceil(fromMs / 60000) * 60000 + 60000;
+  for (let i = 0; i < MAX_ITERS && out.length < count; i++, ms += 60000) {
+    const wc = wallClock(ms, fmt);
+    if (matchesWall(p, wc)) {
+      out.push(`${wc.year}-${pad(wc.month)}-${pad(wc.day)}T${pad(wc.hour)}:${pad(wc.minute)}:00${wc.offset}`);
+    }
   }
   return out;
 }
 
 router.get('/', (_req: Request, res: Response) => {
   res.json({
-    name: 'Cron Explainer API', version: '1.0.0',
-    description: 'Deterministic 5-field cron parsing: human-readable description plus the next scheduled run times (UTC). Real parsing and date math — never estimated.',
+    name: 'Cron Explainer API', version: '1.1.0',
+    description: 'Deterministic 5-field cron parsing: human-readable description plus the next scheduled run times in any IANA timezone (DST-aware). Real parsing and date math — never estimated.',
     openapi_url: 'https://orbis-apis.onrender.com/cron-explainer/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/explain', summary: 'Parse a cron expression into fields + a plain-English description', price_usdc: 0.003 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: explain + next run times + reasoning', price_usdc: 0.008 },
+      { method: 'POST', path: '/explain', summary: 'Parse a cron expression into fields + a plain-English description', price_usdc: 0.005 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: explain + next run times (any IANA timezone, DST-aware) + reasoning', price_usdc: 0.015 },
     ],
     pricing: [
-      { path: '/explain', price_usdc: 0.003, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
+      { path: '/explain', price_usdc: 0.005, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
     ],
     x402_compatible: true,
   });
@@ -191,21 +257,33 @@ router.post('/lookup', (req: Request, res: Response) => {
     if (!Number.isInteger(req.body.count) || req.body.count < 1 || req.body.count > 20) return fail(res, t0, 400, 'invalid_count', '"count" must be an integer 1–20');
     count = req.body.count;
   }
-  const runs = nextRuns(p, fromMs, count);
-  const desc = describe(p);
+  let tz = 'UTC';
+  if (req.body?.timezone !== undefined) {
+    if (typeof req.body.timezone !== 'string' || !isValidTimezone(req.body.timezone)) {
+      return fail(res, t0, 400, 'invalid_timezone', '"timezone" must be a valid IANA timezone name, e.g. "America/New_York" or "UTC"');
+    }
+    tz = req.body.timezone;
+  }
+  const runs = nextRuns(p, fromMs, count, tz);
+  const desc = describe(p, tz);
   respond(res, t0, {
     expression: expr.trim(),
     fields: p.fields,
     description: desc,
     next_runs: runs,
-    next_runs_timezone: 'UTC',
+    next_runs_timezone: tz,
+    next_run_count: runs.length,
     reasoning: {
-      why_result_generated: `Parsed the cron expression and computed the next ${runs.length} matching minute(s) in UTC after the reference time.`,
-      key_factors: [desc, p.domRestricted && p.dowRestricted ? 'day-of-month and day-of-week both set → matches on either (Vixie cron)' : 'standard day matching', 'all times in UTC'],
-      invalidators: ['Interpreting the schedule in a non-UTC timezone.', 'A schedule with no occurrence within ~2.8 years returns fewer runs.'],
+      why_result_generated: `Parsed the cron expression and computed the next ${runs.length} matching minute(s) interpreted in ${tz} after the reference time.`,
+      key_factors: [
+        desc,
+        p.domRestricted && p.dowRestricted ? 'day-of-month and day-of-week both set → matches on either (Vixie cron)' : 'standard day matching',
+        tz === 'UTC' ? 'times in UTC' : `wall-clock times in ${tz}, DST-aware (returned with UTC offset)`,
+      ],
+      invalidators: ['Interpreting the schedule in a different timezone changes the absolute instants.', 'A schedule with no occurrence within ~2.8 years returns fewer runs.'],
     },
     confidence_score: 1.0,
-    recommended_actions_priority_order: [desc, runs.length ? `Next run: ${runs[0]} (UTC).` : 'No upcoming run found within the search horizon.'],
+    recommended_actions_priority_order: [desc, runs.length ? `Next run: ${runs[0]} (${tz}).` : 'No upcoming run found within the search horizon.'],
     chain_to: [],
     privacy: PRIVACY,
   });

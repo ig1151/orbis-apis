@@ -35,6 +35,8 @@ function escapeCell(s: string, delim: string): string {
     : s;
 }
 
+type OutputFormat = 'csv' | 'json' | 'jsonl';
+
 interface BuildResult { csv: string; row_count: number; columns: string[]; delimiter: string; rows: Record<string, unknown>[]; }
 
 function buildCsv(rawRows: Record<string, unknown>[], delim: string, header: boolean, doFlatten: boolean): BuildResult {
@@ -46,6 +48,14 @@ function buildCsv(rawRows: Record<string, unknown>[], delim: string, header: boo
   if (header) lines.push(columns.map((c) => escapeCell(c, delim)).join(delim));
   for (const r of rows) lines.push(columns.map((c) => escapeCell(cell(r[c]), delim)).join(delim));
   return { csv: lines.join('\n'), row_count: rows.length, columns, delimiter: delim, rows };
+}
+
+// Serialize the (flattened) rows into the requested wire format.
+// json  → a single JSON array; jsonl → one JSON object per line; csv → RFC 4180.
+function serialize(b: BuildResult, format: OutputFormat): string {
+  if (format === 'json') return JSON.stringify(b.rows);
+  if (format === 'jsonl') return b.rows.map((r) => JSON.stringify(r)).join('\n');
+  return b.csv;
 }
 
 function inferTypes(rows: Record<string, unknown>[], columns: string[]): Record<string, string> {
@@ -76,29 +86,31 @@ function readRows(data: unknown): Record<string, unknown>[] | string {
   return arr as Record<string, unknown>[];
 }
 
-function readOptions(body: any): { delim: string; header: boolean; flatten: boolean } | string {
+function readOptions(body: any): { delim: string; header: boolean; flatten: boolean; output: OutputFormat } | string {
   const delim = body?.delimiter ?? ',';
   if (typeof delim !== 'string' || delim.length !== 1) return '"delimiter" must be a single character';
   const header = body?.include_header ?? true;
   if (typeof header !== 'boolean') return '"include_header" must be a boolean';
   const flatten = body?.flatten ?? true;
   if (typeof flatten !== 'boolean') return '"flatten" must be a boolean';
-  return { delim, header, flatten };
+  const output = body?.output ?? 'csv';
+  if (output !== 'csv' && output !== 'json' && output !== 'jsonl') return '"output" must be one of "csv", "json", "jsonl"';
+  return { delim, header, flatten, output };
 }
 
 router.get('/', (_req: Request, res: Response) => {
   res.json({
-    name: 'JSON to CSV API', version: '1.0.0',
-    description: 'Deterministic JSON-array to CSV conversion with nested-object flattening (dot notation) and RFC 4180 quoting. Pure code — never estimated.',
+    name: 'JSON to CSV API', version: '1.1.0',
+    description: 'Deterministic JSON-array conversion to CSV (RFC 4180), JSON, or JSONL with nested-object flattening (dot notation). Pure code — never estimated.',
     openapi_url: 'https://orbis-apis.onrender.com/json-to-csv/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/convert', summary: 'Convert a JSON array of objects to CSV', price_usdc: 0.003 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: convert + column type inference + reasoning', price_usdc: 0.008 },
+      { method: 'POST', path: '/convert', summary: 'Convert a JSON array of objects to CSV, JSON, or JSONL', price_usdc: 0.005 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: convert + column type inference + reasoning', price_usdc: 0.015 },
     ],
     pricing: [
-      { path: '/convert', price_usdc: 0.003, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
+      { path: '/convert', price_usdc: 0.005, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
     ],
     x402_compatible: true,
   });
@@ -112,10 +124,11 @@ router.post('/convert', (req: Request, res: Response) => {
   if (typeof opts === 'string') return fail(res, t0, 400, 'invalid_options', opts);
   const b = buildCsv(rows, opts.delim, opts.header, opts.flatten);
   respond(res, t0, {
-    csv: b.csv, row_count: b.row_count, column_count: b.columns.length, columns: b.columns, delimiter: b.delimiter,
+    output: serialize(b, opts.output), output_format: opts.output,
+    row_count: b.row_count, column_count: b.columns.length, columns: b.columns, delimiter: b.delimiter,
     confidence_score: 1.0,
     recommended_actions_priority_order: [
-      `Converted ${b.row_count} row(s) across ${b.columns.length} column(s).`,
+      `Converted ${b.row_count} row(s) across ${b.columns.length} column(s) to ${opts.output.toUpperCase()}.`,
       'Use /lookup to also receive inferred column types.',
     ],
     chain_to: [],
@@ -132,11 +145,12 @@ router.post('/lookup', (req: Request, res: Response) => {
   const b = buildCsv(rows, opts.delim, opts.header, opts.flatten);
   const column_types = inferTypes(b.rows, b.columns);
   respond(res, t0, {
-    csv: b.csv, row_count: b.row_count, column_count: b.columns.length, columns: b.columns, delimiter: b.delimiter,
+    output: serialize(b, opts.output), output_format: opts.output,
+    row_count: b.row_count, column_count: b.columns.length, columns: b.columns, delimiter: b.delimiter,
     column_types,
     reasoning: {
-      why_result_generated: `Flattened ${b.row_count} object(s), unioned ${b.columns.length} column(s), and serialized to RFC 4180 CSV.`,
-      key_factors: [opts.flatten ? 'nested objects flattened with dot notation' : 'top-level keys only', 'arrays serialized as JSON strings', `delimiter "${opts.delim}"`],
+      why_result_generated: `Flattened ${b.row_count} object(s), unioned ${b.columns.length} column(s), and serialized to ${opts.output.toUpperCase()}.`,
+      key_factors: [opts.flatten ? 'nested objects flattened with dot notation' : 'top-level keys only', 'arrays serialized as JSON strings', opts.output === 'csv' ? `delimiter "${opts.delim}"` : `output format ${opts.output}`],
       invalidators: ['Rows that are not JSON objects.', 'Expecting a non-dot flattening convention.'],
     },
     confidence_score: 1.0,

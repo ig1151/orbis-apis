@@ -28,6 +28,14 @@ for (const [cat, units] of Object.entries(CATEGORIES)) {
   for (const unit of Object.keys(units)) INDEX[unit] = { category: cat };
 }
 
+// Static catalog of every supported unit symbol per category (temperature is
+// handled separately from the factor table, so it's appended here).
+const CATALOG: Record<string, string[]> = {
+  ...Object.fromEntries(Object.entries(CATEGORIES).map(([cat, units]) => [cat, Object.keys(units)])),
+  temperature: [...TEMP_UNITS],
+};
+const TOTAL_UNITS = Object.values(CATALOG).reduce((n, arr) => n + arr.length, 0);
+
 function tempToC(v: number, from: Temp): number {
   return from === 'C' ? v : from === 'F' ? (v - 32) * 5 / 9 : v - 273.15;
 }
@@ -70,21 +78,38 @@ function readPair(o: any): { value: number; from: string; to: string } | string 
 
 router.get('/', (_req: Request, res: Response) => {
   res.json({
-    name: 'Unit Conversion API', version: '2.0.0',
+    name: 'Unit Conversion API', version: '2.1.0',
     description: 'Deterministic measurement conversion across length, mass, volume, area, speed, time, digital data, and temperature. Exact SI factors computed in real code — confidence always 1.0, never estimated.',
     openapi_url: 'https://orbis-apis.onrender.com/unit-conversion/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/convert', summary: 'Convert a value between two units of the same category', price_usdc: 0.003 },
-      { method: 'POST', path: '/batch', summary: 'Convert up to 100 value/unit pairs in one call', price_usdc: 0.005 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: convert + all sibling-unit equivalents + reasoning', price_usdc: 0.008 },
+      { method: 'GET', path: '/supported-units', summary: 'List every supported unit symbol per category', price_usdc: 0 },
+      { method: 'POST', path: '/convert', summary: 'Convert a value between two units of the same category', price_usdc: 0.005 },
+      { method: 'POST', path: '/batch', summary: 'Convert up to 100 value/unit pairs in one call', price_usdc: 0.01 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL: convert + all sibling-unit equivalents + reasoning', price_usdc: 0.015 },
     ],
     pricing: [
-      { path: '/convert', price_usdc: 0.003, currency: 'USDC' },
-      { path: '/batch', price_usdc: 0.005, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
+      { path: '/supported-units', price_usdc: 0, currency: 'USDC' },
+      { path: '/convert', price_usdc: 0.005, currency: 'USDC' },
+      { path: '/batch', price_usdc: 0.01, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
     ],
     x402_compatible: true,
+  });
+});
+
+router.get('/supported-units', (_req: Request, res: Response) => {
+  const t0 = Date.now();
+  respond(res, t0, {
+    categories: CATALOG,
+    total_units: TOTAL_UNITS,
+    confidence_score: 1.0,
+    recommended_actions_priority_order: [
+      `${TOTAL_UNITS} unit symbols across ${Object.keys(CATALOG).length} categories.`,
+      'Pass any two symbols from the same category to /convert.',
+    ],
+    chain_to: [{ api: 'unit-conversion', reason: 'Convert between any two of these units via /convert.' }],
+    privacy: PRIVACY,
   });
 });
 

@@ -146,7 +146,7 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/generate-key', summary: 'Generate a random 256-bit key', operationId: 'generateKey',
-    priceUsdc: 0.002, responseSchemaRef: 'GenerateKeyResponse',
+    priceUsdc: 0.003, responseSchemaRef: 'GenerateKeyResponse',
     responseExample: {
       trace_id: 'a1-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
       algorithm: 'aes-256-gcm', key_bits: 256, key_base64: KEY_EX,
@@ -158,7 +158,7 @@ const endpoints: AplusEndpoint[] = [
   },
   {
     method: 'post', path: '/encrypt', summary: 'Encrypt plaintext with a provided key', operationId: 'encrypt',
-    priceUsdc: 0.005, requestSchemaRef: 'EncryptRequest', responseSchemaRef: 'EncryptResponse',
+    priceUsdc: 0.01, requestSchemaRef: 'EncryptRequest', responseSchemaRef: 'EncryptResponse',
     requestExample: { plaintext: 'hello agent', key_base64: KEY_EX },
     responseExample: {
       trace_id: 'a2-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
@@ -171,7 +171,7 @@ const endpoints: AplusEndpoint[] = [
   },
   {
     method: 'post', path: '/decrypt', summary: 'Decrypt ciphertext with key + iv + auth tag', operationId: 'decrypt',
-    priceUsdc: 0.005, requestSchemaRef: 'DecryptRequest', responseSchemaRef: 'DecryptResponse',
+    priceUsdc: 0.01, requestSchemaRef: 'DecryptRequest', responseSchemaRef: 'DecryptResponse',
     requestExample: { ciphertext_base64: CT_EX, iv_base64: IV_EX, auth_tag_base64: TAG_EX, key_base64: KEY_EX },
     responseExample: {
       trace_id: 'a3-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
@@ -183,7 +183,7 @@ const endpoints: AplusEndpoint[] = [
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL generate key + encrypt + return full reusable bundle', operationId: 'lookup',
-    priceUsdc: 0.008, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
+    priceUsdc: 0.02, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
     requestExample: { plaintext: 'hello agent' },
     responseExample: {
       trace_id: 'a4-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
@@ -211,6 +211,12 @@ export const spec = buildAplusSpec({
   description: 'Stateless AES-256-GCM authenticated encryption and decryption. Real cryptography (Node crypto); caller-owned keys; nothing stored; deterministic schemas.',
   endpoints,
   schemas,
+  infoExtensions: {
+    // Security-category signal for agents/marketplaces. No side effects and
+    // nothing is stored, so no human approval is required to call it.
+    'x-security-sensitive': true,
+    'x-human-approval-required': false,
+  },
 });
 
 export default specRouter(spec);

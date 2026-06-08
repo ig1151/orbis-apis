@@ -75,6 +75,8 @@ export interface AplusSpecMeta {
   endpoints: AplusEndpoint[];
   /** API-specific component schemas (fully typed — no bare `object`). */
   schemas: Record<string, unknown>;
+  /** Extra API-level extensions merged into `info` (e.g. x-security-sensitive). */
+  infoExtensions?: Record<string, unknown>;
 }
 
 // Common typed components injected into every spec.
@@ -200,6 +202,7 @@ export function buildAplusSpec(meta: AplusSpecMeta): Record<string, unknown> {
       'x402-compatible': true,
       'x-agent-marketplace-ready': true,
       'x-pay-per-call-optimized': true,
+      ...(meta.infoExtensions ?? {}),
     },
     servers: [{ url: base }],
     security: [{ ApiKeyAuth: [] }],

@@ -58,6 +58,7 @@ const schemas = {
       expression: { type: 'string', example: '0 9 * * 1-5' },
       from: { type: 'string', format: 'date-time', description: 'Reference time (ISO-8601); defaults to now.' },
       count: { type: 'integer', minimum: 1, maximum: 20, description: 'How many next runs to return (default 5).' },
+      timezone: { type: 'string', default: 'UTC', description: 'IANA timezone the cron fields are interpreted in (DST-aware), e.g. "America/New_York". Defaults to UTC.', example: 'America/New_York' },
     },
   },
   DiscoveryResponse: {
@@ -98,10 +99,11 @@ const schemas = {
       { $ref: '#/components/schemas/ExplainCore' },
       {
         type: 'object',
-        required: ['next_runs', 'next_runs_timezone', 'reasoning'],
+        required: ['next_runs', 'next_runs_timezone', 'next_run_count', 'reasoning'],
         properties: {
-          next_runs: { type: 'array', items: { type: 'string', format: 'date-time' } },
-          next_runs_timezone: { type: 'string', enum: ['UTC'] },
+          next_runs: { type: 'array', items: { type: 'string', format: 'date-time' }, description: 'Next matching instants as ISO-8601 with the timezone offset (or Z for UTC).' },
+          next_runs_timezone: { type: 'string', description: 'IANA timezone the runs are expressed in.' },
+          next_run_count: { type: 'integer', minimum: 0, description: 'Number of next_runs returned (≤ requested count; fewer if the horizon has no more matches).' },
           reasoning: { $ref: '#/components/schemas/Reasoning' },
         },
       },
@@ -113,12 +115,13 @@ const schemas = {
 
 const FIELDS_EXAMPLE = { minute: '0', hour: '9', day_of_month: '*', month: '*', day_of_week: '1-5' };
 const DESC = 'At 09:00, on Monday, Tuesday, Wednesday, Thursday, Friday (UTC).';
+const DESC_TZ = 'At 09:00, on Monday, Tuesday, Wednesday, Thursday, Friday (America/New_York).';
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/explain', summary: 'Parse a cron expression into fields + a plain-English description', operationId: 'explain',
-    priceUsdc: 0.003, requestSchemaRef: 'ExplainRequest', responseSchemaRef: 'ExplainResponse',
+    priceUsdc: 0.005, requestSchemaRef: 'ExplainRequest', responseSchemaRef: 'ExplainResponse',
     requestExample: { expression: '0 9 * * 1-5' },
     responseExample: {
       trace_id: 'c1-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
@@ -129,21 +132,22 @@ const endpoints: AplusEndpoint[] = [
     },
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL explain + next run times + reasoning', operationId: 'lookup',
-    priceUsdc: 0.008, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
-    requestExample: { expression: '0 9 * * 1-5', from: '2026-06-08T00:00:00Z', count: 3 },
+    method: 'post', path: '/lookup', summary: 'ONE-CALL explain + next run times (any IANA timezone, DST-aware) + reasoning', operationId: 'lookup',
+    priceUsdc: 0.015, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
+    requestExample: { expression: '0 9 * * 1-5', from: '2026-06-08T00:00:00Z', count: 3, timezone: 'America/New_York' },
     responseExample: {
       trace_id: 'c2-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
-      expression: '0 9 * * 1-5', fields: FIELDS_EXAMPLE, description: DESC,
-      next_runs: ['2026-06-08T09:00:00Z', '2026-06-09T09:00:00Z', '2026-06-10T09:00:00Z'],
-      next_runs_timezone: 'UTC',
+      expression: '0 9 * * 1-5', fields: FIELDS_EXAMPLE, description: DESC_TZ,
+      next_runs: ['2026-06-08T09:00:00-04:00', '2026-06-09T09:00:00-04:00', '2026-06-10T09:00:00-04:00'],
+      next_runs_timezone: 'America/New_York',
+      next_run_count: 3,
       reasoning: {
-        why_result_generated: 'Parsed the cron expression and computed the next 3 matching minute(s) in UTC after the reference time.',
-        key_factors: [DESC, 'standard day matching', 'all times in UTC'],
-        invalidators: ['Interpreting the schedule in a non-UTC timezone.', 'A schedule with no occurrence within ~2.8 years returns fewer runs.'],
+        why_result_generated: 'Parsed the cron expression and computed the next 3 matching minute(s) interpreted in America/New_York after the reference time.',
+        key_factors: [DESC_TZ, 'standard day matching', 'wall-clock times in America/New_York, DST-aware (returned with UTC offset)'],
+        invalidators: ['Interpreting the schedule in a different timezone changes the absolute instants.', 'A schedule with no occurrence within ~2.8 years returns fewer runs.'],
       },
       confidence_score: 1.0,
-      recommended_actions_priority_order: [DESC, 'Next run: 2026-06-08T09:00:00Z (UTC).'],
+      recommended_actions_priority_order: [DESC_TZ, 'Next run: 2026-06-08T09:00:00-04:00 (America/New_York).'],
       chain_to: [], privacy: { data_stored: false, retention: 'none' },
     },
   },
@@ -152,7 +156,8 @@ const endpoints: AplusEndpoint[] = [
 export const spec = buildAplusSpec({
   slug: 'cron-explainer',
   title: 'Cron Explainer API',
-  description: 'Deterministic 5-field cron parsing: plain-English description plus the next scheduled run times in UTC. Real parsing and date arithmetic; deterministic schemas; confidence always 1.0.',
+  version: '1.1.0',
+  description: 'Deterministic 5-field cron parsing: plain-English description plus the next scheduled run times in any IANA timezone (DST-aware). Real parsing and date arithmetic; deterministic schemas; confidence always 1.0.',
   endpoints,
   schemas,
 });
