@@ -1,0 +1,36 @@
+{
+  "name": "AES Vault API",
+  "shortDescription": "Stateless AES-256-GCM encrypt/decrypt for agents — real crypto, caller-owned keys, nothing stored",
+  "description": "Agent-native authenticated encryption using AES-256-GCM, computed with Node's crypto (not a language model). /generate-key returns a random 256-bit key; /encrypt encrypts UTF-8 plaintext under a caller-supplied key and returns ciphertext, IV, and GCM auth tag (all base64); /decrypt verifies the auth tag and returns the plaintext, failing closed on any tampering or wrong key. The one-call /lookup generates a fresh key, encrypts, and returns the complete reusable bundle plus a reasoning object. Fully stateless — keys and data are never stored (lose the key and the ciphertext is unrecoverable). Confidence is always 1.0.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/aes-vault",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/aes-vault/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/aes-vault/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["encryption", "aes", "cryptography", "security", "developer-tools", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["aes encryption api", "aes-256-gcm api", "encrypt decrypt api", "authenticated encryption api", "stateless encryption api", "generate aes key api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.008,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/generate-key", "pricePerCallUsdc": 0.002, "description": "Generate a random 256-bit key" },
+        { "method": "POST", "pathPattern": "/encrypt", "pricePerCallUsdc": 0.005, "description": "Encrypt plaintext with a provided key" },
+        { "method": "POST", "pathPattern": "/decrypt", "pricePerCallUsdc": 0.005, "description": "Decrypt ciphertext with key + iv + auth tag" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL generate key + encrypt + full reusable bundle" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/generate-key", "description": "Generate a 256-bit AES key" },
+    { "method": "POST", "path": "/encrypt", "description": "AES-256-GCM encrypt" },
+    { "method": "POST", "path": "/decrypt", "description": "AES-256-GCM decrypt" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL key + encrypt bundle" }
+  ]
+}

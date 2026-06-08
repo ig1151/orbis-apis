@@ -1,126 +1,34 @@
-[
-  {
-    "name": "Unit Conversion API",
-    "shortDescription": "Unit conversion, batch convert, and unit detection for engineering and logistics agents",
-    "description": "Convert between units of measurement, batch-convert multiple values, and detect unit types from text for engineering, logistics, and data normalization workflows.",
-    "category": "data-analytics",
-    "baseUrl": "https://orbis-apis.onrender.com/unit-conversion",
-    "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/unit-conversion/openapi.json",
-    "openApiSpecUrl": "https://orbis-apis.onrender.com/unit-conversion/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
-    "tags": [
-      "units",
-      "conversion",
-      "engineering",
-      "logistics",
-      "measurement"
-    ],
-    "tiers": [
-      {
-        "name": "Free",
-        "isFree": true,
-        "requestsPerDay": 100,
-        "requestsPerMonth": 3000
-      },
-      {
-        "name": "Pay Per Call",
-        "isFree": false,
-        "pricingType": "per_call",
-        "pricePerCall": 0.004,
-        "endpointPricing": [
-          {
-            "method": "POST",
-            "pathPattern": "/convert",
-            "pricePerCallUsdc": 0.001,
-            "description": "Convert a value from one unit to another"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/batch",
-            "pricePerCallUsdc": 0.004,
-            "description": "Batch-convert multiple unit pairs"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/detect-unit",
-            "pricePerCallUsdc": 0.002,
-            "description": "Detect and extract units from text"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Execution readiness check with next API chaining"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.003,
-            "description": "ONE-CALL full unit conversion intelligence"
-          }
-        ]
-      },
-      {
-        "name": "High Volume",
-        "isFree": false,
-        "pricingType": "per_call",
-        "pricePerCall": 0.002,
-        "endpointPricing": [
-          {
-            "method": "POST",
-            "pathPattern": "/convert",
-            "pricePerCallUsdc": 0.0005,
-            "description": "Convert a value from one unit to another"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/batch",
-            "pricePerCallUsdc": 0.002,
-            "description": "Batch-convert multiple unit pairs"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/lookup",
-            "pricePerCallUsdc": 0.002,
-            "description": "ONE-CALL full unit conversion intelligence"
-          }
-        ]
-      }
-    ],
-    "endpoints": [
-      {
-        "method": "POST",
-        "path": "/convert",
-        "description": "Convert a value from one unit to another"
-      },
-      {
-        "method": "POST",
-        "path": "/batch",
-        "description": "Batch-convert multiple unit pairs"
-      },
-      {
-        "method": "POST",
-        "path": "/detect-unit",
-        "description": "Detect and extract units from text"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution readiness check with next API chaining"
-      },
-      {
-        "method": "POST",
-        "path": "/lookup",
-        "description": "ONE-CALL full unit conversion intelligence"
-      }
-    ],
-    "keywords": [
-      "convert units of measurement",
-      "kg to lbs converter api",
-      "metric imperial conversion",
-      "measurement converter api",
-      "scientific unit converter"
-    ]
-  }
-]
+{
+  "name": "Unit Conversion API",
+  "shortDescription": "Deterministic unit conversion across 8 measurement categories for agents — exact SI math, never estimated",
+  "description": "Agent-native measurement conversion computed in real code (not by a language model). /convert converts a value between any two units of the same category — length, mass, volume, area, speed, time, digital data, or temperature — using exact SI factors. /batch converts up to 100 value/unit pairs in one call with per-item success flags. The one-call /lookup returns the conversion plus the same value expressed in every unit of the category, a reasoning object, and prioritized recommendations. Confidence is always 1.0 because nothing is estimated. Accepts both from/to and legacy from_unit/to_unit field names.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/unit-conversion",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/unit-conversion/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/unit-conversion/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["units", "conversion", "measurement", "developer-tools", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["unit conversion api", "kg to lbs converter api", "metric imperial conversion", "temperature converter api", "data size converter api", "batch unit conversion"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.008,
+      "requestsPerDay": 200000,
+      "requestsPerMonth": 6000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.003, "description": "Convert a value between two units of the same category" },
+        { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.005, "description": "Convert up to 100 value/unit pairs in one call" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL convert + all sibling-unit equivalents + reasoning" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/convert", "description": "Single unit conversion" },
+    { "method": "POST", "path": "/batch", "description": "Batch convert up to 100 pairs" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL conversion + all equivalents" }
+  ]
+}

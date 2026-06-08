@@ -1,25 +1,205 @@
-import { Router, Request, Response } from 'express';
-const router = Router();
-const privacy = { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } };
-const confidence = { type: 'object', additionalProperties: { type: 'number' } };
-const actions = { type: 'array', items: { type: 'string' } };
-const traceFields = { trace_id: { type: 'string' }, computed_at: { type: 'string' }, success: { type: 'boolean' } };
+import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
 
-router.get('/', (_req: Request, res: Response) => {
-  res.json({
-    openapi: '3.1.0',
-    info: { title: 'Unit Conversion API', version: '1.0.0', description: 'Convert between units of measurement, batch-convert multiple values, and detect unit types from text for engineering, logistics, and data normalization workflows', 'x-agent-callable': true, 'x-mcp-compatible': true, 'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { convert: '$0.001', batch: '$0.004', 'detect-unit': '$0.002', 'execution-gate': '$0.001', lookup: '$0.003' } } },
-    servers: [{ url: 'https://orbis-apis.onrender.com/unit-conversion' }],
-    security: [{ ApiKeyAuth: [] }],
-    paths: {
-      '/convert': { post: { operationId: 'convertUnit', summary: 'Convert a value from one unit to another', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['value', 'from_unit', 'to_unit'], properties: { value: { type: 'number' }, from_unit: { type: 'string' }, to_unit: { type: 'string' } } } } } }, responses: { '200': { description: 'Converted value', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, input: { type: 'object' }, output: { type: 'object' }, unit_type: { type: 'string' }, formula: { type: 'string' }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing fields' }, '500': { description: 'Failed' } } } },
-      '/batch': { post: { operationId: 'batchConvert', summary: 'Batch-convert multiple values across unit pairs', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['conversions'], properties: { conversions: { type: 'array', items: { type: 'object', required: ['value', 'from_unit', 'to_unit'], properties: { value: { type: 'number' }, from_unit: { type: 'string' }, to_unit: { type: 'string' } } }, maxItems: 20 } } } } } }, responses: { '200': { description: 'Batch results', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, results: { type: 'array', items: { type: 'object' } }, total: { type: 'number' }, successful: { type: 'number' }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing conversions' }, '500': { description: 'Failed' } } } },
-      '/detect-unit': { post: { operationId: 'detectUnit', summary: 'Detect and extract units from free text', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' } } } } } }, responses: { '200': { description: 'Detected units', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, detected_units: { type: 'array', items: { type: 'object' } }, total_detected: { type: 'number' }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing text' }, '500': { description: 'Failed' } } } },
-      '/execution-gate': { post: { operationId: 'executionGate', summary: 'Execution readiness check', requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['from_unit', 'to_unit'], properties: { from_unit: { type: 'string' }, to_unit: { type: 'string' }, objective: { type: 'string' } } } } } }, responses: { '200': { description: 'Gate result', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, execution_ready: { type: 'boolean' }, next_api: { type: 'string' }, blocking_flags: actions, confidence_per_section: confidence, privacy } } } } } } } },
-      '/lookup': { post: { operationId: 'lookup', summary: 'ONE-CALL: full unit conversion — convert + related conversions + unit metadata', 'x-one-call': true, requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['value', 'from_unit', 'to_unit'], properties: { value: { type: 'number' }, from_unit: { type: 'string' }, to_unit: { type: 'string' } } } } } }, responses: { '200': { description: 'Full unit conversion intelligence', content: { 'application/json': { schema: { type: 'object', properties: { ...traceFields, output: { type: 'object' }, related_conversions: { type: 'array', items: { type: 'object' } }, unit_metadata: { type: 'object' }, confidence_per_section: confidence, recommended_actions_priority_order: actions, privacy } } } } }, '400': { description: 'Missing fields' }, '500': { description: 'Failed' } } } },
+const EnvelopeOk = {
+  type: 'object',
+  required: ['trace_id', 'computed_at', 'success', 'latency_ms'],
+  properties: {
+    trace_id: { type: 'string' },
+    computed_at: { type: 'string', format: 'date-time' },
+    success: { type: 'boolean', enum: [true] },
+    latency_ms: { type: 'integer', minimum: 0 },
+  },
+};
+
+const ConvertCore = {
+  type: 'object',
+  required: ['value', 'from', 'to', 'result', 'category'],
+  // allOf branch — strictness enforced via unevaluatedProperties:false on the composite.
+  properties: {
+    value: { type: 'number' },
+    from: { type: 'string', description: 'Source unit symbol.' },
+    to: { type: 'string', description: 'Target unit symbol.' },
+    result: { type: 'number', description: 'Converted value (12 significant digits).' },
+    category: { type: 'string', enum: ['length', 'mass', 'volume', 'area', 'speed', 'time', 'data', 'temperature'] },
+  },
+};
+
+const Tail = {
+  type: 'object',
+  required: ['confidence_score', 'recommended_actions_priority_order', 'chain_to', 'privacy'],
+  properties: {
+    confidence_score: { type: 'number', minimum: 0, maximum: 1 },
+    recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+    chain_to: { type: 'array', items: { $ref: '#/components/schemas/ChainTo' } },
+    privacy: { $ref: '#/components/schemas/Privacy' },
+  },
+};
+
+const ConvertRequest = {
+  type: 'object', required: ['value'], additionalProperties: false,
+  description: 'Provide from/to (preferred) or the legacy from_unit/to_unit.',
+  properties: {
+    value: { type: 'number', example: 10 },
+    from: { type: 'string', example: 'km' },
+    to: { type: 'string', example: 'mi' },
+    from_unit: { type: 'string', description: 'Legacy alias for "from".' },
+    to_unit: { type: 'string', description: 'Legacy alias for "to".' },
+  },
+};
+
+const schemas = {
+  EnvelopeOk,
+  ConvertCore,
+  _Tail: Tail,
+  ConvertRequest,
+  BatchRequest: {
+    type: 'object', required: ['conversions'], additionalProperties: false,
+    properties: {
+      conversions: {
+        type: 'array', minItems: 1, maxItems: 100,
+        items: { $ref: '#/components/schemas/ConvertRequest' },
+      },
     },
-    components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },
-  });
+  },
+  LookupRequest: ConvertRequest,
+  BatchResultItem: {
+    type: 'object', required: ['success'], additionalProperties: false,
+    properties: {
+      success: { type: 'boolean' },
+      value: { type: 'number' }, from: { type: 'string' }, to: { type: 'string' },
+      result: { type: 'number' }, category: { type: 'string' },
+      error: { type: 'string', description: 'Present only when success is false.' },
+    },
+  },
+  DiscoveryResponse: {
+    type: 'object',
+    required: ['name', 'version', 'description', 'openapi_url', 'auth', 'endpoints', 'pricing', 'x402_compatible'],
+    additionalProperties: false,
+    properties: {
+      name: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
+      openapi_url: { type: 'string', format: 'uri' },
+      auth: {
+        type: 'object', required: ['type', 'header'], additionalProperties: false,
+        properties: { type: { type: 'string' }, header: { type: 'string' } },
+      },
+      endpoints: {
+        type: 'array',
+        items: {
+          type: 'object', required: ['method', 'path', 'summary', 'price_usdc'], additionalProperties: false,
+          properties: { method: { type: 'string' }, path: { type: 'string' }, summary: { type: 'string' }, price_usdc: { type: 'number' } },
+        },
+      },
+      pricing: {
+        type: 'array',
+        items: {
+          type: 'object', required: ['path', 'price_usdc', 'currency'], additionalProperties: false,
+          properties: { path: { type: 'string' }, price_usdc: { type: 'number' }, currency: { type: 'string', enum: ['USDC'] } },
+        },
+      },
+      x402_compatible: { type: 'boolean' },
+    },
+  },
+  ConvertResponse: {
+    allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/ConvertCore' }, { $ref: '#/components/schemas/_Tail' }],
+    unevaluatedProperties: false,
+  },
+  BatchResponse: {
+    allOf: [
+      { $ref: '#/components/schemas/EnvelopeOk' },
+      {
+        type: 'object',
+        required: ['results', 'total', 'successful', 'failed'],
+        properties: {
+          results: { type: 'array', items: { $ref: '#/components/schemas/BatchResultItem' } },
+          total: { type: 'integer', minimum: 0 },
+          successful: { type: 'integer', minimum: 0 },
+          failed: { type: 'integer', minimum: 0 },
+        },
+      },
+      { $ref: '#/components/schemas/_Tail' },
+    ],
+    unevaluatedProperties: false,
+  },
+  LookupResponse: {
+    allOf: [
+      { $ref: '#/components/schemas/EnvelopeOk' },
+      { $ref: '#/components/schemas/ConvertCore' },
+      {
+        type: 'object',
+        required: ['equivalents', 'reasoning'],
+        properties: {
+          equivalents: { type: 'object', additionalProperties: { type: 'number' }, description: 'The input value expressed in every unit of the category.' },
+          reasoning: { $ref: '#/components/schemas/Reasoning' },
+        },
+      },
+      { $ref: '#/components/schemas/_Tail' },
+    ],
+    unevaluatedProperties: false,
+  },
+};
+
+const TAIL_EXAMPLE = {
+  confidence_score: 1.0,
+  recommended_actions_priority_order: ['10 km = 6.21371192237 mi.', 'Use /lookup for the same value in every length unit.'],
+  chain_to: [],
+  privacy: { data_stored: false, retention: 'none' },
+};
+
+const endpoints: AplusEndpoint[] = [
+  { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
+  {
+    method: 'post', path: '/convert', summary: 'Convert a value between two units of the same category', operationId: 'convert',
+    priceUsdc: 0.003, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse',
+    requestExample: { value: 10, from: 'km', to: 'mi' },
+    responseExample: {
+      trace_id: 'u1-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
+      value: 10, from: 'km', to: 'mi', result: 6.21371192237, category: 'length',
+      ...TAIL_EXAMPLE,
+    },
+  },
+  {
+    method: 'post', path: '/batch', summary: 'Convert up to 100 value/unit pairs in one call', operationId: 'batch',
+    priceUsdc: 0.005, requestSchemaRef: 'BatchRequest', responseSchemaRef: 'BatchResponse',
+    requestExample: { conversions: [{ value: 100, from: 'C', to: 'F' }, { value: 1, from: 'GB', to: 'MiB' }] },
+    responseExample: {
+      trace_id: 'u2-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
+      results: [
+        { success: true, value: 100, from: 'C', to: 'F', result: 212, category: 'temperature' },
+        { success: true, value: 1, from: 'GB', to: 'MiB', result: 953.674316406, category: 'data' },
+      ],
+      total: 2, successful: 2, failed: 0,
+      confidence_score: 1.0,
+      recommended_actions_priority_order: ['2/2 conversions succeeded.', 'All pairs converted exactly.'],
+      chain_to: [], privacy: { data_stored: false, retention: 'none' },
+    },
+  },
+  {
+    method: 'post', path: '/lookup', summary: 'ONE-CALL convert + all sibling-unit equivalents + reasoning', operationId: 'lookup',
+    priceUsdc: 0.008, oneCall: true, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
+    requestExample: { value: 100, from: 'C', to: 'F' },
+    responseExample: {
+      trace_id: 'u3-1780000000000', computed_at: '2026-06-08T12:00:00.000Z', success: true, latency_ms: 0,
+      value: 100, from: 'C', to: 'F', result: 212, category: 'temperature',
+      equivalents: { C: 100, F: 212, K: 373.15 },
+      reasoning: {
+        why_result_generated: 'Converted 100 C to F using exact temperature factors.',
+        key_factors: ['category: temperature', 'C and F share the same dimension', 'exact conversion factors (no estimation)'],
+        invalidators: ['Passing units from different categories.', 'Non-finite input value.'],
+      },
+      confidence_score: 1.0,
+      recommended_actions_priority_order: ['100 C = 212 F.', 'Pick the equivalent unit that matches your downstream system.'],
+      chain_to: [], privacy: { data_stored: false, retention: 'none' },
+    },
+  },
+];
+
+export const spec = buildAplusSpec({
+  slug: 'unit-conversion',
+  title: 'Unit Conversion API',
+  description: 'Deterministic measurement conversion across length, mass, volume, area, speed, time, digital data, and temperature. Exact SI factors computed in real code; deterministic schemas; confidence always 1.0.',
+  version: '2.0.0',
+  endpoints,
+  schemas,
 });
 
-export default router;
+export default specRouter(spec);

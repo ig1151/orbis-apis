@@ -1,0 +1,32 @@
+{
+  "name": "JSON to CSV API",
+  "shortDescription": "Deterministic JSON-array to CSV conversion with nested flattening and type inference for data agents",
+  "description": "Agent-native JSON-to-CSV conversion computed in real code (not by a language model). /convert turns a JSON object or array of objects into RFC 4180 CSV, flattening nested objects with dot-notation keys, serializing arrays as JSON, unioning columns across rows, and quoting values that contain delimiters, quotes, or newlines. Configurable delimiter, header, and flattening. The one-call /lookup adds per-column type inference (string/number/boolean/json/null/mixed), a reasoning object, and prioritized recommendations. Handles up to 10,000 rows. Confidence is always 1.0 because nothing is estimated.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/json-to-csv",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/json-to-csv/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/json-to-csv/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["json", "csv", "data-transform", "developer-tools", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["json to csv api", "convert json to csv", "flatten json api", "csv export api", "json array to csv", "nested json csv converter"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.008,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.003, "description": "Convert a JSON array of objects to CSV" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL convert + column type inference + reasoning" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/convert", "description": "JSON to CSV conversion" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL convert + type inference" }
+  ]
+}

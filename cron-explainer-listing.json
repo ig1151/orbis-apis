@@ -1,0 +1,32 @@
+{
+  "name": "Cron Explainer API",
+  "shortDescription": "Deterministic cron parsing — plain-English description + next run times (UTC) for scheduling agents",
+  "description": "Agent-native cron expression intelligence computed in real code (not by a language model). /explain parses a standard 5-field cron expression into its component fields and a plain-English description (e.g. '0 9 * * 1-5' → 'At 09:00, Monday through Friday'). The one-call /lookup adds the next scheduled run times in UTC (configurable count and reference time), a reasoning object, and prioritized recommendations. Handles ranges, lists, steps, and month/day names, with correct Vixie-cron day-of-month/day-of-week matching. Confidence is always 1.0 because nothing is estimated.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/cron-explainer",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/cron-explainer/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/cron-explainer/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["cron", "scheduling", "crontab", "developer-tools", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["cron expression parser api", "explain cron api", "next cron run time api", "crontab to english", "cron schedule calculator", "cron describer api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.008,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/explain", "pricePerCallUsdc": 0.003, "description": "Parse a cron expression into fields + plain-English description" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL explain + next run times + reasoning" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/explain", "description": "Parse + describe a cron expression" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL explain + next run times" }
+  ]
+}
