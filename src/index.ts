@@ -594,6 +594,12 @@ import currencyFormattingRouter from './routes/currency-formatting-api/routes/in
 import currencyFormattingOpenapiRouter from './routes/currency-formatting-api/routes/openapi';
 import unitConversionRouter from './routes/unit-conversion-api/routes/intelligence';
 import unitConversionOpenapiRouter from './routes/unit-conversion-api/routes/openapi';
+import aesVaultRouter from './routes/aes-vault-api/routes/intelligence';
+import aesVaultOpenapiRouter from './routes/aes-vault-api/routes/openapi';
+import cronExplainerRouter from './routes/cron-explainer-api/routes/intelligence';
+import cronExplainerOpenapiRouter from './routes/cron-explainer-api/routes/openapi';
+import jsonToCsvRouter from './routes/json-to-csv-api/routes/intelligence';
+import jsonToCsvOpenapiRouter from './routes/json-to-csv-api/routes/openapi';
 import taxRateRouter from './routes/tax-rate-api/routes/intelligence';
 import taxRateOpenapiRouter from './routes/tax-rate-api/routes/openapi';
 import shippingRateRouter from './routes/shipping-rate-api/routes/intelligence';
@@ -1153,6 +1159,9 @@ const routerMap: Record<string, import("express").Router> = {
   'timezone': timezoneRouter,
   'currency-formatting': currencyFormattingRouter,
   'unit-conversion': unitConversionRouter,
+  'aes-vault': aesVaultRouter,
+  'cron-explainer': cronExplainerRouter,
+  'json-to-csv': jsonToCsvRouter,
   'tax-rate': taxRateRouter,
   'shipping-rate': shippingRateRouter,
   'package-tracking': packageTrackingRouter,
@@ -1538,6 +1547,9 @@ const openapiMap: Record<string, import("express").Router> = {
   'timezone': timezoneOpenapiRouter,
   'currency-formatting': currencyFormattingOpenapiRouter,
   'unit-conversion': unitConversionOpenapiRouter,
+  'aes-vault': aesVaultOpenapiRouter,
+  'cron-explainer': cronExplainerOpenapiRouter,
+  'json-to-csv': jsonToCsvOpenapiRouter,
   'tax-rate': taxRateOpenapiRouter,
   'shipping-rate': shippingRateOpenapiRouter,
   'package-tracking': packageTrackingOpenapiRouter,
