@@ -159,7 +159,7 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/calculate', summary: 'CIDR → network/broadcast/mask/usable host range', operationId: 'calculate',
-    priceUsdc: 0.001, requestSchemaRef: 'CidrRequest', responseSchemaRef: 'CalculateResponse',
+    priceUsdc: 0.005, requestSchemaRef: 'CidrRequest', responseSchemaRef: 'CalculateResponse',
     requestExample: { cidr: '192.168.1.0/24' },
     responseExample: {
       trace_id: 'a1b2c3d4-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
@@ -171,7 +171,7 @@ const endpoints: AplusEndpoint[] = [
   },
   {
     method: 'post', path: '/overlap', summary: 'Detect overlap/containment between two CIDR blocks', operationId: 'overlap',
-    priceUsdc: 0.002, requestSchemaRef: 'OverlapRequest', responseSchemaRef: 'OverlapResponse',
+    priceUsdc: 0.008, requestSchemaRef: 'OverlapRequest', responseSchemaRef: 'OverlapResponse',
     requestExample: { cidr_a: '10.0.0.0/16', cidr_b: '10.0.5.0/24' },
     responseExample: {
       trace_id: 'b2c3d4e5-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
@@ -184,7 +184,7 @@ const endpoints: AplusEndpoint[] = [
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL full subnet breakdown + optional overlap', operationId: 'lookup',
-    priceUsdc: 0.003, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
+    priceUsdc: 0.015, requestSchemaRef: 'LookupRequest', responseSchemaRef: 'LookupResponse',
     requestExample: { cidr: '10.0.0.0/24', other_cidr: '10.0.0.128/25' },
     responseExample: {
       trace_id: 'c3d4e5f6-1780000000000', computed_at: '2026-06-07T19:30:00.000Z', success: true, latency_ms: 0,
