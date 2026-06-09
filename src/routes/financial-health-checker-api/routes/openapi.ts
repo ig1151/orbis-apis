@@ -38,13 +38,14 @@ const HealthComponentScores = {
 
 const HealthCore = {
   type: 'object',
-  required: ['ratios', 'component_scores', 'health_score', 'grade', 'risk_level'],
+  required: ['ratios', 'component_scores', 'health_score', 'grade', 'risk_level', 'weakest_component'],
   properties: {
     ratios: { $ref: '#/components/schemas/HealthRatios' },
     component_scores: { $ref: '#/components/schemas/HealthComponentScores' },
     health_score: { type: 'integer', minimum: 0, maximum: 100, description: 'Weighted: savings 30%, debt 30%, emergency 25%, solvency 15%.' },
     grade: { type: 'string', enum: ['A', 'B', 'C', 'D', 'F'] },
     risk_level: { type: 'string', enum: ['low', 'moderate', 'high'] },
+    weakest_component: { type: 'string', enum: ['savings', 'debt', 'emergency', 'solvency'], description: 'Lowest-scoring component — the highest-leverage area to improve. Useful for agent routing.' },
   },
 };
 
@@ -118,7 +119,7 @@ const REQ_EXAMPLE = {
 const CORE_EXAMPLE = {
   ratios: { savings_rate: 0.1231, debt_to_income: 0.2308, expense_ratio: 0.6462, emergency_fund_months: 2.9, net_worth: -145000 },
   component_scores: { savings: 62, debt: 71, emergency: 48, solvency: 0 },
-  health_score: 51, grade: 'D', risk_level: 'moderate',
+  health_score: 51, grade: 'D', risk_level: 'moderate', weakest_component: 'solvency',
 };
 
 const TAIL_EXAMPLE = {
@@ -141,14 +142,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/score', summary: 'Core ratios + weighted health score + grade',
-    operationId: 'scoreHealth', priceUsdc: 0.01,
+    operationId: 'scoreHealth', priceUsdc: 0.01, humanApprovalRequired: true,
     requestSchemaRef: 'HealthRequest', responseSchemaRef: 'ScoreResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'fh1-1780000000000', computed_at: '2026-06-09T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL health check + reasoning + prioritized actions',
-    operationId: 'lookup', priceUsdc: 0.02, oneCall: true,
+    operationId: 'lookup', priceUsdc: 0.02, oneCall: true, humanApprovalRequired: true,
     requestSchemaRef: 'HealthRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -171,7 +172,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic personal financial-health score (0–100) and letter grade from four weighted components — savings rate, debt-to-income, emergency-fund coverage, and solvency — each returned as a sub-score alongside the underlying ratios. The one-call /lookup adds reasoning and actions prioritized by the weakest component. Real arithmetic, never estimated; carries a financial disclaimer on every response.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
 });
 
 export default specRouter(spec);

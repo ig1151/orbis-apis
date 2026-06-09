@@ -59,6 +59,15 @@ const schemas = {
   EnvelopeOk,
   FundCore,
   _FinanceTail: FinanceTail,
+  SensitivityRow: {
+    type: 'object',
+    required: ['monthly_contribution', 'months_to_goal'],
+    additionalProperties: false,
+    properties: {
+      monthly_contribution: { type: 'number' },
+      months_to_goal: { type: 'integer', minimum: 0 },
+    },
+  },
   FundRequest,
   DiscoveryResponse: {
     type: 'object',
@@ -81,7 +90,14 @@ const schemas = {
     allOf: [
       { $ref: '#/components/schemas/EnvelopeOk' },
       { $ref: '#/components/schemas/FundCore' },
-      { type: 'object', required: ['reasoning'], properties: { reasoning: { $ref: '#/components/schemas/Reasoning' } } },
+      {
+        type: 'object',
+        required: ['sensitivity_analysis', 'reasoning'],
+        properties: {
+          sensitivity_analysis: { type: 'array', items: { $ref: '#/components/schemas/SensitivityRow' }, description: 'Months-to-goal across contribution levels (0.5×/1×/2× the supplied amount, or 5/10/20% of expenses when none given).' },
+          reasoning: { $ref: '#/components/schemas/Reasoning' },
+        },
+      },
       { $ref: '#/components/schemas/_FinanceTail' },
     ],
     unevaluatedProperties: false,
@@ -113,19 +129,24 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/calculate', summary: 'Target, coverage, gap, and time-to-goal',
-    operationId: 'calculate', priceUsdc: 0.005,
+    operationId: 'calculate', priceUsdc: 0.005, humanApprovalRequired: true,
     requestSchemaRef: 'FundRequest', responseSchemaRef: 'CalculateResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'ef1-1780000000000', computed_at: '2026-06-09T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL emergency-fund analysis + reasoning + actions',
-    operationId: 'lookup', priceUsdc: 0.01, oneCall: true,
+    operationId: 'lookup', priceUsdc: 0.01, oneCall: true, humanApprovalRequired: true,
     requestSchemaRef: 'FundRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
       trace_id: 'ef2-1780000000000', computed_at: '2026-06-09T12:00:00.000Z', success: true, latency_ms: 0,
       ...CORE_EXAMPLE,
+      sensitivity_analysis: [
+        { monthly_contribution: 250, months_to_goal: 111 },
+        { monthly_contribution: 500, months_to_goal: 56 },
+        { monthly_contribution: 1000, months_to_goal: 28 },
+      ],
       reasoning: {
         why_result_generated: 'Recommended 8 months based on variable income and 2 dependent(s), then measured current savings against 33600.',
         key_factors: ['Status: underfunded (1.4 month(s) of coverage now).', 'Target: 8 months = 33600.', 'Gap of 27600, ~56 month(s) to close at 500/mo.'],
@@ -143,7 +164,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic emergency-fund planning: a recommended target (months scaled by job stability and dependents), current coverage in months, funded percent, the dollar gap, and time-to-goal at a given monthly contribution — all in real arithmetic, never estimated. The one-call /lookup adds reasoning and prioritized actions. Carries a financial disclaimer on every response.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
 });
 
 export default specRouter(spec);

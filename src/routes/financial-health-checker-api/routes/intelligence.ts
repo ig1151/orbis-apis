@@ -39,6 +39,7 @@ export interface HealthResult {
   health_score: number;
   grade: 'A' | 'B' | 'C' | 'D' | 'F';
   risk_level: 'low' | 'moderate' | 'high';
+  weakest_component: keyof HealthComponentScores;
 }
 
 type ParsedInput = HealthInput | { error: string };
@@ -97,6 +98,10 @@ export function computeHealth(i: HealthInput): HealthResult {
   const grade: HealthResult['grade'] = health_score >= 90 ? 'A' : health_score >= 75 ? 'B' : health_score >= 60 ? 'C' : health_score >= 45 ? 'D' : 'F';
   const risk_level: HealthResult['risk_level'] = health_score >= 75 ? 'low' : health_score >= 50 ? 'moderate' : 'high';
 
+  // Lowest-scoring component, deterministic tie-break by fixed key order.
+  const ORDER: (keyof HealthComponentScores)[] = ['savings', 'debt', 'emergency', 'solvency'];
+  const weakest_component = ORDER.reduce((a, b) => (component_scores[b] < component_scores[a] ? b : a), ORDER[0]);
+
   return {
     ratios: {
       savings_rate: round(savings_rate, 4),
@@ -109,6 +114,7 @@ export function computeHealth(i: HealthInput): HealthResult {
     health_score,
     grade,
     risk_level,
+    weakest_component,
   };
 }
 

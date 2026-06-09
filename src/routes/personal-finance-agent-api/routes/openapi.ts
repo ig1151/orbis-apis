@@ -190,7 +190,7 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL full financial profile → health + emergency fund + refinance + prioritized plan',
-    operationId: 'lookup', priceUsdc: 0.04, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.06, oneCall: true, humanApprovalRequired: true,
     requestSchemaRef: 'ProfileRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {

@@ -108,7 +108,9 @@ async function run(base) {
   check('emergency-fund-calculator', 'POST /calculate', 'CalculateResponse', ef, (d) =>
     d.recommended_target_months === 8 && d.recommended_target_amount === 33600 && d.gap === 27600 && d.months_to_goal === Math.ceil(27600 / 500) ? null : `math: tgt=${d.recommended_target_months} amt=${d.recommended_target_amount} gap=${d.gap} m2g=${d.months_to_goal}`);
   const efl = await call(base, 'POST', '/emergency-fund-calculator/lookup', efReq);
-  check('emergency-fund-calculator', 'POST /lookup', 'LookupResponse', efl, (d) => d.reasoning && d.status === 'underfunded' ? null : 'lookup shape');
+  check('emergency-fund-calculator', 'POST /lookup', 'LookupResponse', efl, (d) =>
+    d.reasoning && d.status === 'underfunded' && Array.isArray(d.sensitivity_analysis) && d.sensitivity_analysis.length >= 1 &&
+    d.sensitivity_analysis.every((s) => typeof s.monthly_contribution === 'number' && Number.isInteger(s.months_to_goal)) ? null : 'lookup shape / sensitivity');
   // fully funded: no contribution, big savings → months_to_goal 0, status fully_funded
   const efFull = await call(base, 'POST', '/emergency-fund-calculator/calculate', { monthly_expenses: 3000, current_savings: 30000, job_stability: 'stable' });
   check('emergency-fund-calculator', 'POST /calculate (fully funded)', 'CalculateResponse', efFull, (d) =>
@@ -126,7 +128,7 @@ async function run(base) {
   const hReq = { monthly_income: 6500, monthly_expenses: 4200, monthly_debt_payments: 1500, monthly_savings: 800, liquid_savings: 12000, total_assets: 95000, total_liabilities: 240000 };
   const hs = await call(base, 'POST', '/financial-health-checker/score', hReq);
   check('financial-health-checker', 'POST /score', 'ScoreResponse', hs, (d) =>
-    d.health_score >= 0 && d.health_score <= 100 && d.component_scores.solvency === 0 && ['A', 'B', 'C', 'D', 'F'].includes(d.grade) ? null : `score shape: ${JSON.stringify(d.component_scores)}`);
+    d.health_score >= 0 && d.health_score <= 100 && d.component_scores.solvency === 0 && d.weakest_component === 'solvency' && ['A', 'B', 'C', 'D', 'F'].includes(d.grade) ? null : `score shape: ${JSON.stringify({ cs: d.component_scores, w: d.weakest_component })}`);
   const hl = await call(base, 'POST', '/financial-health-checker/lookup', hReq);
   check('financial-health-checker', 'POST /lookup', 'LookupResponse', hl, (d) => d.reasoning && d.recommended_actions_priority_order.length > 0 ? null : 'lookup shape');
   // strong profile → grade A, low risk

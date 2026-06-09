@@ -43,10 +43,10 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/personal-finance-agent/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL full financial profile → health + emergency fund + refinance + prioritized plan', price_usdc: 0.04 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL full financial profile → health + emergency fund + refinance + prioritized plan', price_usdc: 0.06 },
     ],
     pricing: [
-      { path: '/lookup', price_usdc: 0.04, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.06, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

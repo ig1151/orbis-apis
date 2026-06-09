@@ -84,6 +84,17 @@ export function computeEmergencyFund(i: EmergencyFundInput): EmergencyFundResult
   };
 }
 
+// Time-to-goal across a few contribution levels (relative to the supplied
+// contribution, or expense-based when none is given). Deterministic.
+function fundSensitivity(i: EmergencyFundInput, gap: number): { monthly_contribution: number; months_to_goal: number }[] {
+  const c = i.monthly_contribution;
+  const levels = c > 0
+    ? [Math.round(c * 0.5), Math.round(c), Math.round(c * 2)]
+    : [Math.round(i.monthly_expenses * 0.05), Math.round(i.monthly_expenses * 0.1), Math.round(i.monthly_expenses * 0.2)];
+  const unique = [...new Set(levels)].filter((x) => x > 0).sort((a, b) => a - b);
+  return unique.map((mc) => ({ monthly_contribution: mc, months_to_goal: gap === 0 ? 0 : Math.ceil(gap / mc) }));
+}
+
 function actions(r: EmergencyFundResult): string[] {
   const out: string[] = [];
   if (r.status === 'fully_funded') {
@@ -145,6 +156,7 @@ router.post('/lookup', (req: Request, res: Response) => {
   const r = computeEmergencyFund(parsed);
   respond(res, t0, {
     ...r,
+    sensitivity_analysis: fundSensitivity(parsed, r.gap),
     reasoning: {
       why_result_generated: `Recommended ${r.recommended_target_months} months based on ${parsed.job_stability} income and ${parsed.dependents} dependent(s), then measured current savings against ${r.recommended_target_amount}.`,
       key_factors: [
