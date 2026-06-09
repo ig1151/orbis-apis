@@ -598,6 +598,16 @@ import aesVaultRouter from './routes/aes-vault-api/routes/intelligence';
 import aesVaultOpenapiRouter from './routes/aes-vault-api/routes/openapi';
 import cronExplainerRouter from './routes/cron-explainer-api/routes/intelligence';
 import cronExplainerOpenapiRouter from './routes/cron-explainer-api/routes/openapi';
+import refinanceCalculatorRouter from './routes/refinance-calculator-api/routes/intelligence';
+import refinanceCalculatorOpenapiRouter from './routes/refinance-calculator-api/routes/openapi';
+import mortgageRefinanceRouter from './routes/mortgage-refinance-api/routes/intelligence';
+import mortgageRefinanceOpenapiRouter from './routes/mortgage-refinance-api/routes/openapi';
+import emergencyFundCalculatorRouter from './routes/emergency-fund-calculator-api/routes/intelligence';
+import emergencyFundCalculatorOpenapiRouter from './routes/emergency-fund-calculator-api/routes/openapi';
+import financialHealthCheckerRouter from './routes/financial-health-checker-api/routes/intelligence';
+import financialHealthCheckerOpenapiRouter from './routes/financial-health-checker-api/routes/openapi';
+import personalFinanceAgentRouter from './routes/personal-finance-agent-api/routes/intelligence';
+import personalFinanceAgentOpenapiRouter from './routes/personal-finance-agent-api/routes/openapi';
 import jsonToCsvRouter from './routes/json-to-csv-api/routes/intelligence';
 import jsonToCsvOpenapiRouter from './routes/json-to-csv-api/routes/openapi';
 import taxRateRouter from './routes/tax-rate-api/routes/intelligence';
@@ -1161,6 +1171,11 @@ const routerMap: Record<string, import("express").Router> = {
   'unit-conversion': unitConversionRouter,
   'aes-vault': aesVaultRouter,
   'cron-explainer': cronExplainerRouter,
+  'refinance-calculator': refinanceCalculatorRouter,
+  'mortgage-refinance': mortgageRefinanceRouter,
+  'emergency-fund-calculator': emergencyFundCalculatorRouter,
+  'financial-health-checker': financialHealthCheckerRouter,
+  'personal-finance-agent': personalFinanceAgentRouter,
   'json-to-csv': jsonToCsvRouter,
   'tax-rate': taxRateRouter,
   'shipping-rate': shippingRateRouter,
@@ -1549,6 +1564,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'unit-conversion': unitConversionOpenapiRouter,
   'aes-vault': aesVaultOpenapiRouter,
   'cron-explainer': cronExplainerOpenapiRouter,
+  'refinance-calculator': refinanceCalculatorOpenapiRouter,
+  'mortgage-refinance': mortgageRefinanceOpenapiRouter,
+  'emergency-fund-calculator': emergencyFundCalculatorOpenapiRouter,
+  'financial-health-checker': financialHealthCheckerOpenapiRouter,
+  'personal-finance-agent': personalFinanceAgentOpenapiRouter,
   'json-to-csv': jsonToCsvOpenapiRouter,
   'tax-rate': taxRateOpenapiRouter,
   'shipping-rate': shippingRateOpenapiRouter,

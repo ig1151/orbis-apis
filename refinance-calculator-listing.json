@@ -1,0 +1,32 @@
+{
+  "name": "Refinance Calculator API",
+  "shortDescription": "Deterministic loan refinance analysis — current vs new payment, monthly & lifetime savings, and break-even months for refinancing agents",
+  "description": "Agent-native refinance intelligence computed in real amortization math (not by a language model) for mortgage, auto, student, and personal loans. /calculate returns the current vs new monthly payment, monthly savings, new loan amount, current vs new total interest, break-even months on closing costs, lifetime savings, a worth_it verdict, and a risk_level. The one-call /lookup adds explicit assumptions, a new-rate sensitivity table (± 0.5%), a reasoning object (why_result_generated, key_factors, invalidators), and prioritized recommended actions. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0. Supports cash-out and configurable closing costs.",
+  "category": "finance",
+  "baseUrl": "https://orbis-apis.onrender.com/refinance-calculator",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/refinance-calculator/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/refinance-calculator/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["finance", "refinance", "loans", "mortgage", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["refinance calculator api", "loan refinance api", "break even refinance api", "monthly savings refinance", "refinance savings calculator", "auto loan refinance api", "student loan refinance api", "refinance decision api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.02,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/calculate", "pricePerCallUsdc": 0.01, "description": "Current vs new payment, savings, and break-even" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL refinance analysis + reasoning + rate sensitivity" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/calculate", "description": "Compute current vs new payment, savings, and break-even" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL refinance analysis + reasoning + rate sensitivity" }
+  ]
+}

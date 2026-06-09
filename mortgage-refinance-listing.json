@@ -1,0 +1,32 @@
+{
+  "name": "Mortgage Refinance API",
+  "shortDescription": "Deterministic mortgage refinance analysis — LTV, PMI removal, points break-even, cash-out, and rate-and-term savings for home-finance agents",
+  "description": "Agent-native mortgage refinance intelligence computed in real amortization math (not by a language model). /analyze returns new loan-to-value, PMI removal eligibility, discount-points cost, total upfront cost, current vs new monthly payment (principal + interest + PMI), monthly savings, break-even months, new total interest, lifetime savings, a worth_it verdict, and a risk_level. The one-call /lookup adds explicit assumptions, a new-rate sensitivity table (± 0.5%), a reasoning object (why_result_generated, key_factors, invalidators), and prioritized recommended actions. Handles cash-out and discount points. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+  "category": "finance",
+  "baseUrl": "https://orbis-apis.onrender.com/mortgage-refinance",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/mortgage-refinance/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/mortgage-refinance/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["finance", "mortgage", "refinance", "pmi", "ltv", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["mortgage refinance api", "pmi removal api", "ltv calculator api", "mortgage break even api", "cash out refinance api", "rate and term refinance", "discount points calculator", "mortgage refinance savings api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.025,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.01, "description": "LTV, PMI removal, points, payment & break-even" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.025, "description": "ONE-CALL mortgage refinance analysis + reasoning + rate sensitivity" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/analyze", "description": "LTV, PMI removal, points, payment & break-even" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL mortgage refinance analysis + reasoning + rate sensitivity" }
+  ]
+}
