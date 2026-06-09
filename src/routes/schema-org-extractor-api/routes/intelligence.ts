@@ -1,56 +1,186 @@
 import { Router, Request, Response } from 'express';
-import axios from 'axios';
+import * as cheerio from 'cheerio';
 
 const router = Router();
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!;
-const MODEL = 'anthropic/claude-sonnet-4-5';
-
-async function callClaude(prompt: string): Promise<string> {
-  const res = await axios.post(
-    'https://openrouter.ai/api/v1/chat/completions',
-    { model: MODEL, messages: [{ role: 'user', content: prompt }] },
-    { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' } }
-  );
-  return res.data.choices[0].message.content;
-}
-
-function parseJSON(raw: string) {
-  try { return JSON.parse(raw.replace(/```json|```/g, '').trim()); }
-  catch { return { success: false, error: 'parse_error', raw: raw.slice(0, 200) }; }
-}
 
 const rid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); });
+
+// ---- deterministic schema.org extraction (cheerio) ----------------------------------------
+
+const RICH_RESULT_TYPES = new Set([
+  'Article', 'NewsArticle', 'BlogPosting', 'Product', 'Recipe', 'Event', 'FAQPage',
+  'HowTo', 'JobPosting', 'LocalBusiness', 'Organization', 'BreadcrumbList', 'Review',
+  'AggregateRating', 'VideoObject', 'Course', 'SoftwareApplication', 'QAPage', 'WebSite',
+]);
+
+function typeName(t: any): string[] {
+  if (!t) return [];
+  if (Array.isArray(t)) return t.map(String);
+  return [String(t).replace(/^https?:\/\/schema\.org\//, '')];
+}
+
+interface Extracted { type: string; format: 'json_ld' | 'microdata' | 'rdfa'; raw_data: any; properties: Record<string, any>; nested_types: string[]; }
+
+function flattenJsonLd(node: any, out: Extracted[]) {
+  if (!node || typeof node !== 'object') return;
+  if (Array.isArray(node)) { node.forEach(n => flattenJsonLd(n, out)); return; }
+  if (Array.isArray(node['@graph'])) { node['@graph'].forEach((n: any) => flattenJsonLd(n, out)); }
+  const types = typeName(node['@type']);
+  if (types.length) {
+    const properties: Record<string, any> = {};
+    const nested: string[] = [];
+    for (const [k, v] of Object.entries(node)) {
+      if (k === '@type' || k === '@context') continue;
+      if (v && typeof v === 'object') {
+        const nt = typeName((v as any)['@type']);
+        nt.forEach(t => nested.push(t));
+        properties[k] = Array.isArray(v) ? `[${v.length} items]` : (nt[0] || 'object');
+      } else {
+        properties[k] = v;
+      }
+    }
+    out.push({ type: types[0], format: 'json_ld', raw_data: node, properties, nested_types: [...new Set(nested)] });
+  }
+}
+
+function extractSchemas(html: string) {
+  const $ = cheerio.load(html);
+  const schemas: Extracted[] = [];
+
+  // JSON-LD
+  $('script[type="application/ld+json"]').each((_, el) => {
+    const txt = $(el).contents().text();
+    try { flattenJsonLd(JSON.parse(txt), schemas); } catch { /* malformed JSON-LD block — skip, do not fabricate */ }
+  });
+  const has_json_ld = schemas.some(s => s.format === 'json_ld');
+
+  // Microdata
+  $('[itemscope][itemtype]').each((_, el) => {
+    const itemtype = $(el).attr('itemtype') || '';
+    const types = typeName(itemtype);
+    const properties: Record<string, any> = {};
+    $(el).find('[itemprop]').each((__, p) => {
+      const name = $(p).attr('itemprop')!;
+      const val = $(p).attr('content') || $(p).attr('href') || $(p).attr('src') || $(p).text().trim();
+      if (name && properties[name] === undefined) properties[name] = val;
+    });
+    if (types.length) schemas.push({ type: types[0], format: 'microdata', raw_data: { itemtype, properties }, properties, nested_types: [] });
+  });
+  const has_microdata = schemas.some(s => s.format === 'microdata');
+
+  // RDFa (lightweight)
+  $('[typeof]').each((_, el) => {
+    const types = typeName($(el).attr('typeof'));
+    if (types.length) schemas.push({ type: types[0], format: 'rdfa', raw_data: { typeof: $(el).attr('typeof') }, properties: {}, nested_types: [] });
+  });
+  const has_rdfa = schemas.some(s => s.format === 'rdfa');
+
+  const schema_types_present = [...new Set(schemas.map(s => s.type))];
+  return { schemas, schemas_found: schemas.length, schema_types_present, has_json_ld, has_microdata, has_rdfa };
+}
+
+function validateSchemas(html: string) {
+  const { schemas } = extractSchemas(html);
+  const errors: { schema_type: string; property: string; message: string; severity: 'error' | 'warning' }[] = [];
+  const rich_result_eligible: string[] = [];
+  const rich_result_blocked: string[] = [];
+  const warnings: string[] = [];
+
+  for (const s of schemas) {
+    const isRich = RICH_RESULT_TYPES.has(s.type);
+    // JSON-LD must declare @context
+    if (s.format === 'json_ld' && !s.raw_data['@context']) {
+      errors.push({ schema_type: s.type, property: '@context', message: 'Missing @context (should be https://schema.org)', severity: 'warning' });
+    }
+    // Type-specific minimal required properties
+    const req: Record<string, string[]> = {
+      Product: ['name'], Article: ['headline'], NewsArticle: ['headline'], BlogPosting: ['headline'],
+      Recipe: ['name'], Event: ['name', 'startDate'], FAQPage: ['mainEntity'], BreadcrumbList: ['itemListElement'],
+      JobPosting: ['title'], LocalBusiness: ['name'],
+    };
+    const need = req[s.type] || [];
+    const missing = need.filter(p => s.properties[p] === undefined);
+    for (const p of missing) errors.push({ schema_type: s.type, property: p, message: `Required property "${p}" is missing`, severity: 'error' });
+
+    if (isRich) {
+      if (missing.length) rich_result_blocked.push(s.type);
+      else rich_result_eligible.push(s.type);
+    } else {
+      warnings.push(`Type "${s.type}" is not a Google rich-result type`);
+    }
+  }
+
+  const errorCount = errors.filter(e => e.severity === 'error').length;
+  const validation_score = schemas.length === 0 ? 0 : Math.max(0, 100 - errorCount * 25 - errors.filter(e => e.severity === 'warning').length * 5);
+  return {
+    schemas_validated: schemas.length,
+    is_valid: errorCount === 0 && schemas.length > 0,
+    errors,
+    rich_result_eligible: [...new Set(rich_result_eligible)],
+    rich_result_blocked: [...new Set(rich_result_blocked)],
+    warnings: [...new Set(warnings)],
+    validation_score,
+  };
+}
+
+// ---- envelope -----------------------------------------------------------------------------
+
+function envelope(data: any, opts: { start: number; score: number; reason: string; ttl: number; actions: any[] }) {
+  return {
+    success: true,
+    request_id: rid(),
+    data,
+    confidence: { score: opts.score, reason: opts.reason, per_section: { parse: opts.score } },
+    provenance: { provider: 'deterministic-compute', retrieved_at: new Date().toISOString(), source_type: 'api_call' },
+    cache: { recommended_ttl_seconds: opts.ttl, retryable: false, cache_recommended: true },
+    recommended_next_api: [
+      { api: 'schema-org-extractor', endpoint: '/schema-intelligence', reason: 'Full extract + validate in one call' },
+      { api: 'breadcrumb-validator', endpoint: '/validate', reason: 'Deep-validate BreadcrumbList markup' },
+    ],
+    recommended_actions_priority_order: opts.actions,
+    execution_metadata: { latency_ms: Date.now() - opts.start, model: 'deterministic', automation_safe: true },
+  };
+}
+
+function requireHtml(input: any): string | null {
+  if (typeof input === 'string' && input.trim()) return input;
+  return null;
+}
+
+// ---- routes -------------------------------------------------------------------------------
 
 router.get('/', (_req: Request, res: Response) => {
   res.json({ name: 'Schema.org Extractor API', info: '/schema-org-extractor/info', openapi: '/schema-org-extractor/openapi.json', health: 'ok' });
 });
 
-router.post('/extract', async (req: Request, res: Response) => {
+router.post('/extract', (req: Request, res: Response) => {
+  const start = Date.now();
   const { input, options } = req.body;
-  if (!input) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
-  try {
-    const raw = await callClaude(`You are an expert Schema.org Extractor API engine performing: extract.
-Input: "${input}"
-Options: ${JSON.stringify(options || {})}
-Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object with: url string, schemas_found integer, schemas array of objects each with type string, format enum json_ld|microdata|rdfa, raw_data object, properties object, nested_types array of strings, schema_types_present array of strings, has_json_ld boolean, has_microdata boolean, has_rdfa boolean), confidence (object: score 0-1, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Return only the JSON object.`);
-    res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
+  const html = requireHtml(input);
+  if (!html) return res.status(400).json({ error: 'input is required (HTML content)', code: 'MISSING_INPUT', retryable: false });
+  const data = { url: options?.url || null, ...extractSchemas(html) };
+  res.json(envelope(data, {
+    start, score: 1, ttl: 86400,
+    reason: 'Deterministic JSON-LD / microdata / RDFa extraction',
+    actions: [{ priority: data.schemas_found ? 'low' : 'medium', action: data.schemas_found ? 'Validate the extracted schemas for rich-result eligibility' : 'Add schema.org structured data to the page', reason: `${data.schemas_found} schema(s) found` }],
+  }));
 });
 
-router.post('/validate', async (req: Request, res: Response) => {
+router.post('/validate', (req: Request, res: Response) => {
+  const start = Date.now();
   const { input, options } = req.body;
-  if (!input) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
-  try {
-    const raw = await callClaude(`You are an expert Schema.org Extractor API engine performing: validate.
-Input: "${input}"
-Options: ${JSON.stringify(options || {})}
-Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object with: url string, is_valid boolean, schemas_validated integer, errors array of objects each with schema_type string, property string, message string, severity enum error|warning, rich_result_eligible array of strings, rich_result_blocked array of strings, warnings array of strings, validation_score integer 0-100), confidence (object: score 0-1, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Return only the JSON object.`);
-    res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
+  const html = requireHtml(input);
+  if (!html) return res.status(400).json({ error: 'input is required (HTML content)', code: 'MISSING_INPUT', retryable: false });
+  const data = { url: options?.url || null, ...validateSchemas(html) };
+  res.json(envelope(data, {
+    start, score: 1, ttl: 86400,
+    reason: 'Deterministic schema validation against required properties',
+    actions: data.errors.filter(e => e.severity === 'error').slice(0, 3).map(e => ({ priority: 'high' as const, action: `Add "${e.property}" to ${e.schema_type}`, reason: e.message })),
+  }));
 });
 
-router.post('/execution-gate', (_req: Request, res: Response) => {
-  const { input, objective } = _req.body;
+router.post('/execution-gate', (req: Request, res: Response) => {
+  const { input, objective } = req.body;
   if (!input) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
   res.json({
     success: true, request_id: rid(),
@@ -65,16 +195,31 @@ router.post('/execution-gate', (_req: Request, res: Response) => {
   });
 });
 
-router.post('/schema-intelligence', async (req: Request, res: Response) => {
+router.post('/schema-intelligence', (req: Request, res: Response) => {
+  const start = Date.now();
   const { input, options } = req.body;
-  if (!input) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
-  try {
-    const raw = await callClaude(`You are a complete Schema.org Extractor API intelligence engine. Combine extract and validate into one comprehensive schema intelligence response.
-Input: "${input}"
-Options: ${JSON.stringify(options || {})}
-Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object including: extract sub-object, validate sub-object, overall_score integer 0-100, rich_result_potential enum high|medium|low|none, key_findings array of strings, summary string), confidence (object: score 0-1, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Return only the JSON object.`);
-    res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
+  const html = requireHtml(input);
+  if (!html) return res.status(400).json({ error: 'input is required (HTML content)', code: 'MISSING_INPUT', retryable: false });
+  const extract = { url: options?.url || null, ...extractSchemas(html) };
+  const validate = { url: options?.url || null, ...validateSchemas(html) };
+  const rich = validate.rich_result_eligible.length;
+  const rich_result_potential: 'high' | 'medium' | 'low' | 'none' =
+    rich >= 2 ? 'high' : rich === 1 ? 'medium' : extract.schemas_found ? 'low' : 'none';
+  const overall_score = validate.validation_score;
+  const data = {
+    extract, validate, overall_score, rich_result_potential,
+    key_findings: [
+      `${extract.schemas_found} schema(s): ${extract.schema_types_present.join(', ') || 'none'}`,
+      `${validate.rich_result_eligible.length} rich-result eligible type(s)`,
+      validate.errors.length ? `${validate.errors.length} validation issue(s)` : 'No validation errors',
+    ],
+    summary: `Found ${extract.schemas_found} schema(s); rich-result potential: ${rich_result_potential}.`,
+  };
+  res.json(envelope(data, {
+    start, score: 1, ttl: 86400,
+    reason: 'Deterministic combined schema.org intelligence',
+    actions: [{ priority: validate.errors.length ? 'high' : 'low', action: validate.errors.length ? 'Fix schema validation errors' : 'Markup is valid', reason: `Score ${overall_score}/100` }],
+  }));
 });
 
 export default router;
