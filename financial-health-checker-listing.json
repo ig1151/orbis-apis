@@ -1,0 +1,32 @@
+{
+  "name": "Financial Health Checker API",
+  "shortDescription": "Deterministic 0–100 financial-health score and grade from savings rate, debt-to-income, emergency coverage, and solvency",
+  "description": "Agent-native personal financial-health scoring computed in real arithmetic (not by a language model). /score returns the core ratios (savings rate, debt-to-income, expense ratio, emergency-fund months, net worth), four weighted component sub-scores (savings 30%, debt 30%, emergency 25%, solvency 15%), an overall 0–100 health_score, a letter grade (A–F), and a risk_level. The one-call /lookup adds a reasoning object (why_result_generated, key_factors, invalidators) and recommended actions prioritized by the weakest component. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+  "category": "finance",
+  "baseUrl": "https://orbis-apis.onrender.com/financial-health-checker",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/financial-health-checker/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/financial-health-checker/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["finance", "financial-health", "budgeting", "debt-to-income", "net-worth", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["financial health score api", "debt to income api", "savings rate api", "net worth api", "personal finance score api", "financial wellness api", "money health check api", "financial ratios api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.02,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.01, "description": "Core ratios + weighted health score + grade" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL health check + reasoning + prioritized actions" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/score", "description": "Core ratios + weighted health score + grade" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL health check + reasoning + prioritized actions" }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "Emergency Fund Calculator API",
+  "shortDescription": "Deterministic emergency-fund target, coverage, gap, and time-to-goal — months scaled by job stability and dependents",
+  "description": "Agent-native emergency-fund planning computed in real arithmetic (not by a language model). /calculate returns a recommended target in months (scaled by job stability and number of dependents), the target dollar amount, current coverage in months, funded percent, the remaining gap, months-to-goal at a given monthly contribution, and a status (fully_funded, adequate, underfunded, critical). The one-call /lookup adds a reasoning object (why_result_generated, key_factors, invalidators) and prioritized recommended actions. Accepts a target_months override. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+  "category": "finance",
+  "baseUrl": "https://orbis-apis.onrender.com/emergency-fund-calculator",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/emergency-fund-calculator/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/emergency-fund-calculator/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["finance", "emergency-fund", "savings", "budgeting", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["emergency fund calculator api", "savings goal api", "emergency savings target api", "months of expenses api", "emergency fund gap api", "savings time to goal api", "rainy day fund api", "financial safety net api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.01,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/calculate", "pricePerCallUsdc": 0.005, "description": "Target, coverage, gap, and time-to-goal" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "ONE-CALL emergency-fund analysis + reasoning + actions" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/calculate", "description": "Target, coverage, gap, and time-to-goal" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL emergency-fund analysis + reasoning + actions" }
+  ]
+}

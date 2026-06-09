@@ -1,0 +1,30 @@
+{
+  "name": "Personal Finance Agent API",
+  "shortDescription": "One-call personal-finance planner — composes financial-health, emergency-fund, and refinance analysis into a prioritized action plan",
+  "description": "Agent-native one-call personal-finance planner computed in real arithmetic (not by a language model). POST /lookup takes a full financial profile (income, expenses, debt payments, savings, assets, liabilities, dependents, job stability, and an optional loan to evaluate) and composes three deterministic analyses — a 0–100 financial-health score with component sub-scores, an emergency-fund check (target, coverage, gap, time-to-goal), and a refinance evaluation when a loan is supplied — into a single prioritized action_plan ordered by impact. Returns a reasoning object (why_result_generated, key_factors, invalidators), recommended_actions_priority_order, and chain_to links to the underlying calculators for detail. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+  "category": "finance",
+  "baseUrl": "https://orbis-apis.onrender.com/personal-finance-agent",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/personal-finance-agent/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/personal-finance-agent/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["finance", "personal-finance", "financial-planning", "agent", "budgeting", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["personal finance agent api", "financial planning api", "money plan api", "personal finance assistant api", "financial action plan api", "budget and debt plan api", "one call finance api", "financial advisor agent api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.04,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.04, "description": "ONE-CALL full financial profile → health + emergency fund + refinance + prioritized plan" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL full financial profile → health + emergency fund + refinance + prioritized plan" }
+  ]
+}

@@ -1,0 +1,363 @@
+[
+  {
+    "name": "Refinance Calculator API",
+    "shortDescription": "Deterministic loan refinance analysis — current vs new payment, monthly & lifetime savings, and break-even months for refinancing agents",
+    "description": "Agent-native refinance intelligence computed in real amortization math (not by a language model) for mortgage, auto, student, and personal loans. /calculate returns the current vs new monthly payment, monthly savings, new loan amount, current vs new total interest, break-even months on closing costs, lifetime savings, a worth_it verdict, and a risk_level. The one-call /lookup adds explicit assumptions, a new-rate sensitivity table (± 0.5%), a reasoning object (why_result_generated, key_factors, invalidators), and prioritized recommended actions. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0. Supports cash-out and configurable closing costs.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/refinance-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/refinance-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/refinance-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "refinance",
+      "loans",
+      "mortgage",
+      "calculator",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "refinance calculator api",
+      "loan refinance api",
+      "break even refinance api",
+      "monthly savings refinance",
+      "refinance savings calculator",
+      "auto loan refinance api",
+      "student loan refinance api",
+      "refinance decision api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/calculate",
+            "pricePerCallUsdc": 0.01,
+            "description": "Current vs new payment, savings, and break-even"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL refinance analysis + reasoning + rate sensitivity"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/calculate",
+        "description": "Compute current vs new payment, savings, and break-even"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL refinance analysis + reasoning + rate sensitivity"
+      }
+    ]
+  },
+  {
+    "name": "Mortgage Refinance API",
+    "shortDescription": "Deterministic mortgage refinance analysis — LTV, PMI removal, points break-even, cash-out, and rate-and-term savings for home-finance agents",
+    "description": "Agent-native mortgage refinance intelligence computed in real amortization math (not by a language model). /analyze returns new loan-to-value, PMI removal eligibility, discount-points cost, total upfront cost, current vs new monthly payment (principal + interest + PMI), monthly savings, break-even months, new total interest, lifetime savings, a worth_it verdict, and a risk_level. The one-call /lookup adds explicit assumptions, a new-rate sensitivity table (± 0.5%), a reasoning object (why_result_generated, key_factors, invalidators), and prioritized recommended actions. Handles cash-out and discount points. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/mortgage-refinance",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/mortgage-refinance/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/mortgage-refinance/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "mortgage",
+      "refinance",
+      "pmi",
+      "ltv",
+      "calculator",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "mortgage refinance api",
+      "pmi removal api",
+      "ltv calculator api",
+      "mortgage break even api",
+      "cash out refinance api",
+      "rate and term refinance",
+      "discount points calculator",
+      "mortgage refinance savings api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.025,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.01,
+            "description": "LTV, PMI removal, points, payment & break-even"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.025,
+            "description": "ONE-CALL mortgage refinance analysis + reasoning + rate sensitivity"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "LTV, PMI removal, points, payment & break-even"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL mortgage refinance analysis + reasoning + rate sensitivity"
+      }
+    ]
+  },
+  {
+    "name": "Emergency Fund Calculator API",
+    "shortDescription": "Deterministic emergency-fund target, coverage, gap, and time-to-goal — months scaled by job stability and dependents",
+    "description": "Agent-native emergency-fund planning computed in real arithmetic (not by a language model). /calculate returns a recommended target in months (scaled by job stability and number of dependents), the target dollar amount, current coverage in months, funded percent, the remaining gap, months-to-goal at a given monthly contribution, and a status (fully_funded, adequate, underfunded, critical). The one-call /lookup adds a reasoning object (why_result_generated, key_factors, invalidators) and prioritized recommended actions. Accepts a target_months override. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/emergency-fund-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/emergency-fund-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/emergency-fund-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "emergency-fund",
+      "savings",
+      "budgeting",
+      "calculator",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "emergency fund calculator api",
+      "savings goal api",
+      "emergency savings target api",
+      "months of expenses api",
+      "emergency fund gap api",
+      "savings time to goal api",
+      "rainy day fund api",
+      "financial safety net api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200,
+        "requestsPerMonth": 6000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/calculate",
+            "pricePerCallUsdc": 0.005,
+            "description": "Target, coverage, gap, and time-to-goal"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL emergency-fund analysis + reasoning + actions"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/calculate",
+        "description": "Target, coverage, gap, and time-to-goal"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL emergency-fund analysis + reasoning + actions"
+      }
+    ]
+  },
+  {
+    "name": "Financial Health Checker API",
+    "shortDescription": "Deterministic 0–100 financial-health score and grade from savings rate, debt-to-income, emergency coverage, and solvency",
+    "description": "Agent-native personal financial-health scoring computed in real arithmetic (not by a language model). /score returns the core ratios (savings rate, debt-to-income, expense ratio, emergency-fund months, net worth), four weighted component sub-scores (savings 30%, debt 30%, emergency 25%, solvency 15%), an overall 0–100 health_score, a letter grade (A–F), and a risk_level. The one-call /lookup adds a reasoning object (why_result_generated, key_factors, invalidators) and recommended actions prioritized by the weakest component. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/financial-health-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/financial-health-checker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/financial-health-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "financial-health",
+      "budgeting",
+      "debt-to-income",
+      "net-worth",
+      "calculator",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "financial health score api",
+      "debt to income api",
+      "savings rate api",
+      "net worth api",
+      "personal finance score api",
+      "financial wellness api",
+      "money health check api",
+      "financial ratios api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200,
+        "requestsPerMonth": 6000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.01,
+            "description": "Core ratios + weighted health score + grade"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL health check + reasoning + prioritized actions"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Core ratios + weighted health score + grade"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL health check + reasoning + prioritized actions"
+      }
+    ]
+  },
+  {
+    "name": "Personal Finance Agent API",
+    "shortDescription": "One-call personal-finance planner — composes financial-health, emergency-fund, and refinance analysis into a prioritized action plan",
+    "description": "Agent-native one-call personal-finance planner computed in real arithmetic (not by a language model). POST /lookup takes a full financial profile (income, expenses, debt payments, savings, assets, liabilities, dependents, job stability, and an optional loan to evaluate) and composes three deterministic analyses — a 0–100 financial-health score with component sub-scores, an emergency-fund check (target, coverage, gap, time-to-goal), and a refinance evaluation when a loan is supplied — into a single prioritized action_plan ordered by impact. Returns a reasoning object (why_result_generated, key_factors, invalidators), recommended_actions_priority_order, and chain_to links to the underlying calculators for detail. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/personal-finance-agent",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/personal-finance-agent/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/personal-finance-agent/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "personal-finance",
+      "financial-planning",
+      "agent",
+      "budgeting",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "personal finance agent api",
+      "financial planning api",
+      "money plan api",
+      "personal finance assistant api",
+      "financial action plan api",
+      "budget and debt plan api",
+      "one call finance api",
+      "financial advisor agent api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.04,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.04,
+            "description": "ONE-CALL full financial profile → health + emergency fund + refinance + prioritized plan"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL full financial profile → health + emergency fund + refinance + prioritized plan"
+      }
+    ]
+  }
+]
