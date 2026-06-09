@@ -2,13 +2,13 @@
   {
     "name": "Robots.txt Parser API",
     "shortDescription": "Parse and validate robots.txt files to check crawl rules and permissions",
-    "description": "Parse any domain's robots.txt file: extract user-agent rules, allow/disallow paths, crawl delays, and sitemap references. Validate whether specific URLs are allowed or blocked for given user agents. Built for SEO agents, web crawlers, and site auditing workflows with typed confidence scores, provenance, cache hints, and execution-gate support.",
+    "description": "Parse any domain's robots.txt file and extract user-agent rules, allow/disallow paths, crawl delays, and sitemap references. Validate whether specific URLs are crawlable for given user agents. Built for SEO agents, web crawlers, and site auditing workflows.",
     "category": "developer-tools",
     "baseUrl": "https://orbis-apis.onrender.com/robots-txt-parser",
     "websiteUrl": "https://orbis-apis.onrender.com",
-    "docsUrl": "https://orbis-apis.onrender.com/robots-txt-parser/docs",
+    "docsUrl": "https://orbis-apis.onrender.com/robots-txt-parser/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/robots-txt-parser/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/robots-txt-parser/logo.png",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
     "tags": [
       "robots-txt",
       "seo",
@@ -17,51 +17,38 @@
       "sitemap"
     ],
     "keywords": [
-      "robots.txt parser",
-      "robots txt validator",
+      "robots.txt parser api",
       "crawl permission checker",
-      "user-agent rules",
-      "disallow paths",
+      "robots txt validator",
+      "user-agent crawl rules",
       "seo robots audit"
     ],
     "tiers": [
       {
         "name": "Free",
         "isFree": true,
-        "requestsPerDay": 500,
-        "requestsPerMonth": 15000
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
       },
       {
         "name": "Pay Per Call",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.001,
+        "pricePerCall": 0.002,
         "requestsPerDay": 50000,
         "requestsPerMonth": 1500000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/parse",
-            "pricePerCallUsdc": 0.002,
-            "description": "Parse robots.txt for a domain"
+            "pricePerCallUsdc": 0.001,
+            "description": "Parse robots.txt and extract crawl rules"
           },
           {
             "method": "POST",
             "pathPattern": "/validate",
-            "pricePerCallUsdc": 0.002,
-            "description": "Check if a URL is allowed by robots.txt"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
             "pricePerCallUsdc": 0.001,
-            "description": "Execution gate check"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/robots-intelligence",
-            "pricePerCallUsdc": 0.005,
-            "description": "One-call combined intelligence"
+            "description": "Validate whether a URL is allowed for a given user-agent"
           }
         ]
       },
@@ -69,33 +56,21 @@
         "name": "High Volume",
         "isFree": false,
         "pricingType": "per_call",
-        "pricePerCall": 0.0005,
+        "pricePerCall": 0.001,
         "requestsPerDay": 500000,
         "requestsPerMonth": 15000000,
         "endpointPricing": [
           {
             "method": "POST",
             "pathPattern": "/parse",
-            "pricePerCallUsdc": 0.001,
-            "description": "Parse robots.txt for a domain"
+            "pricePerCallUsdc": 0.0005,
+            "description": "Parse (discounted)"
           },
           {
             "method": "POST",
             "pathPattern": "/validate",
-            "pricePerCallUsdc": 0.001,
-            "description": "Check if a URL is allowed by robots.txt"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/execution-gate",
             "pricePerCallUsdc": 0.0005,
-            "description": "Execution gate check"
-          },
-          {
-            "method": "POST",
-            "pathPattern": "/robots-intelligence",
-            "pricePerCallUsdc": 0.0025,
-            "description": "One-call combined intelligence"
+            "description": "Validate (discounted)"
           }
         ]
       }
@@ -104,22 +79,12 @@
       {
         "method": "POST",
         "path": "/parse",
-        "description": "Parse robots.txt for a domain"
+        "description": "Fetch and parse a domain's robots.txt — returns user-agent rules, allowed/disallowed paths, and sitemaps"
       },
       {
         "method": "POST",
         "path": "/validate",
-        "description": "Check if a URL is allowed by robots.txt"
-      },
-      {
-        "method": "POST",
-        "path": "/execution-gate",
-        "description": "Execution gate check"
-      },
-      {
-        "method": "POST",
-        "path": "/robots-intelligence",
-        "description": "One-call combined intelligence"
+        "description": "Check if a specific URL is crawlable for a given user-agent"
       }
     ]
   }

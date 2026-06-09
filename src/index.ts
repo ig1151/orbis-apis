@@ -608,6 +608,14 @@ import financialHealthCheckerRouter from './routes/financial-health-checker-api/
 import financialHealthCheckerOpenapiRouter from './routes/financial-health-checker-api/routes/openapi';
 import personalFinanceAgentRouter from './routes/personal-finance-agent-api/routes/intelligence';
 import personalFinanceAgentOpenapiRouter from './routes/personal-finance-agent-api/routes/openapi';
+import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
+import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
+import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
+import webhookReliabilityScorerOpenapiRouter from './routes/webhook-reliability-scorer-api/routes/openapi';
+import webhookValidatorRouter from './routes/webhook-validator-api/routes/intelligence';
+import webhookValidatorOpenapiRouter from './routes/webhook-validator-api/routes/openapi';
+import webhookPayloadBuilderRouter from './routes/webhook-payload-builder-api/routes/intelligence';
+import webhookPayloadBuilderOpenapiRouter from './routes/webhook-payload-builder-api/routes/openapi';
 import jsonToCsvRouter from './routes/json-to-csv-api/routes/intelligence';
 import jsonToCsvOpenapiRouter from './routes/json-to-csv-api/routes/openapi';
 import taxRateRouter from './routes/tax-rate-api/routes/intelligence';
@@ -1176,6 +1184,10 @@ const routerMap: Record<string, import("express").Router> = {
   'emergency-fund-calculator': emergencyFundCalculatorRouter,
   'financial-health-checker': financialHealthCheckerRouter,
   'personal-finance-agent': personalFinanceAgentRouter,
+  'webhook-signature-verifier': webhookSignatureVerifierRouter,
+  'webhook-reliability-scorer': webhookReliabilityScorerRouter,
+  'webhook-validator': webhookValidatorRouter,
+  'webhook-payload-builder': webhookPayloadBuilderRouter,
   'json-to-csv': jsonToCsvRouter,
   'tax-rate': taxRateRouter,
   'shipping-rate': shippingRateRouter,
@@ -1569,6 +1581,10 @@ const openapiMap: Record<string, import("express").Router> = {
   'emergency-fund-calculator': emergencyFundCalculatorOpenapiRouter,
   'financial-health-checker': financialHealthCheckerOpenapiRouter,
   'personal-finance-agent': personalFinanceAgentOpenapiRouter,
+  'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
+  'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
+  'webhook-validator': webhookValidatorOpenapiRouter,
+  'webhook-payload-builder': webhookPayloadBuilderOpenapiRouter,
   'json-to-csv': jsonToCsvOpenapiRouter,
   'tax-rate': taxRateOpenapiRouter,
   'shipping-rate': shippingRateOpenapiRouter,

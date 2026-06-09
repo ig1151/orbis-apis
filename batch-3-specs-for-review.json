@@ -1,0 +1,3686 @@
+{
+  "bundle": "Orbis A+ API batch 3 — specs for review (post-ChatGPT-review revision)",
+  "generated_at_note": "Applied ChatGPT batch-3 review: value-based price increases (~50-100%) across all 4 APIs; AES Vault x-security-sensitive:true + x-human-approval-required:false; Cron Explainer DST-aware IANA timezone support + next_run_count (zero new deps, via Intl); JSON->CSV output=csv|json|jsonl; Unit Conversion free /supported-units catalog endpoint. All 23 endpoint/behavior checks ajv-2020-validated vs published schemas (incl. AES round-trip and DST EST/EDT offsets).",
+  "apis": [
+    {
+      "slug": "aes-vault",
+      "info": {
+        "title": "AES Vault API",
+        "version": "1.0.0",
+        "description": "Stateless AES-256-GCM authenticated encryption and decryption. Real cryptography (Node crypto); caller-owned keys; nothing stored; deterministic schemas."
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "AES Vault API",
+          "version": "1.0.0",
+          "description": "Stateless AES-256-GCM authenticated encryption and decryption. Real cryptography (Node crypto); caller-owned keys; nothing stored; deterministic schemas.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x402-compatible": true,
+          "x-agent-marketplace-ready": true,
+          "x-pay-per-call-optimized": true,
+          "x-security-sensitive": true,
+          "x-human-approval-required": false
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/aes-vault"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "discover",
+              "summary": "Service discovery",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DiscoveryResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/generate-key": {
+            "post": {
+              "operationId": "generateKey",
+              "summary": "Generate a random 256-bit key",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/GenerateKeyResponse"
+                      },
+                      "example": {
+                        "trace_id": "a1-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "algorithm": "aes-256-gcm",
+                        "key_bits": 256,
+                        "key_base64": "bXktMzItYnl0ZS1rZXktZXhhbXBsZS0xMjM0NTY3OA==",
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Store this key in a secret manager — it is shown once and never stored here.",
+                          "Pass it to /encrypt as key_base64."
+                        ],
+                        "chain_to": [
+                          {
+                            "api": "aes-vault",
+                            "reason": "Encrypt data with this key via /encrypt."
+                          }
+                        ],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.003,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/encrypt": {
+            "post": {
+              "operationId": "encrypt",
+              "summary": "Encrypt plaintext with a provided key",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/EncryptResponse"
+                      },
+                      "example": {
+                        "trace_id": "a2-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "algorithm": "aes-256-gcm",
+                        "ciphertext_base64": "q1Z3yQ==",
+                        "iv_base64": "MTIzNDU2Nzg5MDEy",
+                        "auth_tag_base64": "YWJjZGVmZ2hpamtsbW5vcA==",
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Persist ciphertext_base64, iv_base64, and auth_tag_base64 together.",
+                          "Decrypt later via /decrypt with the same key."
+                        ],
+                        "chain_to": [
+                          {
+                            "api": "aes-vault",
+                            "reason": "Decrypt this payload via /decrypt."
+                          }
+                        ],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/EncryptRequest"
+                    },
+                    "example": {
+                      "plaintext": "hello agent",
+                      "key_base64": "bXktMzItYnl0ZS1rZXktZXhhbXBsZS0xMjM0NTY3OA=="
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.01,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/decrypt": {
+            "post": {
+              "operationId": "decrypt",
+              "summary": "Decrypt ciphertext with key + iv + auth tag",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DecryptResponse"
+                      },
+                      "example": {
+                        "trace_id": "a3-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "algorithm": "aes-256-gcm",
+                        "plaintext": "hello agent",
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Authentication tag verified — ciphertext is intact and authentic."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/DecryptRequest"
+                    },
+                    "example": {
+                      "ciphertext_base64": "q1Z3yQ==",
+                      "iv_base64": "MTIzNDU2Nzg5MDEy",
+                      "auth_tag_base64": "YWJjZGVmZ2hpamtsbW5vcA==",
+                      "key_base64": "bXktMzItYnl0ZS1rZXktZXhhbXBsZS0xMjM0NTY3OA=="
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.01,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "lookup",
+              "summary": "ONE-CALL generate key + encrypt + return full reusable bundle",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/LookupResponse"
+                      },
+                      "example": {
+                        "trace_id": "a4-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "algorithm": "aes-256-gcm",
+                        "key_bits": 256,
+                        "key_base64": "bXktMzItYnl0ZS1rZXktZXhhbXBsZS0xMjM0NTY3OA==",
+                        "ciphertext_base64": "q1Z3yQ==",
+                        "iv_base64": "MTIzNDU2Nzg5MDEy",
+                        "auth_tag_base64": "YWJjZGVmZ2hpamtsbW5vcA==",
+                        "reasoning": {
+                          "why_result_generated": "Generated a fresh 256-bit key and encrypted the plaintext with AES-256-GCM, returning everything needed to decrypt later.",
+                          "key_factors": [
+                            "AES-256-GCM authenticated encryption",
+                            "96-bit random IV per call",
+                            "key generated from a CSPRNG"
+                          ],
+                          "invalidators": [
+                            "Losing key_base64 makes the ciphertext permanently unrecoverable.",
+                            "Reusing the same key+IV pair across messages weakens GCM security."
+                          ]
+                        },
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Store key_base64 in a secret manager NOW — it is not retrievable later.",
+                          "Persist ciphertext_base64, iv_base64, and auth_tag_base64 together with the key reference.",
+                          "Decrypt via /decrypt using all four values."
+                        ],
+                        "chain_to": [
+                          {
+                            "api": "aes-vault",
+                            "reason": "Decrypt this payload via /decrypt."
+                          }
+                        ],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/LookupRequest"
+                    },
+                    "example": {
+                      "plaintext": "hello agent"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.02,
+                "currency": "USDC"
+              },
+              "x-one-call": true
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          },
+          "schemas": {
+            "ChainTo": {
+              "type": "object",
+              "required": [
+                "api",
+                "reason"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "api": {
+                  "type": "string",
+                  "description": "Slug of a recommended next API to call."
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Why an agent would chain to this API next."
+                }
+              }
+            },
+            "Reasoning": {
+              "type": "object",
+              "required": [
+                "why_result_generated",
+                "key_factors",
+                "invalidators"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "why_result_generated": {
+                  "type": "string"
+                },
+                "key_factors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "invalidators": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Conditions that would change or invalidate this result."
+                }
+              }
+            },
+            "Privacy": {
+              "type": "object",
+              "required": [
+                "data_stored",
+                "retention"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data_stored": {
+                  "type": "boolean"
+                },
+                "retention": {
+                  "type": "string",
+                  "description": "Retention policy, e.g. \"none\"."
+                }
+              }
+            },
+            "EnvelopeError": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "details": {
+                  "description": "Optional machine-readable error context."
+                }
+              }
+            },
+            "Error400": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms",
+                "error"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer"
+                },
+                "error": {
+                  "$ref": "#/components/schemas/EnvelopeError"
+                }
+              }
+            },
+            "Error500": {
+              "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms"
+              ],
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    true
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "_Tail": {
+              "type": "object",
+              "required": [
+                "confidence_score",
+                "recommended_actions_priority_order",
+                "chain_to",
+                "privacy"
+              ],
+              "properties": {
+                "confidence_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "recommended_actions_priority_order": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "chain_to": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChainTo"
+                  }
+                },
+                "privacy": {
+                  "$ref": "#/components/schemas/Privacy"
+                }
+              }
+            },
+            "GenerateKeyCore": {
+              "type": "object",
+              "required": [
+                "algorithm",
+                "key_bits",
+                "key_base64"
+              ],
+              "properties": {
+                "algorithm": {
+                  "type": "string",
+                  "enum": [
+                    "aes-256-gcm"
+                  ]
+                },
+                "key_bits": {
+                  "type": "integer",
+                  "enum": [
+                    256
+                  ]
+                },
+                "key_base64": {
+                  "type": "string",
+                  "description": "Base64-encoded 32-byte key."
+                }
+              }
+            },
+            "EncryptCore": {
+              "type": "object",
+              "required": [
+                "algorithm",
+                "ciphertext_base64",
+                "iv_base64",
+                "auth_tag_base64"
+              ],
+              "properties": {
+                "algorithm": {
+                  "type": "string",
+                  "enum": [
+                    "aes-256-gcm"
+                  ]
+                },
+                "ciphertext_base64": {
+                  "type": "string"
+                },
+                "iv_base64": {
+                  "type": "string",
+                  "description": "Base64-encoded 12-byte IV."
+                },
+                "auth_tag_base64": {
+                  "type": "string",
+                  "description": "Base64-encoded 16-byte GCM auth tag."
+                }
+              }
+            },
+            "DecryptCore": {
+              "type": "object",
+              "required": [
+                "algorithm",
+                "plaintext"
+              ],
+              "properties": {
+                "algorithm": {
+                  "type": "string",
+                  "enum": [
+                    "aes-256-gcm"
+                  ]
+                },
+                "plaintext": {
+                  "type": "string"
+                }
+              }
+            },
+            "EncryptRequest": {
+              "type": "object",
+              "required": [
+                "plaintext",
+                "key_base64"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "plaintext": {
+                  "type": "string",
+                  "description": "UTF-8 plaintext (max 256 KB).",
+                  "example": "hello agent"
+                },
+                "key_base64": {
+                  "type": "string",
+                  "description": "Base64-encoded 32-byte key from /generate-key."
+                }
+              }
+            },
+            "DecryptRequest": {
+              "type": "object",
+              "required": [
+                "ciphertext_base64",
+                "iv_base64",
+                "auth_tag_base64",
+                "key_base64"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "ciphertext_base64": {
+                  "type": "string"
+                },
+                "iv_base64": {
+                  "type": "string"
+                },
+                "auth_tag_base64": {
+                  "type": "string"
+                },
+                "key_base64": {
+                  "type": "string"
+                }
+              }
+            },
+            "LookupRequest": {
+              "type": "object",
+              "required": [
+                "plaintext"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "plaintext": {
+                  "type": "string",
+                  "description": "UTF-8 plaintext (max 256 KB).",
+                  "example": "hello agent"
+                }
+              }
+            },
+            "DiscoveryResponse": {
+              "type": "object",
+              "required": [
+                "name",
+                "version",
+                "description",
+                "openapi_url",
+                "auth",
+                "endpoints",
+                "pricing",
+                "x402_compatible"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "openapi_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "auth": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "header"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "header": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "endpoints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "path",
+                      "summary",
+                      "price_usdc"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "pricing": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "price_usdc",
+                      "currency"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "enum": [
+                          "USDC"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "x402_compatible": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "GenerateKeyResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/GenerateKeyCore"
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "EncryptResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/EncryptCore"
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "DecryptResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/DecryptCore"
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "algorithm",
+                    "key_bits",
+                    "key_base64",
+                    "ciphertext_base64",
+                    "iv_base64",
+                    "auth_tag_base64",
+                    "reasoning"
+                  ],
+                  "properties": {
+                    "algorithm": {
+                      "type": "string",
+                      "enum": [
+                        "aes-256-gcm"
+                      ]
+                    },
+                    "key_bits": {
+                      "type": "integer",
+                      "enum": [
+                        256
+                      ]
+                    },
+                    "key_base64": {
+                      "type": "string"
+                    },
+                    "ciphertext_base64": {
+                      "type": "string"
+                    },
+                    "iv_base64": {
+                      "type": "string"
+                    },
+                    "auth_tag_base64": {
+                      "type": "string"
+                    },
+                    "reasoning": {
+                      "$ref": "#/components/schemas/Reasoning"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            }
+          }
+        }
+      },
+      "listing": {
+        "name": "AES Vault API",
+        "shortDescription": "Stateless AES-256-GCM encrypt/decrypt for agents — real crypto, caller-owned keys, nothing stored",
+        "description": "Agent-native authenticated encryption using AES-256-GCM, computed with Node's crypto (not a language model). /generate-key returns a random 256-bit key; /encrypt encrypts UTF-8 plaintext under a caller-supplied key and returns ciphertext, IV, and GCM auth tag (all base64); /decrypt verifies the auth tag and returns the plaintext, failing closed on any tampering or wrong key. The one-call /lookup generates a fresh key, encrypts, and returns the complete reusable bundle plus a reasoning object. Fully stateless — keys and data are never stored (lose the key and the ciphertext is unrecoverable). Confidence is always 1.0.",
+        "category": "developer-tools",
+        "baseUrl": "https://orbis-apis.onrender.com/aes-vault",
+        "websiteUrl": "https://orbis-apis.onrender.com",
+        "docsUrl": "https://orbis-apis.onrender.com/aes-vault/openapi.json",
+        "openApiSpecUrl": "https://orbis-apis.onrender.com/aes-vault/openapi.json",
+        "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+        "tags": [
+          "encryption",
+          "aes",
+          "cryptography",
+          "security",
+          "developer-tools",
+          "x402",
+          "coinbase-bazaar",
+          "agentic-market"
+        ],
+        "keywords": [
+          "aes encryption api",
+          "aes-256-gcm api",
+          "encrypt decrypt api",
+          "authenticated encryption api",
+          "stateless encryption api",
+          "generate aes key api"
+        ],
+        "tiers": [
+          {
+            "name": "Free",
+            "isFree": true,
+            "requestsPerDay": 200,
+            "requestsPerMonth": 6000
+          },
+          {
+            "name": "Pay Per Call",
+            "isFree": false,
+            "pricingType": "per_call",
+            "pricePerCall": 0.01,
+            "requestsPerDay": 100000,
+            "requestsPerMonth": 3000000,
+            "endpointPricing": [
+              {
+                "method": "POST",
+                "pathPattern": "/generate-key",
+                "pricePerCallUsdc": 0.003,
+                "description": "Generate a random 256-bit key"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/encrypt",
+                "pricePerCallUsdc": 0.01,
+                "description": "Encrypt plaintext with a provided key"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/decrypt",
+                "pricePerCallUsdc": 0.01,
+                "description": "Decrypt ciphertext with key + iv + auth tag"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/lookup",
+                "pricePerCallUsdc": 0.02,
+                "description": "ONE-CALL generate key + encrypt + full reusable bundle"
+              }
+            ]
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/generate-key",
+            "description": "Generate a 256-bit AES key"
+          },
+          {
+            "method": "POST",
+            "path": "/encrypt",
+            "description": "AES-256-GCM encrypt"
+          },
+          {
+            "method": "POST",
+            "path": "/decrypt",
+            "description": "AES-256-GCM decrypt"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL key + encrypt bundle"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "cron-explainer",
+      "info": {
+        "title": "Cron Explainer API",
+        "version": "1.1.0",
+        "description": "Deterministic 5-field cron parsing: plain-English description plus the next scheduled run times in any IANA timezone (DST-aware). Real parsing and date arithmetic; deterministic schemas; confidence always 1.0."
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Cron Explainer API",
+          "version": "1.1.0",
+          "description": "Deterministic 5-field cron parsing: plain-English description plus the next scheduled run times in any IANA timezone (DST-aware). Real parsing and date arithmetic; deterministic schemas; confidence always 1.0.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x402-compatible": true,
+          "x-agent-marketplace-ready": true,
+          "x-pay-per-call-optimized": true
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/cron-explainer"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "discover",
+              "summary": "Service discovery",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DiscoveryResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/explain": {
+            "post": {
+              "operationId": "explain",
+              "summary": "Parse a cron expression into fields + a plain-English description",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/ExplainResponse"
+                      },
+                      "example": {
+                        "trace_id": "c1-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "expression": "0 9 * * 1-5",
+                        "fields": {
+                          "minute": "0",
+                          "hour": "9",
+                          "day_of_month": "*",
+                          "month": "*",
+                          "day_of_week": "1-5"
+                        },
+                        "description": "At 09:00, on Monday, Tuesday, Wednesday, Thursday, Friday (UTC).",
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "At 09:00, on Monday, Tuesday, Wednesday, Thursday, Friday (UTC).",
+                          "Use /lookup to compute the next scheduled run times."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ExplainRequest"
+                    },
+                    "example": {
+                      "expression": "0 9 * * 1-5"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.005,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "lookup",
+              "summary": "ONE-CALL explain + next run times (any IANA timezone, DST-aware) + reasoning",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/LookupResponse"
+                      },
+                      "example": {
+                        "trace_id": "c2-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "expression": "0 9 * * 1-5",
+                        "fields": {
+                          "minute": "0",
+                          "hour": "9",
+                          "day_of_month": "*",
+                          "month": "*",
+                          "day_of_week": "1-5"
+                        },
+                        "description": "At 09:00, on Monday, Tuesday, Wednesday, Thursday, Friday (America/New_York).",
+                        "next_runs": [
+                          "2026-06-08T09:00:00-04:00",
+                          "2026-06-09T09:00:00-04:00",
+                          "2026-06-10T09:00:00-04:00"
+                        ],
+                        "next_runs_timezone": "America/New_York",
+                        "next_run_count": 3,
+                        "reasoning": {
+                          "why_result_generated": "Parsed the cron expression and computed the next 3 matching minute(s) interpreted in America/New_York after the reference time.",
+                          "key_factors": [
+                            "At 09:00, on Monday, Tuesday, Wednesday, Thursday, Friday (America/New_York).",
+                            "standard day matching",
+                            "wall-clock times in America/New_York, DST-aware (returned with UTC offset)"
+                          ],
+                          "invalidators": [
+                            "Interpreting the schedule in a different timezone changes the absolute instants.",
+                            "A schedule with no occurrence within ~2.8 years returns fewer runs."
+                          ]
+                        },
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "At 09:00, on Monday, Tuesday, Wednesday, Thursday, Friday (America/New_York).",
+                          "Next run: 2026-06-08T09:00:00-04:00 (America/New_York)."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/LookupRequest"
+                    },
+                    "example": {
+                      "expression": "0 9 * * 1-5",
+                      "from": "2026-06-08T00:00:00Z",
+                      "count": 3,
+                      "timezone": "America/New_York"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.015,
+                "currency": "USDC"
+              },
+              "x-one-call": true
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          },
+          "schemas": {
+            "ChainTo": {
+              "type": "object",
+              "required": [
+                "api",
+                "reason"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "api": {
+                  "type": "string",
+                  "description": "Slug of a recommended next API to call."
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Why an agent would chain to this API next."
+                }
+              }
+            },
+            "Reasoning": {
+              "type": "object",
+              "required": [
+                "why_result_generated",
+                "key_factors",
+                "invalidators"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "why_result_generated": {
+                  "type": "string"
+                },
+                "key_factors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "invalidators": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Conditions that would change or invalidate this result."
+                }
+              }
+            },
+            "Privacy": {
+              "type": "object",
+              "required": [
+                "data_stored",
+                "retention"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data_stored": {
+                  "type": "boolean"
+                },
+                "retention": {
+                  "type": "string",
+                  "description": "Retention policy, e.g. \"none\"."
+                }
+              }
+            },
+            "EnvelopeError": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "details": {
+                  "description": "Optional machine-readable error context."
+                }
+              }
+            },
+            "Error400": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms",
+                "error"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer"
+                },
+                "error": {
+                  "$ref": "#/components/schemas/EnvelopeError"
+                }
+              }
+            },
+            "Error500": {
+              "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms"
+              ],
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    true
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "CronFields": {
+              "type": "object",
+              "required": [
+                "minute",
+                "hour",
+                "day_of_month",
+                "month",
+                "day_of_week"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "minute": {
+                  "type": "string"
+                },
+                "hour": {
+                  "type": "string"
+                },
+                "day_of_month": {
+                  "type": "string"
+                },
+                "month": {
+                  "type": "string"
+                },
+                "day_of_week": {
+                  "type": "string"
+                }
+              }
+            },
+            "ExplainCore": {
+              "type": "object",
+              "required": [
+                "expression",
+                "fields",
+                "description"
+              ],
+              "properties": {
+                "expression": {
+                  "type": "string"
+                },
+                "fields": {
+                  "$ref": "#/components/schemas/CronFields"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Plain-English description (UTC)."
+                }
+              }
+            },
+            "_Tail": {
+              "type": "object",
+              "required": [
+                "confidence_score",
+                "recommended_actions_priority_order",
+                "chain_to",
+                "privacy"
+              ],
+              "properties": {
+                "confidence_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "recommended_actions_priority_order": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "chain_to": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChainTo"
+                  }
+                },
+                "privacy": {
+                  "$ref": "#/components/schemas/Privacy"
+                }
+              }
+            },
+            "ExplainRequest": {
+              "type": "object",
+              "required": [
+                "expression"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "expression": {
+                  "type": "string",
+                  "description": "A standard 5-field cron expression.",
+                  "example": "0 9 * * 1-5"
+                }
+              }
+            },
+            "LookupRequest": {
+              "type": "object",
+              "required": [
+                "expression"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "expression": {
+                  "type": "string",
+                  "example": "0 9 * * 1-5"
+                },
+                "from": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Reference time (ISO-8601); defaults to now."
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 20,
+                  "description": "How many next runs to return (default 5)."
+                },
+                "timezone": {
+                  "type": "string",
+                  "default": "UTC",
+                  "description": "IANA timezone the cron fields are interpreted in (DST-aware), e.g. \"America/New_York\". Defaults to UTC.",
+                  "example": "America/New_York"
+                }
+              }
+            },
+            "DiscoveryResponse": {
+              "type": "object",
+              "required": [
+                "name",
+                "version",
+                "description",
+                "openapi_url",
+                "auth",
+                "endpoints",
+                "pricing",
+                "x402_compatible"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "openapi_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "auth": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "header"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "header": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "endpoints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "path",
+                      "summary",
+                      "price_usdc"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "pricing": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "price_usdc",
+                      "currency"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "enum": [
+                          "USDC"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "x402_compatible": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "ExplainResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/ExplainCore"
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/ExplainCore"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "next_runs",
+                    "next_runs_timezone",
+                    "next_run_count",
+                    "reasoning"
+                  ],
+                  "properties": {
+                    "next_runs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "description": "Next matching instants as ISO-8601 with the timezone offset (or Z for UTC)."
+                    },
+                    "next_runs_timezone": {
+                      "type": "string",
+                      "description": "IANA timezone the runs are expressed in."
+                    },
+                    "next_run_count": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Number of next_runs returned (≤ requested count; fewer if the horizon has no more matches)."
+                    },
+                    "reasoning": {
+                      "$ref": "#/components/schemas/Reasoning"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            }
+          }
+        }
+      },
+      "listing": {
+        "name": "Cron Explainer API",
+        "shortDescription": "Deterministic cron parsing — plain-English description + next run times in any IANA timezone (DST-aware) for scheduling agents",
+        "description": "Agent-native cron expression intelligence computed in real code (not by a language model). /explain parses a standard 5-field cron expression into its component fields and a plain-English description (e.g. '0 9 * * 1-5' → 'At 09:00, Monday through Friday'). The one-call /lookup adds the next scheduled run times in any IANA timezone (DST-aware, e.g. America/New_York — returned as ISO-8601 with the UTC offset), a next_run_count, configurable count and reference time, a reasoning object, and prioritized recommendations. Handles ranges, lists, steps, and month/day names, with correct Vixie-cron day-of-month/day-of-week matching. Confidence is always 1.0 because nothing is estimated.",
+        "category": "developer-tools",
+        "baseUrl": "https://orbis-apis.onrender.com/cron-explainer",
+        "websiteUrl": "https://orbis-apis.onrender.com",
+        "docsUrl": "https://orbis-apis.onrender.com/cron-explainer/openapi.json",
+        "openApiSpecUrl": "https://orbis-apis.onrender.com/cron-explainer/openapi.json",
+        "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+        "tags": [
+          "cron",
+          "scheduling",
+          "crontab",
+          "developer-tools",
+          "deterministic",
+          "x402",
+          "coinbase-bazaar",
+          "agentic-market"
+        ],
+        "keywords": [
+          "cron expression parser api",
+          "explain cron api",
+          "next cron run time api",
+          "crontab to english",
+          "cron schedule calculator",
+          "cron describer api",
+          "cron timezone api",
+          "cron next run timezone"
+        ],
+        "tiers": [
+          {
+            "name": "Free",
+            "isFree": true,
+            "requestsPerDay": 200,
+            "requestsPerMonth": 6000
+          },
+          {
+            "name": "Pay Per Call",
+            "isFree": false,
+            "pricingType": "per_call",
+            "pricePerCall": 0.015,
+            "requestsPerDay": 100000,
+            "requestsPerMonth": 3000000,
+            "endpointPricing": [
+              {
+                "method": "POST",
+                "pathPattern": "/explain",
+                "pricePerCallUsdc": 0.005,
+                "description": "Parse a cron expression into fields + plain-English description"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/lookup",
+                "pricePerCallUsdc": 0.015,
+                "description": "ONE-CALL explain + next run times (any IANA timezone, DST-aware) + reasoning"
+              }
+            ]
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/explain",
+            "description": "Parse + describe a cron expression"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL explain + next run times (any IANA timezone, DST-aware)"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "json-to-csv",
+      "info": {
+        "title": "JSON to CSV API",
+        "version": "1.1.0",
+        "description": "Deterministic JSON-array conversion to CSV (RFC 4180), JSON, or JSONL with nested-object flattening (dot notation) and per-column type inference. Pure code; deterministic schemas; confidence always 1.0."
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "JSON to CSV API",
+          "version": "1.1.0",
+          "description": "Deterministic JSON-array conversion to CSV (RFC 4180), JSON, or JSONL with nested-object flattening (dot notation) and per-column type inference. Pure code; deterministic schemas; confidence always 1.0.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x402-compatible": true,
+          "x-agent-marketplace-ready": true,
+          "x-pay-per-call-optimized": true
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/json-to-csv"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "discover",
+              "summary": "Service discovery",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DiscoveryResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/convert": {
+            "post": {
+              "operationId": "convert",
+              "summary": "Convert a JSON array of objects to CSV, JSON, or JSONL",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/ConvertResponse"
+                      },
+                      "example": {
+                        "trace_id": "j1-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "output": "id,user.name\n1,Ada\n2,Lin",
+                        "output_format": "csv",
+                        "row_count": 2,
+                        "column_count": 2,
+                        "columns": [
+                          "id",
+                          "user.name"
+                        ],
+                        "delimiter": ",",
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Converted 2 row(s) across 2 column(s) to CSV.",
+                          "Use /lookup to also receive inferred column types."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ConvertRequest"
+                    },
+                    "example": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "user": {
+                            "name": "Ada"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "user": {
+                            "name": "Lin"
+                          }
+                        }
+                      ],
+                      "output": "csv"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.005,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "lookup",
+              "summary": "ONE-CALL convert + column type inference + reasoning",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/LookupResponse"
+                      },
+                      "example": {
+                        "trace_id": "j2-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "output": "{\"id\":1,\"active\":true}\n{\"id\":2,\"active\":false}",
+                        "output_format": "jsonl",
+                        "row_count": 2,
+                        "column_count": 2,
+                        "columns": [
+                          "id",
+                          "active"
+                        ],
+                        "delimiter": ",",
+                        "column_types": {
+                          "id": "number",
+                          "active": "boolean"
+                        },
+                        "reasoning": {
+                          "why_result_generated": "Flattened 2 object(s), unioned 2 column(s), and serialized to JSONL.",
+                          "key_factors": [
+                            "nested objects flattened with dot notation",
+                            "arrays serialized as JSON strings",
+                            "output format jsonl"
+                          ],
+                          "invalidators": [
+                            "Rows that are not JSON objects.",
+                            "Expecting a non-dot flattening convention."
+                          ]
+                        },
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Converted 2 row(s) across 2 column(s) to JSONL.",
+                          "Map column_types to your destination schema before import."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/LookupRequest"
+                    },
+                    "example": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "active": true
+                        },
+                        {
+                          "id": 2,
+                          "active": false
+                        }
+                      ],
+                      "output": "jsonl"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.015,
+                "currency": "USDC"
+              },
+              "x-one-call": true
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          },
+          "schemas": {
+            "ChainTo": {
+              "type": "object",
+              "required": [
+                "api",
+                "reason"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "api": {
+                  "type": "string",
+                  "description": "Slug of a recommended next API to call."
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Why an agent would chain to this API next."
+                }
+              }
+            },
+            "Reasoning": {
+              "type": "object",
+              "required": [
+                "why_result_generated",
+                "key_factors",
+                "invalidators"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "why_result_generated": {
+                  "type": "string"
+                },
+                "key_factors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "invalidators": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Conditions that would change or invalidate this result."
+                }
+              }
+            },
+            "Privacy": {
+              "type": "object",
+              "required": [
+                "data_stored",
+                "retention"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data_stored": {
+                  "type": "boolean"
+                },
+                "retention": {
+                  "type": "string",
+                  "description": "Retention policy, e.g. \"none\"."
+                }
+              }
+            },
+            "EnvelopeError": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "details": {
+                  "description": "Optional machine-readable error context."
+                }
+              }
+            },
+            "Error400": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms",
+                "error"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer"
+                },
+                "error": {
+                  "$ref": "#/components/schemas/EnvelopeError"
+                }
+              }
+            },
+            "Error500": {
+              "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms"
+              ],
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    true
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "CsvCore": {
+              "type": "object",
+              "required": [
+                "output",
+                "output_format",
+                "row_count",
+                "column_count",
+                "columns",
+                "delimiter"
+              ],
+              "properties": {
+                "output": {
+                  "type": "string",
+                  "description": "Serialized data in the requested format: RFC 4180 CSV, a JSON array, or newline-delimited JSON (JSONL)."
+                },
+                "output_format": {
+                  "type": "string",
+                  "enum": [
+                    "csv",
+                    "json",
+                    "jsonl"
+                  ],
+                  "description": "The format of the \"output\" field."
+                },
+                "row_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "column_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "columns": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "delimiter": {
+                  "type": "string",
+                  "description": "Field delimiter (applies to CSV output)."
+                }
+              }
+            },
+            "_Tail": {
+              "type": "object",
+              "required": [
+                "confidence_score",
+                "recommended_actions_priority_order",
+                "chain_to",
+                "privacy"
+              ],
+              "properties": {
+                "confidence_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "recommended_actions_priority_order": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "chain_to": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChainTo"
+                  }
+                },
+                "privacy": {
+                  "$ref": "#/components/schemas/Privacy"
+                }
+              }
+            },
+            "ConvertRequest": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data": {
+                  "description": "A JSON object or an array of JSON objects (max 10000 rows).",
+                  "oneOf": [
+                    {
+                      "type": "object"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  ]
+                },
+                "delimiter": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1,
+                  "default": ",",
+                  "description": "Single-character field delimiter (CSV only)."
+                },
+                "include_header": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Emit a header row (CSV only)."
+                },
+                "flatten": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Flatten nested objects with dot-notation keys."
+                },
+                "output": {
+                  "type": "string",
+                  "enum": [
+                    "csv",
+                    "json",
+                    "jsonl"
+                  ],
+                  "default": "csv",
+                  "description": "Output wire format: CSV (RFC 4180), a JSON array, or newline-delimited JSON (JSONL)."
+                }
+              }
+            },
+            "LookupRequest": {
+              "type": "object",
+              "required": [
+                "data"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data": {
+                  "description": "A JSON object or an array of JSON objects (max 10000 rows).",
+                  "oneOf": [
+                    {
+                      "type": "object"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  ]
+                },
+                "delimiter": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1,
+                  "default": ",",
+                  "description": "Single-character field delimiter (CSV only)."
+                },
+                "include_header": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Emit a header row (CSV only)."
+                },
+                "flatten": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Flatten nested objects with dot-notation keys."
+                },
+                "output": {
+                  "type": "string",
+                  "enum": [
+                    "csv",
+                    "json",
+                    "jsonl"
+                  ],
+                  "default": "csv",
+                  "description": "Output wire format: CSV (RFC 4180), a JSON array, or newline-delimited JSON (JSONL)."
+                }
+              }
+            },
+            "DiscoveryResponse": {
+              "type": "object",
+              "required": [
+                "name",
+                "version",
+                "description",
+                "openapi_url",
+                "auth",
+                "endpoints",
+                "pricing",
+                "x402_compatible"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "openapi_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "auth": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "header"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "header": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "endpoints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "path",
+                      "summary",
+                      "price_usdc"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "pricing": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "price_usdc",
+                      "currency"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "enum": [
+                          "USDC"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "x402_compatible": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "ConvertResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/CsvCore"
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/CsvCore"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "column_types",
+                    "reasoning"
+                  ],
+                  "properties": {
+                    "column_types": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "json",
+                          "null",
+                          "mixed"
+                        ]
+                      },
+                      "description": "Inferred type per column across all rows."
+                    },
+                    "reasoning": {
+                      "$ref": "#/components/schemas/Reasoning"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            }
+          }
+        }
+      },
+      "listing": {
+        "name": "JSON to CSV API",
+        "shortDescription": "Deterministic JSON conversion to CSV, JSON, or JSONL with nested flattening and type inference for data agents",
+        "description": "Agent-native JSON conversion computed in real code (not by a language model). /convert turns a JSON object or array of objects into RFC 4180 CSV, a JSON array, or newline-delimited JSON (JSONL) via the output parameter — flattening nested objects with dot-notation keys, serializing arrays as JSON, unioning columns across rows, and quoting values that contain delimiters, quotes, or newlines. Configurable delimiter, header, flattening, and output format. The one-call /lookup adds per-column type inference (string/number/boolean/json/null/mixed), a reasoning object, and prioritized recommendations. Handles up to 10,000 rows. Confidence is always 1.0 because nothing is estimated.",
+        "category": "developer-tools",
+        "baseUrl": "https://orbis-apis.onrender.com/json-to-csv",
+        "websiteUrl": "https://orbis-apis.onrender.com",
+        "docsUrl": "https://orbis-apis.onrender.com/json-to-csv/openapi.json",
+        "openApiSpecUrl": "https://orbis-apis.onrender.com/json-to-csv/openapi.json",
+        "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+        "tags": [
+          "json",
+          "csv",
+          "jsonl",
+          "data-transform",
+          "developer-tools",
+          "deterministic",
+          "x402",
+          "coinbase-bazaar",
+          "agentic-market"
+        ],
+        "keywords": [
+          "json to csv api",
+          "convert json to csv",
+          "json to jsonl api",
+          "flatten json api",
+          "csv export api",
+          "json array to csv",
+          "nested json csv converter"
+        ],
+        "tiers": [
+          {
+            "name": "Free",
+            "isFree": true,
+            "requestsPerDay": 200,
+            "requestsPerMonth": 6000
+          },
+          {
+            "name": "Pay Per Call",
+            "isFree": false,
+            "pricingType": "per_call",
+            "pricePerCall": 0.015,
+            "requestsPerDay": 100000,
+            "requestsPerMonth": 3000000,
+            "endpointPricing": [
+              {
+                "method": "POST",
+                "pathPattern": "/convert",
+                "pricePerCallUsdc": 0.005,
+                "description": "Convert a JSON array of objects to CSV, JSON, or JSONL"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/lookup",
+                "pricePerCallUsdc": 0.015,
+                "description": "ONE-CALL convert + column type inference + reasoning"
+              }
+            ]
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/convert",
+            "description": "JSON to CSV / JSON / JSONL conversion"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL convert + type inference"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "unit-conversion",
+      "info": {
+        "title": "Unit Conversion API",
+        "version": "2.1.0",
+        "description": "Deterministic measurement conversion across length, mass, volume, area, speed, time, digital data, and temperature. Exact SI factors computed in real code; deterministic schemas; confidence always 1.0. Includes a free /supported-units catalog endpoint."
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Unit Conversion API",
+          "version": "2.1.0",
+          "description": "Deterministic measurement conversion across length, mass, volume, area, speed, time, digital data, and temperature. Exact SI factors computed in real code; deterministic schemas; confidence always 1.0. Includes a free /supported-units catalog endpoint.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x402-compatible": true,
+          "x-agent-marketplace-ready": true,
+          "x-pay-per-call-optimized": true
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/unit-conversion"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "discover",
+              "summary": "Service discovery",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DiscoveryResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/supported-units": {
+            "get": {
+              "operationId": "supportedUnits",
+              "summary": "List every supported unit symbol per category",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/SupportedUnitsResponse"
+                      },
+                      "example": {
+                        "trace_id": "u0-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "categories": {
+                          "length": [
+                            "m",
+                            "km",
+                            "cm",
+                            "mm",
+                            "um",
+                            "nm",
+                            "mi",
+                            "yd",
+                            "ft",
+                            "in",
+                            "nmi"
+                          ],
+                          "temperature": [
+                            "C",
+                            "F",
+                            "K"
+                          ]
+                        },
+                        "total_units": 58,
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "58 unit symbols across 8 categories.",
+                          "Pass any two symbols from the same category to /convert."
+                        ],
+                        "chain_to": [
+                          {
+                            "api": "unit-conversion",
+                            "reason": "Convert between any two of these units via /convert."
+                          }
+                        ],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/convert": {
+            "post": {
+              "operationId": "convert",
+              "summary": "Convert a value between two units of the same category",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/ConvertResponse"
+                      },
+                      "example": {
+                        "trace_id": "u1-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "value": 10,
+                        "from": "km",
+                        "to": "mi",
+                        "result": 6.21371192237,
+                        "category": "length",
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "10 km = 6.21371192237 mi.",
+                          "Use /lookup for the same value in every length unit."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ConvertRequest"
+                    },
+                    "example": {
+                      "value": 10,
+                      "from": "km",
+                      "to": "mi"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.005,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/batch": {
+            "post": {
+              "operationId": "batch",
+              "summary": "Convert up to 100 value/unit pairs in one call",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/BatchResponse"
+                      },
+                      "example": {
+                        "trace_id": "u2-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "results": [
+                          {
+                            "success": true,
+                            "value": 100,
+                            "from": "C",
+                            "to": "F",
+                            "result": 212,
+                            "category": "temperature"
+                          },
+                          {
+                            "success": true,
+                            "value": 1,
+                            "from": "GB",
+                            "to": "MiB",
+                            "result": 953.674316406,
+                            "category": "data"
+                          }
+                        ],
+                        "total": 2,
+                        "successful": 2,
+                        "failed": 0,
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "2/2 conversions succeeded.",
+                          "All pairs converted exactly."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/BatchRequest"
+                    },
+                    "example": {
+                      "conversions": [
+                        {
+                          "value": 100,
+                          "from": "C",
+                          "to": "F"
+                        },
+                        {
+                          "value": 1,
+                          "from": "GB",
+                          "to": "MiB"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.01,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "lookup",
+              "summary": "ONE-CALL convert + all sibling-unit equivalents + reasoning",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/LookupResponse"
+                      },
+                      "example": {
+                        "trace_id": "u3-1780000000000",
+                        "computed_at": "2026-06-08T12:00:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "value": 100,
+                        "from": "C",
+                        "to": "F",
+                        "result": 212,
+                        "category": "temperature",
+                        "equivalents": {
+                          "C": 100,
+                          "F": 212,
+                          "K": 373.15
+                        },
+                        "reasoning": {
+                          "why_result_generated": "Converted 100 C to F using exact temperature factors.",
+                          "key_factors": [
+                            "category: temperature",
+                            "C and F share the same dimension",
+                            "exact conversion factors (no estimation)"
+                          ],
+                          "invalidators": [
+                            "Passing units from different categories.",
+                            "Non-finite input value."
+                          ]
+                        },
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "100 C = 212 F.",
+                          "Pick the equivalent unit that matches your downstream system."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/LookupRequest"
+                    },
+                    "example": {
+                      "value": 100,
+                      "from": "C",
+                      "to": "F"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.015,
+                "currency": "USDC"
+              },
+              "x-one-call": true
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          },
+          "schemas": {
+            "ChainTo": {
+              "type": "object",
+              "required": [
+                "api",
+                "reason"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "api": {
+                  "type": "string",
+                  "description": "Slug of a recommended next API to call."
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Why an agent would chain to this API next."
+                }
+              }
+            },
+            "Reasoning": {
+              "type": "object",
+              "required": [
+                "why_result_generated",
+                "key_factors",
+                "invalidators"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "why_result_generated": {
+                  "type": "string"
+                },
+                "key_factors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "invalidators": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Conditions that would change or invalidate this result."
+                }
+              }
+            },
+            "Privacy": {
+              "type": "object",
+              "required": [
+                "data_stored",
+                "retention"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data_stored": {
+                  "type": "boolean"
+                },
+                "retention": {
+                  "type": "string",
+                  "description": "Retention policy, e.g. \"none\"."
+                }
+              }
+            },
+            "EnvelopeError": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "details": {
+                  "description": "Optional machine-readable error context."
+                }
+              }
+            },
+            "Error400": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms",
+                "error"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer"
+                },
+                "error": {
+                  "$ref": "#/components/schemas/EnvelopeError"
+                }
+              }
+            },
+            "Error500": {
+              "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms"
+              ],
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    true
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "ConvertCore": {
+              "type": "object",
+              "required": [
+                "value",
+                "from",
+                "to",
+                "result",
+                "category"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "from": {
+                  "type": "string",
+                  "description": "Source unit symbol."
+                },
+                "to": {
+                  "type": "string",
+                  "description": "Target unit symbol."
+                },
+                "result": {
+                  "type": "number",
+                  "description": "Converted value (12 significant digits)."
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "length",
+                    "mass",
+                    "volume",
+                    "area",
+                    "speed",
+                    "time",
+                    "data",
+                    "temperature"
+                  ]
+                }
+              }
+            },
+            "_Tail": {
+              "type": "object",
+              "required": [
+                "confidence_score",
+                "recommended_actions_priority_order",
+                "chain_to",
+                "privacy"
+              ],
+              "properties": {
+                "confidence_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "recommended_actions_priority_order": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "chain_to": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChainTo"
+                  }
+                },
+                "privacy": {
+                  "$ref": "#/components/schemas/Privacy"
+                }
+              }
+            },
+            "ConvertRequest": {
+              "type": "object",
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false,
+              "description": "Provide from/to (preferred) or the legacy from_unit/to_unit.",
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "example": 10
+                },
+                "from": {
+                  "type": "string",
+                  "example": "km"
+                },
+                "to": {
+                  "type": "string",
+                  "example": "mi"
+                },
+                "from_unit": {
+                  "type": "string",
+                  "description": "Legacy alias for \"from\"."
+                },
+                "to_unit": {
+                  "type": "string",
+                  "description": "Legacy alias for \"to\"."
+                }
+              }
+            },
+            "BatchRequest": {
+              "type": "object",
+              "required": [
+                "conversions"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "conversions": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 100,
+                  "items": {
+                    "$ref": "#/components/schemas/ConvertRequest"
+                  }
+                }
+              }
+            },
+            "LookupRequest": {
+              "type": "object",
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false,
+              "description": "Provide from/to (preferred) or the legacy from_unit/to_unit.",
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "example": 10
+                },
+                "from": {
+                  "type": "string",
+                  "example": "km"
+                },
+                "to": {
+                  "type": "string",
+                  "example": "mi"
+                },
+                "from_unit": {
+                  "type": "string",
+                  "description": "Legacy alias for \"from\"."
+                },
+                "to_unit": {
+                  "type": "string",
+                  "description": "Legacy alias for \"to\"."
+                }
+              }
+            },
+            "BatchResultItem": {
+              "type": "object",
+              "required": [
+                "success"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "from": {
+                  "type": "string"
+                },
+                "to": {
+                  "type": "string"
+                },
+                "result": {
+                  "type": "number"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "error": {
+                  "type": "string",
+                  "description": "Present only when success is false."
+                }
+              }
+            },
+            "DiscoveryResponse": {
+              "type": "object",
+              "required": [
+                "name",
+                "version",
+                "description",
+                "openapi_url",
+                "auth",
+                "endpoints",
+                "pricing",
+                "x402_compatible"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "openapi_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "auth": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "header"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "header": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "endpoints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "path",
+                      "summary",
+                      "price_usdc"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "pricing": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "price_usdc",
+                      "currency"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "enum": [
+                          "USDC"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "x402_compatible": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "ConvertResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/ConvertCore"
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "BatchResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "results",
+                    "total",
+                    "successful",
+                    "failed"
+                  ],
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BatchResultItem"
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "successful": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "failed": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/ConvertCore"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "equivalents",
+                    "reasoning"
+                  ],
+                  "properties": {
+                    "equivalents": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "number"
+                      },
+                      "description": "The input value expressed in every unit of the category."
+                    },
+                    "reasoning": {
+                      "$ref": "#/components/schemas/Reasoning"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "SupportedUnitsResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "categories",
+                    "total_units"
+                  ],
+                  "properties": {
+                    "categories": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Map of category name to the unit symbols it supports."
+                    },
+                    "total_units": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/_Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            }
+          }
+        }
+      },
+      "listing": {
+        "name": "Unit Conversion API",
+        "shortDescription": "Deterministic unit conversion across 8 measurement categories for agents — exact SI math, never estimated",
+        "description": "Agent-native measurement conversion computed in real code (not by a language model). The free /supported-units endpoint lists every supported unit symbol per category, so agents can discover what's convertible. /convert converts a value between any two units of the same category — length, mass, volume, area, speed, time, digital data, or temperature — using exact SI factors. /batch converts up to 100 value/unit pairs in one call with per-item success flags. The one-call /lookup returns the conversion plus the same value expressed in every unit of the category, a reasoning object, and prioritized recommendations. Confidence is always 1.0 because nothing is estimated. Accepts both from/to and legacy from_unit/to_unit field names.",
+        "category": "developer-tools",
+        "baseUrl": "https://orbis-apis.onrender.com/unit-conversion",
+        "websiteUrl": "https://orbis-apis.onrender.com",
+        "docsUrl": "https://orbis-apis.onrender.com/unit-conversion/openapi.json",
+        "openApiSpecUrl": "https://orbis-apis.onrender.com/unit-conversion/openapi.json",
+        "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+        "tags": [
+          "units",
+          "conversion",
+          "measurement",
+          "developer-tools",
+          "deterministic",
+          "x402",
+          "coinbase-bazaar",
+          "agentic-market"
+        ],
+        "keywords": [
+          "unit conversion api",
+          "kg to lbs converter api",
+          "metric imperial conversion",
+          "temperature converter api",
+          "data size converter api",
+          "batch unit conversion",
+          "supported units api",
+          "unit catalog api"
+        ],
+        "tiers": [
+          {
+            "name": "Free",
+            "isFree": true,
+            "requestsPerDay": 200,
+            "requestsPerMonth": 6000
+          },
+          {
+            "name": "Pay Per Call",
+            "isFree": false,
+            "pricingType": "per_call",
+            "pricePerCall": 0.015,
+            "requestsPerDay": 200000,
+            "requestsPerMonth": 6000000,
+            "endpointPricing": [
+              {
+                "method": "GET",
+                "pathPattern": "/supported-units",
+                "pricePerCallUsdc": 0,
+                "description": "List every supported unit symbol per category (free)"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/convert",
+                "pricePerCallUsdc": 0.005,
+                "description": "Convert a value between two units of the same category"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/batch",
+                "pricePerCallUsdc": 0.01,
+                "description": "Convert up to 100 value/unit pairs in one call"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/lookup",
+                "pricePerCallUsdc": 0.015,
+                "description": "ONE-CALL convert + all sibling-unit equivalents + reasoning"
+              }
+            ]
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/supported-units",
+            "description": "List all supported units (free)"
+          },
+          {
+            "method": "POST",
+            "path": "/convert",
+            "description": "Single unit conversion"
+          },
+          {
+            "method": "POST",
+            "path": "/batch",
+            "description": "Batch convert up to 100 pairs"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL conversion + all equivalents"
+          }
+        ]
+      }
+    }
+  ]
+}

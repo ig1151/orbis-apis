@@ -1,0 +1,672 @@
+[
+  {
+    "name": "Fear & Greed Index API",
+    "shortDescription": "Real-time crypto Fear & Greed Index with history, trend analysis, and contrarian trade signals",
+    "description": "Access the crypto Fear & Greed Index in real time, track 30-day history, detect sentiment extremes, and surface contrarian buy/sell opportunities. Built for trading agents, portfolio dashboards, and market timing workflows. Returns structured sentiment data with drivers, signals, and daily streak analysis.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/fear-greed",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/fear-greed/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/fear-greed/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "fear-greed",
+      "market-sentiment",
+      "crypto",
+      "trading-signals",
+      "contrarian"
+    ],
+    "keywords": [
+      "fear and greed index api",
+      "crypto sentiment api",
+      "market sentiment indicator",
+      "crypto fear greed tracker",
+      "contrarian trading signal"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/current",
+            "pricePerCallUsdc": 0.002,
+            "description": "Current Fear & Greed Index value with drivers and trade signal"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.003,
+            "description": "Historical daily readings with streak analysis and summary stats"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL: current + 30d history + contrarian opportunity signal"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/current",
+            "pricePerCallUsdc": 0.001,
+            "description": "Current index (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.0015,
+            "description": "History (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.002,
+            "description": "Full lookup (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/current",
+        "description": "Current Fear & Greed Index \u2014 value (0-100), label, drivers, and trade signal"
+      },
+      {
+        "method": "POST",
+        "path": "/history",
+        "description": "Historical daily Fear & Greed readings with summary stats and streak analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: current index + 30d history + contrarian opportunity signal"
+      }
+    ]
+  },
+  {
+    "name": "Stablecoin Depeg Risk API",
+    "shortDescription": "Monitor stablecoin peg deviation, collateral health, and depeg risk in real time",
+    "description": "Track stablecoin peg deviations, collateral ratios, reserve transparency, and on-chain risk signals for any stablecoin. Supports batch monitoring of up to 20 stablecoins at once. Built for DeFi risk agents, yield optimization workflows, and treasury management systems that need early depeg warnings.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/stablecoin-depeg",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/stablecoin-depeg/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/stablecoin-depeg/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "stablecoin",
+      "depeg",
+      "defi",
+      "risk-monitoring",
+      "crypto"
+    ],
+    "keywords": [
+      "stablecoin depeg api",
+      "stablecoin risk monitor",
+      "usdc depeg tracker",
+      "stablecoin collateral ratio api",
+      "defi depeg alert"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.003,
+            "description": "Check peg deviation, collateral ratio, reserve transparency, and risk score"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.004,
+            "description": "Batch monitor up to 20 stablecoins with alerts and market health"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL: full stablecoin intelligence \u2014 peg, risk, history, issuer, market data"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0025,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Check (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.002,
+            "description": "Monitor (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Full lookup (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Check stablecoin peg deviation, collateral ratio, reserve transparency, and risk score"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "Batch monitor up to 20 stablecoins \u2014 risk levels, alerts, market health"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: full stablecoin intelligence \u2014 peg, risk, history, issuer, market data"
+      }
+    ]
+  },
+  {
+    "name": "Top Movers API",
+    "shortDescription": "Real-time top crypto gainers, losers, and trending coins with momentum signals",
+    "description": "Get real-time top crypto gainers, losers, and trending coins ranked by percentage change, volume, and momentum. Built for trading agents, market scanners, and portfolio dashboards that need to act on momentum signals. Includes trade signals, recovery likelihood, trend drivers, and sector rotation data.",
+    "category": "market-data",
+    "baseUrl": "https://orbis-apis.onrender.com/top-movers",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/top-movers/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/top-movers/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "top-movers",
+      "crypto-gainers",
+      "crypto-losers",
+      "trending-coins",
+      "market-data"
+    ],
+    "keywords": [
+      "top crypto gainers api",
+      "crypto top losers api",
+      "trending cryptocurrency api",
+      "market movers crypto api",
+      "momentum trading signals"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/gainers",
+            "pricePerCallUsdc": 0.002,
+            "description": "Top crypto gainers with momentum and trade signal"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/losers",
+            "pricePerCallUsdc": 0.002,
+            "description": "Top crypto losers with recovery likelihood and cause"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.002,
+            "description": "Trending coins by search volume, social mentions, on-chain activity"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL: gainers + losers + trending + market sentiment + sector rotation"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0025,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/gainers",
+            "pricePerCallUsdc": 0.001,
+            "description": "Gainers (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/losers",
+            "pricePerCallUsdc": 0.001,
+            "description": "Losers (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.001,
+            "description": "Trending (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Full lookup (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/gainers",
+        "description": "Top crypto gainers ranked by % gain \u2014 with momentum, signal, and category"
+      },
+      {
+        "method": "POST",
+        "path": "/losers",
+        "description": "Top crypto losers ranked by % decline \u2014 with recovery likelihood and cause"
+      },
+      {
+        "method": "POST",
+        "path": "/trending",
+        "description": "Trending coins by search volume, social mentions, and on-chain activity"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: gainers + losers + trending + market sentiment + sector rotation"
+      }
+    ]
+  },
+  {
+    "name": "Impermanent Loss API",
+    "shortDescription": "Calculate and simulate impermanent loss for AMM liquidity pool positions",
+    "description": "Calculate impermanent loss for AMM LP positions using the x*y=k constant product formula. Simulate IL across custom price scenarios, compare LP vs HODL value, and get exit recommendations. Built for DeFi liquidity providers, yield farming agents, and portfolio risk systems managing active LP positions.",
+    "category": "defi",
+    "baseUrl": "https://orbis-apis.onrender.com/impermanent-loss",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/impermanent-loss/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/impermanent-loss/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "impermanent-loss",
+      "defi",
+      "liquidity-pool",
+      "amm",
+      "yield-farming"
+    ],
+    "keywords": [
+      "impermanent loss calculator api",
+      "AMM liquidity pool api",
+      "uniswap impermanent loss",
+      "LP vs HODL comparison api",
+      "defi yield farming risk"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/calculate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Calculate current IL using x*y=k formula with hodl comparison"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/simulate",
+            "pricePerCallUsdc": 0.004,
+            "description": "Simulate IL across custom price scenarios \u2014 LP vs HODL breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL: IL calculation + scenarios + position value + exit recommendation"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0025,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/calculate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Calculate (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/simulate",
+            "pricePerCallUsdc": 0.002,
+            "description": "Simulate (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Full lookup (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/calculate",
+        "description": "Calculate current impermanent loss for an AMM LP position using x*y=k formula"
+      },
+      {
+        "method": "POST",
+        "path": "/simulate",
+        "description": "Simulate IL across custom price change scenarios \u2014 compare LP vs HODL value"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: IL calculation + scenarios + position value + exit recommendation"
+      }
+    ]
+  },
+  {
+    "name": "NFT Floor Price API",
+    "shortDescription": "NFT collection floor prices, volume, market data, and wash trading risk signals",
+    "description": "Get real-time NFT collection floor prices, 24h/7d changes, volume, supply stats, and listed percentage. Compare up to 10 collections at once, or use the full lookup for wash trading detection, whale concentration, rarity data, and investment grades. Built for NFT trading agents, portfolio trackers, and DeFi automation workflows.",
+    "category": "nft",
+    "baseUrl": "https://orbis-apis.onrender.com/nft-floor-price",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/nft-floor-price/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/nft-floor-price/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "nft",
+      "floor-price",
+      "nft-market-data",
+      "wash-trading",
+      "nft-analytics"
+    ],
+    "keywords": [
+      "nft floor price api",
+      "nft collection data api",
+      "nft volume tracker api",
+      "wash trading detection api",
+      "nft market analytics"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/floor",
+            "pricePerCallUsdc": 0.003,
+            "description": "Floor price with 24h/7d change, volume, supply stats, and trade signal"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.004,
+            "description": "Compare up to 10 collections ranked by floor, volume, market cap"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: floor + volume + market + rarity + wash trading risk + investment grade"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/floor",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Floor (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.002,
+            "description": "Compare (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.003,
+            "description": "Full lookup (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/floor",
+        "description": "NFT collection floor price \u2014 USD/ETH, 24h/7d change, volume, supply, listed%, signal"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare floor prices across up to 10 NFT collections \u2014 ranked by floor, volume, market cap"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: floor + volume + market + rarity + wash trading risk + investment grade"
+      }
+    ]
+  },
+  {
+    "name": "Staking Rewards API",
+    "shortDescription": "Staking APY rates, provider comparison, reward estimates, and network health for PoS assets",
+    "description": "Get native and real APY after inflation for PoS assets, compare providers (exchange, liquid staking, self-custody, pool), estimate rewards for a given amount and duration with price scenarios, and retrieve network health data. Compare yields across up to 15 assets ranked by risk-adjusted APY. Built for yield-seeking agents, portfolio managers, and DeFi automation workflows.",
+    "category": "defi",
+    "baseUrl": "https://orbis-apis.onrender.com/staking-rewards",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/staking-rewards/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/staking-rewards/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "staking",
+      "apy",
+      "defi",
+      "proof-of-stake",
+      "yield"
+    ],
+    "keywords": [
+      "staking rewards api",
+      "crypto staking apy api",
+      "ethereum staking yield api",
+      "liquid staking provider comparison",
+      "proof of stake rewards calculator"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rates",
+            "pricePerCallUsdc": 0.003,
+            "description": "Staking rates with native APY, real APY, providers, lock-up, and slash risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/estimate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Estimate rewards for a given amount and duration with 4 price scenarios"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.004,
+            "description": "Compare staking yields across up to 15 PoS assets by risk-adjusted APY"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: rates + provider comparison + reward estimate + network health"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rates",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Rates (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/estimate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Estimate (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.002,
+            "description": "Compare (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.003,
+            "description": "Full lookup (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/rates",
+        "description": "Staking rates \u2014 native APY, real APY after inflation, providers, lock-up, unbonding, slash risk"
+      },
+      {
+        "method": "POST",
+        "path": "/estimate",
+        "description": "Estimate staking rewards for a given amount and duration with price scenarios"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare staking yields across up to 15 PoS assets \u2014 ranked by risk-adjusted APY"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: rates + provider comparison + reward estimate + network health"
+      }
+    ]
+  }
+]

@@ -1,0 +1,96 @@
+[
+  {
+    "name": "Search Extract API",
+    "shortDescription": "Web search and structured content extraction in one call",
+    "description": "Perform web searches and extract structured content from results in a single API call. Returns titles, snippets, URLs, and optionally scraped page content. Built for research agents, knowledge retrieval pipelines, and autonomous browsing workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/search-extract",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/search-extract/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/search-extract/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "search",
+      "web-extraction",
+      "scraping",
+      "research",
+      "nlp"
+    ],
+    "keywords": [
+      "web search api",
+      "search and extract content",
+      "structured web scraping",
+      "research agent api",
+      "search results with content"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50,
+        "requestsPerMonth": 1500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/search",
+            "pricePerCallUsdc": 0.005,
+            "description": "Web search with structured content extraction"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/search/batch",
+            "pricePerCallUsdc": 0.004,
+            "description": "Batch search queries"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/search",
+            "pricePerCallUsdc": 0.003,
+            "description": "Search and extract (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/search/batch",
+            "pricePerCallUsdc": 0.002,
+            "description": "Batch search (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/v1/search",
+        "description": "Search the web and extract structured content — titles, snippets, URLs, and page text"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/search",
+        "description": "Search via query params"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/search/batch",
+        "description": "Run multiple search queries in a single request"
+      }
+    ]
+  }
+]

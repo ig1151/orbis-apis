@@ -1,0 +1,1387 @@
+{
+  "generated": "2026-05-26",
+  "apis": [
+    {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "Whale Wallet Tracker API",
+        "version": "1.0.0",
+        "description": "Track large on-chain wallet movements, identify whale accumulation/distribution patterns, and surface entry/exit signals for trading agents and portfolio managers.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x-human-approval-required": false,
+        "x-pricing": {
+          "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+          "pay_per_call": { "track": "$0.003", "scan": "$0.004", "lookup": "$0.006" }
+        },
+        "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows.",
+        "x-paper-mode-recommended": true
+      },
+      "servers": [{ "url": "https://orbis-apis.onrender.com/whale-wallet-tracker" }],
+      "security": [{ "ApiKeyAuth": [] }],
+      "paths": {
+        "/": {
+          "get": {
+            "operationId": "whaleWalletDiscovery",
+            "summary": "API discovery — name, version, available endpoints",
+            "security": [],
+            "responses": { "200": { "description": "Discovery info" } }
+          }
+        },
+        "/track": {
+          "post": {
+            "operationId": "whaleWalletTrack",
+            "summary": "Track a specific wallet — classification, recent activity, holdings, and entry/exit signals",
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["address"],
+                    "properties": {
+                      "address": { "type": "string", "description": "Wallet address to track" },
+                      "chain": { "type": "string", "default": "ethereum", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc", "solana"] }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Whale wallet profile with activity and signals",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "address": { "type": "string" },
+                        "chain": { "type": "string" },
+                        "whale_classification": {
+                          "type": "object",
+                          "properties": {
+                            "is_whale": { "type": "boolean" },
+                            "tier": { "type": "string", "enum": ["mega_whale", "whale", "large_holder", "mid_holder", "retail"] },
+                            "estimated_portfolio_usd": { "type": "number" },
+                            "rank_percentile": { "type": "number" }
+                          }
+                        },
+                        "recent_activity": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "action": { "type": "string", "enum": ["buy", "sell", "transfer", "accumulate", "distribute"] },
+                              "token": { "type": "string" },
+                              "amount_usd": { "type": "number" },
+                              "timestamp": { "type": "string", "format": "date-time" },
+                              "signal": { "type": "string", "enum": ["bullish", "bearish", "neutral"] },
+                              "note": { "type": "string" }
+                            }
+                          }
+                        },
+                        "holdings_snapshot": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "token": { "type": "string" },
+                              "amount": { "type": "number" },
+                              "value_usd": { "type": "number" },
+                              "pct_portfolio": { "type": "number" }
+                            }
+                          }
+                        },
+                        "behavior_patterns": {
+                          "type": "object",
+                          "properties": {
+                            "trading_style": { "type": "string" },
+                            "avg_hold_days": { "type": "number" },
+                            "win_rate_pct": { "type": "number" },
+                            "recent_bias": { "type": "string" }
+                          }
+                        },
+                        "entry_exit_signals": {
+                          "type": "object",
+                          "properties": {
+                            "current_signal": { "type": "string" },
+                            "signal_strength": { "type": "string" },
+                            "notable_observation": { "type": "string" }
+                          }
+                        },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": { "description": "Missing address" },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/scan": {
+          "post": {
+            "operationId": "whaleWalletScan",
+            "summary": "Scan for recent large whale movements across the market",
+            "requestBody": {
+              "required": false,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "chain": { "type": "string", "default": "ethereum" },
+                      "min_usd": { "type": "number", "default": 1000000, "description": "Minimum transaction value in USD" },
+                      "limit": { "type": "integer", "default": 10, "minimum": 1, "maximum": 50 }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Recent whale movements with market summary",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "chain": { "type": "string" },
+                        "min_usd_threshold": { "type": "number" },
+                        "movements": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "action": { "type": "string" },
+                              "token": { "type": "string" },
+                              "amount_usd": { "type": "number" },
+                              "timestamp": { "type": "string", "format": "date-time" },
+                              "signal": { "type": "string", "enum": ["bullish", "bearish", "neutral"] },
+                              "note": { "type": "string" }
+                            }
+                          }
+                        },
+                        "market_summary": {
+                          "type": "object",
+                          "properties": {
+                            "net_whale_flow_usd": { "type": "number" },
+                            "dominant_action": { "type": "string" },
+                            "top_tokens_by_flow": { "type": "array", "items": { "type": "string" } },
+                            "overall_signal": { "type": "string" }
+                          }
+                        },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/lookup": {
+          "post": {
+            "operationId": "whaleWalletLookup",
+            "summary": "ONE-CALL: top whale wallets + recent moves + aggregate entry/exit signal for a token",
+            "x-one-call": true,
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["token"],
+                    "properties": {
+                      "token": { "type": "string", "description": "Token symbol or address (e.g. ETH, BTC, PEPE)" },
+                      "chain": { "type": "string", "default": "ethereum" }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Full whale intelligence for a token",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "token": { "type": "string" },
+                        "chain": { "type": "string" },
+                        "top_whale_wallets": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "address": { "type": "string" },
+                              "tier": { "type": "string" },
+                              "holdings_usd": { "type": "number" },
+                              "pct_supply": { "type": "number" },
+                              "recent_action": { "type": "string" },
+                              "action_strength": { "type": "string" }
+                            }
+                          }
+                        },
+                        "recent_movements": { "type": "array", "items": { "type": "object" } },
+                        "concentration_risk": {
+                          "type": "object",
+                          "properties": {
+                            "top_10_pct_supply": { "type": "number" },
+                            "top_50_pct_supply": { "type": "number" },
+                            "risk_level": { "type": "string" },
+                            "risk_note": { "type": "string" }
+                          }
+                        },
+                        "aggregate_signal": {
+                          "type": "object",
+                          "properties": {
+                            "signal": { "type": "string", "enum": ["strong_buy", "buy", "neutral", "sell", "strong_sell"] },
+                            "whale_consensus": { "type": "string" },
+                            "short_term_outlook": { "type": "string" },
+                            "key_insight": { "type": "string" }
+                          }
+                        },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": { "description": "Missing token" },
+              "500": { "description": "Internal error" }
+            }
+          }
+        }
+      },
+      "components": {
+        "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } }
+      }
+    },
+    {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "Smart Money Flow API",
+        "version": "1.0.0",
+        "description": "Track institutional and smart-money capital flows on-chain — identify where sophisticated investors are deploying capital, sector rotation signals, and top wallet activity for trading agents.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x-human-approval-required": false,
+        "x-pricing": {
+          "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+          "pay_per_call": { "flows": "$0.003", "wallets": "$0.004", "lookup": "$0.006" }
+        },
+        "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows.",
+        "x-paper-mode-recommended": true
+      },
+      "servers": [{ "url": "https://orbis-apis.onrender.com/smart-money-flow" }],
+      "security": [{ "ApiKeyAuth": [] }],
+      "paths": {
+        "/": {
+          "get": {
+            "operationId": "smartMoneyDiscovery",
+            "summary": "API discovery — name, version, available endpoints",
+            "security": [],
+            "responses": { "200": { "description": "Discovery info" } }
+          }
+        },
+        "/flows": {
+          "post": {
+            "operationId": "smartMoneyFlows",
+            "summary": "Current smart money capital flows by sector — rotation direction and momentum signals",
+            "requestBody": {
+              "required": false,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "chain": { "type": "string", "default": "ethereum", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc", "solana", "all"] },
+                      "sector": { "type": "string", "description": "Filter by sector (defi, nft, layer2, gaming, meme, etc.)" },
+                      "timeframe": { "type": "string", "default": "24h", "enum": ["1h", "6h", "24h", "7d", "30d"] }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Smart money flows by sector with rotation context",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "chain": { "type": "string" },
+                        "timeframe": { "type": "string" },
+                        "flows": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "sector": { "type": "string" },
+                              "net_flow_usd": { "type": "number" },
+                              "direction": { "type": "string", "enum": ["inflow", "outflow", "neutral"] },
+                              "top_tokens": { "type": "array", "items": { "type": "string" } },
+                              "momentum": { "type": "string" },
+                              "signal": { "type": "string", "enum": ["bullish", "bearish", "neutral"] }
+                            }
+                          }
+                        },
+                        "total_smart_money_volume_usd": { "type": "number" },
+                        "dominant_rotation": {
+                          "type": "object",
+                          "properties": {
+                            "from_sector": { "type": "string" },
+                            "to_sector": { "type": "string" },
+                            "magnitude": { "type": "string" },
+                            "context": { "type": "string" }
+                          }
+                        },
+                        "market_regime": { "type": "string", "enum": ["risk_on", "risk_off", "selective", "mixed"] },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/wallets": {
+          "post": {
+            "operationId": "smartMoneyWallets",
+            "summary": "Top smart money wallets — recent positions, ROI, and current thesis",
+            "requestBody": {
+              "required": false,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "chain": { "type": "string", "default": "ethereum" },
+                      "limit": { "type": "integer", "default": 10, "minimum": 1, "maximum": 50 },
+                      "strategy": { "type": "string", "description": "Filter by strategy (momentum, value, arbitrage, etc.)" }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Top smart money wallets with positions and thesis",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "chain": { "type": "string" },
+                        "wallets": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "address": { "type": "string" },
+                              "label": { "type": "string" },
+                              "category": { "type": "string" },
+                              "roi_30d_pct": { "type": "number" },
+                              "roi_90d_pct": { "type": "number" },
+                              "win_rate_pct": { "type": "number" },
+                              "current_thesis": { "type": "string" },
+                              "risk_appetite": { "type": "string" }
+                            }
+                          }
+                        },
+                        "summary": {
+                          "type": "object",
+                          "properties": {
+                            "consensus_bet": { "type": "string" },
+                            "consensus_chain": { "type": "string" },
+                            "divergence_rate_pct": { "type": "number" }
+                          }
+                        },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/lookup": {
+          "post": {
+            "operationId": "smartMoneyLookup",
+            "summary": "ONE-CALL: smart money flow summary + top holders + rotation signal for a token",
+            "x-one-call": true,
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["token"],
+                    "properties": {
+                      "token": { "type": "string", "description": "Token symbol or name (e.g. ETH, SOL, LINK)" },
+                      "chain": { "type": "string", "default": "ethereum" }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Full smart money intelligence for a token",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "token": { "type": "string" },
+                        "chain": { "type": "string" },
+                        "smart_money_position": {
+                          "type": "object",
+                          "properties": {
+                            "net_flow_7d_usd": { "type": "number" },
+                            "net_flow_30d_usd": { "type": "number" },
+                            "direction": { "type": "string" },
+                            "unique_smart_wallets": { "type": "integer" },
+                            "avg_entry_price_usd": { "type": "number" }
+                          }
+                        },
+                        "top_holders": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "address": { "type": "string" },
+                              "category": { "type": "string" },
+                              "position_usd": { "type": "number" },
+                              "action_30d": { "type": "string" }
+                            }
+                          }
+                        },
+                        "rotation_context": {
+                          "type": "object",
+                          "properties": {
+                            "money_coming_from": { "type": "string" },
+                            "catalyst": { "type": "string" },
+                            "rotation_strength": { "type": "string" }
+                          }
+                        },
+                        "aggregate_signal": {
+                          "type": "object",
+                          "properties": {
+                            "signal": { "type": "string", "enum": ["strong_buy", "buy", "neutral", "sell", "strong_sell"] },
+                            "smart_money_consensus": { "type": "string" },
+                            "conviction_level": { "type": "string" },
+                            "key_insight": { "type": "string" }
+                          }
+                        },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": { "description": "Missing token" },
+              "500": { "description": "Internal error" }
+            }
+          }
+        }
+      },
+      "components": {
+        "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } }
+      }
+    },
+    {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "Meme Coin Intelligence API",
+        "version": "1.0.0",
+        "description": "Virality scores, rugpull risk assessment, momentum analysis, and social signals for meme coins. Built for trading agents and portfolio managers that need fast, structured meme coin intelligence.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x-human-approval-required": false,
+        "x-pricing": {
+          "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+          "pay_per_call": { "score": "$0.003", "trending": "$0.004", "lookup": "$0.006" }
+        },
+        "x-financial-disclaimer": "For informational purposes only. Not financial advice. Meme coins are extremely high risk — can go to zero instantly.",
+        "x-paper-mode-recommended": true
+      },
+      "servers": [{ "url": "https://orbis-apis.onrender.com/meme-coin-intelligence" }],
+      "security": [{ "ApiKeyAuth": [] }],
+      "paths": {
+        "/": {
+          "get": {
+            "operationId": "memeCoinDiscovery",
+            "summary": "API discovery — name, version, available endpoints",
+            "security": [],
+            "responses": { "200": { "description": "Discovery info" } }
+          }
+        },
+        "/score": {
+          "post": {
+            "operationId": "memeCoinScore",
+            "summary": "Virality + rugpull risk score for a meme coin — momentum, social signals, contract safety",
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["token"],
+                    "properties": {
+                      "token": { "type": "string", "description": "Token name or contract address (e.g. PEPE, SHIB, DOGE)" },
+                      "chain": { "type": "string", "default": "ethereum", "enum": ["ethereum", "base", "bsc", "solana", "arbitrum"] }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Full meme coin risk and virality assessment",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "token": { "type": "string" },
+                        "chain": { "type": "string" },
+                        "virality_score": {
+                          "type": "object",
+                          "properties": {
+                            "score": { "type": "number", "minimum": 0, "maximum": 100 },
+                            "tier": { "type": "string", "enum": ["viral", "trending", "growing", "fading", "dead"] },
+                            "momentum": { "type": "string" },
+                            "drivers": { "type": "array", "items": { "type": "string" } },
+                            "peak_reached": { "type": "boolean" }
+                          }
+                        },
+                        "rugpull_risk": {
+                          "type": "object",
+                          "properties": {
+                            "risk_score": { "type": "number", "minimum": 0, "maximum": 100 },
+                            "risk_level": { "type": "string", "enum": ["critical", "high", "medium", "low", "minimal"] },
+                            "red_flags": { "type": "array", "items": { "type": "string" } },
+                            "green_flags": { "type": "array", "items": { "type": "string" } },
+                            "contract_verified": { "type": "boolean" },
+                            "liquidity_locked": { "type": "boolean" },
+                            "dev_wallet_pct": { "type": "number" }
+                          }
+                        },
+                        "social_signal": {
+                          "type": "object",
+                          "properties": {
+                            "sentiment": { "type": "string" },
+                            "influencer_mentions": { "type": "integer" },
+                            "community_size_estimate": { "type": "integer" },
+                            "viral_narrative": { "type": "string" }
+                          }
+                        },
+                        "momentum_score": {
+                          "type": "object",
+                          "properties": {
+                            "score": { "type": "number" },
+                            "price_action": { "type": "string" },
+                            "volume_trend": { "type": "string" },
+                            "fomo_indicator": { "type": "string" }
+                          }
+                        },
+                        "recommendation": { "type": "string", "enum": ["ride", "watch", "avoid", "exit"] },
+                        "recommendation_rationale": { "type": "string" },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": { "description": "Missing token" },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/trending": {
+          "post": {
+            "operationId": "memeCoinTrending",
+            "summary": "Trending meme coins right now — ranked by virality with risk summary",
+            "requestBody": {
+              "required": false,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "chain": { "type": "string", "default": "all", "enum": ["all", "ethereum", "base", "bsc", "solana"] },
+                      "limit": { "type": "integer", "default": 10, "minimum": 1, "maximum": 50 },
+                      "min_virality": { "type": "number", "default": 50, "minimum": 0, "maximum": 100 }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Trending meme coins with virality and risk scores",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "chain": { "type": "string" },
+                        "trending": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "token": { "type": "string" },
+                              "chain": { "type": "string" },
+                              "virality_score": { "type": "number" },
+                              "rugpull_risk_level": { "type": "string" },
+                              "momentum": { "type": "string" },
+                              "price_change_24h_pct": { "type": "number" },
+                              "social_buzz": { "type": "string" },
+                              "narrative": { "type": "string" },
+                              "stage": { "type": "string", "enum": ["early", "mid", "peak", "fading"] }
+                            }
+                          }
+                        },
+                        "market_summary": {
+                          "type": "object",
+                          "properties": {
+                            "meme_season_indicator": { "type": "number" },
+                            "dominant_chains": { "type": "array", "items": { "type": "string" } },
+                            "dominant_narratives": { "type": "array", "items": { "type": "string" } },
+                            "avg_rugpull_risk": { "type": "string" }
+                          }
+                        },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/lookup": {
+          "post": {
+            "operationId": "memeCoinLookup",
+            "summary": "ONE-CALL: full meme coin intelligence — virality, rugpull risk, momentum, lifecycle stage, entry window",
+            "x-one-call": true,
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["token"],
+                    "properties": {
+                      "token": { "type": "string" },
+                      "chain": { "type": "string", "default": "ethereum" }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Complete meme coin intelligence",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "token": { "type": "string" },
+                        "chain": { "type": "string" },
+                        "virality": { "type": "object", "properties": { "score": { "type": "number" }, "tier": { "type": "string" }, "momentum": { "type": "string" }, "peak_reached": { "type": "boolean" } } },
+                        "rugpull_risk": { "type": "object", "properties": { "risk_score": { "type": "number" }, "risk_level": { "type": "string" }, "red_flags": { "type": "array", "items": { "type": "string" } }, "liquidity_locked": { "type": "boolean" }, "dev_wallet_pct": { "type": "number" } } },
+                        "social": { "type": "object", "properties": { "sentiment": { "type": "string" }, "influencer_mentions": { "type": "integer" }, "viral_narrative": { "type": "string" }, "trending_rank": { "type": "integer" } } },
+                        "momentum": { "type": "object", "properties": { "score": { "type": "number" }, "price_action": { "type": "string" }, "volume_trend": { "type": "string" }, "fomo_indicator": { "type": "string" } } },
+                        "lifecycle_stage": { "type": "string", "enum": ["launch", "early_adoption", "viral_peak", "distribution", "fading", "dead"] },
+                        "entry_window": { "type": "object", "properties": { "status": { "type": "string", "enum": ["open", "closing", "closed", "too_early"] }, "optimal_entry": { "type": "string" }, "target_exit": { "type": "string" }, "max_hold_recommendation": { "type": "string" } } },
+                        "aggregate_signal": { "type": "object", "properties": { "signal": { "type": "string", "enum": ["strong_buy", "buy", "watch", "avoid", "exit"] }, "conviction": { "type": "string" }, "key_risk": { "type": "string" }, "key_catalyst": { "type": "string" } } },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": { "description": "Missing token" },
+              "500": { "description": "Internal error" }
+            }
+          }
+        }
+      },
+      "components": {
+        "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } }
+      }
+    },
+    {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "Cross-Exchange Arbitrage API",
+        "version": "1.0.0",
+        "description": "Detect price gaps across centralized exchanges (Binance, Coinbase, Kraken, OKX, Bybit, etc.) and calculate net profit opportunities after all fees. Built for arbitrage bots, trading agents, and quant strategies.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x-human-approval-required": false,
+        "x-pricing": {
+          "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+          "pay_per_call": { "scan": "$0.003", "opportunities": "$0.005", "lookup": "$0.006" }
+        },
+        "x-financial-disclaimer": "For informational purposes only. Not financial advice. Arbitrage prices are time-sensitive — always verify independently before executing.",
+        "x-paper-mode-recommended": true
+      },
+      "servers": [{ "url": "https://orbis-apis.onrender.com/cross-exchange-arbitrage" }],
+      "security": [{ "ApiKeyAuth": [] }],
+      "paths": {
+        "/": {
+          "get": {
+            "operationId": "crossExchangeArbitrageDiscovery",
+            "summary": "API discovery — name, version, available endpoints",
+            "security": [],
+            "responses": { "200": { "description": "Discovery info" } }
+          }
+        },
+        "/scan": {
+          "post": {
+            "operationId": "crossExchangeArbitrageScan",
+            "summary": "Price comparison across exchanges for a token — bids, asks, fees, and net spread",
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["token"],
+                    "properties": {
+                      "token": { "type": "string", "description": "Token symbol (e.g. BTC, ETH, SOL)" },
+                      "exchanges": { "type": "array", "items": { "type": "string" }, "description": "List of exchanges to compare (defaults to top 8)" }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Price matrix with arbitrage spread and fee breakdown",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "token": { "type": "string" },
+                        "prices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "exchange": { "type": "string" },
+                              "bid": { "type": "number" },
+                              "ask": { "type": "number" },
+                              "mid": { "type": "number" },
+                              "spread_pct": { "type": "number" },
+                              "volume_24h_usd": { "type": "number" },
+                              "liquidity": { "type": "string" },
+                              "withdrawal_fee_usd": { "type": "number" },
+                              "withdrawal_time_min": { "type": "number" }
+                            }
+                          }
+                        },
+                        "best_buy": { "type": "object", "properties": { "exchange": { "type": "string" }, "price": { "type": "number" } } },
+                        "best_sell": { "type": "object", "properties": { "exchange": { "type": "string" }, "price": { "type": "number" } } },
+                        "raw_spread_pct": { "type": "number" },
+                        "total_fees_pct": { "type": "number" },
+                        "net_profit_pct": { "type": "number" },
+                        "viable": { "type": "boolean" },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": { "description": "Missing token" },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/opportunities": {
+          "post": {
+            "operationId": "crossExchangeArbitrageOpportunities",
+            "summary": "Top arbitrage opportunities across the market — ranked by net profit after all fees",
+            "requestBody": {
+              "required": false,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "min_profit_pct": { "type": "number", "default": 0.3, "description": "Minimum net profit percentage after fees" },
+                      "limit": { "type": "integer", "default": 10, "minimum": 1, "maximum": 50 },
+                      "include_fees": { "type": "boolean", "default": true }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Ranked arbitrage opportunities with profit estimates",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "min_profit_pct": { "type": "number" },
+                        "opportunities": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "token": { "type": "string" },
+                              "buy_exchange": { "type": "string" },
+                              "sell_exchange": { "type": "string" },
+                              "raw_spread_pct": { "type": "number" },
+                              "trading_fee_pct": { "type": "number" },
+                              "net_profit_pct": { "type": "number" },
+                              "estimated_profit_usd": { "type": "number" },
+                              "required_capital_usd": { "type": "number" },
+                              "execution_time_min": { "type": "number" },
+                              "risk_level": { "type": "string", "enum": ["low", "medium", "high"] },
+                              "risk_factors": { "type": "array", "items": { "type": "string" } },
+                              "viability": { "type": "string", "enum": ["excellent", "good", "marginal", "risky"] }
+                            }
+                          }
+                        },
+                        "market_summary": {
+                          "type": "object",
+                          "properties": {
+                            "total_opportunities": { "type": "integer" },
+                            "avg_net_profit_pct": { "type": "number" },
+                            "best_token": { "type": "string" },
+                            "best_exchange_pair": { "type": "string" }
+                          }
+                        },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/lookup": {
+          "post": {
+            "operationId": "crossExchangeArbitrageLookup",
+            "summary": "ONE-CALL: full arbitrage analysis for a token — prices, best route, alternatives, risk assessment, verdict",
+            "x-one-call": true,
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["token"],
+                    "properties": {
+                      "token": { "type": "string" },
+                      "capital_usd": { "type": "number", "default": 10000, "description": "Available capital in USD for profit calculation" }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Complete arbitrage intelligence for a token",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "token": { "type": "string" },
+                        "capital_usd": { "type": "number" },
+                        "price_matrix": { "type": "array", "items": { "type": "object", "properties": { "exchange": { "type": "string" }, "price": { "type": "number" }, "liquidity": { "type": "string" }, "spread_pct": { "type": "number" } } } },
+                        "best_opportunity": { "type": "object", "properties": { "buy_exchange": { "type": "string" }, "sell_exchange": { "type": "string" }, "raw_spread_pct": { "type": "number" }, "all_fees_pct": { "type": "number" }, "net_profit_pct": { "type": "number" }, "estimated_profit_usd": { "type": "number" }, "execution_time_min": { "type": "number" }, "max_viable_order_usd": { "type": "number" } } },
+                        "alternative_routes": { "type": "array", "items": { "type": "object", "properties": { "buy": { "type": "string" }, "sell": { "type": "string" }, "net_profit_pct": { "type": "number" }, "note": { "type": "string" } } } },
+                        "risk_assessment": { "type": "object", "properties": { "price_risk": { "type": "string" }, "liquidity_risk": { "type": "string" }, "execution_risk": { "type": "string" }, "overall_risk": { "type": "string" }, "key_risks": { "type": "array", "items": { "type": "string" } } } },
+                        "verdict": { "type": "string", "enum": ["execute", "watch", "pass"] },
+                        "verdict_rationale": { "type": "string" },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": { "description": "Missing token" },
+              "500": { "description": "Internal error" }
+            }
+          }
+        }
+      },
+      "components": {
+        "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } }
+      }
+    },
+    {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "Market Dominance API",
+        "version": "1.0.0",
+        "description": "Track BTC, ETH, and altcoin market dominance in real time — detect phase transitions (BTC season, alt season, etc.), rotation signals, and portfolio allocation implications.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x-human-approval-required": false,
+        "x-pricing": {
+          "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+          "pay_per_call": { "current": "$0.002", "history": "$0.003", "lookup": "$0.005" }
+        },
+        "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows.",
+        "x-paper-mode-recommended": true
+      },
+      "servers": [{ "url": "https://orbis-apis.onrender.com/market-dominance" }],
+      "security": [{ "ApiKeyAuth": [] }],
+      "paths": {
+        "/": {
+          "get": {
+            "operationId": "marketDominanceDiscovery",
+            "summary": "API discovery — name, version, available endpoints",
+            "security": [],
+            "responses": { "200": { "description": "Discovery info" } }
+          }
+        },
+        "/current": {
+          "post": {
+            "operationId": "marketDominanceCurrent",
+            "summary": "Current BTC/ETH/alt dominance — market phase and rotation signals",
+            "requestBody": { "required": false, "content": { "application/json": { "schema": { "type": "object", "properties": {} } } } },
+            "responses": {
+              "200": {
+                "description": "Current dominance breakdown with phase classification",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "dominance": {
+                          "type": "object",
+                          "properties": {
+                            "btc": { "type": "object", "properties": { "pct": { "type": "number" }, "change_24h": { "type": "number" }, "change_7d": { "type": "number" }, "trend": { "type": "string", "enum": ["rising", "falling", "stable"] } } },
+                            "eth": { "type": "object", "properties": { "pct": { "type": "number" }, "change_24h": { "type": "number" }, "change_7d": { "type": "number" }, "trend": { "type": "string", "enum": ["rising", "falling", "stable"] } } },
+                            "stablecoins": { "type": "object", "properties": { "pct": { "type": "number" }, "change_24h": { "type": "number" }, "trend": { "type": "string" } } },
+                            "altcoins": { "type": "object", "properties": { "pct": { "type": "number" }, "change_24h": { "type": "number" }, "trend": { "type": "string" } } },
+                            "defi": { "type": "object", "properties": { "pct": { "type": "number" }, "change_24h": { "type": "number" } } }
+                          }
+                        },
+                        "total_market_cap_usd": { "type": "number" },
+                        "market_phase": { "type": "object", "properties": { "phase": { "type": "string", "enum": ["btc_season", "eth_season", "alt_season", "defi_season", "stable_season", "mixed"] }, "confidence": { "type": "number" }, "description": { "type": "string" } } },
+                        "rotation_signals": { "type": "array", "items": { "type": "object", "properties": { "from": { "type": "string" }, "to": { "type": "string" }, "strength": { "type": "string" }, "signal": { "type": "string" } } } },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/history": {
+          "post": {
+            "operationId": "marketDominanceHistory",
+            "summary": "Historical dominance data — trend analysis and phase transitions",
+            "requestBody": {
+              "required": false,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "days": { "type": "integer", "default": 30, "minimum": 1, "maximum": 365 },
+                      "assets": { "type": "array", "items": { "type": "string" }, "default": ["btc", "eth", "altcoins"] }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Historical dominance with trend analysis",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "period_days": { "type": "integer" },
+                        "assets": { "type": "array", "items": { "type": "string" } },
+                        "history": { "type": "array", "items": { "type": "object", "properties": { "date": { "type": "string", "format": "date" }, "btc_pct": { "type": "number" }, "eth_pct": { "type": "number" }, "altcoins_pct": { "type": "number" }, "stablecoins_pct": { "type": "number" }, "phase": { "type": "string" } } } },
+                        "trend_analysis": { "type": "object", "properties": { "btc_trend": { "type": "string" }, "eth_trend": { "type": "string" }, "alt_trend": { "type": "string" }, "dominant_phase_period": { "type": "string" }, "phase_transitions": { "type": "array", "items": { "type": "object", "properties": { "date": { "type": "string" }, "from": { "type": "string" }, "to": { "type": "string" }, "catalyst": { "type": "string" } } } } } },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/lookup": {
+          "post": {
+            "operationId": "marketDominanceLookup",
+            "summary": "ONE-CALL: dominance + phase + rotation signals + portfolio allocation implications",
+            "x-one-call": true,
+            "requestBody": { "required": false, "content": { "application/json": { "schema": { "type": "object", "properties": {} } } } },
+            "responses": {
+              "200": {
+                "description": "Complete market dominance intelligence",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "dominance": { "type": "object", "properties": { "btc_pct": { "type": "number" }, "eth_pct": { "type": "number" }, "alts_pct": { "type": "number" }, "stablecoins_pct": { "type": "number" }, "change_7d": { "type": "object", "additionalProperties": { "type": "number" } } } },
+                        "market_phase": { "type": "object", "properties": { "phase": { "type": "string" }, "duration_days": { "type": "integer" }, "phase_strength": { "type": "string" }, "next_rotation_probability": { "type": "object", "properties": { "to": { "type": "string" }, "probability_pct": { "type": "number" }, "timeframe": { "type": "string" } } } } },
+                        "rotation_signals": { "type": "array", "items": { "type": "object", "properties": { "signal": { "type": "string" }, "direction": { "type": "string" }, "affected_assets": { "type": "array", "items": { "type": "string" } }, "strength": { "type": "string" } } } },
+                        "portfolio_implications": { "type": "object", "properties": { "btc_allocation_bias": { "type": "string", "enum": ["increase", "decrease", "hold"] }, "eth_allocation_bias": { "type": "string", "enum": ["increase", "decrease", "hold"] }, "alt_allocation_bias": { "type": "string", "enum": ["increase", "decrease", "hold"] }, "stablecoin_allocation_bias": { "type": "string", "enum": ["increase", "decrease", "hold"] }, "rationale": { "type": "string" } } },
+                        "key_levels": { "type": "object", "properties": { "btc_dominance_key_support": { "type": "number" }, "btc_dominance_key_resistance": { "type": "number" }, "alt_season_threshold_pct": { "type": "number" } } },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "500": { "description": "Internal error" }
+            }
+          }
+        }
+      },
+      "components": {
+        "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } }
+      }
+    },
+    {
+      "openapi": "3.1.0",
+      "info": {
+        "title": "Token Holder Distribution API",
+        "version": "1.0.0",
+        "description": "Analyze token holder distribution — whale concentration, top holder behavior, decentralization trends, and sell pressure risk. Built for due diligence, tokenomics analysis, and risk-aware trading agents.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x-human-approval-required": false,
+        "x-pricing": {
+          "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+          "pay_per_call": { "analyze": "$0.003", "trend": "$0.003", "lookup": "$0.006" }
+        },
+        "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows.",
+        "x-paper-mode-recommended": true
+      },
+      "servers": [{ "url": "https://orbis-apis.onrender.com/token-holder-distribution" }],
+      "security": [{ "ApiKeyAuth": [] }],
+      "paths": {
+        "/": {
+          "get": {
+            "operationId": "tokenHolderDiscovery",
+            "summary": "API discovery — name, version, available endpoints",
+            "security": [],
+            "responses": { "200": { "description": "Discovery info" } }
+          }
+        },
+        "/analyze": {
+          "post": {
+            "operationId": "tokenHolderAnalyze",
+            "summary": "Snapshot of token holder distribution — whale %, top-10 concentration, segment breakdown",
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["token"],
+                    "properties": {
+                      "token": { "type": "string", "description": "Token name or contract address (e.g. ETH, UNI, LINK)" },
+                      "chain": { "type": "string", "default": "ethereum", "enum": ["ethereum", "base", "arbitrum", "polygon", "bsc", "solana"] }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Holder distribution snapshot with concentration risk",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "token": { "type": "string" },
+                        "chain": { "type": "string" },
+                        "total_holders": { "type": "integer" },
+                        "distribution": { "type": "object", "properties": { "top_1_pct_supply": { "type": "number" }, "top_10_pct_supply": { "type": "number" }, "top_50_pct_supply": { "type": "number" }, "retail_holders_pct": { "type": "number" }, "exchange_held_pct": { "type": "number" }, "locked_pct": { "type": "number" } } },
+                        "top_holders": { "type": "array", "items": { "type": "object", "properties": { "rank": { "type": "integer" }, "address": { "type": "string" }, "label": { "type": "string" }, "type": { "type": "string", "enum": ["exchange", "team", "dao", "whale", "retail", "contract"] }, "pct_supply": { "type": "number" }, "change_30d_pct": { "type": "number" }, "behavior": { "type": "string", "enum": ["accumulating", "distributing", "holding"] } } } },
+                        "holder_segments": { "type": "array", "items": { "type": "object", "properties": { "range": { "type": "string" }, "count": { "type": "integer" }, "pct_of_supply": { "type": "number" }, "type": { "type": "string" } } } },
+                        "concentration_risk": { "type": "object", "properties": { "gini_coefficient": { "type": "number", "minimum": 0, "maximum": 1 }, "risk_level": { "type": "string", "enum": ["critical", "high", "medium", "low"] }, "risk_note": { "type": "string" }, "sell_pressure_risk": { "type": "string" } } },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": { "description": "Missing token" },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/trend": {
+          "post": {
+            "operationId": "tokenHolderTrend",
+            "summary": "Holder distribution trend — growth rate, decentralization direction, whale behavior over time",
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["token"],
+                    "properties": {
+                      "token": { "type": "string" },
+                      "chain": { "type": "string", "default": "ethereum" },
+                      "days": { "type": "integer", "default": 30, "minimum": 7, "maximum": 365 }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Historical holder distribution trends",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "token": { "type": "string" },
+                        "chain": { "type": "string" },
+                        "period_days": { "type": "integer" },
+                        "holder_count_trend": { "type": "array", "items": { "type": "object", "properties": { "date": { "type": "string", "format": "date" }, "total_holders": { "type": "integer" }, "new_holders": { "type": "integer" }, "lost_holders": { "type": "integer" } } } },
+                        "concentration_trend": { "type": "array", "items": { "type": "object", "properties": { "date": { "type": "string", "format": "date" }, "top_10_pct_supply": { "type": "number" }, "whale_count": { "type": "integer" } } } },
+                        "trend_summary": { "type": "object", "properties": { "holder_growth_rate_pct": { "type": "number" }, "holder_trend": { "type": "string" }, "decentralization_trend": { "type": "string" }, "whale_activity": { "type": "string" }, "retail_adoption": { "type": "string" } } },
+                        "key_events": { "type": "array", "items": { "type": "object", "properties": { "date": { "type": "string" }, "event": { "type": "string" }, "impact": { "type": "string" } } } },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": { "description": "Missing token" },
+              "500": { "description": "Internal error" }
+            }
+          }
+        },
+        "/lookup": {
+          "post": {
+            "operationId": "tokenHolderLookup",
+            "summary": "ONE-CALL: snapshot + trend + concentration risk + investment signal for a token",
+            "x-one-call": true,
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["token"],
+                    "properties": {
+                      "token": { "type": "string" },
+                      "chain": { "type": "string", "default": "ethereum" }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Complete token holder distribution intelligence",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "trace_id": { "type": "string" },
+                        "computed_at": { "type": "string", "format": "date-time" },
+                        "success": { "type": "boolean" },
+                        "token": { "type": "string" },
+                        "chain": { "type": "string" },
+                        "snapshot": { "type": "object", "properties": { "total_holders": { "type": "integer" }, "top_10_pct_supply": { "type": "number" }, "top_50_pct_supply": { "type": "number" }, "whale_count": { "type": "integer" }, "retail_pct_supply": { "type": "number" }, "exchange_pct_supply": { "type": "number" } } },
+                        "top_holders": { "type": "array", "items": { "type": "object", "properties": { "rank": { "type": "integer" }, "address": { "type": "string" }, "label": { "type": "string" }, "type": { "type": "string" }, "pct_supply": { "type": "number" }, "behavior": { "type": "string" } } } },
+                        "trend_30d": { "type": "object", "properties": { "holder_count_change": { "type": "integer" }, "holder_trend": { "type": "string" }, "whale_trend": { "type": "string" }, "decentralization_trend": { "type": "string" } } },
+                        "concentration_risk": { "type": "object", "properties": { "risk_level": { "type": "string", "enum": ["critical", "high", "medium", "low"] }, "gini_coefficient": { "type": "number" }, "key_risks": { "type": "array", "items": { "type": "string" } }, "sell_pressure_risk": { "type": "string" } } },
+                        "investment_signal": { "type": "object", "properties": { "signal": { "type": "string", "enum": ["bullish", "neutral", "bearish"] }, "conviction": { "type": "string" }, "key_insight": { "type": "string" }, "watch_list": { "type": "array", "items": { "type": "string" } } } },
+                        "financial_disclaimer": { "type": "string" },
+                        "paper_mode_recommended": { "type": "boolean" },
+                        "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                        "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                        "chain_to": { "type": "array", "items": { "type": "string" } },
+                        "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": { "description": "Missing token" },
+              "500": { "description": "Internal error" }
+            }
+          }
+        }
+      },
+      "components": {
+        "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } }
+      }
+    }
+  ]
+}

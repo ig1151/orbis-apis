@@ -1,0 +1,333 @@
+[
+  {
+    "name": "UUID/ULID Batch Generator API",
+    "shortDescription": "Crypto-random UUID v4 and sortable ULID generation in batches for agents",
+    "description": "Agent-native identifier generation. /uuid returns cryptographically-random UUID v4 values; /ulid returns lexicographically-sortable, time-ordered ULIDs (48-bit timestamp + 80-bit randomness). Batches of 1–1000 per call, with collision-probability notes, sortability flag, and a reasoning object on the one-call /lookup. Real crypto RNG (Node crypto) — never estimated, confidence always 1.0. Atomic and cheap for autonomous agents that need stable keys, idempotency tokens, or ordered IDs.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/uuid-ulid-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/uuid-ulid-generator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/uuid-ulid-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "uuid",
+      "ulid",
+      "identifiers",
+      "developer-tools",
+      "generator",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "uuid generator api",
+      "ulid generator api",
+      "batch id generation",
+      "sortable unique id",
+      "idempotency key generator",
+      "crypto random id api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 500,
+        "requestsPerMonth": 15000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 200000,
+        "requestsPerMonth": 6000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/uuid",
+            "pricePerCallUsdc": 0.002,
+            "description": "Batch of UUID v4"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/ulid",
+            "pricePerCallUsdc": 0.002,
+            "description": "Batch of sortable ULIDs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL generate by format with metadata + recommendations"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/uuid",
+        "description": "Generate UUID v4 batch"
+      },
+      {
+        "method": "POST",
+        "path": "/ulid",
+        "description": "Generate sortable ULID batch"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL generation workflow"
+      }
+    ]
+  },
+  {
+    "name": "Color Palette Contrast Evaluator API",
+    "shortDescription": "Deterministic WCAG 2.1 contrast ratios, AA/AAA pass-fail, and accessible alternatives for agents",
+    "description": "Agent-native accessibility evaluation. /contrast returns the exact WCAG 2.1 contrast ratio for a foreground/background pair with AA and AAA pass-fail for normal and large text. /palette recommends the optimal text color (black or white) and contrast for each swatch. The one-call /lookup adds accessible alternatives and a reasoning object. Real relative-luminance math — never estimated, confidence always 1.0. Ideal for design, UI-generation, and content agents enforcing accessibility before shipping.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "color",
+      "contrast",
+      "wcag",
+      "accessibility",
+      "a11y",
+      "design",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "wcag contrast ratio api",
+      "color contrast checker api",
+      "aa aaa contrast api",
+      "accessible color palette api",
+      "text color contrast api",
+      "a11y contrast evaluator"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/contrast",
+            "pricePerCallUsdc": 0.005,
+            "description": "WCAG contrast ratio + AA/AAA pass-fail"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/palette",
+            "pricePerCallUsdc": 0.008,
+            "description": "Per-color best text color + contrast"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL contrast + ratings + accessible alternatives"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/contrast",
+        "description": "Contrast ratio + AA/AAA"
+      },
+      {
+        "method": "POST",
+        "path": "/palette",
+        "description": "Palette text-color recommendations"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL contrast workflow"
+      }
+    ]
+  },
+  {
+    "name": "Geospatial Coordinate Calculator API",
+    "shortDescription": "Deterministic great-circle distance, bearing, and midpoint between coordinates for agents",
+    "description": "Agent-native geospatial geometry. /distance returns the Haversine great-circle distance (km, mi, m, or nmi) and initial bearing with cardinal direction between two lat/lon points. /batch processes up to 100 pairs in one call for routing and clustering. The one-call /lookup adds the geographic midpoint and a reasoning object. Real spherical trigonometry — never estimated, confidence always 1.0. Built for logistics, travel, mapping, and location-aware autonomous agents.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/geo-coordinate-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/geo-coordinate-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/geo-coordinate-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "geospatial",
+      "distance",
+      "haversine",
+      "bearing",
+      "coordinates",
+      "logistics",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "haversine distance api",
+      "great circle distance api",
+      "coordinate distance calculator",
+      "bearing between coordinates api",
+      "geo midpoint api",
+      "lat lon distance api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/distance",
+            "pricePerCallUsdc": 0.005,
+            "description": "Great-circle distance + bearing"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/batch",
+            "pricePerCallUsdc": 0.01,
+            "description": "Distances/bearings for many pairs"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL distance + bearing + midpoint + direction"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/distance",
+        "description": "Distance + bearing"
+      },
+      {
+        "method": "POST",
+        "path": "/batch",
+        "description": "Batch distances"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL geo workflow"
+      }
+    ]
+  },
+  {
+    "name": "Timezone Offset Harmonizer API",
+    "shortDescription": "Deterministic timezone conversion and UTC normalization from absolute instants for agents",
+    "description": "Agent-native timezone math backed by the IANA/ICU database. /normalize converts any absolute instant (ISO 8601 with Z/offset, or epoch ms) to UTC and epoch. /convert expresses that instant as wall-clock time, UTC offset, and zone abbreviation (DST-correct, e.g. PST vs PDT) in a target timezone. The one-call /lookup harmonizes one instant across up to 25 zones for meeting scheduling, with a reasoning object. Naive local times are rejected to guarantee correctness — never guessed, confidence always 1.0.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/timezone-harmonizer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/timezone-harmonizer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/timezone-harmonizer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "timezone",
+      "utc",
+      "dst",
+      "scheduling",
+      "datetime",
+      "developer-tools",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "timezone converter api",
+      "utc normalization api",
+      "iana timezone api",
+      "dst offset api",
+      "meeting timezone harmonizer",
+      "convert time between zones api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 300,
+        "requestsPerMonth": 9000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/normalize",
+            "pricePerCallUsdc": 0.005,
+            "description": "Normalize an absolute instant to UTC + epoch"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/convert",
+            "pricePerCallUsdc": 0.008,
+            "description": "Express an instant in a target timezone"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL UTC + many target zones + meeting-friendly view"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/normalize",
+        "description": "Normalize to UTC/epoch"
+      },
+      {
+        "method": "POST",
+        "path": "/convert",
+        "description": "Convert to a timezone"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL multi-zone harmonize"
+      }
+    ]
+  }
+]

@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Fear & Greed Index API",
+    "shortDescription": "Real-time crypto Fear & Greed Index with history, trend analysis, and contrarian trade signals",
+    "description": "Access the crypto Fear & Greed Index in real time, track 30-day history, detect sentiment extremes, and surface contrarian buy/sell opportunities. Built for trading agents, portfolio dashboards, and market timing workflows. Returns structured sentiment data with drivers, signals, and daily streak analysis.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/fear-greed",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/fear-greed/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/fear-greed/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "fear-greed",
+      "market-sentiment",
+      "crypto",
+      "trading-signals",
+      "contrarian"
+    ],
+    "keywords": [
+      "fear and greed index api",
+      "crypto sentiment api",
+      "market sentiment indicator",
+      "crypto fear greed tracker",
+      "contrarian trading signal"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/current",
+            "pricePerCallUsdc": 0.002,
+            "description": "Current Fear & Greed Index value with drivers and trade signal"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.003,
+            "description": "Historical daily readings with streak analysis and summary stats"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "ONE-CALL: current + 30d history + contrarian opportunity signal"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/current",
+        "description": "Current Fear & Greed Index \u2014 value (0-100), label, drivers, and trade signal"
+      },
+      {
+        "method": "POST",
+        "path": "/history",
+        "description": "Historical daily Fear & Greed readings with summary stats and streak analysis"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: current index + 30d history + contrarian opportunity signal"
+      }
+    ]
+  }
+]

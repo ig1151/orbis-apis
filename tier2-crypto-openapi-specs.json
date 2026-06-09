@@ -1,0 +1,1032 @@
+{
+  "generated_at": "2026-05-26T00:00:00Z",
+  "batch": "Tier 2 Crypto APIs",
+  "apis": [
+    {
+      "name": "Lending Rates API",
+      "base_url": "https://orbis-apis.onrender.com/lending-rates",
+      "listing": {
+        "name": "Lending Rates API",
+        "shortDescription": "Compare DeFi lending rates across Aave, Compound, Spark, and Morpho — find the best yield with risk context",
+        "category": "financial-data",
+        "tags": ["lending-rates", "defi-yield", "aave", "compound", "crypto"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/rates", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/compare", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Lending Rates API",
+          "version": "1.0.0",
+          "description": "Compare DeFi lending rates across Aave, Compound, Spark, Morpho, Euler, and other major protocols. Get current APY, 7-day and 30-day averages, utilization rates, and rate trends. Compare risk-adjusted yields with protocol audit status, insurance, and withdrawal delays.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x-human-approval-required": false,
+          "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true,
+          "x402-compatible": true,
+          "x-agent-marketplace-ready": true,
+          "x-pay-per-call-optimized": true,
+          "x-pricing": {
+            "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 },
+            "pay_per_call": { "rates": "$0.003", "compare": "$0.003", "lookup": "$0.008" }
+          },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify rates on-chain before depositing."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/lending-rates" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "lendingRatesDiscovery",
+              "summary": "API discovery — name, version, endpoints, pricing, capabilities",
+              "security": [],
+              "responses": {
+                "200": {
+                  "description": "Discovery payload",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" }, "version": { "type": "string" },
+                          "description": { "type": "string" }, "health": { "type": "string" },
+                          "docs_url": { "type": "string", "format": "uri" },
+                          "auth": { "type": "object", "properties": { "type": { "type": "string" }, "header": { "type": "string" } } },
+                          "endpoints": { "type": "array", "items": { "type": "object", "properties": { "method": { "type": "string" }, "path": { "type": "string" }, "summary": { "type": "string" }, "price_usdc": { "type": "number" } } } },
+                          "pricing": { "type": "object" },
+                          "agent_capabilities": { "type": "array", "items": { "type": "string" } },
+                          "x402_compatible": { "type": "boolean" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/rates": {
+            "post": {
+              "operationId": "lendingRatesGet",
+              "summary": "Current lending rates for an asset across DeFi protocols",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": ["asset"],
+                      "properties": {
+                        "asset": { "type": "string", "description": "Asset symbol (e.g. USDC, ETH, WBTC)" },
+                        "chain": { "type": "string", "default": "ethereum", "enum": ["ethereum", "base", "arbitrum", "polygon", "optimism"] }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Lending rates across protocols",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "asset": { "type": "string" }, "chain": { "type": "string" },
+                          "rates": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "protocol": { "type": "string" }, "apy": { "type": "number" },
+                                "apy_7d_avg": { "type": "number" }, "apy_30d_avg": { "type": "number" },
+                                "utilization_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+                                "total_supplied_usd": { "type": "number" }, "supply_cap_usd": { "type": "number" },
+                                "rate_trend": { "type": "string", "enum": ["rising", "falling", "stable"] },
+                                "protocol_tvl_usd": { "type": "number" }
+                              }
+                            }
+                          },
+                          "best_rate": { "type": "object", "properties": { "protocol": { "type": "string" }, "apy": { "type": "number" } } },
+                          "market_avg_apy": { "type": "number" }, "rate_spread_pct": { "type": "number" },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing asset" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/compare": {
+            "post": {
+              "operationId": "lendingRatesCompare",
+              "summary": "Side-by-side protocol comparison with risk-adjusted yield",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": ["asset"],
+                      "properties": {
+                        "asset": { "type": "string" },
+                        "chain": { "type": "string", "default": "ethereum" },
+                        "protocols": { "type": "array", "items": { "type": "string" }, "description": "Protocol names to compare (defaults to top 5)" }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Protocol comparison with risk context",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "asset": { "type": "string" }, "chain": { "type": "string" },
+                          "comparison": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "protocol": { "type": "string" }, "apy": { "type": "number" },
+                                "risk_score": { "type": "number" }, "risk_level": { "type": "string", "enum": ["low", "medium", "high"] },
+                                "risk_adjusted_yield": { "type": "number" },
+                                "audit_status": { "type": "string", "enum": ["audited", "partially_audited", "unaudited"] },
+                                "insurance_available": { "type": "boolean" }, "min_deposit_usd": { "type": "number" },
+                                "withdrawal_delay_hours": { "type": "number" },
+                                "notable_risks": { "type": "array", "items": { "type": "string" } }
+                              }
+                            }
+                          },
+                          "best_yield": { "type": "object", "properties": { "protocol": { "type": "string" }, "apy": { "type": "number" } } },
+                          "best_risk_adjusted": { "type": "object", "properties": { "protocol": { "type": "string" }, "risk_adjusted_yield": { "type": "number" } } },
+                          "recommendation": { "type": "string" },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing asset" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "lendingRatesLookup",
+              "summary": "ONE-CALL: best rate + trend + protocol risk + recommendation for an asset",
+              "x-one-call": true,
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object", "required": ["asset"],
+                      "properties": {
+                        "asset": { "type": "string" }, "chain": { "type": "string", "default": "ethereum" }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Full lending intelligence",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "asset": { "type": "string" }, "chain": { "type": "string" },
+                          "rates_snapshot": { "type": "array", "items": { "type": "object", "properties": { "protocol": { "type": "string" }, "apy": { "type": "number" }, "risk_level": { "type": "string", "enum": ["low", "medium", "high"] }, "utilization_pct": { "type": "number" }, "rate_trend": { "type": "string", "enum": ["rising", "falling", "stable"] } } } },
+                          "rate_trend": { "type": "object", "properties": { "direction": { "type": "string", "enum": ["rising", "falling", "stable"] }, "30d_change_bps": { "type": "number" }, "driver": { "type": "string" }, "outlook": { "type": "string" } } },
+                          "protocol_risk": { "type": "array", "items": { "type": "object", "properties": { "protocol": { "type": "string" }, "risk_score": { "type": "number" }, "top_risk_factor": { "type": "string" }, "audit_count": { "type": "integer" }, "insurance_available": { "type": "boolean" } } } },
+                          "recommendation": { "type": "object", "properties": { "action": { "type": "string", "enum": ["deposit_now", "wait", "diversify", "avoid"] }, "best_protocol": { "type": "string" }, "expected_apy": { "type": "number" }, "rationale": { "type": "string" }, "alternative": { "type": "string" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing asset" }, "500": { "description": "Internal error" }
+              }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "Borrowing Rates API",
+      "base_url": "https://orbis-apis.onrender.com/borrowing-rates",
+      "listing": {
+        "name": "Borrowing Rates API",
+        "shortDescription": "Find the cheapest DeFi borrow across protocols with collateral options and liquidation risk analysis",
+        "category": "financial-data",
+        "tags": ["borrowing-rates", "defi-lending", "liquidation-risk", "crypto", "leverage"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/rates", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/optimize", "pricePerCallUsdc": 0.004 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Borrowing Rates API",
+          "version": "1.0.0",
+          "description": "Compare DeFi borrowing costs across Aave, Compound, Spark, Morpho, and other protocols. Find the cheapest borrow for any asset with collateral options, LTV parameters, health factor projections, and liquidation risk scoring.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "rates": "$0.003", "optimize": "$0.004", "lookup": "$0.008" } },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. Verify liquidation thresholds before borrowing."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/borrowing-rates" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": { "get": { "operationId": "borrowingRatesDiscovery", "summary": "API discovery", "security": [], "responses": { "200": { "description": "Discovery payload" } } } },
+          "/rates": {
+            "post": {
+              "operationId": "borrowingRatesGet",
+              "summary": "Current borrowing rates for an asset across DeFi protocols",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["asset"], "properties": { "asset": { "type": "string" }, "chain": { "type": "string", "default": "ethereum", "enum": ["ethereum", "base", "arbitrum", "polygon", "optimism"] } } } } } },
+              "responses": {
+                "200": {
+                  "description": "Borrowing rates across protocols",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "asset": { "type": "string" }, "chain": { "type": "string" },
+                          "borrow_rates": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "protocol": { "type": "string" }, "variable_apr": { "type": "number" }, "stable_apr": { "type": "number" },
+                                "rate_mode_available": { "type": "array", "items": { "type": "string", "enum": ["variable", "stable"] } },
+                                "utilization_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+                                "total_borrowed_usd": { "type": "number" }, "borrow_cap_usd": { "type": "number" },
+                                "rate_trend": { "type": "string", "enum": ["rising", "falling", "stable"] },
+                                "optimal_utilization_pct": { "type": "number" }
+                              }
+                            }
+                          },
+                          "cheapest_variable": { "type": "object", "properties": { "protocol": { "type": "string" }, "apr": { "type": "number" } } },
+                          "cheapest_stable": { "type": "object", "properties": { "protocol": { "type": "string" }, "apr": { "type": "number" } } },
+                          "market_avg_variable_apr": { "type": "number" },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing asset" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/optimize": {
+            "post": {
+              "operationId": "borrowingRatesOptimize",
+              "summary": "Find cheapest borrow strategy with collateral and liquidation risk analysis",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["asset"], "properties": { "asset": { "type": "string" }, "collateral": { "type": "string", "default": "ETH" }, "borrow_amount_usd": { "type": "number", "default": 10000 }, "chain": { "type": "string", "default": "ethereum" } } } } } },
+              "responses": {
+                "200": {
+                  "description": "Optimized borrow strategies with risk assessment",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "asset": { "type": "string" }, "collateral": { "type": "string" }, "borrow_amount_usd": { "type": "number" }, "chain": { "type": "string" },
+                          "strategies": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "protocol": { "type": "string" }, "rate_mode": { "type": "string", "enum": ["variable", "stable"] },
+                                "apr": { "type": "number" }, "annual_cost_usd": { "type": "number" },
+                                "ltv_pct": { "type": "number" }, "liquidation_threshold_pct": { "type": "number" },
+                                "safe_ltv_pct": { "type": "number" }, "health_factor_at_safe_ltv": { "type": "number" },
+                                "min_collateral_usd": { "type": "number" }, "liquidation_risk": { "type": "string", "enum": ["low", "medium", "high"] }
+                              }
+                            }
+                          },
+                          "best_strategy": { "type": "object", "properties": { "protocol": { "type": "string" }, "rate_mode": { "type": "string" }, "apr": { "type": "number" }, "annual_cost_usd": { "type": "number" } } },
+                          "risk_summary": { "type": "object", "properties": { "main_risk": { "type": "string" }, "liquidation_note": { "type": "string" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing asset" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "borrowingRatesLookup",
+              "summary": "ONE-CALL: cheapest borrow + collateral options + liquidation risk + strategy",
+              "x-one-call": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["asset"], "properties": { "asset": { "type": "string" }, "collateral": { "type": "string", "default": "ETH" }, "chain": { "type": "string", "default": "ethereum" } } } } } },
+              "responses": {
+                "200": {
+                  "description": "Full borrowing intelligence",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "asset": { "type": "string" }, "collateral": { "type": "string" }, "chain": { "type": "string" },
+                          "rates_snapshot": { "type": "array", "items": { "type": "object", "properties": { "protocol": { "type": "string" }, "variable_apr": { "type": "number" }, "stable_apr": { "type": "number" }, "utilization_pct": { "type": "number" }, "rate_trend": { "type": "string", "enum": ["rising", "falling", "stable"] } } } },
+                          "collateral_options": { "type": "array", "items": { "type": "object", "properties": { "collateral_asset": { "type": "string" }, "ltv_pct": { "type": "number" }, "liquidation_threshold_pct": { "type": "number" }, "liquidation_bonus_pct": { "type": "number" }, "quality": { "type": "string", "enum": ["blue_chip", "mid_cap", "volatile"] } } } },
+                          "rate_trend": { "type": "object", "properties": { "direction": { "type": "string", "enum": ["rising", "falling", "stable"] }, "30d_change_bps": { "type": "number" }, "driver": { "type": "string" } } },
+                          "liquidation_risk_assessment": { "type": "object", "properties": { "risk_level": { "type": "string", "enum": ["low", "medium", "high"] }, "key_factors": { "type": "array", "items": { "type": "string" } }, "recommended_max_ltv_pct": { "type": "number" } } },
+                          "strategy": { "type": "object", "properties": { "action": { "type": "string", "enum": ["borrow_now", "wait_for_lower_rates", "use_stable", "avoid"] }, "best_protocol": { "type": "string" }, "best_rate_mode": { "type": "string", "enum": ["variable", "stable"] }, "apr": { "type": "number" }, "rationale": { "type": "string" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing asset" }, "500": { "description": "Internal error" }
+              }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "TVL Analytics API",
+      "base_url": "https://orbis-apis.onrender.com/tvl-analytics",
+      "listing": {
+        "name": "TVL Analytics API",
+        "shortDescription": "Track DeFi protocol TVL, chain dominance, and growth trends — with health scores and investment signals",
+        "category": "financial-data",
+        "tags": ["tvl", "defi-analytics", "protocol-health", "crypto", "on-chain"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/protocol", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/chains", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "TVL Analytics API",
+          "version": "1.0.0",
+          "description": "Track Total Value Locked across DeFi protocols and blockchains. Get current TVL, chain breakdown, growth trends, market share, ATH drawdown, and chain rotation signals.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "protocol": "$0.003", "chains": "$0.003", "lookup": "$0.008" } },
+          "x-financial-disclaimer": "For informational purposes only. Not financial advice. TVL data should be cross-checked with on-chain sources."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/tvl-analytics" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": { "get": { "operationId": "tvlAnalyticsDiscovery", "summary": "API discovery", "security": [], "responses": { "200": { "description": "Discovery payload" } } } },
+          "/protocol": {
+            "post": {
+              "operationId": "tvlProtocol",
+              "summary": "TVL snapshot for a specific protocol with trend and market position",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["protocol"], "properties": { "protocol": { "type": "string", "description": "Protocol name (e.g. Aave, Uniswap, Lido, Curve)" } } } } } },
+              "responses": {
+                "200": {
+                  "description": "Protocol TVL with trend and market position",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "protocol": { "type": "string" }, "tvl_usd": { "type": "number" },
+                          "tvl_by_chain": { "type": "array", "items": { "type": "object", "properties": { "chain": { "type": "string" }, "tvl_usd": { "type": "number" }, "pct_of_total": { "type": "number" } } } },
+                          "tvl_trend": { "type": "object", "properties": { "24h_change_pct": { "type": "number" }, "7d_change_pct": { "type": "number" }, "30d_change_pct": { "type": "number" }, "direction": { "type": "string", "enum": ["growing", "shrinking", "stable"] }, "all_time_high_usd": { "type": "number" }, "ath_drawdown_pct": { "type": "number" } } },
+                          "market_position": { "type": "object", "properties": { "global_rank": { "type": "integer" }, "category": { "type": "string" }, "market_share_pct": { "type": "number" }, "competitors": { "type": "array", "items": { "type": "string" } } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing protocol" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/chains": {
+            "post": {
+              "operationId": "tvlChains",
+              "summary": "TVL breakdown by blockchain — market share, flows, and rotation signal",
+              "requestBody": { "required": false, "content": { "application/json": { "schema": { "type": "object", "properties": { "category": { "type": "string", "description": "Filter by DeFi category (e.g. lending, dex, liquid-staking)" } } } } } },
+              "responses": {
+                "200": {
+                  "description": "TVL breakdown by chain with flow summary",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "category": { "type": "string" }, "total_defi_tvl_usd": { "type": "number" },
+                          "chains": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "chain": { "type": "string" }, "tvl_usd": { "type": "number" }, "market_share_pct": { "type": "number" },
+                                "7d_change_pct": { "type": "number" }, "30d_change_pct": { "type": "number" },
+                                "trend": { "type": "string", "enum": ["growing", "shrinking", "stable"] },
+                                "dominant_protocol": { "type": "string" }, "protocol_count": { "type": "integer" }
+                              }
+                            }
+                          },
+                          "flow_summary": { "type": "object", "properties": { "top_inflow_chain": { "type": "string" }, "top_outflow_chain": { "type": "string" }, "rotation_signal": { "type": "string", "enum": ["moving_to_l2", "moving_to_ethereum", "mixed"] }, "narrative": { "type": "string" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "tvlLookup",
+              "summary": "ONE-CALL: TVL + growth trend + health score + investment signal for a protocol",
+              "x-one-call": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["protocol"], "properties": { "protocol": { "type": "string" } } } } } },
+              "responses": {
+                "200": {
+                  "description": "Full TVL intelligence",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "protocol": { "type": "string" },
+                          "tvl_snapshot": { "type": "object", "properties": { "tvl_usd": { "type": "number" }, "global_rank": { "type": "integer" }, "market_share_pct": { "type": "number" }, "category": { "type": "string" } } },
+                          "growth_trend": { "type": "object", "properties": { "direction": { "type": "string", "enum": ["growing", "shrinking", "stable"] }, "7d_change_pct": { "type": "number" }, "30d_change_pct": { "type": "number" }, "90d_change_pct": { "type": "number" }, "growth_quality": { "type": "string", "enum": ["organic", "incentivized", "declining", "recovering"] } } },
+                          "health_score": { "type": "object", "properties": { "score": { "type": "number", "minimum": 0, "maximum": 100 }, "score_label": { "type": "string", "enum": ["excellent", "good", "fair", "poor"] }, "factors": { "type": "object", "properties": { "tvl_stability": { "type": "number" }, "growth_consistency": { "type": "number" }, "chain_diversity": { "type": "number" }, "market_position": { "type": "number" } } } } },
+                          "investment_signal": { "type": "object", "properties": { "signal": { "type": "string", "enum": ["strong_buy", "buy", "neutral", "sell", "avoid"] }, "rationale": { "type": "string" }, "key_risk": { "type": "string" }, "key_opportunity": { "type": "string" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing protocol" }, "500": { "description": "Internal error" }
+              }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "Honeypot Scanner API",
+      "base_url": "https://orbis-apis.onrender.com/honeypot-scanner",
+      "listing": {
+        "name": "Honeypot Scanner API",
+        "shortDescription": "Detect honeypot contracts, rug pull mechanisms, and sell restrictions before you trade any token",
+        "category": "financial-data",
+        "tags": ["honeypot-detection", "rugpull-risk", "contract-safety", "crypto", "token-analysis"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/risk", "pricePerCallUsdc": 0.004 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Honeypot Scanner API",
+          "version": "1.0.0",
+          "description": "Detect honeypot contracts, rug pull mechanisms, and malicious token patterns. Analyze smart contract flags, ownership risk, LP lock status, and sell restrictions before trading. Simulate buy and sell transactions to expose hidden traps.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": true, "x-execution-gate-required": true,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "scan": "$0.003", "risk": "$0.004", "lookup": "$0.008" } },
+          "x-financial-disclaimer": "For informational purposes only. AI safety analysis is not a guarantee. Always verify on-chain before trading."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/honeypot-scanner" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": { "get": { "operationId": "honeypotScannerDiscovery", "summary": "API discovery", "security": [], "responses": { "200": { "description": "Discovery payload" } } } },
+          "/scan": {
+            "post": {
+              "operationId": "honeypotScan",
+              "summary": "Scan a contract for honeypot flags, sell restrictions, and buy/sell simulation",
+              "x-human-approval-required": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["contract"], "properties": { "contract": { "type": "string", "description": "Token contract address" }, "chain": { "type": "string", "default": "ethereum", "enum": ["ethereum", "base", "bsc", "polygon", "arbitrum", "solana"] } } } } } },
+              "responses": {
+                "200": {
+                  "description": "Honeypot scan result",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "contract": { "type": "string" }, "chain": { "type": "string" },
+                          "is_honeypot": { "type": "boolean" }, "honeypot_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+                          "sell_restrictions": { "type": "object", "properties": { "can_sell": { "type": "boolean" }, "sell_tax_pct": { "type": "number" }, "buy_tax_pct": { "type": "number" }, "transfer_pausable": { "type": "boolean" }, "blacklist_function": { "type": "boolean" }, "max_transaction_limit": { "type": "boolean" } } },
+                          "contract_flags": { "type": "array", "items": { "type": "object", "properties": { "flag": { "type": "string" }, "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] }, "description": { "type": "string" } } } },
+                          "simulation_result": { "type": "object", "properties": { "buy_success": { "type": "boolean" }, "sell_success": { "type": "boolean" }, "net_loss_pct": { "type": "number" }, "failure_reason": { "type": "string" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing contract" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/risk": {
+            "post": {
+              "operationId": "honeypotRisk",
+              "summary": "Full risk score with ownership analysis, LP lock status, and rug pull vectors",
+              "x-human-approval-required": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["contract"], "properties": { "contract": { "type": "string" }, "chain": { "type": "string", "default": "ethereum" } } } } } },
+              "responses": {
+                "200": {
+                  "description": "Contract risk analysis with rug vectors",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "contract": { "type": "string" }, "chain": { "type": "string" },
+                          "risk_score": { "type": "number", "minimum": 0, "maximum": 100 },
+                          "risk_level": { "type": "string", "enum": ["safe", "low", "medium", "high", "critical"] },
+                          "ownership_risk": { "type": "object", "properties": { "is_renounced": { "type": "boolean" }, "owner_address": { "type": "string" }, "owner_can_mint": { "type": "boolean" }, "owner_can_pause": { "type": "boolean" }, "owner_can_blacklist": { "type": "boolean" }, "multisig": { "type": "boolean" } } },
+                          "liquidity_risk": { "type": "object", "properties": { "lp_locked": { "type": "boolean" }, "lock_duration_days": { "type": "number" }, "lock_platform": { "type": "string" }, "lp_burned_pct": { "type": "number" }, "top_lp_holder_pct": { "type": "number" } } },
+                          "rug_vectors": { "type": "array", "items": { "type": "object", "properties": { "vector": { "type": "string" }, "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] }, "present": { "type": "boolean" }, "description": { "type": "string" } } } },
+                          "audit": { "type": "object", "properties": { "audited": { "type": "boolean" }, "auditor": { "type": "string" }, "critical_issues_found": { "type": "integer" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing contract" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "honeypotLookup",
+              "summary": "ONE-CALL: honeypot verdict + rug risk + safety checklist + trade recommendation",
+              "x-one-call": true, "x-human-approval-required": true, "x-execution-gate-required": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["contract"], "properties": { "contract": { "type": "string" }, "chain": { "type": "string", "default": "ethereum" } } } } } },
+              "responses": {
+                "200": {
+                  "description": "Full honeypot and safety assessment",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "contract": { "type": "string" }, "chain": { "type": "string" },
+                          "verdict": { "type": "object", "properties": { "is_honeypot": { "type": "boolean" }, "is_safe": { "type": "boolean" }, "overall_risk": { "type": "string", "enum": ["safe", "low", "medium", "high", "critical"] }, "trade_recommendation": { "type": "string", "enum": ["safe_to_trade", "caution", "avoid", "do_not_buy"] } } },
+                          "honeypot_check": { "type": "object", "properties": { "is_honeypot": { "type": "boolean" }, "confidence": { "type": "number" }, "can_sell": { "type": "boolean" }, "sell_tax_pct": { "type": "number" }, "buy_tax_pct": { "type": "number" } } },
+                          "rug_risk": { "type": "object", "properties": { "score": { "type": "number" }, "risk_level": { "type": "string", "enum": ["low", "medium", "high", "critical"] }, "lp_locked": { "type": "boolean" }, "owner_renounced": { "type": "boolean" }, "top_risk_factors": { "type": "array", "items": { "type": "string" } } } },
+                          "safety_checklist": { "type": "array", "items": { "type": "object", "properties": { "check": { "type": "string" }, "status": { "type": "string", "enum": ["pass", "warn", "fail"] }, "detail": { "type": "string" } } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing contract" }, "500": { "description": "Internal error" }
+              }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "NFT Collection Analytics API",
+      "base_url": "https://orbis-apis.onrender.com/nft-collection-analytics",
+      "listing": {
+        "name": "NFT Collection Analytics API",
+        "shortDescription": "Floor price, volume, whale holders, and market cycle stage for any NFT collection",
+        "category": "financial-data",
+        "tags": ["nft", "collection-analytics", "floor-price", "crypto", "trading-signals"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/collection", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/trending", "pricePerCallUsdc": 0.004 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "NFT Collection Analytics API",
+          "version": "1.0.0",
+          "description": "Analyze NFT collection floor price, volume, holder distribution, whale activity, and market cycle stage. Surface trending collections ranked by momentum. Identify cycle stage (discovery, accumulation, hype, distribution, decline) for any collection.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": false, "x-execution-gate-required": false,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "collection": "$0.003", "trending": "$0.004", "lookup": "$0.008" } },
+          "x-financial-disclaimer": "For informational purposes only. NFT markets are highly speculative. Not financial advice."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/nft-collection-analytics" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": { "get": { "operationId": "nftCollectionDiscovery", "summary": "API discovery", "security": [], "responses": { "200": { "description": "Discovery payload" } } } },
+          "/collection": {
+            "post": {
+              "operationId": "nftCollection",
+              "summary": "Floor price, volume, holder metrics, and supply data for an NFT collection",
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["collection"], "properties": { "collection": { "type": "string", "description": "Collection name or contract address" }, "chain": { "type": "string", "default": "ethereum", "enum": ["ethereum", "base", "polygon", "solana"] } } } } } },
+              "responses": {
+                "200": {
+                  "description": "NFT collection metrics",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "collection": { "type": "string" }, "chain": { "type": "string" },
+                          "floor_price": { "type": "object", "properties": { "eth": { "type": "number" }, "usd": { "type": "number" }, "24h_change_pct": { "type": "number" }, "7d_change_pct": { "type": "number" }, "30d_change_pct": { "type": "number" }, "all_time_high_eth": { "type": "number" } } },
+                          "volume": { "type": "object", "properties": { "24h_usd": { "type": "number" }, "7d_usd": { "type": "number" }, "30d_usd": { "type": "number" }, "total_usd": { "type": "number" }, "trend": { "type": "string", "enum": ["rising", "falling", "stable"] } } },
+                          "holders": { "type": "object", "properties": { "total": { "type": "integer" }, "unique": { "type": "integer" }, "top_10_pct_supply": { "type": "number" }, "whale_count": { "type": "integer" }, "avg_items_per_holder": { "type": "number" }, "distribution_score": { "type": "number" } } },
+                          "supply": { "type": "object", "properties": { "total": { "type": "integer" }, "listed": { "type": "integer" }, "listed_pct": { "type": "number" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing collection" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/trending": {
+            "post": {
+              "operationId": "nftTrending",
+              "summary": "Trending NFT collections ranked by volume momentum",
+              "requestBody": { "required": false, "content": { "application/json": { "schema": { "type": "object", "properties": { "chain": { "type": "string", "default": "ethereum" }, "category": { "type": "string" }, "limit": { "type": "integer", "default": 10, "minimum": 1, "maximum": 50 } } } } } },
+              "responses": {
+                "200": {
+                  "description": "Trending collections with momentum scores",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "chain": { "type": "string" }, "category": { "type": "string" },
+                          "trending": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "collection": { "type": "string" }, "floor_eth": { "type": "number" }, "floor_usd": { "type": "number" },
+                                "24h_volume_usd": { "type": "number" }, "24h_floor_change_pct": { "type": "number" },
+                                "momentum_score": { "type": "number", "minimum": 0, "maximum": 100 },
+                                "trend": { "type": "string", "enum": ["exploding", "rising", "stable", "cooling"] },
+                                "category": { "type": "string" }, "notable": { "type": "string" }
+                              }
+                            }
+                          },
+                          "market_summary": { "type": "object", "properties": { "overall_nft_sentiment": { "type": "string", "enum": ["hot", "warm", "cool", "cold"] }, "dominant_category": { "type": "string" }, "avg_volume_change_24h_pct": { "type": "number" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "nftLookup",
+              "summary": "ONE-CALL: full collection intelligence with cycle stage and investment signal",
+              "x-one-call": true,
+              "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "required": ["collection"], "properties": { "collection": { "type": "string" }, "chain": { "type": "string", "default": "ethereum" } } } } } },
+              "responses": {
+                "200": {
+                  "description": "Complete NFT collection intelligence",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "collection": { "type": "string" }, "chain": { "type": "string" },
+                          "market_metrics": { "type": "object", "properties": { "floor_eth": { "type": "number" }, "floor_usd": { "type": "number" }, "24h_volume_usd": { "type": "number" }, "30d_volume_usd": { "type": "number" }, "floor_7d_change_pct": { "type": "number" } } },
+                          "holder_analysis": { "type": "object", "properties": { "total_holders": { "type": "integer" }, "top_10_pct_supply": { "type": "number" }, "whale_activity": { "type": "string", "enum": ["accumulating", "distributing", "holding"] }, "distribution_health": { "type": "string", "enum": ["healthy", "concentrated", "risky"] } } },
+                          "market_cycle": { "type": "object", "properties": { "stage": { "type": "string", "enum": ["discovery", "accumulation", "hype", "distribution", "decline", "dormant"] }, "momentum": { "type": "string", "enum": ["rising", "peaking", "falling", "bottoming"] }, "cycle_note": { "type": "string" } } },
+                          "investment_signal": { "type": "object", "properties": { "signal": { "type": "string", "enum": ["strong_buy", "buy", "neutral", "sell", "avoid"] }, "conviction": { "type": "string", "enum": ["high", "medium", "low"] }, "rationale": { "type": "string" }, "key_risk": { "type": "string" }, "entry_note": { "type": "string" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing collection" }, "500": { "description": "Internal error" }
+              }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    },
+    {
+      "name": "AI Trade Confidence API",
+      "base_url": "https://orbis-apis.onrender.com/ai-trade-confidence",
+      "listing": {
+        "name": "AI Trade Confidence API",
+        "shortDescription": "AI-scored trade signal confidence with setup validation, risk-reward analysis, and go/no-go verdict",
+        "category": "financial-data",
+        "tags": ["trade-confidence", "signal-validation", "ai-trading", "crypto", "risk-assessment"],
+        "tiers": [
+          { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+          {
+            "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.010,
+            "endpointPricing": [
+              { "method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.003 },
+              { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.005 },
+              { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.010 }
+            ]
+          }
+        ]
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "AI Trade Confidence API",
+          "version": "1.0.0",
+          "description": "Score the confidence of any trade signal using AI multi-factor analysis across technical, fundamental, sentiment, on-chain, and macro dimensions. Validate complete trade setups with risk-reward ratio, confluence analysis, key levels, and setup grade A-F.",
+          "x-agent-callable": true, "x-mcp-compatible": true,
+          "x-human-approval-required": true, "x-execution-gate-required": true,
+          "x-paper-mode-recommended": true, "x402-compatible": true,
+          "x-agent-marketplace-ready": true, "x-pay-per-call-optimized": true,
+          "x-pricing": { "free_tier": { "requests_per_day": 100, "requests_per_month": 3000 }, "pay_per_call": { "score": "$0.003", "validate": "$0.005", "lookup": "$0.010" } },
+          "x-financial-disclaimer": "For informational purposes only. Human review required before any trade execution. Not financial advice."
+        },
+        "servers": [{ "url": "https://orbis-apis.onrender.com/ai-trade-confidence" }],
+        "security": [{ "ApiKeyAuth": [] }],
+        "paths": {
+          "/": { "get": { "operationId": "aiTradeConfidenceDiscovery", "summary": "API discovery", "security": [], "responses": { "200": { "description": "Discovery payload" } } } },
+          "/score": {
+            "post": {
+              "operationId": "aiTradeScore",
+              "summary": "AI confidence score for a directional trade signal",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object", "required": ["asset", "direction"],
+                      "properties": {
+                        "asset": { "type": "string", "description": "Asset to trade (e.g. BTC, ETH, SOL)" },
+                        "direction": { "type": "string", "enum": ["long", "short", "buy", "sell"] },
+                        "timeframe": { "type": "string", "default": "4h", "enum": ["15m", "1h", "4h", "1d", "1w"] },
+                        "signal_source": { "type": "string", "description": "Where the signal came from (e.g. RSI oversold, breakout, whale accumulation)" }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Trade confidence score with factor breakdown",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "asset": { "type": "string" }, "direction": { "type": "string" }, "timeframe": { "type": "string" },
+                          "confidence_score": { "type": "number", "minimum": 0, "maximum": 100 },
+                          "confidence_level": { "type": "string", "enum": ["very_high", "high", "moderate", "low", "very_low"] },
+                          "signal_factors": { "type": "object", "properties": { "technical_score": { "type": "number" }, "fundamental_score": { "type": "number" }, "sentiment_score": { "type": "number" }, "on_chain_score": { "type": "number" }, "macro_score": { "type": "number" } } },
+                          "top_supporting_factors": { "type": "array", "items": { "type": "string" } },
+                          "top_contradicting_factors": { "type": "array", "items": { "type": "string" } },
+                          "verdict": { "type": "string", "enum": ["strong_signal", "valid_signal", "weak_signal", "conflicted", "fade"] },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing asset or direction" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/validate": {
+            "post": {
+              "operationId": "aiTradeValidate",
+              "summary": "Validate a full trade setup with R:R, confluence, and key level analysis",
+              "x-human-approval-required": true,
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object", "required": ["asset", "direction"],
+                      "properties": {
+                        "asset": { "type": "string" }, "direction": { "type": "string", "enum": ["long", "short", "buy", "sell"] },
+                        "entry_price": { "type": "number" }, "stop_loss": { "type": "number" }, "take_profit": { "type": "number" },
+                        "timeframe": { "type": "string", "default": "4h" }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Trade setup validation with risk-reward and confluence",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "asset": { "type": "string" }, "direction": { "type": "string" },
+                          "entry_price": { "type": "number" }, "stop_loss": { "type": "number" }, "take_profit": { "type": "number" }, "timeframe": { "type": "string" },
+                          "setup_quality": { "type": "object", "properties": { "score": { "type": "number" }, "grade": { "type": "string", "enum": ["A", "B", "C", "D", "F"] }, "issues": { "type": "array", "items": { "type": "string" } }, "strengths": { "type": "array", "items": { "type": "string" } } } },
+                          "risk_reward": { "type": "object", "properties": { "ratio": { "type": "number" }, "risk_pct": { "type": "number" }, "reward_pct": { "type": "number" }, "acceptable": { "type": "boolean" }, "note": { "type": "string" } } },
+                          "confluence_analysis": { "type": "object", "properties": { "aligned_signals": { "type": "array", "items": { "type": "string" } }, "conflicting_signals": { "type": "array", "items": { "type": "string" } }, "confluence_score": { "type": "number" }, "verdict": { "type": "string", "enum": ["high_confluence", "moderate", "low_confluence", "conflicted"] } } },
+                          "key_levels": { "type": "object", "properties": { "support": { "type": "number" }, "resistance": { "type": "number" }, "invalidation": { "type": "number" } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing asset or direction" }, "500": { "description": "Internal error" }
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "aiTradeLookup",
+              "summary": "ONE-CALL: confidence score + setup validation + risk + go/no-go verdict",
+              "x-one-call": true, "x-human-approval-required": true, "x-execution-gate-required": true,
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object", "required": ["asset", "direction"],
+                      "properties": {
+                        "asset": { "type": "string" }, "direction": { "type": "string", "enum": ["long", "short", "buy", "sell"] },
+                        "entry_price": { "type": "number" }, "stop_loss": { "type": "number" }, "take_profit": { "type": "number" },
+                        "timeframe": { "type": "string", "default": "4h" }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Full trade confidence analysis with go/no-go verdict",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "trace_id": { "type": "string" }, "computed_at": { "type": "string", "format": "date-time" }, "success": { "type": "boolean" },
+                          "asset": { "type": "string" }, "direction": { "type": "string" }, "timeframe": { "type": "string" },
+                          "confidence_score": { "type": "number", "minimum": 0, "maximum": 100 },
+                          "confidence_level": { "type": "string", "enum": ["very_high", "high", "moderate", "low", "very_low"] },
+                          "signal_factors": { "type": "object", "properties": { "technical_score": { "type": "number" }, "fundamental_score": { "type": "number" }, "sentiment_score": { "type": "number" }, "on_chain_score": { "type": "number" }, "macro_score": { "type": "number" } } },
+                          "setup_validation": { "type": "object", "properties": { "grade": { "type": "string", "enum": ["A", "B", "C", "D", "F"] }, "risk_reward_ratio": { "type": "number" }, "confluence_verdict": { "type": "string", "enum": ["high", "moderate", "low", "conflicted"] } } },
+                          "risk_assessment": { "type": "object", "properties": { "risk_level": { "type": "string", "enum": ["low", "medium", "high", "very_high"] }, "key_risks": { "type": "array", "items": { "type": "string" } }, "max_recommended_position_pct": { "type": "number" } } },
+                          "go_no_go": { "type": "object", "properties": { "verdict": { "type": "string", "enum": ["execute", "wait", "reduce_size", "pass"] }, "conviction": { "type": "string", "enum": ["high", "medium", "low"] }, "rationale": { "type": "string" }, "conditions_to_improve": { "type": "array", "items": { "type": "string" } } } },
+                          "financial_disclaimer": { "type": "string" }, "paper_mode_recommended": { "type": "boolean" },
+                          "confidence_per_section": { "type": "object", "additionalProperties": { "type": "number" } },
+                          "recommended_actions_priority_order": { "type": "array", "items": { "type": "string" } },
+                          "privacy": { "type": "object", "properties": { "data_stored": { "type": "boolean" }, "retention": { "type": "string" } } }
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": { "description": "Missing asset or direction" }, "500": { "description": "Internal error" }
+              }
+            }
+          }
+        },
+        "components": { "securitySchemes": { "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "X-API-Key" } } }
+      }
+    }
+  ]
+}

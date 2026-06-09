@@ -1,0 +1,119 @@
+[
+  {
+    "name": "DeFi Position Risk API",
+    "shortDescription": "Monitor DeFi positions and execute liquidation defense actions autonomously",
+    "description": "Monitors active DeFi positions and executes defensive actions to prevent liquidation. Supports autonomous risk monitoring, position health checks, and real-time defensive rebalancing for lending protocol agents.",
+    "category": "blockchain-web3",
+    "baseUrl": "https://orbis-apis.onrender.com/defi-position-risk",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/defi-position-risk/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/defi-position-risk/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "defi",
+      "liquidation",
+      "risk",
+      "position-management",
+      "blockchain"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/position/:wallet/:protocol",
+            "pricePerCallUsdc": 0.002,
+            "description": "Fetch live position health for a wallet+protocol"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.003,
+            "description": "Monitor position and return risk score"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/defend",
+            "pricePerCallUsdc": 0.005,
+            "description": "Execute defensive action to prevent liquidation"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          }
+        ],
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "endpointPricing": [
+          {
+            "method": "GET",
+            "pathPattern": "/position/:wallet/:protocol",
+            "pricePerCallUsdc": 0.001,
+            "description": "Position health (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/monitor",
+            "pricePerCallUsdc": 0.002,
+            "description": "Risk monitor (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/defend",
+            "pricePerCallUsdc": 0.003,
+            "description": "Defense action (discounted)"
+          }
+        ],
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/position/:wallet/:protocol",
+        "description": "Fetch live position health \u2014 collateral ratio, liquidation threshold, health factor"
+      },
+      {
+        "method": "POST",
+        "path": "/monitor",
+        "description": "Monitor position risk \u2014 risk score, alert level, recommended action"
+      },
+      {
+        "method": "POST",
+        "path": "/defend",
+        "description": "Execute defensive action \u2014 repay debt, add collateral, or rebalance to prevent liquidation"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      }
+    ],
+    "keywords": [
+      "defi liquidation protection",
+      "monitor collateral ratio",
+      "aave position health",
+      "prevent liquidation defi",
+      "lending protocol risk api"
+    ]
+  }
+]
