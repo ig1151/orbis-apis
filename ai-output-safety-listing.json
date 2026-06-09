@@ -1,0 +1,119 @@
+[
+  {
+    "name": "AI Output Safety API",
+    "shortDescription": "Detect harmful, toxic, or policy-violating content in AI-generated text",
+    "description": "Scan AI-generated text for harmful content, policy violations, PII leakage, and prompt injection. Supports safety scoring, batch processing, and automatic redaction. Built for LLM pipelines, content moderation agents, and AI governance workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/ai-output-safety",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ai-output-safety/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ai-output-safety/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "ai-safety",
+      "content-moderation",
+      "toxicity",
+      "pii-detection",
+      "llm-guardrails"
+    ],
+    "keywords": [
+      "ai output safety checker",
+      "detect harmful ai content",
+      "llm content moderation",
+      "toxicity detection api",
+      "pii redaction api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check",
+            "pricePerCallUsdc": 0.003,
+            "description": "Safety check — harmful content and policy violation detection"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "Safety score — numeric risk score for AI output"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/redact",
+            "pricePerCallUsdc": 0.003,
+            "description": "Redact PII and sensitive content from AI output"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/batch",
+            "pricePerCallUsdc": 0.002,
+            "description": "Batch safety check"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Safety check (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Safety score (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/redact",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Redaction (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/v1/check",
+        "description": "Check AI output for harmful content, policy violations, and prompt injection"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/score",
+        "description": "Get a numeric safety risk score for AI-generated text"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/redact",
+        "description": "Automatically redact PII and sensitive content from AI output"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/batch",
+        "description": "Batch safety check for multiple outputs"
+      }
+    ]
+  }
+]

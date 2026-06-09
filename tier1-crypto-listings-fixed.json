@@ -1,0 +1,608 @@
+[
+  {
+    "name": "Whale Wallet Tracker API",
+    "shortDescription": "Track whale wallet movements, accumulation patterns, and smart entry/exit signals across chains",
+    "description": "Institutional-grade whale intelligence API for trading agents, portfolio managers, and autonomous crypto workflows. Monitor large wallet accumulation, exchange inflows/outflows, smart money positioning, profit-taking behavior, and confidence-scored entry/exit signals. Optimized for x402 micropayments, Coinbase Bazaar, and agent-native execution workflows.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/whale-wallet-tracker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/whale-wallet-tracker/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/whale-wallet-tracker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/whale-wallet-tracker.png",
+    "tags": [
+      "whales",
+      "wallet-tracking",
+      "smart-money",
+      "on-chain",
+      "crypto",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "track whale wallet",
+      "large crypto transfers",
+      "wallet holdings api",
+      "whale accumulation",
+      "onchain entry exit signals"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/track",
+            "pricePerCallUsdc": 0.003,
+            "description": "Track a specific wallet \u2014 classification, recent activity, holdings, and entry/exit signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.005,
+            "description": "Scan for recent large whale movements across the market"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: top whale wallets + recent moves + aggregate entry/exit signal for a token"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/track",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Track wallet (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Market scan (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "Full lookup (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/track",
+        "description": "Track a specific wallet \u2014 classification, recent activity, holdings, and entry/exit signals"
+      },
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Scan for recent large whale movements across the market"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: top whale wallets + recent moves + aggregate entry/exit signal for a token"
+      }
+    ],
+    "x402Compatible": true,
+    "agentCallable": true,
+    "mcpCompatible": true,
+    "coinbaseBazaarReady": true,
+    "paperModeRecommended": true,
+    "financialDisclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+  },
+  {
+    "name": "Smart Money Flow API",
+    "shortDescription": "Track institutional and smart-money capital flows across crypto ecosystems",
+    "description": "Advanced smart money intelligence API for AI trading systems, hedge funds, and autonomous market agents. Analyze institutional capital flows, rotation patterns, accumulation zones, liquidity migration, and conviction scoring across chains, sectors, and assets.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/smart-money-flow",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/smart-money-flow/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/smart-money-flow/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/smart-money-flow.png",
+    "tags": [
+      "smart-money",
+      "capital-flows",
+      "institutional",
+      "on-chain",
+      "trading-signals",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "smart money flow api",
+      "institutional wallet flows",
+      "crypto sector rotation",
+      "top smart wallets",
+      "onchain capital flows"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/flows",
+            "pricePerCallUsdc": 0.004,
+            "description": "Current smart money capital flows by sector \u2014 rotation direction and momentum signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/wallets",
+            "pricePerCallUsdc": 0.006,
+            "description": "Top smart money wallets \u2014 recent positions, ROI, and current thesis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL: smart money flow summary + top holders + rotation signal for a token"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/flows",
+        "description": "Current smart money capital flows by sector \u2014 rotation direction and momentum signals"
+      },
+      {
+        "method": "POST",
+        "path": "/wallets",
+        "description": "Top smart money wallets \u2014 recent positions, ROI, and current thesis"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: smart money flow summary + top holders + rotation signal for a token"
+      }
+    ],
+    "x402Compatible": true,
+    "agentCallable": true,
+    "mcpCompatible": true,
+    "coinbaseBazaarReady": true,
+    "paperModeRecommended": true,
+    "financialDisclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+  },
+  {
+    "name": "Meme Coin Intelligence API",
+    "shortDescription": "Virality scoring, rugpull detection, momentum tracking, and meme coin social intelligence",
+    "description": "AI-powered meme coin intelligence API for traders, discovery engines, and autonomous crypto agents. Detect virality, momentum acceleration, social hype, rugpull risk, whale participation, and conviction signals before meme narratives peak.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/meme-coin-intelligence",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/meme-coin-intelligence/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/meme-coin-intelligence/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/meme-coin-intelligence.png",
+    "tags": [
+      "meme-coins",
+      "virality",
+      "rugpull-risk",
+      "social-sentiment",
+      "momentum",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "meme coin intelligence",
+      "rugpull risk api",
+      "meme coin virality score",
+      "trending meme coins",
+      "contract safety score"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.003,
+            "description": "Virality + rugpull risk score for a meme coin \u2014 momentum, social signals, contract safety"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.004,
+            "description": "Trending meme coins right now \u2014 ranked by virality with risk summary"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: full meme coin intelligence \u2014 virality, rugpull risk, momentum, lifecycle stage, entry window"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Virality + rugpull risk score for a meme coin \u2014 momentum, social signals, contract safety"
+      },
+      {
+        "method": "POST",
+        "path": "/trending",
+        "description": "Trending meme coins right now \u2014 ranked by virality with risk summary"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: full meme coin intelligence \u2014 virality, rugpull risk, momentum, lifecycle stage, entry window"
+      }
+    ],
+    "x402Compatible": true,
+    "agentCallable": true,
+    "mcpCompatible": true,
+    "coinbaseBazaarReady": true,
+    "paperModeRecommended": true,
+    "financialDisclaimer": "For informational purposes only. Not financial advice. Meme coins are extremely high risk \u2014 can go to zero instantly."
+  },
+  {
+    "name": "Cross-Exchange Arbitrage API",
+    "shortDescription": "Detect real-time crypto arbitrage opportunities across centralized exchanges",
+    "description": "Professional arbitrage intelligence API for trading bots, quant systems, and autonomous execution agents. Detect cross-exchange price gaps, fee-adjusted net profit, liquidity depth, transfer latency risk, and executable arbitrage opportunities in real time.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/cross-exchange-arbitrage/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/cross-exchange-arbitrage.png",
+    "tags": [
+      "arbitrage",
+      "trading",
+      "cross-exchange",
+      "crypto",
+      "quant",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "crypto arbitrage api",
+      "cross exchange price gaps",
+      "arbitrage opportunities",
+      "net spread after fees",
+      "trading bot arbitrage"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.005,
+            "description": "Price comparison across exchanges for a token \u2014 bids, asks, fees, and net spread"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/opportunities",
+            "pricePerCallUsdc": 0.006,
+            "description": "Top arbitrage opportunities across the market \u2014 ranked by net profit after all fees"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL: full arbitrage analysis for a token \u2014 prices, best route, alternatives, risk assessment, verdict"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.0025,
+            "description": "Scan (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/opportunities",
+            "pricePerCallUsdc": 0.003,
+            "description": "Opportunities (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "Full lookup (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Price comparison across exchanges for a token \u2014 bids, asks, fees, and net spread"
+      },
+      {
+        "method": "POST",
+        "path": "/opportunities",
+        "description": "Top arbitrage opportunities across the market \u2014 ranked by net profit after all fees"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: full arbitrage analysis for a token \u2014 prices, best route, alternatives, risk assessment, verdict"
+      }
+    ],
+    "x402Compatible": true,
+    "agentCallable": true,
+    "mcpCompatible": true,
+    "coinbaseBazaarReady": true,
+    "paperModeRecommended": true,
+    "financialDisclaimer": "For informational purposes only. Not financial advice. Arbitrage prices are time-sensitive \u2014 always verify independently before executing."
+  },
+  {
+    "name": "Market Dominance API",
+    "shortDescription": "Track BTC, ETH, and altcoin dominance shifts with sector rotation intelligence",
+    "description": "Crypto market rotation intelligence API for portfolio managers, macro traders, and AI market agents. Analyze BTC dominance, ETH rotation, altseason probability, liquidity migration, and sector leadership shifts across crypto markets.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/market-dominance",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/market-dominance/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/market-dominance/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/market-dominance.png",
+    "tags": [
+      "market-dominance",
+      "btc-dominance",
+      "altseason",
+      "market-rotation",
+      "macro",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "btc dominance api",
+      "alt season indicator",
+      "crypto market phase",
+      "market dominance history",
+      "portfolio allocation signal"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/current",
+            "pricePerCallUsdc": 0.003,
+            "description": "Current BTC/ETH/alt dominance \u2014 market phase and rotation signals"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.004,
+            "description": "Historical dominance data \u2014 trend analysis and phase transitions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: dominance + phase + rotation signals + portfolio allocation implications"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/current",
+        "description": "Current BTC/ETH/alt dominance \u2014 market phase and rotation signals"
+      },
+      {
+        "method": "POST",
+        "path": "/history",
+        "description": "Historical dominance data \u2014 trend analysis and phase transitions"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: dominance + phase + rotation signals + portfolio allocation implications"
+      }
+    ],
+    "x402Compatible": true,
+    "agentCallable": true,
+    "mcpCompatible": true,
+    "coinbaseBazaarReady": true,
+    "paperModeRecommended": true,
+    "financialDisclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+  },
+  {
+    "name": "Token Holder Distribution API",
+    "shortDescription": "Analyze whale concentration, holder distribution, and accumulation trends for any token",
+    "description": "Institutional-grade token holder intelligence API for due diligence, risk analysis, and trading workflows. Analyze whale ownership concentration, top-10 holder control, holder growth trends, wallet distribution health, and accumulation risk signals across tokens.",
+    "category": "financial-data",
+    "baseUrl": "https://orbis-apis.onrender.com/token-holder-distribution",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/token-holder-distribution/docs",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/token-holder-distribution/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/assets/token-holder-distribution.png",
+    "tags": [
+      "token-distribution",
+      "holder-analysis",
+      "whales",
+      "on-chain",
+      "risk-analysis",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "token holder distribution",
+      "top holders api",
+      "whale concentration risk",
+      "tokenomics analysis",
+      "sell pressure risk"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.003,
+            "description": "Snapshot of token holder distribution \u2014 whale %, top-10 concentration, segment breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trend",
+            "pricePerCallUsdc": 0.004,
+            "description": "Holder distribution trend \u2014 growth rate, decentralization direction, whale behavior over time"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL: snapshot + trend + concentration risk + investment signal for a token"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Analyze (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trend",
+            "pricePerCallUsdc": 0.002,
+            "description": "Trend (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.004,
+            "description": "Full lookup (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Snapshot of token holder distribution \u2014 whale %, top-10 concentration, segment breakdown"
+      },
+      {
+        "method": "POST",
+        "path": "/trend",
+        "description": "Holder distribution trend \u2014 growth rate, decentralization direction, whale behavior over time"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: snapshot + trend + concentration risk + investment signal for a token"
+      }
+    ],
+    "x402Compatible": true,
+    "agentCallable": true,
+    "mcpCompatible": true,
+    "coinbaseBazaarReady": true,
+    "paperModeRecommended": true,
+    "financialDisclaimer": "For informational purposes only. Not financial advice. Verify independently before use in trading workflows."
+  }
+]

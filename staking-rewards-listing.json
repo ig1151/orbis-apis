@@ -1,0 +1,125 @@
+[
+  {
+    "name": "Staking Rewards API",
+    "shortDescription": "Staking APY rates, provider comparison, reward estimates, and network health for PoS assets",
+    "description": "Get native and real APY after inflation for PoS assets, compare providers (exchange, liquid staking, self-custody, pool), estimate rewards for a given amount and duration with price scenarios, and retrieve network health data. Compare yields across up to 15 assets ranked by risk-adjusted APY. Built for yield-seeking agents, portfolio managers, and DeFi automation workflows.",
+    "category": "defi",
+    "baseUrl": "https://orbis-apis.onrender.com/staking-rewards",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/staking-rewards/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/staking-rewards/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "staking",
+      "apy",
+      "defi",
+      "proof-of-stake",
+      "yield"
+    ],
+    "keywords": [
+      "staking rewards api",
+      "crypto staking apy api",
+      "ethereum staking yield api",
+      "liquid staking provider comparison",
+      "proof of stake rewards calculator"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rates",
+            "pricePerCallUsdc": 0.003,
+            "description": "Staking rates with native APY, real APY, providers, lock-up, and slash risk"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/estimate",
+            "pricePerCallUsdc": 0.003,
+            "description": "Estimate rewards for a given amount and duration with 4 price scenarios"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.004,
+            "description": "Compare staking yields across up to 15 PoS assets by risk-adjusted APY"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.006,
+            "description": "ONE-CALL: rates + provider comparison + reward estimate + network health"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/rates",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Rates (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/estimate",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Estimate (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.002,
+            "description": "Compare (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.003,
+            "description": "Full lookup (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/rates",
+        "description": "Staking rates — native APY, real APY after inflation, providers, lock-up, unbonding, slash risk"
+      },
+      {
+        "method": "POST",
+        "path": "/estimate",
+        "description": "Estimate staking rewards for a given amount and duration with price scenarios"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare staking yields across up to 15 PoS assets — ranked by risk-adjusted APY"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: rates + provider comparison + reward estimate + network health"
+      }
+    ]
+  }
+]

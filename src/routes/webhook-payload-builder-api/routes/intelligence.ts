@@ -32,6 +32,7 @@ export interface BuildResult {
   signed_string: string;
   timestamp: number;
   message_id: string;
+  secret_echoed: false;
   request: { method: 'POST'; url: string | null; headers: Record<string, string>; body: string };
 }
 
@@ -124,6 +125,7 @@ export function computeBuild(i: BuildInput): BuildResult {
     signed_string,
     timestamp,
     message_id,
+    secret_echoed: false,
     request: { method: 'POST', url: i.url ?? null, headers, body: bodyStr },
   };
 }

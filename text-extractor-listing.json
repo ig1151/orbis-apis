@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Text Extractor API",
+    "shortDescription": "Extract structured data and named entities from unstructured text",
+    "description": "Extract structured data and named entities from unstructured text using AI. Supports schema-driven extraction and full entity recognition for document processing, data pipeline, and NLP automation agents.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/text-extractor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/text-extractor/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/text-extractor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "nlp",
+      "extraction",
+      "structured-data",
+      "entities",
+      "document-processing"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.004,
+            "description": "Schema-driven structured data extraction"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/entities",
+            "pricePerCallUsdc": 0.003,
+            "description": "Named entity recognition"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/execution-gate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Execution readiness check"
+          }
+        ],
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/extract",
+            "pricePerCallUsdc": 0.002,
+            "description": "Structured extraction (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/entities",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Entity recognition (discounted)"
+          }
+        ],
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/extract",
+        "description": "Schema-driven extraction \u2014 pull structured fields from free-form text using a JSON schema definition"
+      },
+      {
+        "method": "POST",
+        "path": "/entities",
+        "description": "Named entity recognition \u2014 extract people, organizations, locations, dates, and custom entities"
+      },
+      {
+        "method": "POST",
+        "path": "/execution-gate",
+        "description": "Execution readiness check with next API chaining"
+      }
+    ],
+    "keywords": [
+      "extract data from text",
+      "structured data extraction api",
+      "named entity recognition",
+      "parse unstructured text",
+      "nlp data extraction"
+    ]
+  }
+]

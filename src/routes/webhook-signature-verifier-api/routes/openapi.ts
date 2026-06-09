@@ -15,7 +15,7 @@ const VerifyCore = {
   type: 'object',
   required: [
     'provider', 'algorithm', 'encoding', 'signature_status', 'match',
-    'computed_signature', 'provided_signature', 'signed_string_note', 'recommended_fix',
+    'computed_signature', 'computed_signature_preview', 'provided_signature', 'signed_string_note', 'recommended_fix',
   ],
   properties: {
     provider: { type: 'string', enum: ['stripe', 'github', 'shopify', 'slack', 'svix', 'generic'] },
@@ -23,7 +23,8 @@ const VerifyCore = {
     encoding: { type: 'string', enum: ['hex', 'base64'] },
     signature_status: { type: 'string', enum: ['valid', 'invalid', 'missing_signature', 'missing_timestamp'] },
     match: { type: 'boolean', description: 'True only when the computed digest matched the provided one (constant-time).' },
-    computed_signature: { type: ['string', 'null'], description: 'The signature this service computed (with provider prefix), or null when input was missing.' },
+    computed_signature: { type: ['string', 'null'], description: 'The full signature this service computed (with provider prefix), or null when input was missing. The caller supplied the secret, so this leaks nothing they could not compute — useful for diffing against what you received.' },
+    computed_signature_preview: { type: ['string', 'null'], description: 'A short, log-safe preview of computed_signature ("<prefix><first 8 hex>…"); null when no signature was computed.' },
     provided_signature: { type: 'string', description: 'The signature value you supplied, echoed back.' },
     signed_string_note: { type: 'string', description: 'How this provider canonicalizes the signed string.' },
     recommended_fix: { type: ['string', 'null'], description: 'Actionable fix when the check did not pass; null when valid.' },
@@ -108,6 +109,7 @@ const CORE_EXAMPLE = {
   signature_status: 'valid',
   match: true,
   computed_signature: '8b9c0d1e2f3a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4',
+  computed_signature_preview: '8b9c0d1e…',
   provided_signature: 't=1718000000,v1=8b9c0d1e2f3a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4',
   signed_string_note: 'HMAC-SHA256 over "{timestamp}.{raw_body}", hex; header is "t=<ts>,v1=<sig>".',
   recommended_fix: null,

@@ -1,0 +1,96 @@
+[
+  {
+    "name": "Token Trust API",
+    "shortDescription": "Assess ERC-20 and SPL token contract risk, honeypot detection, and liquidity analysis",
+    "description": "Evaluate smart contract token risk before interacting. Detects honeypots, rug pulls, minting risks, ownership concentration, and liquidity traps. Returns a trust score and actionable risk flags for DeFi and Web3 agents making token-gated decisions.",
+    "category": "blockchain-web3",
+    "baseUrl": "https://orbis-apis.onrender.com/token-trust",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/token-trust/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/token-trust/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "token-safety",
+      "honeypot-detection",
+      "defi",
+      "smart-contract",
+      "rug-pull"
+    ],
+    "keywords": [
+      "token trust score api",
+      "honeypot detector",
+      "erc20 contract risk",
+      "defi token safety check",
+      "rug pull detection api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check",
+            "pricePerCallUsdc": 0.008,
+            "description": "Full token trust check — honeypot, rug pull, liquidity, and ownership analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check/batch",
+            "pricePerCallUsdc": 0.006,
+            "description": "Batch token trust check"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check",
+            "pricePerCallUsdc": 0.005,
+            "description": "Token trust check (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check/batch",
+            "pricePerCallUsdc": 0.003,
+            "description": "Batch check (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/v1/check",
+        "description": "Evaluate a token contract — trust score, honeypot flag, rug pull risk, liquidity analysis"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/check",
+        "description": "Evaluate a token contract via query params"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/check/batch",
+        "description": "Batch token trust evaluation for multiple contracts"
+      }
+    ]
+  }
+]

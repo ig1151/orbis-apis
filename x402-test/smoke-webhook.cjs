@@ -74,7 +74,8 @@ async function run(base) {
   const ghReq = { provider: 'github', secret: ghSecret, payload: ghBody, signature: ghSig };
   const ghOk = await call(base, 'POST', '/webhook-signature-verifier/verify', ghReq);
   check('webhook-signature-verifier', 'POST /verify (github valid)', 'VerifyResponse', ghOk, (d) =>
-    d.signature_status === 'valid' && d.match === true && d.recommended_fix === null && d.computed_signature === ghSig ? null : `expected valid: ${JSON.stringify({ s: d.signature_status, c: d.computed_signature })}`);
+    d.signature_status === 'valid' && d.match === true && d.recommended_fix === null && d.computed_signature === ghSig &&
+    d.computed_signature_preview === 'sha256=' + ghSig.slice(7, 15) + '…' ? null : `expected valid: ${JSON.stringify({ s: d.signature_status, c: d.computed_signature, p: d.computed_signature_preview })}`);
 
   const ghBad = await call(base, 'POST', '/webhook-signature-verifier/verify', { ...ghReq, secret: 'wrong-secret' });
   check('webhook-signature-verifier', 'POST /verify (github wrong secret)', 'VerifyResponse', ghBad, (d) =>
@@ -166,7 +167,7 @@ async function run(base) {
   const bb = await call(base, 'POST', '/webhook-payload-builder/build', buildReq);
   check('webhook-payload-builder', 'POST /build (github)', 'BuildResponse', bb, (d) =>
     d.provider === 'github' && d.headers['X-Hub-Signature-256'] === d.signature && d.signature.startsWith('sha256=') &&
-    d.request.method === 'POST' && d.request.body === d.body && d.message_id === 'evt_x' ? null : `build shape: ${JSON.stringify({ h: d.headers, sig: d.signature })}`);
+    d.request.method === 'POST' && d.request.body === d.body && d.message_id === 'evt_x' && d.secret_echoed === false ? null : `build shape: ${JSON.stringify({ h: d.headers, sig: d.signature, se: d.secret_echoed })}`);
   // Independent recompute of the github signature over the returned body.
   check('webhook-payload-builder', 'build signature matches independent HMAC', 'BuildResponse', bb, (d) => {
     const expect = 'sha256=' + crypto.createHmac('sha256', 'topsecret').update(d.body, 'utf8').digest('hex');
@@ -187,6 +188,22 @@ async function run(base) {
 
   const bBad = await call(base, 'POST', '/webhook-payload-builder/build', { provider: 'github', event_type: '', data: {}, secret: 's' });
   check('webhook-payload-builder', 'POST /build (empty event_type → 400)', 'Error400', bBad, (d) => d.error && d.error.code === 'invalid_request' ? null : 'expected invalid_request');
+
+  // ---- Embedded responseExample drift guard: every example in every spec must
+  // validate against the schema it is declared under. Catches hand-written
+  // example/response divergence (e.g. a stale delivery_score).
+  console.log('openapi responseExample validation:');
+  for (const [slug, { spec }] of Object.entries(APIS)) {
+    for (const [p, ops] of Object.entries(spec.paths)) {
+      for (const [method, op] of Object.entries(ops)) {
+        const media = op.responses?.['200']?.content?.['application/json'];
+        if (!media?.example) continue;
+        const ref = media.schema?.$ref?.split('/').pop();
+        if (!ref) continue;
+        check(slug, `example ${method.toUpperCase()} ${p}`, ref, media.example);
+      }
+    }
+  }
 
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);

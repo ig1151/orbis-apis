@@ -167,15 +167,15 @@ const REQ_EXAMPLE = {
 };
 
 const CORE_EXAMPLE = {
-  delivery_score: 60.5,
-  health_status: 'unhealthy',
+  delivery_score: 36.3,
+  health_status: 'critical',
   total_deliveries: 4,
   successful_deliveries: 2,
   failed_deliveries: 2,
   success_rate: 0.5,
   failure_rate: 0.5,
   retry_rate: 0.25,
-  latency: { p50_ms: 720, p95_ms: 7860, max_ms: 9000 },
+  latency: { p50_ms: 720, p95_ms: 7830, max_ms: 9000 },
   failure_reason: [
     { category: 'server_error', count: 1, share: 0.5 },
     { category: 'timeout', count: 1, share: 0.5 },
@@ -186,8 +186,9 @@ const CORE_EXAMPLE = {
 const TAIL_EXAMPLE = {
   confidence_score: 1.0,
   recommended_actions_priority_order: [
-    'Delivery health is unhealthy (60.5/100) with a 50% failure rate — Server-side (5xx) failures are usually transient — retry with jittered exponential backoff; dead-letter after exhausting retries.',
-    'p95 latency is 7860ms — keep handlers under ~1s by processing webhooks asynchronously (ack fast, work in a queue).',
+    'Delivery health is critical (36.3/100) with a 50% failure rate — Server-side (5xx) failures are usually transient — retry with jittered exponential backoff; dead-letter after exhausting retries.',
+    'p95 latency is 7830ms — keep handlers under ~1s by processing webhooks asynchronously (ack fast, work in a queue).',
+    'Retry rate is 25% — high retrying inflates load; ensure handlers are idempotent and return 2xx quickly.',
   ],
   chain_to: [
     { api: 'webhook-validator', reason: 'Check whether the endpoint config (timeouts, retries, idempotency) explains the failures.' },
@@ -216,7 +217,7 @@ const endpoints: AplusEndpoint[] = [
       ...CORE_EXAMPLE,
       reasoning: {
         why_result_generated: 'Scored 4 deliveries (2 ok / 2 failed) from attempts; started at success_rate×100 (50) then applied retry and latency penalties.',
-        key_factors: ['Success rate 50%, retry rate 25%.', 'Latency p50 720ms / p95 7860ms.', 'Top failure category: server_error (1).'],
+        key_factors: ['Success rate 50%, retry rate 25%.', 'Latency p50 720ms / p95 7830ms.', 'Top failure category: server_error (1).'],
         invalidators: ['A small sample size makes the score noisy — interpret with caution under ~50 deliveries.', 'Client-side (4xx) failures will not improve with retries even though they lower the score.'],
       },
       ...TAIL_EXAMPLE,

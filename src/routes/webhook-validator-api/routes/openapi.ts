@@ -188,7 +188,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic webhook configuration + payload best-practice validation. Supply any subset of endpoint config (url, signature verification, timestamp/replay protection, idempotency, content-type, timeout, retries, payload size) plus an optional sample body, and it runs a fixed checklist returning typed checks[] (each with severity and a concrete recommendation), counts, and a 0–100 validation_score with a production-readiness verdict. Real rule-based checks, never an LLM guess; confidence is always 1.0. Nothing is stored.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-webhook': true },
+  infoExtensions: { 'x-webhook': true, 'x-security-sensitive': true },
 });
 
 export default specRouter(spec);

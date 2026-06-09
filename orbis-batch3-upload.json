@@ -1,0 +1,138 @@
+[
+  {
+    "name": "AES Vault API",
+    "shortDescription": "Stateless AES-256-GCM encrypt/decrypt for agents — real crypto, caller-owned keys, nothing stored",
+    "description": "Agent-native authenticated encryption using AES-256-GCM, computed with Node's crypto (not a language model). /generate-key returns a random 256-bit key; /encrypt encrypts UTF-8 plaintext under a caller-supplied key and returns ciphertext, IV, and GCM auth tag (all base64); /decrypt verifies the auth tag and returns the plaintext, failing closed on any tampering or wrong key. The one-call /lookup generates a fresh key, encrypts, and returns the complete reusable bundle plus a reasoning object. Fully stateless — keys and data are never stored (lose the key and the ciphertext is unrecoverable). Confidence is always 1.0.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/aes-vault",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/aes-vault/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/aes-vault/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["encryption", "aes", "cryptography", "security", "developer-tools", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["aes encryption api", "aes-256-gcm api", "encrypt decrypt api", "authenticated encryption api", "stateless encryption api", "generate aes key api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/generate-key", "pricePerCallUsdc": 0.003, "description": "Generate a random 256-bit key" },
+          { "method": "POST", "pathPattern": "/encrypt", "pricePerCallUsdc": 0.01, "description": "Encrypt plaintext with a provided key" },
+          { "method": "POST", "pathPattern": "/decrypt", "pricePerCallUsdc": 0.01, "description": "Decrypt ciphertext with key + iv + auth tag" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL generate key + encrypt + full reusable bundle" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/generate-key", "description": "Generate a 256-bit AES key" },
+      { "method": "POST", "path": "/encrypt", "description": "AES-256-GCM encrypt" },
+      { "method": "POST", "path": "/decrypt", "description": "AES-256-GCM decrypt" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL key + encrypt bundle" }
+    ]
+  },
+  {
+    "name": "JSON to CSV API",
+    "shortDescription": "Deterministic JSON conversion to CSV, JSON, or JSONL with nested flattening and type inference for data agents",
+    "description": "Agent-native JSON conversion computed in real code (not by a language model). /convert turns a JSON object or array of objects into RFC 4180 CSV, a JSON array, or newline-delimited JSON (JSONL) via the output parameter — flattening nested objects with dot-notation keys, serializing arrays as JSON, unioning columns across rows, and quoting values that contain delimiters, quotes, or newlines. Configurable delimiter, header, flattening, and output format. The one-call /lookup adds per-column type inference (string/number/boolean/json/null/mixed), a reasoning object, and prioritized recommendations. Handles up to 10,000 rows. Confidence is always 1.0 because nothing is estimated.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/json-to-csv",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/json-to-csv/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/json-to-csv/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["json", "csv", "jsonl", "data-transform", "developer-tools", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["json to csv api", "convert json to csv", "json to jsonl api", "flatten json api", "csv export api", "json array to csv", "nested json csv converter"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.005, "description": "Convert a JSON array of objects to CSV, JSON, or JSONL" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "ONE-CALL convert + column type inference + reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/convert", "description": "JSON to CSV / JSON / JSONL conversion" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL convert + type inference" }
+    ]
+  },
+  {
+    "name": "Unit Conversion API",
+    "shortDescription": "Deterministic unit conversion across 8 measurement categories for agents — exact SI math, never estimated",
+    "description": "Agent-native measurement conversion computed in real code (not by a language model). The free /supported-units endpoint lists every supported unit symbol per category, so agents can discover what's convertible. /convert converts a value between any two units of the same category — length, mass, volume, area, speed, time, digital data, or temperature — using exact SI factors. /batch converts up to 100 value/unit pairs in one call with per-item success flags. The one-call /lookup returns the conversion plus the same value expressed in every unit of the category, a reasoning object, and prioritized recommendations. Confidence is always 1.0 because nothing is estimated. Accepts both from/to and legacy from_unit/to_unit field names.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/unit-conversion",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/unit-conversion/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/unit-conversion/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["units", "conversion", "measurement", "developer-tools", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["unit conversion api", "kg to lbs converter api", "metric imperial conversion", "temperature converter api", "data size converter api", "batch unit conversion", "supported units api", "unit catalog api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 200000,
+        "requestsPerMonth": 6000000,
+        "endpointPricing": [
+          { "method": "GET", "pathPattern": "/supported-units", "pricePerCallUsdc": 0, "description": "List every supported unit symbol per category (free)" },
+          { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.005, "description": "Convert a value between two units of the same category" },
+          { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.01, "description": "Convert up to 100 value/unit pairs in one call" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "ONE-CALL convert + all sibling-unit equivalents + reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "GET", "path": "/supported-units", "description": "List all supported units (free)" },
+      { "method": "POST", "path": "/convert", "description": "Single unit conversion" },
+      { "method": "POST", "path": "/batch", "description": "Batch convert up to 100 pairs" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL conversion + all equivalents" }
+    ]
+  },
+  {
+    "name": "Cron Explainer API",
+    "shortDescription": "Deterministic cron parsing — plain-English description + next run times in any IANA timezone (DST-aware) for scheduling agents",
+    "description": "Agent-native cron expression intelligence computed in real code (not by a language model). /explain parses a standard 5-field cron expression into its component fields and a plain-English description (e.g. '0 9 * * 1-5' → 'At 09:00, Monday through Friday'). The one-call /lookup adds the next scheduled run times in any IANA timezone (DST-aware, e.g. America/New_York — returned as ISO-8601 with the UTC offset), a next_run_count, configurable count and reference time, a reasoning object, and prioritized recommendations. Handles ranges, lists, steps, and month/day names, with correct Vixie-cron day-of-month/day-of-week matching. Confidence is always 1.0 because nothing is estimated.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/cron-explainer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/cron-explainer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/cron-explainer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["cron", "scheduling", "crontab", "developer-tools", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["cron expression parser api", "explain cron api", "next cron run time api", "crontab to english", "cron schedule calculator", "cron describer api", "cron timezone api", "cron next run timezone"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/explain", "pricePerCallUsdc": 0.005, "description": "Parse a cron expression into fields + plain-English description" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "ONE-CALL explain + next run times (any IANA timezone, DST-aware) + reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/explain", "description": "Parse + describe a cron expression" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL explain + next run times (any IANA timezone, DST-aware)" }
+    ]
+  }
+]

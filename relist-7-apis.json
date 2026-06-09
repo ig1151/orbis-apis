@@ -1,0 +1,674 @@
+[
+  {
+    "name": "AI Output Safety API",
+    "shortDescription": "Detect harmful, toxic, or policy-violating content in AI-generated text",
+    "description": "Scan AI-generated text for harmful content, policy violations, PII leakage, and prompt injection. Supports safety scoring, batch processing, and automatic redaction. Built for LLM pipelines, content moderation agents, and AI governance workflows.",
+    "category": "ai-ml",
+    "baseUrl": "https://orbis-apis.onrender.com/ai-output-safety",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ai-output-safety/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ai-output-safety/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "ai-safety",
+      "content-moderation",
+      "toxicity",
+      "pii-detection",
+      "llm-guardrails"
+    ],
+    "keywords": [
+      "ai output safety checker",
+      "detect harmful ai content",
+      "llm content moderation",
+      "toxicity detection api",
+      "pii redaction api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.004,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check",
+            "pricePerCallUsdc": 0.003,
+            "description": "Safety check \u2014 harmful content and policy violation detection"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/score",
+            "pricePerCallUsdc": 0.002,
+            "description": "Safety score \u2014 numeric risk score for AI output"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/redact",
+            "pricePerCallUsdc": 0.003,
+            "description": "Redact PII and sensitive content from AI output"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/batch",
+            "pricePerCallUsdc": 0.002,
+            "description": "Batch safety check"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Safety check (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/score",
+            "pricePerCallUsdc": 0.001,
+            "description": "Safety score (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/redact",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Redaction (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/v1/check",
+        "description": "Check AI output for harmful content, policy violations, and prompt injection"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/score",
+        "description": "Get a numeric safety risk score for AI-generated text"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/redact",
+        "description": "Automatically redact PII and sensitive content from AI output"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/batch",
+        "description": "Batch safety check for multiple outputs"
+      }
+    ]
+  },
+  {
+    "name": "Token Trust API",
+    "shortDescription": "Assess ERC-20 and SPL token contract risk, honeypot detection, and liquidity analysis",
+    "description": "Evaluate smart contract token risk before interacting. Detects honeypots, rug pulls, minting risks, ownership concentration, and liquidity traps. Returns a trust score and actionable risk flags for DeFi and Web3 agents making token-gated decisions.",
+    "category": "blockchain-web3",
+    "baseUrl": "https://orbis-apis.onrender.com/token-trust",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/token-trust/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/token-trust/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "token-safety",
+      "honeypot-detection",
+      "defi",
+      "smart-contract",
+      "rug-pull"
+    ],
+    "keywords": [
+      "token trust score api",
+      "honeypot detector",
+      "erc20 contract risk",
+      "defi token safety check",
+      "rug pull detection api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check",
+            "pricePerCallUsdc": 0.008,
+            "description": "Full token trust check \u2014 honeypot, rug pull, liquidity, and ownership analysis"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check/batch",
+            "pricePerCallUsdc": 0.006,
+            "description": "Batch token trust check"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check",
+            "pricePerCallUsdc": 0.005,
+            "description": "Token trust check (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/check/batch",
+            "pricePerCallUsdc": 0.003,
+            "description": "Batch check (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/v1/check",
+        "description": "Evaluate a token contract \u2014 trust score, honeypot flag, rug pull risk, liquidity analysis"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/check",
+        "description": "Evaluate a token contract via query params"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/check/batch",
+        "description": "Batch token trust evaluation for multiple contracts"
+      }
+    ]
+  },
+  {
+    "name": "Lead Enrichment API",
+    "shortDescription": "Enrich leads with company, contact, and firmographic data from a domain or email",
+    "description": "Enrich sales leads with company profile, industry, headcount, tech stack, social profiles, and contact details. Accepts domain or email input. Built for CRM automation, outbound sales agents, and lead scoring pipelines.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/lead-enrichment",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/lead-enrichment/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/lead-enrichment/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "lead-enrichment",
+      "b2b",
+      "company-data",
+      "sales-intelligence",
+      "crm"
+    ],
+    "keywords": [
+      "lead enrichment api",
+      "company data from domain",
+      "b2b contact enrichment",
+      "firmographic data api",
+      "enrich email domain"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50,
+        "requestsPerMonth": 1500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.006,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/enrich",
+            "pricePerCallUsdc": 0.006,
+            "description": "Enrich a lead with company and contact data"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/enrich",
+            "pricePerCallUsdc": 0.003,
+            "description": "Lead enrichment (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/v1/enrich",
+        "description": "Enrich a lead \u2014 company profile, industry, headcount, tech stack, and contact details from domain or email"
+      }
+    ]
+  },
+  {
+    "name": "Search Extract API",
+    "shortDescription": "Web search and structured content extraction in one call",
+    "description": "Perform web searches and extract structured content from results in a single API call. Returns titles, snippets, URLs, and optionally scraped page content. Built for research agents, knowledge retrieval pipelines, and autonomous browsing workflows.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/search-extract",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/search-extract/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/search-extract/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "search",
+      "web-extraction",
+      "scraping",
+      "research",
+      "nlp"
+    ],
+    "keywords": [
+      "web search api",
+      "search and extract content",
+      "structured web scraping",
+      "research agent api",
+      "search results with content"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 50,
+        "requestsPerMonth": 1500
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/search",
+            "pricePerCallUsdc": 0.005,
+            "description": "Web search with structured content extraction"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/search/batch",
+            "pricePerCallUsdc": 0.004,
+            "description": "Batch search queries"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/v1/search",
+            "pricePerCallUsdc": 0.003,
+            "description": "Search and extract (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/v1/search/batch",
+            "pricePerCallUsdc": 0.002,
+            "description": "Batch search (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/v1/search",
+        "description": "Search the web and extract structured content \u2014 titles, snippets, URLs, and page text"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/search",
+        "description": "Search via query params"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/search/batch",
+        "description": "Run multiple search queries in a single request"
+      }
+    ]
+  },
+  {
+    "name": "Robots.txt Parser API",
+    "shortDescription": "Parse and validate robots.txt files to check crawl rules and permissions",
+    "description": "Parse any domain's robots.txt file and extract user-agent rules, allow/disallow paths, crawl delays, and sitemap references. Validate whether specific URLs are crawlable for given user agents. Built for SEO agents, web crawlers, and site auditing workflows.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/robots-txt-parser",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/robots-txt-parser/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/robots-txt-parser/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "robots-txt",
+      "seo",
+      "crawl",
+      "web-audit",
+      "sitemap"
+    ],
+    "keywords": [
+      "robots.txt parser api",
+      "crawl permission checker",
+      "robots txt validator",
+      "user-agent crawl rules",
+      "seo robots audit"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.002,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.001,
+            "description": "Parse robots.txt and extract crawl rules"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.001,
+            "description": "Validate whether a URL is allowed for a given user-agent"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.001,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/parse",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Parse (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.0005,
+            "description": "Validate (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/parse",
+        "description": "Fetch and parse a domain's robots.txt \u2014 returns user-agent rules, allowed/disallowed paths, and sitemaps"
+      },
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Check if a specific URL is crawlable for a given user-agent"
+      }
+    ]
+  },
+  {
+    "name": "IP Geolocation API",
+    "shortDescription": "IP address geolocation, risk scoring, and bulk lookups for fraud detection",
+    "description": "IP address geolocation, risk scoring, and bulk lookups for fraud detection, personalization, and access control agent workflows. Returns country, region, city, ISP, threat score, VPN flag, and proxy detection.",
+    "category": "data-analytics",
+    "baseUrl": "https://orbis-apis.onrender.com/ip-geolocation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/ip-geolocation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/ip-geolocation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "ip",
+      "geolocation",
+      "fraud",
+      "security",
+      "access-control"
+    ],
+    "keywords": [
+      "ip geolocation api",
+      "ip address lookup",
+      "fraud detection ip",
+      "vpn proxy detection",
+      "ip risk scoring"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.003,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.002,
+            "description": "Geolocation lookup \u2014 country, region, city, ISP"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/risk",
+            "pricePerCallUsdc": 0.003,
+            "description": "Risk scoring \u2014 threat score, VPN, proxy, and abuse detection"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/bulk",
+            "pricePerCallUsdc": 0.001,
+            "description": "Bulk IP lookup (per IP in batch)"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.0015,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.001,
+            "description": "Geolocation lookup (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/risk",
+            "pricePerCallUsdc": 0.0015,
+            "description": "Risk scoring (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Geolocate an IP address \u2014 country, region, city, coordinates, and ISP"
+      },
+      {
+        "method": "POST",
+        "path": "/risk",
+        "description": "Get threat score, VPN flag, proxy detection, and abuse history for an IP"
+      },
+      {
+        "method": "POST",
+        "path": "/bulk",
+        "description": "Bulk geolocation lookup for multiple IP addresses"
+      }
+    ]
+  },
+  {
+    "name": "Wallet Balance API",
+    "shortDescription": "Look up wallet token balances, portfolio composition, and transaction history",
+    "description": "Look up wallet token balances, analyze portfolio composition, view transaction history and estimate net worth for Web3 and DeFi agents. Supports EVM-compatible chains and returns structured balance data with USD valuation.",
+    "category": "blockchain-web3",
+    "baseUrl": "https://orbis-apis.onrender.com/wallet-balance",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/wallet-balance/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/wallet-balance/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "wallet",
+      "balance",
+      "portfolio",
+      "defi",
+      "web3"
+    ],
+    "keywords": [
+      "wallet balance api",
+      "crypto portfolio tracker",
+      "evm wallet lookup",
+      "token balance checker",
+      "defi net worth api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "Token balance lookup for a wallet address"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/portfolio",
+            "pricePerCallUsdc": 0.01,
+            "description": "Full portfolio composition with USD valuations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.01,
+            "description": "Transaction history for a wallet"
+          }
+        ]
+      },
+      {
+        "name": "High Volume",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 500000,
+        "requestsPerMonth": 15000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.003,
+            "description": "Balance lookup (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/portfolio",
+            "pricePerCallUsdc": 0.005,
+            "description": "Portfolio (discounted)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.005,
+            "description": "History (discounted)"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Look up token balances for a wallet address across EVM chains"
+      },
+      {
+        "method": "POST",
+        "path": "/portfolio",
+        "description": "Get full portfolio composition with token prices and USD net worth"
+      },
+      {
+        "method": "POST",
+        "path": "/history",
+        "description": "Retrieve transaction history for a wallet address"
+      }
+    ]
+  }
+]

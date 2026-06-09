@@ -29,9 +29,15 @@ const tests = [
   { slug: "nft-sniper-alert-api-ad69f1",          path: "/listings?collection=bayc", method: "GET" },
   { slug: "nft-volume-heatmap-api-9394dd",        path: "/collection?name=bayc",     method: "GET" },
   { slug: "nft-arbitrage-api-e2ee16",             path: "/opportunities?collection=bayc", method: "GET" },
-  // ── Still on old slugs (not re-uploaded) ──────────────────────────────────
-  { slug: "stablecoin-depeg-risk-api-e1a7a2",     path: "/check",         body: { symbol: "USDC" } },
-  { slug: "cross-exchange-arbitrage-api-6f66f2",  path: "/scan",          body: { token: "BTC" } },
+  // ── NEW slugs from 2nd upload (2026-05-28) ───────────────────────────────
+  { slug: "stablecoin-depeg-risk-api-a70cf1",     path: "/check",         body: { symbol: "USDC" } },
+  { slug: "cross-exchange-arbitrage-api-91c857",  path: "/scan",          body: { token: "BTC" } },
+  { slug: "impermanent-loss-api-901db5",          path: "/calculate",     body: { token_a: "ETH", token_b: "USDC", entry_price_a: 2000, entry_price_b: 1, current_price_a: 2500, current_price_b: 1 } },
+  { slug: "nft-floor-price-api-61ad50",           path: "/floor",         body: { collection: "bayc", chain: "ethereum" } },
+  { slug: "nft-whale-tracker-api-158b4f",         path: "/movements",     method: "GET" },
+  { slug: "nft-influencer-tracking-api-3bbc17",   path: "/activity",      method: "GET" },
+  { slug: "nft-rarity-score-api-a41170",          path: `/score?contract=${BAYC}&tokenId=1234`, method: "GET" },
+  // ── Still-passing old slugs (kept for regression) ─────────────────────────
   { slug: "tvl-analytics-api-616ae3",             path: "/protocol",      body: { protocol: "aave" } },
   { slug: "nft-collection-analytics-api-0c09f6",  path: "/collection",    body: { collection: "bayc", chain: "ethereum" } },
   { slug: "bollinger-band-alert-api-2240b8",      path: "/bands",         body: { symbol: "BTC", timeframe: "1d" } },

@@ -1,0 +1,91 @@
+[
+  {
+    "name": "Top Movers API",
+    "shortDescription": "Real-time top crypto gainers, losers, and trending coins with momentum signals",
+    "description": "Get real-time top crypto gainers, losers, and trending coins ranked by percentage change, volume, and momentum. Built for trading agents, market scanners, and portfolio dashboards that need to act on momentum signals. Includes trade signals, recovery likelihood, trend drivers, and sector rotation data.",
+    "category": "market-data",
+    "baseUrl": "https://orbis-apis.onrender.com/top-movers",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/top-movers/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/top-movers/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "top-movers",
+      "crypto-gainers",
+      "crypto-losers",
+      "trending-coins",
+      "market-data"
+    ],
+    "keywords": [
+      "top crypto gainers api",
+      "crypto top losers api",
+      "trending cryptocurrency api",
+      "market movers crypto api",
+      "momentum trading signals"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/gainers",
+            "pricePerCallUsdc": 0.002,
+            "description": "Top crypto gainers with momentum and trade signal"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/losers",
+            "pricePerCallUsdc": 0.002,
+            "description": "Top crypto losers with recovery likelihood and cause"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/trending",
+            "pricePerCallUsdc": 0.002,
+            "description": "Trending coins by search volume, social mentions, on-chain activity"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "ONE-CALL: gainers + losers + trending + market sentiment + sector rotation"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/gainers",
+        "description": "Top crypto gainers ranked by % gain \u2014 with momentum, signal, and category"
+      },
+      {
+        "method": "POST",
+        "path": "/losers",
+        "description": "Top crypto losers ranked by % decline \u2014 with recovery likelihood and cause"
+      },
+      {
+        "method": "POST",
+        "path": "/trending",
+        "description": "Trending coins by search volume, social mentions, and on-chain activity"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL: gainers + losers + trending + market sentiment + sector rotation"
+      }
+    ]
+  }
+]

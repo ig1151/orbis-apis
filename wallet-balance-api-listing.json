@@ -1,21 +1,80 @@
-{
-  "name": "Wallet Balance API",
-  "slug": "wallet-balance",
-  "version": "1.0.0",
-  "description": "Look up wallet token balances, analyze portfolio composition, view transaction history and estimate net worth for Web3 and DeFi agents",
-  "category": "Crypto / Onchain",
-  "tags": ["wallet", "balance", "portfolio", "defi", "web3"],
-  "pricing": {
-    "free_tier": { "requests_per_day": 300 },
-    "pay_per_call": { "lookup": "$0.002", "portfolio": "$0.003", "history": "$0.003", "execution-gate": "$0.001", "wallet-intelligence": "$0.008", "net-worth": "$0.004", "batch": "$0.015" }
-  },
-  "endpoints": ["/lookup", "/portfolio", "/history", "/execution-gate", "/wallet-intelligence", "/net-worth", "/batch"],
-  "one_call_endpoint": "/wallet-intelligence",
-  "base_url": "https://orbis-apis.onrender.com/wallet-balance",
-  "openapi_url": "https://orbis-apis.onrender.com/wallet-balance/openapi.json",
-  "auth": { "type": "apiKey", "header": "X-API-Key" },
-  "grade": "A+",
-  "mcp_compatible": true,
-  "agent_callable": true,
-  "privacy": { "data_stored": false, "retention": "none" }
-}
+[
+  {
+    "name": "Wallet Balance API",
+    "shortDescription": "Look up wallet token balances, portfolio composition, and transaction history",
+    "description": "Look up wallet token balances, analyze portfolio composition, view transaction history and estimate net worth for Web3 and DeFi agents. Supports EVM-compatible chains and returns structured balance data with USD valuation.",
+    "category": "blockchain-web3",
+    "baseUrl": "https://orbis-apis.onrender.com/wallet-balance",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/wallet-balance/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/wallet-balance/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "wallet",
+      "balance",
+      "portfolio",
+      "defi",
+      "web3"
+    ],
+    "keywords": [
+      "wallet balance api",
+      "crypto portfolio tracker",
+      "evm wallet lookup",
+      "token balance checker",
+      "defi net worth api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.005,
+        "requestsPerDay": 50000,
+        "requestsPerMonth": 1500000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.005,
+            "description": "Token balance lookup for a wallet address"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/portfolio",
+            "pricePerCallUsdc": 0.005,
+            "description": "Full portfolio composition with USD valuations"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/history",
+            "pricePerCallUsdc": 0.005,
+            "description": "Transaction history for a wallet"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Look up token balances for a wallet address across EVM chains"
+      },
+      {
+        "method": "POST",
+        "path": "/portfolio",
+        "description": "Get full portfolio composition with token prices and USD net worth"
+      },
+      {
+        "method": "POST",
+        "path": "/history",
+        "description": "Retrieve transaction history for a wallet address"
+      }
+    ]
+  }
+]

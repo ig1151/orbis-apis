@@ -31,7 +31,7 @@ const RequestSpec = {
 
 const BuildCore = {
   type: 'object',
-  required: ['provider', 'body', 'headers', 'signature', 'signed_string', 'timestamp', 'message_id', 'request'],
+  required: ['provider', 'body', 'headers', 'signature', 'signed_string', 'timestamp', 'message_id', 'secret_echoed', 'request'],
   properties: {
     provider: { type: 'string', enum: ['stripe', 'github', 'shopify', 'slack', 'svix', 'generic'] },
     body: { type: 'string', description: 'Canonical JSON envelope {id,type,created,data}, serialized once.' },
@@ -40,6 +40,7 @@ const BuildCore = {
     signed_string: { type: 'string', description: 'The exact string that was HMAC-signed.' },
     timestamp: { type: 'integer', description: 'Unix seconds used in the signature (supplied or generated).' },
     message_id: { type: 'string', description: 'Event/message id used for idempotency (supplied or generated).' },
+    secret_echoed: { type: 'boolean', enum: [false], description: 'Always false — the signing secret is used to sign and then discarded; it is never returned or stored.' },
     request: { $ref: '#/components/schemas/RequestSpec' },
   },
 };
@@ -129,6 +130,7 @@ const CORE_EXAMPLE = {
   signed_string: '1718000000.{"id":"evt_test_1","type":"payment_intent.succeeded","created":1718000000,"data":{"id":"pi_123","amount":4200,"currency":"usd"}}',
   timestamp: 1718000000,
   message_id: 'evt_test_1',
+  secret_echoed: false,
   request: {
     method: 'POST',
     url: 'https://api.example.com/webhooks/stripe',

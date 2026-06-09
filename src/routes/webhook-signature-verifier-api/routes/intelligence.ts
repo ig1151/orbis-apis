@@ -29,9 +29,18 @@ export interface VerifyResult {
   signature_status: SignatureStatus;
   match: boolean;
   computed_signature: string | null;
+  computed_signature_preview: string | null;
   provided_signature: string;
   signed_string_note: string;
   recommended_fix: string | null;
+}
+
+/** Short, log-safe preview of a signature: "<prefix><first 8 hex>…". */
+function previewSig(provider: string, full: string | null): string | null {
+  if (full === null) return null;
+  const prefix = PROVIDERS[provider]?.prefix ?? '';
+  const digest = full.startsWith(prefix) ? full.slice(prefix.length) : full;
+  return `${prefix}${digest.slice(0, 8)}…`;
 }
 
 type ParsedInput = VerifyInput | { error: string };
@@ -62,7 +71,7 @@ export function parseVerify(body: any): ParsedInput {
 
 export function computeVerify(i: VerifyInput): VerifyResult {
   const p = PROVIDERS[i.provider];
-  const base: Omit<VerifyResult, 'signature_status' | 'match' | 'computed_signature' | 'recommended_fix'> = {
+  const base: Omit<VerifyResult, 'signature_status' | 'match' | 'computed_signature' | 'computed_signature_preview' | 'recommended_fix'> = {
     provider: p.id,
     algorithm: p.algo,
     encoding: p.encoding,
@@ -83,6 +92,7 @@ export function computeVerify(i: VerifyInput): VerifyResult {
       signature_status: 'missing_timestamp',
       match: false,
       computed_signature: null,
+      computed_signature_preview: null,
       recommended_fix: `${p.label} signs over a timestamp. Supply "timestamp"${i.provider === 'stripe' ? ' (or pass the full "t=…,v1=…" header as "signature")' : ''}${i.provider === 'svix' ? ' and "message_id"' : ''} so the signed string can be reconstructed.`,
     };
   }
@@ -93,6 +103,7 @@ export function computeVerify(i: VerifyInput): VerifyResult {
       signature_status: 'missing_signature',
       match: false,
       computed_signature: null,
+      computed_signature_preview: null,
       recommended_fix: `No signature value was provided. Read the "${p.signature_header}" header from the incoming request and pass it as "signature".`,
     };
   }
@@ -113,6 +124,7 @@ export function computeVerify(i: VerifyInput): VerifyResult {
     signature_status: match ? 'valid' : 'invalid',
     match,
     computed_signature,
+    computed_signature_preview: previewSig(i.provider, computed_signature),
     recommended_fix: match
       ? null
       : recommendedFix(i, p),

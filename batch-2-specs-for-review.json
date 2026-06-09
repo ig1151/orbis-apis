@@ -1,0 +1,3659 @@
+{
+  "bundle": "Orbis A+ API batch 2 — specs for review (revised after pricing + A+ fixes)",
+  "generated_at_note": "4 deterministic agent-native APIs. Revised: value-based pricing, x-one-call on /lookup, unevaluatedProperties:false strictness (validated against real responses with ajv 2020), logoUrl, stronger chain_to. All response schemas verified to validate their own responses.",
+  "apis": [
+    {
+      "slug": "uuid-ulid-generator",
+      "info": {
+        "name": "UUID/ULID Batch Generator API",
+        "version": "1.0.0",
+        "description": "Cryptographically-random UUID v4 and lexicographically-sortable ULID generation in batches. Real crypto RNG — no estimation.",
+        "openapi_url": "https://orbis-apis.onrender.com/uuid-ulid-generator/openapi.json",
+        "auth": {
+          "type": "apiKey",
+          "header": "X-API-Key"
+        },
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/uuid",
+            "summary": "Generate a batch of UUID v4",
+            "price_usdc": 0.002
+          },
+          {
+            "method": "POST",
+            "path": "/ulid",
+            "summary": "Generate a batch of sortable ULIDs",
+            "price_usdc": 0.002
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "summary": "ONE-CALL: generate by format with metadata + recommendations",
+            "price_usdc": 0.005
+          }
+        ],
+        "pricing": [
+          {
+            "path": "/uuid",
+            "price_usdc": 0.002,
+            "currency": "USDC"
+          },
+          {
+            "path": "/ulid",
+            "price_usdc": 0.002,
+            "currency": "USDC"
+          },
+          {
+            "path": "/lookup",
+            "price_usdc": 0.005,
+            "currency": "USDC"
+          }
+        ],
+        "x402_compatible": true
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "UUID/ULID Batch Generator API",
+          "version": "1.0.0",
+          "description": "Cryptographically-random UUID v4 and lexicographically-sortable ULID generation in batches (1–1000). Real crypto RNG; deterministic schemas; confidence always 1.0.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x402-compatible": true,
+          "x-agent-marketplace-ready": true,
+          "x-pay-per-call-optimized": true
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/uuid-ulid-generator"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "discover",
+              "summary": "Service discovery",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DiscoveryResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/uuid": {
+            "post": {
+              "operationId": "uuid",
+              "summary": "Generate a batch of UUID v4",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/BatchResponse"
+                      },
+                      "example": {
+                        "trace_id": "u1-1780000000000",
+                        "computed_at": "2026-06-07T19:30:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "format": "uuid",
+                        "version": "v4",
+                        "count": 3,
+                        "ids": [
+                          "1f3b9c2a-7e4d-4a6b-9c1e-2d5f8a0b3c4d",
+                          "2a4c0d3b-8f5e-4b7c-0d2f-3e6a9b1c4d5e",
+                          "3b5d1e4c-9a6f-4c8d-1e3a-4f7b0c2d5e6f"
+                        ],
+                        "sortable": false,
+                        "collision_note": "UUID v4 has 122 bits of randomness; collision probability is negligible.",
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Use as random primary keys or idempotency keys."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/CountRequest"
+                    },
+                    "example": {
+                      "count": 3
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.002,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/ulid": {
+            "post": {
+              "operationId": "ulid",
+              "summary": "Generate a batch of sortable ULIDs",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/BatchResponse"
+                      },
+                      "example": {
+                        "trace_id": "l1-1780000000000",
+                        "computed_at": "2026-06-07T19:30:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "format": "ulid",
+                        "version": "ulid",
+                        "count": 2,
+                        "ids": [
+                          "01J9Z8ABCD0123456789ABCDEF",
+                          "01J9Z8ABCD9876543210ZYXWVU"
+                        ],
+                        "sortable": true,
+                        "collision_note": "ULID has 80 bits of randomness per millisecond.",
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Use as lexicographically-sortable, time-ordered keys."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/CountRequest"
+                    },
+                    "example": {
+                      "count": 2
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.002,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "lookup",
+              "summary": "ONE-CALL generate by format with metadata",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/LookupResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/LookupRequest"
+                    },
+                    "example": {
+                      "format": "ulid",
+                      "count": 5
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.005,
+                "currency": "USDC"
+              },
+              "x-one-call": true
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          },
+          "schemas": {
+            "ChainTo": {
+              "type": "object",
+              "required": [
+                "api",
+                "reason"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "api": {
+                  "type": "string",
+                  "description": "Slug of a recommended next API to call."
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Why an agent would chain to this API next."
+                }
+              }
+            },
+            "Reasoning": {
+              "type": "object",
+              "required": [
+                "why_result_generated",
+                "key_factors",
+                "invalidators"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "why_result_generated": {
+                  "type": "string"
+                },
+                "key_factors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "invalidators": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Conditions that would change or invalidate this result."
+                }
+              }
+            },
+            "Privacy": {
+              "type": "object",
+              "required": [
+                "data_stored",
+                "retention"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data_stored": {
+                  "type": "boolean"
+                },
+                "retention": {
+                  "type": "string",
+                  "description": "Retention policy, e.g. \"none\"."
+                }
+              }
+            },
+            "EnvelopeError": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "details": {
+                  "description": "Optional machine-readable error context."
+                }
+              }
+            },
+            "Error400": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms",
+                "error"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer"
+                },
+                "error": {
+                  "$ref": "#/components/schemas/EnvelopeError"
+                }
+              }
+            },
+            "Error500": {
+              "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms"
+              ],
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    true
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "Tail": {
+              "type": "object",
+              "required": [
+                "confidence_score",
+                "recommended_actions_priority_order",
+                "chain_to",
+                "privacy"
+              ],
+              "properties": {
+                "confidence_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "recommended_actions_priority_order": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "chain_to": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChainTo"
+                  }
+                },
+                "privacy": {
+                  "$ref": "#/components/schemas/Privacy"
+                }
+              }
+            },
+            "IdBatchCore": {
+              "type": "object",
+              "required": [
+                "format",
+                "version",
+                "count",
+                "ids",
+                "sortable",
+                "collision_note"
+              ],
+              "properties": {
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "uuid",
+                    "ulid"
+                  ]
+                },
+                "version": {
+                  "type": "string",
+                  "enum": [
+                    "v4",
+                    "ulid"
+                  ]
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000
+                },
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "sortable": {
+                  "type": "boolean"
+                },
+                "collision_note": {
+                  "type": "string"
+                }
+              }
+            },
+            "CountRequest": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000,
+                  "default": 1,
+                  "description": "How many IDs to generate."
+                }
+              }
+            },
+            "LookupRequest": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "uuid",
+                    "ulid"
+                  ],
+                  "default": "uuid"
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000,
+                  "default": 1
+                }
+              }
+            },
+            "DiscoveryResponse": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "version",
+                "description",
+                "openapi_url",
+                "auth",
+                "endpoints",
+                "pricing",
+                "x402_compatible"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "openapi_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "auth": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "header"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "header": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "endpoints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "path",
+                      "summary",
+                      "price_usdc"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "pricing": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "price_usdc",
+                      "currency"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "enum": [
+                          "USDC"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "x402_compatible": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "BatchResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/IdBatchCore"
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "$ref": "#/components/schemas/IdBatchCore"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "reasoning"
+                  ],
+                  "properties": {
+                    "reasoning": {
+                      "$ref": "#/components/schemas/Reasoning"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            }
+          }
+        }
+      },
+      "listing": {
+        "name": "UUID/ULID Batch Generator API",
+        "shortDescription": "Crypto-random UUID v4 and sortable ULID generation in batches for agents",
+        "description": "Agent-native identifier generation. /uuid returns cryptographically-random UUID v4 values; /ulid returns lexicographically-sortable, time-ordered ULIDs (48-bit timestamp + 80-bit randomness). Batches of 1–1000 per call, with collision-probability notes, sortability flag, and a reasoning object on the one-call /lookup. Real crypto RNG (Node crypto) — never estimated, confidence always 1.0. Atomic and cheap for autonomous agents that need stable keys, idempotency tokens, or ordered IDs.",
+        "category": "developer-tools",
+        "baseUrl": "https://orbis-apis.onrender.com/uuid-ulid-generator",
+        "websiteUrl": "https://orbis-apis.onrender.com",
+        "docsUrl": "https://orbis-apis.onrender.com/uuid-ulid-generator/openapi.json",
+        "openApiSpecUrl": "https://orbis-apis.onrender.com/uuid-ulid-generator/openapi.json",
+        "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+        "tags": [
+          "uuid",
+          "ulid",
+          "identifiers",
+          "developer-tools",
+          "generator",
+          "x402",
+          "coinbase-bazaar",
+          "agentic-market"
+        ],
+        "keywords": [
+          "uuid generator api",
+          "ulid generator api",
+          "batch id generation",
+          "sortable unique id",
+          "idempotency key generator",
+          "crypto random id api"
+        ],
+        "tiers": [
+          {
+            "name": "Free",
+            "isFree": true,
+            "requestsPerDay": 500,
+            "requestsPerMonth": 15000
+          },
+          {
+            "name": "Pay Per Call",
+            "isFree": false,
+            "pricingType": "per_call",
+            "pricePerCall": 0.005,
+            "requestsPerDay": 200000,
+            "requestsPerMonth": 6000000,
+            "endpointPricing": [
+              {
+                "method": "POST",
+                "pathPattern": "/uuid",
+                "pricePerCallUsdc": 0.002,
+                "description": "Batch of UUID v4"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/ulid",
+                "pricePerCallUsdc": 0.002,
+                "description": "Batch of sortable ULIDs"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/lookup",
+                "pricePerCallUsdc": 0.005,
+                "description": "ONE-CALL generate by format with metadata + recommendations"
+              }
+            ]
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/uuid",
+            "description": "Generate UUID v4 batch"
+          },
+          {
+            "method": "POST",
+            "path": "/ulid",
+            "description": "Generate sortable ULID batch"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL generation workflow"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "color-contrast-evaluator",
+      "info": {
+        "name": "Color Palette Contrast Evaluator API",
+        "version": "1.0.0",
+        "description": "Deterministic WCAG 2.1 contrast-ratio evaluation: AA/AAA pass-fail for text, palette text-color recommendations, and accessible alternatives. Real luminance math — confidence 1.0.",
+        "openapi_url": "https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json",
+        "auth": {
+          "type": "apiKey",
+          "header": "X-API-Key"
+        },
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/contrast",
+            "summary": "WCAG contrast ratio + AA/AAA pass-fail for a fg/bg pair",
+            "price_usdc": 0.005
+          },
+          {
+            "method": "POST",
+            "path": "/palette",
+            "summary": "Per-color best text color + contrast for a palette",
+            "price_usdc": 0.008
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "summary": "ONE-CALL: contrast + ratings + accessible alternatives",
+            "price_usdc": 0.015
+          }
+        ],
+        "pricing": [
+          {
+            "path": "/contrast",
+            "price_usdc": 0.005,
+            "currency": "USDC"
+          },
+          {
+            "path": "/palette",
+            "price_usdc": 0.008,
+            "currency": "USDC"
+          },
+          {
+            "path": "/lookup",
+            "price_usdc": 0.015,
+            "currency": "USDC"
+          }
+        ],
+        "x402_compatible": true
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Color Palette Contrast Evaluator API",
+          "version": "1.0.0",
+          "description": "Deterministic WCAG 2.1 contrast evaluation: AA/AAA pass-fail for text pairs, per-color text recommendations across a palette, and accessible alternatives. Real luminance math; confidence always 1.0.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x402-compatible": true,
+          "x-agent-marketplace-ready": true,
+          "x-pay-per-call-optimized": true
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/color-contrast-evaluator"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "discover",
+              "summary": "Service discovery",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DiscoveryResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/contrast": {
+            "post": {
+              "operationId": "contrast",
+              "summary": "WCAG contrast ratio + AA/AAA pass-fail",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/ContrastResponse"
+                      },
+                      "example": {
+                        "trace_id": "c1-1780000000000",
+                        "computed_at": "2026-06-07T19:30:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "input": {
+                          "foreground": "#777777",
+                          "background": "#FFFFFF"
+                        },
+                        "contrast_ratio": 4.48,
+                        "ratings": {
+                          "aa_normal": false,
+                          "aa_large": true,
+                          "aaa_normal": false,
+                          "aaa_large": false,
+                          "highest_level": "AA Large only"
+                        },
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Fails AA for normal text — darken/lighten one color or reserve for large text only."
+                        ],
+                        "chain_to": [],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ColorPair"
+                    },
+                    "example": {
+                      "foreground": "#777777",
+                      "background": "#FFFFFF"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.005,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/palette": {
+            "post": {
+              "operationId": "palette",
+              "summary": "Per-color best text color + contrast",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/PaletteResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/PaletteRequest"
+                    },
+                    "example": {
+                      "colors": [
+                        "#1A2B3C",
+                        "#FFD700",
+                        "#0A0A0A"
+                      ]
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.008,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "lookup",
+              "summary": "ONE-CALL contrast + ratings + accessible alternatives",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/LookupResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ColorPair"
+                    },
+                    "example": {
+                      "foreground": "#888888",
+                      "background": "#FFFFFF"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.015,
+                "currency": "USDC"
+              },
+              "x-one-call": true
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          },
+          "schemas": {
+            "ChainTo": {
+              "type": "object",
+              "required": [
+                "api",
+                "reason"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "api": {
+                  "type": "string",
+                  "description": "Slug of a recommended next API to call."
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Why an agent would chain to this API next."
+                }
+              }
+            },
+            "Reasoning": {
+              "type": "object",
+              "required": [
+                "why_result_generated",
+                "key_factors",
+                "invalidators"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "why_result_generated": {
+                  "type": "string"
+                },
+                "key_factors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "invalidators": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Conditions that would change or invalidate this result."
+                }
+              }
+            },
+            "Privacy": {
+              "type": "object",
+              "required": [
+                "data_stored",
+                "retention"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data_stored": {
+                  "type": "boolean"
+                },
+                "retention": {
+                  "type": "string",
+                  "description": "Retention policy, e.g. \"none\"."
+                }
+              }
+            },
+            "EnvelopeError": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "details": {
+                  "description": "Optional machine-readable error context."
+                }
+              }
+            },
+            "Error400": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms",
+                "error"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer"
+                },
+                "error": {
+                  "$ref": "#/components/schemas/EnvelopeError"
+                }
+              }
+            },
+            "Error500": {
+              "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms"
+              ],
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    true
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "Tail": {
+              "type": "object",
+              "required": [
+                "confidence_score",
+                "recommended_actions_priority_order",
+                "chain_to",
+                "privacy"
+              ],
+              "properties": {
+                "confidence_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "recommended_actions_priority_order": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "chain_to": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChainTo"
+                  }
+                },
+                "privacy": {
+                  "$ref": "#/components/schemas/Privacy"
+                }
+              }
+            },
+            "Ratings": {
+              "type": "object",
+              "required": [
+                "aa_normal",
+                "aa_large",
+                "aaa_normal",
+                "aaa_large",
+                "highest_level"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "aa_normal": {
+                  "type": "boolean"
+                },
+                "aa_large": {
+                  "type": "boolean"
+                },
+                "aaa_normal": {
+                  "type": "boolean"
+                },
+                "aaa_large": {
+                  "type": "boolean"
+                },
+                "highest_level": {
+                  "type": "string",
+                  "enum": [
+                    "AAA",
+                    "AA",
+                    "AA Large only",
+                    "Fail"
+                  ]
+                }
+              }
+            },
+            "ColorPair": {
+              "type": "object",
+              "required": [
+                "foreground",
+                "background"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "foreground": {
+                  "type": "string",
+                  "example": "#777777"
+                },
+                "background": {
+                  "type": "string",
+                  "example": "#FFFFFF"
+                }
+              }
+            },
+            "PaletteItem": {
+              "type": "object",
+              "required": [
+                "color",
+                "recommended_text_color",
+                "text_contrast_ratio",
+                "text_meets_aa"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "color": {
+                  "type": "string"
+                },
+                "recommended_text_color": {
+                  "type": "string",
+                  "enum": [
+                    "#000000",
+                    "#FFFFFF"
+                  ]
+                },
+                "text_contrast_ratio": {
+                  "type": "number"
+                },
+                "text_meets_aa": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "Alternative": {
+              "type": "object",
+              "required": [
+                "suggestion",
+                "resulting_ratio",
+                "meets_aa"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "suggestion": {
+                  "type": "string"
+                },
+                "resulting_ratio": {
+                  "type": "number"
+                },
+                "meets_aa": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "PaletteRequest": {
+              "type": "object",
+              "required": [
+                "colors"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "colors": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 50,
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "#1A2B3C",
+                    "#FFD700",
+                    "#0A0A0A"
+                  ]
+                }
+              }
+            },
+            "DiscoveryResponse": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "version",
+                "description",
+                "openapi_url",
+                "auth",
+                "endpoints",
+                "pricing",
+                "x402_compatible"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "openapi_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "auth": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "header"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "header": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "endpoints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "path",
+                      "summary",
+                      "price_usdc"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "pricing": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "price_usdc",
+                      "currency"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "enum": [
+                          "USDC"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "x402_compatible": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "ContrastResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "input",
+                    "contrast_ratio",
+                    "ratings"
+                  ],
+                  "properties": {
+                    "input": {
+                      "$ref": "#/components/schemas/ColorPair"
+                    },
+                    "contrast_ratio": {
+                      "type": "number"
+                    },
+                    "ratings": {
+                      "$ref": "#/components/schemas/Ratings"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "PaletteResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "count",
+                    "colors"
+                  ],
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "colors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PaletteItem"
+                      }
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "input",
+                    "contrast_ratio",
+                    "ratings",
+                    "accessible_alternatives",
+                    "reasoning"
+                  ],
+                  "properties": {
+                    "input": {
+                      "$ref": "#/components/schemas/ColorPair"
+                    },
+                    "contrast_ratio": {
+                      "type": "number"
+                    },
+                    "ratings": {
+                      "$ref": "#/components/schemas/Ratings"
+                    },
+                    "accessible_alternatives": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Alternative"
+                      }
+                    },
+                    "reasoning": {
+                      "$ref": "#/components/schemas/Reasoning"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            }
+          }
+        }
+      },
+      "listing": {
+        "name": "Color Palette Contrast Evaluator API",
+        "shortDescription": "Deterministic WCAG 2.1 contrast ratios, AA/AAA pass-fail, and accessible alternatives for agents",
+        "description": "Agent-native accessibility evaluation. /contrast returns the exact WCAG 2.1 contrast ratio for a foreground/background pair with AA and AAA pass-fail for normal and large text. /palette recommends the optimal text color (black or white) and contrast for each swatch. The one-call /lookup adds accessible alternatives and a reasoning object. Real relative-luminance math — never estimated, confidence always 1.0. Ideal for design, UI-generation, and content agents enforcing accessibility before shipping.",
+        "category": "developer-tools",
+        "baseUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator",
+        "websiteUrl": "https://orbis-apis.onrender.com",
+        "docsUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json",
+        "openApiSpecUrl": "https://orbis-apis.onrender.com/color-contrast-evaluator/openapi.json",
+        "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+        "tags": [
+          "color",
+          "contrast",
+          "wcag",
+          "accessibility",
+          "a11y",
+          "design",
+          "x402",
+          "coinbase-bazaar",
+          "agentic-market"
+        ],
+        "keywords": [
+          "wcag contrast ratio api",
+          "color contrast checker api",
+          "aa aaa contrast api",
+          "accessible color palette api",
+          "text color contrast api",
+          "a11y contrast evaluator"
+        ],
+        "tiers": [
+          {
+            "name": "Free",
+            "isFree": true,
+            "requestsPerDay": 300,
+            "requestsPerMonth": 9000
+          },
+          {
+            "name": "Pay Per Call",
+            "isFree": false,
+            "pricingType": "per_call",
+            "pricePerCall": 0.015,
+            "requestsPerDay": 100000,
+            "requestsPerMonth": 3000000,
+            "endpointPricing": [
+              {
+                "method": "POST",
+                "pathPattern": "/contrast",
+                "pricePerCallUsdc": 0.005,
+                "description": "WCAG contrast ratio + AA/AAA pass-fail"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/palette",
+                "pricePerCallUsdc": 0.008,
+                "description": "Per-color best text color + contrast"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/lookup",
+                "pricePerCallUsdc": 0.015,
+                "description": "ONE-CALL contrast + ratings + accessible alternatives"
+              }
+            ]
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/contrast",
+            "description": "Contrast ratio + AA/AAA"
+          },
+          {
+            "method": "POST",
+            "path": "/palette",
+            "description": "Palette text-color recommendations"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL contrast workflow"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "geo-coordinate-calculator",
+      "info": {
+        "name": "Geospatial Coordinate Calculator API",
+        "version": "1.0.0",
+        "description": "Deterministic great-circle geometry: distance (Haversine), initial bearing, and midpoint between coordinates. Real spherical math — confidence 1.0.",
+        "openapi_url": "https://orbis-apis.onrender.com/geo-coordinate-calculator/openapi.json",
+        "auth": {
+          "type": "apiKey",
+          "header": "X-API-Key"
+        },
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/distance",
+            "summary": "Great-circle distance + bearing between two points",
+            "price_usdc": 0.005
+          },
+          {
+            "method": "POST",
+            "path": "/batch",
+            "summary": "Distances/bearings for many coordinate pairs",
+            "price_usdc": 0.01
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "summary": "ONE-CALL: distance + bearing + midpoint + direction",
+            "price_usdc": 0.015
+          }
+        ],
+        "pricing": [
+          {
+            "path": "/distance",
+            "price_usdc": 0.005,
+            "currency": "USDC"
+          },
+          {
+            "path": "/batch",
+            "price_usdc": 0.01,
+            "currency": "USDC"
+          },
+          {
+            "path": "/lookup",
+            "price_usdc": 0.015,
+            "currency": "USDC"
+          }
+        ],
+        "x402_compatible": true
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Geospatial Coordinate Calculator API",
+          "version": "1.0.0",
+          "description": "Deterministic great-circle geometry: Haversine distance (km/mi/m/nmi), initial bearing with cardinal direction, and midpoint between two coordinates. Real spherical math; confidence always 1.0.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x402-compatible": true,
+          "x-agent-marketplace-ready": true,
+          "x-pay-per-call-optimized": true
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/geo-coordinate-calculator"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "discover",
+              "summary": "Service discovery",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DiscoveryResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/distance": {
+            "post": {
+              "operationId": "distance",
+              "summary": "Great-circle distance + bearing",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DistanceResponse"
+                      },
+                      "example": {
+                        "trace_id": "g1-1780000000000",
+                        "computed_at": "2026-06-07T19:30:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "input": {
+                          "from": {
+                            "lat": 40.7128,
+                            "lon": -74.006
+                          },
+                          "to": {
+                            "lat": 34.0522,
+                            "lon": -118.2437
+                          },
+                          "unit": "km"
+                        },
+                        "distance": 3935.746,
+                        "unit": "km",
+                        "method": "haversine",
+                        "initial_bearing_deg": 273.65,
+                        "cardinal_direction": "W",
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Bearing W — heading from origin to destination."
+                        ],
+                        "chain_to": [
+                          {
+                            "api": "timezone-harmonizer",
+                            "reason": "Get the local time at the destination coordinates."
+                          },
+                          {
+                            "api": "local-business",
+                            "reason": "Find businesses near these coordinates."
+                          }
+                        ],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/DistanceRequest"
+                    },
+                    "example": {
+                      "from": {
+                        "lat": 40.7128,
+                        "lon": -74.006
+                      },
+                      "to": {
+                        "lat": 34.0522,
+                        "lon": -118.2437
+                      },
+                      "unit": "km"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.005,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/batch": {
+            "post": {
+              "operationId": "batch",
+              "summary": "Distances/bearings for many pairs",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/BatchResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/BatchRequest"
+                    },
+                    "example": {
+                      "pairs": [
+                        {
+                          "from": {
+                            "lat": 51.5074,
+                            "lon": -0.1278
+                          },
+                          "to": {
+                            "lat": 48.8566,
+                            "lon": 2.3522
+                          }
+                        }
+                      ],
+                      "unit": "km"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.01,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "lookup",
+              "summary": "ONE-CALL distance + bearing + midpoint",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/LookupResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/DistanceRequest"
+                    },
+                    "example": {
+                      "from": {
+                        "lat": 35.6762,
+                        "lon": 139.6503
+                      },
+                      "to": {
+                        "lat": 1.3521,
+                        "lon": 103.8198
+                      },
+                      "unit": "km"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.015,
+                "currency": "USDC"
+              },
+              "x-one-call": true
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          },
+          "schemas": {
+            "ChainTo": {
+              "type": "object",
+              "required": [
+                "api",
+                "reason"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "api": {
+                  "type": "string",
+                  "description": "Slug of a recommended next API to call."
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Why an agent would chain to this API next."
+                }
+              }
+            },
+            "Reasoning": {
+              "type": "object",
+              "required": [
+                "why_result_generated",
+                "key_factors",
+                "invalidators"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "why_result_generated": {
+                  "type": "string"
+                },
+                "key_factors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "invalidators": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Conditions that would change or invalidate this result."
+                }
+              }
+            },
+            "Privacy": {
+              "type": "object",
+              "required": [
+                "data_stored",
+                "retention"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data_stored": {
+                  "type": "boolean"
+                },
+                "retention": {
+                  "type": "string",
+                  "description": "Retention policy, e.g. \"none\"."
+                }
+              }
+            },
+            "EnvelopeError": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "details": {
+                  "description": "Optional machine-readable error context."
+                }
+              }
+            },
+            "Error400": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms",
+                "error"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer"
+                },
+                "error": {
+                  "$ref": "#/components/schemas/EnvelopeError"
+                }
+              }
+            },
+            "Error500": {
+              "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms"
+              ],
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    true
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "Tail": {
+              "type": "object",
+              "required": [
+                "confidence_score",
+                "recommended_actions_priority_order",
+                "chain_to",
+                "privacy"
+              ],
+              "properties": {
+                "confidence_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "recommended_actions_priority_order": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "chain_to": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChainTo"
+                  }
+                },
+                "privacy": {
+                  "$ref": "#/components/schemas/Privacy"
+                }
+              }
+            },
+            "Point": {
+              "type": "object",
+              "required": [
+                "lat",
+                "lon"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "lat": {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                "lon": {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                }
+              }
+            },
+            "DistanceRequest": {
+              "type": "object",
+              "required": [
+                "from",
+                "to"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "from": {
+                  "$ref": "#/components/schemas/Point"
+                },
+                "to": {
+                  "$ref": "#/components/schemas/Point"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "km",
+                    "mi",
+                    "m",
+                    "nmi"
+                  ],
+                  "default": "km"
+                }
+              }
+            },
+            "BatchRequest": {
+              "type": "object",
+              "required": [
+                "pairs"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "pairs": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 100,
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "from",
+                      "to"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "from": {
+                        "$ref": "#/components/schemas/Point"
+                      },
+                      "to": {
+                        "$ref": "#/components/schemas/Point"
+                      }
+                    }
+                  }
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "km",
+                    "mi",
+                    "m",
+                    "nmi"
+                  ],
+                  "default": "km"
+                }
+              }
+            },
+            "BatchItem": {
+              "type": "object",
+              "required": [
+                "index",
+                "distance",
+                "initial_bearing_deg",
+                "cardinal_direction"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "index": {
+                  "type": "integer"
+                },
+                "distance": {
+                  "type": "number"
+                },
+                "initial_bearing_deg": {
+                  "type": "number"
+                },
+                "cardinal_direction": {
+                  "type": "string"
+                }
+              }
+            },
+            "DiscoveryResponse": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "version",
+                "description",
+                "openapi_url",
+                "auth",
+                "endpoints",
+                "pricing",
+                "x402_compatible"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "openapi_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "auth": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "header"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "header": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "endpoints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "path",
+                      "summary",
+                      "price_usdc"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "pricing": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "price_usdc",
+                      "currency"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "enum": [
+                          "USDC"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "x402_compatible": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "DistanceResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "input",
+                    "distance",
+                    "unit",
+                    "method",
+                    "initial_bearing_deg",
+                    "cardinal_direction"
+                  ],
+                  "properties": {
+                    "input": {
+                      "type": "object",
+                      "required": [
+                        "from",
+                        "to",
+                        "unit"
+                      ],
+                      "properties": {
+                        "from": {
+                          "$ref": "#/components/schemas/Point"
+                        },
+                        "to": {
+                          "$ref": "#/components/schemas/Point"
+                        },
+                        "unit": {
+                          "type": "string",
+                          "enum": [
+                            "km",
+                            "mi",
+                            "m",
+                            "nmi"
+                          ],
+                          "default": "km"
+                        }
+                      }
+                    },
+                    "distance": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "enum": [
+                        "km",
+                        "mi",
+                        "m",
+                        "nmi"
+                      ],
+                      "default": "km"
+                    },
+                    "method": {
+                      "type": "string",
+                      "enum": [
+                        "haversine"
+                      ]
+                    },
+                    "initial_bearing_deg": {
+                      "type": "number"
+                    },
+                    "cardinal_direction": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "BatchResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "unit",
+                    "count",
+                    "results"
+                  ],
+                  "properties": {
+                    "unit": {
+                      "type": "string",
+                      "enum": [
+                        "km",
+                        "mi",
+                        "m",
+                        "nmi"
+                      ],
+                      "default": "km"
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BatchItem"
+                      }
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "input",
+                    "distance",
+                    "unit",
+                    "method",
+                    "initial_bearing_deg",
+                    "cardinal_direction",
+                    "midpoint",
+                    "reasoning"
+                  ],
+                  "properties": {
+                    "input": {
+                      "type": "object",
+                      "required": [
+                        "from",
+                        "to",
+                        "unit"
+                      ],
+                      "properties": {
+                        "from": {
+                          "$ref": "#/components/schemas/Point"
+                        },
+                        "to": {
+                          "$ref": "#/components/schemas/Point"
+                        },
+                        "unit": {
+                          "type": "string",
+                          "enum": [
+                            "km",
+                            "mi",
+                            "m",
+                            "nmi"
+                          ],
+                          "default": "km"
+                        }
+                      }
+                    },
+                    "distance": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "type": "string",
+                      "enum": [
+                        "km",
+                        "mi",
+                        "m",
+                        "nmi"
+                      ],
+                      "default": "km"
+                    },
+                    "method": {
+                      "type": "string",
+                      "enum": [
+                        "haversine"
+                      ]
+                    },
+                    "initial_bearing_deg": {
+                      "type": "number"
+                    },
+                    "cardinal_direction": {
+                      "type": "string"
+                    },
+                    "midpoint": {
+                      "$ref": "#/components/schemas/Point"
+                    },
+                    "reasoning": {
+                      "$ref": "#/components/schemas/Reasoning"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            }
+          }
+        }
+      },
+      "listing": {
+        "name": "Geospatial Coordinate Calculator API",
+        "shortDescription": "Deterministic great-circle distance, bearing, and midpoint between coordinates for agents",
+        "description": "Agent-native geospatial geometry. /distance returns the Haversine great-circle distance (km, mi, m, or nmi) and initial bearing with cardinal direction between two lat/lon points. /batch processes up to 100 pairs in one call for routing and clustering. The one-call /lookup adds the geographic midpoint and a reasoning object. Real spherical trigonometry — never estimated, confidence always 1.0. Built for logistics, travel, mapping, and location-aware autonomous agents.",
+        "category": "developer-tools",
+        "baseUrl": "https://orbis-apis.onrender.com/geo-coordinate-calculator",
+        "websiteUrl": "https://orbis-apis.onrender.com",
+        "docsUrl": "https://orbis-apis.onrender.com/geo-coordinate-calculator/openapi.json",
+        "openApiSpecUrl": "https://orbis-apis.onrender.com/geo-coordinate-calculator/openapi.json",
+        "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+        "tags": [
+          "geospatial",
+          "distance",
+          "haversine",
+          "bearing",
+          "coordinates",
+          "logistics",
+          "x402",
+          "coinbase-bazaar",
+          "agentic-market"
+        ],
+        "keywords": [
+          "haversine distance api",
+          "great circle distance api",
+          "coordinate distance calculator",
+          "bearing between coordinates api",
+          "geo midpoint api",
+          "lat lon distance api"
+        ],
+        "tiers": [
+          {
+            "name": "Free",
+            "isFree": true,
+            "requestsPerDay": 300,
+            "requestsPerMonth": 9000
+          },
+          {
+            "name": "Pay Per Call",
+            "isFree": false,
+            "pricingType": "per_call",
+            "pricePerCall": 0.015,
+            "requestsPerDay": 100000,
+            "requestsPerMonth": 3000000,
+            "endpointPricing": [
+              {
+                "method": "POST",
+                "pathPattern": "/distance",
+                "pricePerCallUsdc": 0.005,
+                "description": "Great-circle distance + bearing"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/batch",
+                "pricePerCallUsdc": 0.01,
+                "description": "Distances/bearings for many pairs"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/lookup",
+                "pricePerCallUsdc": 0.015,
+                "description": "ONE-CALL distance + bearing + midpoint + direction"
+              }
+            ]
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/distance",
+            "description": "Distance + bearing"
+          },
+          {
+            "method": "POST",
+            "path": "/batch",
+            "description": "Batch distances"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL geo workflow"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "timezone-harmonizer",
+      "info": {
+        "name": "Timezone Offset Harmonizer API",
+        "version": "1.0.0",
+        "description": "Deterministic timezone conversion from absolute instants using the IANA/ICU database: normalize to UTC and express wall-clock time + offset in any zone. Real tz data — confidence 1.0.",
+        "openapi_url": "https://orbis-apis.onrender.com/timezone-harmonizer/openapi.json",
+        "auth": {
+          "type": "apiKey",
+          "header": "X-API-Key"
+        },
+        "notes": "Inputs must be absolute instants (ISO 8601 with Z/offset, or epoch ms). Naive local times are rejected to guarantee correctness.",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/normalize",
+            "summary": "Normalize an absolute instant to UTC + epoch",
+            "price_usdc": 0.005
+          },
+          {
+            "method": "POST",
+            "path": "/convert",
+            "summary": "Express an instant in a target timezone (wall-clock + offset)",
+            "price_usdc": 0.008
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "summary": "ONE-CALL: UTC + many target zones + meeting-friendly view",
+            "price_usdc": 0.015
+          }
+        ],
+        "pricing": [
+          {
+            "path": "/normalize",
+            "price_usdc": 0.005,
+            "currency": "USDC"
+          },
+          {
+            "path": "/convert",
+            "price_usdc": 0.008,
+            "currency": "USDC"
+          },
+          {
+            "path": "/lookup",
+            "price_usdc": 0.015,
+            "currency": "USDC"
+          }
+        ],
+        "x402_compatible": true
+      },
+      "openapi": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "Timezone Offset Harmonizer API",
+          "version": "1.0.0",
+          "description": "Deterministic timezone conversion from absolute instants via the IANA/ICU database: normalize to UTC/epoch and express wall-clock time + offset + abbreviation in any zone. Naive local times are rejected to guarantee correctness. Confidence always 1.0.",
+          "x-agent-callable": true,
+          "x-mcp-compatible": true,
+          "x402-compatible": true,
+          "x-agent-marketplace-ready": true,
+          "x-pay-per-call-optimized": true
+        },
+        "servers": [
+          {
+            "url": "https://orbis-apis.onrender.com/timezone-harmonizer"
+          }
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "paths": {
+          "/": {
+            "get": {
+              "operationId": "discover",
+              "summary": "Service discovery",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DiscoveryResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/normalize": {
+            "post": {
+              "operationId": "normalize",
+              "summary": "Normalize an absolute instant to UTC + epoch",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/NormalizeResponse"
+                      },
+                      "example": {
+                        "trace_id": "t1-1780000000000",
+                        "computed_at": "2026-06-07T19:30:00.000Z",
+                        "success": true,
+                        "latency_ms": 0,
+                        "input": {
+                          "datetime": "2026-06-07T12:30:00-07:00"
+                        },
+                        "utc_iso": "2026-06-07T19:30:00.000Z",
+                        "epoch_ms": 1780860600000,
+                        "confidence_score": 1,
+                        "recommended_actions_priority_order": [
+                          "Store as UTC/epoch; convert to local only for display."
+                        ],
+                        "chain_to": [
+                          {
+                            "api": "calendar-scheduling",
+                            "reason": "Schedule a meeting across the harmonized time zones."
+                          },
+                          {
+                            "api": "geo-coordinate-calculator",
+                            "reason": "Compute distances between the locations in each zone."
+                          }
+                        ],
+                        "privacy": {
+                          "data_stored": false,
+                          "retention": "none"
+                        }
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/NormalizeRequest"
+                    },
+                    "example": {
+                      "datetime": "2026-06-07T12:30:00-07:00"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.005,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/convert": {
+            "post": {
+              "operationId": "convert",
+              "summary": "Express an instant in a target timezone",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/ConvertResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ConvertRequest"
+                    },
+                    "example": {
+                      "datetime": "2026-06-07T19:30:00Z",
+                      "to_tz": "Asia/Tokyo"
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.008,
+                "currency": "USDC"
+              }
+            }
+          },
+          "/lookup": {
+            "post": {
+              "operationId": "lookup",
+              "summary": "ONE-CALL UTC + many target zones",
+              "responses": {
+                "200": {
+                  "description": "Successful response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/LookupResponse"
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error400"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "Internal error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error500"
+                      }
+                    }
+                  }
+                }
+              },
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/LookupRequest"
+                    },
+                    "example": {
+                      "datetime": "2026-06-07T19:30:00Z",
+                      "to_tzs": [
+                        "America/Los_Angeles",
+                        "Europe/London",
+                        "Asia/Tokyo"
+                      ]
+                    }
+                  }
+                }
+              },
+              "x-pricing": {
+                "model": "per_call",
+                "price_usdc": 0.015,
+                "currency": "USDC"
+              },
+              "x-one-call": true
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "ApiKeyAuth": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "X-API-Key"
+            }
+          },
+          "schemas": {
+            "ChainTo": {
+              "type": "object",
+              "required": [
+                "api",
+                "reason"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "api": {
+                  "type": "string",
+                  "description": "Slug of a recommended next API to call."
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Why an agent would chain to this API next."
+                }
+              }
+            },
+            "Reasoning": {
+              "type": "object",
+              "required": [
+                "why_result_generated",
+                "key_factors",
+                "invalidators"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "why_result_generated": {
+                  "type": "string"
+                },
+                "key_factors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "invalidators": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Conditions that would change or invalidate this result."
+                }
+              }
+            },
+            "Privacy": {
+              "type": "object",
+              "required": [
+                "data_stored",
+                "retention"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "data_stored": {
+                  "type": "boolean"
+                },
+                "retention": {
+                  "type": "string",
+                  "description": "Retention policy, e.g. \"none\"."
+                }
+              }
+            },
+            "EnvelopeError": {
+              "type": "object",
+              "required": [
+                "code",
+                "message"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "details": {
+                  "description": "Optional machine-readable error context."
+                }
+              }
+            },
+            "Error400": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms",
+                "error"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    false
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer"
+                },
+                "error": {
+                  "$ref": "#/components/schemas/EnvelopeError"
+                }
+              }
+            },
+            "Error500": {
+              "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+              "type": "object",
+              "required": [
+                "trace_id",
+                "computed_at",
+                "success",
+                "latency_ms"
+              ],
+              "properties": {
+                "trace_id": {
+                  "type": "string"
+                },
+                "computed_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "success": {
+                  "type": "boolean",
+                  "enum": [
+                    true
+                  ]
+                },
+                "latency_ms": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "Tail": {
+              "type": "object",
+              "required": [
+                "confidence_score",
+                "recommended_actions_priority_order",
+                "chain_to",
+                "privacy"
+              ],
+              "properties": {
+                "confidence_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "recommended_actions_priority_order": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "chain_to": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChainTo"
+                  }
+                },
+                "privacy": {
+                  "$ref": "#/components/schemas/Privacy"
+                }
+              }
+            },
+            "ZoneTime": {
+              "type": "object",
+              "required": [
+                "timezone",
+                "local_time",
+                "offset_minutes",
+                "offset_label",
+                "abbreviation"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "timezone": {
+                  "type": "string"
+                },
+                "local_time": {
+                  "type": "string",
+                  "description": "Wall-clock ISO (no offset) in this zone."
+                },
+                "offset_minutes": {
+                  "type": "integer"
+                },
+                "offset_label": {
+                  "type": "string",
+                  "example": "-07:00"
+                },
+                "abbreviation": {
+                  "type": "string",
+                  "example": "PDT"
+                }
+              }
+            },
+            "NormalizeRequest": {
+              "type": "object",
+              "required": [
+                "datetime"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "datetime": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ],
+                  "description": "Absolute instant: ISO 8601 with Z/offset, or epoch milliseconds.",
+                  "example": "2026-06-07T19:30:00Z"
+                }
+              }
+            },
+            "ConvertRequest": {
+              "type": "object",
+              "required": [
+                "datetime",
+                "to_tz"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "datetime": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ],
+                  "description": "Absolute instant: ISO 8601 with Z/offset, or epoch milliseconds.",
+                  "example": "2026-06-07T19:30:00Z"
+                },
+                "to_tz": {
+                  "type": "string",
+                  "example": "America/Los_Angeles"
+                }
+              }
+            },
+            "LookupRequest": {
+              "type": "object",
+              "required": [
+                "datetime",
+                "to_tzs"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "datetime": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ],
+                  "description": "Absolute instant: ISO 8601 with Z/offset, or epoch milliseconds.",
+                  "example": "2026-06-07T19:30:00Z"
+                },
+                "to_tzs": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 25,
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "America/Los_Angeles",
+                    "Europe/London",
+                    "Asia/Tokyo"
+                  ]
+                }
+              }
+            },
+            "DiscoveryResponse": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "version",
+                "description",
+                "openapi_url",
+                "auth",
+                "notes",
+                "endpoints",
+                "pricing",
+                "x402_compatible"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "notes": {
+                  "type": "string"
+                },
+                "openapi_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "auth": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "header"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "header": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "endpoints": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "path",
+                      "summary",
+                      "price_usdc"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "method": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "pricing": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "path",
+                      "price_usdc",
+                      "currency"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "path": {
+                        "type": "string"
+                      },
+                      "price_usdc": {
+                        "type": "number"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "enum": [
+                          "USDC"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "x402_compatible": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "NormalizeResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "input",
+                    "utc_iso",
+                    "epoch_ms"
+                  ],
+                  "properties": {
+                    "input": {
+                      "$ref": "#/components/schemas/NormalizeRequest"
+                    },
+                    "utc_iso": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "epoch_ms": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "ConvertResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "input",
+                    "utc_iso",
+                    "converted"
+                  ],
+                  "properties": {
+                    "input": {
+                      "$ref": "#/components/schemas/ConvertRequest"
+                    },
+                    "utc_iso": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "converted": {
+                      "$ref": "#/components/schemas/ZoneTime"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/EnvelopeOk"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "input",
+                    "utc_iso",
+                    "epoch_ms",
+                    "zones",
+                    "reasoning"
+                  ],
+                  "properties": {
+                    "input": {
+                      "$ref": "#/components/schemas/LookupRequest"
+                    },
+                    "utc_iso": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "epoch_ms": {
+                      "type": "integer"
+                    },
+                    "zones": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ZoneTime"
+                      }
+                    },
+                    "reasoning": {
+                      "$ref": "#/components/schemas/Reasoning"
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Tail"
+                }
+              ],
+              "unevaluatedProperties": false
+            }
+          }
+        }
+      },
+      "listing": {
+        "name": "Timezone Offset Harmonizer API",
+        "shortDescription": "Deterministic timezone conversion and UTC normalization from absolute instants for agents",
+        "description": "Agent-native timezone math backed by the IANA/ICU database. /normalize converts any absolute instant (ISO 8601 with Z/offset, or epoch ms) to UTC and epoch. /convert expresses that instant as wall-clock time, UTC offset, and zone abbreviation (DST-correct, e.g. PST vs PDT) in a target timezone. The one-call /lookup harmonizes one instant across up to 25 zones for meeting scheduling, with a reasoning object. Naive local times are rejected to guarantee correctness — never guessed, confidence always 1.0.",
+        "category": "developer-tools",
+        "baseUrl": "https://orbis-apis.onrender.com/timezone-harmonizer",
+        "websiteUrl": "https://orbis-apis.onrender.com",
+        "docsUrl": "https://orbis-apis.onrender.com/timezone-harmonizer/openapi.json",
+        "openApiSpecUrl": "https://orbis-apis.onrender.com/timezone-harmonizer/openapi.json",
+        "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+        "tags": [
+          "timezone",
+          "utc",
+          "dst",
+          "scheduling",
+          "datetime",
+          "developer-tools",
+          "x402",
+          "coinbase-bazaar",
+          "agentic-market"
+        ],
+        "keywords": [
+          "timezone converter api",
+          "utc normalization api",
+          "iana timezone api",
+          "dst offset api",
+          "meeting timezone harmonizer",
+          "convert time between zones api"
+        ],
+        "tiers": [
+          {
+            "name": "Free",
+            "isFree": true,
+            "requestsPerDay": 300,
+            "requestsPerMonth": 9000
+          },
+          {
+            "name": "Pay Per Call",
+            "isFree": false,
+            "pricingType": "per_call",
+            "pricePerCall": 0.015,
+            "requestsPerDay": 100000,
+            "requestsPerMonth": 3000000,
+            "endpointPricing": [
+              {
+                "method": "POST",
+                "pathPattern": "/normalize",
+                "pricePerCallUsdc": 0.005,
+                "description": "Normalize an absolute instant to UTC + epoch"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/convert",
+                "pricePerCallUsdc": 0.008,
+                "description": "Express an instant in a target timezone"
+              },
+              {
+                "method": "POST",
+                "pathPattern": "/lookup",
+                "pricePerCallUsdc": 0.015,
+                "description": "ONE-CALL UTC + many target zones + meeting-friendly view"
+              }
+            ]
+          }
+        ],
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/normalize",
+            "description": "Normalize to UTC/epoch"
+          },
+          {
+            "method": "POST",
+            "path": "/convert",
+            "description": "Convert to a timezone"
+          },
+          {
+            "method": "POST",
+            "path": "/lookup",
+            "description": "ONE-CALL multi-zone harmonize"
+          }
+        ]
+      }
+    }
+  ]
+}
