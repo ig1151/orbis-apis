@@ -1,0 +1,32 @@
+{
+  "name": "Webhook Validator API",
+  "shortDescription": "Deterministic webhook config + payload best-practice checklist — HTTPS, signature, replay, idempotency, timeouts, JSON",
+  "description": "Agent-native webhook best-practice validation computed by real rule-based checks (not a language model). /validate accepts any subset of webhook configuration fields — endpoint url, signature verification, timestamp/replay protection, idempotency, content-type, handler timeout, retry budget, max payload size — plus an optional sample raw body, and returns a typed checks[] (each with id, severity from critical to info, pass/fail/warn status, message, and a concrete recommendation), pass/fail/warning counts, and a 0–100 validation_score with a production-readiness verdict (production_ready, needs_attention, not_production_ready). The one-call /lookup adds a reasoning object and a prioritized, severity-ordered fix list. Results are deterministic so confidence is always 1.0; nothing is stored.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/webhook-validator",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/webhook-validator/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/webhook-validator/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["webhook", "validation", "best-practices", "security", "idempotency", "replay-protection", "developer-tools", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["webhook validator api", "webhook best practices api", "webhook config checker api", "webhook security audit api", "webhook idempotency api", "webhook replay protection api", "webhook checklist api", "production webhook api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.02,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.01, "description": "Run the webhook best-practice checklist" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL validate + reasoning + prioritized fixes" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/validate", "description": "Run the webhook best-practice checklist" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL validate + reasoning + prioritized fixes" }
+  ]
+}

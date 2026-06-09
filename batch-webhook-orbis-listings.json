@@ -1,0 +1,310 @@
+[
+  {
+    "name": "Webhook Signature Verifier API",
+    "shortDescription": "Deterministic HMAC webhook signature verification with presets for Stripe, GitHub, Shopify, Slack, and Svix",
+    "description": "Agent-native webhook signature verification computed with real cryptography (Node crypto HMAC + constant-time compare), not a language model. /verify takes a provider preset (stripe, github, shopify, slack, svix, or generic), the signing secret, the raw request body, and the signature header value, then reconstructs that provider's exact signed string, computes the digest, and compares it in constant time — returning signature_status (valid, invalid, missing_signature, missing_timestamp), the computed_signature, algorithm/encoding, and a concrete recommended_fix when it fails. The one-call /lookup adds a reasoning object (why_result_generated, key_factors, invalidators) and prioritized recommended actions. Handles Stripe's t=…,v1=… timestamped scheme, GitHub sha256= hex, Shopify base64, Slack v0:ts:body, and Svix/standard-webhooks id.ts.body base64. Secrets and payloads are never stored; results are deterministic so confidence is always 1.0.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/webhook-signature-verifier",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/webhook-signature-verifier/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/webhook-signature-verifier/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "webhook",
+      "signature",
+      "hmac",
+      "stripe",
+      "github",
+      "shopify",
+      "slack",
+      "svix",
+      "security",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "webhook signature verification api",
+      "hmac signature api",
+      "stripe webhook signature api",
+      "github webhook signature api",
+      "shopify hmac api",
+      "slack signing secret api",
+      "svix webhook api",
+      "verify webhook signature api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200,
+        "requestsPerMonth": 6000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/verify",
+            "pricePerCallUsdc": 0.01,
+            "description": "Verify a webhook signature against a secret"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL verify + reasoning + recommended fixes"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/verify",
+        "description": "Verify a webhook signature against a secret"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL verify + reasoning + recommended fixes"
+      }
+    ]
+  },
+  {
+    "name": "Webhook Reliability Scorer API",
+    "shortDescription": "Deterministic webhook delivery-health score from an attempt log or aggregate stats — score, rates, latency, retry policy",
+    "description": "Agent-native webhook delivery-health scoring computed in real arithmetic (not by a language model). /score accepts either a raw attempt log (each with success, status_code, latency_ms, attempt_number) or aggregate stats (total/successful/retried deliveries plus optional latency summary and failure breakdown) and returns a 0–100 delivery_score, a health_status (healthy, degraded, unhealthy, critical), success/failure/retry rates, p50/p95/max latency, a failure breakdown by category (client_error, server_error, timeout, connection_error), and a recommended retry policy tuned to the dominant failure mode. The one-call /lookup adds a reasoning object (why_result_generated, key_factors, invalidators) and prioritized recommended actions. Results are deterministic so confidence is always 1.0; nothing is stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/webhook-reliability-scorer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/webhook-reliability-scorer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/webhook-reliability-scorer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "webhook",
+      "reliability",
+      "delivery",
+      "monitoring",
+      "retry",
+      "latency",
+      "sre",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "webhook reliability api",
+      "webhook delivery score api",
+      "webhook health api",
+      "webhook retry policy api",
+      "webhook latency api",
+      "delivery success rate api",
+      "webhook failure analysis api",
+      "webhook monitoring api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200,
+        "requestsPerMonth": 6000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.01,
+            "description": "Score delivery health from attempts or stats"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL score + reasoning + retry policy"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score delivery health from attempts or stats"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL score + reasoning + retry policy"
+      }
+    ]
+  },
+  {
+    "name": "Webhook Validator API",
+    "shortDescription": "Deterministic webhook config + payload best-practice checklist — HTTPS, signature, replay, idempotency, timeouts, JSON",
+    "description": "Agent-native webhook best-practice validation computed by real rule-based checks (not a language model). /validate accepts any subset of webhook configuration fields — endpoint url, signature verification, timestamp/replay protection, idempotency, content-type, handler timeout, retry budget, max payload size — plus an optional sample raw body, and returns a typed checks[] (each with id, severity from critical to info, pass/fail/warn status, message, and a concrete recommendation), pass/fail/warning counts, and a 0–100 validation_score with a production-readiness verdict (production_ready, needs_attention, not_production_ready). The one-call /lookup adds a reasoning object and a prioritized, severity-ordered fix list. Results are deterministic so confidence is always 1.0; nothing is stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/webhook-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/webhook-validator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/webhook-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "webhook",
+      "validation",
+      "best-practices",
+      "security",
+      "idempotency",
+      "replay-protection",
+      "developer-tools",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "webhook validator api",
+      "webhook best practices api",
+      "webhook config checker api",
+      "webhook security audit api",
+      "webhook idempotency api",
+      "webhook replay protection api",
+      "webhook checklist api",
+      "production webhook api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200,
+        "requestsPerMonth": 6000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.01,
+            "description": "Run the webhook best-practice checklist"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL validate + reasoning + prioritized fixes"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Run the webhook best-practice checklist"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL validate + reasoning + prioritized fixes"
+      }
+    ]
+  },
+  {
+    "name": "Webhook Payload Builder API",
+    "shortDescription": "Build a signed webhook envelope + ready-to-send request for Stripe, GitHub, Shopify, Slack, Svix, or generic HMAC",
+    "description": "Agent-native signed-webhook envelope builder computed with real cryptography (Node crypto HMAC), not a language model. /build takes a provider preset, an event_type, the payload data, and a signing secret, then serializes a canonical {id,type,created,data} JSON body, computes the HMAC signature, and returns the provider-formatted signature header(s), the timestamp and idempotency message id used, the exact signed string, and a complete ready-to-send request spec (method, url, headers, body). Supports Stripe (t=…,v1=…), GitHub (sha256=…), Shopify (base64), Slack (v0:ts:body), Svix/standard-webhooks (id.ts.body), and generic HMAC. Ideal for integration tests, replays, fixtures, and local development. The one-call /lookup adds a reasoning object and send guidance. Results are deterministic so confidence is always 1.0; secrets are never stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/webhook-payload-builder",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/webhook-payload-builder/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/webhook-payload-builder/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "webhook",
+      "payload",
+      "hmac",
+      "signature",
+      "testing",
+      "fixtures",
+      "stripe",
+      "github",
+      "developer-tools",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "webhook payload builder api",
+      "signed webhook api",
+      "webhook test payload api",
+      "webhook signature generator api",
+      "stripe webhook test api",
+      "webhook fixture api",
+      "hmac webhook builder api",
+      "webhook replay api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 200,
+        "requestsPerMonth": 6000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/build",
+            "pricePerCallUsdc": 0.01,
+            "description": "Build a signed webhook envelope + request spec"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL build + reasoning + send guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/build",
+        "description": "Build a signed webhook envelope + request spec"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL build + reasoning + send guidance"
+      }
+    ]
+  }
+]

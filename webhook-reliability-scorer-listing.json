@@ -1,0 +1,32 @@
+{
+  "name": "Webhook Reliability Scorer API",
+  "shortDescription": "Deterministic webhook delivery-health score from an attempt log or aggregate stats — score, rates, latency, retry policy",
+  "description": "Agent-native webhook delivery-health scoring computed in real arithmetic (not by a language model). /score accepts either a raw attempt log (each with success, status_code, latency_ms, attempt_number) or aggregate stats (total/successful/retried deliveries plus optional latency summary and failure breakdown) and returns a 0–100 delivery_score, a health_status (healthy, degraded, unhealthy, critical), success/failure/retry rates, p50/p95/max latency, a failure breakdown by category (client_error, server_error, timeout, connection_error), and a recommended retry policy tuned to the dominant failure mode. The one-call /lookup adds a reasoning object (why_result_generated, key_factors, invalidators) and prioritized recommended actions. Results are deterministic so confidence is always 1.0; nothing is stored.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/webhook-reliability-scorer",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/webhook-reliability-scorer/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/webhook-reliability-scorer/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["webhook", "reliability", "delivery", "monitoring", "retry", "latency", "sre", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["webhook reliability api", "webhook delivery score api", "webhook health api", "webhook retry policy api", "webhook latency api", "delivery success rate api", "webhook failure analysis api", "webhook monitoring api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.02,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.01, "description": "Score delivery health from attempts or stats" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL score + reasoning + retry policy" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/score", "description": "Score delivery health from attempts or stats" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL score + reasoning + retry policy" }
+  ]
+}

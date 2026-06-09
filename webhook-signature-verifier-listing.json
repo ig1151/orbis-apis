@@ -1,0 +1,32 @@
+{
+  "name": "Webhook Signature Verifier API",
+  "shortDescription": "Deterministic HMAC webhook signature verification with presets for Stripe, GitHub, Shopify, Slack, and Svix",
+  "description": "Agent-native webhook signature verification computed with real cryptography (Node crypto HMAC + constant-time compare), not a language model. /verify takes a provider preset (stripe, github, shopify, slack, svix, or generic), the signing secret, the raw request body, and the signature header value, then reconstructs that provider's exact signed string, computes the digest, and compares it in constant time — returning signature_status (valid, invalid, missing_signature, missing_timestamp), the computed_signature, algorithm/encoding, and a concrete recommended_fix when it fails. The one-call /lookup adds a reasoning object (why_result_generated, key_factors, invalidators) and prioritized recommended actions. Handles Stripe's t=…,v1=… timestamped scheme, GitHub sha256= hex, Shopify base64, Slack v0:ts:body, and Svix/standard-webhooks id.ts.body base64. Secrets and payloads are never stored; results are deterministic so confidence is always 1.0.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/webhook-signature-verifier",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/webhook-signature-verifier/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/webhook-signature-verifier/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["webhook", "signature", "hmac", "stripe", "github", "shopify", "slack", "svix", "security", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["webhook signature verification api", "hmac signature api", "stripe webhook signature api", "github webhook signature api", "shopify hmac api", "slack signing secret api", "svix webhook api", "verify webhook signature api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.02,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/verify", "pricePerCallUsdc": 0.01, "description": "Verify a webhook signature against a secret" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL verify + reasoning + recommended fixes" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/verify", "description": "Verify a webhook signature against a secret" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL verify + reasoning + recommended fixes" }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "Webhook Payload Builder API",
+  "shortDescription": "Build a signed webhook envelope + ready-to-send request for Stripe, GitHub, Shopify, Slack, Svix, or generic HMAC",
+  "description": "Agent-native signed-webhook envelope builder computed with real cryptography (Node crypto HMAC), not a language model. /build takes a provider preset, an event_type, the payload data, and a signing secret, then serializes a canonical {id,type,created,data} JSON body, computes the HMAC signature, and returns the provider-formatted signature header(s), the timestamp and idempotency message id used, the exact signed string, and a complete ready-to-send request spec (method, url, headers, body). Supports Stripe (t=…,v1=…), GitHub (sha256=…), Shopify (base64), Slack (v0:ts:body), Svix/standard-webhooks (id.ts.body), and generic HMAC. Ideal for integration tests, replays, fixtures, and local development. The one-call /lookup adds a reasoning object and send guidance. Results are deterministic so confidence is always 1.0; secrets are never stored.",
+  "category": "developer-tools",
+  "baseUrl": "https://orbis-apis.onrender.com/webhook-payload-builder",
+  "websiteUrl": "https://orbis-apis.onrender.com",
+  "docsUrl": "https://orbis-apis.onrender.com/webhook-payload-builder/openapi.json",
+  "openApiSpecUrl": "https://orbis-apis.onrender.com/webhook-payload-builder/openapi.json",
+  "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+  "tags": ["webhook", "payload", "hmac", "signature", "testing", "fixtures", "stripe", "github", "developer-tools", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+  "keywords": ["webhook payload builder api", "signed webhook api", "webhook test payload api", "webhook signature generator api", "stripe webhook test api", "webhook fixture api", "hmac webhook builder api", "webhook replay api"],
+  "tiers": [
+    { "name": "Free", "isFree": true, "requestsPerDay": 200, "requestsPerMonth": 6000 },
+    {
+      "name": "Pay Per Call",
+      "isFree": false,
+      "pricingType": "per_call",
+      "pricePerCall": 0.02,
+      "requestsPerDay": 100000,
+      "requestsPerMonth": 3000000,
+      "endpointPricing": [
+        { "method": "POST", "pathPattern": "/build", "pricePerCallUsdc": 0.01, "description": "Build a signed webhook envelope + request spec" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL build + reasoning + send guidance" }
+      ]
+    }
+  ],
+  "endpoints": [
+    { "method": "POST", "path": "/build", "description": "Build a signed webhook envelope + request spec" },
+    { "method": "POST", "path": "/lookup", "description": "ONE-CALL build + reasoning + send guidance" }
+  ]
+}
