@@ -10,7 +10,10 @@ import { monthlyPayment, monthlyRate, round, num, FINANCIAL_DISCLAIMER, EXECUTIO
 
 const router = Router();
 const PRIVACY = { data_stored: false, retention: 'none' as const };
-const CONFIDENCE_PER_SECTION = { buy_cost: 1, rent_cost: 1, breakeven: 1 };
+// Assumption-heavy model: the arithmetic is exact but the inputs (appreciation,
+// rent growth, returns) are forecasts — reflect that in a lower overall confidence.
+const CONFIDENCE = 0.75;
+const CONFIDENCE_PER_SECTION = { math: 1, assumptions: 0.55 };
 
 export interface RentBuyInput {
   home_price: number;
@@ -200,7 +203,7 @@ router.post('/compare', (req: Request, res: Response) => {
   const r = computeRentBuy(parsed);
   respond(res, t0, {
     ...r,
-    confidence_score: 1.0,
+    confidence_score: CONFIDENCE,
     confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(r),
     chain_to: CHAIN_TO,
@@ -236,7 +239,7 @@ router.post('/lookup', (req: Request, res: Response) => {
         'Local taxes, HOA, PMI, and mortgage-interest deductions can shift the comparison.',
       ],
     },
-    confidence_score: 1.0,
+    confidence_score: CONFIDENCE,
     confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(r),
     chain_to: CHAIN_TO,

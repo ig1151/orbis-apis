@@ -110,7 +110,7 @@ const CHAIN_TO = [
   { api: 'debt-payoff-planner', reason: 'Lowering balances improves utilization — plan the payoff.' },
 ];
 
-const DISCLAIMER = FINANCIAL_DISCLAIMER + ' This is a model-based ESTIMATE using public FICO category weights, not your actual FICO or VantageScore, which are proprietary and use data not captured here.';
+const DISCLAIMER = FINANCIAL_DISCLAIMER + ' This is a model-based ESTIMATE using public FICO category weights, not your actual FICO or VantageScore, which are proprietary and use data not captured here. It is NOT a credit decision and must not be used for credit underwriting, adverse-action notices, or any FCRA-regulated purpose.';
 
 router.get('/', (_req: Request, res: Response) => {
   res.json({

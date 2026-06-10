@@ -33,7 +33,7 @@ export function parseInsurance(body: any): Parsed {
   const existing_coverage = num(body?.existing_coverage) ?? 0;
   const liquid_assets = num(body?.liquid_assets) ?? 0;
 
-  if (annual_income === undefined || annual_income <= 0) return { error: '"annual_income" must be a positive number' };
+  if (annual_income === undefined || annual_income < 0) return { error: '"annual_income" must be 0 or greater (use 0 for a non-earning caregiver — a need can still arise from debt, mortgage, and education)' };
   if (years_income_replacement < 0 || years_income_replacement > 50) return { error: '"years_income_replacement" must be between 0 and 50' };
   for (const [k, v] of Object.entries({ non_mortgage_debt, mortgage_balance, education_fund_needed, final_expenses, existing_coverage, liquid_assets })) {
     if ((v as number) < 0) return { error: `"${k}" must be 0 or greater` };
