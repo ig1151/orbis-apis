@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Rent vs Buy Calculator API",
+    "shortDescription": "Deterministic rent-vs-buy comparison over a horizon \u2014 net cost each way, recommendation, and break-even year",
+    "description": "Agent-native rent-vs-buy calculator computed in real math. /compare models the net cost of buying (mortgage + taxes + insurance + maintenance \u2212 equity recovered at sale) against renting (rent growth \u2212 investment gain on the cash a buyer ties up) over a holding horizon, returning a recommendation, the cost difference, a full buy/rent breakdown, and the break-even year. The one-call /lookup adds an appreciation-sensitivity table (\u00b12%), reasoning (why_result_generated, key_factors, invalidators), and explicit assumptions (it is assumption-heavy by nature). Confidence always 1.0; every response carries a financial_disclaimer.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/rent-vs-buy-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/rent-vs-buy-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/rent-vs-buy-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "rent-vs-buy",
+      "real-estate",
+      "mortgage",
+      "calculator",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "rent vs buy api",
+      "rent or buy calculator api",
+      "buy vs rent api",
+      "rent vs buy breakeven api",
+      "should i buy a house api",
+      "home buying calculator api",
+      "renting vs owning api",
+      "rent buy comparison api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.01,
+            "description": "Net buy vs net rent cost + recommendation + break-even"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL comparison + reasoning + appreciation sensitivity"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Net buy vs net rent cost + recommendation + break-even"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL comparison + reasoning + appreciation sensitivity"
+      }
+    ]
+  }
+]

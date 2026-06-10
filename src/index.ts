@@ -618,6 +618,16 @@ import budgetPlannerRouter from './routes/budget-planner-api/routes/intelligence
 import budgetPlannerOpenapiRouter from './routes/budget-planner-api/routes/openapi';
 import netWorthTrackerRouter from './routes/net-worth-tracker-api/routes/intelligence';
 import netWorthTrackerOpenapiRouter from './routes/net-worth-tracker-api/routes/openapi';
+import creditScoreEstimatorRouter from './routes/credit-score-estimator-api/routes/intelligence';
+import creditScoreEstimatorOpenapiRouter from './routes/credit-score-estimator-api/routes/openapi';
+import insuranceNeedsCalculatorRouter from './routes/insurance-needs-calculator-api/routes/intelligence';
+import insuranceNeedsCalculatorOpenapiRouter from './routes/insurance-needs-calculator-api/routes/openapi';
+import loanAffordabilityCalculatorRouter from './routes/loan-affordability-calculator-api/routes/intelligence';
+import loanAffordabilityCalculatorOpenapiRouter from './routes/loan-affordability-calculator-api/routes/openapi';
+import rentVsBuyCalculatorRouter from './routes/rent-vs-buy-calculator-api/routes/intelligence';
+import rentVsBuyCalculatorOpenapiRouter from './routes/rent-vs-buy-calculator-api/routes/openapi';
+import dtiCalculatorRouter from './routes/dti-calculator-api/routes/intelligence';
+import dtiCalculatorOpenapiRouter from './routes/dti-calculator-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1199,6 +1209,11 @@ const routerMap: Record<string, import("express").Router> = {
   'savings-goal-optimizer': savingsGoalOptimizerRouter,
   'budget-planner': budgetPlannerRouter,
   'net-worth-tracker': netWorthTrackerRouter,
+  'credit-score-estimator': creditScoreEstimatorRouter,
+  'insurance-needs-calculator': insuranceNeedsCalculatorRouter,
+  'loan-affordability-calculator': loanAffordabilityCalculatorRouter,
+  'rent-vs-buy-calculator': rentVsBuyCalculatorRouter,
+  'dti-calculator': dtiCalculatorRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1601,6 +1616,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'savings-goal-optimizer': savingsGoalOptimizerOpenapiRouter,
   'budget-planner': budgetPlannerOpenapiRouter,
   'net-worth-tracker': netWorthTrackerOpenapiRouter,
+  'credit-score-estimator': creditScoreEstimatorOpenapiRouter,
+  'insurance-needs-calculator': insuranceNeedsCalculatorOpenapiRouter,
+  'loan-affordability-calculator': loanAffordabilityCalculatorOpenapiRouter,
+  'rent-vs-buy-calculator': rentVsBuyCalculatorOpenapiRouter,
+  'dti-calculator': dtiCalculatorOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,

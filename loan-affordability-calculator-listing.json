@@ -1,0 +1,77 @@
+[
+  {
+    "name": "Loan Affordability Calculator API",
+    "shortDescription": "Deterministic max loan & home price from income, DTI caps, rate and term \u2014 identifies the binding constraint",
+    "description": "Agent-native loan/home affordability calculator computed in real amortization math. /calculate applies the standard 28% front-end and 36% back-end DTI caps to your income, nets out existing debt and taxes/insurance, and inverts the amortization formula to the maximum loan amount and purchase price \u2014 and names the binding constraint. The one-call /lookup adds a rate-sensitivity table (\u00b11%), reasoning (why_result_generated, key_factors, invalidators), and assumptions. Confidence always 1.0; every response carries a financial_disclaimer.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/loan-affordability-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/loan-affordability-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/loan-affordability-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "affordability",
+      "mortgage",
+      "loan",
+      "dti",
+      "calculator",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "loan affordability api",
+      "home affordability calculator api",
+      "how much house can i afford api",
+      "max loan amount api",
+      "mortgage affordability api",
+      "dti affordability api",
+      "max purchase price api",
+      "borrowing power api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/calculate",
+            "pricePerCallUsdc": 0.01,
+            "description": "Max loan, purchase price, and binding DTI constraint"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL affordability + reasoning + rate sensitivity"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/calculate",
+        "description": "Max loan, purchase price, and binding DTI constraint"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL affordability + reasoning + rate sensitivity"
+      }
+    ]
+  }
+]

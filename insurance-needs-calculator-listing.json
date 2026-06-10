@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Insurance Needs Calculator API",
+    "shortDescription": "Deterministic life-insurance needs via the DIME method \u2014 total need, coverage gap, and recommended coverage",
+    "description": "Agent-native life-insurance needs calculator computed with the DIME method (Debt + Income replacement + Mortgage + Education) plus final expenses, netted against existing coverage and liquid assets. /calculate returns the DIME breakdown, total need, coverage gap, a recommended coverage amount (rounded to 25k), a 10\u00d7-income cross-check, and an adequately_insured flag. The one-call /lookup adds an income-horizon sensitivity table, reasoning (why_result_generated, key_factors, invalidators), and assumptions. Real arithmetic \u2014 confidence always 1.0; every response carries a financial_disclaimer.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/insurance-needs-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/insurance-needs-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/insurance-needs-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "insurance",
+      "life-insurance",
+      "dime",
+      "calculator",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "insurance needs api",
+      "life insurance calculator api",
+      "dime method api",
+      "how much life insurance api",
+      "coverage gap api",
+      "term life insurance api",
+      "insurance coverage calculator",
+      "life insurance needs api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/calculate",
+            "pricePerCallUsdc": 0.01,
+            "description": "DIME need, coverage gap, recommended coverage"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL needs analysis + reasoning + sensitivity"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/calculate",
+        "description": "DIME need, coverage gap, recommended coverage"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL needs analysis + reasoning + sensitivity"
+      }
+    ]
+  }
+]
