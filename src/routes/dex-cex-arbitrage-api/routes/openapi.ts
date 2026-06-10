@@ -41,7 +41,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Detect price gaps between DEX pools and CEX order books for the same token, accounting for DEX liquidity depth, CEX bid/ask, and net profit after estimated swap fees.',
       'x-agent-callable': true, 'x-mcp-compatible': true,
-      'x-human-approval-required': true, 'x-execution-gate-required': true,
+      'x-human-approval-required': false, 'x-execution-gate-required': true,
       'x-paper-mode-recommended': true, 'x402-compatible': true,
       'x-agent-marketplace-ready': true, 'x-pay-per-call-optimized': true,
       'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.004', alerts: '$0.005', lookup: '$0.012' } },
@@ -182,7 +182,7 @@ router.get('/', (_req: Request, res: Response) => {
           summary: 'ONE-CALL: full DEX/CEX arb analysis with execution checklist',
           'x-one-call': true,
           'x-execution-gate-required': true,
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           requestBody: {
             required: true,
             content: {

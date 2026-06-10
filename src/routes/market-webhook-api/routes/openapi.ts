@@ -12,7 +12,7 @@ router.get('/', (_req: Request, res: Response) => {
       'x-pricing': { '/subscriptions': 0.002, '/': 0.002 },
       privacy: { data_stored: false, retention: 'none' },
     
-    'x-human-approval-required': true,},
+    'x-human-approval-required': false,},
     servers: [{ url: 'https://orbis-apis.onrender.com/market-webhook' }],
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },

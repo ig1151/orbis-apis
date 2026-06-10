@@ -161,14 +161,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/calculate', summary: 'Compute current vs new payment, savings, and break-even',
-    operationId: 'calculate', priceUsdc: 0.01, humanApprovalRequired: true,
+    operationId: 'calculate', priceUsdc: 0.01, humanApprovalRequired: false,
     requestSchemaRef: 'RefinanceRequest', responseSchemaRef: 'CalculateResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'rf1-1780000000000', computed_at: '2026-06-09T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL refinance analysis + reasoning + rate sensitivity',
-    operationId: 'lookup', priceUsdc: 0.02, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.02, oneCall: true, humanApprovalRequired: false,
     requestSchemaRef: 'RefinanceRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -200,7 +200,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic loan refinance analysis for mortgage, auto, student, and personal loans. Computes current vs new monthly payment, monthly and lifetime savings, break-even months, and rate sensitivity in real amortization math (never estimated). Includes a financial disclaimer and human-approval flag because results inform refinancing decisions.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

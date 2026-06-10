@@ -180,7 +180,7 @@ router.get('/', (_req: Request, res: Response) => {
           summary: 'ONE-CALL: breakout analysis + confirmation checklist + entry/invalidation levels',
           'x-one-call': true,
           'x-execution-gate-required': true,
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           requestBody: {
             required: true,
             content: {

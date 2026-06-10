@@ -142,14 +142,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/score', summary: 'Core ratios + weighted health score + grade',
-    operationId: 'scoreHealth', priceUsdc: 0.01, humanApprovalRequired: true,
+    operationId: 'scoreHealth', priceUsdc: 0.01, humanApprovalRequired: false,
     requestSchemaRef: 'HealthRequest', responseSchemaRef: 'ScoreResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'fh1-1780000000000', computed_at: '2026-06-09T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL health check + reasoning + prioritized actions',
-    operationId: 'lookup', priceUsdc: 0.02, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.02, oneCall: true, humanApprovalRequired: false,
     requestSchemaRef: 'HealthRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -172,7 +172,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic personal financial-health score (0–100) and letter grade from four weighted components — savings rate, debt-to-income, emergency-fund coverage, and solvency — each returned as a sub-score alongside the underlying ratios. The one-call /lookup adds reasoning and actions prioritized by the weakest component. Real arithmetic, never estimated; carries a financial disclaimer on every response.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

@@ -9,7 +9,7 @@ const openApiSpec = {
     description: 'Multi-symbol crypto strategy scanner. Scans up to 5 symbols in parallel, ranks by signal strength, identifies best buy/sell opportunities, and generates a unified portfolio narrative.',
     'x-agent-callable': true,
     'x-mcp-compatible': true,
-    'x-human-approval-required': true,
+    'x-human-approval-required': false,
     'x-execution-gate-required': true,
     'x-paper-mode-recommended': true,
     'x-pricing': { '/scan': 0.01, '/execution-gate': 0.002 },
@@ -94,7 +94,7 @@ const openApiSpec = {
         summary: 'POST variant of scan — same as GET with body params',
         operationId: 'scanPost',
         'x-agent-callable': true,
-        'x-human-approval-required': true,
+        'x-human-approval-required': false,
         'x-execution-gate-required': true,
         requestBody: { required: false, content: { 'application/json': { schema: { type: 'object', properties: {
           symbols: { type: 'string', description: 'Comma-separated symbols (max 5)' },

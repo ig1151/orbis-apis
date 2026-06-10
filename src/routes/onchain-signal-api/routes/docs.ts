@@ -13,7 +13,7 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
       disclaimer: 'For informational purposes only. Not financial advice.',
       privacy: { data_stored: false, retention: 'none' },
     
-    'x-human-approval-required': true,},
+    'x-human-approval-required': false,},
     servers: [{ url: 'https://orbis-apis.onrender.com/onchain-signal' }],
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },

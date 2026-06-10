@@ -27,7 +27,7 @@ const SPEC = {
     },
     "x-financial-disclaimer": "For informational purposes only. Not financial advice. Crypto trading involves substantial risk of loss.",
     "x-execution-gate-required": true,
-    "x-human-approval-required": true,
+    "x-human-approval-required": false,
     "x-paper-mode-recommended": true
   },
   "servers": [

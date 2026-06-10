@@ -37,7 +37,7 @@ router.get('/', (_req: Request, res: Response) => {
       description: 'Score portfolio risk, analyze concentration and sector exposure, run stress tests, estimate drawdowns, and generate rebalancing action plans for investment agents.',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
-      'x-human-approval-required': true,
+      'x-human-approval-required': false,
       'x-execution-gate-required': true,
       'x-paper-mode-recommended': true,
       'x-financial-disclaimer': 'Informational only. Not financial advice. Do not act on rebalancing suggestions without consulting a qualified financial advisor. Tax consequences vary by jurisdiction.',

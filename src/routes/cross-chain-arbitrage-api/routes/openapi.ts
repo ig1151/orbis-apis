@@ -47,7 +47,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Price differences for a token across chains (Ethereum, Base, Arbitrum, Polygon, BSC, Solana), accounting for bridge costs, gas on each chain, and bridge latency.',
       'x-agent-callable': true, 'x-mcp-compatible': true,
-      'x-human-approval-required': true, 'x-execution-gate-required': true,
+      'x-human-approval-required': false, 'x-execution-gate-required': true,
       'x-paper-mode-recommended': true, 'x402-compatible': true,
       'x-agent-marketplace-ready': true, 'x-pay-per-call-optimized': true,
       'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.005', routes: '$0.006', lookup: '$0.015' } },
@@ -177,7 +177,7 @@ router.get('/', (_req: Request, res: Response) => {
           summary: 'ONE-CALL: full cross-chain arb with bridge recommendation and execution steps',
           'x-one-call': true,
           'x-execution-gate-required': true,
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           requestBody: {
             required: true,
             content: {

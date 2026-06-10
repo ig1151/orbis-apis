@@ -189,7 +189,7 @@ router.get('/', (_req: Request, res: Response) => {
           summary: 'ONE-CALL: gas-adjusted analysis with optimal gas strategy and profit scenarios',
           'x-one-call': true,
           'x-execution-gate-required': true,
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           requestBody: {
             required: true,
             content: {
