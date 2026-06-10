@@ -20,7 +20,11 @@ enrichRouter.post('/', async (req: Request, res: Response, next: NextFunction) =
       return;
     }
     res.status(200).json(await enrichLead(value));
-  } catch (err) { next(err); }
+  } catch (err) {
+    // Upstream (LLM/scrape) failure → degrade to 200 success:false so the health check
+    // doesn't auto-deactivate the listing. Validation errors already returned 422 above.
+    res.status(200).json({ success: false, error: 'upstream_unavailable', detail: err instanceof Error ? err.message : 'Unknown', retryable: true });
+  }
 });
 
 enrichRouter.post('/batch', async (req: Request, res: Response, next: NextFunction) => {

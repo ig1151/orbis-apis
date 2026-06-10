@@ -43,7 +43,7 @@ Return ONLY valid JSON:
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify({ model: MODEL, max_tokens: 1000, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' } }),
     });
-    if (!response.ok) { res.status(500).json({ error: 'Model error' }); return; }
+    if (!response.ok) { res.status(200).json({ success: false, error: 'upstream_unavailable', detail: 'Model error', retryable: true }); return; }
     const data = await response.json() as any;
     const parsed = JSON.parse(data.choices[0].message.content.replace(/```json|```/g, '').trim());
     res.status(200).json({
@@ -56,6 +56,6 @@ Return ONLY valid JSON:
       created_at: new Date().toISOString(),
     });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(200).json({ success: false, error: 'upstream_unavailable', detail: err.message, retryable: true });
   }
 });

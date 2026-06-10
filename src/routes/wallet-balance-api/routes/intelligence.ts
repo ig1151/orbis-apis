@@ -6,12 +6,27 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!;
 const MODEL = 'anthropic/claude-sonnet-4-5';
 
 async function callClaude(prompt: string): Promise<string> {
-  const res = await axios.post(
-    'https://openrouter.ai/api/v1/chat/completions',
-    { model: MODEL, messages: [{ role: 'user', content: prompt }] },
-    { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' } }
-  );
-  return res.data.choices[0].message.content;
+  // Hardened: 25s timeout + bounded retry on 429/5xx/timeout so transient upstream
+  // failures degrade to a caught error (→ 200 success:false) instead of a hang/500.
+  const MAX_RETRIES = 2;
+  let lastErr: any;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await axios.post(
+        'https://openrouter.ai/api/v1/chat/completions',
+        { model: MODEL, messages: [{ role: 'user', content: prompt }] },
+        { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 25000 }
+      );
+      return res.data.choices[0].message.content;
+    } catch (e: any) {
+      lastErr = e;
+      const status = e?.response?.status;
+      const retryable = !status || status === 429 || status >= 500 || e?.code === 'ECONNABORTED';
+      if (attempt < MAX_RETRIES && retryable) { await new Promise(r => setTimeout(r, 500 * (attempt + 1))); continue; }
+      throw e;
+    }
+  }
+  throw lastErr;
 }
 
 function parseJSON(raw: string) { return JSON.parse(raw.replace(/```json|```/g, '').trim()); }
@@ -28,7 +43,7 @@ router.post('/lookup', async (req: Request, res: Response) => {
     const raw = await callClaude(`Return wallet balance for address="${address}", chain="${chain||'ethereum'}". Return JSON only:
 {"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"address":"${address}","chain":"${chain||'ethereum'}","native_balance":"string","native_balance_usd":0.0,"token_count":0,"nft_count":0,"last_activity":"string","is_contract":false,"source_provenance":{"provider":"wallet-balance-ai","retrieved_at":"${new Date().toISOString()}","freshness_score":0.90},"cache_ttl_seconds":60,"cache_recommended":true,"recommended_next_api":"wallet-balance","recommended_next_endpoint":"/portfolio","automation_safe":true,"confidence_per_section":{"balance":0.90},"recommended_actions_priority_order":["check portfolio","assess risk","monitor activity"],"privacy":{"data_stored":false,"retention":"none"}}`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message }); }
 });
 
 router.post('/portfolio', async (req: Request, res: Response) => {
@@ -38,7 +53,7 @@ router.post('/portfolio', async (req: Request, res: Response) => {
     const raw = await callClaude(`Return token portfolio for wallet address="${address}", chain="${chain||'ethereum'}". Return JSON only:
 {"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"address":"${address}","chain":"string","tokens":[{"symbol":"string","name":"string","contract":"string","balance":"string","balance_usd":0.0,"price_usd":0.0,"price_change_24h_pct":0.0,"weight_pct":0.0}],"total_value_usd":0.0,"defi_value_usd":0.0,"nft_floor_value_usd":0.0,"source_provenance":{"provider":"wallet-balance-ai","retrieved_at":"${new Date().toISOString()}","freshness_score":0.90},"cache_ttl_seconds":60,"cache_recommended":true,"recommended_next_api":"wallet-balance","recommended_next_endpoint":"/net-worth","automation_safe":true,"confidence_per_section":{"portfolio":0.88},"recommended_actions_priority_order":["calculate net worth","assess diversification","monitor high-value positions"],"privacy":{"data_stored":false,"retention":"none"}}`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message }); }
 });
 
 router.post('/history', async (req: Request, res: Response) => {
@@ -48,7 +63,7 @@ router.post('/history', async (req: Request, res: Response) => {
     const raw = await callClaude(`Return balance history for wallet address="${address}", chain="${chain||'ethereum'}", limit=${limit||10}. Return JSON only:
 {"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"address":"${address}","chain":"string","history":[{"date":"string","native_balance":"string","total_value_usd":0.0,"change_usd":0.0,"notable_event":"string"}],"peak_value_usd":0.0,"current_vs_peak_pct":0.0,"active_days":0,"source_provenance":{"provider":"wallet-balance-ai","retrieved_at":"${new Date().toISOString()}","freshness_score":0.88},"cache_ttl_seconds":300,"cache_recommended":true,"recommended_next_api":"wallet-balance","recommended_next_endpoint":"/wallet-intelligence","automation_safe":true,"confidence_per_section":{"history":0.85},"recommended_actions_priority_order":["analyze trend","note peak value","identify significant events"],"privacy":{"data_stored":false,"retention":"none"}}`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message }); }
 });
 
 router.post('/execution-gate', async (req: Request, res: Response) => {
@@ -75,7 +90,7 @@ router.post('/wallet-intelligence', async (req: Request, res: Response) => {
     const raw = await callClaude(`Full wallet intelligence for address="${address}", chain="${chain||'ethereum'}". Return JSON only:
 {"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"address":"${address}","chain":"string","native_balance":"string","total_value_usd":0.0,"token_count":0,"nft_count":0,"defi_positions":0,"wallet_type":"whale|high_value|mid_tier|retail|new_wallet","risk_profile":"conservative|moderate|aggressive|degen","activity_pattern":"active|moderate|dormant","notable_holdings":["string"],"last_activity":"string","age_days":0,"source_provenance":{"provider":"wallet-balance-ai","retrieved_at":"${new Date().toISOString()}","freshness_score":0.90},"cache_ttl_seconds":60,"cache_recommended":true,"recommended_next_api":"address-risk","recommended_next_endpoint":"/assess","automation_safe":true,"confidence_per_section":{"balance":0.90,"classification":0.82},"recommended_actions_priority_order":["assess risk profile","check notable holdings","monitor activity"],"privacy":{"data_stored":false,"retention":"none"}}`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message }); }
 });
 
 router.post('/net-worth', async (req: Request, res: Response) => {
@@ -85,7 +100,7 @@ router.post('/net-worth', async (req: Request, res: Response) => {
     const raw = await callClaude(`Estimate crypto net worth for wallet address="${address}", include_defi=${include_defi||true}, include_nfts=${include_nfts||true}. Return JSON only:
 {"trace_id":"${traceId()}","computed_at":"${new Date().toISOString()}","success":true,"address":"string","net_worth_usd":0.0,"breakdown":{"liquid_tokens_usd":0.0,"native_eth_usd":0.0,"defi_positions_usd":0.0,"nft_floor_value_usd":0.0,"staked_usd":0.0},"largest_position":{"asset":"string","value_usd":0.0,"weight_pct":0.0},"portfolio_concentration":"concentrated|diversified","source_provenance":{"provider":"wallet-balance-ai","retrieved_at":"${new Date().toISOString()}","freshness_score":0.88},"cache_ttl_seconds":60,"cache_recommended":true,"recommended_next_api":"wallet-balance","recommended_next_endpoint":"/wallet-intelligence","automation_safe":true,"confidence_per_section":{"net_worth":0.85},"recommended_actions_priority_order":["use in risk model","check concentration","set portfolio alerts"],"privacy":{"data_stored":false,"retention":"none"}}`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message }); }
 });
 
 router.post('/batch', async (req: Request, res: Response) => {
@@ -106,7 +121,7 @@ router.post('/batch', async (req: Request, res: Response) => {
       recommended_next_api: 'wallet-balance', recommended_next_endpoint: '/wallet-intelligence',
       automation_safe: true, privacy: { data_stored: false, retention: 'none' },
     });
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message }); }
 });
 
 export default router;
