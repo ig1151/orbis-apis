@@ -95,19 +95,31 @@ export async function enrichLead(req: EnrichRequest): Promise<EnrichResponse> {
 
   const prompt = buildPrompt({ ...req, domain }, websiteContent);
 
-  const response = await fetch(OPENROUTER_API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 2048,
-      messages: [{ role: 'user', content: prompt }],
-      response_format: { type: 'json_object' },
-    }),
-  });
+  // Hardened: 25s timeout (via AbortController) + bounded retry on 429/5xx/timeout.
+  const callOpenRouter = async (): Promise<Response> => {
+    const MAX_RETRIES = 2;
+    let lastErr: any;
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 25000);
+      try {
+        const r = await fetch(OPENROUTER_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+          body: JSON.stringify({ model: MODEL, max_tokens: 2048, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' } }),
+          signal: ctrl.signal,
+        });
+        if (!r.ok && (r.status === 429 || r.status >= 500) && attempt < MAX_RETRIES) { await new Promise(res => setTimeout(res, 500 * (attempt + 1))); continue; }
+        return r;
+      } catch (e: any) {
+        lastErr = e;
+        if (attempt < MAX_RETRIES) { await new Promise(res => setTimeout(res, 500 * (attempt + 1))); continue; }
+        throw e;
+      } finally { clearTimeout(timer); }
+    }
+    throw lastErr;
+  };
+  const response = await callOpenRouter();
 
   if (!response.ok) {
     const err = await response.text();

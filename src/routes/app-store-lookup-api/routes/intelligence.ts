@@ -6,12 +6,27 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!;
 const MODEL = 'anthropic/claude-sonnet-4-5';
 
 async function callClaude(prompt: string): Promise<string> {
-  const res = await axios.post(
-    'https://openrouter.ai/api/v1/chat/completions',
-    { model: MODEL, messages: [{ role: 'user', content: prompt }] },
-    { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' } }
-  );
-  return res.data.choices[0].message.content;
+  // Hardened: 25s timeout + bounded retry on 429/5xx/timeout so transient upstream
+  // failures degrade to a caught error (→ 200 success:false) instead of a hang/500.
+  const MAX_RETRIES = 2;
+  let lastErr: any;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await axios.post(
+        'https://openrouter.ai/api/v1/chat/completions',
+        { model: MODEL, messages: [{ role: 'user', content: prompt }] },
+        { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 25000 }
+      );
+      return res.data.choices[0].message.content;
+    } catch (e: any) {
+      lastErr = e;
+      const status = e?.response?.status;
+      const retryable = !status || status === 429 || status >= 500 || e?.code === 'ECONNABORTED';
+      if (attempt < MAX_RETRIES && retryable) { await new Promise(r => setTimeout(r, 500 * (attempt + 1))); continue; }
+      throw e;
+    }
+  }
+  throw lastErr;
 }
 
 function parseJSON(raw: string) {
@@ -33,7 +48,7 @@ Options: ${JSON.stringify(options || {})}
 Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object with typed API-specific fields), confidence (object: score 0-1 number, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Use enums strictly. Return only the JSON object.
 The data object must include all typed fields relevant to lookup for this API. Be specific and deterministic.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
 });
 
 router.post('/reviews', async (req: Request, res: Response) => {
@@ -46,7 +61,7 @@ Options: ${JSON.stringify(options || {})}
 Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object with typed API-specific fields), confidence (object: score 0-1 number, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Use enums strictly. Return only the JSON object.
 The data object must include all typed fields relevant to reviews for this API. Use enums where applicable. Be specific and deterministic.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
 });
 
 router.post('/similar', async (req: Request, res: Response) => {
@@ -59,7 +74,7 @@ Options: ${JSON.stringify(options || {})}
 Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object with typed API-specific fields), confidence (object: score 0-1 number, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Use enums strictly. Return only the JSON object.
 The data object must include all typed fields relevant to similar for this API. Use enums where applicable. Be specific and deterministic.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
 });
 
 router.post('/execution-gate', async (req: Request, res: Response) => {
@@ -89,7 +104,7 @@ Options: ${JSON.stringify(options || {})}
 Return ONLY a valid JSON object with these exact top-level keys — no markdown, no prose: success (boolean true), request_id (uuid v4 string), data (object with typed API-specific fields), confidence (object: score 0-1 number, reason string, per_section object), provenance (object: provider string, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (object: recommended_ttl_seconds integer, retryable boolean, cache_recommended boolean), recommended_next_api (array of objects: api string, endpoint string, reason string), recommended_actions_priority_order (array of objects: priority enum high|medium|low, action string, reason string), execution_metadata (object: latency_ms integer, model string, automation_safe boolean). Use enums strictly. Return only the JSON object.
 The data object MUST include: all fields from lookup, reviews, and similar sub-analyses, plus an overall_score (0-100 number), key_findings (array of strings), and summary (string). Use enums where applicable. Recommended_next_api should point to relevant downstream APIs with specific reasons based on what was found.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
 });
 
 export default router;

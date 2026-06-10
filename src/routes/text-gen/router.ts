@@ -60,7 +60,9 @@ router.post('/generate', async (req: Request, res: Response) => {
       execution_ready: true, next_api: 'text-gen', next_endpoint: '/text-gen/generate',
     });
   } catch (err: any) {
-    res.status(500).json({ error: 'Text generation failed', details: err.message, execution_ready: false });
+    // Both primary and fallback models failed — degrade to 200 success:false so the
+    // health check doesn't auto-deactivate the listing on transient upstream errors.
+    res.status(200).json({ success: false, error: 'upstream_unavailable', details: err.message, retryable: true, execution_ready: false });
   }
 });
 

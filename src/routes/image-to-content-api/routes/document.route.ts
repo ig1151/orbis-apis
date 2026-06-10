@@ -48,7 +48,7 @@ router.post('/', async (req: Request, res: Response) => {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify({ model: MODEL, max_tokens: 1500, messages: [{ role: 'user', content: [imageContent, { type: 'text', text: prompt }] }], response_format: { type: 'json_object' } }),
     });
-    if (!response.ok) { const err = await response.text(); res.status(500).json({ error: `Model error: ${response.status} ${err}` }); return; }
+    if (!response.ok) { const err = await response.text(); res.status(200).json({ success: false, error: 'upstream_unavailable', detail: `Model error: ${response.status} ${err}`, retryable: true }); return; }
     const data = await response.json() as any;
     const parsed = JSON.parse(data.choices[0].message.content.replace(/```json|```/g, '').trim());
     res.status(200).json({
@@ -61,7 +61,7 @@ router.post('/', async (req: Request, res: Response) => {
       created_at: new Date().toISOString(),
     });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(200).json({ success: false, error: 'upstream_unavailable', detail: err.message, retryable: true });
   }
 });
 

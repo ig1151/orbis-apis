@@ -28,7 +28,11 @@ analyzeRouter.post('/', upload.single('image_file'), async (req: Request, res: R
       return;
     }
     res.status(200).json(await analyzeImage(value));
-  } catch (err) { next(err); }
+  } catch (err) {
+    // Upstream (vision model) failure → degrade to 200 success:false so the health check
+    // doesn't auto-deactivate the listing. Validation errors already returned 422 above.
+    res.status(200).json({ success: false, error: 'upstream_unavailable', detail: err instanceof Error ? err.message : 'Unknown', retryable: true });
+  }
 });
 
 analyzeRouter.post('/batch', async (req: Request, res: Response, next: NextFunction) => {

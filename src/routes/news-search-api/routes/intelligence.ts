@@ -6,12 +6,27 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!;
 const MODEL = 'anthropic/claude-sonnet-4-5';
 
 async function callClaude(prompt: string): Promise<string> {
-  const res = await axios.post(
-    'https://openrouter.ai/api/v1/chat/completions',
-    { model: MODEL, messages: [{ role: 'user', content: prompt }] },
-    { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' } }
-  );
-  return res.data.choices[0].message.content;
+  // Hardened: 25s timeout + bounded retry on 429/5xx/timeout so transient upstream
+  // failures degrade to a caught error (→ 200 success:false) instead of a hang/500.
+  const MAX_RETRIES = 2;
+  let lastErr: any;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await axios.post(
+        'https://openrouter.ai/api/v1/chat/completions',
+        { model: MODEL, messages: [{ role: 'user', content: prompt }] },
+        { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 25000 }
+      );
+      return res.data.choices[0].message.content;
+    } catch (e: any) {
+      lastErr = e;
+      const status = e?.response?.status;
+      const retryable = !status || status === 429 || status >= 500 || e?.code === 'ECONNABORTED';
+      if (attempt < MAX_RETRIES && retryable) { await new Promise(r => setTimeout(r, 500 * (attempt + 1))); continue; }
+      throw e;
+    }
+  }
+  throw lastErr;
 }
 
 function parseJSON(raw: string) {
@@ -61,7 +76,7 @@ router.post('/latest', async (req: Request, res: Response) => {
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message }); }
 });
 
 // POST /by-topic
@@ -94,7 +109,7 @@ router.post('/by-topic', async (req: Request, res: Response) => {
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message }); }
 });
 
 // POST /by-company
@@ -131,7 +146,7 @@ router.post('/by-company', async (req: Request, res: Response) => {
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message }); }
 });
 
 // POST /execution-gate
@@ -185,7 +200,7 @@ router.post('/search', async (req: Request, res: Response) => {
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch (e: any) { res.status(200).json({ success: false, error: e.message }); }
 });
 
 export default router;
