@@ -42,15 +42,23 @@ const RetSensitivityRow = {
   },
 };
 
+const ExecutionMetadata = {
+  type: 'object', required: ['model', 'automation_safe'], additionalProperties: false,
+  properties: { model: { type: 'string', enum: ['deterministic'] }, automation_safe: { type: 'boolean' } },
+};
+const ConfidencePerSection = { type: 'object', additionalProperties: { type: 'number', minimum: 0, maximum: 1 } };
+
 const FinanceTail = {
   type: 'object',
-  required: ['confidence_score', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy'],
+  required: ['confidence_score', 'confidence_per_section', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy', 'execution_metadata'],
   properties: {
     confidence_score: { type: 'number', minimum: 0, maximum: 1 },
+    confidence_per_section: { $ref: '#/components/schemas/ConfidencePerSection' },
     recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
     chain_to: { type: 'array', items: { $ref: '#/components/schemas/ChainTo' } },
     financial_disclaimer: { type: 'string' },
     privacy: { $ref: '#/components/schemas/Privacy' },
+    execution_metadata: { $ref: '#/components/schemas/ExecutionMetadata' },
   },
 };
 
@@ -58,7 +66,7 @@ const RetirementRequest = {
   type: 'object', required: ['current_age', 'retirement_age'], additionalProperties: false,
   properties: {
     current_age: { type: 'number', minimum: 0, maximum: 110 },
-    retirement_age: { type: 'number', minimum: 1, maximum: 110, description: 'Must exceed current_age.' },
+    retirement_age: { type: 'number', minimum: 0, maximum: 110, description: 'Must be ≥ current_age; equal means retiring now (years/months_to_retirement = 0, projected = current balance).' },
     current_savings: { type: 'number', minimum: 0, default: 0 },
     monthly_contribution: { type: 'number', minimum: 0, default: 0 },
     annual_return_pct: { type: 'number', minimum: -20, maximum: 30, default: 7 },
@@ -82,6 +90,8 @@ const CORE_EXAMPLE = {
 
 const TAIL_EXAMPLE = {
   confidence_score: 1,
+  confidence_per_section: { projection: 1, nest_egg_analysis: 1, sensitivity_analysis: 1 },
+  execution_metadata: { model: 'deterministic', automation_safe: true },
   recommended_actions_priority_order: [
     "Gap of 660180.93 (today's dollars) to your target. Increase monthly contributions to about 1971.12, retire later, or adjust the target income.",
     'Maximize tax-advantaged accounts (401k/IRA) and any employer match before taxable investing.',
@@ -100,6 +110,8 @@ const schemas = {
   EnvelopeOk,
   RetCore,
   RetSensitivityRow,
+  ExecutionMetadata,
+  ConfidencePerSection,
   _FinanceTail: FinanceTail,
   RetirementRequest,
   DiscoveryResponse: {

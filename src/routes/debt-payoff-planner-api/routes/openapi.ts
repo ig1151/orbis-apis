@@ -72,15 +72,23 @@ const DebtCore = {
   },
 };
 
+const ExecutionMetadata = {
+  type: 'object', required: ['model', 'automation_safe'], additionalProperties: false,
+  properties: { model: { type: 'string', enum: ['deterministic'] }, automation_safe: { type: 'boolean' } },
+};
+const ConfidencePerSection = { type: 'object', additionalProperties: { type: 'number', minimum: 0, maximum: 1 } };
+
 const FinanceTail = {
   type: 'object',
-  required: ['confidence_score', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy'],
+  required: ['confidence_score', 'confidence_per_section', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy', 'execution_metadata'],
   properties: {
     confidence_score: { type: 'number', minimum: 0, maximum: 1 },
+    confidence_per_section: { $ref: '#/components/schemas/ConfidencePerSection' },
     recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
     chain_to: { type: 'array', items: { $ref: '#/components/schemas/ChainTo' } },
     financial_disclaimer: { type: 'string' },
     privacy: { $ref: '#/components/schemas/Privacy' },
+    execution_metadata: { $ref: '#/components/schemas/ExecutionMetadata' },
   },
 };
 
@@ -123,6 +131,8 @@ const CORE_EXAMPLE = {
 
 const TAIL_EXAMPLE = {
   confidence_score: 1,
+  confidence_per_section: { payoff_simulation: 1, recommendation: 1, sensitivity_analysis: 1 },
+  execution_metadata: { model: 'deterministic', automation_safe: true },
   recommended_actions_priority_order: [
     'Use the avalanche strategy: Avalanche pays off highest-APR debt first, minimizing total interest (729.75 less than snowball).',
     'Direct all 795/mo (incl. 250 extra) per the payoff order; you are debt-free in 34 month(s).',
@@ -143,6 +153,8 @@ const schemas = {
   StrategyResult,
   MinimumsOnly,
   DebtSensitivityRow,
+  ExecutionMetadata,
+  ConfidencePerSection,
   DebtCore,
   _FinanceTail: FinanceTail,
   DebtEntry,
@@ -177,7 +189,7 @@ const schemas = {
         required: ['assumptions', 'sensitivity_analysis', 'reasoning'],
         properties: {
           assumptions: { type: 'array', items: { type: 'string' } },
-          sensitivity_analysis: { type: 'array', items: { $ref: '#/components/schemas/DebtSensitivityRow' }, description: 'Months and interest at extra payment +0/+50/+100/+200.' },
+          sensitivity_analysis: { type: 'array', items: { $ref: '#/components/schemas/DebtSensitivityRow' }, description: 'Four rows: total extra_monthly_payment stepped by +0/+50/+100/+200 above the supplied extra (absolute values shown in extra_monthly_payment).' },
           reasoning: { $ref: '#/components/schemas/Reasoning' },
         },
       },
@@ -210,7 +222,8 @@ const endpoints: AplusEndpoint[] = [
       ],
       sensitivity_analysis: [
         { extra_monthly_payment: 250, months_to_debt_free: 34, total_interest_paid: 3121.46 },
-        { extra_monthly_payment: 300, months_to_debt_free: 31, total_interest_paid: 2772.49 },
+        { extra_monthly_payment: 300, months_to_debt_free: 32, total_interest_paid: 2827.57 },
+        { extra_monthly_payment: 350, months_to_debt_free: 30, total_interest_paid: 2590.34 },
         { extra_monthly_payment: 450, months_to_debt_free: 26, total_interest_paid: 2229.05 },
       ],
       reasoning: {

@@ -42,15 +42,23 @@ const NetWorthCore = {
   },
 };
 
+const ExecutionMetadata = {
+  type: 'object', required: ['model', 'automation_safe'], additionalProperties: false,
+  properties: { model: { type: 'string', enum: ['deterministic'] }, automation_safe: { type: 'boolean' } },
+};
+const ConfidencePerSection = { type: 'object', additionalProperties: { type: 'number', minimum: 0, maximum: 1 } };
+
 const FinanceTail = {
   type: 'object',
-  required: ['confidence_score', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy'],
+  required: ['confidence_score', 'confidence_per_section', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy', 'execution_metadata'],
   properties: {
     confidence_score: { type: 'number', minimum: 0, maximum: 1 },
+    confidence_per_section: { $ref: '#/components/schemas/ConfidencePerSection' },
     recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
     chain_to: { type: 'array', items: { $ref: '#/components/schemas/ChainTo' } },
     financial_disclaimer: { type: 'string' },
     privacy: { $ref: '#/components/schemas/Privacy' },
+    execution_metadata: { $ref: '#/components/schemas/ExecutionMetadata' },
   },
 };
 
@@ -116,6 +124,8 @@ const CORE_EXAMPLE = {
 
 const TAIL_EXAMPLE = {
   confidence_score: 1,
+  confidence_per_section: { net_worth: 1, ratios: 1, benchmark: 1 },
+  execution_metadata: { model: 'deterministic', automation_safe: true },
   recommended_actions_priority_order: [
     'Net worth is 313000 with a debt-to-asset ratio of 0.5086.',
     'Re-run monthly to track the trend; net worth direction matters more than any single snapshot.',
@@ -133,6 +143,8 @@ const schemas = {
   EnvelopeOk,
   AssetBreakdownItem,
   LiabilityBreakdownItem,
+  ExecutionMetadata,
+  ConfidencePerSection,
   NetWorthCore,
   _FinanceTail: FinanceTail,
   AssetEntry,
@@ -181,14 +193,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/calculate', summary: 'Compute net worth, ratios, and breakdowns',
-    operationId: 'calculate', priceUsdc: 0.008,
+    operationId: 'calculate', priceUsdc: 0.008, humanApprovalRequired: true,
     requestSchemaRef: 'NetWorthRequest', responseSchemaRef: 'CalculateResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'net1-1780000000000', computed_at: '2026-06-10T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL net worth + reasoning + benchmark',
-    operationId: 'lookup', priceUsdc: 0.015, oneCall: true,
+    operationId: 'lookup', priceUsdc: 0.015, oneCall: true, humanApprovalRequired: true,
     requestSchemaRef: 'NetWorthRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -215,7 +227,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic net-worth calculator. Sums assets and liabilities, computes net worth and the debt-to-asset ratio, breaks down each side by type, and benchmarks against the age×income/10 wealth target when age and income are supplied — pure arithmetic, never estimated.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
 });
 
 export default specRouter(spec);

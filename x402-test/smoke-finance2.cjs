@@ -110,6 +110,12 @@ async function run(base) {
     d.sensitivity_analysis.length === 5 && d.required_monthly_contribution_for_target > 1000 ? null : 'required contribution to close gap should exceed current');
   const rBad = await call(base, 'POST', '/retirement-planner/project', { current_age: 70, retirement_age: 65 });
   check('retirement-planner', 'POST /project (retire<current -> 400)', 'Error400', rBad.json, () => rBad.status === 400 ? null : `status ${rBad.status}`);
+  // immediate retirement: current_age == retirement_age (edge case from review)
+  check('retirement-planner', 'POST /project (retire now)', 'ProjectResponse', (await call(base, 'POST', '/retirement-planner/project', { current_age: 65, retirement_age: 65, current_savings: 500000, monthly_contribution: 0, annual_return_pct: 5, inflation_pct: 3 })).json, d =>
+    d.months_to_retirement === 0 && d.years_to_retirement === 0 && d.projected_balance === 500000 ? null : 'retire-now should give 0 months and projected == current savings');
+  // execution_metadata present + deterministic
+  check('retirement-planner', 'execution_metadata deterministic', 'ProjectResponse', (await call(base, 'POST', '/retirement-planner/project', rReq)).json, d =>
+    d.execution_metadata && d.execution_metadata.model === 'deterministic' ? null : 'expected execution_metadata.model=deterministic');
 
   // ---------- savings-goal-optimizer ----------
   console.log('savings-goal-optimizer:');
@@ -122,6 +128,15 @@ async function run(base) {
     d.mode === 'projection' && typeof d.reaches_goal === 'boolean' && d.projected_balance_at_target !== null ? null : 'projection mode fields missing');
   const sBad = await call(base, 'POST', '/savings-goal-optimizer/calculate', { goal_amount: 30000 });
   check('savings-goal-optimizer', 'POST /calculate (no lever -> 400)', 'Error400', sBad.json, () => sBad.status === 400 ? null : `status ${sBad.status}`);
+  // unreachable goal: zero contribution, zero return (edge case from review) -> explicit invalid_reason, no fabricated months
+  check('savings-goal-optimizer', 'POST /calculate (goal unreachable)', 'CalculateResponse', (await call(base, 'POST', '/savings-goal-optimizer/calculate', { goal_amount: 100000, current_savings: 1000, monthly_contribution: 0, annual_return_pct: 0 })).json, d =>
+    d.reaches_goal === false && d.months_to_goal === null && d.invalid_reason === 'goal_unreachable' ? null : 'expected goal_unreachable with null months');
+  // negative return + zero contribution: balance shrinks forever -> also unreachable
+  check('savings-goal-optimizer', 'POST /calculate (negative return)', 'CalculateResponse', (await call(base, 'POST', '/savings-goal-optimizer/calculate', { goal_amount: 100000, current_savings: 1000, monthly_contribution: 0, annual_return_pct: -5 })).json, d =>
+    d.reaches_goal === false && d.invalid_reason === 'goal_unreachable' ? null : 'shrinking balance should be goal_unreachable');
+  // required_contribution mode exercises the second sensitivity-row variant (strict oneOf)
+  check('savings-goal-optimizer', 'POST /lookup (required mode sensitivity)', 'LookupResponse', (await call(base, 'POST', '/savings-goal-optimizer/lookup', { goal_amount: 30000, current_savings: 5000, target_months: 30, annual_return_pct: 4 })).json, d =>
+    d.mode === 'required_contribution' && d.sensitivity_analysis.every(r => typeof r.required_monthly_contribution === 'number') ? null : 'required-mode sensitivity rows must carry required_monthly_contribution');
 
   // ---------- budget-planner ----------
   console.log('budget-planner:');

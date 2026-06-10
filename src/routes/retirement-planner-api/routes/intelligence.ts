@@ -1,8 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { respond, fail } from '../../_aplus/scaffold';
 import {
-  monthlyRate, realMonthlyRate, futureValue, requiredContribution, round, num, FINANCIAL_DISCLAIMER,
+  monthlyRate, realMonthlyRate, futureValue, requiredContribution, round, num, FINANCIAL_DISCLAIMER, EXECUTION_METADATA,
 } from '../../_aplus/finance';
+
+const CONFIDENCE_PER_SECTION = { projection: 1, nest_egg_analysis: 1, sensitivity_analysis: 1 };
 
 // Deterministic retirement projection. Compounds current savings + monthly
 // contributions to the retirement date, reports the balance in nominal and
@@ -51,7 +53,7 @@ export function parseRetirement(body: any): Parsed {
   const current_annual_income = num(body?.current_annual_income);
 
   if (current_age === undefined || current_age < 0 || current_age > 110) return { error: '"current_age" must be between 0 and 110' };
-  if (retirement_age === undefined || retirement_age <= current_age || retirement_age > 110) return { error: '"retirement_age" must be greater than current_age and at most 110' };
+  if (retirement_age === undefined || retirement_age < current_age || retirement_age > 110) return { error: '"retirement_age" must be greater than or equal to current_age and at most 110 (equal = retiring now)' };
   if (current_savings < 0) return { error: '"current_savings" must be 0 or greater' };
   if (monthly_contribution < 0) return { error: '"monthly_contribution" must be 0 or greater' };
   if (annual_return_pct < -20 || annual_return_pct > 30) return { error: '"annual_return_pct" must be between -20 and 30' };
@@ -187,10 +189,12 @@ router.post('/project', (req: Request, res: Response) => {
   respond(res, t0, {
     ...r,
     confidence_score: 1.0,
+    confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(parsed, r),
     chain_to: CHAIN_TO,
     financial_disclaimer: FINANCIAL_DISCLAIMER,
     privacy: PRIVACY,
+    execution_metadata: EXECUTION_METADATA,
   });
 });
 
@@ -218,10 +222,12 @@ router.post('/lookup', (req: Request, res: Response) => {
       ],
     },
     confidence_score: 1.0,
+    confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(parsed, r),
     chain_to: CHAIN_TO,
     financial_disclaimer: FINANCIAL_DISCLAIMER,
     privacy: PRIVACY,
+    execution_metadata: EXECUTION_METADATA,
   });
 });
 

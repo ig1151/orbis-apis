@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { respond, fail } from '../../_aplus/scaffold';
-import { round, num, FINANCIAL_DISCLAIMER } from '../../_aplus/finance';
+import { round, num, FINANCIAL_DISCLAIMER, EXECUTION_METADATA } from '../../_aplus/finance';
+
+const CONFIDENCE_PER_SECTION = { net_worth: 1, ratios: 1, benchmark: 1 };
 
 // Deterministic net-worth calculator. Sums assets and liabilities, computes net
 // worth and the debt-to-asset ratio, breaks down each side, and (when age +
@@ -186,10 +188,12 @@ router.post('/calculate', (req: Request, res: Response) => {
   respond(res, t0, {
     ...r,
     confidence_score: 1.0,
+    confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(r),
     chain_to: CHAIN_TO,
     financial_disclaimer: FINANCIAL_DISCLAIMER,
     privacy: PRIVACY,
+    execution_metadata: EXECUTION_METADATA,
   });
 });
 
@@ -219,10 +223,12 @@ router.post('/lookup', (req: Request, res: Response) => {
       ],
     },
     confidence_score: 1.0,
+    confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(r),
     chain_to: CHAIN_TO,
     financial_disclaimer: FINANCIAL_DISCLAIMER,
     privacy: PRIVACY,
+    execution_metadata: EXECUTION_METADATA,
   });
 });
 

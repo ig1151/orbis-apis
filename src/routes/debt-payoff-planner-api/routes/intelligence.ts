@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { respond, fail } from '../../_aplus/scaffold';
-import { monthlyRate, round, num, FINANCIAL_DISCLAIMER } from '../../_aplus/finance';
+import { monthlyRate, round, num, FINANCIAL_DISCLAIMER, EXECUTION_METADATA } from '../../_aplus/finance';
+
+const CONFIDENCE_PER_SECTION = { payoff_simulation: 1, recommendation: 1, sensitivity_analysis: 1 };
 
 // Deterministic debt-payoff planner. Simulates the avalanche (highest-APR first)
 // and snowball (smallest-balance first) strategies month-by-month with real
@@ -246,10 +248,12 @@ router.post('/plan', (req: Request, res: Response) => {
   respond(res, t0, {
     ...p,
     confidence_score: 1.0,
+    confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(p),
     chain_to: CHAIN_TO,
     financial_disclaimer: FINANCIAL_DISCLAIMER,
     privacy: PRIVACY,
+    execution_metadata: EXECUTION_METADATA,
   });
 });
 
@@ -276,10 +280,12 @@ router.post('/lookup', (req: Request, res: Response) => {
       ],
     },
     confidence_score: 1.0,
+    confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(p),
     chain_to: CHAIN_TO,
     financial_disclaimer: FINANCIAL_DISCLAIMER,
     privacy: PRIVACY,
+    execution_metadata: EXECUTION_METADATA,
   });
 });
 

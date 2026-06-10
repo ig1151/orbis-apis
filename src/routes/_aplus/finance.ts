@@ -106,6 +106,9 @@ export function realMonthlyRate(nominalAnnualPct: number, inflationAnnualPct: nu
   return realAnnual / 12;
 }
 
+/** Deterministic-compute marker for execution_metadata on every finance response. */
+export const EXECUTION_METADATA = { model: 'deterministic' as const, automation_safe: true };
+
 /** Standard disclaimer string reused across every finance API. */
 export const FINANCIAL_DISCLAIMER =
   'This result is an informational, deterministic calculation based solely on the inputs you provided. ' +

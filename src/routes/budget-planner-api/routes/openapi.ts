@@ -53,15 +53,23 @@ const BudgetCore = {
   },
 };
 
+const ExecutionMetadata = {
+  type: 'object', required: ['model', 'automation_safe'], additionalProperties: false,
+  properties: { model: { type: 'string', enum: ['deterministic'] }, automation_safe: { type: 'boolean' } },
+};
+const ConfidencePerSection = { type: 'object', additionalProperties: { type: 'number', minimum: 0, maximum: 1 } };
+
 const FinanceTail = {
   type: 'object',
-  required: ['confidence_score', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy'],
+  required: ['confidence_score', 'confidence_per_section', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy', 'execution_metadata'],
   properties: {
     confidence_score: { type: 'number', minimum: 0, maximum: 1 },
+    confidence_per_section: { $ref: '#/components/schemas/ConfidencePerSection' },
     recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
     chain_to: { type: 'array', items: { $ref: '#/components/schemas/ChainTo' } },
     financial_disclaimer: { type: 'string' },
     privacy: { $ref: '#/components/schemas/Privacy' },
+    execution_metadata: { $ref: '#/components/schemas/ExecutionMetadata' },
   },
 };
 
@@ -115,6 +123,8 @@ const CORE_EXAMPLE = {
 
 const TAIL_EXAMPLE = {
   confidence_score: 1,
+  confidence_per_section: { allocation: 1, rule_comparison: 1 },
+  execution_metadata: { model: 'deterministic', automation_safe: true },
   recommended_actions_priority_order: [
     'You have 1720 unallocated each month — direct it to savings or debt payoff to lift your 15% savings rate toward 20%.',
     'Savings is 15% of income; aim for 20% (1200/mo) including retirement and emergency fund.',
@@ -132,6 +142,8 @@ const schemas = {
   EnvelopeOk,
   Variance,
   CategoryBreakdownItem,
+  ExecutionMetadata,
+  ConfidencePerSection,
   BudgetCore,
   _FinanceTail: FinanceTail,
   ExpenseItem,
@@ -179,14 +191,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/analyze', summary: 'Bucket spending and compare to 50/30/20',
-    operationId: 'analyze', priceUsdc: 0.008,
+    operationId: 'analyze', priceUsdc: 0.008, humanApprovalRequired: true,
     requestSchemaRef: 'BudgetRequest', responseSchemaRef: 'AnalyzeResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'bud1-1780000000000', computed_at: '2026-06-10T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL budget analysis + reasoning + recommendations',
-    operationId: 'lookup', priceUsdc: 0.015, oneCall: true,
+    operationId: 'lookup', priceUsdc: 0.015, oneCall: true, humanApprovalRequired: true,
     requestSchemaRef: 'BudgetRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -213,7 +225,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic 50/30/20 budget analyzer. Buckets monthly spending into needs/wants/savings (from an expense list or direct totals), compares it to the 50/30/20 rule, and reports the savings rate, per-bucket variance, and any overspending — pure arithmetic, never estimated.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
 });
 
 export default specRouter(spec);

@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { respond, fail } from '../../_aplus/scaffold';
-import { round, num, clamp, FINANCIAL_DISCLAIMER } from '../../_aplus/finance';
+import { round, num, clamp, FINANCIAL_DISCLAIMER, EXECUTION_METADATA } from '../../_aplus/finance';
+
+const CONFIDENCE_PER_SECTION = { allocation: 1, rule_comparison: 1 };
 
 // Deterministic 50/30/20 budget analyzer. Buckets monthly spending into
 // needs / wants / savings, compares actual allocation to the 50/30/20 rule,
@@ -160,10 +162,12 @@ router.post('/analyze', (req: Request, res: Response) => {
   respond(res, t0, {
     ...r,
     confidence_score: 1.0,
+    confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(r),
     chain_to: CHAIN_TO,
     financial_disclaimer: FINANCIAL_DISCLAIMER,
     privacy: PRIVACY,
+    execution_metadata: EXECUTION_METADATA,
   });
 });
 
@@ -187,16 +191,18 @@ router.post('/lookup', (req: Request, res: Response) => {
         `Largest deviation from target: ${[['needs', r.variance.needs], ['wants', r.variance.wants], ['savings', r.variance.savings]].sort((a, b) => Math.abs(b[1] as number) - Math.abs(a[1] as number))[0][0]}.`,
       ],
       invalidators: [
-        'Misclassifying a need as a want (or vice versa) shifts the buckets.',
+        'Expense classifications (need/want/savings) are user-supplied and subjective; the arithmetic is exact but the bucket boundaries depend on your judgment — reclassifying a line moves the percentages.',
         'Pre-tax vs after-tax income changes every percentage.',
         'One-off months (bonuses, large purchases) are not representative.',
       ],
     },
     confidence_score: 1.0,
+    confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(r),
     chain_to: CHAIN_TO,
     financial_disclaimer: FINANCIAL_DISCLAIMER,
     privacy: PRIVACY,
+    execution_metadata: EXECUTION_METADATA,
   });
 });
 

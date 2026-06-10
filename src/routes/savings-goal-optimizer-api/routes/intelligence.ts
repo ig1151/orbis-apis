@@ -1,8 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { respond, fail } from '../../_aplus/scaffold';
 import {
-  monthlyRate, futureValue, periodsToTarget, requiredContribution, round, num, FINANCIAL_DISCLAIMER,
+  monthlyRate, futureValue, periodsToTarget, requiredContribution, round, num, FINANCIAL_DISCLAIMER, EXECUTION_METADATA,
 } from '../../_aplus/finance';
+
+const CONFIDENCE_PER_SECTION = { calculation: 1, sensitivity_analysis: 1 };
 
 // Deterministic savings-goal optimizer. Three modes depending on what you supply:
 //  - contribution only  -> months to reach the goal
@@ -35,6 +37,7 @@ export interface SavingsResult {
   projected_balance_at_target: number | null;
   surplus_or_shortfall_at_target: number | null;
   reaches_goal: boolean | null;
+  invalid_reason: 'goal_unreachable' | null;
   total_contributions: number | null;
   total_growth: number | null;
 }
@@ -78,6 +81,7 @@ export function computeSavings(i: SavingsInput): SavingsResult {
     projected_balance_at_target: null,
     surplus_or_shortfall_at_target: null,
     reaches_goal: null,
+    invalid_reason: null,
     total_contributions: null,
     total_growth: null,
   };
@@ -109,7 +113,10 @@ export function computeSavings(i: SavingsInput): SavingsResult {
       base.total_growth = round(fv - i.current_savings - contribution * m2g);
       base.reaches_goal = true;
     } else {
-      base.reaches_goal = false; // contribution + growth never reaches the goal within the horizon
+      // contribution + growth never reaches the goal within the horizon (e.g. zero
+      // contribution with no/negative return, or a balance that shrinks forever)
+      base.reaches_goal = false;
+      base.invalid_reason = 'goal_unreachable';
     }
   } else {
     base.mode = 'required_contribution';
@@ -198,10 +205,12 @@ router.post('/calculate', (req: Request, res: Response) => {
   respond(res, t0, {
     ...r,
     confidence_score: 1.0,
+    confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(r),
     chain_to: CHAIN_TO,
     financial_disclaimer: FINANCIAL_DISCLAIMER,
     privacy: PRIVACY,
+    execution_metadata: EXECUTION_METADATA,
   });
 });
 
@@ -230,10 +239,12 @@ router.post('/lookup', (req: Request, res: Response) => {
       ],
     },
     confidence_score: 1.0,
+    confidence_per_section: CONFIDENCE_PER_SECTION,
     recommended_actions_priority_order: actions(r),
     chain_to: CHAIN_TO,
     financial_disclaimer: FINANCIAL_DISCLAIMER,
     privacy: PRIVACY,
+    execution_metadata: EXECUTION_METADATA,
   });
 });
 

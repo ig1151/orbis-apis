@@ -16,7 +16,7 @@ const SavingsCore = {
   required: [
     'mode', 'goal_amount', 'current_savings', 'amount_remaining', 'annual_return_pct', 'monthly_contribution',
     'months_to_goal', 'target_months', 'required_monthly_contribution', 'projected_balance_at_target',
-    'surplus_or_shortfall_at_target', 'reaches_goal', 'total_contributions', 'total_growth',
+    'surplus_or_shortfall_at_target', 'reaches_goal', 'invalid_reason', 'total_contributions', 'total_growth',
   ],
   properties: {
     mode: { type: 'string', enum: ['time_to_goal', 'required_contribution', 'projection'], description: 'Which calculation ran, based on the inputs supplied.' },
@@ -31,30 +31,37 @@ const SavingsCore = {
     projected_balance_at_target: { type: ['number', 'null'] },
     surplus_or_shortfall_at_target: { type: ['number', 'null'] },
     reaches_goal: { type: ['boolean', 'null'] },
+    invalid_reason: { type: ['string', 'null'], enum: ['goal_unreachable', null], description: 'Set to "goal_unreachable" when the contribution/return can never reach the goal; null otherwise.' },
     total_contributions: { type: ['number', 'null'] },
     total_growth: { type: ['number', 'null'] },
   },
 };
 
+// Strict, mode-specific rows: either a contribution→time row or a months→contribution row.
 const SavingsSensitivityRow = {
-  type: 'object', additionalProperties: false,
-  properties: {
-    monthly_contribution: { type: 'number' },
-    months_to_goal: { type: ['integer', 'null'] },
-    target_months: { type: 'integer' },
-    required_monthly_contribution: { type: 'number' },
-  },
+  oneOf: [
+    { type: 'object', required: ['monthly_contribution', 'months_to_goal'], additionalProperties: false, properties: { monthly_contribution: { type: 'number' }, months_to_goal: { type: ['integer', 'null'] } } },
+    { type: 'object', required: ['target_months', 'required_monthly_contribution'], additionalProperties: false, properties: { target_months: { type: 'integer' }, required_monthly_contribution: { type: 'number' } } },
+  ],
 };
+
+const ExecutionMetadata = {
+  type: 'object', required: ['model', 'automation_safe'], additionalProperties: false,
+  properties: { model: { type: 'string', enum: ['deterministic'] }, automation_safe: { type: 'boolean' } },
+};
+const ConfidencePerSection = { type: 'object', additionalProperties: { type: 'number', minimum: 0, maximum: 1 } };
 
 const FinanceTail = {
   type: 'object',
-  required: ['confidence_score', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy'],
+  required: ['confidence_score', 'confidence_per_section', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy', 'execution_metadata'],
   properties: {
     confidence_score: { type: 'number', minimum: 0, maximum: 1 },
+    confidence_per_section: { $ref: '#/components/schemas/ConfidencePerSection' },
     recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
     chain_to: { type: 'array', items: { $ref: '#/components/schemas/ChainTo' } },
     financial_disclaimer: { type: 'string' },
     privacy: { $ref: '#/components/schemas/Privacy' },
+    execution_metadata: { $ref: '#/components/schemas/ExecutionMetadata' },
   },
 };
 
@@ -75,12 +82,13 @@ const REQ_EXAMPLE = { goal_amount: 30000, current_savings: 5000, monthly_contrib
 const CORE_EXAMPLE = {
   mode: 'time_to_goal', goal_amount: 30000, current_savings: 5000, amount_remaining: 25000, annual_return_pct: 4,
   monthly_contribution: 800, months_to_goal: 30, target_months: null, required_monthly_contribution: null,
-  projected_balance_at_target: null, surplus_or_shortfall_at_target: null, reaches_goal: true,
+  projected_balance_at_target: null, surplus_or_shortfall_at_target: null, reaches_goal: true, invalid_reason: null,
   total_contributions: 24000, total_growth: 1721.85,
 };
 
 const TAIL_EXAMPLE = {
   confidence_score: 1,
+  confidence_per_section: { calculation: 1, sensitivity_analysis: 1 },
   recommended_actions_priority_order: [
     'At 800/mo you reach 30000 in 30 month(s).',
     'Automate the transfer on payday and hold the fund in a high-yield/insured account matched to your time horizon.',
@@ -92,12 +100,15 @@ const TAIL_EXAMPLE = {
   ],
   financial_disclaimer: 'This result is an informational, deterministic calculation… not financial advice.',
   privacy: { data_stored: false, retention: 'none' },
+  execution_metadata: { model: 'deterministic', automation_safe: true },
 };
 
 const schemas = {
   EnvelopeOk,
   SavingsCore,
   SavingsSensitivityRow,
+  ExecutionMetadata,
+  ConfidencePerSection,
   _FinanceTail: FinanceTail,
   SavingsRequest,
   DiscoveryResponse: {
@@ -144,14 +155,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/calculate', summary: 'Time-to-goal, required contribution, or projection',
-    operationId: 'calculate', priceUsdc: 0.008,
+    operationId: 'calculate', priceUsdc: 0.008, humanApprovalRequired: true,
     requestSchemaRef: 'SavingsRequest', responseSchemaRef: 'CalculateResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'sav1-1780000000000', computed_at: '2026-06-10T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL plan + reasoning + sensitivity',
-    operationId: 'lookup', priceUsdc: 0.015, oneCall: true,
+    operationId: 'lookup', priceUsdc: 0.015, oneCall: true, humanApprovalRequired: true,
     requestSchemaRef: 'SavingsRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -183,7 +194,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic savings-goal planner. Computes time-to-goal from a contribution, the contribution required for a target date, or the projected balance and surplus/shortfall when both are supplied — all with real monthly compound-interest math (never estimated).',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
 });
 
 export default specRouter(spec);
