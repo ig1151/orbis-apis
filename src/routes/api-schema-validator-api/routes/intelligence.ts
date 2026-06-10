@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import Ajv from 'ajv';
+import Ajv2019 from 'ajv/dist/2019';
 import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 
@@ -22,20 +23,40 @@ function parseDoc(body: any): { doc: any; failed: boolean } {
 }
 
 // ---- type detection ----------------------------------------------------------
-type SchemaType = 'openapi_3_0' | 'openapi_3_1' | 'json_schema_draft7' | 'json_schema_draft2020' | 'unknown';
+type SchemaType = 'openapi_3_0' | 'openapi_3_1' | 'swagger_2_0' | 'json_schema_draft7' | 'json_schema_draft2019' | 'json_schema_draft2020' | 'unknown';
 function detectType(doc: any): { type: SchemaType; version: string } {
   if (doc && typeof doc.openapi === 'string') {
     if (/^3\.1/.test(doc.openapi)) return { type: 'openapi_3_1', version: doc.openapi };
     if (/^3\.0/.test(doc.openapi)) return { type: 'openapi_3_0', version: doc.openapi };
     return { type: 'unknown', version: doc.openapi };
   }
-  if (doc && typeof doc.swagger === 'string') return { type: 'unknown', version: `swagger-${doc.swagger}` };
+  if (doc && typeof doc.swagger === 'string') return { type: 'swagger_2_0', version: `swagger-${doc.swagger}` };
   const sch = (doc?.$schema || '').toString();
   if (/2020-12/.test(sch)) return { type: 'json_schema_draft2020', version: 'draft-2020-12' };
-  if (/2019-09/.test(sch)) return { type: 'json_schema_draft7', version: 'draft-2019-09' };
+  if (/2019-09/.test(sch)) return { type: 'json_schema_draft2019', version: 'draft-2019-09' };
   if (/draft-0?7/.test(sch)) return { type: 'json_schema_draft7', version: 'draft-07' };
   if (doc && (doc.type || doc.properties || doc.$ref || doc.allOf || doc.oneOf)) return { type: 'json_schema_draft7', version: 'draft-07' };
   return { type: 'unknown', version: 'unknown' };
+}
+
+// ---- local $ref resolution (for broken-ref detection) -----------------------
+function resolveLocalRef(doc: any, ref: string): any {
+  if (typeof ref !== 'string' || !ref.startsWith('#/')) return undefined; // external ref → not checked here
+  const parts = ref.slice(2).split('/').map(p => p.replace(/~1/g, '/').replace(/~0/g, '~'));
+  let node = doc;
+  for (const p of parts) { if (node == null || typeof node !== 'object') return null; node = node[p]; }
+  return node ?? null;
+}
+function deref(doc: any, node: any, depth = 0): any {
+  if (!node || typeof node !== 'object' || depth > 25 || typeof node.$ref !== 'string') return node;
+  const t = resolveLocalRef(doc, node.$ref);
+  return (t == null) ? node : deref(doc, t, depth + 1);
+}
+function collectRefs(node: any, acc: string[], seen = new Set<any>()): void {
+  if (!node || typeof node !== 'object' || seen.has(node)) return;
+  seen.add(node);
+  if (typeof node.$ref === 'string') acc.push(node.$ref);
+  for (const k of Object.keys(node)) collectRefs(node[k], acc, seen);
 }
 
 const HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
@@ -82,6 +103,8 @@ function validateDoc(doc: any) {
   const schemas_count = Object.keys(schemas).length;
   let required_fields_present = false;
 
+  const VALID_PARAM_LOCATIONS = ['query', 'header', 'path', 'cookie'];
+
   if (type === 'openapi_3_0' || type === 'openapi_3_1') {
     required_fields_present = !!(doc.openapi && doc.info && doc.paths);
     if (!doc.info) errors.push({ path: 'info', message: 'Missing required `info` object', severity: 'error' });
@@ -91,17 +114,52 @@ function validateDoc(doc: any) {
     }
     if (!doc.paths || typeof doc.paths !== 'object') errors.push({ path: 'paths', message: 'Missing required `paths` object', severity: 'error' });
     else {
-      paths_count = Object.keys(doc.paths).length;
-      eachOperation(doc, (p, m, op) => {
-        const at = `paths.${p}.${m}`;
-        if (!op.responses || typeof op.responses !== 'object' || !Object.keys(op.responses).length) errors.push({ path: `${at}.responses`, message: 'Operation has no responses (required)', severity: 'error' });
-      });
+      const pathsObj = doc.paths;
+      paths_count = Object.keys(pathsObj).length;
       if (!paths_count) warnings.push({ path: 'paths', message: 'No paths defined', severity: 'warning' });
+      for (const p of Object.keys(pathsObj)) {
+        if (!p.startsWith('/')) errors.push({ path: `paths.${p}`, message: `Path "${p}" must start with "/"`, severity: 'error' });
+        const templated = (p.match(/\{([^}]+)\}/g) || []).map(s => s.slice(1, -1));
+        const item = pathsObj[p] || {};
+        const pathParams = (Array.isArray(item.parameters) ? item.parameters : []).map((pm: any) => deref(doc, pm));
+        for (const m of HTTP_METHODS) {
+          const op = item[m];
+          if (!op || typeof op !== 'object') continue;
+          const at = `paths.${p}.${m}`;
+          if (!op.responses || typeof op.responses !== 'object' || !Object.keys(op.responses).length) errors.push({ path: `${at}.responses`, message: 'Operation has no responses (required)', severity: 'error' });
+          else {
+            for (const code of Object.keys(op.responses)) {
+              if (code !== 'default' && !/^[1-5]\d\d$/.test(code) && !/^[1-5]XX$/.test(code)) warnings.push({ path: `${at}.responses.${code}`, message: `Response key "${code}" is not a valid HTTP status code or "default"`, severity: 'warning' });
+            }
+          }
+          if ((m === 'get' || m === 'delete' || m === 'head') && op.requestBody) warnings.push({ path: `${at}.requestBody`, message: `${m.toUpperCase()} should not define a requestBody`, severity: 'warning' });
+          const opParamsList = (Array.isArray(op.parameters) ? op.parameters : []).map((pm: any) => deref(doc, pm));
+          const allParams = [...pathParams, ...opParamsList];
+          for (const pm of allParams) {
+            if (!pm || typeof pm !== 'object') { errors.push({ path: `${at}.parameters`, message: 'Parameter is not an object', severity: 'error' }); continue; }
+            if (!pm.name || typeof pm.name !== 'string') errors.push({ path: `${at}.parameters`, message: 'Parameter missing required `name`', severity: 'error' });
+            if (!pm.in || !VALID_PARAM_LOCATIONS.includes(pm.in)) errors.push({ path: `${at}.parameters.${pm.name || '?'}`, message: `Parameter "${pm.name || '?'}" has invalid/missing \`in\` (expected query|header|path|cookie)`, severity: 'error' });
+            if (pm.in === 'path' && pm.required !== true) errors.push({ path: `${at}.parameters.${pm.name}`, message: `Path parameter "${pm.name}" must be required:true`, severity: 'error' });
+          }
+          const declaredPathParams = allParams.filter((pm: any) => pm?.in === 'path').map((pm: any) => pm.name);
+          for (const t of templated) if (!declaredPathParams.includes(t)) errors.push({ path: at, message: `Path template "{${t}}" has no matching path parameter (in:path, required:true)`, severity: 'error' });
+        }
+      }
+    }
+    // broken local $ref detection across the whole document
+    const refs: string[] = [];
+    collectRefs(doc, refs);
+    const checkedRefs = new Set<string>();
+    for (const ref of refs) {
+      if (!ref.startsWith('#/') || checkedRefs.has(ref)) continue;
+      checkedRefs.add(ref);
+      if (resolveLocalRef(doc, ref) == null) errors.push({ path: ref, message: `Unresolved local $ref "${ref}"`, severity: 'error' });
     }
     if (type === 'openapi_3_1' && !/^3\.1/.test(doc.openapi)) errors.push({ path: 'openapi', message: 'Version string does not match 3.1.x', severity: 'error' });
-  } else if (type === 'json_schema_draft7' || type === 'json_schema_draft2020') {
-    // meta-validate by compiling with ajv
-    const ajv: any = type === 'json_schema_draft2020' ? new (Ajv2020 as any)({ allErrors: true, strict: false }) : new (Ajv as any)({ allErrors: true, strict: false });
+  } else if (type === 'json_schema_draft7' || type === 'json_schema_draft2019' || type === 'json_schema_draft2020') {
+    // meta-validate by compiling with the matching ajv draft
+    const Ctor: any = type === 'json_schema_draft2020' ? Ajv2020 : type === 'json_schema_draft2019' ? Ajv2019 : Ajv;
+    const ajv: any = new Ctor({ allErrors: true, strict: false });
     addFormats(ajv);
     try {
       ajv.compile(doc);
@@ -112,13 +170,18 @@ function validateDoc(doc: any) {
       errors.push({ path: '(schema)', message: `Schema does not compile: ${e.message}`, severity: 'error' });
     }
     info_messages.push(`Validated as JSON Schema (${version})`);
+  } else if (type === 'swagger_2_0') {
+    // Explicitly unsupported (not merely "unknown"): a Swagger 2.0 doc is well-formed but
+    // outside this validator's scope. Report clearly rather than silently warning.
+    errors.push({ path: 'swagger', message: 'Swagger 2.0 (OpenAPI 2.0) is not supported by this validator. Convert to OpenAPI 3.x — only OpenAPI 3.0/3.1 and JSON Schema (draft-07/2019-09/2020-12) are validated.', severity: 'error' });
+    paths_count = doc.paths ? Object.keys(doc.paths).length : 0;
   } else {
-    if (doc?.swagger) { warnings.push({ path: 'swagger', message: 'Swagger 2.0 detected; only OpenAPI 3.x and JSON Schema are fully validated', severity: 'warning' }); paths_count = doc.paths ? Object.keys(doc.paths).length : 0; }
-    else warnings.push({ path: '(root)', message: 'Could not determine schema type (no openapi/swagger/$schema/type)', severity: 'warning' });
+    warnings.push({ path: '(root)', message: 'Could not determine schema type (no openapi/swagger/$schema/type)', severity: 'warning' });
   }
 
+  const supported = type !== 'unknown' && type !== 'swagger_2_0';
   const is_valid = errors.length === 0 && type !== 'unknown';
-  return { schema_type: type, version_detected: version, is_valid, errors, warnings, info_messages, paths_count, schemas_count, required_fields_present };
+  return { schema_type: type, version_detected: version, supported, is_valid, errors, warnings, info_messages, paths_count, schemas_count, required_fields_present };
 }
 
 // ---- core: lint --------------------------------------------------------------
@@ -226,7 +289,7 @@ router.post('/lint', (req: Request, res: Response) => {
 router.post('/execution-gate', (_req: Request, res: Response) => {
   const { input, objective } = _req.body;
   if (!input && !_req.body?.schema && !_req.body?.document) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
-  res.json({ success: true, request_id: rid(), execution_ready: true, input, objective: objective || 'analyze', next_api: 'api-schema-validator', next_endpoint: '/schema-validator-intelligence', blocking_flags: [], confidence: { score: 0.98, reason: 'Input present and valid', per_section: { execution_ready: 0.98 } }, provenance: { provider: 'system', retrieved_at: new Date().toISOString(), source_type: 'api_call' }, recommended_next_api: [{ api: 'api-schema-validator', endpoint: '/schema-validator-intelligence', reason: 'Full schema validator intelligence in one call' }], recommended_actions_priority_order: [{ priority: 'high', action: 'Call /schema-validator-intelligence', reason: 'Single-request full analysis' }], execution_metadata: { latency_ms: 1, model: 'system', automation_safe: true } });
+  res.json({ success: true, request_id: rid(), execution_ready: true, input, objective: objective || 'analyze', next_api: 'api-schema-validator', next_endpoint: '/schema-validator-intelligence', blocking_flags: [], confidence: { score: 0.98, reason: 'Input present and valid', per_section: { execution_ready: 0.98 } }, provenance: { provider: 'system', retrieved_at: new Date().toISOString(), source_type: 'api_call' }, recommended_next_api: [{ api: 'api-schema-validator', endpoint: '/schema-validator-intelligence', reason: 'Full schema validator intelligence in one call' }], recommended_actions_priority_order: [{ priority: 'high', action: 'Call /schema-validator-intelligence', reason: 'Single-request full analysis' }], execution_metadata: { latency_ms: 1, model: 'deterministic', automation_safe: true } });
 });
 
 router.post('/schema-validator-intelligence', (req: Request, res: Response) => {

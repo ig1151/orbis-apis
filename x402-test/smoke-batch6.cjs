@@ -141,6 +141,39 @@ const server = app.listen(0, async () => {
   r = await post('/mcp-compatibility-validator/validate', { input: '{not valid json' });
   check('200 success:false unparseable', r.status === 200 && r.json.success === false, r.json);
 
+  // ---- ChatGPT review fixes ----
+  console.log('# openapi-diff-checker: parameter removal is non-breaking');
+  const withParam = { openapi: '3.0.0', info: { version: '1.0.0' }, paths: { '/users': { post: { parameters: [{ name: 'role', in: 'query', schema: { type: 'string' } }], responses: { '201': {} } } } } };
+  const noParam = { openapi: '3.0.0', info: { version: '2.0.0' }, paths: { '/users': { post: { parameters: [], responses: { '201': {} } } } } };
+  r = await post('/openapi-diff-checker/breaking-changes', { old: withParam, new: noParam });
+  check('param removal NOT breaking', !r.json.data.breaking_changes.some(b => b.change_type === 'parameter_removed'), r.json.data.breaking_changes);
+  check('param removal listed non-breaking', r.json.data.non_breaking_changes.some(b => b.change_type === 'parameter_removed'));
+  check('param-only removal → minor', r.json.data.recommended_semver_bump === 'minor', r.json.data.recommended_semver_bump);
+
+  console.log('# openapi-diff-checker: $ref resolution (param + schema refs)');
+  const refOld = { openapi: '3.0.0', info: { version: '1.0.0' }, paths: { '/x': { get: { parameters: [{ $ref: '#/components/parameters/P' }], responses: { '200': {} } } } }, components: { parameters: { P: { name: 'q', in: 'query', schema: { $ref: '#/components/schemas/T' } } }, schemas: { T: { type: 'string' } } } };
+  const refNew = { openapi: '3.0.0', info: { version: '2.0.0' }, paths: { '/x': { get: { parameters: [{ $ref: '#/components/parameters/P' }], responses: { '200': {} } } } }, components: { parameters: { P: { name: 'q', in: 'query', schema: { $ref: '#/components/schemas/T' } } }, schemas: { T: { type: 'integer' } } } };
+  r = await post('/openapi-diff-checker/breaking-changes', { old: refOld, new: refNew });
+  check('$ref param type change detected', r.json.data.breaking_changes.some(b => b.change_type === 'parameter_type_changed'), r.json.data.breaking_changes);
+
+  console.log('# openapi-diff-checker: execution-gate model deterministic');
+  r = await post('/openapi-diff-checker/execution-gate', { old_spec: v1 });
+  check('diff gate model deterministic', r.json.execution_metadata.model === 'deterministic', r.json.execution_metadata);
+
+  console.log('# mcp: execution-gate model deterministic');
+  r = await post('/mcp-compatibility-validator/execution-gate', { input: goodManifest });
+  check('mcp gate model deterministic', r.json.execution_metadata.model === 'deterministic', r.json.execution_metadata);
+
+  console.log('# mcp: detectAuth no false positive from a tool param named "authorization"');
+  r = await post('/mcp-compatibility-validator/check', { input: { tools: [{ name: 'call_api', description: 'd', inputSchema: { type: 'object', properties: { authorization: { type: 'string' } } } }] } });
+  check('no false api_key from param name', r.json.data.authentication_scheme_detected === 'none', r.json.data.authentication_scheme_detected);
+  r = await post('/mcp-compatibility-validator/check', { input: { auth: { type: 'oauth2' }, tools: [{ name: 't', description: 'd', inputSchema: { type: 'object' } }] } });
+  check('detects real oauth2', r.json.data.authentication_scheme_detected === 'oauth2', r.json.data.authentication_scheme_detected);
+
+  console.log('# mcp: mcp-intelligence validates resources/prompts (parity with /validate)');
+  r = await post('/mcp-compatibility-validator/mcp-intelligence', { input: { tools: [{ name: 't', description: 'd', inputSchema: { type: 'object' } }], resources: [{ description: 'no uri' }] } });
+  check('intelligence flags bad resource', r.json.data.is_valid === false && r.json.data.resource_definitions_valid === false, r.json.data);
+
   console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
   server.close();
   process.exit(fail ? 1 : 0);

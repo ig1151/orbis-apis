@@ -72,17 +72,28 @@ function detectTransport(m: any): 'stdio' | 'http' | 'sse' | 'websocket' | 'unkn
   return 'unknown';
 }
 
+// Detect the auth scheme by inspecting ONLY auth-relevant fields — never the whole
+// manifest blob (a tool param literally named "authorization" must not imply api_key).
 function detectAuth(m: any): 'oauth2' | 'api_key' | 'none' | 'unknown' {
   if (!m || typeof m !== 'object') return 'unknown';
-  const blob = JSON.stringify(m).toLowerCase();
-  if (m.auth?.type) {
-    const a = m.auth.type.toString().toLowerCase();
+  const classify = (raw: any): 'oauth2' | 'api_key' | 'none' | null => {
+    const a = (raw ?? '').toString().toLowerCase();
+    if (!a) return null;
     if (a.includes('oauth')) return 'oauth2';
-    if (a.includes('key') || a.includes('token') || a.includes('bearer')) return 'api_key';
-    if (a === 'none') return 'none';
+    if (a.includes('key') || a.includes('token') || a.includes('bearer') || a.includes('apikey')) return 'api_key';
+    if (a === 'none' || a === 'false') return 'none';
+    return null;
+  };
+  // explicit auth.type / authentication.type
+  const explicit = classify(m.auth?.type) || classify(m.authentication?.type) || classify(typeof m.auth === 'string' ? m.auth : null) || classify(typeof m.authentication === 'string' ? m.authentication : null);
+  if (explicit) return explicit;
+  // OpenAPI-style securitySchemes (scoped, not the whole document)
+  const schemes = m.securitySchemes || m.components?.securitySchemes || m.security;
+  if (schemes && typeof schemes === 'object') {
+    const blob = JSON.stringify(schemes).toLowerCase();
+    if (/oauth2?/.test(blob)) return 'oauth2';
+    if (/apikey|api[_-]?key|"http"|bearer/.test(blob)) return 'api_key';
   }
-  if (/oauth2?/.test(blob)) return 'oauth2';
-  if (/"(api[_-]?key|bearer|authorization)"/.test(blob)) return 'api_key';
   if (m.auth === false || m.authentication === 'none') return 'none';
   return 'none';
 }
@@ -249,7 +260,7 @@ router.post('/check', (req: Request, res: Response) => {
 router.post('/execution-gate', (_req: Request, res: Response) => {
   const { input, objective } = _req.body;
   if (!input) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
-  res.json({ success: true, request_id: rid(), execution_ready: true, input, objective: objective || 'analyze', next_api: 'mcp-compatibility-validator', next_endpoint: '/mcp-intelligence', blocking_flags: [], confidence: { score: 0.98, reason: 'Input present and valid', per_section: { execution_ready: 0.98 } }, provenance: { provider: 'system', retrieved_at: new Date().toISOString(), source_type: 'api_call' }, recommended_next_api: [{ api: 'mcp-compatibility-validator', endpoint: '/mcp-intelligence', reason: 'Full MCP compatibility intelligence in one call' }], recommended_actions_priority_order: [{ priority: 'high', action: 'Call /mcp-intelligence', reason: 'Single-request full analysis' }], execution_metadata: { latency_ms: 1, model: 'system', automation_safe: true } });
+  res.json({ success: true, request_id: rid(), execution_ready: true, input, objective: objective || 'analyze', next_api: 'mcp-compatibility-validator', next_endpoint: '/mcp-intelligence', blocking_flags: [], confidence: { score: 0.98, reason: 'Input present and valid', per_section: { execution_ready: 0.98 } }, provenance: { provider: 'system', retrieved_at: new Date().toISOString(), source_type: 'api_call' }, recommended_next_api: [{ api: 'mcp-compatibility-validator', endpoint: '/mcp-intelligence', reason: 'Full MCP compatibility intelligence in one call' }], recommended_actions_priority_order: [{ priority: 'high', action: 'Call /mcp-intelligence', reason: 'Single-request full analysis' }], execution_metadata: { latency_ms: 1, model: 'deterministic', automation_safe: true } });
 });
 
 router.post('/mcp-intelligence', (req: Request, res: Response) => {
@@ -261,8 +272,14 @@ router.post('/mcp-intelligence', (req: Request, res: Response) => {
   const tv = validateTools(tools);
   const transport = detectTransport(manifest);
   const auth = detectAuth(manifest);
-  const errors = tv.errors;
-  const warnings = tv.warnings;
+  // parity with /validate: also validate resources/prompts so intelligence never under-reports
+  const resourcesValid = resources.every(r => r && typeof r === 'object' && (typeof r.uri === 'string' || typeof r.uriTemplate === 'string'));
+  const promptsValid = prompts.every(p => p && typeof p === 'object' && typeof p.name === 'string');
+  const errors = [...tv.errors];
+  const warnings = [...tv.warnings];
+  if (resources.length && !resourcesValid) errors.push({ path: 'resources', message: 'One or more resources missing uri/uriTemplate', severity: 'error' });
+  if (prompts.length && !promptsValid) errors.push({ path: 'prompts', message: 'One or more prompts missing name', severity: 'error' });
+  if (!tools.length) warnings.push({ path: 'tools', message: 'No tools found in manifest', severity: 'warning' });
   const score = Math.max(0, 100 - errors.length * 15 - warnings.length * 3);
   const is_valid = errors.length === 0;
 
@@ -283,6 +300,8 @@ router.post('/mcp-intelligence', (req: Request, res: Response) => {
     mcp_version_detected: manifest?.protocolVersion || manifest?.mcp_version || 'unspecified',
     is_valid,
     tool_definitions_valid: tv.allValid && tools.length > 0,
+    resource_definitions_valid: resourcesValid,
+    prompt_definitions_valid: promptsValid,
     transport_type: transport,
     authentication_scheme_detected: auth,
     errors,

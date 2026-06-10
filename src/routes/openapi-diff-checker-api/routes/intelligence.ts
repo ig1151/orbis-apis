@@ -67,16 +67,43 @@ function operations(spec: any): Map<string, any> {
   return ops;
 }
 
-function paramKey(pm: any): string { return `${pm?.in || 'unknown'}:${pm?.name || 'unnamed'}`; }
-function paramType(pm: any): string { return pm?.schema?.type || pm?.type || 'unspecified'; }
+// ---- local $ref resolution --------------------------------------------------
+// Resolve a local JSON-pointer ref (e.g. "#/components/parameters/Foo") within a spec.
+function resolveLocalRef(spec: any, ref: string): any {
+  if (typeof ref !== 'string' || !ref.startsWith('#/')) return null;
+  const parts = ref.slice(2).split('/').map(p => p.replace(/~1/g, '/').replace(/~0/g, '~'));
+  let node = spec;
+  for (const p of parts) { if (node == null || typeof node !== 'object') return null; node = node[p]; }
+  return node ?? null;
+}
+// Follow local $refs (cycle-guarded, depth-bounded) and return the concrete node.
+// External refs (http/file or non-local) are left as-is — we only resolve in-document.
+function deref(spec: any, node: any, seen = new Set<string>(), depth = 0): any {
+  if (!node || typeof node !== 'object' || depth > 25) return node;
+  if (typeof node.$ref === 'string') {
+    if (seen.has(node.$ref)) return node;
+    const target = resolveLocalRef(spec, node.$ref);
+    if (target == null) return node;
+    const next = new Set(seen); next.add(node.$ref);
+    return deref(spec, target, next, depth + 1);
+  }
+  return node;
+}
 
-// Merge path-level + operation-level parameters into a keyed map.
+function paramKey(pm: any): string { return `${pm?.in || 'unknown'}:${pm?.name || 'unnamed'}`; }
+function paramType(spec: any, pm: any): string {
+  const p = deref(spec, pm);
+  const schema = deref(spec, p?.schema);
+  return schema?.type || p?.type || 'unspecified';
+}
+
+// Merge path-level + operation-level parameters into a keyed map (resolving $ref params).
 function opParams(spec: any, opPath: string, op: any): Map<string, any> {
   const map = new Map<string, any>();
   const path = opPath.slice(opPath.indexOf(' ') + 1);
   const pathItem = spec?.paths?.[path] || {};
-  for (const pm of (Array.isArray(pathItem.parameters) ? pathItem.parameters : [])) map.set(paramKey(pm), pm);
-  for (const pm of (Array.isArray(op?.parameters) ? op.parameters : [])) map.set(paramKey(pm), pm);
+  for (const pm of (Array.isArray(pathItem.parameters) ? pathItem.parameters : [])) { const r = deref(spec, pm); map.set(paramKey(r), r); }
+  for (const pm of (Array.isArray(op?.parameters) ? op.parameters : [])) { const r = deref(spec, pm); map.set(paramKey(r), r); }
   return map;
 }
 
@@ -143,9 +170,11 @@ function computeDiff(oldSpec: any, newSpec: any) {
         else nonBreaking.push({ path: key, change_type: 'optional_parameter_added', description: `Optional parameter ${pk} added to ${key}` });
       } else {
         const before = oldP.get(pk);
-        if (paramType(before) !== paramType(pm)) {
-          changes.push({ path: key, change_type: 'parameter_type_changed', description: `Parameter ${pk} type ${paramType(before)} → ${paramType(pm)}` });
-          breaking.push({ path: key, change_type: 'parameter_type_changed', description: `Parameter ${pk} on ${key} changed type ${paramType(before)} → ${paramType(pm)}`, impact: 'major' });
+        const beforeType = paramType(oldSpec, before);
+        const afterType = paramType(newSpec, pm);
+        if (beforeType !== afterType) {
+          changes.push({ path: key, change_type: 'parameter_type_changed', description: `Parameter ${pk} type ${beforeType} → ${afterType}` });
+          breaking.push({ path: key, change_type: 'parameter_type_changed', description: `Parameter ${pk} on ${key} changed type ${beforeType} → ${afterType}`, impact: 'major' });
         }
         if (!before.required && pm.required) {
           changes.push({ path: key, change_type: 'parameter_now_required', description: `Parameter ${pk} became required` });
@@ -161,8 +190,10 @@ function computeDiff(oldSpec: any, newSpec: any) {
         const required = !!pm.required;
         removed_parameters.push({ path: key, parameter: pk, required });
         changes.push({ path: key, change_type: 'parameter_removed', description: `Parameter ${pk} removed` });
-        // removing a param is non-breaking for clients still sending it; flag minor
-        breaking.push({ path: key, change_type: 'parameter_removed', description: `Parameter ${pk} removed from ${key}`, impact: 'minor' });
+        // Removing a request parameter is generally NON-breaking: most servers ignore
+        // unknown params clients keep sending. It is only breaking if the server rejects
+        // unknown params (strict mode), which cannot be determined from the spec alone.
+        nonBreaking.push({ path: key, change_type: 'parameter_removed', description: `Parameter ${pk} removed from ${key} (non-breaking unless the server rejects unknown params)` });
       }
     }
 
@@ -213,12 +244,15 @@ function computeDiff(oldSpec: any, newSpec: any) {
     }
     for (const f of Object.keys(oldProps)) {
       if (!(f in newProps)) continue;
-      const ot = oldProps[f]?.type || 'unspecified';
-      const nt = newProps[f]?.type || 'unspecified';
+      // resolve $ref so a property pointing at a renamed/retyped component is compared by value
+      const oldPF = deref(oldSpec, oldProps[f]);
+      const newPF = deref(newSpec, newProps[f]);
+      const ot = oldPF?.type || 'unspecified';
+      const nt = newPF?.type || 'unspecified';
       if (ot !== nt) {
         changes.push({ path: `${name}.${f}`, change_type: 'property_type_changed', description: `Property ${f} type ${ot} → ${nt}` });
         breaking.push({ path: `${name}.${f}`, change_type: 'property_type_changed', description: `Property ${name}.${f} type ${ot} → ${nt}`, impact: 'major' });
-      } else if (stableStringify(oldProps[f]) !== stableStringify(newProps[f])) {
+      } else if (stableStringify(oldPF) !== stableStringify(newPF)) {
         changes.push({ path: `${name}.${f}`, change_type: 'property_modified', description: `Property ${f} definition changed` });
       }
       if (newReq.includes(f) && !oldReq.includes(f)) breaking.push({ path: `${name}.${f}`, change_type: 'property_now_required', description: `Property ${name}.${f} became required`, impact: 'major' });
@@ -300,7 +334,7 @@ router.post('/breaking-changes', (req: Request, res: Response) => {
 router.post('/execution-gate', (_req: Request, res: Response) => {
   const { input, objective } = _req.body;
   if (!input && !(_req.body?.old_spec || _req.body?.old)) return res.status(400).json({ error: 'input is required', code: 'MISSING_INPUT', retryable: false });
-  res.json({ success: true, request_id: rid(), execution_ready: true, input, objective: objective || 'analyze', next_api: 'openapi-diff-checker', next_endpoint: '/diff-intelligence', blocking_flags: [], confidence: { score: 0.98, reason: 'Input present and valid', per_section: { execution_ready: 0.98 } }, provenance: { provider: 'system', retrieved_at: new Date().toISOString(), source_type: 'api_call' }, recommended_next_api: [{ api: 'openapi-diff-checker', endpoint: '/diff-intelligence', reason: 'Full OpenAPI diff intelligence in one call' }], recommended_actions_priority_order: [{ priority: 'high', action: 'Call /diff-intelligence', reason: 'Single-request full analysis' }], execution_metadata: { latency_ms: 1, model: 'system', automation_safe: true } });
+  res.json({ success: true, request_id: rid(), execution_ready: true, input, objective: objective || 'analyze', next_api: 'openapi-diff-checker', next_endpoint: '/diff-intelligence', blocking_flags: [], confidence: { score: 0.98, reason: 'Input present and valid', per_section: { execution_ready: 0.98 } }, provenance: { provider: 'system', retrieved_at: new Date().toISOString(), source_type: 'api_call' }, recommended_next_api: [{ api: 'openapi-diff-checker', endpoint: '/diff-intelligence', reason: 'Full OpenAPI diff intelligence in one call' }], recommended_actions_priority_order: [{ priority: 'high', action: 'Call /diff-intelligence', reason: 'Single-request full analysis' }], execution_metadata: { latency_ms: 1, model: 'deterministic', automation_safe: true } });
 });
 
 router.post('/diff-intelligence', (req: Request, res: Response) => {

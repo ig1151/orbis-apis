@@ -142,6 +142,48 @@ const server = app.listen(0, async () => {
   r = await post('/api-schema-validator/validate', { input: 'totally not json' });
   check('200 success:false unparseable', r.status === 200 && r.json.success === false, r.json);
 
+  // ---- ChatGPT review fixes ----
+  console.log('# json-schema-validator /generate (mixed scalar array → anyOf items)');
+  r = await post('/json-schema-validator/generate', { json_sample: { mixed: [1, 'two', 3] }, strict: true });
+  check('mixed array items anyOf', Array.isArray(r.json.schema.properties.mixed.items.anyOf), r.json.schema.properties.mixed.items);
+  check('mixed array self-validates', r.json.self_validation_passed === true, r.json.schema.properties.mixed.items);
+
+  console.log('# json-schema-validator /generate (object array → merged props, required = intersection)');
+  r = await post('/json-schema-validator/generate', { json_sample: { rows: [{ a: 1, b: 'x' }, { a: 2 }] }, strict: true });
+  const items = r.json.schema.properties.rows.items;
+  check('object array merged a+b', items.type === 'object' && 'a' in items.properties && 'b' in items.properties, items);
+  check('required is intersection (a only)', Array.isArray(items.required) && items.required.includes('a') && !items.required.includes('b'), items.required);
+  check('object array self-validates', r.json.self_validation_passed === true);
+
+  console.log('# json-schema-validator /fix (typed defaults for missing required, not null)');
+  r = await post('/json-schema-validator/fix', { json_data: {}, schema: userSchema });
+  check('string defaults to "" not null', r.json.corrected_json.id === '' && r.json.corrected_json.email === '', r.json.corrected_json);
+
+  console.log('# api-schema-validator: draft-2019-09 detected as its own type');
+  r = await post('/api-schema-validator/validate', { input: { $schema: 'https://json-schema.org/draft/2019-09/schema', type: 'object', properties: { x: { type: 'string' } } } });
+  check('draft-2019 type', r.json.data.schema_type === 'json_schema_draft2019', r.json.data.schema_type);
+  check('draft-2019 valid', r.json.data.is_valid === true, r.json.data.errors);
+
+  console.log('# api-schema-validator: Swagger 2.0 clearly unsupported');
+  r = await post('/api-schema-validator/validate', { input: { swagger: '2.0', info: { title: 'x', version: '1.0.0' }, paths: {} } });
+  check('swagger type', r.json.data.schema_type === 'swagger_2_0', r.json.data.schema_type);
+  check('swagger unsupported + invalid', r.json.data.supported === false && r.json.data.is_valid === false, r.json.data);
+  check('swagger clear message', r.json.data.errors.some(e => /not supported/i.test(e.message)), r.json.data.errors);
+
+  console.log('# api-schema-validator: broken local $ref flagged');
+  r = await post('/api-schema-validator/validate', { input: { openapi: '3.0.0', info: { title: 'x', version: '1.0.0' }, paths: { '/a': { get: { responses: { '200': { description: 'ok', content: { 'application/json': { schema: { $ref: '#/components/schemas/Missing' } } } } } } } } } });
+  check('broken $ref flagged', r.json.data.errors.some(e => /Unresolved local \$ref/.test(e.message)), r.json.data.errors);
+
+  console.log('# api-schema-validator: path-template param consistency');
+  r = await post('/api-schema-validator/validate', { input: { openapi: '3.0.0', info: { title: 'x', version: '1.0.0' }, paths: { '/users/{id}': { get: { responses: { '200': { description: 'ok' } } } } } } });
+  check('undeclared path param flagged', r.json.data.errors.some(e => /Path template/.test(e.message)), r.json.data.errors);
+  r = await post('/api-schema-validator/validate', { input: { openapi: '3.0.0', info: { title: 'x', version: '1.0.0' }, paths: { '/users/{id}': { get: { parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }], responses: { '200': { description: 'ok' } } } } } } });
+  check('declared path param valid', r.json.data.is_valid === true, r.json.data.errors);
+
+  console.log('# api-schema-validator: execution-gate model deterministic');
+  r = await post('/api-schema-validator/execution-gate', { input: openapi });
+  check('asv gate model deterministic', r.json.execution_metadata.model === 'deterministic', r.json.execution_metadata);
+
   console.log(`\nRESULT: ${pass} passed, ${fail} failed`);
   server.close();
   process.exit(fail ? 1 : 0);
