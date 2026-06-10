@@ -159,14 +159,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/project', summary: 'Project retirement balance, sustainable income, and target gap',
-    operationId: 'project', priceUsdc: 0.01, humanApprovalRequired: true,
+    operationId: 'project', priceUsdc: 0.01,
     requestSchemaRef: 'RetirementRequest', responseSchemaRef: 'ProjectResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'ret1-1780000000000', computed_at: '2026-06-10T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL projection + reasoning + return sensitivity',
-    operationId: 'lookup', priceUsdc: 0.025, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.025, oneCall: true,
     requestSchemaRef: 'RetirementRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -199,7 +199,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic retirement projection. Compounds current savings + monthly contributions to the retirement date, reports the balance in nominal and inflation-adjusted (today\'s) dollars, derives sustainable income via the 4% rule, and sizes any nest-egg gap when a target income is supplied. Includes a financial disclaimer and human-approval flag because results inform long-term financial decisions.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

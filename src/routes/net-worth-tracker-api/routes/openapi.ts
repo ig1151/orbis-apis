@@ -193,14 +193,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/calculate', summary: 'Compute net worth, ratios, and breakdowns',
-    operationId: 'calculate', priceUsdc: 0.008, humanApprovalRequired: true,
+    operationId: 'calculate', priceUsdc: 0.008,
     requestSchemaRef: 'NetWorthRequest', responseSchemaRef: 'CalculateResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'net1-1780000000000', computed_at: '2026-06-10T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL net worth + reasoning + benchmark',
-    operationId: 'lookup', priceUsdc: 0.015, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.015, oneCall: true,
     requestSchemaRef: 'NetWorthRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -227,7 +227,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic net-worth calculator. Sums assets and liabilities, computes net worth and the debt-to-asset ratio, breaks down each side by type, and benchmarks against the age×income/10 wealth target when age and income are supplied — pure arithmetic, never estimated.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

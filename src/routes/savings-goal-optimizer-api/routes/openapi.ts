@@ -155,14 +155,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/calculate', summary: 'Time-to-goal, required contribution, or projection',
-    operationId: 'calculate', priceUsdc: 0.008, humanApprovalRequired: true,
+    operationId: 'calculate', priceUsdc: 0.008,
     requestSchemaRef: 'SavingsRequest', responseSchemaRef: 'CalculateResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'sav1-1780000000000', computed_at: '2026-06-10T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL plan + reasoning + sensitivity',
-    operationId: 'lookup', priceUsdc: 0.015, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.015, oneCall: true,
     requestSchemaRef: 'SavingsRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -194,7 +194,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic savings-goal planner. Computes time-to-goal from a contribution, the contribution required for a target date, or the projected balance and surplus/shortfall when both are supplied — all with real monthly compound-interest math (never estimated).',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

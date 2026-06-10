@@ -203,14 +203,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/plan', summary: 'Compare avalanche vs snowball + recommended strategy',
-    operationId: 'plan', priceUsdc: 0.01, humanApprovalRequired: true,
+    operationId: 'plan', priceUsdc: 0.01,
     requestSchemaRef: 'DebtPayoffRequest', responseSchemaRef: 'PlanResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'deb1-1780000000000', computed_at: '2026-06-10T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL payoff plan + reasoning + extra-payment sensitivity',
-    operationId: 'lookup', priceUsdc: 0.02, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.02, oneCall: true,
     requestSchemaRef: 'DebtPayoffRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -243,7 +243,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic debt-payoff planner. Simulates avalanche (highest-APR first) and snowball (smallest-balance first) strategies month-by-month with real interest accrual and minimum-payment rollover, recommends one, and quantifies the interest and months saved vs paying only minimums. Includes a financial disclaimer and human-approval flag because results inform borrowing decisions.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

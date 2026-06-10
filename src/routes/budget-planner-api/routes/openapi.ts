@@ -191,14 +191,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/analyze', summary: 'Bucket spending and compare to 50/30/20',
-    operationId: 'analyze', priceUsdc: 0.008, humanApprovalRequired: true,
+    operationId: 'analyze', priceUsdc: 0.008,
     requestSchemaRef: 'BudgetRequest', responseSchemaRef: 'AnalyzeResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'bud1-1780000000000', computed_at: '2026-06-10T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL budget analysis + reasoning + recommendations',
-    operationId: 'lookup', priceUsdc: 0.015, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.015, oneCall: true,
     requestSchemaRef: 'BudgetRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -225,7 +225,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic 50/30/20 budget analyzer. Buckets monthly spending into needs/wants/savings (from an expense list or direct totals), compares it to the 50/30/20 rule, and reports the savings rate, per-bucket variance, and any overspending — pure arithmetic, never estimated.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);
