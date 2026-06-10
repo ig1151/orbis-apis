@@ -87,6 +87,21 @@ export interface EnrichResponse {
   linkedin_message?: string;
   follow_up_email?: OutreachContent;
   personalization_tokens?: PersonalizationTokens;
+  // Deterministic on-page extraction fields (real data scraped from the company website).
+  website?: string;
+  logo?: string;
+  headline?: string;
+  emails?: string[];
+  social_profiles?: {
+    linkedin?: string;
+    twitter?: string;
+    facebook?: string;
+    github?: string;
+    youtube?: string;
+    instagram?: string;
+  };
+  /** Notes on fields that require a paid B2B data provider and were returned null. */
+  data_notes?: string[];
   latency_ms: number;
   usage: { input_tokens: number; output_tokens: number };
   created_at: string;
