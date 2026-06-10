@@ -105,7 +105,7 @@ openapiRouter.get('/', (_req: Request, res: Response) => {
         privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         endpoints: { type: 'array', items: { type: 'object', properties: { path: { type: 'string' }, method: { type: 'string' }, price_usdc: { type: 'number' }, description: { type: 'string' } } } },
       } } } } } } } },
-      '/analyze': { post: { operationId: 'analyzeImage', summary: 'Analyze an image and extract structured content', 'x-agent-callable': true, 'x-human-approval-required': true,
+      '/analyze': { post: { operationId: 'analyzeImage', summary: 'Analyze an image and extract structured content', 'x-agent-callable': true, 'x-human-approval-required': false,
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['image'], properties: {
           image: { type: 'string', description: 'Base64-encoded image string' },
           image_format: { type: 'string', enum: ['jpeg', 'png', 'gif', 'webp'], description: 'Image format' },

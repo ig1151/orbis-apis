@@ -51,7 +51,7 @@ router.get('/', (_req: Request, res: Response) => {
       description: 'Virality scores, rugpull risk assessment, momentum analysis, and social signals for meme coins. Built for trading agents and portfolio managers that need fast, structured meme coin intelligence.',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
-      'x-human-approval-required': true,
+      'x-human-approval-required': false,
       'x-execution-gate-required': true,
       'x-paper-mode-recommended': true,
       'x402-compatible': true,
@@ -76,7 +76,7 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'memeCoinScore',
           summary: 'Virality + rugpull risk score for a meme coin — momentum, social signals, contract safety',
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           requestBody: {
             required: true,
             content: {
@@ -210,7 +210,7 @@ router.get('/', (_req: Request, res: Response) => {
           operationId: 'memeCoinLookup',
           summary: 'ONE-CALL: full meme coin intelligence — virality, rugpull risk, momentum, lifecycle stage, entry window',
           'x-one-call': true,
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           'x-execution-gate-required': true,
           requestBody: {
             required: true,

@@ -190,7 +190,7 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL full financial profile → health + emergency fund + refinance + prioritized plan',
-    operationId: 'lookup', priceUsdc: 0.06, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.06, oneCall: true, humanApprovalRequired: false,
     requestSchemaRef: 'ProfileRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -238,7 +238,7 @@ export const spec = buildAplusSpec({
   description: 'One-call personal-finance planner for agents. Takes a full financial profile and composes three deterministic analyses — a financial-health score, an emergency-fund check, and (when a loan is supplied) a refinance evaluation — into a single prioritized action plan with reasoning. All real arithmetic, never estimated. Carries a financial disclaimer and a human-approval flag because the plan informs debt, savings, and refinancing decisions.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

@@ -35,7 +35,7 @@ router.get('/', (_req: Request, res: Response) => {
     x402_compatible: true, paper_mode_recommended: true,
     'x-paper-mode-recommended': true,
     'x-execution-gate-required': true,
-    'x-human-approval-required': true,
+    'x-human-approval-required': false,
     execution_modes: ['agent-callable', 'execution-gated'],
     'x-latency-tier': 'real-time',
     chain_to: [

@@ -147,14 +147,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/analyze', summary: 'LTV, PMI removal, points, payment & break-even',
-    operationId: 'analyze', priceUsdc: 0.01, humanApprovalRequired: true,
+    operationId: 'analyze', priceUsdc: 0.01, humanApprovalRequired: false,
     requestSchemaRef: 'MortgageRequest', responseSchemaRef: 'AnalyzeResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'mr1-1780000000000', computed_at: '2026-06-09T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL mortgage refinance analysis + reasoning + rate sensitivity',
-    operationId: 'lookup', priceUsdc: 0.025, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.025, oneCall: true, humanApprovalRequired: false,
     requestSchemaRef: 'MortgageRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -186,7 +186,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic mortgage refinance analysis: loan-to-value, PMI removal eligibility, discount-points break-even, cash-out, and rate-and-term savings — all in real amortization math (never estimated). Returns monthly and lifetime savings, break-even months, rate sensitivity, and reasoning, with a financial disclaimer and human-approval flag because results inform a refinancing decision.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

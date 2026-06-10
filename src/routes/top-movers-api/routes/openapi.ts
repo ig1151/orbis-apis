@@ -25,7 +25,7 @@ router.get('/', (_req: Request, res: Response) => {
       description: 'Real-time top crypto gainers, losers, and trending coins. Built for trading agents, market scanners, and portfolio dashboards that need to act on momentum signals.',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
-      'x-human-approval-required': true,
+      'x-human-approval-required': false,
       'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { gainers: '$0.002', losers: '$0.002', trending: '$0.002', lookup: '$0.005' } },
       'x-financial-disclaimer': 'For informational purposes only. Not financial advice.',
       'x-paper-mode-recommended': true,

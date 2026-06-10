@@ -9,12 +9,12 @@ router.get('/', (_req: Request, res: Response) => {
       description: 'Real-time crypto social sentiment analysis. Track sentiment scores, velocity, volume changes and trending signals across BTC, ETH, SOL and 20+ major assets.',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
-      'x-human-approval-required': true,
+      'x-human-approval-required': false,
       'x-execution-gate-required': true,
       'x-paper-mode-recommended': true,
       'x-crypto-safety': 'Sentiment data is for informational purposes only. Do not use as sole basis for financial decisions.',
       'x-pricing': { '/crypto-sentiment/{symbol}': 0.002, '/signals': 0.002, '/trending': 0.001, 
-      '/history/{symbol}': { get: { operationId: 'getSentimentHistory', summary: 'Get historical sentiment trend for a crypto asset over 1d, 3d or 7d windows', 'x-agent-callable': true, 'x-human-approval-required': true,
+      '/history/{symbol}': { get: { operationId: 'getSentimentHistory', summary: 'Get historical sentiment trend for a crypto asset over 1d, 3d or 7d windows', 'x-agent-callable': true, 'x-human-approval-required': false,
         parameters: [
           { name: 'symbol', in: 'path', required: true, schema: { type: 'string', enum: ['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','LINK','DOT','MATIC','UNI','ARB','OP','SUI','APT','PEPE','WIF','BONK','INJ','TIA','ATOM','NEAR','FET'] } },
           { name: 'window', in: 'query', required: false, schema: { type: 'string', enum: ['1d','3d','7d'], default: '7d' } },
@@ -98,7 +98,7 @@ router.get('/', (_req: Request, res: Response) => {
         privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
         endpoints: { type: 'array', items: { type: 'object', properties: { path: { type: 'string' }, method: { type: 'string' }, price_usdc: { type: 'number' }, description: { type: 'string' } } } },
       } } } } } } } },
-      '/crypto-sentiment/{symbol}': { get: { operationId: 'getCryptoSentiment', summary: 'Get real-time social sentiment for a crypto asset', 'x-agent-callable': true, 'x-human-approval-required': true,
+      '/crypto-sentiment/{symbol}': { get: { operationId: 'getCryptoSentiment', summary: 'Get real-time social sentiment for a crypto asset', 'x-agent-callable': true, 'x-human-approval-required': false,
         parameters: [{ name: 'symbol', in: 'path', required: true, schema: { type: 'string', enum: ['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','LINK','DOT','MATIC','UNI','ARB','OP','SUI','APT','PEPE','WIF','BONK','INJ','TIA','ATOM','NEAR','FET'] }, description: 'Crypto asset symbol' }],
         responses: { '200': { description: 'Sentiment analysis result', content: { 'application/json': { schema: { type: 'object', properties: {
           symbol: { type: 'string' },
@@ -121,7 +121,7 @@ router.get('/', (_req: Request, res: Response) => {
           source_provenance: { type: 'array', items: { type: 'object', properties: { source: { type: 'string' }, weight: { type: 'number' }, mention_count: { type: 'integer' }, confidence: { type: 'number', minimum: 0, maximum: 1 } } }, description: 'Per-source sentiment weighting and confidence' },
           timestamp: { type: 'string', format: 'date-time' },
         } } } } } } } },
-      '/signals': { get: { operationId: 'getSentimentSignals', summary: 'Get aggregated sentiment signals across all tracked assets', 'x-agent-callable': true, 'x-human-approval-required': true,
+      '/signals': { get: { operationId: 'getSentimentSignals', summary: 'Get aggregated sentiment signals across all tracked assets', 'x-agent-callable': true, 'x-human-approval-required': false,
         responses: { '200': { description: 'Sentiment signals', content: { 'application/json': { schema: { type: 'object', properties: {
           signals: { type: 'array', items: { type: 'object', properties: {
             symbol: { type: 'string' },
@@ -137,7 +137,7 @@ router.get('/', (_req: Request, res: Response) => {
           privacy: { type: 'object', properties: { data_stored: { type: 'boolean' }, retention: { type: 'string' } } },
           timestamp: { type: 'string', format: 'date-time' },
         } } } } } } } },
-      '/trending': { get: { operationId: 'getTrending', summary: 'Get trending crypto assets by social mention volume', 'x-agent-callable': true, 'x-human-approval-required': true,
+      '/trending': { get: { operationId: 'getTrending', summary: 'Get trending crypto assets by social mention volume', 'x-agent-callable': true, 'x-human-approval-required': false,
         responses: { '200': { description: 'Trending assets', content: { 'application/json': { schema: { type: 'object', properties: {
           trending: { type: 'array', items: { type: 'object', properties: {
             symbol: { type: 'string' },
@@ -154,7 +154,7 @@ router.get('/', (_req: Request, res: Response) => {
           timestamp: { type: 'string', format: 'date-time' },
         } } } } } } } },
       
-      '/history/{symbol}': { get: { operationId: 'getSentimentHistory', summary: 'Get historical sentiment trend for a crypto asset over 1d, 3d or 7d windows', 'x-agent-callable': true, 'x-human-approval-required': true,
+      '/history/{symbol}': { get: { operationId: 'getSentimentHistory', summary: 'Get historical sentiment trend for a crypto asset over 1d, 3d or 7d windows', 'x-agent-callable': true, 'x-human-approval-required': false,
         parameters: [
           { name: 'symbol', in: 'path', required: true, schema: { type: 'string', enum: ['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','LINK','DOT','MATIC','UNI','ARB','OP','SUI','APT','PEPE','WIF','BONK','INJ','TIA','ATOM','NEAR','FET'] } },
           { name: 'window', in: 'query', required: false, schema: { type: 'string', enum: ['1d','3d','7d'], default: '7d' } },

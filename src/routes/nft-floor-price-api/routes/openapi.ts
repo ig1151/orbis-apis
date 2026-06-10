@@ -38,7 +38,7 @@ router.get('/', (_req: Request, res: Response) => {
       description: 'NFT collection floor prices, volume, market data, and risk signals. Supports collection comparison and full intelligence including wash trading detection for NFT trading agents and portfolio trackers.',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
-      'x-human-approval-required': true,
+      'x-human-approval-required': false,
       'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { floor: '$0.003', compare: '$0.004', lookup: '$0.006' } },
       'x-financial-disclaimer': 'For informational purposes only. Not financial advice.',
       'x-paper-mode-recommended': true,

@@ -34,7 +34,7 @@ router.get('/', (_req: Request, res: Response) => {
       title: 'Honeypot Scanner API', version: '1.0.0',
       description: 'Detect honeypot contracts, rug pull mechanisms, and malicious token patterns. Analyze smart contract flags, ownership risk, liquidity lock status, and sell restrictions before trading.',
       'x-agent-callable': true, 'x-mcp-compatible': true,
-      'x-human-approval-required': true, 'x-execution-gate-required': true,
+      'x-human-approval-required': false, 'x-execution-gate-required': true,
       'x-paper-mode-recommended': true, 'x402-compatible': true,
       'x-agent-marketplace-ready': true, 'x-pay-per-call-optimized': true,
       'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { scan: '$0.003', risk: '$0.004', lookup: '$0.008' } },
@@ -55,7 +55,7 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'honeypotScan',
           summary: 'Scan a contract for honeypot flags, sell restrictions, and buy/sell simulation',
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           requestBody: {
             required: true,
             content: { 'application/json': { schema: { type: 'object', required: ['contract'], properties: { contract: { type: 'string', description: 'Token contract address' }, chain: { type: 'string', default: 'ethereum', enum: ['ethereum', 'base', 'bsc', 'polygon', 'arbitrum', 'solana'] } } } } },
@@ -87,7 +87,7 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'honeypotRisk',
           summary: 'Full risk score with ownership analysis, LP lock status, and rug pull vectors',
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           requestBody: {
             required: true,
             content: { 'application/json': { schema: { type: 'object', required: ['contract'], properties: { contract: { type: 'string' }, chain: { type: 'string', default: 'ethereum' } } } } },
@@ -121,7 +121,7 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'honeypotLookup',
           summary: 'ONE-CALL: honeypot verdict + rug risk + safety checklist + trade recommendation',
-          'x-one-call': true, 'x-human-approval-required': true, 'x-execution-gate-required': true,
+          'x-one-call': true, 'x-human-approval-required': false, 'x-execution-gate-required': true,
           requestBody: {
             required: true,
             content: { 'application/json': { schema: { type: 'object', required: ['contract'], properties: { contract: { type: 'string' }, chain: { type: 'string', default: 'ethereum' } } } } },

@@ -15,7 +15,7 @@ router.get('/openapi.json', (_req: Request, res: Response) => {
       paper_mode_recommended: true,
       privacy: { data_stored: false, retention: 'none' },
     
-    'x-human-approval-required': true,},
+    'x-human-approval-required': false,},
     servers: [{ url: 'https://orbis-apis.onrender.com/stablecoin-yield' }],
     security: [{ ApiKeyAuth: [] }],
     components: { securitySchemes: { ApiKeyAuth: { type: 'apiKey', in: 'header', name: 'X-API-Key' } } },

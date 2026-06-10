@@ -38,7 +38,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Copy trade signals from top-performing on-chain wallets. Returns recent trades, entry/exit timing, position sizing guidance, leaderboard rankings, and risk-adjusted copy plan.',
       'x-agent-callable': true, 'x-mcp-compatible': true,
-      'x-human-approval-required': true, 'x-execution-gate-required': true,
+      'x-human-approval-required': false, 'x-execution-gate-required': true,
       'x-paper-mode-recommended': true, 'x402-compatible': true,
       'x-agent-marketplace-ready': true, 'x-pay-per-call-optimized': true,
       'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { signals: '$0.004', leaderboard: '$0.004', lookup: '$0.015' } },
@@ -121,7 +121,7 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'walletCopyTradingLookup',
           summary: 'ONE-CALL: full copy trading plan with position sizing and risk limits',
-          'x-one-call': true, 'x-execution-gate-required': true, 'x-human-approval-required': true,
+          'x-one-call': true, 'x-execution-gate-required': true, 'x-human-approval-required': false,
           requestBody: {
             required: true,
             content: { 'application/json': { schema: { type: 'object', required: ['address'], properties: {

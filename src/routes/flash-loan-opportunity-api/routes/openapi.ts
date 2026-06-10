@@ -60,7 +60,7 @@ router.get('/', (_req: Request, res: Response) => {
       version: '1.0.0',
       description: 'Flash loan arbitrage opportunity detection across Aave, dYdX, and Balancer. Identifies executable arb paths that can be wrapped in a flash loan for zero-capital execution.',
       'x-agent-callable': true, 'x-mcp-compatible': true,
-      'x-human-approval-required': true, 'x-execution-gate-required': true,
+      'x-human-approval-required': false, 'x-execution-gate-required': true,
       'x-paper-mode-recommended': true, 'x402-compatible': true,
       'x-agent-marketplace-ready': true, 'x-pay-per-call-optimized': true,
       'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { protocols: '$0.005', scan: '$0.01', lookup: '$0.025' } },
@@ -188,7 +188,7 @@ router.get('/', (_req: Request, res: Response) => {
           summary: 'ONE-CALL: full flash loan execution plan with step-by-step execution',
           'x-one-call': true,
           'x-execution-gate-required': true,
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           requestBody: {
             required: true,
             content: {

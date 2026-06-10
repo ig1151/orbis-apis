@@ -54,7 +54,7 @@ router.get('/', (_req: Request, res: Response) => {
       description: 'Detect price gaps across centralized exchanges (Binance, Coinbase, Kraken, OKX, Bybit, etc.) and calculate net profit opportunities after all fees. Built for arbitrage bots, trading agents, and quant strategies.',
       'x-agent-callable': true,
       'x-mcp-compatible': true,
-      'x-human-approval-required': true,
+      'x-human-approval-required': false,
       'x-execution-gate-required': true,
       'x-paper-mode-recommended': true,
       'x402-compatible': true,
@@ -185,7 +185,7 @@ router.get('/', (_req: Request, res: Response) => {
           operationId: 'crossExchangeArbitrageLookup',
           summary: 'ONE-CALL: full arbitrage analysis — prices, best route, alternatives, risk assessment, execute/watch/pass verdict',
           'x-one-call': true,
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           'x-execution-gate-required': true,
           requestBody: {
             required: true,

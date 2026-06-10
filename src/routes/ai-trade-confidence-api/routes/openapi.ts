@@ -36,7 +36,7 @@ router.get('/', (_req: Request, res: Response) => {
       title: 'AI Trade Confidence API', version: '1.0.0',
       description: 'Score the confidence of any trade signal using AI multi-factor analysis. Validate trade setups with technical, fundamental, and sentiment signal alignment before execution.',
       'x-agent-callable': true, 'x-mcp-compatible': true,
-      'x-human-approval-required': true, 'x-execution-gate-required': true,
+      'x-human-approval-required': false, 'x-execution-gate-required': true,
       'x-paper-mode-recommended': true, 'x402-compatible': true,
       'x-agent-marketplace-ready': true, 'x-pay-per-call-optimized': true,
       'x-pricing': { free_tier: { requests_per_day: 100, requests_per_month: 3000 }, pay_per_call: { score: '$0.003', validate: '$0.005', lookup: '$0.010' } },
@@ -101,7 +101,7 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'aiTradeValidate',
           summary: 'Validate a full trade setup with R:R, confluence, and key level analysis',
-          'x-human-approval-required': true,
+          'x-human-approval-required': false,
           requestBody: {
             required: true,
             content: {
@@ -147,7 +147,7 @@ router.get('/', (_req: Request, res: Response) => {
         post: {
           operationId: 'aiTradeLookup',
           summary: 'ONE-CALL: confidence score + setup validation + risk + go/no-go verdict',
-          'x-one-call': true, 'x-human-approval-required': true, 'x-execution-gate-required': true,
+          'x-one-call': true, 'x-human-approval-required': false, 'x-execution-gate-required': true,
           requestBody: {
             required: true,
             content: {

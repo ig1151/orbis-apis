@@ -129,14 +129,14 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
     method: 'post', path: '/calculate', summary: 'Target, coverage, gap, and time-to-goal',
-    operationId: 'calculate', priceUsdc: 0.005, humanApprovalRequired: true,
+    operationId: 'calculate', priceUsdc: 0.005, humanApprovalRequired: false,
     requestSchemaRef: 'FundRequest', responseSchemaRef: 'CalculateResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: { trace_id: 'ef1-1780000000000', computed_at: '2026-06-09T12:00:00.000Z', success: true, latency_ms: 0, ...CORE_EXAMPLE, ...TAIL_EXAMPLE },
   },
   {
     method: 'post', path: '/lookup', summary: 'ONE-CALL emergency-fund analysis + reasoning + actions',
-    operationId: 'lookup', priceUsdc: 0.01, oneCall: true, humanApprovalRequired: true,
+    operationId: 'lookup', priceUsdc: 0.01, oneCall: true, humanApprovalRequired: false,
     requestSchemaRef: 'FundRequest', responseSchemaRef: 'LookupResponse',
     requestExample: REQ_EXAMPLE,
     responseExample: {
@@ -164,7 +164,7 @@ export const spec = buildAplusSpec({
   description: 'Deterministic emergency-fund planning: a recommended target (months scaled by job stability and dependents), current coverage in months, funded percent, the dollar gap, and time-to-goal at a given monthly contribution — all in real arithmetic, never estimated. The one-call /lookup adds reasoning and prioritized actions. Carries a financial disclaimer on every response.',
   endpoints,
   schemas,
-  infoExtensions: { 'x-finance': true, 'x-human-approval-required': true },
+  infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);
