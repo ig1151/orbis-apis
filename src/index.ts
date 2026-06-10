@@ -1799,6 +1799,10 @@ app.use('/nft-sniper-alert', nftSniperAlertRouter);
 app.use('/nft-volume-heatmap', nftVolumeHeatmapRouter);
 app.use('/nft-influencer-tracking', nftInfluencerTrackingRouter);
 app.use('/nft-arbitrage', nftArbitrageRouter);
+// text-gen: the routerMap entry only serves the info page (GET /text-gen); mount the
+// actual generation router so POST /text-gen/generate works (falls through from the
+// /:slug dispatcher when the info router has no matching route).
+app.use('/text-gen', textGenRouter);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
