@@ -1,19 +1,12 @@
 import { Router, Request, Response } from 'express';
 import axios from 'axios';
+import { callClaude } from '../../../shared/ai';
 import { buildRuntime } from '../../../shared/ai';
 
 const router = Router();
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!;
 const MODEL = 'anthropic/claude-sonnet-4-5';
 
-async function callClaude(prompt: string): Promise<string> {
-  const res = await axios.post(
-    'https://openrouter.ai/api/v1/chat/completions',
-    { model: MODEL, messages: [{ role: 'user', content: prompt }] },
-    { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' } }
-  );
-  return res.data.choices[0].message.content;
-}
 function parseJSON(raw: string) { return JSON.parse(raw.replace(/```json|```/g, '').trim()); }
 function traceId() { return `qa_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`; }
 
