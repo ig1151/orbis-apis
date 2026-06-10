@@ -63,6 +63,52 @@ export function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, n));
 }
 
+/**
+ * Future value of a starting balance plus a fixed end-of-period contribution,
+ * compounded for `periods` at periodic rate `r`. Handles r === 0.
+ *   FV = PV·(1+r)^n + PMT·((1+r)^n − 1)/r
+ */
+export function futureValue(present: number, contribution: number, r: number, periods: number): number {
+  if (periods <= 0) return present;
+  if (r === 0) return present + contribution * periods;
+  const f = Math.pow(1 + r, periods);
+  return present * f + contribution * ((f - 1) / r);
+}
+
+/**
+ * Number of periods for `present` + per-period `contribution` (at rate `r`) to
+ * reach `target`. Returns null when it can never be reached (no growth and no
+ * contribution, or contribution ≤ 0 with present already below target at r=0).
+ */
+export function periodsToTarget(present: number, contribution: number, r: number, target: number): number | null {
+  if (present >= target) return 0;
+  if (r === 0) return contribution > 0 ? Math.ceil((target - present) / contribution) : null;
+  // grows if present·r + contribution > 0 (i.e. period-over-period balance increases)
+  if (present * r + contribution <= 0) return null;
+  const n = Math.log((target * r + contribution) / (present * r + contribution)) / Math.log(1 + r);
+  return n > 0 ? Math.ceil(n) : 0;
+}
+
+/**
+ * Per-period contribution required to grow `present` to `target` over `periods`
+ * at periodic rate `r`. Can be negative when `present` already overshoots.
+ */
+export function requiredContribution(present: number, target: number, r: number, periods: number): number {
+  if (periods <= 0) return target - present;
+  if (r === 0) return (target - present) / periods;
+  const f = Math.pow(1 + r, periods);
+  return (target - present * f) * r / (f - 1);
+}
+
+/** Real (inflation-adjusted) periodic rate from nominal and inflation annual %s. */
+export function realMonthlyRate(nominalAnnualPct: number, inflationAnnualPct: number): number {
+  const realAnnual = (1 + nominalAnnualPct / 100) / (1 + inflationAnnualPct / 100) - 1;
+  return realAnnual / 12;
+}
+
+/** Deterministic-compute marker for execution_metadata on every finance response. */
+export const EXECUTION_METADATA = { model: 'deterministic' as const, automation_safe: true };
+
 /** Standard disclaimer string reused across every finance API. */
 export const FINANCIAL_DISCLAIMER =
   'This result is an informational, deterministic calculation based solely on the inputs you provided. ' +

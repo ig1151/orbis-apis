@@ -1,0 +1,142 @@
+[
+  {
+    "name": "Debt Payoff Planner API",
+    "shortDescription": "Deterministic avalanche vs snowball debt payoff — months to debt-free, total interest, and interest saved vs minimums",
+    "description": "Agent-native debt-payoff intelligence computed in real month-by-month simulation (not by a language model). /plan simulates both the avalanche (highest-APR first) and snowball (smallest-balance first) strategies with real APR/12 interest accrual and minimum-payment rollover, then returns each strategy's months-to-debt-free, total interest, total paid, and per-debt payoff order — plus a recommended strategy and the interest and months saved versus paying only minimums. The one-call /lookup adds assumptions, an extra-payment sensitivity table (+0/+50/+100/+200), a reasoning object (why_result_generated, key_factors, invalidators), and prioritized actions. Honestly flags debts whose payments never cover interest. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/debt-payoff-planner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/debt-payoff-planner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/debt-payoff-planner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "debt", "debt-payoff", "avalanche", "snowball", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["debt payoff api", "debt avalanche api", "debt snowball api", "debt payoff calculator", "pay off debt faster api", "credit card payoff api", "interest saved calculator", "debt free date api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.02,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/plan", "pricePerCallUsdc": 0.01, "description": "Compare avalanche vs snowball + recommended strategy" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL payoff plan + reasoning + extra-payment sensitivity" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/plan", "description": "Compare avalanche vs snowball + recommended strategy" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL payoff plan + reasoning + extra-payment sensitivity" }
+    ]
+  },
+  {
+    "name": "Retirement Planner API",
+    "shortDescription": "Deterministic retirement projection — nominal & inflation-adjusted balance, 4%-rule sustainable income, and nest-egg gap",
+    "description": "Agent-native retirement intelligence computed in real future-value math (not by a language model). /project compounds current savings + monthly contributions to the retirement date and returns the projected balance in both nominal and inflation-adjusted (today's) dollars, total contributions, investment growth, the 4%-rule sustainable annual income, and — when a target income is supplied — the nest-egg target, surplus/gap, income-replacement ratio, and an on_track verdict. The one-call /lookup adds the monthly contribution required to close any gap, explicit assumptions, a return-rate sensitivity table (± 2%), a reasoning object (why_result_generated, key_factors, invalidators), and prioritized actions. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/retirement-planner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/retirement-planner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/retirement-planner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "retirement", "401k", "fire", "compound-interest", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["retirement planner api", "retirement calculator api", "nest egg calculator api", "4% rule api", "retirement savings projection", "401k projection api", "fire calculator api", "retirement gap api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.025,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/project", "pricePerCallUsdc": 0.01, "description": "Project retirement balance, sustainable income, and target gap" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.025, "description": "ONE-CALL projection + reasoning + return sensitivity" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/project", "description": "Project retirement balance, sustainable income, and target gap" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL projection + reasoning + return sensitivity" }
+    ]
+  },
+  {
+    "name": "Savings Goal Optimizer API",
+    "shortDescription": "Deterministic savings-goal planner — time-to-goal, required monthly contribution, or projected balance with compound interest",
+    "description": "Agent-native savings-goal intelligence computed in real monthly compound-interest math (not by a language model). Given a goal and current savings, /calculate runs one of three modes automatically: supply a monthly contribution to get the time-to-goal, supply a target date to get the required monthly contribution, or supply both to get the projected balance plus surplus/shortfall. Returns amount remaining, months-to-goal, required contribution, total contributions, and investment growth as applicable. The one-call /lookup adds explicit assumptions, a sensitivity table on the operative lever, a reasoning object (why_result_generated, key_factors, invalidators), and prioritized actions. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/savings-goal-optimizer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/savings-goal-optimizer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/savings-goal-optimizer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "savings", "savings-goal", "compound-interest", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["savings goal api", "savings calculator api", "time to goal api", "required monthly savings api", "compound interest savings api", "savings projection api", "down payment savings api", "emergency fund savings api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.015,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/calculate", "pricePerCallUsdc": 0.008, "description": "Time-to-goal, required contribution, or projection" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "ONE-CALL plan + reasoning + sensitivity" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/calculate", "description": "Time-to-goal, required contribution, or projection" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL plan + reasoning + sensitivity" }
+    ]
+  },
+  {
+    "name": "Budget Planner API",
+    "shortDescription": "Deterministic 50/30/20 budget analyzer — needs/wants/savings buckets, savings rate, per-bucket variance, and overspending",
+    "description": "Agent-native budget intelligence computed in pure arithmetic (not by a language model). /analyze buckets monthly spending into needs/wants/savings (from an itemized expense list or direct totals), compares the allocation to the 50/30/20 rule, and returns each bucket's amount and percent of income, the recommended targets, per-bucket variance, the savings rate, a status (overspending/balanced/surplus), unallocated dollars, and an optional per-category breakdown. The one-call /lookup adds explicit assumptions, a reasoning object (why_result_generated, key_factors, invalidators), and prioritized recommendations. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/budget-planner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/budget-planner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/budget-planner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "budget", "50-30-20", "budgeting", "savings-rate", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["budget planner api", "50/30/20 budget api", "budget calculator api", "savings rate api", "needs wants savings api", "monthly budget api", "overspending detector api", "budget analysis api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.015,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.008, "description": "Bucket spending and compare to 50/30/20" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "ONE-CALL budget analysis + reasoning + recommendations" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/analyze", "description": "Bucket spending and compare to 50/30/20" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL budget analysis + reasoning + recommendations" }
+    ]
+  },
+  {
+    "name": "Net Worth Tracker API",
+    "shortDescription": "Deterministic net-worth calculator — assets minus liabilities, debt-to-asset ratio, liquidity, and wealth benchmark",
+    "description": "Agent-native net-worth intelligence computed in pure arithmetic (not by a language model). /calculate sums assets and liabilities, computes net worth and the debt-to-asset ratio, identifies liquid assets, breaks down each side by type with percentages, flags solvency, and — when age and income are supplied — benchmarks against the age×income/10 wealth target with a prosperity tier (under/average/prodigious accumulator). The one-call /lookup adds explicit assumptions, a reasoning object (why_result_generated, key_factors, invalidators), and prioritized actions. Every response carries a financial_disclaimer; results are deterministic so confidence is always 1.0.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/net-worth-tracker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/net-worth-tracker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/net-worth-tracker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "net-worth", "assets", "liabilities", "wealth", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["net worth api", "net worth calculator api", "assets liabilities api", "debt to asset ratio api", "wealth benchmark api", "personal balance sheet api", "net worth tracker api", "solvency api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.015,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/calculate", "pricePerCallUsdc": 0.008, "description": "Compute net worth, ratios, and breakdowns" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "ONE-CALL net worth + reasoning + benchmark" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/calculate", "description": "Compute net worth, ratios, and breakdowns" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL net worth + reasoning + benchmark" }
+    ]
+  }
+]
