@@ -1,24 +1,36 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
 
-const EnvelopeOk = {
-  type: 'object', required: ['trace_id', 'computed_at', 'success', 'latency_ms'],
+// Flat response schemas (additionalProperties:false) composed from property
+// fragments — avoids allOf-branch self-reject while keeping every object schema strict.
+type Frag = { required: string[]; properties: Record<string, unknown> };
+const merge = (...frags: Frag[]) => ({
+  type: 'object', additionalProperties: false,
+  required: [...new Set(frags.flatMap(f => f.required))],
+  properties: Object.assign({}, ...frags.map(f => f.properties)),
+});
+
+const ENVELOPE: Frag = {
+  required: ['trace_id', 'computed_at', 'success', 'latency_ms'],
   properties: { trace_id: { type: 'string' }, computed_at: { type: 'string', format: 'date-time' }, success: { type: 'boolean', enum: [true] }, latency_ms: { type: 'integer', minimum: 0 } },
 };
-const ExecutionMetadata = {
-  type: 'object', required: ['model', 'automation_safe'], additionalProperties: false,
-  properties: { model: { type: 'string', enum: ['deterministic'] }, automation_safe: { type: 'boolean' } },
-};
-const ConfidencePerSection = { type: 'object', additionalProperties: { type: 'number', minimum: 0, maximum: 1 } };
-
+const ExecutionMetadata = { type: 'object', required: ['model', 'automation_safe'], additionalProperties: false, properties: { model: { type: 'string', enum: ['deterministic'] }, automation_safe: { type: 'boolean' } } };
+const ConfidencePerSection = { type: 'object', required: ['model_estimate', 'factor_breakdown'], additionalProperties: false, properties: { model_estimate: { type: 'number', minimum: 0, maximum: 1 }, factor_breakdown: { type: 'number', minimum: 0, maximum: 1 } } };
 const Factor = {
   type: 'object', required: ['factor', 'weight_pct', 'sub_score', 'impact', 'note'], additionalProperties: false,
+  properties: { factor: { type: 'string' }, weight_pct: { type: 'number' }, sub_score: { type: 'number' }, impact: { type: 'string', enum: ['positive', 'neutral', 'negative'] }, note: { type: 'string' } },
+};
+const TAIL: Frag = {
+  required: ['confidence_score', 'confidence_per_section', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy', 'execution_metadata'],
   properties: {
-    factor: { type: 'string' }, weight_pct: { type: 'number' }, sub_score: { type: 'number' },
-    impact: { type: 'string', enum: ['positive', 'neutral', 'negative'] }, note: { type: 'string' },
+    confidence_score: { type: 'number', minimum: 0, maximum: 1, description: 'Below 1.0: a model estimate, not exact math.' },
+    confidence_per_section: { $ref: '#/components/schemas/ConfidencePerSection' },
+    recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
+    chain_to: { type: 'array', items: { $ref: '#/components/schemas/ChainTo' } },
+    financial_disclaimer: { type: 'string' }, privacy: { $ref: '#/components/schemas/Privacy' },
+    execution_metadata: { $ref: '#/components/schemas/ExecutionMetadata' },
   },
 };
-const CreditCore = {
-  type: 'object',
+const CORE: Frag = {
   required: ['estimated_score', 'score_range', 'rating', 'factor_breakdown', 'weakest_factor', 'is_estimate'],
   properties: {
     estimated_score: { type: 'integer', minimum: 300, maximum: 850 },
@@ -26,22 +38,11 @@ const CreditCore = {
     rating: { type: 'string', enum: ['poor', 'fair', 'good', 'very_good', 'exceptional'] },
     factor_breakdown: { type: 'array', items: { $ref: '#/components/schemas/Factor' } },
     weakest_factor: { type: 'string' },
-    is_estimate: { type: 'boolean', enum: [true], description: 'Always true — a model estimate, not your actual FICO/VantageScore.' },
+    is_estimate: { type: 'boolean', enum: [true], description: 'Always true — a model estimate, not your actual FICO/VantageScore, and not a credit decision.' },
   },
 };
-const FinanceTail = {
-  type: 'object',
-  required: ['confidence_score', 'confidence_per_section', 'recommended_actions_priority_order', 'chain_to', 'financial_disclaimer', 'privacy', 'execution_metadata'],
-  properties: {
-    confidence_score: { type: 'number', minimum: 0, maximum: 1, description: 'Below 1.0: this is a model estimate, not exact math.' },
-    confidence_per_section: { $ref: '#/components/schemas/ConfidencePerSection' },
-    recommended_actions_priority_order: { type: 'array', items: { type: 'string' } },
-    chain_to: { type: 'array', items: { $ref: '#/components/schemas/ChainTo' } },
-    financial_disclaimer: { type: 'string' },
-    privacy: { $ref: '#/components/schemas/Privacy' },
-    execution_metadata: { $ref: '#/components/schemas/ExecutionMetadata' },
-  },
-};
+const LOOKUP_EXTRA: Frag = { required: ['assumptions', 'reasoning'], properties: { assumptions: { type: 'array', items: { type: 'string' } }, reasoning: { $ref: '#/components/schemas/Reasoning' } } };
+
 const CreditRequest = {
   type: 'object', required: ['on_time_payment_pct', 'credit_utilization_pct', 'avg_account_age_years', 'num_credit_types'], additionalProperties: false,
   properties: {
@@ -67,40 +68,31 @@ const CORE_EXAMPLE = {
   weakest_factor: 'new_credit', is_estimate: true,
 };
 const TAIL_EXAMPLE = {
-  confidence_score: 0.6,
-  confidence_per_section: { model_estimate: 0.6, factor_breakdown: 1 },
+  confidence_score: 0.6, confidence_per_section: { model_estimate: 0.6, factor_breakdown: 1 },
   recommended_actions_priority_order: ['Your profile is strong across all factors; maintain on-time payments and low utilization.'],
   chain_to: [
     { api: 'dti-calculator', reason: 'Check the debt-to-income ratio lenders pair with your score.' },
     { api: 'loan-affordability-calculator', reason: 'Translate this score band into the rate/amount you can likely qualify for.' },
     { api: 'debt-payoff-planner', reason: 'Lowering balances improves utilization — plan the payoff.' },
   ],
-  financial_disclaimer: 'Informational, deterministic estimate using public FICO category weights — not your actual FICO/VantageScore.',
-  privacy: { data_stored: false, retention: 'none' },
-  execution_metadata: { model: 'deterministic', automation_safe: true },
+  financial_disclaimer: 'Informational, deterministic estimate using public FICO category weights — not your actual FICO/VantageScore and not a credit decision (not for FCRA-regulated use).',
+  privacy: { data_stored: false, retention: 'none' }, execution_metadata: { model: 'deterministic', automation_safe: true },
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Factor, CreditCore, _FinanceTail: FinanceTail, CreditRequest,
+  ExecutionMetadata, ConfidencePerSection, Factor, CreditRequest,
   DiscoveryResponse: {
     type: 'object', required: ['name', 'version', 'description', 'openapi_url', 'auth', 'endpoints', 'pricing', 'x402_compatible'], additionalProperties: false,
     properties: {
-      name: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' },
-      openapi_url: { type: 'string', format: 'uri' },
+      name: { type: 'string' }, version: { type: 'string' }, description: { type: 'string' }, openapi_url: { type: 'string', format: 'uri' },
       auth: { type: 'object', required: ['type', 'header'], additionalProperties: false, properties: { type: { type: 'string' }, header: { type: 'string' } } },
       endpoints: { type: 'array', items: { type: 'object', required: ['method', 'path', 'summary', 'price_usdc'], additionalProperties: false, properties: { method: { type: 'string' }, path: { type: 'string' }, summary: { type: 'string' }, price_usdc: { type: 'number' } } } },
       pricing: { type: 'array', items: { type: 'object', required: ['path', 'price_usdc', 'currency'], additionalProperties: false, properties: { path: { type: 'string' }, price_usdc: { type: 'number' }, currency: { type: 'string', enum: ['USDC'] } } } },
       x402_compatible: { type: 'boolean' },
     },
   },
-  EstimateResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/CreditCore' }, { $ref: '#/components/schemas/_FinanceTail' }], unevaluatedProperties: false },
-  LookupResponse: {
-    allOf: [
-      { $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/CreditCore' },
-      { type: 'object', required: ['assumptions', 'reasoning'], properties: { assumptions: { type: 'array', items: { type: 'string' } }, reasoning: { $ref: '#/components/schemas/Reasoning' } } },
-      { $ref: '#/components/schemas/_FinanceTail' },
-    ], unevaluatedProperties: false,
-  },
+  EstimateResponse: merge(ENVELOPE, CORE, TAIL),
+  LookupResponse: merge(ENVELOPE, CORE, LOOKUP_EXTRA, TAIL),
 };
 
 const endpoints: AplusEndpoint[] = [
@@ -124,7 +116,7 @@ const endpoints: AplusEndpoint[] = [
 
 export const spec = buildAplusSpec({
   slug: 'credit-score-estimator', title: 'Credit Score Estimator API', version: '1.0.0',
-  description: 'Transparent credit-score estimator using the public FICO category weights (payment 35%, utilization 30%, age 15%, mix 10%, new credit 10%), mapped to the 300–850 scale with a per-factor breakdown. A deterministic model and explicit estimate — not your actual FICO/VantageScore — so confidence is below 1.0 and the result is a range.',
+  description: 'Transparent credit-score estimator using the public FICO category weights (payment 35%, utilization 30%, age 15%, mix 10%, new credit 10%), mapped to the 300–850 scale with a per-factor breakdown. A deterministic model and explicit estimate — not your actual FICO/VantageScore and not a credit decision (not for credit underwriting or FCRA-regulated use) — so confidence is below 1.0 and the result is a range.',
   endpoints, schemas, infoExtensions: { 'x-finance': true, 'x-human-approval-required': false },
 });
 

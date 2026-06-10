@@ -73,7 +73,7 @@ const CORE_EXAMPLE = {
   rent_breakdown: { total_rent_paid: 220678.91, investment_gain_on_upfront: 52125.73 }, horizon_years: 7,
 };
 const TAIL_EXAMPLE = {
-  confidence_score: 1, confidence_per_section: { buy_cost: 1, rent_cost: 1, breakeven: 1 },
+  confidence_score: 0.75, confidence_per_section: { math: 1, assumptions: 0.55 },
   recommended_actions_priority_order: ['Over 7 years, renting is cheaper by 10096.03 (net rent 168553.18 vs net buy 178649.21).', 'Buying does not break even within the horizon — the shorter you stay, the more renting wins.', 'Re-run with your real rate, local tax/appreciation, and the rent you would actually pay.'],
   chain_to: [
     { api: 'loan-affordability-calculator', reason: 'Confirm the purchase price fits your income and DTI.' },
