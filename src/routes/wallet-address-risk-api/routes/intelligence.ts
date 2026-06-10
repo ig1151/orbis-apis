@@ -4,11 +4,33 @@ const router = Router();
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!;
 const MODEL = 'anthropic/claude-sonnet-4-5';
 
-async function callClaude(prompt: string): Promise<string> {
-  const res = await axios.post('https://openrouter.ai/api/v1/chat/completions',
-    { model: MODEL, messages: [{ role: 'user', content: prompt }] },
-    { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' } });
-  return res.data.choices[0].message.content;
+// Hardened: 20s timeout + bounded retry on 429/5xx/timeout so a slow upstream can never hang the request.
+async function callClaude(prompt: string, attempt = 0): Promise<string> {
+  try {
+    const res = await axios.post('https://openrouter.ai/api/v1/chat/completions',
+      { model: MODEL, messages: [{ role: 'user', content: prompt }] },
+      { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 20000 });
+    return res.data.choices[0].message.content;
+  } catch (e: any) {
+    const status = e?.response?.status;
+    const retryable = e?.code === 'ECONNABORTED' || !status || status === 429 || status >= 500;
+    if (retryable && attempt < 2) {
+      await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+      return callClaude(prompt, attempt + 1);
+    }
+    throw e;
+  }
+}
+
+// Degrade upstream failures to 200 success:false (never 500/hang) — no risk values are fabricated on failure.
+function degrade(res: Response) {
+  return res.json({
+    success: false, request_id: rid(), error: 'upstream_unavailable',
+    message: 'The risk engine is temporarily unavailable. No risk values are fabricated on failure.',
+    retryable: true,
+    provenance: { provider: 'wallet-address-risk', retrieved_at: new Date().toISOString(), source_type: 'api_call' },
+    execution_metadata: { latency_ms: 0, model: 'unavailable', automation_safe: true },
+  });
 }
 
 function parseJSON(raw: string) {
@@ -31,7 +53,7 @@ Input (blockchain wallet address): "${input}"
 Options: ${JSON.stringify(options || {})}
 Return ONLY valid JSON: success, request_id, data (typed fields: address string, blockchain enum bitcoin|ethereum|tron|solana|bnb|polygon|unknown, risk_score integer 0-100, risk_level enum critical|high|medium|low|safe, is_sanctioned boolean, sanctions_lists array of strings, is_mixer boolean, is_exchange boolean, exchange_name string, illicit_exposure_pct number 0-100, transaction_count integer, first_seen_date string, last_seen_date string, aml_flags array of strings), confidence (score 0-1, reason, per_section), provenance (provider, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (recommended_ttl_seconds, retryable, cache_recommended), recommended_next_api (array: api, endpoint, reason), recommended_actions_priority_order (array: priority high|medium|low, action, reason), execution_metadata (latency_ms, model, automation_safe). No markdown.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
+  } catch { return degrade(res); }
 });
 
 router.post('/analyze', async (req: Request, res: Response) => {
@@ -43,7 +65,7 @@ Input (blockchain wallet address): "${input}"
 Options: ${JSON.stringify(options || {})}
 Return ONLY valid JSON: success, request_id, data (typed fields: address string, cluster_id string, cluster_size integer, direct_exposure object with illicit number and unknown number and legitimate number as percentages, indirect_exposure object with illicit number and unknown number and legitimate number as percentages, counterparty_categories array of objects with category string and exposure_pct number, recent_transactions array of objects with hash and amount and direction enum in|out and risk_label, entity_name string), confidence (score 0-1, reason, per_section), provenance (provider, retrieved_at ISO8601, source_type enum ai_generated|cached|live_scan|api_call), cache (recommended_ttl_seconds, retryable, cache_recommended), recommended_next_api (array: api, endpoint, reason), recommended_actions_priority_order (array: priority high|medium|low, action, reason), execution_metadata (latency_ms, model, automation_safe). No markdown.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
+  } catch { return degrade(res); }
 });
 
 router.post('/execution-gate', (_req: Request, res: Response) => {
@@ -60,7 +82,7 @@ router.post('/wallet-risk-intelligence', async (req: Request, res: Response) => 
 Input: "${input}"
 Return ONLY valid JSON: success, request_id, data (all sub-results + overall_score 0-100 + key_findings array + summary), confidence, provenance, cache, recommended_next_api, recommended_actions_priority_order, execution_metadata. No markdown.`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message, code: 'UPSTREAM_ERROR', retryable: true }); }
+  } catch { return degrade(res); }
 });
 
 export default router;

@@ -5,13 +5,37 @@ const router = Router();
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!;
 const MODEL = 'anthropic/claude-sonnet-4-5';
 
-async function callClaude(prompt: string): Promise<string> {
-  const res = await axios.post(
-    'https://openrouter.ai/api/v1/chat/completions',
-    { model: MODEL, messages: [{ role: 'user', content: prompt }] },
-    { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' } }
-  );
-  return res.data.choices[0].message.content;
+// Hardened: 20s timeout + bounded retry on 429/5xx/timeout so a slow upstream can never hang the request.
+async function callClaude(prompt: string, attempt = 0): Promise<string> {
+  try {
+    const res = await axios.post(
+      'https://openrouter.ai/api/v1/chat/completions',
+      { model: MODEL, messages: [{ role: 'user', content: prompt }] },
+      { headers: { Authorization: `Bearer ${OPENROUTER_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 20000 }
+    );
+    return res.data.choices[0].message.content;
+  } catch (e: any) {
+    const status = e?.response?.status;
+    const retryable = e?.code === 'ECONNABORTED' || !status || status === 429 || status >= 500;
+    if (retryable && attempt < 2) {
+      await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+      return callClaude(prompt, attempt + 1);
+    }
+    throw e;
+  }
+}
+
+// Degrade upstream failures to 200 success:false (never 500/hang) — no odds are fabricated on failure.
+function degrade(res: Response) {
+  return res.json({
+    trace_id: traceId(), computed_at: new Date().toISOString(), success: false,
+    error: 'upstream_unavailable',
+    message: 'The odds engine is temporarily unavailable. No odds are returned rather than fabricated values.',
+    retryable: true,
+    source_provenance: { provider: 'betting-odds', retrieved_at: new Date().toISOString(), freshness_score: 0 },
+    cache_ttl_seconds: 0, cache_recommended: false, automation_safe: true,
+    privacy: { data_stored: false, retention: 'none' },
+  });
 }
 
 function parseJSON(raw: string) {
@@ -62,7 +86,7 @@ router.post('/odds', async (req: Request, res: Response) => {
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch { return degrade(res); }
 });
 
 // POST /line-movement
@@ -94,7 +118,7 @@ router.post('/line-movement', async (req: Request, res: Response) => {
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch { return degrade(res); }
 });
 
 // POST /comparison
@@ -125,7 +149,7 @@ router.post('/comparison', async (req: Request, res: Response) => {
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch { return degrade(res); }
 });
 
 // POST /execution-gate
@@ -180,7 +204,7 @@ router.post('/betting-intelligence', async (req: Request, res: Response) => {
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch { return degrade(res); }
 });
 
 // POST /arbitrage
@@ -221,7 +245,7 @@ router.post('/arbitrage', async (req: Request, res: Response) => {
   "privacy": {"data_stored": false, "retention": "none"}
 }`);
     res.json(parseJSON(raw));
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch { return degrade(res); }
 });
 
 // POST /batch
@@ -249,7 +273,7 @@ router.post('/batch', async (req: Request, res: Response) => {
       automation_safe: true,
       privacy: { data_stored: false, retention: 'none' },
     });
-  } catch (e: any) { res.status(500).json({ error: e.message }); }
+  } catch { return degrade(res); }
 });
 
 export default router;
