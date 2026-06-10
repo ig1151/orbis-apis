@@ -608,6 +608,16 @@ import financialHealthCheckerRouter from './routes/financial-health-checker-api/
 import financialHealthCheckerOpenapiRouter from './routes/financial-health-checker-api/routes/openapi';
 import personalFinanceAgentRouter from './routes/personal-finance-agent-api/routes/intelligence';
 import personalFinanceAgentOpenapiRouter from './routes/personal-finance-agent-api/routes/openapi';
+import debtPayoffPlannerRouter from './routes/debt-payoff-planner-api/routes/intelligence';
+import debtPayoffPlannerOpenapiRouter from './routes/debt-payoff-planner-api/routes/openapi';
+import retirementPlannerRouter from './routes/retirement-planner-api/routes/intelligence';
+import retirementPlannerOpenapiRouter from './routes/retirement-planner-api/routes/openapi';
+import savingsGoalOptimizerRouter from './routes/savings-goal-optimizer-api/routes/intelligence';
+import savingsGoalOptimizerOpenapiRouter from './routes/savings-goal-optimizer-api/routes/openapi';
+import budgetPlannerRouter from './routes/budget-planner-api/routes/intelligence';
+import budgetPlannerOpenapiRouter from './routes/budget-planner-api/routes/openapi';
+import netWorthTrackerRouter from './routes/net-worth-tracker-api/routes/intelligence';
+import netWorthTrackerOpenapiRouter from './routes/net-worth-tracker-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1184,6 +1194,11 @@ const routerMap: Record<string, import("express").Router> = {
   'emergency-fund-calculator': emergencyFundCalculatorRouter,
   'financial-health-checker': financialHealthCheckerRouter,
   'personal-finance-agent': personalFinanceAgentRouter,
+  'debt-payoff-planner': debtPayoffPlannerRouter,
+  'retirement-planner': retirementPlannerRouter,
+  'savings-goal-optimizer': savingsGoalOptimizerRouter,
+  'budget-planner': budgetPlannerRouter,
+  'net-worth-tracker': netWorthTrackerRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1581,6 +1596,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'emergency-fund-calculator': emergencyFundCalculatorOpenapiRouter,
   'financial-health-checker': financialHealthCheckerOpenapiRouter,
   'personal-finance-agent': personalFinanceAgentOpenapiRouter,
+  'debt-payoff-planner': debtPayoffPlannerOpenapiRouter,
+  'retirement-planner': retirementPlannerOpenapiRouter,
+  'savings-goal-optimizer': savingsGoalOptimizerOpenapiRouter,
+  'budget-planner': budgetPlannerOpenapiRouter,
+  'net-worth-tracker': netWorthTrackerOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
