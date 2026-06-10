@@ -53,12 +53,39 @@ function detectFormat(s: string): string | null {
   for (const [fmt, re] of Object.entries(FMT)) if (re.test(s)) return fmt;
   return null;
 }
+// Merge the per-item schemas of an array into a single `items` schema so mixed arrays
+// are represented faithfully (not inferred from the first element alone).
+function mergeItemSchemas(schemas: any[], strict: boolean): any {
+  if (!schemas.length) return {};
+  const bySig = new Map<string, any>();
+  for (const s of schemas) bySig.set(JSON.stringify(s), s);
+  const uniq = [...bySig.values()];
+  if (uniq.length === 1) return uniq[0];
+  // all objects → structural union (props = union; required = present-in-ALL items)
+  if (schemas.every(s => s && s.type === 'object')) {
+    const allKeys = new Set<string>();
+    schemas.forEach(s => Object.keys(s.properties || {}).forEach(k => allKeys.add(k)));
+    const properties: Record<string, any> = {};
+    const required: string[] = [];
+    for (const k of allKeys) {
+      const present = schemas.filter(s => s.properties && k in s.properties).map(s => s.properties[k]);
+      properties[k] = mergeItemSchemas(present, strict);
+      const requiredInAll = schemas.every(s => Array.isArray(s.required) && s.required.includes(k));
+      if (strict && requiredInAll) required.push(k);
+    }
+    const out: any = { type: 'object', properties };
+    if (required.length) out.required = required;
+    if (strict) out.additionalProperties = false;
+    return out;
+  }
+  // mixed scalar/heterogeneous → anyOf of the distinct shapes
+  return { anyOf: uniq };
+}
 function inferSchema(value: any, strict: boolean): any {
   if (value === null) return { type: 'null' };
   if (Array.isArray(value)) {
     if (!value.length) return { type: 'array', items: {} };
-    // merge item schemas shallowly: use first element's schema as representative
-    return { type: 'array', items: inferSchema(value[0], strict) };
+    return { type: 'array', items: mergeItemSchemas(value.map(v => inferSchema(v, strict)), strict) };
   }
   const t = typeof value;
   if (t === 'string') { const f = detectFormat(value); return f ? { type: 'string', format: f } : { type: 'string' }; }
@@ -77,6 +104,24 @@ function inferSchema(value: any, strict: boolean): any {
     return out;
   }
   return {};
+}
+
+// Produce a schema-appropriate default for a missing required property, so injected
+// values are likely to satisfy the schema (instead of always null, which fails string/number).
+function typedDefault(propSchema: any): any {
+  if (!propSchema || typeof propSchema !== 'object') return null;
+  if ('default' in propSchema) return propSchema.default;
+  if (Array.isArray(propSchema.enum) && propSchema.enum.length) return propSchema.enum[0];
+  const t = Array.isArray(propSchema.type) ? propSchema.type.find((x: string) => x !== 'null') : propSchema.type;
+  switch (t) {
+    case 'string': return '';
+    case 'number': case 'integer': return 0;
+    case 'boolean': return false;
+    case 'array': return [];
+    case 'object': return {};
+    case 'null': return null;
+    default: return null;
+  }
 }
 
 // ---- envelope helpers (preserve published trace_id/source_provenance shape) --
@@ -300,7 +345,10 @@ router.post('/fix', (req: Request, res: Response) => {
     if (kw === 'required') {
       const missing = e.params?.missingProperty;
       const { node } = getParent(ip + '/' + (missing || ''));
-      const defVal = (schema && schema.properties && schema.properties[missing] && 'default' in schema.properties[missing]) ? schema.properties[missing].default : null;
+      // type-appropriate default from the property's schema (string→"", number→0, …),
+      // falling back to null only when the type is unknown.
+      const propSchema = (schema && schema.properties) ? schema.properties[missing] : undefined;
+      const defVal = typedDefault(propSchema);
       if (node && typeof node === 'object' && missing) { node[missing] = defVal; }
       fixes.push({ path: (ip || '') + '/' + missing, issue: `Missing required property "${missing}"`, suggested_value: defVal, fix_type: 'add_required', auto_applied: !!(node && missing) });
     } else if (kw === 'additionalProperties') {
