@@ -14,31 +14,56 @@ const router = Router();
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const MODEL = 'anthropic/claude-sonnet-4-5';
 
+const REQUEST_TIMEOUT_MS = 25000;
+const MAX_ATTEMPTS = 3;
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
 async function callClaude(prompt: string): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) throw new Error('OPENROUTER_API_KEY not set');
 
-  const response = await fetch(OPENROUTER_API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 2000,
-      messages: [{ role: 'user', content: prompt }],
-      response_format: { type: 'json_object' },
-    }),
-  });
+  let lastErr: any;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    if (attempt > 0) await sleep(500 * Math.pow(2, attempt - 1)); // 500ms, then 1s
+    // bound the fetch so a slow/hung upstream can't stall the request indefinitely
+    const ac = new AbortController();
+    const timer = setTimeout(() => ac.abort(), REQUEST_TIMEOUT_MS);
+    try {
+      const response = await fetch(OPENROUTER_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          max_tokens: 2000,
+          messages: [{ role: 'user', content: prompt }],
+          response_format: { type: 'json_object' },
+        }),
+        signal: ac.signal,
+      });
 
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`OpenRouter error: ${response.status} ${err}`);
+      if (!response.ok) {
+        const err = await response.text();
+        const e: any = new Error(`OpenRouter error: ${response.status} ${err}`);
+        e.status = response.status;
+        throw e;
+      }
+
+      const data = await response.json() as { choices?: { message?: { content?: string } }[] };
+      const content = data?.choices?.[0]?.message?.content;
+      return content ?? '';
+    } catch (err: any) {
+      lastErr = err;
+      const retryable = err?.name === 'AbortError' || err?.status === 429 || (typeof err?.status === 'number' && err.status >= 500);
+      if (attempt < MAX_ATTEMPTS - 1 && retryable) continue;
+      throw err;
+    } finally {
+      clearTimeout(timer);
+    }
   }
-
-  const data = await response.json() as { choices: { message: { content: string } }[] };
-  return data.choices[0].message.content ?? '';
+  throw lastErr;
 }
 
 function parseJSON(raw: string): unknown {
