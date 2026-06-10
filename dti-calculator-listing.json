@@ -1,0 +1,77 @@
+[
+  {
+    "name": "DTI Calculator API",
+    "shortDescription": "Deterministic debt-to-income ratios \u2014 front/back-end DTI, lender qualification band, and headroom to 36%/43%",
+    "description": "Agent-native debt-to-income calculator computed in pure arithmetic. /calculate returns the front-end (housing) and back-end (total debt) DTI ratios against gross income, maps the back-end ratio to a lender qualification band (strong/acceptable/limited/high-risk), and reports how much additional monthly debt fits before the 36% and 43% limits. The one-call /lookup adds the standard threshold table, reasoning (why_result_generated, key_factors, invalidators), and assumptions. Confidence always 1.0; every response carries a financial_disclaimer.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/dti-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/dti-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/dti-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "dti",
+      "debt-to-income",
+      "mortgage",
+      "lending",
+      "calculator",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "dti calculator api",
+      "debt to income api",
+      "debt to income ratio api",
+      "front end dti api",
+      "back end dti api",
+      "mortgage qualification api",
+      "dti ratio calculator",
+      "loan qualification dti api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/calculate",
+            "pricePerCallUsdc": 0.008,
+            "description": "Front/back-end DTI + qualification band + headroom"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL DTI + reasoning + threshold guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/calculate",
+        "description": "Front/back-end DTI + qualification band + headroom"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL DTI + reasoning + threshold guidance"
+      }
+    ]
+  }
+]

@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Credit Score Estimator API",
+    "shortDescription": "Transparent credit-score estimate from the public FICO category weights \u2014 score band + per-factor breakdown + improvement plan",
+    "description": "Agent-native credit-score estimator computed from the publicly documented FICO category weights (payment history 35%, utilization 30%, length 15%, mix 10%, new credit 10%) and mapped to the 300\u2013850 scale. /estimate returns an estimated score, an uncertainty band (\u00b120), a rating, and a per-factor breakdown with each factor's sub-score and impact. The one-call /lookup adds a prioritized improvement plan, reasoning (why_result_generated, key_factors, invalidators), and assumptions. A deterministic MODEL and explicit estimate \u2014 not your actual FICO/VantageScore \u2014 so confidence is intentionally below 1.0. No fabrication: every sub-score derives from your inputs.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/credit-score-estimator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/credit-score-estimator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/credit-score-estimator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "credit-score",
+      "fico",
+      "credit",
+      "calculator",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "credit score api",
+      "credit score estimator api",
+      "fico score api",
+      "credit score calculator",
+      "estimate credit score api",
+      "credit factors api",
+      "improve credit score api",
+      "credit health api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.02,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/estimate",
+            "pricePerCallUsdc": 0.01,
+            "description": "Estimate score band + per-factor breakdown"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.02,
+            "description": "ONE-CALL estimate + reasoning + improvement plan"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/estimate",
+        "description": "Estimate score band + per-factor breakdown"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL estimate + reasoning + improvement plan"
+      }
+    ]
+  }
+]

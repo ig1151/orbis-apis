@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Credit Score Estimator API",
+    "shortDescription": "Transparent credit-score estimate from the public FICO category weights — score band + per-factor breakdown + improvement plan",
+    "description": "Agent-native credit-score estimator computed from the publicly documented FICO category weights (payment history 35%, utilization 30%, length 15%, mix 10%, new credit 10%) and mapped to the 300–850 scale. /estimate returns an estimated score, an uncertainty band (±20), a rating, and a per-factor breakdown with each factor's sub-score and impact. The one-call /lookup adds a prioritized improvement plan, reasoning (why_result_generated, key_factors, invalidators), and assumptions. A deterministic MODEL and explicit estimate — not your actual FICO/VantageScore — so confidence is intentionally below 1.0. No fabrication: every sub-score derives from your inputs.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/credit-score-estimator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/credit-score-estimator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/credit-score-estimator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "credit-score", "fico", "credit", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["credit score api", "credit score estimator api", "fico score api", "credit score calculator", "estimate credit score api", "credit factors api", "improve credit score api", "credit health api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.02, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/estimate", "pricePerCallUsdc": 0.01, "description": "Estimate score band + per-factor breakdown" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL estimate + reasoning + improvement plan" }
+        ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/estimate", "description": "Estimate score band + per-factor breakdown" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL estimate + reasoning + improvement plan" }
+    ]
+  },
+  {
+    "name": "Insurance Needs Calculator API",
+    "shortDescription": "Deterministic life-insurance needs via the DIME method — total need, coverage gap, and recommended coverage",
+    "description": "Agent-native life-insurance needs calculator computed with the DIME method (Debt + Income replacement + Mortgage + Education) plus final expenses, netted against existing coverage and liquid assets. /calculate returns the DIME breakdown, total need, coverage gap, a recommended coverage amount (rounded to 25k), a 10×-income cross-check, and an adequately_insured flag. The one-call /lookup adds an income-horizon sensitivity table, reasoning (why_result_generated, key_factors, invalidators), and assumptions. Real arithmetic — confidence always 1.0; every response carries a financial_disclaimer.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/insurance-needs-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/insurance-needs-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/insurance-needs-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "insurance", "life-insurance", "dime", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["insurance needs api", "life insurance calculator api", "dime method api", "how much life insurance api", "coverage gap api", "term life insurance api", "insurance coverage calculator", "life insurance needs api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.02, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/calculate", "pricePerCallUsdc": 0.01, "description": "DIME need, coverage gap, recommended coverage" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL needs analysis + reasoning + sensitivity" }
+        ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/calculate", "description": "DIME need, coverage gap, recommended coverage" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL needs analysis + reasoning + sensitivity" }
+    ]
+  },
+  {
+    "name": "Loan Affordability Calculator API",
+    "shortDescription": "Deterministic max loan & home price from income, DTI caps, rate and term — identifies the binding constraint",
+    "description": "Agent-native loan/home affordability calculator computed in real amortization math. /calculate applies the standard 28% front-end and 36% back-end DTI caps to your income, nets out existing debt and taxes/insurance, and inverts the amortization formula to the maximum loan amount and purchase price — and names the binding constraint. The one-call /lookup adds a rate-sensitivity table (±1%), reasoning (why_result_generated, key_factors, invalidators), and assumptions. Confidence always 1.0; every response carries a financial_disclaimer.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/loan-affordability-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/loan-affordability-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/loan-affordability-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "affordability", "mortgage", "loan", "dti", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["loan affordability api", "home affordability calculator api", "how much house can i afford api", "max loan amount api", "mortgage affordability api", "dti affordability api", "max purchase price api", "borrowing power api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.02, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/calculate", "pricePerCallUsdc": 0.01, "description": "Max loan, purchase price, and binding DTI constraint" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL affordability + reasoning + rate sensitivity" }
+        ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/calculate", "description": "Max loan, purchase price, and binding DTI constraint" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL affordability + reasoning + rate sensitivity" }
+    ]
+  },
+  {
+    "name": "Rent vs Buy Calculator API",
+    "shortDescription": "Deterministic rent-vs-buy comparison over a horizon — net cost each way, recommendation, and break-even year",
+    "description": "Agent-native rent-vs-buy calculator computed in real math. /compare models the net cost of buying (mortgage + taxes + insurance + maintenance − equity recovered at sale) against renting (rent growth − investment gain on the cash a buyer ties up) over a holding horizon, returning a recommendation, the cost difference, a full buy/rent breakdown, and the break-even year. The one-call /lookup adds an appreciation-sensitivity table (±2%), reasoning (why_result_generated, key_factors, invalidators), and explicit assumptions (it is assumption-heavy by nature). Confidence always 1.0; every response carries a financial_disclaimer.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/rent-vs-buy-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/rent-vs-buy-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/rent-vs-buy-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "rent-vs-buy", "real-estate", "mortgage", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["rent vs buy api", "rent or buy calculator api", "buy vs rent api", "rent vs buy breakeven api", "should i buy a house api", "home buying calculator api", "renting vs owning api", "rent buy comparison api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.02, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/compare", "pricePerCallUsdc": 0.01, "description": "Net buy vs net rent cost + recommendation + break-even" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.02, "description": "ONE-CALL comparison + reasoning + appreciation sensitivity" }
+        ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/compare", "description": "Net buy vs net rent cost + recommendation + break-even" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL comparison + reasoning + appreciation sensitivity" }
+    ]
+  },
+  {
+    "name": "DTI Calculator API",
+    "shortDescription": "Deterministic debt-to-income ratios — front/back-end DTI, lender qualification band, and headroom to 36%/43%",
+    "description": "Agent-native debt-to-income calculator computed in pure arithmetic. /calculate returns the front-end (housing) and back-end (total debt) DTI ratios against gross income, maps the back-end ratio to a lender qualification band (strong/acceptable/limited/high-risk), and reports how much additional monthly debt fits before the 36% and 43% limits. The one-call /lookup adds the standard threshold table, reasoning (why_result_generated, key_factors, invalidators), and assumptions. Confidence always 1.0; every response carries a financial_disclaimer.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/dti-calculator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/dti-calculator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/dti-calculator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "dti", "debt-to-income", "mortgage", "lending", "calculator", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["dti calculator api", "debt to income api", "debt to income ratio api", "front end dti api", "back end dti api", "mortgage qualification api", "dti ratio calculator", "loan qualification dti api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.015, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/calculate", "pricePerCallUsdc": 0.008, "description": "Front/back-end DTI + qualification band + headroom" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "ONE-CALL DTI + reasoning + threshold guidance" }
+        ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/calculate", "description": "Front/back-end DTI + qualification band + headroom" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL DTI + reasoning + threshold guidance" }
+    ]
+  }
+]

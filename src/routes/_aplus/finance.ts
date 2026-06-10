@@ -106,6 +106,17 @@ export function realMonthlyRate(nominalAnnualPct: number, inflationAnnualPct: nu
   return realAnnual / 12;
 }
 
+/**
+ * Maximum loan principal a fixed monthly payment can support at annual rate
+ * `annualPct` over `months`. Inverse of monthlyPayment(). Handles the 0% case.
+ */
+export function maxLoanForPayment(payment: number, annualPct: number, months: number): number {
+  if (months <= 0 || payment <= 0) return 0;
+  const r = monthlyRate(annualPct);
+  if (r === 0) return payment * months;
+  return payment * (1 - Math.pow(1 + r, -months)) / r;
+}
+
 /** Deterministic-compute marker for execution_metadata on every finance response. */
 export const EXECUTION_METADATA = { model: 'deterministic' as const, automation_safe: true };
 
