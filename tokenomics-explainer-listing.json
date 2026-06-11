@@ -1,0 +1,77 @@
+[
+  {
+    "name": "Tokenomics Explainer API",
+    "shortDescription": "Compute float %, locked supply, FDV, MC/FDV, inflation and a vesting unlock curve",
+    "description": "Deterministic tokenomics math. From supply figures, optional price, optional annual emission, and an optional vesting schedule, computes circulating float %, locked supply, dilution to max supply, market cap, fully-diluted valuation (FDV), MC/FDV ratio, annual inflation, and a cumulative unlock curve with next-unlock detection. Pure arithmetic derived solely from your inputs — NOT an LLM and not market data, not financial advice. /analyze runs the core math, /lookup adds the vesting unlock curve and reasoning.",
+    "category": "blockchain-web3",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/tokenomics-explainer",
+    "docsUrl": "https://orbis-apis.onrender.com/tokenomics-explainer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/tokenomics-explainer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "tokenomics",
+      "web3",
+      "crypto",
+      "fdv",
+      "vesting",
+      "inflation",
+      "valuation",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "tokenomics API",
+      "FDV calculator",
+      "token vesting schedule",
+      "circulating supply float",
+      "token inflation API",
+      "market cap FDV ratio",
+      "unlock curve API"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "Supply, valuation and inflation math"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL analysis with vesting unlock curve and reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Supply, valuation and inflation math"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL analysis with vesting unlock curve and reasoning"
+      }
+    ]
+  }
+]

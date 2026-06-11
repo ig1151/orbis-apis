@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Web3 Security Checklist API",
+    "shortDescription": "Defensive smart-contract audit-readiness rubric with score, grade and red flags",
+    "description": "Deterministic, defensive smart-contract audit-readiness checklist. Declare which security practices a contract follows (independent audit, verified source, access control, reentrancy protection, timelock, multisig admin, test coverage, pause mechanism, bug bounty, known-vuln status); returns a 0–100 readiness score, an A–F grade, per-item pass/fail, missing critical items, and red-flag warnings (e.g. owner can drain funds, upgradeable without timelock) that force a do-not-deploy. A self-assessment rubric — NOT an audit. No bytecode analysis, no LLM. /assess scores, /lookup adds reasoning and remediation.",
+    "category": "blockchain-web3",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/web3-security-checklist",
+    "docsUrl": "https://orbis-apis.onrender.com/web3-security-checklist/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web3-security-checklist/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web3",
+      "smart-contracts",
+      "security",
+      "audit-readiness",
+      "defi",
+      "checklist",
+      "defensive",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "smart contract security checklist",
+      "audit readiness API",
+      "web3 security score",
+      "contract risk rubric",
+      "defi security checklist",
+      "pre-audit assessment"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/assess",
+            "pricePerCallUsdc": 0.006,
+            "description": "Score audit-readiness from declared facts"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL readiness with reasoning and remediation guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/assess",
+        "description": "Score audit-readiness from declared facts"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL readiness with reasoning and remediation guidance"
+      }
+    ]
+  }
+]

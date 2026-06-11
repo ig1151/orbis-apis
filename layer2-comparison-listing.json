@@ -1,0 +1,88 @@
+[
+  {
+    "name": "Layer 2 Blockchain Comparison API",
+    "shortDescription": "Compare Ethereum L2s by type, settlement, VM, fee, throughput and finality from a curated table",
+    "description": "Deterministic Layer-2 comparison over a curated static table of Ethereum scaling networks (Arbitrum, OP Mainnet, Base, zkSync Era, Polygon zkEVM, Starknet, Linea, Scroll and more). Resolve one network or compare several across type (optimistic/zk rollup, validium, sidechain), settlement layer, VM, data availability, indicative tx fee, throughput and finality. Categorical facts are exact; numeric metrics are curated indicative estimates. No fetch, no LLM. /chain resolves one, /compare ranks several, /lookup adds reasoning.",
+    "category": "blockchain-web3",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/layer2-comparison",
+    "docsUrl": "https://orbis-apis.onrender.com/layer2-comparison/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/layer2-comparison/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "blockchain",
+      "layer-2",
+      "ethereum",
+      "rollup",
+      "zk-rollup",
+      "optimistic-rollup",
+      "scaling",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "layer 2 comparison API",
+      "ethereum L2 API",
+      "rollup comparison",
+      "arbitrum vs optimism",
+      "zk rollup API",
+      "L2 fees finality",
+      "scaling network data"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/chain",
+            "pricePerCallUsdc": 0.004,
+            "description": "Resolve one L2 network record"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.006,
+            "description": "Compare 2+ L2 networks side by side"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL resolve/compare with reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/chain",
+        "description": "Resolve one L2 network record"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare 2+ L2 networks side by side"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL resolve/compare with reasoning"
+      }
+    ]
+  }
+]

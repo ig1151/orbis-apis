@@ -1,0 +1,383 @@
+[
+  {
+    "name": "Layer 2 Blockchain Comparison API",
+    "shortDescription": "Compare Ethereum L2s by type, settlement, VM, fee, throughput and finality from a curated table",
+    "description": "Deterministic Layer-2 comparison over a curated static table of Ethereum scaling networks (Arbitrum, OP Mainnet, Base, zkSync Era, Polygon zkEVM, Starknet, Linea, Scroll and more). Resolve one network or compare several across type (optimistic/zk rollup, validium, sidechain), settlement layer, VM, data availability, indicative tx fee, throughput and finality. Categorical facts are exact; numeric metrics are curated indicative estimates. No fetch, no LLM. /chain resolves one, /compare ranks several, /lookup adds reasoning.",
+    "category": "blockchain-web3",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/layer2-comparison",
+    "docsUrl": "https://orbis-apis.onrender.com/layer2-comparison/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/layer2-comparison/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "blockchain",
+      "layer-2",
+      "ethereum",
+      "rollup",
+      "zk-rollup",
+      "optimistic-rollup",
+      "scaling",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "layer 2 comparison API",
+      "ethereum L2 API",
+      "rollup comparison",
+      "arbitrum vs optimism",
+      "zk rollup API",
+      "L2 fees finality",
+      "scaling network data"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/chain",
+            "pricePerCallUsdc": 0.004,
+            "description": "Resolve one L2 network record"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/compare",
+            "pricePerCallUsdc": 0.006,
+            "description": "Compare 2+ L2 networks side by side"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL resolve/compare with reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/chain",
+        "description": "Resolve one L2 network record"
+      },
+      {
+        "method": "POST",
+        "path": "/compare",
+        "description": "Compare 2+ L2 networks side by side"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL resolve/compare with reasoning"
+      }
+    ]
+  },
+  {
+    "name": "Web3 Security Checklist API",
+    "shortDescription": "Defensive smart-contract audit-readiness rubric with score, grade and red flags",
+    "description": "Deterministic, defensive smart-contract audit-readiness checklist. Declare which security practices a contract follows (independent audit, verified source, access control, reentrancy protection, timelock, multisig admin, test coverage, pause mechanism, bug bounty, known-vuln status); returns a 0–100 readiness score, an A–F grade, per-item pass/fail, missing critical items, and red-flag warnings (e.g. owner can drain funds, upgradeable without timelock) that force a do-not-deploy. A self-assessment rubric — NOT an audit. No bytecode analysis, no LLM. /assess scores, /lookup adds reasoning and remediation.",
+    "category": "blockchain-web3",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/web3-security-checklist",
+    "docsUrl": "https://orbis-apis.onrender.com/web3-security-checklist/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web3-security-checklist/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web3",
+      "smart-contracts",
+      "security",
+      "audit-readiness",
+      "defi",
+      "checklist",
+      "defensive",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "smart contract security checklist",
+      "audit readiness API",
+      "web3 security score",
+      "contract risk rubric",
+      "defi security checklist",
+      "pre-audit assessment"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/assess",
+            "pricePerCallUsdc": 0.006,
+            "description": "Score audit-readiness from declared facts"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL readiness with reasoning and remediation guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/assess",
+        "description": "Score audit-readiness from declared facts"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL readiness with reasoning and remediation guidance"
+      }
+    ]
+  },
+  {
+    "name": "Tokenomics Explainer API",
+    "shortDescription": "Compute float %, locked supply, FDV, MC/FDV, inflation and a vesting unlock curve",
+    "description": "Deterministic tokenomics math. From supply figures, optional price, optional annual emission, and an optional vesting schedule, computes circulating float %, locked supply, dilution to max supply, market cap, fully-diluted valuation (FDV), MC/FDV ratio, annual inflation, and a cumulative unlock curve with next-unlock detection. Pure arithmetic derived solely from your inputs — NOT an LLM and not market data, not financial advice. /analyze runs the core math, /lookup adds the vesting unlock curve and reasoning.",
+    "category": "blockchain-web3",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/tokenomics-explainer",
+    "docsUrl": "https://orbis-apis.onrender.com/tokenomics-explainer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/tokenomics-explainer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "tokenomics",
+      "web3",
+      "crypto",
+      "fdv",
+      "vesting",
+      "inflation",
+      "valuation",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "tokenomics API",
+      "FDV calculator",
+      "token vesting schedule",
+      "circulating supply float",
+      "token inflation API",
+      "market cap FDV ratio",
+      "unlock curve API"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "Supply, valuation and inflation math"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL analysis with vesting unlock curve and reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Supply, valuation and inflation math"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL analysis with vesting unlock curve and reasoning"
+      }
+    ]
+  },
+  {
+    "name": "Web3 Wallet Risk Scorer API",
+    "shortDescription": "Score wallet risk from caller-supplied features (age, tx count, approvals, flags)",
+    "description": "Deterministic wallet-risk rubric over caller-supplied features — age, transaction count, unique counterparties, token approvals, unlimited approvals, failed-transaction ratio, and mixer/flagged-counterparty signals. Returns a 0–100 risk score, a band (low/medium/high/severe), and per-factor contributions with mitigants. It scores the facts you pass in (no chain fetch), so it is advisory, not a verdict on a real address. Mixer/flagged signals force at least a high band. No LLM. /score scores, /lookup adds reasoning and guidance.",
+    "category": "blockchain-web3",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/web3-wallet-risk-scorer",
+    "docsUrl": "https://orbis-apis.onrender.com/web3-wallet-risk-scorer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web3-wallet-risk-scorer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web3",
+      "wallet",
+      "risk-scoring",
+      "aml",
+      "defi",
+      "rubric",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "wallet risk score API",
+      "crypto wallet risk",
+      "web3 aml rubric",
+      "token approval risk",
+      "wallet reputation API",
+      "address risk features"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.006,
+            "description": "Score wallet risk from declared features"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL risk score with reasoning and guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score wallet risk from declared features"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL risk score with reasoning and guidance"
+      }
+    ]
+  },
+  {
+    "name": "WebSocket Tester API",
+    "shortDescription": "Live ws:// / wss:// connectivity test with handshake timing, echo check and SSRF guard",
+    "description": "Live WebSocket connectivity tester. Opens a real ws:// or wss:// connection within a tight timeout (≤5s), measures the handshake latency, optionally verifies an echo round-trip, and always returns HTTP 200 with connected:true/false — never a 5xx, never a hang. Reports secure/plaintext, handshake_ms, echo result, close code and any error. Includes an SSRF guard that refuses loopback, private and link-local hosts (including cloud metadata IPs). /test runs the probe, /lookup adds reasoning.",
+    "category": "developer-tools",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/websocket-tester",
+    "docsUrl": "https://orbis-apis.onrender.com/websocket-tester/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/websocket-tester/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "websocket",
+      "connectivity",
+      "uptime",
+      "networking",
+      "monitoring",
+      "ws",
+      "wss",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "websocket tester API",
+      "ws connectivity check",
+      "wss handshake test",
+      "websocket echo test",
+      "realtime endpoint monitor",
+      "websocket uptime API"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/test",
+            "pricePerCallUsdc": 0.01,
+            "description": "Connect, measure handshake, optional echo check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL connectivity test with reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/test",
+        "description": "Connect, measure handshake, optional echo check"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL connectivity test with reasoning"
+      }
+    ]
+  }
+]
