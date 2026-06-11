@@ -628,6 +628,16 @@ import rentVsBuyCalculatorRouter from './routes/rent-vs-buy-calculator-api/route
 import rentVsBuyCalculatorOpenapiRouter from './routes/rent-vs-buy-calculator-api/routes/openapi';
 import dtiCalculatorRouter from './routes/dti-calculator-api/routes/intelligence';
 import dtiCalculatorOpenapiRouter from './routes/dti-calculator-api/routes/openapi';
+import dataValidatorRouter from './routes/data-validator-api/routes/intelligence';
+import dataValidatorOpenapiRouter from './routes/data-validator-api/routes/openapi';
+import randomDataGeneratorRouter from './routes/random-data-generator-api/routes/intelligence';
+import randomDataGeneratorOpenapiRouter from './routes/random-data-generator-api/routes/openapi';
+import webContentDiffCheckerRouter from './routes/web-content-diff-checker-api/routes/intelligence';
+import webContentDiffCheckerOpenapiRouter from './routes/web-content-diff-checker-api/routes/openapi';
+import webVitalsGraderRouter from './routes/web-vitals-grader-api/routes/intelligence';
+import webVitalsGraderOpenapiRouter from './routes/web-vitals-grader-api/routes/openapi';
+import webContentTypeClassifierRouter from './routes/web-content-type-classifier-api/routes/intelligence';
+import webContentTypeClassifierOpenapiRouter from './routes/web-content-type-classifier-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1214,6 +1224,11 @@ const routerMap: Record<string, import("express").Router> = {
   'loan-affordability-calculator': loanAffordabilityCalculatorRouter,
   'rent-vs-buy-calculator': rentVsBuyCalculatorRouter,
   'dti-calculator': dtiCalculatorRouter,
+  'data-validator': dataValidatorRouter,
+  'random-data-generator': randomDataGeneratorRouter,
+  'web-content-diff-checker': webContentDiffCheckerRouter,
+  'web-vitals-grader': webVitalsGraderRouter,
+  'web-content-type-classifier': webContentTypeClassifierRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1621,6 +1636,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'loan-affordability-calculator': loanAffordabilityCalculatorOpenapiRouter,
   'rent-vs-buy-calculator': rentVsBuyCalculatorOpenapiRouter,
   'dti-calculator': dtiCalculatorOpenapiRouter,
+  'data-validator': dataValidatorOpenapiRouter,
+  'random-data-generator': randomDataGeneratorOpenapiRouter,
+  'web-content-diff-checker': webContentDiffCheckerOpenapiRouter,
+  'web-vitals-grader': webVitalsGraderOpenapiRouter,
+  'web-content-type-classifier': webContentTypeClassifierOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
