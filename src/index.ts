@@ -658,6 +658,16 @@ import countryCurrencyDataRouter from './routes/country-currency-data-api/routes
 import countryCurrencyDataOpenapiRouter from './routes/country-currency-data-api/routes/openapi';
 import financePaymentsRouter from './routes/finance-payments-api/routes/intelligence';
 import financePaymentsOpenapiRouter from './routes/finance-payments-api/routes/openapi';
+import layer2ComparisonRouter from './routes/layer2-comparison-api/routes/intelligence';
+import layer2ComparisonOpenapiRouter from './routes/layer2-comparison-api/routes/openapi';
+import web3SecurityChecklistRouter from './routes/web3-security-checklist-api/routes/intelligence';
+import web3SecurityChecklistOpenapiRouter from './routes/web3-security-checklist-api/routes/openapi';
+import tokenomicsExplainerRouter from './routes/tokenomics-explainer-api/routes/intelligence';
+import tokenomicsExplainerOpenapiRouter from './routes/tokenomics-explainer-api/routes/openapi';
+import web3WalletRiskScorerRouter from './routes/web3-wallet-risk-scorer-api/routes/intelligence';
+import web3WalletRiskScorerOpenapiRouter from './routes/web3-wallet-risk-scorer-api/routes/openapi';
+import websocketTesterRouter from './routes/websocket-tester-api/routes/intelligence';
+import websocketTesterOpenapiRouter from './routes/websocket-tester-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1259,6 +1269,11 @@ const routerMap: Record<string, import("express").Router> = {
   'web-scrape-monitoring-scorer': webScrapeMonitoringScorerRouter,
   'country-currency-data': countryCurrencyDataRouter,
   'finance-payments': financePaymentsRouter,
+  'layer2-comparison': layer2ComparisonRouter,
+  'web3-security-checklist': web3SecurityChecklistRouter,
+  'tokenomics-explainer': tokenomicsExplainerRouter,
+  'web3-wallet-risk-scorer': web3WalletRiskScorerRouter,
+  'websocket-tester': websocketTesterRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1681,6 +1696,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'web-scrape-monitoring-scorer': webScrapeMonitoringScorerOpenapiRouter,
   'country-currency-data': countryCurrencyDataOpenapiRouter,
   'finance-payments': financePaymentsOpenapiRouter,
+  'layer2-comparison': layer2ComparisonOpenapiRouter,
+  'web3-security-checklist': web3SecurityChecklistOpenapiRouter,
+  'tokenomics-explainer': tokenomicsExplainerOpenapiRouter,
+  'web3-wallet-risk-scorer': web3WalletRiskScorerOpenapiRouter,
+  'websocket-tester': websocketTesterOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,

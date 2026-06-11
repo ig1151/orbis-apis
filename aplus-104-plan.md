@@ -28,11 +28,11 @@ Legend: ⬜ todo · 🟡 wip · ✅ shipped · 📤 listed · ⛔ skip(dupe) · 
 ✅ Web Content Type Classifier API — URL/extension/MIME/heuristics → content type [batch1]
 ✅ Web Archive URL Builder API — build Wayback / archive.today / cache URLs + timestamp parsing (pure string) [batch2]
 ✅ Country & Currency Data API — static ISO-3166 / ISO-4217 dataset: lookup, format, dial codes [batch3]
-⬜ Layer 2 Blockchain Comparison API — curated static L2 spec table → compare fees/finality/type
-⬜ Web3 Security Checklist API — deterministic audit-readiness checklist/rubric from declared features
-⬜ Tokenomics Explainer API — math from supply/emission/vesting inputs (inflation, float, unlock curve) — NOT a knowledge LLM
-⬜ Web3 Wallet Risk Scorer API — rubric over CALLER-SUPPLIED wallet features (age, tx count, approvals) → score
-⬜ WebSocket Tester API — connect/handshake/echo check (bounded timeout; live but cheap)
+✅ Layer 2 Blockchain Comparison API — curated static L2 spec table → compare fees/finality/type [batch4]
+✅ Web3 Security Checklist API — deterministic audit-readiness checklist/rubric from declared features [batch4]
+✅ Tokenomics Explainer API — math from supply/emission/vesting inputs (inflation, float, unlock curve) — NOT a knowledge LLM [batch4]
+✅ Web3 Wallet Risk Scorer API — rubric over CALLER-SUPPLIED wallet features (age, tx count, approvals) → score [batch4]
+✅ WebSocket Tester API — connect/handshake/echo check (bounded timeout; live but cheap) [batch4]
 ✅ Finance Payments API — payment math: installment/APR, fee split, settlement amounts (scope to deterministic) [batch3]
 
 ## B. LIKELY DUPES of shipped APIs — confirm then skip — 6
@@ -67,3 +67,4 @@ Webhook Signature Verifier · Website Tech Stack Detector · (Personal Finance A
 - **Batch 1 (2026-06-11)** — Data Validator · Random Data Generator · Web Content Diff Checker · Web Vitals Grader · Web Content Type Classifier. Shared `_aplus/util.ts` + `_aplus/specparts.ts` scaffolds added. tsc clean; `smoke-bucketa-batch1.cjs` 49/49. MERGED (PR #27) + LIVE-VERIFIED.
 - **Batch 2 (2026-06-11)** — Web Performance Budget Checker · Web Scrape Rate Limiter · Web Content Freshness Scorer · Web Archive URL Builder · Web Scrape Cost/ROI Analyzer. tsc clean; `smoke-bucketa-batch2.cjs` 39/39.
 - **Batch 3 (2026-06-11)** — Web Scrape Planner · Web Scrape Legal Risk Checker · Web Scrape Monitoring Scorer · Country & Currency Data · Finance Payments. tsc clean; `smoke-bucketa-batch3.cjs` 47/47.
+- **Batch 4 (2026-06-11)** — Layer 2 Blockchain Comparison · Web3 Security Checklist · Tokenomics Explainer · Web3 Wallet Risk Scorer · WebSocket Tester. tsc clean; `smoke-bucketa-batch4.cjs` 45/45. **Bucket A complete (20/20).**

@@ -1,0 +1,75 @@
+[
+  {
+    "name": "WebSocket Tester API",
+    "shortDescription": "Live ws:// / wss:// connectivity test with handshake timing, echo check and SSRF guard",
+    "description": "Live WebSocket connectivity tester. Opens a real ws:// or wss:// connection within a tight timeout (≤5s), measures the handshake latency, optionally verifies an echo round-trip, and always returns HTTP 200 with connected:true/false — never a 5xx, never a hang. Reports secure/plaintext, handshake_ms, echo result, close code and any error. Includes an SSRF guard that refuses loopback, private and link-local hosts (including cloud metadata IPs). /test runs the probe, /lookup adds reasoning.",
+    "category": "developer-tools",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/websocket-tester",
+    "docsUrl": "https://orbis-apis.onrender.com/websocket-tester/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/websocket-tester/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "websocket",
+      "connectivity",
+      "uptime",
+      "networking",
+      "monitoring",
+      "ws",
+      "wss",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "websocket tester API",
+      "ws connectivity check",
+      "wss handshake test",
+      "websocket echo test",
+      "realtime endpoint monitor",
+      "websocket uptime API"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/test",
+            "pricePerCallUsdc": 0.01,
+            "description": "Connect, measure handshake, optional echo check"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL connectivity test with reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/test",
+        "description": "Connect, measure handshake, optional echo check"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL connectivity test with reasoning"
+      }
+    ]
+  }
+]
