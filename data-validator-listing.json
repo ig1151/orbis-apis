@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Data Validator API",
+    "shortDescription": "Deterministic format validation — Luhn cards, IBAN, ISBN, EAN/UPC, ABA routing, E.164, email syntax, JSON",
+    "description": "Agent-native data-format validator computed with real checksum and syntax algorithms — never an LLM. /validate checks a value against one format (Luhn card numbers, IBAN mod-97, ISBN-10/13, EAN/UPC GTIN, US ABA routing number, E.164 phone, email syntax, or JSON parse) or auto-detects the most likely format. The one-call /lookup also reports which other formats the value satisfies, the detected type, and reasoning (why_result_generated, key_factors, invalidators). Invalid input returns {valid:false, reason} — never a 5xx, never fabricated. Confidence always 1.0.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/data-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-validator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["validation", "checksum", "luhn", "iban", "isbn", "data-quality", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["data validator api", "luhn check api", "iban validator api", "isbn validator api", "ean upc validator api", "routing number validator api", "e164 phone validator api", "email syntax validator api", "json validator api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.005, "description": "Validate a value against one format (or auto-detect)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "ONE-CALL validate + detected type + reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/validate", "description": "Validate a value against one format (or auto-detect)" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL validate + detected type + reasoning" }
+    ]
+  }
+]

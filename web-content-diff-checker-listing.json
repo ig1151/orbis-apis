@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Web Content Diff Checker API",
+    "shortDescription": "LCS diff between two page snapshots — similarity %, add/remove counts, op list, unified diff",
+    "description": "Agent-native text diff computed with a real LCS algorithm — no LLM. /diff compares two versions of a page body (or any text) in line or word mode and returns a Sørensen–Dice similarity %, added/removed/unchanged counts, an op-by-op change list, and a unified-diff string. The one-call /lookup adds reasoning and change-magnitude guidance (minor edit vs substantial change vs different document). Deterministic, confidence 1.0; you supply both texts so there is no fetch to time out.",
+    "category": "web-monitoring",
+    "baseUrl": "https://orbis-apis.onrender.com/web-content-diff-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-content-diff-checker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-content-diff-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["diff", "text-diff", "change-detection", "similarity", "web-monitoring", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["content diff api", "text diff api", "web content diff api", "page change diff api", "unified diff api", "similarity percentage api", "lcs diff api", "snapshot comparison api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/diff", "pricePerCallUsdc": 0.005, "description": "Diff two texts → similarity %, counts, ops, unified diff" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "ONE-CALL diff + reasoning + change guidance" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/diff", "description": "Diff two texts → similarity %, counts, ops, unified diff" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL diff + reasoning + change guidance" }
+    ]
+  }
+]

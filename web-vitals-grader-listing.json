@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Web Vitals Grader API",
+    "shortDescription": "Grade measured LCP/INP/CLS against Google thresholds — per-metric ratings, CWV pass/fail, score, letter grade",
+    "description": "Agent-native Core Web Vitals grader computed from public thresholds — no fetch, no LLM. /grade takes measured metric values (LCP, INP or legacy FID, CLS, plus optional FCP/TTFB) and returns each metric's rating (good / needs-improvement / poor), a Core Web Vitals pass/fail, a 0–100 score, and an A–F letter grade. The one-call /lookup adds reasoning and prioritized, metric-specific fix recommendations. Deterministic, confidence 1.0; input-driven so it never times out fetching a page.",
+    "category": "web-performance",
+    "baseUrl": "https://orbis-apis.onrender.com/web-vitals-grader",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-vitals-grader/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-vitals-grader/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["web-vitals", "core-web-vitals", "performance", "lcp", "inp", "cls", "seo", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["web vitals grader api", "core web vitals api", "lcp inp cls api", "page speed grade api", "cwv pass fail api", "web performance score api", "lighthouse grade api", "seo performance api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/grade", "pricePerCallUsdc": 0.005, "description": "Grade supplied Web Vitals → ratings, pass/fail, score" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "ONE-CALL grade + reasoning + fix priorities" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/grade", "description": "Grade supplied Web Vitals → ratings, pass/fail, score" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL grade + reasoning + fix priorities" }
+    ]
+  }
+]

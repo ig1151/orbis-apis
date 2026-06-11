@@ -1,0 +1,377 @@
+[
+  {
+    "name": "Data Validator API",
+    "shortDescription": "Deterministic format validation — Luhn cards, IBAN, ISBN, EAN/UPC, ABA routing, E.164, email syntax, JSON",
+    "description": "Agent-native data-format validator computed with real checksum and syntax algorithms — never an LLM. /validate checks a value against one format (Luhn card numbers, IBAN mod-97, ISBN-10/13, EAN/UPC GTIN, US ABA routing number, E.164 phone, email syntax, or JSON parse) or auto-detects the most likely format. The one-call /lookup also reports which other formats the value satisfies, the detected type, and reasoning (why_result_generated, key_factors, invalidators). Invalid input returns {valid:false, reason} — never a 5xx, never fabricated. Confidence always 1.0.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/data-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-validator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "validation",
+      "checksum",
+      "luhn",
+      "iban",
+      "isbn",
+      "data-quality",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "data validator api",
+      "luhn check api",
+      "iban validator api",
+      "isbn validator api",
+      "ean upc validator api",
+      "routing number validator api",
+      "e164 phone validator api",
+      "email syntax validator api",
+      "json validator api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/validate",
+            "pricePerCallUsdc": 0.005,
+            "description": "Validate a value against one format (or auto-detect)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL validate + detected type + reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/validate",
+        "description": "Validate a value against one format (or auto-detect)"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL validate + detected type + reasoning"
+      }
+    ]
+  },
+  {
+    "name": "Random Data Generator API",
+    "shortDescription": "Seed-reproducible or crypto-random test data — UUIDs, names, emails, phones, addresses, primitives, multi-column rows",
+    "description": "Agent-native synthetic test-data generator. /generate returns N values of one type (UUID, name, email, username, phone, company, address, city/state/zip, integer/float/boolean, date, hex color, IPv4, MAC, word/sentence, password). The one-call /lookup builds multi-column test rows from a {column: type} map. Supply a seed for fully reproducible fixtures (mulberry32 PRNG); omit it for Node CSPRNG randomness. Deterministic, no LLM, and no real PII — all values are synthetic. Confidence always 1.0.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/random-data-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/random-data-generator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/random-data-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "test-data",
+      "faker",
+      "mock-data",
+      "fixtures",
+      "synthetic-data",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "random data generator api",
+      "fake data api",
+      "mock data api",
+      "test data api",
+      "synthetic data api",
+      "uuid generator api",
+      "fake email generator api",
+      "seeded random data api",
+      "test fixtures api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/generate",
+            "pricePerCallUsdc": 0.005,
+            "description": "Generate N values of one type (optional seed)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL multi-column test rows + reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/generate",
+        "description": "Generate N values of one type (optional seed)"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL multi-column test rows + reasoning"
+      }
+    ]
+  },
+  {
+    "name": "Web Content Diff Checker API",
+    "shortDescription": "LCS diff between two page snapshots — similarity %, add/remove counts, op list, unified diff",
+    "description": "Agent-native text diff computed with a real LCS algorithm — no LLM. /diff compares two versions of a page body (or any text) in line or word mode and returns a Sørensen–Dice similarity %, added/removed/unchanged counts, an op-by-op change list, and a unified-diff string. The one-call /lookup adds reasoning and change-magnitude guidance (minor edit vs substantial change vs different document). Deterministic, confidence 1.0; you supply both texts so there is no fetch to time out.",
+    "category": "web-monitoring",
+    "baseUrl": "https://orbis-apis.onrender.com/web-content-diff-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-content-diff-checker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-content-diff-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "diff",
+      "text-diff",
+      "change-detection",
+      "similarity",
+      "web-monitoring",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "content diff api",
+      "text diff api",
+      "web content diff api",
+      "page change diff api",
+      "unified diff api",
+      "similarity percentage api",
+      "lcs diff api",
+      "snapshot comparison api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/diff",
+            "pricePerCallUsdc": 0.005,
+            "description": "Diff two texts → similarity %, counts, ops, unified diff"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL diff + reasoning + change guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/diff",
+        "description": "Diff two texts → similarity %, counts, ops, unified diff"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL diff + reasoning + change guidance"
+      }
+    ]
+  },
+  {
+    "name": "Web Vitals Grader API",
+    "shortDescription": "Grade measured LCP/INP/CLS against Google thresholds — per-metric ratings, CWV pass/fail, score, letter grade",
+    "description": "Agent-native Core Web Vitals grader computed from public thresholds — no fetch, no LLM. /grade takes measured metric values (LCP, INP or legacy FID, CLS, plus optional FCP/TTFB) and returns each metric's rating (good / needs-improvement / poor), a Core Web Vitals pass/fail, a 0–100 score, and an A–F letter grade. The one-call /lookup adds reasoning and prioritized, metric-specific fix recommendations. Deterministic, confidence 1.0; input-driven so it never times out fetching a page.",
+    "category": "web-performance",
+    "baseUrl": "https://orbis-apis.onrender.com/web-vitals-grader",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-vitals-grader/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-vitals-grader/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web-vitals",
+      "core-web-vitals",
+      "performance",
+      "lcp",
+      "inp",
+      "cls",
+      "seo",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "web vitals grader api",
+      "core web vitals api",
+      "lcp inp cls api",
+      "page speed grade api",
+      "cwv pass fail api",
+      "web performance score api",
+      "lighthouse grade api",
+      "seo performance api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/grade",
+            "pricePerCallUsdc": 0.005,
+            "description": "Grade supplied Web Vitals → ratings, pass/fail, score"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL grade + reasoning + fix priorities"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/grade",
+        "description": "Grade supplied Web Vitals → ratings, pass/fail, score"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL grade + reasoning + fix priorities"
+      }
+    ]
+  },
+  {
+    "name": "Web Content Type Classifier API",
+    "shortDescription": "Resolve a URL/filename/extension/MIME to a canonical content category, MIME, and agent handling",
+    "description": "Agent-native content-type classifier driven by lookup tables — no fetch, no LLM. /classify takes any of a URL, filename, extension, or MIME (Content-Type) string and resolves a canonical category (image, video, audio, pdf, document, spreadsheet, presentation, archive, code, data, webpage, feed, font, executable, text), the canonical MIME, binary-vs-text nature, the deciding signal, and the typical way an agent should handle that type. The one-call /lookup adds reasoning and downstream handling guidance. Deterministic, confidence 1.0, never times out.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/web-content-type-classifier",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-content-type-classifier/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-content-type-classifier/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "content-type",
+      "mime",
+      "file-type",
+      "classification",
+      "developer-tools",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "content type classifier api",
+      "mime type api",
+      "file type detection api",
+      "url content type api",
+      "extension to mime api",
+      "media type api",
+      "file category api",
+      "is binary api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/classify",
+            "pricePerCallUsdc": 0.005,
+            "description": "Classify a URL/filename/extension/MIME → category"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL classify + reasoning + handling guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/classify",
+        "description": "Classify a URL/filename/extension/MIME → category"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL classify + reasoning + handling guidance"
+      }
+    ]
+  }
+]

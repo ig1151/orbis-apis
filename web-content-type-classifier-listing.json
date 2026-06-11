@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Web Content Type Classifier API",
+    "shortDescription": "Resolve a URL/filename/extension/MIME to a canonical content category, MIME, and agent handling",
+    "description": "Agent-native content-type classifier driven by lookup tables — no fetch, no LLM. /classify takes any of a URL, filename, extension, or MIME (Content-Type) string and resolves a canonical category (image, video, audio, pdf, document, spreadsheet, presentation, archive, code, data, webpage, feed, font, executable, text), the canonical MIME, binary-vs-text nature, the deciding signal, and the typical way an agent should handle that type. The one-call /lookup adds reasoning and downstream handling guidance. Deterministic, confidence 1.0, never times out.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/web-content-type-classifier",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-content-type-classifier/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-content-type-classifier/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["content-type", "mime", "file-type", "classification", "developer-tools", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["content type classifier api", "mime type api", "file type detection api", "url content type api", "extension to mime api", "media type api", "file category api", "is binary api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/classify", "pricePerCallUsdc": 0.005, "description": "Classify a URL/filename/extension/MIME → category" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "ONE-CALL classify + reasoning + handling guidance" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/classify", "description": "Classify a URL/filename/extension/MIME → category" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL classify + reasoning + handling guidance" }
+    ]
+  }
+]
