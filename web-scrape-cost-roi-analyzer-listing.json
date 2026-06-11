@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Web Scrape Cost/ROI Analyzer API",
+    "shortDescription": "Compute scrape cost, net value, ROI %, per-page margin, and break-even from page count and unit economics",
+    "description": "Agent-native scrape cost/ROI analyzer computed in pure arithmetic — no fetch, no LLM. /analyze takes page count, per-page cost (or summed cost components), per-page or total value, and a one-time fixed cost, and returns total cost, net value, ROI %, per-page margin, break-even page count, profitability, and a verdict band (strong_roi/positive/marginal/negative). The one-call /lookup adds reasoning and optimization guidance. Deterministic, confidence 1.0.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-scrape-cost-roi-analyzer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-scrape-cost-roi-analyzer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-scrape-cost-roi-analyzer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web-scraping",
+      "roi",
+      "cost-analysis",
+      "unit-economics",
+      "break-even",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "scrape roi api",
+      "scraping cost api",
+      "crawl cost api",
+      "web scraping roi calculator",
+      "break even pages api",
+      "scrape unit economics api",
+      "data extraction roi api",
+      "cost per page api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "Cost, net value, ROI %, break-even, verdict"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL ROI + reasoning + optimization guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Cost, net value, ROI %, break-even, verdict"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL ROI + reasoning + optimization guidance"
+      }
+    ]
+  }
+]

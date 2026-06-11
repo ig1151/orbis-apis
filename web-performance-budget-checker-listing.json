@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Web Performance Budget Checker API",
+    "shortDescription": "Bucket page resource weights by asset class and check them against a performance budget — pass/warn/fail",
+    "description": "Agent-native performance-budget checker computed in pure arithmetic — no fetch, no LLM. /check buckets per-resource weights (or pre-aggregated class totals) into html/css/js/image/font/media/other, compares each class and the page total against a budget (sensible mobile-perf defaults, fully overridable), and returns pass/warn/fail with over-by KB and the worst offenders. The one-call /lookup adds reasoning and prioritized fixes. Deterministic, confidence 1.0.",
+    "category": "web-performance",
+    "baseUrl": "https://orbis-apis.onrender.com/web-performance-budget-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-performance-budget-checker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-performance-budget-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "performance-budget",
+      "web-performance",
+      "page-weight",
+      "core-web-vitals",
+      "asset-budget",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "performance budget api",
+      "page weight budget api",
+      "asset size budget api",
+      "web performance budget checker",
+      "js css image budget api",
+      "page bloat api",
+      "resource weight api",
+      "perf budget pass fail api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.006,
+            "description": "Bucket weights by class & compare vs budget → pass/fail"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL budget check + reasoning + fix priorities"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Bucket weights by class & compare vs budget → pass/fail"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL budget check + reasoning + fix priorities"
+      }
+    ]
+  }
+]

@@ -1,0 +1,77 @@
+[
+  {
+    "name": "Web Scrape Rate Limiter API",
+    "shortDescription": "Compute a polite, crawl-delay-compliant scrape schedule — safe RPS, inter-request delay, concurrency, ETA",
+    "description": "Agent-native, defensive scrape scheduler computed in pure math — no fetch, no LLM. /plan takes a robots crawl-delay (if any), desired RPS, concurrency, and page count and returns a polite, compliant schedule: safe RPS, effective RPS, inter-request delay, concurrency cap, throttle/violation flags, and total ETA. It only ever reduces aggressiveness to honor crawl-delay and politeness defaults. The one-call /lookup adds reasoning and compliance notes. Deterministic, confidence 1.0.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-scrape-rate-limiter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-scrape-rate-limiter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-scrape-rate-limiter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web-scraping",
+      "rate-limit",
+      "crawl-delay",
+      "robots",
+      "politeness",
+      "scheduler",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "scrape rate limiter api",
+      "crawl delay api",
+      "crawl rate api",
+      "robots crawl delay api",
+      "scrape schedule api",
+      "polite crawler api",
+      "requests per second api",
+      "crawl eta api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/plan",
+            "pricePerCallUsdc": 0.006,
+            "description": "Compute a polite, crawl-delay-compliant request schedule"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL schedule + reasoning + compliance notes"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/plan",
+        "description": "Compute a polite, crawl-delay-compliant request schedule"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL schedule + reasoning + compliance notes"
+      }
+    ]
+  }
+]

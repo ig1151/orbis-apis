@@ -1,0 +1,374 @@
+[
+  {
+    "name": "Web Performance Budget Checker API",
+    "shortDescription": "Bucket page resource weights by asset class and check them against a performance budget — pass/warn/fail",
+    "description": "Agent-native performance-budget checker computed in pure arithmetic — no fetch, no LLM. /check buckets per-resource weights (or pre-aggregated class totals) into html/css/js/image/font/media/other, compares each class and the page total against a budget (sensible mobile-perf defaults, fully overridable), and returns pass/warn/fail with over-by KB and the worst offenders. The one-call /lookup adds reasoning and prioritized fixes. Deterministic, confidence 1.0.",
+    "category": "web-performance",
+    "baseUrl": "https://orbis-apis.onrender.com/web-performance-budget-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-performance-budget-checker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-performance-budget-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "performance-budget",
+      "web-performance",
+      "page-weight",
+      "core-web-vitals",
+      "asset-budget",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "performance budget api",
+      "page weight budget api",
+      "asset size budget api",
+      "web performance budget checker",
+      "js css image budget api",
+      "page bloat api",
+      "resource weight api",
+      "perf budget pass fail api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.006,
+            "description": "Bucket weights by class & compare vs budget → pass/fail"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL budget check + reasoning + fix priorities"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/check",
+        "description": "Bucket weights by class & compare vs budget → pass/fail"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL budget check + reasoning + fix priorities"
+      }
+    ]
+  },
+  {
+    "name": "Web Scrape Rate Limiter API",
+    "shortDescription": "Compute a polite, crawl-delay-compliant scrape schedule — safe RPS, inter-request delay, concurrency, ETA",
+    "description": "Agent-native, defensive scrape scheduler computed in pure math — no fetch, no LLM. /plan takes a robots crawl-delay (if any), desired RPS, concurrency, and page count and returns a polite, compliant schedule: safe RPS, effective RPS, inter-request delay, concurrency cap, throttle/violation flags, and total ETA. It only ever reduces aggressiveness to honor crawl-delay and politeness defaults. The one-call /lookup adds reasoning and compliance notes. Deterministic, confidence 1.0.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-scrape-rate-limiter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-scrape-rate-limiter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-scrape-rate-limiter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web-scraping",
+      "rate-limit",
+      "crawl-delay",
+      "robots",
+      "politeness",
+      "scheduler",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "scrape rate limiter api",
+      "crawl delay api",
+      "crawl rate api",
+      "robots crawl delay api",
+      "scrape schedule api",
+      "polite crawler api",
+      "requests per second api",
+      "crawl eta api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/plan",
+            "pricePerCallUsdc": 0.006,
+            "description": "Compute a polite, crawl-delay-compliant request schedule"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL schedule + reasoning + compliance notes"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/plan",
+        "description": "Compute a polite, crawl-delay-compliant request schedule"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL schedule + reasoning + compliance notes"
+      }
+    ]
+  },
+  {
+    "name": "Web Content Freshness Scorer API",
+    "shortDescription": "Score content freshness from published/modified dates — age, 0–100 decay score, staleness band, re-check interval",
+    "description": "Agent-native content-freshness scorer computed with pure date math — no fetch, no LLM. /score takes published and/or modified (Last-Modified) dates plus an optional half-life and returns content age, an exponential-decay freshness score (0–100), a staleness band (fresh/recent/aging/stale/outdated), whether it was updated after publication, and a recommended re-check interval. The one-call /lookup adds reasoning and re-check guidance. Deterministic, confidence 1.0.",
+    "category": "web-monitoring",
+    "baseUrl": "https://orbis-apis.onrender.com/web-content-freshness-scorer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-content-freshness-scorer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-content-freshness-scorer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "freshness",
+      "content-age",
+      "staleness",
+      "web-monitoring",
+      "recency",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "content freshness api",
+      "content age api",
+      "staleness score api",
+      "last modified score api",
+      "recency score api",
+      "web content freshness scorer",
+      "re-crawl interval api",
+      "freshness decay api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.005,
+            "description": "Score content freshness from its dates"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL freshness + reasoning + re-check guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score content freshness from its dates"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL freshness + reasoning + re-check guidance"
+      }
+    ]
+  },
+  {
+    "name": "Web Archive URL Builder API",
+    "shortDescription": "Build Wayback / archive.today / Google Cache URLs + normalized timestamps for any URL",
+    "description": "Agent-native web-archive URL builder computed as pure string math — no fetch, no LLM. /build normalizes a URL and constructs Wayback Machine (snapshot, latest, save, calendar, availability API), archive.today (newest, snapshot list, submit), and Google Cache URLs, and parses any timestamp (ISO 8601, epoch seconds/ms, YYYYMMDD, or 14-digit Wayback) into the canonical Wayback 14-digit form and ISO. The one-call /lookup adds reasoning and retrieval tips. Deterministic, confidence 1.0.",
+    "category": "web-research",
+    "baseUrl": "https://orbis-apis.onrender.com/web-archive-url-builder",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-archive-url-builder/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-archive-url-builder/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web-archive",
+      "wayback",
+      "archive-today",
+      "snapshot",
+      "timestamp",
+      "web-research",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "web archive url builder",
+      "wayback machine url api",
+      "archive.today url api",
+      "wayback timestamp api",
+      "snapshot url api",
+      "archive url api",
+      "wayback availability api",
+      "web cache url api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/build",
+            "pricePerCallUsdc": 0.004,
+            "description": "Build archive URLs + normalized timestamp"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL archive URLs + reasoning + retrieval tips"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/build",
+        "description": "Build archive URLs + normalized timestamp"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL archive URLs + reasoning + retrieval tips"
+      }
+    ]
+  },
+  {
+    "name": "Web Scrape Cost/ROI Analyzer API",
+    "shortDescription": "Compute scrape cost, net value, ROI %, per-page margin, and break-even from page count and unit economics",
+    "description": "Agent-native scrape cost/ROI analyzer computed in pure arithmetic — no fetch, no LLM. /analyze takes page count, per-page cost (or summed cost components), per-page or total value, and a one-time fixed cost, and returns total cost, net value, ROI %, per-page margin, break-even page count, profitability, and a verdict band (strong_roi/positive/marginal/negative). The one-call /lookup adds reasoning and optimization guidance. Deterministic, confidence 1.0.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-scrape-cost-roi-analyzer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-scrape-cost-roi-analyzer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-scrape-cost-roi-analyzer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web-scraping",
+      "roi",
+      "cost-analysis",
+      "unit-economics",
+      "break-even",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "scrape roi api",
+      "scraping cost api",
+      "crawl cost api",
+      "web scraping roi calculator",
+      "break even pages api",
+      "scrape unit economics api",
+      "data extraction roi api",
+      "cost per page api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "Cost, net value, ROI %, break-even, verdict"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL ROI + reasoning + optimization guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Cost, net value, ROI %, break-even, verdict"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL ROI + reasoning + optimization guidance"
+      }
+    ]
+  }
+]

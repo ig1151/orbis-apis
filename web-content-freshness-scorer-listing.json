@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Web Content Freshness Scorer API",
+    "shortDescription": "Score content freshness from published/modified dates — age, 0–100 decay score, staleness band, re-check interval",
+    "description": "Agent-native content-freshness scorer computed with pure date math — no fetch, no LLM. /score takes published and/or modified (Last-Modified) dates plus an optional half-life and returns content age, an exponential-decay freshness score (0–100), a staleness band (fresh/recent/aging/stale/outdated), whether it was updated after publication, and a recommended re-check interval. The one-call /lookup adds reasoning and re-check guidance. Deterministic, confidence 1.0.",
+    "category": "web-monitoring",
+    "baseUrl": "https://orbis-apis.onrender.com/web-content-freshness-scorer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-content-freshness-scorer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-content-freshness-scorer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "freshness",
+      "content-age",
+      "staleness",
+      "web-monitoring",
+      "recency",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "content freshness api",
+      "content age api",
+      "staleness score api",
+      "last modified score api",
+      "recency score api",
+      "web content freshness scorer",
+      "re-crawl interval api",
+      "freshness decay api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.005,
+            "description": "Score content freshness from its dates"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "ONE-CALL freshness + reasoning + re-check guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Score content freshness from its dates"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL freshness + reasoning + re-check guidance"
+      }
+    ]
+  }
+]
