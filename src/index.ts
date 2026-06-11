@@ -648,6 +648,16 @@ import webArchiveUrlBuilderRouter from './routes/web-archive-url-builder-api/rou
 import webArchiveUrlBuilderOpenapiRouter from './routes/web-archive-url-builder-api/routes/openapi';
 import webScrapeCostRoiAnalyzerRouter from './routes/web-scrape-cost-roi-analyzer-api/routes/intelligence';
 import webScrapeCostRoiAnalyzerOpenapiRouter from './routes/web-scrape-cost-roi-analyzer-api/routes/openapi';
+import webScrapePlannerRouter from './routes/web-scrape-planner-api/routes/intelligence';
+import webScrapePlannerOpenapiRouter from './routes/web-scrape-planner-api/routes/openapi';
+import webScrapeLegalRiskCheckerRouter from './routes/web-scrape-legal-risk-checker-api/routes/intelligence';
+import webScrapeLegalRiskCheckerOpenapiRouter from './routes/web-scrape-legal-risk-checker-api/routes/openapi';
+import webScrapeMonitoringScorerRouter from './routes/web-scrape-monitoring-scorer-api/routes/intelligence';
+import webScrapeMonitoringScorerOpenapiRouter from './routes/web-scrape-monitoring-scorer-api/routes/openapi';
+import countryCurrencyDataRouter from './routes/country-currency-data-api/routes/intelligence';
+import countryCurrencyDataOpenapiRouter from './routes/country-currency-data-api/routes/openapi';
+import financePaymentsRouter from './routes/finance-payments-api/routes/intelligence';
+import financePaymentsOpenapiRouter from './routes/finance-payments-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1244,6 +1254,11 @@ const routerMap: Record<string, import("express").Router> = {
   'web-content-freshness-scorer': webContentFreshnessScorerRouter,
   'web-archive-url-builder': webArchiveUrlBuilderRouter,
   'web-scrape-cost-roi-analyzer': webScrapeCostRoiAnalyzerRouter,
+  'web-scrape-planner': webScrapePlannerRouter,
+  'web-scrape-legal-risk-checker': webScrapeLegalRiskCheckerRouter,
+  'web-scrape-monitoring-scorer': webScrapeMonitoringScorerRouter,
+  'country-currency-data': countryCurrencyDataRouter,
+  'finance-payments': financePaymentsRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1661,6 +1676,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'web-content-freshness-scorer': webContentFreshnessScorerOpenapiRouter,
   'web-archive-url-builder': webArchiveUrlBuilderOpenapiRouter,
   'web-scrape-cost-roi-analyzer': webScrapeCostRoiAnalyzerOpenapiRouter,
+  'web-scrape-planner': webScrapePlannerOpenapiRouter,
+  'web-scrape-legal-risk-checker': webScrapeLegalRiskCheckerOpenapiRouter,
+  'web-scrape-monitoring-scorer': webScrapeMonitoringScorerOpenapiRouter,
+  'country-currency-data': countryCurrencyDataOpenapiRouter,
+  'finance-payments': financePaymentsOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,

@@ -1,0 +1,33 @@
+[
+  {
+    "name": "Finance Payments API",
+    "shortDescription": "Deterministic payments math — installment/amortization, processor fee split + gross-up, exact multi-party settlement (sums to the penny)",
+    "description": "Agent-native payments math computed in real arithmetic — no LLM. /installment amortizes a loan (monthly payment, total interest, total paid, schedule). /fee-split computes a processor fee (percent + fixed), net settlement, effective fee %, and an optional gross-up (what to charge to net a target). /settlement splits an amount across parties by weight or share % using largest-remainder allocation that sums exactly to the penny. The one-call /lookup amortizes and applies an optional per-payment processor fee, with reasoning. Confidence 1.0; informational, not financial advice.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/finance-payments",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/finance-payments/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/finance-payments/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["finance", "payments", "amortization", "processor-fees", "settlement", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["payments api", "amortization api", "installment calculator api", "processor fee api", "payment gross up api", "settlement split api", "loan schedule api", "fee split api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.015, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/installment", "pricePerCallUsdc": 0.008, "description": "Amortizing payment, total interest, schedule" },
+          { "method": "POST", "pathPattern": "/fee-split", "pricePerCallUsdc": 0.006, "description": "Processor fee, net settlement, gross-up" },
+          { "method": "POST", "pathPattern": "/settlement", "pricePerCallUsdc": 0.006, "description": "Exact multi-party split (sums to the penny)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "ONE-CALL installment + per-payment fee + reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/installment", "description": "Amortizing payment, total interest, schedule" },
+      { "method": "POST", "path": "/fee-split", "description": "Processor fee, net settlement, gross-up" },
+      { "method": "POST", "path": "/settlement", "description": "Exact multi-party split (sums to the penny)" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL installment + per-payment fee + reasoning" }
+    ]
+  }
+]

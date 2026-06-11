@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Web Scrape Planner API",
+    "shortDescription": "Deterministic crawl planner — batches, per-batch timing, total ETA, and a sample schedule from pages + throughput",
+    "description": "Agent-native crawl planner computed in pure arithmetic — no fetch, no LLM. /plan takes total pages, throughput (robots Crawl-delay or requested RPS), batch size, concurrency, and a retry-overhead %, and returns effective RPS, batch count, last-batch size, per-batch timing, a total ETA (seconds + human-readable), and a sample batch schedule with cumulative pages and start offsets. The one-call /lookup adds reasoning (why_result_generated, key_factors, invalidators) and sequencing guidance. Deterministic, confidence 1.0.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-scrape-planner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-scrape-planner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-scrape-planner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["web-scraping", "crawl-planning", "eta", "batching", "throughput", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["crawl planner api", "scrape eta api", "crawl batch api", "scrape scheduling api", "crawl throughput api", "web scraping planner api", "crawl duration estimate api", "scrape batch timing api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/plan", "pricePerCallUsdc": 0.006, "description": "Batches, per-batch timing, total ETA, sample schedule" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "ONE-CALL crawl plan + reasoning + sequencing guidance" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/plan", "description": "Batches, per-batch timing, total ETA, sample schedule" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL crawl plan + reasoning + sequencing guidance" }
+    ]
+  }
+]

@@ -1,0 +1,417 @@
+[
+  {
+    "name": "Web Scrape Planner API",
+    "shortDescription": "Deterministic crawl planner — batches, per-batch timing, total ETA, and a sample schedule from pages + throughput",
+    "description": "Agent-native crawl planner computed in pure arithmetic — no fetch, no LLM. /plan takes total pages, throughput (robots Crawl-delay or requested RPS), batch size, concurrency, and a retry-overhead %, and returns effective RPS, batch count, last-batch size, per-batch timing, a total ETA (seconds + human-readable), and a sample batch schedule with cumulative pages and start offsets. The one-call /lookup adds reasoning (why_result_generated, key_factors, invalidators) and sequencing guidance. Deterministic, confidence 1.0.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-scrape-planner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-scrape-planner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-scrape-planner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web-scraping",
+      "crawl-planning",
+      "eta",
+      "batching",
+      "throughput",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "crawl planner api",
+      "scrape eta api",
+      "crawl batch api",
+      "scrape scheduling api",
+      "crawl throughput api",
+      "web scraping planner api",
+      "crawl duration estimate api",
+      "scrape batch timing api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/plan",
+            "pricePerCallUsdc": 0.006,
+            "description": "Batches, per-batch timing, total ETA, sample schedule"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL crawl plan + reasoning + sequencing guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/plan",
+        "description": "Batches, per-batch timing, total ETA, sample schedule"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL crawl plan + reasoning + sequencing guidance"
+      }
+    ]
+  },
+  {
+    "name": "Web Scrape Legal Risk Checker API",
+    "shortDescription": "Defensive scrape compliance-risk rubric — 0–100 risk score + level from declared robots/ToS/PII/copyright/circumvention facts",
+    "description": "Agent-native, DEFENSIVE scrape compliance-risk rubric computed deterministically — no LLM. You declare facts about a target (robots disallow, login wall, ToS prohibition, personal/special-category data, copyrighted content, commercial use, access-control circumvention); /assess returns a 0–100 risk score, a legal-risk level (low/moderate/high/severe), per-flag weight contributions, and responsible-scraping guidance. It does NOT help bypass anything — circumvention forces a severe 'do not proceed'. The one-call /lookup adds reasoning and compliance steps. EU/UK weight personal data higher. Confidence 0.7 with a legal disclaimer — this is an advisory rubric, not legal advice.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-scrape-legal-risk-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-scrape-legal-risk-checker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-scrape-legal-risk-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web-scraping",
+      "compliance",
+      "legal-risk",
+      "robots-txt",
+      "gdpr",
+      "defensive",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "scrape compliance api",
+      "scraping legal risk api",
+      "robots compliance api",
+      "gdpr scraping api",
+      "tos scraping risk api",
+      "web scraping legality api",
+      "crawl risk score api",
+      "scraping policy checker api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/assess",
+            "pricePerCallUsdc": 0.006,
+            "description": "Score scrape compliance risk from declared facts"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL risk + reasoning + compliance guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/assess",
+        "description": "Score scrape compliance risk from declared facts"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL risk + reasoning + compliance guidance"
+      }
+    ]
+  },
+  {
+    "name": "Web Scrape Monitoring Scorer API",
+    "shortDescription": "Recommended re-check cadence + volatility band + monitoring-priority score from change rate, importance, and staleness tolerance",
+    "description": "Agent-native monitoring-cadence scorer computed in pure arithmetic — no fetch, no LLM. /score takes an observed change signal (change_rate_per_day, or mean_change_interval_days, or changes_observed + observation_window_days), a business importance (low/medium/high/critical or 1–10), and an optional staleness tolerance, and returns a recommended re-check interval (sampled below the change interval, capped by tolerance and a 15-minute politeness floor), checks/day, what the cadence is capped by, a volatility band, and a 0–100 monitoring-priority score with a band. The one-call /lookup adds reasoning and monitoring guidance. Deterministic, confidence 1.0.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-scrape-monitoring-scorer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-scrape-monitoring-scorer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-scrape-monitoring-scorer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web-scraping",
+      "monitoring",
+      "cadence",
+      "change-detection",
+      "polling",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "monitoring cadence api",
+      "recheck interval api",
+      "page change rate api",
+      "polling frequency api",
+      "website monitoring scorer api",
+      "scrape volatility api",
+      "change detection cadence api",
+      "monitoring priority api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.006,
+            "description": "Recommended cadence + volatility + priority score"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "ONE-CALL cadence + reasoning + monitoring guidance"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/score",
+        "description": "Recommended cadence + volatility + priority score"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL cadence + reasoning + monitoring guidance"
+      }
+    ]
+  },
+  {
+    "name": "Country & Currency Data API",
+    "shortDescription": "Deterministic ISO-3166 / ISO-4217 reference + money formatter over a curated static dataset — no LLM, no network",
+    "description": "Agent-native country/currency reference and money formatter over a curated static ISO-3166 / ISO-4217 dataset — pure lookups and string math, no LLM, no network. /country resolves a country by name, ISO2/ISO3, numeric code, or dial code (with its currency). /currency resolves an ISO-4217 currency and lists which countries use it. /format renders a monetary amount with the correct symbol and minor units (deterministic grouping, no ICU dependency). The one-call /lookup resolves country + currency and optionally formats an amount, with reasoning. Confidence 1.0 — no FX rates, formatting only.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/country-currency-data",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/country-currency-data/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/country-currency-data/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "reference-data",
+      "iso-3166",
+      "iso-4217",
+      "currency",
+      "money-formatting",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "country data api",
+      "currency data api",
+      "iso 3166 api",
+      "iso 4217 api",
+      "dial code api",
+      "money formatter api",
+      "currency symbol api",
+      "country lookup api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/country",
+            "pricePerCallUsdc": 0.004,
+            "description": "Resolve a country record"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/currency",
+            "pricePerCallUsdc": 0.004,
+            "description": "Resolve a currency + countries using it"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/format",
+            "pricePerCallUsdc": 0.004,
+            "description": "Format an amount in a currency"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL country + currency + formatted amount"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/country",
+        "description": "Resolve a country record"
+      },
+      {
+        "method": "POST",
+        "path": "/currency",
+        "description": "Resolve a currency + countries using it"
+      },
+      {
+        "method": "POST",
+        "path": "/format",
+        "description": "Format an amount in a currency"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL country + currency + formatted amount"
+      }
+    ]
+  },
+  {
+    "name": "Finance Payments API",
+    "shortDescription": "Deterministic payments math — installment/amortization, processor fee split + gross-up, exact multi-party settlement (sums to the penny)",
+    "description": "Agent-native payments math computed in real arithmetic — no LLM. /installment amortizes a loan (monthly payment, total interest, total paid, schedule). /fee-split computes a processor fee (percent + fixed), net settlement, effective fee %, and an optional gross-up (what to charge to net a target). /settlement splits an amount across parties by weight or share % using largest-remainder allocation that sums exactly to the penny. The one-call /lookup amortizes and applies an optional per-payment processor fee, with reasoning. Confidence 1.0; informational, not financial advice.",
+    "category": "finance",
+    "baseUrl": "https://orbis-apis.onrender.com/finance-payments",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/finance-payments/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/finance-payments/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "finance",
+      "payments",
+      "amortization",
+      "processor-fees",
+      "settlement",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "payments api",
+      "amortization api",
+      "installment calculator api",
+      "processor fee api",
+      "payment gross up api",
+      "settlement split api",
+      "loan schedule api",
+      "fee split api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/installment",
+            "pricePerCallUsdc": 0.008,
+            "description": "Amortizing payment, total interest, schedule"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/fee-split",
+            "pricePerCallUsdc": 0.006,
+            "description": "Processor fee, net settlement, gross-up"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/settlement",
+            "pricePerCallUsdc": 0.006,
+            "description": "Exact multi-party split (sums to the penny)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.015,
+            "description": "ONE-CALL installment + per-payment fee + reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/installment",
+        "description": "Amortizing payment, total interest, schedule"
+      },
+      {
+        "method": "POST",
+        "path": "/fee-split",
+        "description": "Processor fee, net settlement, gross-up"
+      },
+      {
+        "method": "POST",
+        "path": "/settlement",
+        "description": "Exact multi-party split (sums to the penny)"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL installment + per-payment fee + reasoning"
+      }
+    ]
+  }
+]
