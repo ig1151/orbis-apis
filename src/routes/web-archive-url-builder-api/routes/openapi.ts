@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const WaybackUrls = {
   type: 'object', required: ['snapshot_url', 'latest_url', 'save_url', 'calendar_url', 'availability_api'], additionalProperties: false,
@@ -49,7 +49,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, WaybackUrls, ArchiveTodayUrls, GoogleCacheUrls, Archives, Timestamp, BuildCore, BuildRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('url_construction', 'timestamp_parsing'), _Tail: Tail, WaybackUrls, ArchiveTodayUrls, GoogleCacheUrls, Archives, Timestamp, BuildCore, BuildRequest,
   DiscoveryResponse: discoverySchema(),
   BuildResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/BuildCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

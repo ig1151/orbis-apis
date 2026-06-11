@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const AmortRow = { type: 'object', required: ['month', 'payment', 'principal', 'interest', 'balance'], additionalProperties: false, properties: { month: { type: 'integer' }, payment: { type: 'number' }, principal: { type: 'number' }, interest: { type: 'number' }, balance: { type: 'number' } } };
 const InstallmentCore = {
@@ -41,7 +41,7 @@ const tail = (acts: string[], cps: Record<string, number>) => ({
 });
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, AmortRow, InstallmentCore, FeeCore, Allocation, SettlementCore,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('amortization', 'fees', 'allocation'), _Tail: Tail, AmortRow, InstallmentCore, FeeCore, Allocation, SettlementCore,
   DiscoveryResponse: discoverySchema(),
   InstallmentRequest: { type: 'object', required: ['principal', 'apr', 'term_months'], additionalProperties: false, properties: { principal: { type: 'number', exclusiveMinimum: 0 }, apr: { type: 'number', minimum: 0 }, term_months: { type: 'integer', exclusiveMinimum: 0 } } },
   FeeRequest: { type: 'object', required: ['amount'], additionalProperties: false, properties: { amount: { type: 'number', minimum: 0 }, fee_percent: { type: 'number', minimum: 0, description: 'Default 2.9.' }, fixed_fee: { type: 'number', minimum: 0, description: 'Default 0.30.' }, target_net: { type: 'number', description: 'If set, returns the gross to charge to net this amount.' } } },

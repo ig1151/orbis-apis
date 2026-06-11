@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const MonitorCore = {
   type: 'object',
@@ -39,7 +39,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, MonitorCore, ScoreRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('cadence', 'priority'), _Tail: Tail, MonitorCore, ScoreRequest,
   DiscoveryResponse: discoverySchema(),
   ScoreResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/MonitorCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

@@ -26,6 +26,16 @@ export const ConfidencePerSection = {
   additionalProperties: { type: 'number', minimum: 0, maximum: 1 },
 };
 
+// Per-API strict confidence_per_section schema: locks the section vocabulary to a
+// known set (no arbitrary keys) while leaving keys optional so different endpoints
+// may emit subsets. Bind it as the spec's `ConfidencePerSection` and the shared
+// `_Tail` $ref resolves to it within that self-contained spec.
+export function confSections(...keys: string[]) {
+  const properties: Record<string, { type: string; minimum: number; maximum: number }> = {};
+  for (const k of keys) properties[k] = { type: 'number', minimum: 0, maximum: 1 };
+  return { type: 'object', additionalProperties: false, properties };
+}
+
 // Standard A+ tail shared by every intelligence response (no financial_disclaimer —
 // these are non-finance APIs). Used as an allOf branch, so no additionalProperties here.
 export const Tail = {

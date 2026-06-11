@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const CountryRecord = {
   type: 'object', required: ['name', 'iso2', 'iso3', 'numeric', 'dial_code', 'currency', 'region'], additionalProperties: false,
@@ -34,7 +34,7 @@ const FR = { name: 'France', iso2: 'FR', iso3: 'FRA', numeric: '250', dial_code:
 const EUR_USERS = ['DE', 'FR', 'IT', 'ES', 'NL', 'IE', 'PT', 'BE', 'AT', 'FI'];
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, CountryRecord, CurrencyRecord, CountryCore, CurrencyCore, FormatCore, LookupCore,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('lookup', 'formatting'), _Tail: Tail, CountryRecord, CurrencyRecord, CountryCore, CurrencyCore, FormatCore, LookupCore,
   DiscoveryResponse: discoverySchema(),
   CountryRequest: { type: 'object', additionalProperties: false, properties: { query: { type: 'string' }, country: { type: 'string', description: 'Alias for query.' } }, description: 'Country name, ISO2/ISO3, numeric code, or dial code.' },
   CurrencyRequest: { type: 'object', additionalProperties: false, properties: { code: { type: 'string' }, currency: { type: 'string', description: 'Alias for code.' } }, description: 'ISO-4217 currency code, e.g. USD.' },

@@ -102,7 +102,7 @@ router.post('/plan', (req: Request, res: Response) => {
   if ('error' in r) return fail(res, t0, 400, 'invalid_request', r.error);
   respond(res, t0, {
     ...r.result,
-    confidence_score: 1.0, confidence_per_section: { schedule: 1, compliance: 1 },
+    confidence_score: 0.85, confidence_per_section: { schedule: 1, compliance: 0.7 },
     recommended_actions_priority_order: actions(r.result), chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
   });
 });
@@ -119,7 +119,7 @@ router.post('/lookup', (req: Request, res: Response) => {
       key_factors: [`crawl_delay: ${v.crawl_delay_s ?? 'none'}.`, `throttled: ${v.throttled}.`, `violates_crawl_delay: ${v.violates_crawl_delay}.`],
       invalidators: ['robots crawl-delay is advisory and not honored by all servers, but you should; some sites enforce stricter limits via 429.', 'A shared IP/proxy pool changes effective per-host load.', 'Server-side Retry-After always overrides this schedule.'],
     },
-    confidence_score: 1.0, confidence_per_section: { schedule: 1, compliance: 1 },
+    confidence_score: 0.85, confidence_per_section: { schedule: 1, compliance: 0.7 },
     recommended_actions_priority_order: actions(v), chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
   });
 });

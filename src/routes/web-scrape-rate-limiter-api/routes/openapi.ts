@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const PlanCore = {
   type: 'object',
@@ -27,7 +27,7 @@ const PlanRequest = {
 const CORE_EXAMPLE = { basis: 'crawl_delay', crawl_delay_s: 10, requested_rps: 1, requested_concurrency: 4, pages: 500, safe_rps: 0.1, effective_rps: 0.1, recommended_concurrency: 1, delay_between_requests_ms: 10000, throttled: true, violates_crawl_delay: true, estimated_duration_seconds: 5000 };
 const ACTS = ['robots crawl-delay is 10s → cap at 0.1 req/s, concurrency 1 (10000ms between requests).', 'Your requested rate/concurrency would VIOLATE crawl-delay — it has been throttled down. Do not override.', 'At 0.1 req/s, 500 pages take ~5000s (83.3 min).', 'Always honor robots.txt and Retry-After; back off on 429/503.'];
 const TAIL = {
-  confidence_score: 1, confidence_per_section: { schedule: 1, compliance: 1 }, recommended_actions_priority_order: ACTS,
+  confidence_score: 0.85, confidence_per_section: { schedule: 1, compliance: 0.7 }, recommended_actions_priority_order: ACTS,
   chain_to: [
     { api: 'robots-txt-parser', reason: 'Parse the target robots.txt to obtain the real crawl-delay and disallow rules first.' },
     { api: 'web-scrape-legal-risk-checker', reason: 'Confirm the crawl is permissible (ToS/PII/copyright) before scheduling it.' },
@@ -37,7 +37,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, PlanCore, PlanRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('schedule', 'compliance'), _Tail: Tail, PlanCore, PlanRequest,
   DiscoveryResponse: discoverySchema(),
   PlanResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/PlanCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

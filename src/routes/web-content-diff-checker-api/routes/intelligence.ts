@@ -8,7 +8,9 @@ import { round, EXECUTION_METADATA, PRIVACY } from '../../_aplus/util';
 // fetched page bodies/snapshots).
 
 const router = Router();
-const MAX_TOKENS = 5000;
+// LCS uses an O(n·m) DP matrix; 2500 caps the worst case at ~6.25M cells (~50MB)
+// instead of 25M at 5000. Beyond this, reject rather than risk a memory spike.
+const MAX_TOKENS = 2500;
 
 export type Op = 'equal' | 'add' | 'remove';
 export interface DiffOp { op: Op; value: string; }

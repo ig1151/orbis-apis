@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const TYPE_ENUM = ['luhn', 'iban', 'isbn', 'ean', 'routing', 'e164', 'email', 'json'];
 
@@ -48,7 +48,7 @@ const TAIL_EXAMPLE = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, Check, ValidatorCore, ValidatorRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('checksum', 'syntax'), _Tail: Tail, Check, ValidatorCore, ValidatorRequest,
   DiscoveryResponse: discoverySchema(),
   ValidateResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/ValidatorCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

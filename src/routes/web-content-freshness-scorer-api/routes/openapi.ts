@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const BAND_ENUM = ['fresh', 'recent', 'aging', 'stale', 'outdated'];
 const ScoreCore = {
@@ -31,7 +31,7 @@ const CORE_EXAMPLE = {
 };
 const ACTS = ['Freshness 23.6/100 (stale); content is 375 days old.', 'Likely stale — re-crawl or find an updated source; recommended re-check in 14 days.', 'Content was updated after publication — the modified date drives the score.'];
 const TAIL = {
-  confidence_score: 1, confidence_per_section: { age: 1, score: 1 }, recommended_actions_priority_order: ACTS,
+  confidence_score: 0.85, confidence_per_section: { age: 1, score: 0.7 }, recommended_actions_priority_order: ACTS,
   chain_to: [
     { api: 'web-content-diff-checker', reason: 'Compare the current version against your stored snapshot to confirm what actually changed.' },
     { api: 'website-change-monitor', reason: 'Schedule re-checks at the recommended interval.' },
@@ -40,7 +40,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, ScoreCore, ScoreRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('age', 'score'), _Tail: Tail, ScoreCore, ScoreRequest,
   DiscoveryResponse: discoverySchema(),
   ScoreResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/ScoreCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {
