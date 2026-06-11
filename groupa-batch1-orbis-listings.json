@@ -1,0 +1,122 @@
+[
+  {
+    "name": "LLM Token Counter & Cost Estimator API",
+    "shortDescription": "Approximate token count + exact USD cost for any text and model, from a static pricing table",
+    "description": "Agent-native, deterministic token and cost estimator computed in real code — no LLM and no upstream calls. Text + model id returns an APPROXIMATE token count (offline heuristic, not the model's real tokenizer) and, when output tokens are supplied, the exact USD cost from a static, versioned pricing table (Anthropic Fable/Opus/Sonnet/Haiku + OpenAI + Google). Unknown models return found:false with null prices — never a guessed number. Token estimates always carry confidence 0.7 and an 'approximate tokenizer' invalidator; cost given a token count is exact. /count handles one text; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and deterministic execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/llm-token-counter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/llm-token-counter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/llm-token-counter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "tokens", "cost-estimation", "pricing", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["LLM token counter API", "token cost estimator", "Claude pricing API", "GPT token cost", "estimate tokens from text", "model cost calculator", "agent budgeting API"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/count", "pricePerCallUsdc": 0.004, "description": "Estimate tokens + cost for one text and model" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL token + cost estimate with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/count", "description": "Estimate tokens + cost for one text and model" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL token + cost estimate with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "Context Window Budget Planner API",
+    "shortDescription": "Check whether a prompt fits a model's context window and get a deterministic trim plan",
+    "description": "Agent-native, deterministic context-budget planner computed in real code — no LLM. Given a list of messages (with supplied token counts OR text to estimate), a context window (explicit or derived from a model id), and an output reserve, it returns whether the prompt fits, the overflow, and — if it doesn't fit — a deterministic trim plan that drops the oldest messages or the lowest-priority ones until it fits. Token counts from text are offline heuristic estimates (confidence 0.7); when all token counts are supplied the fit math is exact (confidence 1.0). /plan returns the fit check + trim plan; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/context-budget-planner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/context-budget-planner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/context-budget-planner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "context-window", "tokens", "prompt-engineering", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["context window planner API", "prompt fit checker", "context budget API", "trim messages to fit", "token budget planner", "LLM context limit API", "drop oldest messages"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/plan", "pricePerCallUsdc": 0.005, "description": "Fit check + deterministic trim plan" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "ONE-CALL plan with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/plan", "description": "Fit check + deterministic trim plan" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL plan with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "Text Chunker / Splitter API (RAG)",
+    "shortDescription": "Split text into RAG chunks by tokens, characters, sentences or paragraphs with exact offsets",
+    "description": "Agent-native, deterministic text splitter for RAG pipelines computed in real code — no LLM. Splits text by token budget (char-approximated), fixed character windows, sentences, or paragraphs, with configurable overlap, and returns every chunk with exact, gapless character offsets and an estimated token count. Character offsets are exact and reproducible; the tokens strategy approximates token windows at ~4 chars/token and all per-chunk token counts are offline heuristic estimates (carried as invalidators). /chunk returns the chunks; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/text-chunker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/text-chunker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/text-chunker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["rag", "chunking", "text-splitter", "embeddings", "llm", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["text chunker API", "RAG splitter API", "split text by tokens", "sentence splitter API", "chunk overlap API", "document chunking for embeddings", "text offsets API"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/chunk", "pricePerCallUsdc": 0.005, "description": "Split text into chunks with exact char offsets" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "ONE-CALL chunking with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/chunk", "description": "Split text into chunks with exact char offsets" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL chunking with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "Conversation Cost Ledger API",
+    "shortDescription": "Tally and price a chat message log, with optional spend projection for N more turns",
+    "description": "Agent-native, deterministic conversation cost ledger computed in real code — no LLM. Tallies input and output tokens across a message log (supplied tokens or text to estimate), prices them against a static, versioned pricing table, and optionally projects spend for N more turns from observed or supplied per-turn averages. Assistant messages count as output; all other roles count as input. This is a naive per-message tally — real chat APIs re-send prior context as input each turn, so cumulative input cost is higher (stated as an invalidator). Cost given supplied token counts is exact (confidence 1.0); estimated tokens drop confidence to 0.7. /tally returns the ledger; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/conversation-cost-ledger",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/conversation-cost-ledger/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/conversation-cost-ledger/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "cost-tracking", "tokens", "billing", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["conversation cost API", "LLM spend tracker", "chat token ledger", "project LLM cost", "running cost API", "Claude conversation cost", "agent spend ledger"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/tally", "pricePerCallUsdc": 0.005, "description": "Tally + price a conversation, with optional projection" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "ONE-CALL tally + projection with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/tally", "description": "Tally + price a conversation, with optional projection" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL tally + projection with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "Model Pricing Comparator API",
+    "shortDescription": "Rank every LLM by exact USD cost for a given input/output token split and call count",
+    "description": "Agent-native, deterministic LLM pricing comparator computed in real code — no LLM. Given an input/output token split and a call count, it costs every requested model (or the entire static table — Anthropic Fable/Opus/Sonnet/Haiku + OpenAI + Google) and ranks them cheapest-first, reporting per-call and all-calls totals plus savings versus the most expensive option. Because tokens are supplied (not estimated), costs are exact arithmetic against the table — only the snapshot date qualifies them. Unknown requested models are returned in unknown_models, never guessed. /compare returns the ranking; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/model-pricing-comparator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/model-pricing-comparator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/model-pricing-comparator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "pricing", "cost-comparison", "model-selection", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["LLM pricing comparator API", "compare model cost", "cheapest LLM API", "Claude vs GPT cost", "model cost ranking", "token cost comparison", "AI model price API"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/compare", "pricePerCallUsdc": 0.004, "description": "Rank models by exact cost for a token split" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL comparison with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/compare", "description": "Rank models by exact cost for a token split" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL comparison with reasoning and guidance" }
+    ]
+  }
+]
