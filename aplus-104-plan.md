@@ -17,16 +17,16 @@ Legend: ⬜ todo · 🟡 wip · ✅ shipped · 📤 listed · ⛔ skip(dupe) · 
 ✅ Random Data Generator API — crypto-random faker: names/emails/UUIDs/addresses/test rows, optional seed [batch1]
 ✅ Data Validator API — Luhn (card), IBAN, ISBN, EAN/UPC, routing#, E.164 phone, email syntax, JSON [batch1]
 ✅ Web Content Diff Checker API — line/word/unified diff + similarity % (merges "Web Diff Tracker") [batch1]
-⬜ Web Performance Budget Checker API — resource weights vs budget thresholds → pass/fail per asset class
+✅ Web Performance Budget Checker API — resource weights vs budget thresholds → pass/fail per asset class [batch2]
 ✅ Web Vitals Grader API — given LCP/INP/CLS values → good/needs-improvement/poor + grade (input-driven, no fetch) [batch1]
-⬜ Web Scrape Rate Limiter API — robots crawl-delay + concurrency + target RPS → safe schedule
-⬜ Web Scrape Cost/ROI Analyzer API — pages × cost-per-page vs value → ROI, break-even (merges "Web Scraping ROI & Cost Optimizer")
+✅ Web Scrape Rate Limiter API — robots crawl-delay + concurrency + target RPS → safe schedule [batch2]
+✅ Web Scrape Cost/ROI Analyzer API — pages × cost-per-page vs value → ROI, break-even (merges "Web Scraping ROI & Cost Optimizer") [batch2]
 ⬜ Web Scrape Planner API — given site size/limits → crawl plan, batches, ETA
 ⬜ Web Scrape Legal Risk Checker API — rubric over robots/ToS/PII/copyright flags → risk score
 ⬜ Web Scrape Monitoring Scorer API — change-rate / freshness inputs → monitoring cadence score
-⬜ Web Content Freshness Scorer API — published/modified/Last-Modified dates → freshness score
+✅ Web Content Freshness Scorer API — published/modified/Last-Modified dates → freshness score [batch2]
 ✅ Web Content Type Classifier API — URL/extension/MIME/heuristics → content type [batch1]
-⬜ Web Archive URL Builder API — build Wayback / archive.today / cache URLs + timestamp parsing (pure string)
+✅ Web Archive URL Builder API — build Wayback / archive.today / cache URLs + timestamp parsing (pure string) [batch2]
 ⬜ Country & Currency Data API — static ISO-3166 / ISO-4217 dataset: lookup, format, dial codes
 ⬜ Layer 2 Blockchain Comparison API — curated static L2 spec table → compare fees/finality/type
 ⬜ Web3 Security Checklist API — deterministic audit-readiness checklist/rubric from declared features
@@ -64,4 +64,5 @@ Webhook Signature Verifier · Website Tech Stack Detector · (Personal Finance A
 ---
 
 ## Groups shipped
-- **Batch 1 (2026-06-11)** — Data Validator · Random Data Generator · Web Content Diff Checker · Web Vitals Grader · Web Content Type Classifier. Shared `_aplus/util.ts` + `_aplus/specparts.ts` scaffolds added. tsc clean; `smoke-bucketa-batch1.cjs` 49/49.
+- **Batch 1 (2026-06-11)** — Data Validator · Random Data Generator · Web Content Diff Checker · Web Vitals Grader · Web Content Type Classifier. Shared `_aplus/util.ts` + `_aplus/specparts.ts` scaffolds added. tsc clean; `smoke-bucketa-batch1.cjs` 49/49. MERGED (PR #27) + LIVE-VERIFIED.
+- **Batch 2 (2026-06-11)** — Web Performance Budget Checker · Web Scrape Rate Limiter · Web Content Freshness Scorer · Web Archive URL Builder · Web Scrape Cost/ROI Analyzer. tsc clean; `smoke-bucketa-batch2.cjs` 39/39.

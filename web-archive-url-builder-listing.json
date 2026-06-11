@@ -1,0 +1,77 @@
+[
+  {
+    "name": "Web Archive URL Builder API",
+    "shortDescription": "Build Wayback / archive.today / Google Cache URLs + normalized timestamps for any URL",
+    "description": "Agent-native web-archive URL builder computed as pure string math — no fetch, no LLM. /build normalizes a URL and constructs Wayback Machine (snapshot, latest, save, calendar, availability API), archive.today (newest, snapshot list, submit), and Google Cache URLs, and parses any timestamp (ISO 8601, epoch seconds/ms, YYYYMMDD, or 14-digit Wayback) into the canonical Wayback 14-digit form and ISO. The one-call /lookup adds reasoning and retrieval tips. Deterministic, confidence 1.0.",
+    "category": "web-research",
+    "baseUrl": "https://orbis-apis.onrender.com/web-archive-url-builder",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-archive-url-builder/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-archive-url-builder/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web-archive",
+      "wayback",
+      "archive-today",
+      "snapshot",
+      "timestamp",
+      "web-research",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "web archive url builder",
+      "wayback machine url api",
+      "archive.today url api",
+      "wayback timestamp api",
+      "snapshot url api",
+      "archive url api",
+      "wayback availability api",
+      "web cache url api"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.008,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/build",
+            "pricePerCallUsdc": 0.004,
+            "description": "Build archive URLs + normalized timestamp"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.008,
+            "description": "ONE-CALL archive URLs + reasoning + retrieval tips"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/build",
+        "description": "Build archive URLs + normalized timestamp"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL archive URLs + reasoning + retrieval tips"
+      }
+    ]
+  }
+]

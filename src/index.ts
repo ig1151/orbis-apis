@@ -638,6 +638,16 @@ import webVitalsGraderRouter from './routes/web-vitals-grader-api/routes/intelli
 import webVitalsGraderOpenapiRouter from './routes/web-vitals-grader-api/routes/openapi';
 import webContentTypeClassifierRouter from './routes/web-content-type-classifier-api/routes/intelligence';
 import webContentTypeClassifierOpenapiRouter from './routes/web-content-type-classifier-api/routes/openapi';
+import webPerformanceBudgetCheckerRouter from './routes/web-performance-budget-checker-api/routes/intelligence';
+import webPerformanceBudgetCheckerOpenapiRouter from './routes/web-performance-budget-checker-api/routes/openapi';
+import webScrapeRateLimiterRouter from './routes/web-scrape-rate-limiter-api/routes/intelligence';
+import webScrapeRateLimiterOpenapiRouter from './routes/web-scrape-rate-limiter-api/routes/openapi';
+import webContentFreshnessScorerRouter from './routes/web-content-freshness-scorer-api/routes/intelligence';
+import webContentFreshnessScorerOpenapiRouter from './routes/web-content-freshness-scorer-api/routes/openapi';
+import webArchiveUrlBuilderRouter from './routes/web-archive-url-builder-api/routes/intelligence';
+import webArchiveUrlBuilderOpenapiRouter from './routes/web-archive-url-builder-api/routes/openapi';
+import webScrapeCostRoiAnalyzerRouter from './routes/web-scrape-cost-roi-analyzer-api/routes/intelligence';
+import webScrapeCostRoiAnalyzerOpenapiRouter from './routes/web-scrape-cost-roi-analyzer-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1229,6 +1239,11 @@ const routerMap: Record<string, import("express").Router> = {
   'web-content-diff-checker': webContentDiffCheckerRouter,
   'web-vitals-grader': webVitalsGraderRouter,
   'web-content-type-classifier': webContentTypeClassifierRouter,
+  'web-performance-budget-checker': webPerformanceBudgetCheckerRouter,
+  'web-scrape-rate-limiter': webScrapeRateLimiterRouter,
+  'web-content-freshness-scorer': webContentFreshnessScorerRouter,
+  'web-archive-url-builder': webArchiveUrlBuilderRouter,
+  'web-scrape-cost-roi-analyzer': webScrapeCostRoiAnalyzerRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1641,6 +1656,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'web-content-diff-checker': webContentDiffCheckerOpenapiRouter,
   'web-vitals-grader': webVitalsGraderOpenapiRouter,
   'web-content-type-classifier': webContentTypeClassifierOpenapiRouter,
+  'web-performance-budget-checker': webPerformanceBudgetCheckerOpenapiRouter,
+  'web-scrape-rate-limiter': webScrapeRateLimiterOpenapiRouter,
+  'web-content-freshness-scorer': webContentFreshnessScorerOpenapiRouter,
+  'web-archive-url-builder': webArchiveUrlBuilderOpenapiRouter,
+  'web-scrape-cost-roi-analyzer': webScrapeCostRoiAnalyzerOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
