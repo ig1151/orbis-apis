@@ -35,9 +35,25 @@ export function luhn(value: string): Check {
   return { type: 'luhn', valid, normalized: valid ? d : null, reason: valid ? 'Passes the Luhn checksum.' : 'Fails the Luhn checksum.' };
 }
 
+// ISO 13616 registry: total IBAN length per country (2-letter code → length).
+export const IBAN_LENGTHS: Record<string, number> = {
+  AD: 24, AE: 23, AL: 28, AT: 20, AZ: 28, BA: 20, BE: 16, BG: 22, BH: 22, BR: 29,
+  BY: 28, CH: 21, CR: 22, CY: 28, CZ: 24, DE: 22, DK: 18, DO: 28, EE: 20, EG: 29,
+  ES: 24, FI: 18, FO: 18, FR: 27, GB: 22, GE: 22, GI: 23, GL: 18, GR: 27, GT: 28,
+  HR: 21, HU: 28, IE: 22, IL: 23, IS: 26, IT: 27, JO: 30, KW: 30, KZ: 20, LB: 28,
+  LC: 32, LI: 21, LT: 20, LU: 20, LV: 21, MC: 27, MD: 24, ME: 22, MK: 19, MR: 27,
+  MT: 31, MU: 30, NL: 18, NO: 15, PK: 24, PL: 28, PS: 29, PT: 25, QA: 29, RO: 24,
+  RS: 22, SA: 24, SC: 31, SE: 24, SI: 19, SK: 24, SM: 27, TN: 24, TR: 26, UA: 29,
+  VA: 22, VG: 24, XK: 20,
+};
+
 export function iban(value: string): Check {
   const s = value.replace(/\s/g, '').toUpperCase();
   if (!/^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/.test(s)) return { type: 'iban', valid: false, normalized: null, reason: 'Not a well-formed IBAN (2-letter country, 2 check digits, then alphanumerics).' };
+  const country = s.slice(0, 2);
+  const expectedLen = IBAN_LENGTHS[country];
+  if (expectedLen === undefined) return { type: 'iban', valid: false, normalized: null, reason: `Unknown IBAN country code "${country}" (not in the ISO 13616 registry).` };
+  if (s.length !== expectedLen) return { type: 'iban', valid: false, normalized: null, reason: `Wrong length for ${country}: expected ${expectedLen} characters, got ${s.length}.` };
   const rearranged = s.slice(4) + s.slice(0, 4);
   let remainder = 0;
   for (const ch of rearranged) {
@@ -45,7 +61,7 @@ export function iban(value: string): Check {
     for (const c of code) remainder = (remainder * 10 + (c.charCodeAt(0) - 48)) % 97;
   }
   const valid = remainder === 1;
-  return { type: 'iban', valid, normalized: valid ? s : null, reason: valid ? 'Passes the ISO 7064 mod-97 check.' : 'Fails the mod-97 check digit.' };
+  return { type: 'iban', valid, normalized: valid ? s : null, reason: valid ? `Passes the ISO 7064 mod-97 check and ${country} length (${expectedLen}).` : 'Fails the mod-97 check digit.' };
 }
 
 export function isbn(value: string): Check {
@@ -222,7 +238,7 @@ router.post('/lookup', (req: Request, res: Response) => {
       ],
       invalidators: [
         'Syntax/checksum validity does not guarantee the value exists or is in service (e.g. a Luhn-valid card may be unissued; email syntax ≠ deliverable).',
-        'IBAN here checks mod-97 only, not per-country length tables.',
+        'IBAN validation covers structure, ISO 13616 per-country length, and the mod-97 check digit — but not whether the account actually exists at the bank.',
         'Editing any character can flip the checksum result.',
       ],
     },

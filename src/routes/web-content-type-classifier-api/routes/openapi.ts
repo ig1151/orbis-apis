@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const CATEGORY_ENUM = ['image', 'video', 'audio', 'pdf', 'document', 'spreadsheet', 'presentation', 'archive', 'code', 'data', 'webpage', 'feed', 'font', 'executable', 'text', 'unknown'];
 
@@ -10,7 +10,7 @@ const ClassifyCore = {
     mime: { type: ['string', 'null'] },
     detected_extension: { type: ['string', 'null'] },
     is_binary: { type: 'boolean' }, is_text: { type: 'boolean' },
-    source: { type: 'string', enum: ['mime', 'extension', 'unknown'], description: 'Which signal drove the classification.' },
+    source: { type: 'string', enum: ['mime', 'extension', 'url_heuristic', 'unknown'], description: 'Which signal drove the classification (mime=authoritative, extension=can lie, url_heuristic=extension-less URL guessed as webpage, unknown=unresolved).' },
     typical_handling: { type: 'string', description: 'How an agent should typically handle this content type.' },
   },
 };
@@ -30,7 +30,7 @@ const ClassifyRequest = {
 const CORE_EXAMPLE = { category: 'pdf', mime: 'application/pdf', detected_extension: 'pdf', is_binary: true, is_text: false, source: 'extension', typical_handling: 'Extract text/tables via a PDF parser before reasoning.' };
 const ACTS = ['Classified as pdf (application/pdf) via extension.', 'Extract text/tables via a PDF parser before reasoning.', 'Treat as binary content downstream.'];
 const TAIL = {
-  confidence_score: 1, confidence_per_section: { classification: 1 },
+  confidence_score: 0.85, confidence_per_section: { classification: 0.85 },
   recommended_actions_priority_order: ACTS,
   chain_to: [
     { api: 'web-archive-url-builder', reason: 'Once you know it is a webpage, build a Wayback/cache URL to fetch a stable snapshot.' },
@@ -40,7 +40,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, ClassifyCore, ClassifyRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('classification'), _Tail: Tail, ClassifyCore, ClassifyRequest,
   DiscoveryResponse: discoverySchema(),
   ClassifyResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/ClassifyCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

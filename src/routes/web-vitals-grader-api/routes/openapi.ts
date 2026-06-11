@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const MetricResult = {
   type: 'object', required: ['metric', 'value', 'unit', 'rating', 'good_threshold', 'needs_improvement_threshold', 'is_core'], additionalProperties: false,
@@ -54,7 +54,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, MetricResult, GradeCore, GradeRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('ratings', 'score'), _Tail: Tail, MetricResult, GradeCore, GradeRequest,
   DiscoveryResponse: discoverySchema(),
   GradeResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/GradeCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {
@@ -87,7 +87,7 @@ const endpoints: AplusEndpoint[] = [
 
 export const spec = buildAplusSpec({
   slug: 'web-vitals-grader', title: 'Web Vitals Grader API', version: '1.0.0',
-  description: 'Deterministic Core Web Vitals grader. Supply measured LCP/INP/CLS (and optional FCP/TTFB); returns per-metric ratings against Google\'s published thresholds, a Core Web Vitals pass/fail, a 0–100 score, and a letter grade. Input-driven — no fetch, no LLM.',
+  description: 'Deterministic Core Web Vitals grader. Supply measured LCP/INP/CLS (and optional FCP/TTFB); returns per-metric ratings against Google\'s published good/needs-improvement/poor thresholds and a Core Web Vitals pass/fail. The 0–100 score and A–F letter grade are an opinionated rollup of those official ratings, not a Google-defined metric. Input-driven — no fetch, no LLM.',
   endpoints, schemas, infoExtensions: { 'x-human-approval-required': false },
 });
 

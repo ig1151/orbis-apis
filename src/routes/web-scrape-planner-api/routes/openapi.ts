@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const BatchRow = {
   type: 'object', required: ['index', 'pages', 'cumulative_pages', 'start_offset_seconds', 'est_seconds'], additionalProperties: false,
@@ -49,7 +49,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, BatchRow, PlanCore, PlanRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('batching', 'eta'), _Tail: Tail, BatchRow, PlanCore, PlanRequest,
   DiscoveryResponse: discoverySchema(),
   PlanResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/PlanCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

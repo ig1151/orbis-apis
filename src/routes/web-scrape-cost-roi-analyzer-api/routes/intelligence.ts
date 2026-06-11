@@ -101,7 +101,7 @@ router.post('/analyze', (req: Request, res: Response) => {
   if ('error' in r) return fail(res, t0, 400, 'invalid_request', r.error);
   respond(res, t0, {
     ...r.result,
-    confidence_score: 1.0, confidence_per_section: { cost: 1, roi: 1 },
+    confidence_score: 0.85, confidence_per_section: { cost: 1, roi: 0.7 },
     recommended_actions_priority_order: actions(r.result), chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
   });
 });
@@ -118,7 +118,7 @@ router.post('/lookup', (req: Request, res: Response) => {
       key_factors: [`Margin/page: ${v.margin_per_page}.`, `Break-even pages: ${v.break_even_pages ?? 'n/a'}.`, `Verdict: ${v.verdict}.`],
       invalidators: ['ROI depends entirely on your value estimate, which is rarely linear per page.', 'Cost ignores failure/retry overhead and engineering time unless you fold them into cost_per_page/fixed_cost.', 'Legal/blocking risk can impose costs not captured here — check the legal-risk checker.'],
     },
-    confidence_score: 1.0, confidence_per_section: { cost: 1, roi: 1 },
+    confidence_score: 0.85, confidence_per_section: { cost: 1, roi: 0.7 },
     recommended_actions_priority_order: actions(v), chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
   });
 });

@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const REGION_ENUM = ['EU', 'UK', 'US', 'other'];
 const LEVEL_ENUM = ['low', 'moderate', 'high', 'severe'];
@@ -48,7 +48,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, FlagRow, RiskCore, AssessRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('scoring', 'legal_interpretation'), _Tail: Tail, FlagRow, RiskCore, AssessRequest,
   DiscoveryResponse: discoverySchema(),
   AssessResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/RiskCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

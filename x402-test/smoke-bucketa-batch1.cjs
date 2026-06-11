@@ -49,6 +49,9 @@ async function run(base) {
   check('data-validator', 'POST /validate (luhn ok)', 'ValidateResponse', (await call(base, 'POST', '/data-validator/validate', { value: '4242 4242 4242 4242', type: 'luhn' })).json, d => d.valid === true && d.normalized === '4242424242424242' ? null : 'expected valid luhn');
   check('data-validator', 'POST /validate (luhn bad)', 'ValidateResponse', (await call(base, 'POST', '/data-validator/validate', { value: '4242 4242 4242 4241', type: 'luhn' })).json, d => d.valid === false ? null : 'expected invalid luhn');
   check('data-validator', 'POST /validate (IBAN ok)', 'ValidateResponse', (await call(base, 'POST', '/data-validator/validate', { value: 'GB82 WEST 1234 5698 7654 32', type: 'iban' })).json, d => d.valid === true ? null : 'expected valid IBAN');
+  check('data-validator', 'POST /validate (IBAN wrong length)', 'ValidateResponse', (await call(base, 'POST', '/data-validator/validate', { value: 'GB82WEST1234569876543', type: 'iban' })).json, d => d.valid === false && /length/i.test(d.reason) ? null : `expected length failure, got ${d.reason}`);
+  check('data-validator', 'POST /validate (IBAN unknown country)', 'ValidateResponse', (await call(base, 'POST', '/data-validator/validate', { value: 'ZZ1234567890', type: 'iban' })).json, d => d.valid === false && /unknown iban country/i.test(d.reason) ? null : `expected unknown-country failure, got ${d.reason}`);
+  check('data-validator', 'POST /validate (IBAN right length, bad check)', 'ValidateResponse', (await call(base, 'POST', '/data-validator/validate', { value: 'GB00WEST12345698765432', type: 'iban' })).json, d => d.valid === false && /mod-97/i.test(d.reason) ? null : `expected mod-97 failure, got ${d.reason}`);
   check('data-validator', 'POST /validate (ISBN-13 ok)', 'ValidateResponse', (await call(base, 'POST', '/data-validator/validate', { value: '978-0-306-40615-7', type: 'isbn' })).json, d => d.valid === true ? null : 'expected valid ISBN-13');
   check('data-validator', 'POST /validate (UPC-A ok)', 'ValidateResponse', (await call(base, 'POST', '/data-validator/validate', { value: '036000291452', type: 'ean' })).json, d => d.valid === true ? null : 'expected valid UPC');
   check('data-validator', 'POST /validate (routing ok)', 'ValidateResponse', (await call(base, 'POST', '/data-validator/validate', { value: '021000021', type: 'routing' })).json, d => d.valid === true ? null : 'expected valid routing');
@@ -86,6 +89,9 @@ async function run(base) {
   check('web-content-diff-checker', 'POST /lookup (word)', 'LookupResponse', (await call(base, 'POST', '/web-content-diff-checker/lookup', { a: 'the quick brown fox', b: 'the slow brown fox', mode: 'word' })).json, d => d.mode === 'word' && d.identical === false ? null : 'expected word diff');
   const wdBad = await call(base, 'POST', '/web-content-diff-checker/diff', { a: 'only a' });
   check('web-content-diff-checker', 'POST /diff (missing b -> 400)', 'Error400', wdBad.json, () => wdBad.status === 400 ? null : `status ${wdBad.status}`);
+  const bigText = Array.from({ length: 2501 }, (_, i) => 'line' + i).join('\n');
+  const wdBig = await call(base, 'POST', '/web-content-diff-checker/diff', { a: bigText, b: bigText });
+  check('web-content-diff-checker', 'POST /diff (over token cap -> 400)', 'Error400', wdBig.json, () => wdBig.status === 400 && /limited to 2500/.test(wdBig.json.error?.message || '') ? null : `expected 2500 cap, status ${wdBig.status}, msg ${wdBig.json.error?.message}`);
   driftGuard('web-content-diff-checker');
 
   // ---- web-vitals-grader ----
@@ -102,9 +108,9 @@ async function run(base) {
   // ---- web-content-type-classifier ----
   console.log('web-content-type-classifier:');
   check('web-content-type-classifier', 'GET /', 'DiscoveryResponse', (await call(base, 'GET', '/web-content-type-classifier/')).json);
-  check('web-content-type-classifier', 'POST /classify (pdf url)', 'ClassifyResponse', (await call(base, 'POST', '/web-content-type-classifier/classify', { url: 'https://example.com/report.pdf' })).json, d => d.category === 'pdf' && d.is_binary === true && d.source === 'extension' ? null : 'expected pdf');
-  check('web-content-type-classifier', 'POST /classify (mime wins)', 'ClassifyResponse', (await call(base, 'POST', '/web-content-type-classifier/classify', { url: 'https://x.com/a.pdf', mime: 'text/html' })).json, d => d.category === 'webpage' && d.source === 'mime' ? null : 'mime should win -> webpage');
-  check('web-content-type-classifier', 'POST /classify (extensionless url)', 'ClassifyResponse', (await call(base, 'POST', '/web-content-type-classifier/classify', { url: 'https://example.com/blog/post' })).json, d => d.category === 'webpage' ? null : 'expected webpage');
+  check('web-content-type-classifier', 'POST /classify (pdf url)', 'ClassifyResponse', (await call(base, 'POST', '/web-content-type-classifier/classify', { url: 'https://example.com/report.pdf' })).json, d => d.category === 'pdf' && d.is_binary === true && d.source === 'extension' && d.confidence_score === 0.85 ? null : `expected pdf/extension/0.85, got ${d.source}/${d.confidence_score}`);
+  check('web-content-type-classifier', 'POST /classify (mime wins, conf 1.0)', 'ClassifyResponse', (await call(base, 'POST', '/web-content-type-classifier/classify', { url: 'https://x.com/a.pdf', mime: 'text/html' })).json, d => d.category === 'webpage' && d.source === 'mime' && d.confidence_score === 1 ? null : `mime should win -> webpage @1.0, got ${d.source}/${d.confidence_score}`);
+  check('web-content-type-classifier', 'POST /classify (extensionless url -> url_heuristic 0.7)', 'ClassifyResponse', (await call(base, 'POST', '/web-content-type-classifier/classify', { url: 'https://example.com/blog/post' })).json, d => d.category === 'webpage' && d.source === 'url_heuristic' && d.confidence_score === 0.7 ? null : `expected webpage/url_heuristic/0.7, got ${d.source}/${d.confidence_score}`);
   check('web-content-type-classifier', 'POST /classify (unknown)', 'ClassifyResponse', (await call(base, 'POST', '/web-content-type-classifier/classify', { extension: 'xyz' })).json, d => d.category === 'unknown' ? null : 'expected unknown');
   check('web-content-type-classifier', 'POST /lookup (json mime)', 'LookupResponse', (await call(base, 'POST', '/web-content-type-classifier/lookup', { mime: 'application/json; charset=utf-8' })).json, d => d.category === 'data' && d.is_text === true ? null : 'expected data/text');
   const wcBad = await call(base, 'POST', '/web-content-type-classifier/classify', {});

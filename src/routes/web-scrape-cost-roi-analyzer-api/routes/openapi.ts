@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const RoiCore = {
   type: 'object',
@@ -28,7 +28,7 @@ const RoiRequest = {
 const CORE_EXAMPLE = { pages: 10000, cost_per_page: 0.002, cost_component_total: null, fixed_cost: 50, variable_cost: 20, total_cost: 70, value_per_page: 0.02, total_value: 200, net_value: 130, roi_pct: 185.71, margin_per_page: 0.018, break_even_pages: 2778, profitable: true, verdict: 'positive' };
 const ACTS = ['Net 130 on 70 cost → ROI 185.71% (positive).', 'Per-page margin is 0.018; break even at 2778 pages.'];
 const TAIL = {
-  confidence_score: 1, confidence_per_section: { cost: 1, roi: 1 }, recommended_actions_priority_order: ACTS,
+  confidence_score: 0.85, confidence_per_section: { cost: 1, roi: 0.7 }, recommended_actions_priority_order: ACTS,
   chain_to: [
     { api: 'web-scrape-rate-limiter', reason: 'Turn the page count into a compliant crawl schedule and runtime estimate.' },
     { api: 'web-scrape-planner', reason: 'Break the crawl into batches with an ETA that matches this budget.' },
@@ -37,7 +37,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, RoiCore, RoiRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('cost', 'roi'), _Tail: Tail, RoiCore, RoiRequest,
   DiscoveryResponse: discoverySchema(),
   AnalyzeResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/RoiCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

@@ -102,7 +102,7 @@ router.post('/score', (req: Request, res: Response) => {
   if ('error' in r) return fail(res, t0, 400, 'invalid_request', r.error);
   respond(res, t0, {
     ...r.result,
-    confidence_score: 1.0, confidence_per_section: { age: 1, score: 1 },
+    confidence_score: 0.85, confidence_per_section: { age: 1, score: 0.7 },
     recommended_actions_priority_order: actions(r.result), chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
   });
 });
@@ -119,7 +119,7 @@ router.post('/lookup', (req: Request, res: Response) => {
       key_factors: [`Effective date: ${v.effective_date}.`, `Updated after publish: ${v.was_updated}.`, `Half-life: ${v.half_life_days}d.`],
       invalidators: ['Score assumes content value decays smoothly with age; evergreen reference pages decay far slower than news.', 'A "modified" date can reflect a trivial template change, not real content updates.', 'Tune half_life_days per content type (news ≈ 7–30, docs ≈ 365+).'],
     },
-    confidence_score: 1.0, confidence_per_section: { age: 1, score: 1 },
+    confidence_score: 0.85, confidence_per_section: { age: 1, score: 0.7 },
     recommended_actions_priority_order: actions(v), chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
   });
 });

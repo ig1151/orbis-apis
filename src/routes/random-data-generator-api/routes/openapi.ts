@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const GEN_TYPES = ['uuid', 'name', 'first_name', 'last_name', 'email', 'username', 'phone', 'company', 'address', 'city', 'state', 'zip', 'country', 'integer', 'float', 'boolean', 'date', 'hex_color', 'ipv4', 'mac', 'word', 'sentence', 'password'];
 
@@ -57,7 +57,7 @@ const TAIL = (acts: string[]) => ({
 });
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, Address, GeneratedValue, Column, GenerateCore, LookupCore, GenerateRequest, LookupRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('generation'), _Tail: Tail, Address, GeneratedValue, Column, GenerateCore, LookupCore, GenerateRequest, LookupRequest,
   DiscoveryResponse: discoverySchema(),
   GenerateResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/GenerateCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/LookupCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },

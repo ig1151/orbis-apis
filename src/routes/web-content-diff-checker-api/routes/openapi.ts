@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const DiffOp = { type: 'object', required: ['op', 'value'], additionalProperties: false, properties: { op: { type: 'string', enum: ['equal', 'add', 'remove'] }, value: { type: 'string' } } };
 
@@ -47,7 +47,7 @@ const TAIL = (acts: string[], extra: Record<string, number> = {}) => ({
 });
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, DiffOp, DiffCore, DiffRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('diff', 'similarity'), _Tail: Tail, DiffOp, DiffCore, DiffRequest,
   DiscoveryResponse: discoverySchema(),
   DiffResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/DiffCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

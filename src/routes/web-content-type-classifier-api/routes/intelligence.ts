@@ -57,10 +57,17 @@ const HANDLING: Record<Category, string> = {
   executable: 'Do NOT execute. Treat as an untrusted binary; scan only.', text: 'Read directly as UTF-8 text.', unknown: 'Inspect bytes/headers before processing; type could not be resolved.',
 };
 
+export type ClassifySource = 'mime' | 'extension' | 'url_heuristic' | 'unknown';
 export interface ClassifyResult {
   category: Category; mime: string | null; detected_extension: string | null; is_binary: boolean; is_text: boolean;
-  source: 'mime' | 'extension' | 'unknown'; typical_handling: string;
+  source: ClassifySource; typical_handling: string;
 }
+
+// Confidence reflects how authoritative the winning signal is, not the purity of
+// the lookup: a server-declared MIME is authoritative; an extension can be wrong
+// or renamed; guessing "webpage" from an extension-less URL is a heuristic.
+const SOURCE_CONFIDENCE: Record<ClassifySource, number> = { mime: 1, extension: 0.85, url_heuristic: 0.7, unknown: 0.5 };
+export function classifyConfidence(r: ClassifyResult): number { return SOURCE_CONFIDENCE[r.source]; }
 
 function extFromUrl(s: string): string | null {
   let path = s;
@@ -92,7 +99,7 @@ export function classify(body: any): ClassifyResult | { error: string } {
   }
   // A URL with no extension and no/HTML mime is most likely a webpage.
   if (url && !ext && (!mime || mime === 'text/html')) {
-    return { category: 'webpage', mime: mime ?? 'text/html', detected_extension: null, is_binary: false, is_text: true, source: mime ? 'mime' : 'extension', typical_handling: HANDLING.webpage };
+    return { category: 'webpage', mime: mime ?? 'text/html', detected_extension: null, is_binary: false, is_text: true, source: mime ? 'mime' : 'url_heuristic', typical_handling: HANDLING.webpage };
   }
   return { category: 'unknown', mime, detected_extension: ext, is_binary: false, is_text: false, source: 'unknown', typical_handling: HANDLING.unknown };
 }
@@ -134,7 +141,7 @@ router.post('/classify', (req: Request, res: Response) => {
   if ('error' in r) return fail(res, t0, 400, 'invalid_request', r.error);
   respond(res, t0, {
     ...r,
-    confidence_score: 1.0, confidence_per_section: { classification: 1 },
+    confidence_score: classifyConfidence(r), confidence_per_section: { classification: classifyConfidence(r) },
     recommended_actions_priority_order: actions(r), chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
   });
 });
@@ -150,7 +157,7 @@ router.post('/lookup', (req: Request, res: Response) => {
       key_factors: [`Source: ${r.source}.`, `MIME: ${r.mime ?? 'n/a'}.`, `Binary: ${r.is_binary}.`],
       invalidators: ['MIME from a server can be wrong or generic (application/octet-stream); the extension may lie.', 'Extension-only classification cannot detect a renamed/mismatched file.', 'A URL without an extension is assumed to be a webpage — an API route or download could break that assumption.'],
     },
-    confidence_score: 1.0, confidence_per_section: { classification: 1 },
+    confidence_score: classifyConfidence(r), confidence_per_section: { classification: classifyConfidence(r) },
     recommended_actions_priority_order: actions(r), chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
   });
 });

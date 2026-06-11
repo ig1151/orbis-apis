@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, ConfidencePerSection, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
 
 const CLASS_ENUM = ['html', 'css', 'js', 'image', 'font', 'media', 'other'];
 const STATUS_ENUM = ['pass', 'warn', 'fail'];
@@ -58,7 +58,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection, _Tail: Tail, ClassRow, TotalRow, BudgetCore, Resource, BudgetRequest,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('budget'), _Tail: Tail, ClassRow, TotalRow, BudgetCore, Resource, BudgetRequest,
   DiscoveryResponse: discoverySchema(),
   CheckResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/BudgetCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

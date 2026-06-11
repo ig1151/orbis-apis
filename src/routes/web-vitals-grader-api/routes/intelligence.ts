@@ -72,7 +72,7 @@ const CHAIN_TO = [
 router.get('/', (_req: Request, res: Response) => {
   res.json({
     name: 'Web Vitals Grader API', version: '1.0.0',
-    description: 'Deterministic Core Web Vitals grader. Supply measured LCP/INP/CLS (and optional FCP/TTFB); returns per-metric ratings against Google\'s published thresholds, a Core Web Vitals pass/fail, a 0–100 score, and a letter grade. Input-driven — no fetch, no LLM.',
+    description: 'Deterministic Core Web Vitals grader. Supply measured LCP/INP/CLS (and optional FCP/TTFB); returns per-metric ratings against Google\'s published good/needs-improvement/poor thresholds and a Core Web Vitals pass/fail. The 0–100 score and A–F letter grade are an opinionated rollup of those official ratings, not a Google-defined metric. Input-driven — no fetch, no LLM.',
     openapi_url: 'https://orbis-apis.onrender.com/web-vitals-grader/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
