@@ -1,0 +1,33 @@
+[
+  {
+    "name": "Country & Currency Data API",
+    "shortDescription": "Deterministic ISO-3166 / ISO-4217 reference + money formatter over a curated static dataset — no LLM, no network",
+    "description": "Agent-native country/currency reference and money formatter over a curated static ISO-3166 / ISO-4217 dataset — pure lookups and string math, no LLM, no network. /country resolves a country by name, ISO2/ISO3, numeric code, or dial code (with its currency). /currency resolves an ISO-4217 currency and lists which countries use it. /format renders a monetary amount with the correct symbol and minor units (deterministic grouping, no ICU dependency). The one-call /lookup resolves country + currency and optionally formats an amount, with reasoning. Confidence 1.0 — no FX rates, formatting only.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/country-currency-data",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/country-currency-data/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/country-currency-data/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["reference-data", "iso-3166", "iso-4217", "currency", "money-formatting", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["country data api", "currency data api", "iso 3166 api", "iso 4217 api", "dial code api", "money formatter api", "currency symbol api", "country lookup api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/country", "pricePerCallUsdc": 0.004, "description": "Resolve a country record" },
+          { "method": "POST", "pathPattern": "/currency", "pricePerCallUsdc": 0.004, "description": "Resolve a currency + countries using it" },
+          { "method": "POST", "pathPattern": "/format", "pricePerCallUsdc": 0.004, "description": "Format an amount in a currency" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL country + currency + formatted amount" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/country", "description": "Resolve a country record" },
+      { "method": "POST", "path": "/currency", "description": "Resolve a currency + countries using it" },
+      { "method": "POST", "path": "/format", "description": "Format an amount in a currency" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL country + currency + formatted amount" }
+    ]
+  }
+]

@@ -21,19 +21,19 @@ Legend: ⬜ todo · 🟡 wip · ✅ shipped · 📤 listed · ⛔ skip(dupe) · 
 ✅ Web Vitals Grader API — given LCP/INP/CLS values → good/needs-improvement/poor + grade (input-driven, no fetch) [batch1]
 ✅ Web Scrape Rate Limiter API — robots crawl-delay + concurrency + target RPS → safe schedule [batch2]
 ✅ Web Scrape Cost/ROI Analyzer API — pages × cost-per-page vs value → ROI, break-even (merges "Web Scraping ROI & Cost Optimizer") [batch2]
-⬜ Web Scrape Planner API — given site size/limits → crawl plan, batches, ETA
-⬜ Web Scrape Legal Risk Checker API — rubric over robots/ToS/PII/copyright flags → risk score
-⬜ Web Scrape Monitoring Scorer API — change-rate / freshness inputs → monitoring cadence score
+✅ Web Scrape Planner API — given site size/limits → crawl plan, batches, ETA [batch3]
+✅ Web Scrape Legal Risk Checker API — rubric over robots/ToS/PII/copyright flags → risk score [batch3]
+✅ Web Scrape Monitoring Scorer API — change-rate / freshness inputs → monitoring cadence score [batch3]
 ✅ Web Content Freshness Scorer API — published/modified/Last-Modified dates → freshness score [batch2]
 ✅ Web Content Type Classifier API — URL/extension/MIME/heuristics → content type [batch1]
 ✅ Web Archive URL Builder API — build Wayback / archive.today / cache URLs + timestamp parsing (pure string) [batch2]
-⬜ Country & Currency Data API — static ISO-3166 / ISO-4217 dataset: lookup, format, dial codes
+✅ Country & Currency Data API — static ISO-3166 / ISO-4217 dataset: lookup, format, dial codes [batch3]
 ⬜ Layer 2 Blockchain Comparison API — curated static L2 spec table → compare fees/finality/type
 ⬜ Web3 Security Checklist API — deterministic audit-readiness checklist/rubric from declared features
 ⬜ Tokenomics Explainer API — math from supply/emission/vesting inputs (inflation, float, unlock curve) — NOT a knowledge LLM
 ⬜ Web3 Wallet Risk Scorer API — rubric over CALLER-SUPPLIED wallet features (age, tx count, approvals) → score
 ⬜ WebSocket Tester API — connect/handshake/echo check (bounded timeout; live but cheap)
-⬜ Finance Payments API — payment math: installment/APR, fee split, settlement amounts (scope to deterministic)
+✅ Finance Payments API — payment math: installment/APR, fee split, settlement amounts (scope to deterministic) [batch3]
 
 ## B. LIKELY DUPES of shipped APIs — confirm then skip — 6
 ⛔ Web3 Transaction Decoder API → `transaction-decoder-api`
@@ -66,3 +66,4 @@ Webhook Signature Verifier · Website Tech Stack Detector · (Personal Finance A
 ## Groups shipped
 - **Batch 1 (2026-06-11)** — Data Validator · Random Data Generator · Web Content Diff Checker · Web Vitals Grader · Web Content Type Classifier. Shared `_aplus/util.ts` + `_aplus/specparts.ts` scaffolds added. tsc clean; `smoke-bucketa-batch1.cjs` 49/49. MERGED (PR #27) + LIVE-VERIFIED.
 - **Batch 2 (2026-06-11)** — Web Performance Budget Checker · Web Scrape Rate Limiter · Web Content Freshness Scorer · Web Archive URL Builder · Web Scrape Cost/ROI Analyzer. tsc clean; `smoke-bucketa-batch2.cjs` 39/39.
+- **Batch 3 (2026-06-11)** — Web Scrape Planner · Web Scrape Legal Risk Checker · Web Scrape Monitoring Scorer · Country & Currency Data · Finance Payments. tsc clean; `smoke-bucketa-batch3.cjs` 47/47.

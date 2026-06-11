@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Web Scrape Legal Risk Checker API",
+    "shortDescription": "Defensive scrape compliance-risk rubric — 0–100 risk score + level from declared robots/ToS/PII/copyright/circumvention facts",
+    "description": "Agent-native, DEFENSIVE scrape compliance-risk rubric computed deterministically — no LLM. You declare facts about a target (robots disallow, login wall, ToS prohibition, personal/special-category data, copyrighted content, commercial use, access-control circumvention); /assess returns a 0–100 risk score, a legal-risk level (low/moderate/high/severe), per-flag weight contributions, and responsible-scraping guidance. It does NOT help bypass anything — circumvention forces a severe 'do not proceed'. The one-call /lookup adds reasoning and compliance steps. EU/UK weight personal data higher. Confidence 0.7 with a legal disclaimer — this is an advisory rubric, not legal advice.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-scrape-legal-risk-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-scrape-legal-risk-checker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-scrape-legal-risk-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["web-scraping", "compliance", "legal-risk", "robots-txt", "gdpr", "defensive", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["scrape compliance api", "scraping legal risk api", "robots compliance api", "gdpr scraping api", "tos scraping risk api", "web scraping legality api", "crawl risk score api", "scraping policy checker api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/assess", "pricePerCallUsdc": 0.006, "description": "Score scrape compliance risk from declared facts" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "ONE-CALL risk + reasoning + compliance guidance" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/assess", "description": "Score scrape compliance risk from declared facts" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL risk + reasoning + compliance guidance" }
+    ]
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Web Scrape Monitoring Scorer API",
+    "shortDescription": "Recommended re-check cadence + volatility band + monitoring-priority score from change rate, importance, and staleness tolerance",
+    "description": "Agent-native monitoring-cadence scorer computed in pure arithmetic — no fetch, no LLM. /score takes an observed change signal (change_rate_per_day, or mean_change_interval_days, or changes_observed + observation_window_days), a business importance (low/medium/high/critical or 1–10), and an optional staleness tolerance, and returns a recommended re-check interval (sampled below the change interval, capped by tolerance and a 15-minute politeness floor), checks/day, what the cadence is capped by, a volatility band, and a 0–100 monitoring-priority score with a band. The one-call /lookup adds reasoning and monitoring guidance. Deterministic, confidence 1.0.",
+    "category": "web-scraping",
+    "baseUrl": "https://orbis-apis.onrender.com/web-scrape-monitoring-scorer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/web-scrape-monitoring-scorer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/web-scrape-monitoring-scorer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["web-scraping", "monitoring", "cadence", "change-detection", "polling", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["monitoring cadence api", "recheck interval api", "page change rate api", "polling frequency api", "website monitoring scorer api", "scrape volatility api", "change detection cadence api", "monitoring priority api"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012, "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.006, "description": "Recommended cadence + volatility + priority score" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "ONE-CALL cadence + reasoning + monitoring guidance" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/score", "description": "Recommended cadence + volatility + priority score" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL cadence + reasoning + monitoring guidance" }
+    ]
+  }
+]

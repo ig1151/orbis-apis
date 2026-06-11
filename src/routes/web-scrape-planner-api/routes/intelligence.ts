@@ -38,7 +38,7 @@ export function planCrawl(body: any): { error: string } | { result: PlanResult }
   const batch_size = clamp(Math.round(num(body?.batch_size) ?? 500), 1, 100000);
   const retry_overhead_pct = clamp(num(body?.retry_overhead_pct) ?? 0, 0, 200);
 
-  const pages_with_retries = Math.ceil(total_pages * (1 + retry_overhead_pct / 100));
+  const pages_with_retries = Math.ceil(round(total_pages * (1 + retry_overhead_pct / 100), 6)); // round before ceil to avoid float error (5200*1.1 = 5720.0000000001)
   const total_batches = Math.ceil(total_pages / batch_size);
   const last_batch_pages = total_pages - (total_batches - 1) * batch_size;
   const seconds_per_full_batch = round(batch_size / effective_rps, 2);
