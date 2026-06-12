@@ -8,6 +8,7 @@ export const EnvelopeOk = {
   required: ['trace_id', 'computed_at', 'success', 'latency_ms'],
   properties: {
     trace_id: { type: 'string' },
+    request_id: { type: 'string', description: 'Alias of trace_id for clients that key on request_id.' },
     computed_at: { type: 'string', format: 'date-time' },
     success: { type: 'boolean', enum: [true] },
     latency_ms: { type: 'integer', minimum: 0 },

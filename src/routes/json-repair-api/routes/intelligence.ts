@@ -139,10 +139,41 @@ class Repair {
   }
 }
 
+type Risk = 'low' | 'medium' | 'high';
+export interface RepairDiff { repair: string; description: string; semantic_risk: Risk; }
 export interface RepairCore {
   original_valid: boolean; valid_json: boolean; repaired: boolean;
-  repairs_applied: string[]; parse_error: string | null;
+  repairs_applied: string[]; repaired_diff: RepairDiff[]; semantic_risk: Risk;
+  parse_error: string | null;
   repaired_text: string | null; parsed?: unknown;
+}
+
+// Per-repair semantic risk: HIGH transforms can change meaning, LOW are cosmetic.
+const HIGH_RISK = new Set(['unquoted_value_to_string', 'auto_closed_string', 'coerced_nonfinite_to_null', 'coerced_undefined_to_null']);
+const MEDIUM_RISK = new Set(['normalized_quotes', 'python_literal', 'auto_closed_object', 'auto_closed_array', 'stripped_trailing_text', 'stripped_leading_text']);
+const REPAIR_DESC: Record<string, string> = {
+  stripped_code_fence: 'Removed a surrounding markdown code fence.',
+  stripped_leading_text: 'Removed text before the first JSON value.',
+  stripped_trailing_text: 'Dropped content after the first complete JSON value.',
+  removed_line_comment: 'Removed // line comment(s).',
+  removed_block_comment: 'Removed /* */ block comment(s).',
+  normalized_quotes: 'Converted single/backtick/smart quotes to double quotes.',
+  quoted_unquoted_key: 'Added double quotes around unquoted object key(s).',
+  removed_trailing_comma: 'Removed trailing comma(s).',
+  python_literal: 'Mapped Python literal(s) True/False/None to JSON true/false/null.',
+  coerced_number: 'Normalized a numeric literal (e.g. a leading +).',
+  coerced_nonfinite_to_null: 'Replaced NaN/Infinity with null.',
+  coerced_undefined_to_null: 'Replaced undefined with null.',
+  unquoted_value_to_string: 'Treated a bareword value as a string — this can change the intended type/meaning.',
+  auto_closed_string: 'Auto-closed an unterminated string.',
+  auto_closed_object: 'Auto-closed an unterminated object.',
+  auto_closed_array: 'Auto-closed an unterminated array.',
+};
+const riskOf = (r: string): Risk => HIGH_RISK.has(r) ? 'high' : MEDIUM_RISK.has(r) ? 'medium' : 'low';
+function buildDiff(repairs: string[]): { repaired_diff: RepairDiff[]; semantic_risk: Risk } {
+  const repaired_diff = repairs.map((r) => ({ repair: r, description: REPAIR_DESC[r] ?? r, semantic_risk: riskOf(r) }));
+  const semantic_risk: Risk = repaired_diff.some((d) => d.semantic_risk === 'high') ? 'high' : repaired_diff.some((d) => d.semantic_risk === 'medium') ? 'medium' : 'low';
+  return { repaired_diff, semantic_risk };
 }
 
 export function repair(body: any): { error: string } | { result: RepairCore } {
@@ -154,7 +185,7 @@ export function repair(body: any): { error: string } | { result: RepairCore } {
   // Fast path: already valid
   try {
     const parsed = JSON.parse(text);
-    const core: RepairCore = { original_valid: true, valid_json: true, repaired: false, repairs_applied: [], parse_error: null, repaired_text: JSON.stringify(parsed) };
+    const core: RepairCore = { original_valid: true, valid_json: true, repaired: false, repairs_applied: [], repaired_diff: [], semantic_risk: 'low', parse_error: null, repaired_text: JSON.stringify(parsed) };
     if (return_parsed) core.parsed = parsed;
     return { result: core };
   } catch { /* fall through to repair */ }
@@ -172,16 +203,18 @@ export function repair(body: any): { error: string } | { result: RepairCore } {
     const parsed = r.parse();
     for (const p of pre) r.repairs.add(p);
     const repaired_text = JSON.stringify(parsed);
+    const repairs_applied = [...r.repairs];
     const core: RepairCore = {
       original_valid: false, valid_json: true, repaired: true,
-      repairs_applied: [...r.repairs], parse_error: null, repaired_text,
+      repairs_applied, ...buildDiff(repairs_applied), parse_error: null, repaired_text,
     };
     if (return_parsed) core.parsed = parsed;
     return { result: core };
   } catch (e: any) {
+    const repairs_applied = [...pre];
     const core: RepairCore = {
       original_valid: false, valid_json: false, repaired: false,
-      repairs_applied: [...pre], parse_error: e?.message || String(e), repaired_text: null,
+      repairs_applied, ...buildDiff(repairs_applied), parse_error: e?.message || String(e), repaired_text: null,
     };
     if (return_parsed) core.parsed = null;
     return { result: core };
@@ -192,7 +225,7 @@ function actions(r: RepairCore): string[] {
   if (r.original_valid) return ['Input was already valid JSON — no repair needed.'];
   if (r.valid_json) return [
     `Repaired: applied ${r.repairs_applied.length} fix(es) [${r.repairs_applied.join(', ')}] and re-serialized valid JSON.`,
-    'Verify the parsed result — repairs like quote normalization, unquoted-value-to-string, or auto-closing can change meaning.',
+    `Semantic risk: ${r.semantic_risk}.${r.semantic_risk === 'low' ? ' Repairs were cosmetic.' : ' Verify the parsed result against intent — see repaired_diff for the meaning-changing transforms.'}`,
   ];
   return [`Could not produce valid JSON: ${r.parse_error}. Inspect repaired_text=null and the original input.`];
 }
@@ -246,7 +279,7 @@ router.post('/lookup', (req: Request, res: Response) => {
     ...v,
     reasoning: {
       why_result_generated: v.original_valid ? 'Input parsed as-is; no repair applied.' : v.valid_json ? `Applied ${v.repairs_applied.length} repair(s) and re-parsed successfully.` : `Repair failed: ${v.parse_error}.`,
-      key_factors: [v.original_valid ? 'Original was valid JSON.' : `Original invalid; repairs: ${v.repairs_applied.join(', ') || 'none'}.`, `valid_json=${v.valid_json}.`, 'Output is canonical re-serialized JSON.'],
+      key_factors: [v.original_valid ? 'Original was valid JSON.' : `Original invalid; repairs: ${v.repairs_applied.join(', ') || 'none'}.`, `valid_json=${v.valid_json}; semantic_risk=${v.semantic_risk}.`, 'Output is canonical re-serialized JSON.'],
       invalidators: INVALIDATORS,
     },
     confidence_score: conf(v), confidence_per_section: { repair: conf(v) },

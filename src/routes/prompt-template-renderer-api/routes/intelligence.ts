@@ -10,13 +10,18 @@ import { respond, fail } from '../../_aplus/scaffold';
 
 const router = Router();
 const MAX_CHARS = 200_000;
-const PLACEHOLDER = /\{\{\s*([A-Za-z0-9_$][A-Za-z0-9_$.]*)\s*\}\}/g;
+// {{ name }} / {{ a.b.c }} (default) and ${ name } (dollar_brace mode).
+const RE_DOUBLE = /\{\{\s*([A-Za-z0-9_$][A-Za-z0-9_$.]*)\s*\}\}/g;
+const RE_DOLLAR = /\$\{\s*([A-Za-z0-9_$][A-Za-z0-9_$.]*)\s*\}/g;
 
 type Missing = 'keep' | 'empty' | 'error';
+type Syntax = 'double_brace' | 'dollar_brace';
 
 export interface RenderCore {
+  syntax: Syntax;
   variables_in_template: string[]; variables_provided: string[];
-  missing_variables: string[]; unused_variables: string[];
+  missing_variables: string[]; unused_variables: string[]; duplicate_placeholders: string[];
+  resolved_variable_map: Record<string, string>;
   placeholder_count: number; unique_variable_count: number; all_resolved: boolean;
   missing_behavior: Missing; rendered: string | null; rendered_length: number | null;
 }
@@ -53,20 +58,33 @@ export function render(body: any): { error: string } | { result: RenderCore } {
   if (mbIn !== undefined && !['keep', 'empty', 'error'].includes(mbIn)) return { error: '"missing_behavior" must be one of: keep, empty, error.' };
   const missing_behavior: Missing = mbIn ?? 'keep';
 
-  // Scan placeholders (preserve first-seen order)
+  const synIn = body?.syntax;
+  if (synIn !== undefined && !['double_brace', 'dollar_brace'].includes(synIn)) return { error: '"syntax" must be one of: double_brace, dollar_brace.' };
+  const syntax: Syntax = synIn ?? 'double_brace';
+  const RE = syntax === 'dollar_brace' ? RE_DOLLAR : RE_DOUBLE;
+
+  // Scan placeholders (preserve first-seen order; count repeats)
   const order: string[] = [];
   const seen = new Set<string>();
+  const pathCounts = new Map<string, number>();
   let placeholder_count = 0;
   let m: RegExpExecArray | null;
-  PLACEHOLDER.lastIndex = 0;
-  while ((m = PLACEHOLDER.exec(template)) !== null) {
+  RE.lastIndex = 0;
+  while ((m = RE.exec(template)) !== null) {
     placeholder_count++;
     const path = m[1];
+    pathCounts.set(path, (pathCounts.get(path) ?? 0) + 1);
     if (!seen.has(path)) { seen.add(path); order.push(path); }
   }
+  const duplicate_placeholders = order.filter((p) => (pathCounts.get(p) ?? 0) > 1);
 
   const missingSet = new Set<string>();
-  for (const path of order) if (resolve(vars, path) === undefined) missingSet.add(path);
+  const resolved_variable_map: Record<string, string> = {};
+  for (const path of order) {
+    const v = resolve(vars, path);
+    if (v === undefined) missingSet.add(path);
+    else resolved_variable_map[path] = fmt(v);
+  }
 
   const variables_provided = Object.keys(vars);
   const usedRoots = new Set(order.map((p) => p.split('.')[0]));
@@ -78,7 +96,7 @@ export function render(body: any): { error: string } | { result: RenderCore } {
   if (missing_behavior === 'error' && !all_resolved) {
     rendered = null; rendered_length = null;
   } else {
-    rendered = template.replace(PLACEHOLDER, (whole, path) => {
+    rendered = template.replace(RE, (whole, path) => {
       const v = resolve(vars, path);
       if (v === undefined) return missing_behavior === 'empty' ? '' : whole; // 'keep'
       return fmt(v);
@@ -88,8 +106,10 @@ export function render(body: any): { error: string } | { result: RenderCore } {
 
   return {
     result: {
+      syntax,
       variables_in_template: order, variables_provided,
-      missing_variables: [...missingSet], unused_variables,
+      missing_variables: [...missingSet], unused_variables, duplicate_placeholders,
+      resolved_variable_map,
       placeholder_count, unique_variable_count: order.length, all_resolved,
       missing_behavior, rendered, rendered_length,
     },
@@ -152,7 +172,7 @@ router.post('/lookup', (req: Request, res: Response) => {
     ...v,
     reasoning: {
       why_result_generated: `${v.placeholder_count} placeholder(s), ${v.unique_variable_count} unique variable(s); ${v.all_resolved ? 'all resolved' : `${v.missing_variables.length} missing`}.`,
-      key_factors: [`Referenced: ${v.variables_in_template.join(', ') || 'none'}.`, v.missing_variables.length ? `Missing: ${v.missing_variables.join(', ')}.` : 'No missing variables.', `missing_behavior=${v.missing_behavior}.`],
+      key_factors: [`Referenced (${v.syntax}): ${v.variables_in_template.join(', ') || 'none'}.`, v.missing_variables.length ? `Missing: ${v.missing_variables.join(', ')}.` : 'No missing variables.', `missing_behavior=${v.missing_behavior}${v.duplicate_placeholders.length ? `; duplicated: ${v.duplicate_placeholders.join(', ')}` : ''}.`],
       invalidators: INVALIDATORS,
     },
     confidence_score: 1, confidence_per_section: { render: 1 },

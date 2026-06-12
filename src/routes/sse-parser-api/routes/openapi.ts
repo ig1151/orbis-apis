@@ -11,10 +11,12 @@ const SseEvent = {
 };
 const ParseCore = {
   type: 'object',
-  required: ['event_count', 'comment_count', 'json_parsed_count', 'done', 'byte_length', 'events'],
+  required: ['event_count', 'comment_count', 'json_parsed_count', 'done', 'byte_length', 'stream_type_detected', 'assembled_text', 'events'],
   properties: {
     event_count: { type: 'integer' }, comment_count: { type: 'integer' }, json_parsed_count: { type: 'integer' },
     done: { type: 'boolean' }, byte_length: { type: 'integer' },
+    stream_type_detected: { type: 'string', enum: ['openai', 'anthropic', 'generic', 'unknown'], description: 'Heuristic provider detection from event shapes.' },
+    assembled_text: { type: ['string', 'null'], description: 'Concatenated content fragments when assemble=true; null otherwise.' },
     events: { type: 'array', items: { $ref: '#/components/schemas/SseEvent' } },
   },
 };
@@ -24,11 +26,14 @@ const ParseRequest = {
   properties: {
     text: { type: 'string', minLength: 1, maxLength: 500000, description: 'Raw text/event-stream text.' },
     parse_json: { type: 'boolean', description: 'Best-effort JSON.parse each data field. Default true.' },
+    assemble: { type: 'boolean', description: 'Reconstruct concatenated content into assembled_text. Default false.' },
+    content_path: { type: 'string', description: 'Dotted path into each data_json to pull the text fragment (e.g. choices.0.delta.content). Overrides auto-detection.' },
   },
 };
 
 const CORE = {
   event_count: 3, comment_count: 0, json_parsed_count: 2, done: true, byte_length: 74,
+  stream_type_detected: 'generic', assembled_text: 'Hello',
   events: [
     { event: 'message', id: null, data: '{"delta":"Hel"}', data_json: { delta: 'Hel' }, data_is_json: true, retry: null, is_done: false },
     { event: null, id: null, data: '{"delta":"lo"}', data_json: { delta: 'lo' }, data_is_json: true, retry: null, is_done: false },
@@ -37,6 +42,7 @@ const CORE = {
 };
 const ACTS = [
   'Parsed 3 SSE event(s); 2 with JSON data.',
+  'Assembled 5 chars of content (stream_type_detected=generic).',
   'Stream terminated: [DONE] sentinel present.',
 ];
 const CHAIN = [
@@ -67,9 +73,26 @@ const schemas = {
 };
 
 const env = { trace_id: 'sse-1780000000000', computed_at: '2026-06-11T12:00:00.000Z', success: true, latency_ms: 0 };
-const reqEx = { text: 'event: message\ndata: {"delta":"Hel"}\n\ndata: {"delta":"lo"}\n\ndata: [DONE]\n\n' };
+const reqEx = { text: 'event: message\ndata: {"delta":"Hel"}\n\ndata: {"delta":"lo"}\n\ndata: [DONE]\n\n', assemble: true };
 const endpoints: AplusEndpoint[] = [
-  { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
+  {
+    method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse',
+    responseExample: {
+      name: 'SSE / Streaming Chunk Parser API', version: '1.0.0',
+      description: 'Deterministic Server-Sent Events parser for LLM streaming responses. Parses raw text/event-stream text (event/data/id/retry fields, multi-line data, comments, blank-line boundaries) into structured events, best-effort JSON-parses each data payload, and flags the [DONE] terminator. Pure parsing — no LLM.',
+      openapi_url: 'https://orbis-apis.onrender.com/sse-parser/openapi.json',
+      auth: { type: 'apiKey', header: 'X-API-Key' },
+      endpoints: [
+        { method: 'POST', path: '/parse', summary: 'Parse raw SSE into structured events', price_usdc: 0.004 },
+        { method: 'POST', path: '/lookup', summary: 'ONE-CALL parse + reasoning', price_usdc: 0.008 },
+      ],
+      pricing: [
+        { path: '/parse', price_usdc: 0.004, currency: 'USDC' },
+        { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
+      ],
+      x402_compatible: true,
+    },
+  },
   {
     method: 'post', path: '/parse', summary: 'Parse raw SSE into structured events', operationId: 'parse', priceUsdc: 0.004,
     requestSchemaRef: 'ParseRequest', responseSchemaRef: 'ParseResponse', requestExample: reqEx,
@@ -81,8 +104,8 @@ const endpoints: AplusEndpoint[] = [
     responseExample: {
       ...env, ...CORE,
       reasoning: {
-        why_result_generated: '3 event(s) parsed from 74 bytes; 2 JSON, done=true.',
-        key_factors: ['3 events, 0 comments.', '2 data payloads parsed as JSON.', '[DONE] sentinel present.'],
+        why_result_generated: '3 event(s) parsed from 74 bytes; 2 JSON, done=true, stream_type=generic.',
+        key_factors: ['3 events, 0 comments; detected generic.', '2 data payloads parsed as JSON.', 'Assembled 5 chars.'],
         invalidators: INVALIDATORS,
       },
       ...TAIL,

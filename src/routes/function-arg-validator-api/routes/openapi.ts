@@ -7,12 +7,14 @@ const NormErr = {
 };
 const ArgCore = {
   type: 'object',
-  required: ['valid', 'error_count', 'errors', 'missing_required', 'extra_properties', 'coercion_applied', 'coercion_valid', 'coerced_arguments'],
+  required: ['schema_dialect', 'validation_mode', 'valid', 'error_count', 'errors', 'missing_required', 'extra_properties', 'coercion_applied', 'valid_after_coercion', 'coerced_arguments'],
   properties: {
+    schema_dialect: { type: 'string', description: 'JSON Schema dialect used by the validator.' },
+    validation_mode: { type: 'string', enum: ['strict'], description: 'The strict result is authoritative; coercion is reported separately.' },
     valid: { type: 'boolean' }, error_count: { type: 'integer' },
     errors: { type: 'array', items: { $ref: '#/components/schemas/NormErr' } },
     missing_required: { type: 'array', items: { type: 'string' } }, extra_properties: { type: 'array', items: { type: 'string' } },
-    coercion_applied: { type: 'boolean' }, coercion_valid: { type: 'boolean' },
+    coercion_applied: { type: 'boolean' }, valid_after_coercion: { type: 'boolean' },
     coerced_arguments: { description: 'The arguments after the coercion pass (any JSON value).' },
   },
 };
@@ -26,10 +28,11 @@ const ValidateRequest = {
 };
 
 const CORE = {
+  schema_dialect: '2020-12', validation_mode: 'strict',
   valid: false, error_count: 1,
   errors: [{ instance_path: '/days', keyword: 'type', message: 'must be integer' }],
   missing_required: [], extra_properties: [],
-  coercion_applied: true, coercion_valid: true, coerced_arguments: { city: 'Denver', days: 3 },
+  coercion_applied: true, valid_after_coercion: true, coerced_arguments: { city: 'Denver', days: 3 },
 };
 const ACTS = [
   'Invalid: 1 error(s).',
@@ -65,7 +68,24 @@ const schemas = {
 const env = { trace_id: 'fav-1780000000000', computed_at: '2026-06-11T12:00:00.000Z', success: true, latency_ms: 0 };
 const reqEx = { schema: { type: 'object', properties: { city: { type: 'string' }, days: { type: 'integer' } }, required: ['city'], additionalProperties: false }, arguments: { city: 'Denver', days: '3' } };
 const endpoints: AplusEndpoint[] = [
-  { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
+  {
+    method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse',
+    responseExample: {
+      name: 'Function-Call Argument Validator API', version: '1.0.0',
+      description: 'Deterministic validator for LLM function/tool-call arguments against a JSON Schema (ajv, 2020-12 dialect). Returns pass/fail, normalized errors, missing-required and unexpected-extra keys, and a coercion pass showing whether string→number/boolean coercion + defaults would make the arguments valid. No LLM.',
+      openapi_url: 'https://orbis-apis.onrender.com/function-arg-validator/openapi.json',
+      auth: { type: 'apiKey', header: 'X-API-Key' },
+      endpoints: [
+        { method: 'POST', path: '/validate', summary: 'Validate arguments against a JSON Schema', price_usdc: 0.005 },
+        { method: 'POST', path: '/lookup', summary: 'ONE-CALL validation + coercion + reasoning', price_usdc: 0.009 },
+      ],
+      pricing: [
+        { path: '/validate', price_usdc: 0.005, currency: 'USDC' },
+        { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
+      ],
+      x402_compatible: true,
+    },
+  },
   {
     method: 'post', path: '/validate', summary: 'Validate arguments against a JSON Schema', operationId: 'validate', priceUsdc: 0.005,
     requestSchemaRef: 'ValidateRequest', responseSchemaRef: 'ValidateResponse', requestExample: reqEx,

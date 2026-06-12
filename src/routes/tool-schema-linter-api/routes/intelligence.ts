@@ -16,14 +16,32 @@ const MAX_NODES = 4000;
 const MAX_DEPTH = 6;
 
 type Severity = 'error' | 'warning' | 'info';
-export interface Finding { severity: Severity; code: string; path: string; message: string; }
+type RuleType = 'json_schema' | 'llm_tooling_heuristic';
+export interface Finding { severity: Severity; code: string; rule_type: RuleType; path: string; message: string; }
 export interface LintCore {
   tool_name: string | null; has_parameters: boolean; property_count: number;
   findings: Finding[]; counts: { error: number; warning: number; info: number; total: number };
+  rule_type_counts: { json_schema: number; llm_tooling_heuristic: number };
   lint_score: number; passed: boolean;
 }
 
-const PRIM = new Set(['string', 'number', 'integer', 'boolean', 'null']);
+// json_schema = a structural JSON Schema correctness issue (universal).
+// llm_tooling_heuristic = a model-behavior best-practice ($ref/oneOf support,
+// descriptions, naming) that is NOT inherently a spec violation.
+const RULE_TYPE: Record<string, RuleType> = {
+  TOOL_NAME_MISSING: 'llm_tooling_heuristic', TOOL_NAME_INVALID: 'llm_tooling_heuristic',
+  TOOL_DESCRIPTION_MISSING: 'llm_tooling_heuristic', TOOL_DESCRIPTION_SHORT: 'llm_tooling_heuristic',
+  NO_PARAMETERS: 'llm_tooling_heuristic', PARAMETERS_NOT_OBJECT: 'json_schema', ROOT_NOT_OBJECT: 'llm_tooling_heuristic',
+  SCHEMA_NODE_NOT_OBJECT: 'json_schema', DEEP_NESTING: 'llm_tooling_heuristic',
+  REF_UNSUPPORTED: 'llm_tooling_heuristic', COMPOSITION_KEYWORD: 'llm_tooling_heuristic',
+  MISSING_TYPE: 'json_schema', ENUM_EMPTY: 'json_schema', ENUM_NON_PRIMITIVE: 'llm_tooling_heuristic', ENUM_TOO_LARGE: 'llm_tooling_heuristic',
+  OBJECT_NO_PROPERTIES: 'llm_tooling_heuristic', ADDITIONAL_PROPERTIES_NOT_FALSE: 'llm_tooling_heuristic',
+  REQUIRED_NOT_IN_PROPERTIES: 'json_schema', PROPERTY_NO_DESCRIPTION: 'llm_tooling_heuristic', REQUIRED_NOT_DESCRIBED: 'llm_tooling_heuristic',
+  DUPLICATE_DESCRIPTION: 'llm_tooling_heuristic', AMBIGUOUS_PARAM_NAME: 'llm_tooling_heuristic',
+  ARRAY_NO_ITEMS: 'json_schema', SCHEMA_TRUNCATED: 'llm_tooling_heuristic',
+};
+const ruleType = (code: string): RuleType => RULE_TYPE[code] ?? 'llm_tooling_heuristic';
+const AMBIGUOUS_NAMES = new Set(['data', 'value', 'val', 'input', 'output', 'arg', 'args', 'param', 'params', 'tmp', 'temp', 'obj', 'object', 'item', 'thing', 'x', 'y', 'z', 'foo', 'bar', 'baz']);
 
 export function lint(body: any): { error: string } | { result: LintCore } {
   if (body === null || typeof body !== 'object' || Array.isArray(body)) {
@@ -31,7 +49,8 @@ export function lint(body: any): { error: string } | { result: LintCore } {
   }
   const tool = (body.tool && typeof body.tool === 'object') ? body.tool : body;
   const findings: Finding[] = [];
-  const add = (severity: Severity, code: string, path: string, message: string) => findings.push({ severity, code, path, message });
+  const add = (severity: Severity, code: string, path: string, message: string) => findings.push({ severity, code, rule_type: ruleType(code), path, message });
+  const descSeen = new Map<string, string>(); // description -> first path, for duplicate detection
 
   // ---- tool-level ----
   const name = tool.name;
@@ -86,7 +105,10 @@ export function lint(body: any): { error: string } | { result: LintCore } {
 
       if (node.enum !== undefined) {
         if (!Array.isArray(node.enum) || node.enum.length === 0) add('error', 'ENUM_EMPTY', `${path}.enum`, '"enum" must be a non-empty array.');
-        else if (node.enum.some((v: any) => v !== null && typeof v === 'object')) add('warning', 'ENUM_NON_PRIMITIVE', `${path}.enum`, '"enum" contains non-primitive values; models reproduce primitive enums far more reliably.');
+        else {
+          if (node.enum.some((v: any) => v !== null && typeof v === 'object')) add('warning', 'ENUM_NON_PRIMITIVE', `${path}.enum`, '"enum" contains non-primitive values; models reproduce primitive enums far more reliably.');
+          if (node.enum.length > 100) add('warning', 'ENUM_TOO_LARGE', `${path}.enum`, `"enum" has ${node.enum.length} entries (>100); models pick poorly from very large enums — consider a free string with format guidance.`);
+        }
       }
 
       const t = node.type;
@@ -97,11 +119,21 @@ export function lint(body: any): { error: string } | { result: LintCore } {
         } else {
           if (node.additionalProperties !== false) add('warning', 'ADDITIONAL_PROPERTIES_NOT_FALSE', path, 'Set "additionalProperties": false so the model cannot invent extra arguments.');
           const req = Array.isArray(node.required) ? node.required : [];
+          const reqSet = new Set(req);
           for (const r of req) if (!(r in props)) add('error', 'REQUIRED_NOT_IN_PROPERTIES', `${path}.required`, `Required property "${r}" is not defined in "properties".`);
           for (const [pk, pv] of Object.entries(props)) {
             const ppath = `${path}.properties.${pk}`;
+            if (pk.length === 1 || AMBIGUOUS_NAMES.has(pk.toLowerCase())) add('info', 'AMBIGUOUS_PARAM_NAME', ppath, `Property name "${pk}" is ambiguous; a descriptive name helps the model fill it correctly.`);
             if (pv && typeof pv === 'object' && !Array.isArray(pv)) {
-              if (typeof (pv as any).description !== 'string' || !(pv as any).description.trim()) add('info', 'PROPERTY_NO_DESCRIPTION', ppath, `Property "${pk}" has no "description".`);
+              const d = typeof (pv as any).description === 'string' ? (pv as any).description.trim() : '';
+              if (!d) {
+                if (reqSet.has(pk)) add('warning', 'REQUIRED_NOT_DESCRIBED', ppath, `Required property "${pk}" has no "description" — the model must guess what to pass.`);
+                else add('info', 'PROPERTY_NO_DESCRIPTION', ppath, `Property "${pk}" has no "description".`);
+              } else {
+                const prior = descSeen.get(d);
+                if (prior) add('info', 'DUPLICATE_DESCRIPTION', ppath, `Property "${pk}" reuses the same description as ${prior}; distinct descriptions disambiguate arguments.`);
+                else descSeen.set(d, ppath);
+              }
             }
             walk(pv, ppath, depth + 1);
           }
@@ -118,14 +150,15 @@ export function lint(body: any): { error: string } | { result: LintCore } {
   }
 
   const counts = { error: 0, warning: 0, info: 0, total: findings.length };
-  for (const f of findings) counts[f.severity]++;
+  const rule_type_counts = { json_schema: 0, llm_tooling_heuristic: 0 };
+  for (const f of findings) { counts[f.severity]++; rule_type_counts[f.rule_type]++; }
   let lint_score = 100 - counts.error * 25 - counts.warning * 8 - counts.info * 2;
   if (lint_score < 0) lint_score = 0;
 
   return {
     result: {
       tool_name: typeof name === 'string' ? name : null,
-      has_parameters, property_count, findings, counts, lint_score, passed: counts.error === 0,
+      has_parameters, property_count, findings, counts, rule_type_counts, lint_score, passed: counts.error === 0,
     },
   };
 }
@@ -146,7 +179,7 @@ const CHAIN_TO = [
 ];
 const CONF = { lint: 0.9 };
 const INVALIDATORS = [
-  'Lint rules are best-practice heuristics for LLM tool-calling, not a JSON Schema spec conformance check.',
+  'Findings tagged rule_type "llm_tooling_heuristic" (e.g. $ref/oneOf/anyOf, descriptions, naming) are model-behavior best-practices, NOT JSON Schema spec violations — only "json_schema" findings are universal correctness issues.',
   'Provider support varies — some models handle $ref/oneOf/anyOf fine while others do not; verify against your provider.',
   'A high score means structurally sound, not that the descriptions actually guide the model well.',
 ];
@@ -189,7 +222,7 @@ router.post('/lookup', (req: Request, res: Response) => {
     ...v,
     reasoning: {
       why_result_generated: `${v.findings.length} finding(s) (${v.counts.error} error, ${v.counts.warning} warning, ${v.counts.info} info) → score ${v.lint_score}/100, ${v.passed ? 'passed' : 'failed'}.`,
-      key_factors: [`Tool "${v.tool_name ?? '(unnamed)'}", ${v.property_count} top-level propert${v.property_count === 1 ? 'y' : 'ies'}.`, v.passed ? 'No structural errors.' : `${v.counts.error} error(s) block reliable calling.`, 'Score = 100 − 25·errors − 8·warnings − 2·info (floored at 0).'],
+      key_factors: [`Tool "${v.tool_name ?? '(unnamed)'}", ${v.property_count} top-level propert${v.property_count === 1 ? 'y' : 'ies'}.`, v.passed ? 'No structural errors.' : `${v.counts.error} error(s) block reliable calling.`, `${v.rule_type_counts.json_schema} json_schema vs ${v.rule_type_counts.llm_tooling_heuristic} llm_tooling_heuristic finding(s); score = 100 − 25·errors − 8·warnings − 2·info (floored at 0).`],
       invalidators: INVALIDATORS,
     },
     confidence_score: 0.9, confidence_per_section: CONF,

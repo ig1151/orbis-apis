@@ -40,7 +40,7 @@ function driftGuard(slug) {
     check(slug, `spec example ${method.toUpperCase()} ${path}`, (media.schema?.$ref || '').split('/').pop(), media.example);
   }
 }
-const VOLATILE = new Set(['trace_id', 'computed_at', 'latency_ms']);
+const VOLATILE = new Set(['trace_id', 'request_id', 'computed_at', 'latency_ms']);
 function stripVolatile(o) { const c = JSON.parse(JSON.stringify(o)); for (const k of VOLATILE) delete c[k]; return c; }
 async function call(base, method, path, body) {
   const res = await fetch(`${base}${path}`, { method, headers: { 'content-type': 'application/json' }, body: body !== undefined ? JSON.stringify(body) : undefined });

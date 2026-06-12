@@ -17,9 +17,10 @@ const MAX_ERRORS = 100;
 
 export interface NormErr { instance_path: string; keyword: string; message: string; }
 export interface ArgCore {
+  schema_dialect: string; validation_mode: string;
   valid: boolean; error_count: number; errors: NormErr[];
   missing_required: string[]; extra_properties: string[];
-  coercion_applied: boolean; coercion_valid: boolean; coerced_arguments: unknown;
+  coercion_applied: boolean; valid_after_coercion: boolean; coerced_arguments: unknown;
 }
 
 function normalize(errs: ErrorObject[] | null | undefined): NormErr[] {
@@ -68,23 +69,24 @@ export function validateArgs(body: any): { error: string } | { result: ArgCore }
   }
 
   // Coercion pass (does not mutate the strict result)
-  let coercion_valid = valid;
+  let valid_after_coercion = valid;
   let coerced_arguments: unknown = args;
   let coercion_applied = false;
   try {
     const clone = JSON.parse(argsBytes);
     const ajvC = new Ajv2020({ strict: false, allErrors: true, coerceTypes: true, useDefaults: true });
     const cv = ajvC.compile(schema);
-    coercion_valid = cv(clone) === true;
+    valid_after_coercion = cv(clone) === true;
     coerced_arguments = clone;
     coercion_applied = JSON.stringify(clone) !== argsBytes;
   } catch { /* keep strict values */ }
 
   return {
     result: {
+      schema_dialect: '2020-12', validation_mode: 'strict',
       valid, error_count: errors.length, errors,
       missing_required: [...new Set(missing_required)], extra_properties: [...new Set(extra_properties)],
-      coercion_applied, coercion_valid, coerced_arguments,
+      coercion_applied, valid_after_coercion, coerced_arguments,
     },
   };
 }
@@ -94,7 +96,7 @@ function actions(r: ArgCore): string[] {
   if (r.valid) out.push('Arguments are valid against the schema — safe to dispatch the tool call.');
   else {
     out.push(`Invalid: ${r.error_count} error(s)${r.missing_required.length ? `, missing [${r.missing_required.join(', ')}]` : ''}${r.extra_properties.length ? `, unexpected [${r.extra_properties.join(', ')}]` : ''}.`);
-    if (!r.valid && r.coercion_valid) out.push('Light coercion (string→number/boolean, defaults) WOULD make it valid — use coerced_arguments instead of re-prompting.');
+    if (!r.valid && r.valid_after_coercion) out.push('Light coercion (string→number/boolean, defaults) WOULD make it valid — use coerced_arguments instead of re-prompting.');
     else out.push('Coercion does not fix it — re-prompt the model with the error messages.');
   }
   return out;
@@ -148,8 +150,8 @@ router.post('/lookup', (req: Request, res: Response) => {
   respond(res, t0, {
     ...v,
     reasoning: {
-      why_result_generated: `${v.valid ? 'Valid' : `Invalid (${v.error_count} error(s))`}${!v.valid && v.coercion_valid ? '; valid after coercion' : ''}.`,
-      key_factors: [v.valid ? 'Passed strict validation.' : `Strict errors: ${v.error_count}.`, v.missing_required.length ? `Missing required: ${v.missing_required.join(', ')}.` : 'No missing required keys.', v.coercion_applied ? `Coercion changed the arguments; valid_after_coercion=${v.coercion_valid}.` : 'No coercion changed the arguments.'],
+      why_result_generated: `${v.valid ? 'Valid' : `Invalid (${v.error_count} error(s))`}${!v.valid && v.valid_after_coercion ? '; valid after coercion' : ''}.`,
+      key_factors: [v.valid ? 'Passed strict validation.' : `Strict errors: ${v.error_count}.`, v.missing_required.length ? `Missing required: ${v.missing_required.join(', ')}.` : 'No missing required keys.', v.coercion_applied ? `Coercion changed the arguments; valid_after_coercion=${v.valid_after_coercion}.` : 'No coercion changed the arguments.'],
       invalidators: INVALIDATORS,
     },
     confidence_score: 1, confidence_per_section: CONF,

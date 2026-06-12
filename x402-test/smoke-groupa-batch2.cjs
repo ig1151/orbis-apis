@@ -40,7 +40,7 @@ function driftGuard(slug) {
     check(slug, `spec example ${method.toUpperCase()} ${path}`, (media.schema?.$ref || '').split('/').pop(), media.example);
   }
 }
-const VOLATILE = new Set(['trace_id', 'computed_at', 'latency_ms']);
+const VOLATILE = new Set(['trace_id', 'request_id', 'computed_at', 'latency_ms']);
 function stripVolatile(o) { const c = JSON.parse(JSON.stringify(o)); for (const k of VOLATILE) delete c[k]; return c; }
 async function call(base, method, path, body) {
   const res = await fetch(`${base}${path}`, { method, headers: { 'content-type': 'application/json' }, body: body !== undefined ? JSON.stringify(body) : undefined });
@@ -56,7 +56,17 @@ async function run(base) {
     const r = (await call(base, 'POST', '/tool-schema-linter/lint', tool)).json;
     check('tool-schema-linter', 'POST /lint (well-formed w/ warnings)', 'LintResponse', r, d =>
       d.passed === true && d.tool_name === 'get_weather' && d.property_count === 2 && d.counts.error === 0
-        && d.findings.some(f => f.code === 'ADDITIONAL_PROPERTIES_NOT_FALSE') && d.lint_score === 90 ? null : `unexpected ${d.passed}/${d.lint_score}/${JSON.stringify(d.counts)}`);
+        && d.findings.some(f => f.code === 'ADDITIONAL_PROPERTIES_NOT_FALSE') && d.lint_score === 90
+        && d.findings.every(f => f.rule_type === 'json_schema' || f.rule_type === 'llm_tooling_heuristic')
+        && d.rule_type_counts.llm_tooling_heuristic === 2 && d.rule_type_counts.json_schema === 0 ? null : `unexpected ${d.passed}/${d.lint_score}/${JSON.stringify(d.rule_type_counts)}`);
+  }
+  {
+    // new checks: ambiguous name, required-not-described, duplicate description, $ref tagged heuristic
+    const tool = { name: 'f', description: 'A tool that does a thing.', parameters: { type: 'object', additionalProperties: false, properties: { data: { type: 'string', description: 'same' }, value: { type: 'string', description: 'same' }, ref: { $ref: '#/$defs/x' } }, required: ['data'] } };
+    const r = (await call(base, 'POST', '/tool-schema-linter/lint', tool)).json;
+    check('tool-schema-linter', 'POST /lint (new heuristics)', 'LintResponse', r, d =>
+      d.findings.some(f => f.code === 'AMBIGUOUS_PARAM_NAME') && d.findings.some(f => f.code === 'DUPLICATE_DESCRIPTION')
+        && d.findings.some(f => f.code === 'REF_UNSUPPORTED' && f.rule_type === 'llm_tooling_heuristic') ? null : `missing new findings: ${d.findings.map(f => f.code).join(',')}`);
   }
   {
     // bad: invalid name + required not in properties → errors
@@ -75,9 +85,16 @@ async function run(base) {
     const schema = { type: 'object', properties: { city: { type: 'string' }, days: { type: 'integer' } }, required: ['city'], additionalProperties: false };
     const r = (await call(base, 'POST', '/function-arg-validator/validate', { schema, arguments: { city: 'Denver', days: '3' } })).json;
     check('function-arg-validator', 'POST /validate (coercible)', 'ValidateResponse', r, d =>
-      d.valid === false && d.error_count === 1 && d.coercion_valid === true && d.coercion_applied === true
-        && d.coerced_arguments.days === 3 && d.errors[0].instance_path === '/days' ? null : `unexpected ${d.valid}/${d.coercion_valid}/${JSON.stringify(d.coerced_arguments)}`);
+      d.valid === false && d.error_count === 1 && d.valid_after_coercion === true && d.coercion_applied === true
+        && d.coerced_arguments.days === 3 && d.errors[0].instance_path === '/days'
+        && d.schema_dialect === '2020-12' && d.validation_mode === 'strict' ? null : `unexpected ${d.valid}/${d.valid_after_coercion}/${JSON.stringify(d.coerced_arguments)}`);
   }
+  // advanced JSON Schema keywords (ChatGPT-requested edge cases)
+  check('function-arg-validator', 'POST /validate (oneOf)', 'ValidateResponse', (await call(base, 'POST', '/function-arg-validator/validate', { schema: { oneOf: [{ type: 'string' }, { type: 'integer' }] }, arguments: 5 })).json, d => d.valid === true ? null : 'oneOf should pass for integer');
+  check('function-arg-validator', 'POST /validate (if/then/else)', 'ValidateResponse', (await call(base, 'POST', '/function-arg-validator/validate', { schema: { type: 'object', if: { properties: { kind: { const: 'a' } }, required: ['kind'] }, then: { required: ['a_field'] }, properties: { kind: {}, a_field: {} } }, arguments: { kind: 'a' } })).json, d => d.valid === false && d.missing_required.includes('a_field') ? null : `if/then expected missing a_field, got ${JSON.stringify(d.missing_required)}`);
+  check('function-arg-validator', 'POST /validate (patternProperties)', 'ValidateResponse', (await call(base, 'POST', '/function-arg-validator/validate', { schema: { type: 'object', patternProperties: { '^x_': { type: 'number' } }, additionalProperties: false }, arguments: { x_a: 'nope' } })).json, d => d.valid === false ? null : 'patternProperties type should fail');
+  check('function-arg-validator', 'POST /validate (dependentRequired)', 'ValidateResponse', (await call(base, 'POST', '/function-arg-validator/validate', { schema: { type: 'object', properties: { card: {}, cvv: {} }, dependentRequired: { card: ['cvv'] } }, arguments: { card: '4111' } })).json, d => d.valid === false ? null : 'dependentRequired should fail without cvv');
+  check('function-arg-validator', 'POST /validate (unevaluatedProperties)', 'ValidateResponse', (await call(base, 'POST', '/function-arg-validator/validate', { schema: { type: 'object', properties: { a: {} }, unevaluatedProperties: false }, arguments: { a: 1, b: 2 } })).json, d => d.valid === false ? null : 'unevaluatedProperties:false should reject b');
   check('function-arg-validator', 'POST /validate (valid)', 'ValidateResponse', (await call(base, 'POST', '/function-arg-validator/validate', { schema: { type: 'object', properties: { x: { type: 'number' } }, required: ['x'] }, arguments: { x: 1 } })).json, d => d.valid === true && d.error_count === 0 ? null : 'expected valid');
   {
     const schema = { type: 'object', properties: { a: { type: 'string' } }, required: ['a', 'b'], additionalProperties: false };
@@ -100,8 +117,10 @@ async function run(base) {
       d.original_valid === false && d.valid_json === true && d.repaired === true
         && d.parsed.name === 'Ada' && d.parsed.admin === true && d.parsed.note === null && Array.isArray(d.parsed.tags) && d.parsed.tags.length === 2
         && d.repairs_applied.includes('stripped_code_fence') && d.repairs_applied.includes('python_literal') && d.repairs_applied.includes('removed_trailing_comma')
-        && d.confidence_score === 0.8 ? null : `unexpected ${d.valid_json}/${JSON.stringify(d.parsed)}/${JSON.stringify(d.repairs_applied)}`);
+        && d.semantic_risk === 'medium' && d.repaired_diff.length === d.repairs_applied.length && d.repaired_diff.every(x => ['low', 'medium', 'high'].includes(x.semantic_risk))
+        && d.confidence_score === 0.8 ? null : `unexpected ${d.valid_json}/${d.semantic_risk}/${JSON.stringify(d.repairs_applied)}`);
   }
+  check('json-repair', 'POST /repair (high risk: bareword)', 'RepairResponse', (await call(base, 'POST', '/json-repair/repair', { text: '{a: foo}' })).json, d => d.valid_json === true && d.semantic_risk === 'high' && d.repaired_diff.some(x => x.repair === 'unquoted_value_to_string' && x.semantic_risk === 'high') ? null : `expected high risk, got ${d.semantic_risk}`);
   check('json-repair', 'POST /repair (already valid)', 'RepairResponse', (await call(base, 'POST', '/json-repair/repair', { text: '{"a":1}' })).json, d => d.original_valid === true && d.repaired === false && d.repairs_applied.length === 0 && d.confidence_score === 1 ? null : 'expected original_valid');
   check('json-repair', 'POST /repair (leading prose + unclosed)', 'RepairResponse', (await call(base, 'POST', '/json-repair/repair', { text: 'Here you go: {"a": [1, 2, 3' })).json, d => d.valid_json === true && d.parsed.a.length === 3 && (d.repairs_applied.includes('stripped_leading_text') || d.repairs_applied.includes('auto_closed_array')) ? null : `unexpected ${d.valid_json}/${JSON.stringify(d.repairs_applied)}`);
   check('json-repair', 'POST /lookup', 'LookupResponse', (await call(base, 'POST', '/json-repair/lookup', { text: "{a:1}" })).json, d => d.reasoning && d.valid_json === true ? null : 'expected reasoning');
@@ -114,8 +133,11 @@ async function run(base) {
     check('prompt-template-renderer', 'POST /render (keep missing)', 'RenderResponse', r, d =>
       d.placeholder_count === 4 && d.unique_variable_count === 3 && d.all_resolved === false
         && d.missing_variables.length === 1 && d.missing_variables[0] === 'missing' && d.unused_variables.includes('extra')
+        && d.syntax === 'double_brace' && d.duplicate_placeholders.includes('user.name')
+        && d.resolved_variable_map['user.name'] === 'Ada' && d.resolved_variable_map.plan === 'Pro' && !('missing' in d.resolved_variable_map)
         && d.rendered === 'Hello Ada, your plan is Pro. Ref: Ada. {{ missing }}' && d.rendered_length === d.rendered.length ? null : `unexpected ${d.rendered}`);
   }
+  check('prompt-template-renderer', 'POST /render (dollar_brace syntax)', 'RenderResponse', (await call(base, 'POST', '/prompt-template-renderer/render', { template: 'Hi ${name}, ${name}!', variables: { name: 'Bo' }, syntax: 'dollar_brace' })).json, d => d.syntax === 'dollar_brace' && d.rendered === 'Hi Bo, Bo!' && d.duplicate_placeholders.includes('name') ? null : `unexpected ${d.rendered}`);
   check('prompt-template-renderer', 'POST /render (empty behavior)', 'RenderResponse', (await call(base, 'POST', '/prompt-template-renderer/render', { template: 'A{{x}}B', variables: {}, missing_behavior: 'empty' })).json, d => d.rendered === 'AB' && d.missing_variables.includes('x') ? null : `unexpected ${d.rendered}`);
   check('prompt-template-renderer', 'POST /render (error behavior → null)', 'RenderResponse', (await call(base, 'POST', '/prompt-template-renderer/render', { template: '{{x}}', variables: {}, missing_behavior: 'error' })).json, d => d.rendered === null && d.rendered_length === null && d.all_resolved === false ? null : `unexpected ${d.rendered}`);
   check('prompt-template-renderer', 'POST /render (all resolved)', 'RenderResponse', (await call(base, 'POST', '/prompt-template-renderer/render', { template: 'Hi {{name}}', variables: { name: 'Bo' } })).json, d => d.all_resolved === true && d.rendered === 'Hi Bo' && d.confidence_score === 1 ? null : `unexpected ${d.rendered}`);
@@ -131,7 +153,19 @@ async function run(base) {
     check('sse-parser', 'POST /parse (deltas + DONE)', 'ParseResponse', r, d =>
       d.event_count === 3 && d.json_parsed_count === 2 && d.done === true
         && d.events[0].event === 'message' && d.events[0].data_json.delta === 'Hel' && d.events[2].is_done === true
-        && d.byte_length === Buffer.byteLength(text, 'utf8') ? null : `unexpected ${d.event_count}/${d.done}/${d.byte_length}`);
+        && d.stream_type_detected === 'generic' && d.assembled_text === null
+        && d.byte_length === Buffer.byteLength(text, 'utf8') ? null : `unexpected ${d.event_count}/${d.stream_type_detected}/${d.assembled_text}`);
+  }
+  {
+    const text = 'data: {"delta":"Hel"}\n\ndata: {"delta":"lo"}\n\ndata: [DONE]\n\n';
+    const r = (await call(base, 'POST', '/sse-parser/parse', { text, assemble: true })).json;
+    check('sse-parser', 'POST /parse (assemble generic)', 'ParseResponse', r, d => d.assembled_text === 'Hello' && d.stream_type_detected === 'generic' ? null : `unexpected assembled=${d.assembled_text}`);
+  }
+  {
+    // OpenAI-shaped detection + content_path assembly
+    const text = 'data: {"choices":[{"delta":{"content":"Hi"}}]}\n\ndata: {"choices":[{"delta":{"content":" there"}}]}\n\ndata: [DONE]\n\n';
+    const r = (await call(base, 'POST', '/sse-parser/parse', { text, assemble: true })).json;
+    check('sse-parser', 'POST /parse (openai detect + assemble)', 'ParseResponse', r, d => d.stream_type_detected === 'openai' && d.assembled_text === 'Hi there' ? null : `unexpected ${d.stream_type_detected}/${d.assembled_text}`);
   }
   {
     const text = ': this is a comment\nid: 42\nevent: ping\ndata: line1\ndata: line2\n\n';
