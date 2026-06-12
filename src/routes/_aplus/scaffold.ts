@@ -23,8 +23,10 @@ export function respond<T extends Record<string, unknown>>(
   startMs: number,
   payload: T,
 ): void {
+  const trace_id = traceId();
   res.status(200).json({
-    trace_id: traceId(),
+    trace_id,
+    request_id: trace_id, // alias of trace_id for clients that key on request_id
     computed_at: new Date().toISOString(),
     success: true,
     latency_ms: Date.now() - startMs,
@@ -41,8 +43,10 @@ export function fail(
   message: string,
   details?: unknown,
 ): void {
+  const trace_id = traceId();
   res.status(status).json({
-    trace_id: traceId(),
+    trace_id,
+    request_id: trace_id,
     computed_at: new Date().toISOString(),
     success: false,
     latency_ms: Date.now() - startMs,
@@ -130,6 +134,7 @@ function commonSchemas(): Record<string, unknown> {
       additionalProperties: false,
       properties: {
         trace_id: { type: 'string' },
+        request_id: { type: 'string', description: 'Alias of trace_id.' },
         computed_at: { type: 'string', format: 'date-time' },
         success: { type: 'boolean', enum: [false] },
         latency_ms: { type: 'integer' },
