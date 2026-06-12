@@ -110,6 +110,51 @@ export function costFor(p: ModelPrice, inputTokens: number, outputTokens: number
   return { input_cost_usd: r(input_cost_usd), output_cost_usd: r(output_cost_usd), total_cost_usd: r(input_cost_usd + output_cost_usd) };
 }
 
+// ---- Embedding models (input-only pricing; public snapshot) ----
+export interface EmbeddingPrice {
+  model: string; provider: string;
+  price_per_mtok: number;          // USD per 1,000,000 input tokens
+  default_dimensions: number;      // vector size emitted by default
+  max_dimensions: number;          // largest selectable dimension count
+  max_input_tokens: number;        // per-item token cap
+  source: 'public-snapshot';
+}
+
+const EMBEDDING_TABLE: Record<string, EmbeddingPrice> = {
+  'text-embedding-3-small': { model: 'text-embedding-3-small', provider: 'openai', price_per_mtok: 0.02, default_dimensions: 1536, max_dimensions: 1536, max_input_tokens: 8191, source: 'public-snapshot' },
+  'text-embedding-3-large': { model: 'text-embedding-3-large', provider: 'openai', price_per_mtok: 0.13, default_dimensions: 3072, max_dimensions: 3072, max_input_tokens: 8191, source: 'public-snapshot' },
+  'text-embedding-ada-002': { model: 'text-embedding-ada-002', provider: 'openai', price_per_mtok: 0.10, default_dimensions: 1536, max_dimensions: 1536, max_input_tokens: 8191, source: 'public-snapshot' },
+  'embed-english-v3.0':     { model: 'embed-english-v3.0',     provider: 'cohere', price_per_mtok: 0.10, default_dimensions: 1024, max_dimensions: 1024, max_input_tokens: 512,  source: 'public-snapshot' },
+  'embed-multilingual-v3.0':{ model: 'embed-multilingual-v3.0',provider: 'cohere', price_per_mtok: 0.10, default_dimensions: 1024, max_dimensions: 1024, max_input_tokens: 512,  source: 'public-snapshot' },
+};
+
+const EMBEDDING_ALIASES: Record<string, string> = {
+  'text-embedding-3-small': 'text-embedding-3-small', 'embedding-3-small': 'text-embedding-3-small', '3-small': 'text-embedding-3-small',
+  'text-embedding-3-large': 'text-embedding-3-large', 'embedding-3-large': 'text-embedding-3-large', '3-large': 'text-embedding-3-large',
+  'ada-002': 'text-embedding-ada-002', 'ada': 'text-embedding-ada-002',
+  'cohere-embed-english': 'embed-english-v3.0', 'cohere-embed-multilingual': 'embed-multilingual-v3.0',
+};
+
+/** Look up an embedding model price by id or alias. Returns null if unknown. */
+export function lookupEmbeddingModel(model: unknown): EmbeddingPrice | null {
+  if (typeof model !== 'string') return null;
+  const key = model.trim().toLowerCase();
+  if (EMBEDDING_TABLE[key]) return EMBEDDING_TABLE[key];
+  const alias = EMBEDDING_ALIASES[key];
+  if (alias && EMBEDDING_TABLE[alias]) return EMBEDDING_TABLE[alias];
+  return null;
+}
+
+/** Every embedding model in the table. */
+export function allEmbeddingModels(): EmbeddingPrice[] {
+  return Object.values(EMBEDDING_TABLE);
+}
+
+/** USD embedding cost for a token count. Exact arithmetic. */
+export function embeddingCost(p: EmbeddingPrice, tokens: number): number {
+  return Math.round(((tokens / 1_000_000) * p.price_per_mtok + Number.EPSILON) * 1e6) / 1e6;
+}
+
 /** Standard invalidators every cost/token result should carry. */
 export const PRICING_INVALIDATORS = [
   `Static pricing snapshot (table version ${PRICING_TABLE_VERSION}); provider price changes after this date are not reflected.`,
