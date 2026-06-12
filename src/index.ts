@@ -698,6 +698,17 @@ import truncationPlannerRouter from './routes/truncation-planner-api/routes/inte
 import truncationPlannerOpenapiRouter from './routes/truncation-planner-api/routes/openapi';
 import promptTokenDiffRouter from './routes/prompt-token-diff-api/routes/intelligence';
 import promptTokenDiffOpenapiRouter from './routes/prompt-token-diff-api/routes/openapi';
+// Group F batch 1 — security / policy rubrics
+import passwordStrengthAnalyzerRouter from './routes/password-strength-analyzer-api/routes/intelligence';
+import passwordStrengthAnalyzerOpenapiRouter from './routes/password-strength-analyzer-api/routes/openapi';
+import passphraseGeneratorRouter from './routes/passphrase-generator-api/routes/intelligence';
+import passphraseGeneratorOpenapiRouter from './routes/passphrase-generator-api/routes/openapi';
+import totpHotpGeneratorRouter from './routes/totp-hotp-generator-api/routes/intelligence';
+import totpHotpGeneratorOpenapiRouter from './routes/totp-hotp-generator-api/routes/openapi';
+import secretScannerRouter from './routes/secret-scanner-api/routes/intelligence';
+import secretScannerOpenapiRouter from './routes/secret-scanner-api/routes/openapi';
+import cspBuilderLinterRouter from './routes/csp-builder-linter-api/routes/intelligence';
+import cspBuilderLinterOpenapiRouter from './routes/csp-builder-linter-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1319,6 +1330,11 @@ const routerMap: Record<string, import("express").Router> = {
   'agent-fanout-cost': agentFanoutCostRouter,
   'truncation-planner': truncationPlannerRouter,
   'prompt-token-diff': promptTokenDiffRouter,
+  'password-strength-analyzer': passwordStrengthAnalyzerRouter,
+  'passphrase-generator': passphraseGeneratorRouter,
+  'totp-hotp-generator': totpHotpGeneratorRouter,
+  'secret-scanner': secretScannerRouter,
+  'csp-builder-linter': cspBuilderLinterRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1761,6 +1777,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'agent-fanout-cost': agentFanoutCostOpenapiRouter,
   'truncation-planner': truncationPlannerOpenapiRouter,
   'prompt-token-diff': promptTokenDiffOpenapiRouter,
+  'password-strength-analyzer': passwordStrengthAnalyzerOpenapiRouter,
+  'passphrase-generator': passphraseGeneratorOpenapiRouter,
+  'totp-hotp-generator': totpHotpGeneratorOpenapiRouter,
+  'secret-scanner': secretScannerOpenapiRouter,
+  'csp-builder-linter': cspBuilderLinterOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
