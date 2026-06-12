@@ -1,0 +1,170 @@
+[
+  {
+    "name": "CORS Linter",
+    "shortDescription": "Audit a CORS config for cross-origin risks",
+    "description": "Deterministic CORS configuration linter. Accepts an explicit config or a raw response-headers object and flags cross-origin misconfigurations (wildcard origin with credentials, null/reflected origin, wildcard headers with credentials, missing Vary: Origin) with a 0-100 score and grade. Best-practice heuristics, no LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/cors-linter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/cors-linter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/cors-linter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/cors-linter.png",
+    "tags": ["security", "cors", "headers", "web"],
+    "keywords": ["cors linter", "cross-origin", "access-control-allow-origin", "cors security"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/lint", "pricePerCallUsdc": 0.005, "description": "Lint a CORS configuration" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "ONE-CALL lint with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/lint", "description": "Lint a CORS configuration" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL lint with reasoning" }
+    ]
+  },
+  {
+    "name": "Dockerfile Linter",
+    "shortDescription": "Flag Dockerfile security and best-practice issues",
+    "description": "Deterministic Dockerfile linter. Parses instructions and flags security / best-practice issues (runs as root, unpinned base image, baked-in secrets, curl|sh remote-exec, ADD over COPY, apt hygiene, broad COPY, missing HEALTHCHECK) with a 0-100 score and located findings. Static heuristics, no LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/dockerfile-linter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/dockerfile-linter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/dockerfile-linter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/dockerfile-linter.png",
+    "tags": ["security", "docker", "containers", "devops"],
+    "keywords": ["dockerfile linter", "container security", "docker best practices", "runs as root"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/lint", "pricePerCallUsdc": 0.006, "description": "Lint a Dockerfile" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "ONE-CALL lint with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/lint", "description": "Lint a Dockerfile" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL lint with reasoning" }
+    ]
+  },
+  {
+    "name": "Env Validator",
+    "shortDescription": "Validate .env format and an optional schema",
+    "description": "Deterministic .env validator. Parses dotenv text and reports format issues (malformed lines, invalid keys, duplicates, empty/unquoted values); with an optional schema it checks required keys, types (string/number/integer/boolean/url/email/port), allowed sets, and patterns. Returns key names only, never echoes values. No LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/env-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/env-validator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/env-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/env-validator.png",
+    "tags": ["security", "config", "dotenv", "validation"],
+    "keywords": ["env validator", "dotenv", "config validation", "required env vars"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.005, "description": "Validate .env contents" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "ONE-CALL validate with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/validate", "description": "Validate .env contents" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL validate with reasoning" }
+    ]
+  },
+  {
+    "name": "IAM Scope Simulator",
+    "shortDescription": "Simulate AWS-style allow/deny policy decisions",
+    "description": "Deterministic IAM-style policy simulator. Evaluates AWS-flavored allow/deny statements (action + resource with * and ? wildcards) against one or more action/resource requests using standard precedence: explicit Deny wins, else Allow grants, else implicit deny. Models Effect/Action/Resource only (no Conditions/Principals). No LLM, no live IAM calls.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/iam-scope-simulator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/iam-scope-simulator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/iam-scope-simulator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/iam-scope-simulator.png",
+    "tags": ["security", "iam", "authorization", "policy"],
+    "keywords": ["iam simulator", "policy evaluation", "allow deny", "least privilege"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/simulate", "pricePerCallUsdc": 0.006, "description": "Simulate policy decision(s)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "ONE-CALL simulate with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/simulate", "description": "Simulate policy decision(s)" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL simulate with reasoning" }
+    ]
+  },
+  {
+    "name": "OAuth Scope Diff",
+    "shortDescription": "Diff granted vs required OAuth scopes",
+    "description": "Deterministic OAuth scope diff. Compares a granted scope set against a required set and returns missing, extra (over-grant), and whether the grant satisfies the requirement. Accepts space/comma strings or arrays plus an optional scope hierarchy so a broad scope can imply narrower ones. Pure set math, no LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/oauth-scope-diff",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/oauth-scope-diff/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/oauth-scope-diff/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/oauth-scope-diff.png",
+    "tags": ["security", "oauth", "scopes", "authorization"],
+    "keywords": ["oauth scope diff", "scope comparison", "missing scopes", "least privilege"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/diff", "pricePerCallUsdc": 0.004, "description": "Diff granted vs required scopes" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL diff with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/diff", "description": "Diff granted vs required scopes" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL diff with reasoning" }
+    ]
+  },
+  {
+    "name": "JWT Claim Policy Validator",
+    "shortDescription": "Validate JWT claims against a policy (no sig verify)",
+    "description": "Deterministic JWT claim-policy validator. Decodes a JWT (or takes a claims object) WITHOUT verifying the signature, then checks claims against a policy: exp/nbf/iat validity (clock skew + max age), issuer/audience/subject allow-lists, required claims, and exact-value matches. Signature is NOT verified - verify it out of band. No LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/jwt-claim-policy-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/jwt-claim-policy-validator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/jwt-claim-policy-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/jwt-claim-policy-validator.png",
+    "tags": ["security", "jwt", "claims", "auth"],
+    "keywords": ["jwt claims", "jwt policy", "exp nbf aud iss", "token validation"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.006, "description": "Validate JWT claims vs a policy" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "ONE-CALL validate with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/validate", "description": "Validate JWT claims vs a policy" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL validate with reasoning" }
+    ]
+  }
+]
