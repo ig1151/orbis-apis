@@ -668,6 +668,16 @@ import web3WalletRiskScorerRouter from './routes/web3-wallet-risk-scorer-api/rou
 import web3WalletRiskScorerOpenapiRouter from './routes/web3-wallet-risk-scorer-api/routes/openapi';
 import websocketTesterRouter from './routes/websocket-tester-api/routes/intelligence';
 import websocketTesterOpenapiRouter from './routes/websocket-tester-api/routes/openapi';
+import llmTokenCounterRouter from './routes/llm-token-counter-api/routes/intelligence';
+import llmTokenCounterOpenapiRouter from './routes/llm-token-counter-api/routes/openapi';
+import contextBudgetPlannerRouter from './routes/context-budget-planner-api/routes/intelligence';
+import contextBudgetPlannerOpenapiRouter from './routes/context-budget-planner-api/routes/openapi';
+import textChunkerRouter from './routes/text-chunker-api/routes/intelligence';
+import textChunkerOpenapiRouter from './routes/text-chunker-api/routes/openapi';
+import conversationCostLedgerRouter from './routes/conversation-cost-ledger-api/routes/intelligence';
+import conversationCostLedgerOpenapiRouter from './routes/conversation-cost-ledger-api/routes/openapi';
+import modelPricingComparatorRouter from './routes/model-pricing-comparator-api/routes/intelligence';
+import modelPricingComparatorOpenapiRouter from './routes/model-pricing-comparator-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1274,6 +1284,11 @@ const routerMap: Record<string, import("express").Router> = {
   'tokenomics-explainer': tokenomicsExplainerRouter,
   'web3-wallet-risk-scorer': web3WalletRiskScorerRouter,
   'websocket-tester': websocketTesterRouter,
+  'llm-token-counter': llmTokenCounterRouter,
+  'context-budget-planner': contextBudgetPlannerRouter,
+  'text-chunker': textChunkerRouter,
+  'conversation-cost-ledger': conversationCostLedgerRouter,
+  'model-pricing-comparator': modelPricingComparatorRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1701,6 +1716,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'tokenomics-explainer': tokenomicsExplainerOpenapiRouter,
   'web3-wallet-risk-scorer': web3WalletRiskScorerOpenapiRouter,
   'websocket-tester': websocketTesterOpenapiRouter,
+  'llm-token-counter': llmTokenCounterOpenapiRouter,
+  'context-budget-planner': contextBudgetPlannerOpenapiRouter,
+  'text-chunker': textChunkerOpenapiRouter,
+  'conversation-cost-ledger': conversationCostLedgerOpenapiRouter,
+  'model-pricing-comparator': modelPricingComparatorOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
