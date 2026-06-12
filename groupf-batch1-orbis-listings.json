@@ -1,0 +1,148 @@
+[
+  {
+    "name": "Password Strength Analyzer",
+    "shortDescription": "Charset entropy + crack-time scoring for passwords",
+    "description": "Deterministic password-strength analyzer. Computes the character-set search space, charset entropy (length x log2(pool)), guess counts, and crack-time estimates under stated attacker speeds, plus advisory warnings (common password, single charset, repeats, sequences) and suggestions. The password is never stored. No LLM.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/password-strength-analyzer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/password-strength-analyzer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/password-strength-analyzer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/password-strength-analyzer.png",
+    "tags": ["security", "password", "entropy", "auth"],
+    "keywords": ["password strength", "entropy", "crack time", "password score"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.004, "description": "Analyze password strength" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL analysis with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/analyze", "description": "Analyze password strength" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL analysis with reasoning" }
+    ]
+  },
+  {
+    "name": "Passphrase Generator",
+    "shortDescription": "Diceware-style passphrases with exact entropy",
+    "description": "Diceware-style passphrase generator. Picks words uniformly at random from a curated 630-word list using a CSPRNG, then reports the exact entropy (words x log2(list_size), plus a digit option). Generation is random per call; the entropy math is exact. No LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/passphrase-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/passphrase-generator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/passphrase-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/passphrase-generator.png",
+    "tags": ["security", "passphrase", "diceware", "generator"],
+    "keywords": ["passphrase generator", "diceware", "random words", "password entropy"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/generate", "pricePerCallUsdc": 0.004, "description": "Generate passphrase(s)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL generate with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/generate", "description": "Generate passphrase(s)" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL generate with reasoning" }
+    ]
+  },
+  {
+    "name": "TOTP / HOTP Generator",
+    "shortDescription": "RFC 4226/6238 OTP generate, verify and provision",
+    "description": "RFC 4226 (HOTP) + RFC 6238 (TOTP) one-time-password generator and verifier. Pure HMAC crypto over a base32 secret, deterministic given secret + counter/timestamp. Also mints random secrets and otpauth:// provisioning URIs. No LLM, secrets never stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/totp-hotp-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/totp-hotp-generator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/totp-hotp-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/totp-hotp-generator.png",
+    "tags": ["security", "totp", "hotp", "2fa"],
+    "keywords": ["totp", "hotp", "2fa", "otpauth", "authenticator"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/generate", "pricePerCallUsdc": 0.004, "description": "Generate a TOTP/HOTP code" },
+          { "method": "POST", "pathPattern": "/verify", "pricePerCallUsdc": 0.004, "description": "Verify a code within a window" },
+          { "method": "POST", "pathPattern": "/secret", "pricePerCallUsdc": 0.004, "description": "Mint a random secret + otpauth URI" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL generate with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/generate", "description": "Generate a TOTP/HOTP code" },
+      { "method": "POST", "path": "/verify", "description": "Verify a code within a window" },
+      { "method": "POST", "path": "/secret", "description": "Mint a random secret + otpauth URI" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL generate with reasoning" }
+    ]
+  },
+  {
+    "name": "Secret Scanner",
+    "shortDescription": "Detect leaked credentials in text and code",
+    "description": "Deterministic secret scanner. Matches text/code against known credential patterns (AWS, GitHub, Slack, Google, Stripe, npm, private keys, JWTs) plus a generic high-entropy-assignment heuristic, and reports redacted findings with line/column and severity. Detection only. No LLM, input never stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/secret-scanner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/secret-scanner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/secret-scanner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/secret-scanner.png",
+    "tags": ["security", "secrets", "scanner", "credentials"],
+    "keywords": ["secret scanner", "leaked credentials", "api key detection", "secret detection"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.006, "description": "Scan text for leaked secrets" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "ONE-CALL scan with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/scan", "description": "Scan text for leaked secrets" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL scan with reasoning" }
+    ]
+  },
+  {
+    "name": "CSP Builder & Linter",
+    "shortDescription": "Lint and build Content-Security-Policy headers",
+    "description": "Deterministic Content-Security-Policy builder + linter. /lint flags well-known weaknesses (unsafe-inline/eval, wildcards, data: scripts, insecure schemes, missing default-src/object-src/frame-ancestors/base-uri) with a 0-100 hardening score; /build assembles a canonical header from a directives object, auto-quoting CSP keywords. Best-practice heuristics, no LLM.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/csp-builder-linter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/csp-builder-linter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/csp-builder-linter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/csp-builder-linter.png",
+    "tags": ["security", "csp", "headers", "web"],
+    "keywords": ["content security policy", "csp linter", "csp builder", "security headers"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/lint", "pricePerCallUsdc": 0.005, "description": "Lint a CSP header for weaknesses" },
+          { "method": "POST", "pathPattern": "/build", "pricePerCallUsdc": 0.004, "description": "Build a CSP header from directives" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "ONE-CALL lint with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/lint", "description": "Lint a CSP header for weaknesses" },
+      { "method": "POST", "path": "/build", "description": "Build a CSP header from directives" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL lint with reasoning" }
+    ]
+  }
+]
