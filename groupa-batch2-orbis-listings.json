@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Tool / Function-Schema Linter API",
+    "shortDescription": "Lint an LLM tool/function-calling JSON schema for the pitfalls that make models call it wrong",
+    "description": "Agent-native, deterministic linter for LLM tool / function-calling JSON schemas — pure rule checks, no LLM. Walks a tool definition ({name, description, parameters|input_schema}) and flags the pitfalls that make models call tools incorrectly: missing type/description, objects that don't pin additionalProperties:false (so models invent extra args), required keys absent from properties, $ref and oneOf/anyOf/allOf that many providers don't resolve, empty/non-primitive enums, deep nesting, and invalid tool names. Returns severity-tagged findings, counts, a lint score (100 − 25·errors − 8·warnings − 2·info) and pass/fail. Rules are best-practice heuristics (confidence 0.9); provider support varies. /lint returns findings; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/tool-schema-linter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/tool-schema-linter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/tool-schema-linter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "tool-calling", "function-calling", "json-schema", "linter", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["tool schema linter API", "function calling schema check", "JSON schema linter for LLM", "tool use validation", "additionalProperties false", "OpenAI tool schema", "Anthropic tool schema"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/lint", "pricePerCallUsdc": 0.005, "description": "Lint a tool/function JSON schema" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "ONE-CALL lint with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/lint", "description": "Lint a tool/function JSON schema" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL lint with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "Function-Call Argument Validator API",
+    "shortDescription": "Validate LLM tool-call arguments against a JSON Schema, with a coercion pass that auto-fixes",
+    "description": "Agent-native, deterministic validator for LLM function/tool-call arguments against a JSON Schema, powered by ajv (2020-12 dialect) — no LLM. Returns pass/fail with normalized errors, the missing-required and unexpected-extra keys, and a second coercion pass (string→number/boolean + defaults) that shows whether light coercion would make the arguments valid — so an agent can use coerced_arguments instead of re-prompting when a model emits a stringified number. Real JSON Schema validation (confidence 1.0); only dialect/provider differences qualify it. Remote $ref is not fetched (returns 400). /validate returns the verdict; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/function-arg-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/function-arg-validator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/function-arg-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "tool-calling", "function-calling", "json-schema", "validation", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["function call argument validator", "validate tool call args", "JSON schema validation API", "ajv validation API", "coerce arguments API", "LLM arguments check", "tool use validator"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.005, "description": "Validate arguments against a JSON Schema" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "ONE-CALL validation + coercion with reasoning" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/validate", "description": "Validate arguments against a JSON Schema" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL validation + coercion with reasoning" }
+    ]
+  },
+  {
+    "name": "JSON Repair / Salvage API",
+    "shortDescription": "Repair malformed model JSON — fences, prose, quotes, trailing commas, Python literals, unclosed",
+    "description": "Agent-native, deterministic best-effort JSON repair for malformed model output — no LLM. A tolerant recursive-descent parser fixes the common LLM mistakes — markdown code fences, leading/trailing prose, // and /* */ comments, single/backtick/smart quotes, unquoted object keys, trailing commas, Python literals (True/False/None), non-finite numbers, and unclosed braces/brackets — then re-serializes canonical JSON and reports every transform applied. Repair is heuristic and can change meaning, so confidence is 0.8 (1.0 only when the input was already valid). /repair returns repaired text + parsed value; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/json-repair",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/json-repair/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/json-repair/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "json", "repair", "parsing", "salvage", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["JSON repair API", "fix malformed JSON", "salvage model JSON", "repair LLM output", "trailing comma fix", "json5 to json", "parse broken JSON"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/repair", "pricePerCallUsdc": 0.005, "description": "Repair malformed JSON" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "ONE-CALL repair with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/repair", "description": "Repair malformed JSON" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL repair with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "Prompt Template Renderer & Variable Validator API",
+    "shortDescription": "Render {{var}} prompt templates and report missing and unused variables",
+    "description": "Agent-native, deterministic prompt-template renderer and variable validator — pure string templating, no logic, no LLM. Substitutes {{ var }} / {{ a.b.c }} placeholders (dotted paths into the variables object) and reports which variables the template references, which are missing, and which provided variables go unused. Missing placeholders are kept as literal {{...}}, substituted with empty strings, or flagged (rendered=null) per missing_behavior. Non-string values are JSON-stringified. Deterministic (confidence 1.0). /render returns the rendered text + variable report; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/prompt-template-renderer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/prompt-template-renderer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/prompt-template-renderer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "prompt-engineering", "templating", "variables", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["prompt template API", "render prompt variables", "mustache prompt API", "missing variable check", "prompt templating API", "fill prompt placeholders", "prompt variable validator"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/render", "pricePerCallUsdc": 0.004, "description": "Render a template + validate variables" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL render with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/render", "description": "Render a template + validate variables" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL render with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "SSE / Streaming Chunk Parser API",
+    "shortDescription": "Parse raw Server-Sent Events from LLM streaming into structured, JSON-parsed events",
+    "description": "Agent-native, deterministic Server-Sent Events parser for LLM streaming responses — pure parsing, no LLM. Parses raw text/event-stream text per the WHATWG spec (event/data/id/retry fields, multi-line data joined with newlines, comment lines, blank-line event boundaries) into structured events, best-effort JSON-parses each data payload, and flags the [DONE] terminator. Returns per-event {event, id, data, data_json, data_is_json, retry, is_done} plus counts and a done flag. Deterministic (confidence 1.0); provider-specific delta formats are not assembled into final content. /parse returns the events; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/sse-parser",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/sse-parser/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/sse-parser/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "sse", "streaming", "server-sent-events", "parsing", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["SSE parser API", "server-sent events parser", "parse LLM stream", "event-stream parser", "streaming chunk parser", "parse data: events", "OpenAI stream parser"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/parse", "pricePerCallUsdc": 0.004, "description": "Parse raw SSE into structured events" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL parse with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/parse", "description": "Parse raw SSE into structured events" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL parse with reasoning and guidance" }
+    ]
+  }
+]

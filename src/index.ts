@@ -678,6 +678,16 @@ import conversationCostLedgerRouter from './routes/conversation-cost-ledger-api/
 import conversationCostLedgerOpenapiRouter from './routes/conversation-cost-ledger-api/routes/openapi';
 import modelPricingComparatorRouter from './routes/model-pricing-comparator-api/routes/intelligence';
 import modelPricingComparatorOpenapiRouter from './routes/model-pricing-comparator-api/routes/openapi';
+import toolSchemaLinterRouter from './routes/tool-schema-linter-api/routes/intelligence';
+import toolSchemaLinterOpenapiRouter from './routes/tool-schema-linter-api/routes/openapi';
+import functionArgValidatorRouter from './routes/function-arg-validator-api/routes/intelligence';
+import functionArgValidatorOpenapiRouter from './routes/function-arg-validator-api/routes/openapi';
+import jsonRepairRouter from './routes/json-repair-api/routes/intelligence';
+import jsonRepairOpenapiRouter from './routes/json-repair-api/routes/openapi';
+import promptTemplateRendererRouter from './routes/prompt-template-renderer-api/routes/intelligence';
+import promptTemplateRendererOpenapiRouter from './routes/prompt-template-renderer-api/routes/openapi';
+import sseParserRouter from './routes/sse-parser-api/routes/intelligence';
+import sseParserOpenapiRouter from './routes/sse-parser-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1289,6 +1299,11 @@ const routerMap: Record<string, import("express").Router> = {
   'text-chunker': textChunkerRouter,
   'conversation-cost-ledger': conversationCostLedgerRouter,
   'model-pricing-comparator': modelPricingComparatorRouter,
+  'tool-schema-linter': toolSchemaLinterRouter,
+  'function-arg-validator': functionArgValidatorRouter,
+  'json-repair': jsonRepairRouter,
+  'prompt-template-renderer': promptTemplateRendererRouter,
+  'sse-parser': sseParserRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1721,6 +1736,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'text-chunker': textChunkerOpenapiRouter,
   'conversation-cost-ledger': conversationCostLedgerOpenapiRouter,
   'model-pricing-comparator': modelPricingComparatorOpenapiRouter,
+  'tool-schema-linter': toolSchemaLinterOpenapiRouter,
+  'function-arg-validator': functionArgValidatorOpenapiRouter,
+  'json-repair': jsonRepairOpenapiRouter,
+  'prompt-template-renderer': promptTemplateRendererOpenapiRouter,
+  'sse-parser': sseParserOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
