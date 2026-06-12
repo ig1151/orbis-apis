@@ -137,7 +137,7 @@ router.get('/', (_req: Request, res: Response) => {
 });
 
 const TAIL = (r: SimCore) => ({
-  confidence_score: 1, confidence_per_section: { evaluation: 1 },
+  confidence_score: 0.9, confidence_per_section: { evaluation: 1 },
   recommended_actions_priority_order: actions(r),
   chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
 });

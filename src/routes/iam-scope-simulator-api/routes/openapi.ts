@@ -58,7 +58,7 @@ const INVALIDATORS = [
   'A simulated Allow is necessary but not sufficient — the live authorizer may deny via mechanisms outside the supplied statements.',
 ];
 const TAIL = {
-  confidence_score: 1, confidence_per_section: { evaluation: 1 },
+  confidence_score: 0.9, confidence_per_section: { evaluation: 1 },
   recommended_actions_priority_order: [
     'Decision: Allow for s3:GetObject on arn:aws:s3:::bucket/file.txt. Allowed by statement AllowS3 with no matching Deny.',
     'Confirm no Conditions or boundary policies further restrict this at runtime.',
