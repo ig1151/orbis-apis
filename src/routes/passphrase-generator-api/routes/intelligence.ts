@@ -104,7 +104,7 @@ function tail(r: PassphraseCore) {
 router.get('/', (_req: Request, res: Response) => {
   res.json({
     name: 'Passphrase Generator API', version: '1.0.0',
-    description: `Diceware-style passphrase generator. Picks words uniformly at random from a curated ${LIST_SIZE}-word list using a CSPRNG, then reports the exact entropy (words × log2(list_size)). Generation is random; the entropy math is exact. No LLM, nothing stored.`,
+    description: `Diceware-style passphrase generator. Picks words uniformly at random from a curated ${LIST_SIZE}-word list using a CSPRNG, then reports the exact entropy (words × log2(list_size)). Output is cryptographically random per call (CSPRNG); the reported entropy is exact and deterministic. No LLM, nothing stored.`,
     openapi_url: 'https://orbis-apis.onrender.com/passphrase-generator/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
