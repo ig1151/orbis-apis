@@ -709,6 +709,19 @@ import secretScannerRouter from './routes/secret-scanner-api/routes/intelligence
 import secretScannerOpenapiRouter from './routes/secret-scanner-api/routes/openapi';
 import cspBuilderLinterRouter from './routes/csp-builder-linter-api/routes/intelligence';
 import cspBuilderLinterOpenapiRouter from './routes/csp-builder-linter-api/routes/openapi';
+// Group F batch 2 — security / policy rubrics (completes Group F)
+import corsLinterRouter from './routes/cors-linter-api/routes/intelligence';
+import corsLinterOpenapiRouter from './routes/cors-linter-api/routes/openapi';
+import dockerfileLinterRouter from './routes/dockerfile-linter-api/routes/intelligence';
+import dockerfileLinterOpenapiRouter from './routes/dockerfile-linter-api/routes/openapi';
+import envValidatorRouter from './routes/env-validator-api/routes/intelligence';
+import envValidatorOpenapiRouter from './routes/env-validator-api/routes/openapi';
+import iamScopeSimulatorRouter from './routes/iam-scope-simulator-api/routes/intelligence';
+import iamScopeSimulatorOpenapiRouter from './routes/iam-scope-simulator-api/routes/openapi';
+import oauthScopeDiffRouter from './routes/oauth-scope-diff-api/routes/intelligence';
+import oauthScopeDiffOpenapiRouter from './routes/oauth-scope-diff-api/routes/openapi';
+import jwtClaimPolicyValidatorRouter from './routes/jwt-claim-policy-validator-api/routes/intelligence';
+import jwtClaimPolicyValidatorOpenapiRouter from './routes/jwt-claim-policy-validator-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1335,6 +1348,12 @@ const routerMap: Record<string, import("express").Router> = {
   'totp-hotp-generator': totpHotpGeneratorRouter,
   'secret-scanner': secretScannerRouter,
   'csp-builder-linter': cspBuilderLinterRouter,
+  'cors-linter': corsLinterRouter,
+  'dockerfile-linter': dockerfileLinterRouter,
+  'env-validator': envValidatorRouter,
+  'iam-scope-simulator': iamScopeSimulatorRouter,
+  'oauth-scope-diff': oauthScopeDiffRouter,
+  'jwt-claim-policy-validator': jwtClaimPolicyValidatorRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1782,6 +1801,12 @@ const openapiMap: Record<string, import("express").Router> = {
   'totp-hotp-generator': totpHotpGeneratorOpenapiRouter,
   'secret-scanner': secretScannerOpenapiRouter,
   'csp-builder-linter': cspBuilderLinterOpenapiRouter,
+  'cors-linter': corsLinterOpenapiRouter,
+  'dockerfile-linter': dockerfileLinterOpenapiRouter,
+  'env-validator': envValidatorOpenapiRouter,
+  'iam-scope-simulator': iamScopeSimulatorOpenapiRouter,
+  'oauth-scope-diff': oauthScopeDiffOpenapiRouter,
+  'jwt-claim-policy-validator': jwtClaimPolicyValidatorOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
