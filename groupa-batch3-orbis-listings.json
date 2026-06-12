@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Embedding Cost & Batch Planner API",
+    "shortDescription": "Plan embedding cost, vector storage and batch requests for a corpus before you embed it",
+    "description": "Agent-native, deterministic embedding cost + batch planner — no LLM. From documents (tokens estimated per item), a token total, or doc_count × avg tokens, plus an embedding model (OpenAI text-embedding-3-small/large, ada-002, Cohere embed-v3) and a batch size, it returns the exact embedding cost from a static, versioned price table, the dense vector storage footprint (dimensions × bytes), the number of batch requests needed, and how many documents exceed the model's per-item token cap. Token counts from text are heuristic estimates (confidence 0.7); cost given a token count is exact. Unknown model → found:false, never guessed. /plan returns the plan; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/embedding-cost-planner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/embedding-cost-planner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/embedding-cost-planner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "embeddings", "rag", "cost-estimation", "vector-db", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["embedding cost API", "vector storage calculator", "embedding batch planner", "RAG cost estimator", "text-embedding-3 pricing", "embedding token cost", "vector dimensions storage"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/plan", "pricePerCallUsdc": 0.005, "description": "Embedding cost + batch + storage plan" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "ONE-CALL plan with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/plan", "description": "Embedding cost + batch + storage plan" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL plan with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "Idempotency Key Generator API",
+    "shortDescription": "Turn a request fingerprint into a stable idempotency key so retries dedupe deterministically",
+    "description": "Agent-native, deterministic idempotency-key generator — pure crypto, no LLM. Canonicalizes a request fingerprint (method, path, query, body, selected headers) by recursively sorting object keys — and optionally arrays — then hashes the canonical form (SHA-256 by default; SHA-1/SHA-512 available) into a stable key with an optional namespace prefix. Same inputs always produce the same key, so an agent can safely dedupe retries of side-effectful calls. Header names are lowercased; array order is significant unless sort_arrays is set. Fully deterministic (confidence 1.0). /generate returns the key + canonical form + included fields; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/idempotency-key-generator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/idempotency-key-generator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/idempotency-key-generator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["idempotency", "hashing", "deduplication", "request-fingerprint", "reliability", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["idempotency key API", "request fingerprint hash", "dedupe retries", "stable request key", "sha256 idempotency", "canonical request hash", "agent idempotency"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.006, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/generate", "pricePerCallUsdc": 0.003, "description": "Generate a stable idempotency key" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.006, "description": "ONE-CALL key with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/generate", "description": "Generate a stable idempotency key" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL key with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "Multi-Agent Fan-out Cost Estimator API",
+    "shortDescription": "Price a DAG of agent calls — total spend, per-node cost, and the critical (costliest) chain",
+    "description": "Agent-native, deterministic multi-agent fan-out cost estimator — no LLM. Given a DAG of agent calls (each with a model, per-call input/output tokens, call count, and dependencies), it prices every node from a static, versioned table, sums the TOTAL spend across the whole graph (you pay for every call regardless of parallelism), and identifies the critical dependency chain (the most expensive path) and the single most expensive node. Cycles are rejected; unknown models are reported and the total is flagged partial. Cost given tokens is exact; tokens from text are estimates. /estimate returns the breakdown; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/agent-fanout-cost",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/agent-fanout-cost/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/agent-fanout-cost/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "multi-agent", "cost-estimation", "orchestration", "dag", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["multi-agent cost API", "agent fan-out cost", "agent graph budget", "critical path cost", "LLM orchestration cost", "agent workflow pricing", "DAG cost estimator"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/estimate", "pricePerCallUsdc": 0.006, "description": "Total + critical-path fan-out cost" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "ONE-CALL estimate with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/estimate", "description": "Total + critical-path fan-out cost" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL estimate with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "Stop-Sequence / Truncation Planner API",
+    "shortDescription": "Fit text to a token budget with clean cuts at word/sentence boundaries and stop sequences",
+    "description": "Agent-native, deterministic truncation planner — no LLM. Given text and a token budget, it finds where to cut so the text fits — keeping the head (end), tail (start), or both ends (middle) — snapping cuts to character, word, or sentence boundaries and honoring stop sequences (cut at the earliest match). Returns the kept text, the cut point, removed tokens, and whether the result is within budget. Character boundaries are exact; the token budget is converted at ~4 chars/token, so token counts are heuristic estimates (confidence 0.7) and the kept text may land slightly over/under the real tokenizer. /plan returns the plan; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/truncation-planner",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/truncation-planner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/truncation-planner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "truncation", "tokens", "stop-sequence", "prompt-engineering", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["truncation API", "fit text to token budget", "stop sequence API", "truncate prompt API", "token budget trimmer", "sentence boundary truncation", "context fit API"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/plan", "pricePerCallUsdc": 0.004, "description": "Plan a budget-fitting truncation" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL truncation with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/plan", "description": "Plan a budget-fitting truncation" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL truncation with reasoning and guidance" }
+    ]
+  },
+  {
+    "name": "Prompt Token Diff API",
+    "shortDescription": "Measure the token and cost delta between two prompt versions",
+    "description": "Agent-native, deterministic prompt token + cost diff — no LLM. Compares two prompt versions (a → b) and returns the token, character, and word deltas, the percent change and direction, plus — if a model is given — the USD cost delta per call from a static, versioned price table. Ideal for measuring whether a prompt edit cheapened or inflated a call before shipping it. Token counts are heuristic estimates (confidence 0.7); cost given tokens is exact. Unknown model → found:false. /diff returns the delta; /lookup adds reasoning, invalidators, recommended actions, chain-to hints, privacy and execution metadata.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/prompt-token-diff",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/prompt-token-diff/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/prompt-token-diff/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["llm", "tokens", "prompt-engineering", "cost-estimation", "diff", "ai-infrastructure", "agent-native", "deterministic", "x402", "coinbase-bazaar", "agentic-market"],
+    "keywords": ["prompt token diff API", "prompt cost delta", "compare prompt tokens", "prompt optimization API", "token savings API", "prompt A/B cost", "prompt edit cost"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      { "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008, "requestsPerDay": 100000, "requestsPerMonth": 3000000, "endpointPricing": [
+        { "method": "POST", "pathPattern": "/diff", "pricePerCallUsdc": 0.004, "description": "Token + cost delta between two prompts" },
+        { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "ONE-CALL diff with reasoning and guidance" }
+      ] }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/diff", "description": "Token + cost delta between two prompts" },
+      { "method": "POST", "path": "/lookup", "description": "ONE-CALL diff with reasoning and guidance" }
+    ]
+  }
+]

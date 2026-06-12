@@ -688,6 +688,16 @@ import promptTemplateRendererRouter from './routes/prompt-template-renderer-api/
 import promptTemplateRendererOpenapiRouter from './routes/prompt-template-renderer-api/routes/openapi';
 import sseParserRouter from './routes/sse-parser-api/routes/intelligence';
 import sseParserOpenapiRouter from './routes/sse-parser-api/routes/openapi';
+import embeddingCostPlannerRouter from './routes/embedding-cost-planner-api/routes/intelligence';
+import embeddingCostPlannerOpenapiRouter from './routes/embedding-cost-planner-api/routes/openapi';
+import idempotencyKeyGeneratorRouter from './routes/idempotency-key-generator-api/routes/intelligence';
+import idempotencyKeyGeneratorOpenapiRouter from './routes/idempotency-key-generator-api/routes/openapi';
+import agentFanoutCostRouter from './routes/agent-fanout-cost-api/routes/intelligence';
+import agentFanoutCostOpenapiRouter from './routes/agent-fanout-cost-api/routes/openapi';
+import truncationPlannerRouter from './routes/truncation-planner-api/routes/intelligence';
+import truncationPlannerOpenapiRouter from './routes/truncation-planner-api/routes/openapi';
+import promptTokenDiffRouter from './routes/prompt-token-diff-api/routes/intelligence';
+import promptTokenDiffOpenapiRouter from './routes/prompt-token-diff-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1304,6 +1314,11 @@ const routerMap: Record<string, import("express").Router> = {
   'json-repair': jsonRepairRouter,
   'prompt-template-renderer': promptTemplateRendererRouter,
   'sse-parser': sseParserRouter,
+  'embedding-cost-planner': embeddingCostPlannerRouter,
+  'idempotency-key-generator': idempotencyKeyGeneratorRouter,
+  'agent-fanout-cost': agentFanoutCostRouter,
+  'truncation-planner': truncationPlannerRouter,
+  'prompt-token-diff': promptTokenDiffRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1741,6 +1756,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'json-repair': jsonRepairOpenapiRouter,
   'prompt-template-renderer': promptTemplateRendererOpenapiRouter,
   'sse-parser': sseParserOpenapiRouter,
+  'embedding-cost-planner': embeddingCostPlannerOpenapiRouter,
+  'idempotency-key-generator': idempotencyKeyGeneratorOpenapiRouter,
+  'agent-fanout-cost': agentFanoutCostOpenapiRouter,
+  'truncation-planner': truncationPlannerOpenapiRouter,
+  'prompt-token-diff': promptTokenDiffOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
