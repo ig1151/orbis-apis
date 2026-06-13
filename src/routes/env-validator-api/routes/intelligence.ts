@@ -148,12 +148,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/env-validator/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/validate', summary: 'Validate .env contents', price_usdc: 0.005 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL validate + reasoning', price_usdc: 0.009 },
+      { method: 'POST', path: '/validate', summary: 'Validate .env contents', price_usdc: 0.004 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL validate + reasoning', price_usdc: 0.008 },
     ],
     pricing: [
-      { path: '/validate', price_usdc: 0.005, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
+      { path: '/validate', price_usdc: 0.004, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

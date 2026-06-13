@@ -88,24 +88,24 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/cors-linter/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/lint', summary: 'Lint a CORS configuration', price_usdc: 0.005 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL lint + reasoning', price_usdc: 0.009 },
+    { method: 'POST', path: '/lint', summary: 'Lint a CORS configuration', price_usdc: 0.003 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL lint + reasoning', price_usdc: 0.006 },
   ],
   pricing: [
-    { path: '/lint', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
+    { path: '/lint', price_usdc: 0.003, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.006, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   {
-    method: 'post', path: '/lint', summary: 'Lint a CORS configuration', operationId: 'lint', priceUsdc: 0.005,
+    method: 'post', path: '/lint', summary: 'Lint a CORS configuration', operationId: 'lint', priceUsdc: 0.003,
     requestSchemaRef: 'LintRequest', responseSchemaRef: 'LintResponse', requestExample: reqEx,
     responseExample: { ...env, ...CORE, ...TAIL },
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL lint + reasoning', operationId: 'lookup', priceUsdc: 0.009, oneCall: true,
+    method: 'post', path: '/lookup', summary: 'ONE-CALL lint + reasoning', operationId: 'lookup', priceUsdc: 0.006, oneCall: true,
     requestSchemaRef: 'LintRequest', responseSchemaRef: 'LookupResponse', requestExample: reqEx,
     responseExample: {
       ...env, ...CORE,

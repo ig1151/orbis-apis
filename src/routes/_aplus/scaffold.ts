@@ -10,9 +10,19 @@
 //
 // Determinism: these helpers never call an LLM. Each API supplies its own typed payload
 // schemas and (for compute APIs) computes results in real code.
+//
+// Determinism scope: the deterministic guarantee covers the RESULT PATH only — the
+// computed payload (and its reasoning) is a pure function of the request body. The
+// operational metadata fields — `trace_id`/`request_id` (Math.random + Date.now) and
+// `computed_at`/`latency_ms` (wall clock) — are intentionally nondeterministic per call
+// and are EXCLUDED from the determinism guarantee. They are observability metadata, not
+// inputs to or part of the result, and must never be treated as such.
 
 import { Router, Request, Response } from 'express';
 
+// Operational metadata only — NOT part of the deterministic result path. A fresh,
+// non-reproducible id per response for tracing/correlation; never feed it back into
+// or compare it as result data.
 export function traceId(): string {
   return Math.random().toString(36).slice(2, 10) + '-' + Date.now();
 }

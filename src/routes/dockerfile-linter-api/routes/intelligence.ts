@@ -142,7 +142,9 @@ router.get('/', (_req: Request, res: Response) => {
 });
 
 const TAIL = (r: LintCore) => ({
-  confidence_score: 0.9, confidence_per_section: { dockerfile: 0.9 },
+  // 0.8 (not higher): base-image contents, RUN-script behaviour, and multi-stage
+  // effects are invisible to static analysis — see invalidators below.
+  confidence_score: 0.8, confidence_per_section: { dockerfile: 0.8 },
   recommended_actions_priority_order: actions(r),
   chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
 });

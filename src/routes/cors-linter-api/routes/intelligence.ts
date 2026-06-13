@@ -139,12 +139,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/cors-linter/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/lint', summary: 'Lint a CORS configuration', price_usdc: 0.005 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL lint + reasoning', price_usdc: 0.009 },
+      { method: 'POST', path: '/lint', summary: 'Lint a CORS configuration', price_usdc: 0.003 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL lint + reasoning', price_usdc: 0.006 },
     ],
     pricing: [
-      { path: '/lint', price_usdc: 0.005, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
+      { path: '/lint', price_usdc: 0.003, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.006, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

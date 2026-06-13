@@ -67,24 +67,24 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/oauth-scope-diff/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/diff', summary: 'Diff granted vs required scopes', price_usdc: 0.004 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL diff + reasoning', price_usdc: 0.008 },
+    { method: 'POST', path: '/diff', summary: 'Diff granted vs required scopes', price_usdc: 0.003 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL diff + reasoning', price_usdc: 0.006 },
   ],
   pricing: [
-    { path: '/diff', price_usdc: 0.004, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
+    { path: '/diff', price_usdc: 0.003, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.006, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   {
-    method: 'post', path: '/diff', summary: 'Diff granted vs required scopes', operationId: 'diff', priceUsdc: 0.004,
+    method: 'post', path: '/diff', summary: 'Diff granted vs required scopes', operationId: 'diff', priceUsdc: 0.003,
     requestSchemaRef: 'DiffRequest', responseSchemaRef: 'DiffResponse', requestExample: reqEx,
     responseExample: { ...env, ...CORE, ...TAIL },
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL diff + reasoning', operationId: 'lookup', priceUsdc: 0.008, oneCall: true,
+    method: 'post', path: '/lookup', summary: 'ONE-CALL diff + reasoning', operationId: 'lookup', priceUsdc: 0.006, oneCall: true,
     requestSchemaRef: 'DiffRequest', responseSchemaRef: 'LookupResponse', requestExample: reqEx,
     responseExample: {
       ...env, ...CORE,

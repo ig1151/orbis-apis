@@ -143,12 +143,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/jwt-claim-policy-validator/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/validate', summary: 'Validate JWT claims vs a policy', price_usdc: 0.006 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL validate + reasoning', price_usdc: 0.01 },
+      { method: 'POST', path: '/validate', summary: 'Validate JWT claims vs a policy', price_usdc: 0.004 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL validate + reasoning', price_usdc: 0.008 },
     ],
     pricing: [
-      { path: '/validate', price_usdc: 0.006, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+      { path: '/validate', price_usdc: 0.004, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
     ],
     x402_compatible: true,
   });
