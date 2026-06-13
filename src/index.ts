@@ -722,6 +722,19 @@ import oauthScopeDiffRouter from './routes/oauth-scope-diff-api/routes/intellige
 import oauthScopeDiffOpenapiRouter from './routes/oauth-scope-diff-api/routes/openapi';
 import jwtClaimPolicyValidatorRouter from './routes/jwt-claim-policy-validator-api/routes/intelligence';
 import jwtClaimPolicyValidatorOpenapiRouter from './routes/jwt-claim-policy-validator-api/routes/openapi';
+// Group B batch 1 — developer / encoding / format tools
+import jwtDecoderRouter from './routes/jwt-decoder-api/routes/intelligence';
+import jwtDecoderOpenapiRouter from './routes/jwt-decoder-api/routes/openapi';
+import baseCodecRouter from './routes/base-codec-api/routes/intelligence';
+import baseCodecOpenapiRouter from './routes/base-codec-api/routes/openapi';
+import radixConverterRouter from './routes/radix-converter-api/routes/intelligence';
+import radixConverterOpenapiRouter from './routes/radix-converter-api/routes/openapi';
+import uuidInspectorRouter from './routes/uuid-inspector-api/routes/intelligence';
+import uuidInspectorOpenapiRouter from './routes/uuid-inspector-api/routes/openapi';
+import semverToolsRouter from './routes/semver-tools-api/routes/intelligence';
+import semverToolsOpenapiRouter from './routes/semver-tools-api/routes/openapi';
+import hashHmacRouter from './routes/hash-hmac-api/routes/intelligence';
+import hashHmacOpenapiRouter from './routes/hash-hmac-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1354,6 +1367,12 @@ const routerMap: Record<string, import("express").Router> = {
   'iam-scope-simulator': iamScopeSimulatorRouter,
   'oauth-scope-diff': oauthScopeDiffRouter,
   'jwt-claim-policy-validator': jwtClaimPolicyValidatorRouter,
+  'jwt-decoder': jwtDecoderRouter,
+  'base-codec': baseCodecRouter,
+  'radix-converter': radixConverterRouter,
+  'uuid-inspector': uuidInspectorRouter,
+  'semver-tools': semverToolsRouter,
+  'hash-hmac': hashHmacRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1807,6 +1826,12 @@ const openapiMap: Record<string, import("express").Router> = {
   'iam-scope-simulator': iamScopeSimulatorOpenapiRouter,
   'oauth-scope-diff': oauthScopeDiffOpenapiRouter,
   'jwt-claim-policy-validator': jwtClaimPolicyValidatorOpenapiRouter,
+  'jwt-decoder': jwtDecoderOpenapiRouter,
+  'base-codec': baseCodecOpenapiRouter,
+  'radix-converter': radixConverterOpenapiRouter,
+  'uuid-inspector': uuidInspectorOpenapiRouter,
+  'semver-tools': semverToolsOpenapiRouter,
+  'hash-hmac': hashHmacOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
