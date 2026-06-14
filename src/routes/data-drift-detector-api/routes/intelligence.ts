@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { respond, fail } from '../../_aplus/scaffold';
 import { EXECUTION_METADATA, PRIVACY } from '../../_aplus/util';
 import { round } from '../../_aplus/util';
-import { parseRows, columnsOf, isMissing, asNum, inferType, asKey, psiNumeric, psiCategorical, driftLevel, Row } from '../../_aplus/dataset';
+import { parseRows, columnsOf, isMissing, asNum, inferType, asKey, psiNumeric, psiCategorical, driftLevel, sampleConfidence, Row } from '../../_aplus/dataset';
 
 // Deterministic data-drift detector. Compares a baseline dataset against a
 // current dataset column-by-column and computes the Population Stability Index
@@ -12,6 +12,8 @@ import { parseRows, columnsOf, isMissing, asNum, inferType, asKey, psiNumeric, p
 
 const router = Router();
 
+export interface NumericDriftDetails { baseline_mean: number | null; current_mean: number | null; mean_shift: number | null; bins: number; }
+export interface CategoricalDriftDetails { baseline_categories: number; current_categories: number; new_categories: string[]; dropped_categories: string[]; }
 export interface ColumnDrift {
   column: string;
   type: 'numeric' | 'categorical';
@@ -19,7 +21,7 @@ export interface ColumnDrift {
   drift_level: 'none' | 'minor' | 'major';
   baseline_missing_rate: number;
   current_missing_rate: number;
-  details: Record<string, unknown>;
+  details: NumericDriftDetails | CategoricalDriftDetails;
 }
 export interface DriftCore {
   columns_compared: number;
@@ -145,11 +147,16 @@ router.get('/', (_req: Request, res: Response) => {
   });
 });
 
-const TAIL = (r: DriftCore) => ({
-  confidence_score: 1, confidence_per_section: { drift_statistics: 1 },
-  recommended_actions_priority_order: actions(r),
-  chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
-});
+// Confidence tracks the smaller of the two samples: PSI on a handful of rows is
+// noisy, so we do NOT claim certainty on tiny datasets (see INVALIDATORS).
+const TAIL = (r: DriftCore) => {
+  const conf = sampleConfidence(Math.min(r.baseline_rows, r.current_rows));
+  return {
+    confidence_score: conf, confidence_per_section: { drift_statistics: conf },
+    recommended_actions_priority_order: actions(r),
+    chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
+  };
+};
 
 router.post('/detect', (req: Request, res: Response) => {
   const t0 = Date.now();

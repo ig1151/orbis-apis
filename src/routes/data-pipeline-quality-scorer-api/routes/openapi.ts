@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema, rowSchema } from '../../_aplus/specparts';
 
 const Dimension = {
   type: 'object', required: ['score', 'weight', 'detail'], additionalProperties: false,
@@ -12,20 +12,31 @@ const Dimensions = {
     validity: { oneOf: [Dimension, { type: 'null' }] },
   },
 };
+const WeightsUsed = {
+  type: 'object', additionalProperties: false, required: ['completeness', 'consistency', 'uniqueness'],
+  properties: {
+    completeness: { type: 'number', minimum: 0, maximum: 1 },
+    consistency: { type: 'number', minimum: 0, maximum: 1 },
+    uniqueness: { type: 'number', minimum: 0, maximum: 1 },
+    validity: { type: 'number', minimum: 0, maximum: 1 },
+  },
+};
 const ScoreCore = {
   type: 'object',
-  required: ['row_count', 'column_count', 'dimensions', 'quality_score', 'grade', 'passed', 'top_issues'],
+  required: ['row_count', 'column_count', 'dimensions', 'weighting_profile', 'weights_used', 'quality_score', 'grade', 'passed', 'top_issues'],
   properties: {
     row_count: { type: 'integer', minimum: 0 },
     column_count: { type: 'integer', minimum: 0 },
     dimensions: Dimensions,
+    weighting_profile: { type: 'string', description: 'Identifier of the weight set used to blend the dimensions.' },
+    weights_used: WeightsUsed,
     quality_score: { type: 'integer', minimum: 0, maximum: 100 },
     grade: { type: 'string', enum: ['A', 'B', 'C', 'D', 'F'] },
     passed: { type: 'boolean' },
     top_issues: { type: 'array', items: { type: 'string' } },
   },
 };
-const Row = { type: 'object', description: 'A dataset row as a flat JSON object (column → value).' };
+const Row = rowSchema();
 const ScoreRequest = {
   type: 'object', required: ['rows'], additionalProperties: false,
   properties: {
@@ -43,6 +54,8 @@ const CORE = {
     uniqueness: { score: 0.75, weight: 0.2, detail: '1 duplicate row(s) of 4.' },
     validity: { score: 1, weight: 0.25, detail: '4/4 present cell(s) match the expected type across 1 column(s).' },
   },
+  weighting_profile: 'default',
+  weights_used: { completeness: 0.3, consistency: 0.25, uniqueness: 0.2, validity: 0.25 },
   top_issues: ['Completeness 83.3% (sparsest: phone).', '1 duplicate row(s) (25%).'],
 };
 const CHAIN = [
@@ -55,7 +68,7 @@ const INVALIDATORS = [
   'Uniqueness is full-row duplication over the scored columns; a legitimately repeated row (e.g. event logs) will lower it.',
 ];
 const TAIL = {
-  confidence_score: 0.9, confidence_per_section: { dimensions: 1, weighted_score: 0.9 },
+  confidence_score: 0.8, confidence_per_section: { measures: 1, weighting: 0.8 },
   recommended_actions_priority_order: [
     'Pipeline quality 90/100 (grade A); passes the 80 promotion gate.',
     'Address: Completeness 83.3% (sparsest: phone).',
@@ -65,8 +78,8 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('dimensions', 'weighted_score'), _Tail: Tail,
-  Dimension, Dimensions, ScoreCore, ScoreRequest, DiscoveryResponse: discoverySchema(),
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('measures', 'weighting'), _Tail: Tail,
+  Dimension, Dimensions, WeightsUsed, ScoreCore, ScoreRequest, DiscoveryResponse: discoverySchema(),
   ScoreResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/ScoreCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {
     allOf: [

@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema, rowSchema, CellValue } from '../../_aplus/specparts';
 
 const RuleResult = {
   type: 'object',
@@ -30,22 +30,19 @@ const RulesCore = {
     results: { type: 'array', items: RuleResult },
   },
 };
-const Row = { type: 'object', description: 'A dataset row as a flat JSON object (column → value).' };
-const Rule = {
-  type: 'object', required: ['column', 'type'],
-  properties: {
-    id: { type: 'string', description: 'Optional rule id (default "<column>:<type>").' },
-    column: { type: 'string' },
-    type: { type: 'string', enum: ['not_null', 'unique', 'type', 'range', 'regex', 'enum', 'min_length', 'max_length'] },
-    value: { description: 'type: one of string/number/integer/boolean; min_length/max_length: the length bound.' },
-    expected: { description: 'Alias of value for type rules.' },
-    min: { type: 'number', description: 'range lower bound.' },
-    max: { type: 'number', description: 'range upper bound.' },
-    pattern: { type: 'string', description: 'regex pattern.' },
-    flags: { type: 'string', description: 'regex flags.' },
-    values: { type: 'array', description: 'enum allowed values.' },
-  },
-};
+const Row = rowSchema();
+const idProp = { type: 'string', description: 'Optional rule id (default "<column>:<type>").' };
+// Each rule variant is a closed (additionalProperties:false) schema discriminated
+// by `type`, combined via oneOf so an agent can see exactly which fields each
+// rule kind accepts (no generic/under-typed value/expected/values).
+const NotNullRule = { type: 'object', additionalProperties: false, required: ['column', 'type'], properties: { id: idProp, column: { type: 'string' }, type: { const: 'not_null' } } };
+const UniqueRule = { type: 'object', additionalProperties: false, required: ['column', 'type'], properties: { id: idProp, column: { type: 'string' }, type: { const: 'unique' } } };
+const TypeRule = { type: 'object', additionalProperties: false, required: ['column', 'type'], properties: { id: idProp, column: { type: 'string' }, type: { const: 'type' }, value: { type: 'string', enum: ['string', 'number', 'integer', 'boolean'] }, expected: { type: 'string', enum: ['string', 'number', 'integer', 'boolean'], description: 'Alias of value.' } } };
+const RangeRule = { type: 'object', additionalProperties: false, required: ['column', 'type'], properties: { id: idProp, column: { type: 'string' }, type: { const: 'range' }, min: { type: 'number', description: 'Lower bound (inclusive).' }, max: { type: 'number', description: 'Upper bound (inclusive).' } } };
+const RegexRule = { type: 'object', additionalProperties: false, required: ['column', 'type', 'pattern'], properties: { id: idProp, column: { type: 'string' }, type: { const: 'regex' }, pattern: { type: 'string', maxLength: 300, description: 'RE2-style pattern; nested unbounded quantifiers are rejected.' }, flags: { type: 'string', pattern: '^[imsu]*$', description: 'Match flags (g/y are ignored).' } } };
+const EnumRule = { type: 'object', additionalProperties: false, required: ['column', 'type', 'values'], properties: { id: idProp, column: { type: 'string' }, type: { const: 'enum' }, values: { type: 'array', minItems: 1, items: CellValue, description: 'Allowed values.' } } };
+const LengthRule = { type: 'object', additionalProperties: false, required: ['column', 'type'], properties: { id: idProp, column: { type: 'string' }, type: { enum: ['min_length', 'max_length'] }, value: { type: 'number', description: 'Length bound.' }, length: { type: 'number', description: 'Alias of value.' } } };
+const Rule = { oneOf: [NotNullRule, UniqueRule, TypeRule, RangeRule, RegexRule, EnumRule, LengthRule], description: 'A declarative quality rule; shape depends on "type".' };
 const CheckRequest = {
   type: 'object', required: ['rows', 'rules'], additionalProperties: false,
   properties: {
@@ -70,6 +67,7 @@ const INVALIDATORS = [
   'Rules other than not_null skip missing values by design — add an explicit not_null rule to require presence.',
   'Numeric range/type checks accept numeric strings (e.g. "42") as numbers; use a type rule with value "number" plus a strict regex if you need to reject string-encoded numbers.',
   'sample_violation_rows is capped; "violations" is the exact full count.',
+  'Regex rules are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected, and g/y flags are dropped (they make .test() stateful). Simplify the pattern if rejected.',
 ];
 const TAIL = {
   confidence_score: 1, confidence_per_section: { rule_evaluation: 1 },

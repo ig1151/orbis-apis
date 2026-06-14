@@ -30,10 +30,13 @@ function typeMatches(actual: string, expected: string): boolean {
 const BASE_WEIGHTS = { completeness: 0.3, consistency: 0.25, uniqueness: 0.2, validity: 0.25 };
 
 export interface Dimension { score: number; weight: number; detail: string; }
+export interface WeightsUsed { completeness: number; consistency: number; uniqueness: number; validity?: number; }
 export interface ScoreCore {
   row_count: number;
   column_count: number;
   dimensions: { completeness: Dimension; consistency: Dimension; uniqueness: Dimension; validity: Dimension | null };
+  weighting_profile: string;
+  weights_used: WeightsUsed;
   quality_score: number;
   grade: string;
   passed: boolean;
@@ -135,6 +138,8 @@ function score(body: any): { error: string } | { result: ScoreCore } {
         uniqueness: { score: round(uniqueness, 4), weight: usedWeights.uniqueness, detail: `${dupRows} duplicate row(s) of ${rows.length}.` },
         validity: validity === null ? null : { score: round(validity, 4), weight: usedWeights.validity, detail: validityDetail },
       },
+      weighting_profile: 'default',
+      weights_used: usedWeights as unknown as WeightsUsed,
       quality_score,
       grade: gradeOf(quality_score),
       passed: quality_score >= 80,
@@ -177,8 +182,10 @@ router.get('/', (_req: Request, res: Response) => {
   });
 });
 
+// The dimension measures are exact (measures:1); the composite blend uses
+// heuristic weights (weighting:0.8) exposed via weighting_profile/weights_used.
 const TAIL = (r: ScoreCore) => ({
-  confidence_score: 0.9, confidence_per_section: { dimensions: 1, weighted_score: 0.9 },
+  confidence_score: 0.8, confidence_per_section: { measures: 1, weighting: 0.8 },
   recommended_actions_priority_order: actions(r),
   chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
 });

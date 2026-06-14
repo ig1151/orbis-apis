@@ -15,6 +15,32 @@ const RULE_TYPES = ['not_null', 'unique', 'type', 'range', 'regex', 'enum', 'min
 type RuleType = typeof RULE_TYPES[number];
 const SCALAR_TYPES = ['string', 'number', 'integer', 'boolean'];
 const MAX_SAMPLES = 10;
+const MAX_REGEX_LEN = 300;          // bound pattern size (ReDoS surface)
+const REGEX_FLAGS = 'gimsuy';       // syntactically valid JS regex flags
+
+// Conservative catastrophic-backtracking ("ReDoS") guard: flags a group that is
+// itself quantified by * or + and whose body contains another unbounded
+// quantifier, e.g. (a+)+, (a*)*, (.+)*, ([a-z]+)+. May over-reject some safe
+// patterns — that is the intended trade-off for an API that runs caller-supplied
+// regex over up to 20k rows. (Escaped parens are not parsed; worst case is a
+// false reject, never a missed risk.)
+function looksCatastrophic(src: string): boolean {
+  for (let i = 0; i < src.length; i++) {
+    if (src[i] !== ')') continue;
+    const next = src[i + 1];
+    const quantified = next === '+' || next === '*' || (next === '{' && /^\{\d*,\d*\}/.test(src.slice(i + 1)));
+    if (!quantified) continue;
+    let depth = 0, open = -1;
+    for (let j = i; j >= 0; j--) {
+      if (src[j] === ')') depth++;
+      else if (src[j] === '(') { depth--; if (depth === 0) { open = j; break; } }
+    }
+    if (open === -1) continue;
+    const body = src.slice(open + 1, i);
+    if (/[+*]|\{\d*,\}/.test(body)) return true;
+  }
+  return false;
+}
 
 export interface RuleResult {
   rule_id: string;
@@ -85,7 +111,15 @@ function evalRule(rule: any, rows: Row[], idx: number): { error: string } | Rule
     if (!SCALAR_TYPES.includes(typeParam)) return { error: `rules[${idx}] (type) needs "value" in: ${SCALAR_TYPES.join(', ')}.` };
   } else if (type === 'regex') {
     if (typeof rule.pattern !== 'string') return { error: `rules[${idx}] (regex) needs a "pattern" string.` };
-    try { re = new RegExp(rule.pattern, typeof rule.flags === 'string' ? rule.flags : ''); } catch { return { error: `rules[${idx}] (regex) has an invalid pattern.` }; }
+    if (rule.pattern.length > MAX_REGEX_LEN) return { error: `rules[${idx}] (regex) pattern exceeds the ${MAX_REGEX_LEN}-character limit.` };
+    if (looksCatastrophic(rule.pattern)) return { error: `rules[${idx}] (regex) pattern rejected: nested unbounded quantifiers risk catastrophic backtracking — simplify it.` };
+    const rawFlags = typeof rule.flags === 'string' ? rule.flags : '';
+    const badFlag = [...rawFlags].find((f) => !REGEX_FLAGS.includes(f));
+    if (badFlag) return { error: `rules[${idx}] (regex) has an invalid flag "${badFlag}".` };
+    // Drop g/y: they make RegExp.test() stateful via lastIndex, so reusing one
+    // compiled regex across rows would skip/alternate matches. They are no-ops
+    // for our full-value test anyway.
+    try { re = new RegExp(rule.pattern, rawFlags.replace(/[gy]/g, '')); } catch { return { error: `rules[${idx}] (regex) has an invalid pattern.` }; }
   } else if (type === 'enum') {
     if (!Array.isArray(rule.values) || rule.values.length === 0) return { error: `rules[${idx}] (enum) needs a non-empty "values" array.` };
     enumKeys = new Set((rule.values as unknown[]).map(asKey));
@@ -175,6 +209,7 @@ const INVALIDATORS = [
   'Rules other than not_null skip missing values by design — add an explicit not_null rule to require presence.',
   'Numeric range/type checks accept numeric strings (e.g. "42") as numbers; use a type rule with value "number" plus a strict regex if you need to reject string-encoded numbers.',
   'sample_violation_rows is capped; "violations" is the exact full count.',
+  'Regex rules are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected, and g/y flags are dropped (they make .test() stateful). Simplify the pattern if rejected.',
 ];
 
 function actions(r: RulesCore): string[] {

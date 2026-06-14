@@ -126,9 +126,12 @@ router.get('/', (_req: Request, res: Response) => {
   });
 });
 
-const TAIL = (r: ProfileCore) => ({
-  confidence_score: 1, confidence_per_section: { profiling: 1 },
-  recommended_actions_priority_order: actions(r),
+// Computed stats are exact for the supplied rows (profiling:1), but type
+// inference is a heuristic — numeric-looking strings, mixed columns, etc. (see
+// INVALIDATORS) — so the overall score is bounded by type_inference.
+const TAIL = (_r: ProfileCore) => ({
+  confidence_score: 0.85, confidence_per_section: { profiling: 1, type_inference: 0.85 },
+  recommended_actions_priority_order: actions(_r),
   chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
 });
 

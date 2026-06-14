@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema, rowSchema } from '../../_aplus/specparts';
 
 const NumericStats = {
   type: ['object', 'null'],
@@ -41,7 +41,7 @@ const ProfileCore = {
     columns: { type: 'array', items: ColumnProfile },
   },
 };
-const Row = { type: 'object', description: 'A dataset row as a flat JSON object (column → value).' };
+const Row = rowSchema();
 const ProfileRequest = {
   type: 'object', required: ['rows'], additionalProperties: false,
   properties: {
@@ -67,7 +67,7 @@ const INVALIDATORS = [
   'Statistics describe only the supplied rows — they are not a population estimate.',
 ];
 const TAIL = {
-  confidence_score: 1, confidence_per_section: { profiling: 1 },
+  confidence_score: 0.85, confidence_per_section: { profiling: 1, type_inference: 0.85 },
   recommended_actions_priority_order: [
     'Profiled 2 column(s) over 3 row(s).',
     'Candidate key/id column(s): id.',
@@ -76,7 +76,7 @@ const TAIL = {
 };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('profiling'), _Tail: Tail,
+  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('profiling', 'type_inference'), _Tail: Tail,
   NumericStats, StringStats, BoolStats, TopValue, ColumnProfile, ProfileCore, ProfileRequest, DiscoveryResponse: discoverySchema(),
   ProfileResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/ProfileCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {

@@ -1,6 +1,26 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema, rowSchema } from '../../_aplus/specparts';
 
+const NumericDriftDetails = {
+  type: 'object', additionalProperties: false,
+  required: ['baseline_mean', 'current_mean', 'mean_shift', 'bins'],
+  properties: {
+    baseline_mean: { type: ['number', 'null'] },
+    current_mean: { type: ['number', 'null'] },
+    mean_shift: { type: ['number', 'null'] },
+    bins: { type: 'integer', minimum: 1 },
+  },
+};
+const CategoricalDriftDetails = {
+  type: 'object', additionalProperties: false,
+  required: ['baseline_categories', 'current_categories', 'new_categories', 'dropped_categories'],
+  properties: {
+    baseline_categories: { type: 'integer', minimum: 0 },
+    current_categories: { type: 'integer', minimum: 0 },
+    new_categories: { type: 'array', items: { type: 'string' } },
+    dropped_categories: { type: 'array', items: { type: 'string' } },
+  },
+};
 const ColumnDrift = {
   type: 'object',
   required: ['column', 'type', 'psi', 'drift_level', 'baseline_missing_rate', 'current_missing_rate', 'details'],
@@ -12,7 +32,7 @@ const ColumnDrift = {
     drift_level: { type: 'string', enum: ['none', 'minor', 'major'] },
     baseline_missing_rate: { type: 'number', minimum: 0, maximum: 1 },
     current_missing_rate: { type: 'number', minimum: 0, maximum: 1 },
-    details: { type: 'object', description: 'Type-specific detail (means/mean_shift for numeric; category counts and new/dropped categories for categorical).' },
+    details: { oneOf: [NumericDriftDetails, CategoricalDriftDetails], description: 'Numeric drift detail (means/mean_shift/bins) for numeric columns; categorical detail (category counts + new/dropped categories) for categorical columns.' },
   },
 };
 const DriftCore = {
@@ -29,7 +49,7 @@ const DriftCore = {
     per_column: { type: 'array', items: ColumnDrift },
   },
 };
-const Row = { type: 'object', description: 'A dataset row as a flat JSON object (column → value).' };
+const Row = rowSchema();
 const DetectRequest = {
   type: 'object', required: ['baseline', 'current'], additionalProperties: false,
   properties: {
@@ -57,7 +77,7 @@ const INVALIDATORS = [
   'A column is compared numerically only if BOTH sides parse as numeric; mixed-type columns are compared as categories.',
 ];
 const TAIL = {
-  confidence_score: 1, confidence_per_section: { drift_statistics: 1 },
+  confidence_score: 0.5, confidence_per_section: { drift_statistics: 0.5 },
   recommended_actions_priority_order: [
     'Major drift on tier (PSI 8.5155) — investigate before trusting downstream models/aggregates.',
     'Confirm baseline and current windows are comparable (same population, no schema change).',

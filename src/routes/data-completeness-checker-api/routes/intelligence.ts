@@ -105,6 +105,7 @@ const INVALIDATORS = [
   'Blank/whitespace strings count as missing by default; set "blank_as_missing": false to count them as present.',
   'A column not present in any row but listed in required_columns scores 0% — that is intentional (the field is absent).',
   'completeness_score is capped at 49 (failing) if any required column has a missing value, regardless of overall fill rate.',
+  'Counts are exact for the supplied rows; they are not a population estimate — a complete sample does not guarantee the upstream source is complete.',
 ];
 
 function actions(r: CompletenessCore): string[] {

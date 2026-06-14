@@ -1,5 +1,5 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema, rowSchema } from '../../_aplus/specparts';
 
 const ColumnCompleteness = {
   type: 'object',
@@ -30,7 +30,7 @@ const CompletenessCore = {
     passed: { type: 'boolean' },
   },
 };
-const Row = { type: 'object', description: 'A dataset row as a flat JSON object (column → value).' };
+const Row = rowSchema();
 const CheckRequest = {
   type: 'object', required: ['rows'], additionalProperties: false,
   properties: {
@@ -58,6 +58,7 @@ const INVALIDATORS = [
   'Blank/whitespace strings count as missing by default; set "blank_as_missing": false to count them as present.',
   'A column not present in any row but listed in required_columns scores 0% — that is intentional (the field is absent).',
   'completeness_score is capped at 49 (failing) if any required column has a missing value, regardless of overall fill rate.',
+  'Counts are exact for the supplied rows; they are not a population estimate — a complete sample does not guarantee the upstream source is complete.',
 ];
 const TAIL = {
   confidence_score: 1, confidence_per_section: { completeness: 1 },
