@@ -96,24 +96,24 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/data-profiler/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/profile', summary: 'Profile a dataset', price_usdc: 0.005 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL profile + reasoning', price_usdc: 0.009 },
+    { method: 'POST', path: '/profile', summary: 'Profile a dataset', price_usdc: 0.008 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL profile + reasoning', price_usdc: 0.015 },
   ],
   pricing: [
-    { path: '/profile', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
+    { path: '/profile', price_usdc: 0.008, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   {
-    method: 'post', path: '/profile', summary: 'Profile a dataset', operationId: 'profile', priceUsdc: 0.005,
+    method: 'post', path: '/profile', summary: 'Profile a dataset', operationId: 'profile', priceUsdc: 0.008,
     requestSchemaRef: 'ProfileRequest', responseSchemaRef: 'ProfileResponse', requestExample: reqEx,
     responseExample: { ...env, ...CORE, ...TAIL },
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL profile + reasoning', operationId: 'lookup', priceUsdc: 0.009, oneCall: true,
+    method: 'post', path: '/lookup', summary: 'ONE-CALL profile + reasoning', operationId: 'lookup', priceUsdc: 0.015, oneCall: true,
     requestSchemaRef: 'ProfileRequest', responseSchemaRef: 'LookupResponse', requestExample: reqEx,
     responseExample: {
       ...env, ...CORE,

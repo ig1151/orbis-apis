@@ -129,12 +129,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/data-completeness-checker/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/check', summary: 'Check dataset completeness', price_usdc: 0.004 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL check + reasoning', price_usdc: 0.008 },
+      { method: 'POST', path: '/check', summary: 'Check dataset completeness', price_usdc: 0.005 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL check + reasoning', price_usdc: 0.01 },
     ],
     pricing: [
-      { path: '/check', price_usdc: 0.004, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
+      { path: '/check', price_usdc: 0.005, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

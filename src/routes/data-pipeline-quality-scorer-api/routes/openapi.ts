@@ -106,24 +106,24 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/data-pipeline-quality-scorer/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/score', summary: 'Score dataset quality', price_usdc: 0.006 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL score + reasoning', price_usdc: 0.01 },
+    { method: 'POST', path: '/score', summary: 'Score dataset quality', price_usdc: 0.01 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL score + reasoning', price_usdc: 0.018 },
   ],
   pricing: [
-    { path: '/score', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+    { path: '/score', price_usdc: 0.01, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.018, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   {
-    method: 'post', path: '/score', summary: 'Score dataset quality', operationId: 'score', priceUsdc: 0.006,
+    method: 'post', path: '/score', summary: 'Score dataset quality', operationId: 'score', priceUsdc: 0.01,
     requestSchemaRef: 'ScoreRequest', responseSchemaRef: 'ScoreResponse', requestExample: reqEx,
     responseExample: { ...env, ...CORE, ...TAIL },
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL score + reasoning', operationId: 'lookup', priceUsdc: 0.01, oneCall: true,
+    method: 'post', path: '/lookup', summary: 'ONE-CALL score + reasoning', operationId: 'lookup', priceUsdc: 0.018, oneCall: true,
     requestSchemaRef: 'ScoreRequest', responseSchemaRef: 'LookupResponse', requestExample: reqEx,
     responseExample: {
       ...env, ...CORE,

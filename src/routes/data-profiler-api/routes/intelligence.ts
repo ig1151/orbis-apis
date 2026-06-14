@@ -115,12 +115,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/data-profiler/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/profile', summary: 'Profile a dataset', price_usdc: 0.005 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL profile + reasoning', price_usdc: 0.009 },
+      { method: 'POST', path: '/profile', summary: 'Profile a dataset', price_usdc: 0.008 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL profile + reasoning', price_usdc: 0.015 },
     ],
     pricing: [
-      { path: '/profile', price_usdc: 0.005, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
+      { path: '/profile', price_usdc: 0.008, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

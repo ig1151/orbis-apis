@@ -109,24 +109,24 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/data-drift-detector/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/detect', summary: 'Detect column-level drift (PSI)', price_usdc: 0.006 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL detect + reasoning', price_usdc: 0.01 },
+    { method: 'POST', path: '/detect', summary: 'Detect column-level drift (PSI)', price_usdc: 0.008 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL detect + reasoning', price_usdc: 0.015 },
   ],
   pricing: [
-    { path: '/detect', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+    { path: '/detect', price_usdc: 0.008, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   {
-    method: 'post', path: '/detect', summary: 'Detect column-level drift (PSI)', operationId: 'detect', priceUsdc: 0.006,
+    method: 'post', path: '/detect', summary: 'Detect column-level drift (PSI)', operationId: 'detect', priceUsdc: 0.008,
     requestSchemaRef: 'DetectRequest', responseSchemaRef: 'DetectResponse', requestExample: reqEx,
     responseExample: { ...env, ...CORE, ...TAIL },
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL detect + reasoning', operationId: 'lookup', priceUsdc: 0.01, oneCall: true,
+    method: 'post', path: '/lookup', summary: 'ONE-CALL detect + reasoning', operationId: 'lookup', priceUsdc: 0.015, oneCall: true,
     requestSchemaRef: 'DetectRequest', responseSchemaRef: 'LookupResponse', requestExample: reqEx,
     responseExample: {
       ...env, ...CORE,

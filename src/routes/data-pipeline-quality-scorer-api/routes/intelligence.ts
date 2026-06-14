@@ -171,12 +171,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/data-pipeline-quality-scorer/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/score', summary: 'Score dataset quality', price_usdc: 0.006 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL score + reasoning', price_usdc: 0.01 },
+      { method: 'POST', path: '/score', summary: 'Score dataset quality', price_usdc: 0.01 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL score + reasoning', price_usdc: 0.018 },
     ],
     pricing: [
-      { path: '/score', price_usdc: 0.006, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+      { path: '/score', price_usdc: 0.01, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.018, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

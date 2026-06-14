@@ -136,12 +136,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/data-drift-detector/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/detect', summary: 'Detect column-level drift (PSI)', price_usdc: 0.006 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL detect + reasoning', price_usdc: 0.01 },
+      { method: 'POST', path: '/detect', summary: 'Detect column-level drift (PSI)', price_usdc: 0.008 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL detect + reasoning', price_usdc: 0.015 },
     ],
     pricing: [
-      { path: '/detect', price_usdc: 0.006, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+      { path: '/detect', price_usdc: 0.008, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

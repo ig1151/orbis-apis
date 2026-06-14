@@ -93,24 +93,24 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/data-completeness-checker/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/check', summary: 'Check dataset completeness', price_usdc: 0.004 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL check + reasoning', price_usdc: 0.008 },
+    { method: 'POST', path: '/check', summary: 'Check dataset completeness', price_usdc: 0.005 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL check + reasoning', price_usdc: 0.01 },
   ],
   pricing: [
-    { path: '/check', price_usdc: 0.004, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
+    { path: '/check', price_usdc: 0.005, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   {
-    method: 'post', path: '/check', summary: 'Check dataset completeness', operationId: 'check', priceUsdc: 0.004,
+    method: 'post', path: '/check', summary: 'Check dataset completeness', operationId: 'check', priceUsdc: 0.005,
     requestSchemaRef: 'CheckRequest', responseSchemaRef: 'CheckResponse', requestExample: reqEx,
     responseExample: { ...env, ...CORE, ...TAIL },
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL check + reasoning', operationId: 'lookup', priceUsdc: 0.008, oneCall: true,
+    method: 'post', path: '/lookup', summary: 'ONE-CALL check + reasoning', operationId: 'lookup', priceUsdc: 0.01, oneCall: true,
     requestSchemaRef: 'CheckRequest', responseSchemaRef: 'LookupResponse', requestExample: reqEx,
     responseExample: {
       ...env, ...CORE,
