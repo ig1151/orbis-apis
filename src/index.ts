@@ -756,6 +756,16 @@ import dataAggregatorRouter from './routes/data-aggregator-api/routes/intelligen
 import dataAggregatorOpenapiRouter from './routes/data-aggregator-api/routes/openapi';
 import dataClassificationRouter from './routes/data-classification-api/routes/intelligence';
 import dataClassificationOpenapiRouter from './routes/data-classification-api/routes/openapi';
+import dataLineageTrackerRouter from './routes/data-lineage-tracker-api/routes/intelligence';
+import dataLineageTrackerOpenapiRouter from './routes/data-lineage-tracker-api/routes/openapi';
+import dataCatalogBuilderRouter from './routes/data-catalog-builder-api/routes/intelligence';
+import dataCatalogBuilderOpenapiRouter from './routes/data-catalog-builder-api/routes/openapi';
+import scrapeDataMergerRouter from './routes/scrape-data-merger-api/routes/intelligence';
+import scrapeDataMergerOpenapiRouter from './routes/scrape-data-merger-api/routes/openapi';
+import scrapeDataEnricherRouter from './routes/scrape-data-enricher-api/routes/intelligence';
+import scrapeDataEnricherOpenapiRouter from './routes/scrape-data-enricher-api/routes/openapi';
+import scrapeDataPipelineValidatorRouter from './routes/scrape-data-pipeline-validator-api/routes/intelligence';
+import scrapeDataPipelineValidatorOpenapiRouter from './routes/scrape-data-pipeline-validator-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1406,6 +1416,11 @@ const routerMap: Record<string, import("express").Router> = {
   'data-transformer': dataTransformerRouter,
   'data-aggregator': dataAggregatorRouter,
   'data-classification': dataClassificationRouter,
+  'data-lineage-tracker': dataLineageTrackerRouter,
+  'data-catalog-builder': dataCatalogBuilderRouter,
+  'scrape-data-merger': scrapeDataMergerRouter,
+  'scrape-data-enricher': scrapeDataEnricherRouter,
+  'scrape-data-pipeline-validator': scrapeDataPipelineValidatorRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1875,6 +1890,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'data-transformer': dataTransformerOpenapiRouter,
   'data-aggregator': dataAggregatorOpenapiRouter,
   'data-classification': dataClassificationOpenapiRouter,
+  'data-lineage-tracker': dataLineageTrackerOpenapiRouter,
+  'data-catalog-builder': dataCatalogBuilderOpenapiRouter,
+  'scrape-data-merger': scrapeDataMergerOpenapiRouter,
+  'scrape-data-enricher': scrapeDataEnricherOpenapiRouter,
+  'scrape-data-pipeline-validator': scrapeDataPipelineValidatorOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
