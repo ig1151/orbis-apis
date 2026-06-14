@@ -746,6 +746,16 @@ import dataProfilerRouter from './routes/data-profiler-api/routes/intelligence';
 import dataProfilerOpenapiRouter from './routes/data-profiler-api/routes/openapi';
 import dataPipelineQualityScorerRouter from './routes/data-pipeline-quality-scorer-api/routes/intelligence';
 import dataPipelineQualityScorerOpenapiRouter from './routes/data-pipeline-quality-scorer-api/routes/openapi';
+import dataNormalizerRouter from './routes/data-normalizer-api/routes/intelligence';
+import dataNormalizerOpenapiRouter from './routes/data-normalizer-api/routes/openapi';
+import dataMapperRouter from './routes/data-mapper-api/routes/intelligence';
+import dataMapperOpenapiRouter from './routes/data-mapper-api/routes/openapi';
+import dataTransformerRouter from './routes/data-transformer-api/routes/intelligence';
+import dataTransformerOpenapiRouter from './routes/data-transformer-api/routes/openapi';
+import dataAggregatorRouter from './routes/data-aggregator-api/routes/intelligence';
+import dataAggregatorOpenapiRouter from './routes/data-aggregator-api/routes/openapi';
+import dataClassificationRouter from './routes/data-classification-api/routes/intelligence';
+import dataClassificationOpenapiRouter from './routes/data-classification-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1391,6 +1401,11 @@ const routerMap: Record<string, import("express").Router> = {
   'data-completeness-checker': dataCompletenessCheckerRouter,
   'data-profiler': dataProfilerRouter,
   'data-pipeline-quality-scorer': dataPipelineQualityScorerRouter,
+  'data-normalizer': dataNormalizerRouter,
+  'data-mapper': dataMapperRouter,
+  'data-transformer': dataTransformerRouter,
+  'data-aggregator': dataAggregatorRouter,
+  'data-classification': dataClassificationRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1855,6 +1870,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'data-completeness-checker': dataCompletenessCheckerOpenapiRouter,
   'data-profiler': dataProfilerOpenapiRouter,
   'data-pipeline-quality-scorer': dataPipelineQualityScorerOpenapiRouter,
+  'data-normalizer': dataNormalizerOpenapiRouter,
+  'data-mapper': dataMapperOpenapiRouter,
+  'data-transformer': dataTransformerOpenapiRouter,
+  'data-aggregator': dataAggregatorOpenapiRouter,
+  'data-classification': dataClassificationOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,

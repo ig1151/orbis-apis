@@ -1,0 +1,142 @@
+[
+  {
+    "name": "Data Normalizer API",
+    "shortDescription": "Canonicalize dataset values: whitespace, case, unicode, number, date.",
+    "description": "Deterministic data normalizer that applies an ordered list of canonicalization operations (trim, collapse whitespace, lowercase/uppercase/title case, unicode NFC/NFKC, strip accents, remove punctuation, to number/integer/boolean/date) per column to a posted dataset and returns the normalized rows with per-column change counts. Pure string/number transforms, no LLM, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-normalizer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-normalizer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-normalizer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-quality", "normalization", "etl", "data-cleaning", "canonicalization", "x402"],
+    "keywords": ["data normalization", "text cleaning", "canonicalization", "unicode normalization", "whitespace trim", "case folding"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.011,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/normalize", "pricePerCallUsdc": 0.006, "description": "Normalize a dataset" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.011, "description": "One-call normalize with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/normalize", "description": "Normalize dataset values" },
+      { "method": "POST", "path": "/lookup", "description": "Normalize with reasoning" }
+    ]
+  },
+  {
+    "name": "Data Mapper API",
+    "shortDescription": "Rename, cast, and default-fill dataset fields via a mapping spec.",
+    "description": "Deterministic data mapper that applies a field-mapping spec (rename + optional type cast + default value) to a posted dataset and returns the remapped records with per-mapping stats (applied, defaults used, cast failures). Optionally carries unmapped source columns through. No LLM, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-mapper",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-mapper/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-mapper/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-quality", "field-mapping", "etl", "schema-mapping", "data-transformation", "x402"],
+    "keywords": ["field mapping", "schema mapping", "rename columns", "type casting", "etl mapping", "data transformation"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.011,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/map", "pricePerCallUsdc": 0.006, "description": "Map/rename/cast dataset fields" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.011, "description": "One-call map with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/map", "description": "Map/rename/cast fields" },
+      { "method": "POST", "path": "/lookup", "description": "Map with reasoning" }
+    ]
+  },
+  {
+    "name": "Data Transformer API",
+    "shortDescription": "Declarative row transforms: concat, arithmetic, split, filter.",
+    "description": "Deterministic data transformer that applies an ordered pipeline of declarative row transforms — concat (join columns), arithmetic (+ - * /), split (string into columns), and filter (predicate-based row selection) — to a posted dataset and returns the transformed rows with a per-operation effect summary. No expression evaluation, no LLM, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-transformer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-transformer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-transformer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-quality", "data-transformation", "etl", "row-transforms", "pipelines", "x402"],
+    "keywords": ["data transformation", "row transforms", "derive columns", "split column", "filter rows", "etl"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/transform", "pricePerCallUsdc": 0.007, "description": "Transform dataset rows" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call transform with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/transform", "description": "Transform dataset rows" },
+      { "method": "POST", "path": "/lookup", "description": "Transform with reasoning" }
+    ]
+  },
+  {
+    "name": "Data Aggregator API",
+    "shortDescription": "Group-by + aggregate (sum/avg/count/min/max/median/percentile).",
+    "description": "Deterministic data aggregator that groups a posted dataset by zero or more columns and computes aggregation functions (count, count_distinct, sum, avg, min, max, median, percentile) per group. Returns grouped result rows. Pure arithmetic, no LLM, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-aggregator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-aggregator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-aggregator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-quality", "aggregation", "group-by", "analytics", "etl", "x402"],
+    "keywords": ["data aggregation", "group by", "sum average count", "percentile", "summary statistics", "etl"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.011,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/aggregate", "pricePerCallUsdc": 0.006, "description": "Group-by + aggregate a dataset" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.011, "description": "One-call aggregate with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/aggregate", "description": "Group-by + aggregate" },
+      { "method": "POST", "path": "/lookup", "description": "Aggregate with reasoning" }
+    ]
+  },
+  {
+    "name": "Data Classification API",
+    "shortDescription": "Infer per-column semantic type + PII (email/phone/ssn/credit-card/ip).",
+    "description": "Deterministic data classifier that infers a per-column semantic type (email, phone, url, ip, uuid, credit_card, ssn, zip, date, datetime, currency, boolean, integer, number, json, free_text) and a PII flag/category from regex and Luhn-checksum heuristics over the values. Format-based detection only — does not detect names/addresses. No LLM, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-classification",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-classification/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-classification/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-quality", "data-classification", "pii-detection", "governance", "schema-discovery", "x402"],
+    "keywords": ["data classification", "pii detection", "semantic type", "column type inference", "sensitive data", "data governance"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/classify", "pricePerCallUsdc": 0.007, "description": "Classify dataset columns (semantic + PII)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call classify with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/classify", "description": "Classify columns (semantic + PII)" },
+      { "method": "POST", "path": "/lookup", "description": "Classify with reasoning" }
+    ]
+  }
+]
