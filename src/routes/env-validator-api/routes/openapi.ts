@@ -85,24 +85,24 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/env-validator/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/validate', summary: 'Validate .env contents', price_usdc: 0.005 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL validate + reasoning', price_usdc: 0.009 },
+    { method: 'POST', path: '/validate', summary: 'Validate .env contents', price_usdc: 0.004 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL validate + reasoning', price_usdc: 0.008 },
   ],
   pricing: [
-    { path: '/validate', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
+    { path: '/validate', price_usdc: 0.004, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   {
-    method: 'post', path: '/validate', summary: 'Validate .env contents', operationId: 'validate', priceUsdc: 0.005,
+    method: 'post', path: '/validate', summary: 'Validate .env contents', operationId: 'validate', priceUsdc: 0.004,
     requestSchemaRef: 'ValidateRequest', responseSchemaRef: 'ValidateResponse', requestExample: reqEx,
     responseExample: { ...env, ...CORE, ...TAIL },
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL validate + reasoning', operationId: 'lookup', priceUsdc: 0.009, oneCall: true,
+    method: 'post', path: '/lookup', summary: 'ONE-CALL validate + reasoning', operationId: 'lookup', priceUsdc: 0.008, oneCall: true,
     requestSchemaRef: 'ValidateRequest', responseSchemaRef: 'LookupResponse', requestExample: reqEx,
     responseExample: {
       ...env, ...CORE,

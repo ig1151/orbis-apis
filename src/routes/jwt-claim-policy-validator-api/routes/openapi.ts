@@ -94,24 +94,24 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/jwt-claim-policy-validator/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/validate', summary: 'Validate JWT claims vs a policy', price_usdc: 0.006 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL validate + reasoning', price_usdc: 0.01 },
+    { method: 'POST', path: '/validate', summary: 'Validate JWT claims vs a policy', price_usdc: 0.004 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL validate + reasoning', price_usdc: 0.008 },
   ],
   pricing: [
-    { path: '/validate', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+    { path: '/validate', price_usdc: 0.004, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   {
-    method: 'post', path: '/validate', summary: 'Validate JWT claims vs a policy', operationId: 'validate', priceUsdc: 0.006,
+    method: 'post', path: '/validate', summary: 'Validate JWT claims vs a policy', operationId: 'validate', priceUsdc: 0.004,
     requestSchemaRef: 'ValidateRequest', responseSchemaRef: 'ValidateResponse', requestExample: reqEx,
     responseExample: { ...env, ...CORE, ...TAIL },
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL validate + reasoning', operationId: 'lookup', priceUsdc: 0.01, oneCall: true,
+    method: 'post', path: '/lookup', summary: 'ONE-CALL validate + reasoning', operationId: 'lookup', priceUsdc: 0.008, oneCall: true,
     requestSchemaRef: 'ValidateRequest', responseSchemaRef: 'LookupResponse', requestExample: reqEx,
     responseExample: {
       ...env, ...CORE,

@@ -99,12 +99,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/oauth-scope-diff/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/diff', summary: 'Diff granted vs required scopes', price_usdc: 0.004 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL diff + reasoning', price_usdc: 0.008 },
+      { method: 'POST', path: '/diff', summary: 'Diff granted vs required scopes', price_usdc: 0.003 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL diff + reasoning', price_usdc: 0.006 },
     ],
     pricing: [
-      { path: '/diff', price_usdc: 0.004, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
+      { path: '/diff', price_usdc: 0.003, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.006, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

@@ -45,7 +45,7 @@ const INVALIDATORS = [
   'Best-practice findings (apt hygiene, HEALTHCHECK) are advisory and context-dependent, not security guarantees.',
 ];
 const TAIL = {
-  confidence_score: 0.9, confidence_per_section: { dockerfile: 0.9 },
+  confidence_score: 0.8, confidence_per_section: { dockerfile: 0.8 },
   recommended_actions_priority_order: [
     'Score 28/100 (F); 2 high-severity issue(s). Fix first: RUNS_AS_ROOT at line 1.',
     'Create and switch to a non-root user (USER appuser) before the runtime command.',

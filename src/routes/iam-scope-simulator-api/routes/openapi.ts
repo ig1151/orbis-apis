@@ -94,24 +94,24 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/iam-scope-simulator/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/simulate', summary: 'Simulate policy decision(s)', price_usdc: 0.006 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL simulate + reasoning', price_usdc: 0.01 },
+    { method: 'POST', path: '/simulate', summary: 'Simulate policy decision(s)', price_usdc: 0.007 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL simulate + reasoning', price_usdc: 0.014 },
   ],
   pricing: [
-    { path: '/simulate', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+    { path: '/simulate', price_usdc: 0.007, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.014, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   {
-    method: 'post', path: '/simulate', summary: 'Simulate policy decision(s)', operationId: 'simulate', priceUsdc: 0.006,
+    method: 'post', path: '/simulate', summary: 'Simulate policy decision(s)', operationId: 'simulate', priceUsdc: 0.007,
     requestSchemaRef: 'SimulateRequest', responseSchemaRef: 'SimulateResponse', requestExample: reqEx,
     responseExample: { ...env, ...CORE, ...TAIL },
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL simulate + reasoning', operationId: 'lookup', priceUsdc: 0.01, oneCall: true,
+    method: 'post', path: '/lookup', summary: 'ONE-CALL simulate + reasoning', operationId: 'lookup', priceUsdc: 0.014, oneCall: true,
     requestSchemaRef: 'SimulateRequest', responseSchemaRef: 'LookupResponse', requestExample: reqEx,
     responseExample: {
       ...env, ...CORE,
