@@ -52,6 +52,19 @@ export const Tail = {
   },
 };
 
+// A single dataset cell: any JSON scalar, null, array, or object — NOT an
+// untyped `{}`. Used as the `additionalProperties` schema for dataset rows so
+// "row" is a typed map rather than a generic object.
+export const CellValue = {
+  description: 'A single cell value: any JSON scalar, null, array, or object.',
+  type: ['string', 'number', 'boolean', 'null', 'array', 'object'],
+};
+
+/** Typed dataset-row schema: a flat object whose values are constrained to JSON cell values. */
+export function rowSchema(description = 'A dataset row as a flat JSON object (column → value).') {
+  return { type: 'object', description, additionalProperties: CellValue };
+}
+
 /** Build the standard DiscoveryResponse schema (GET / payload). */
 export function discoverySchema() {
   return {

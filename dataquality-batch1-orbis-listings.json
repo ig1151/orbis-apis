@@ -1,0 +1,237 @@
+[
+  {
+    "name": "Data Drift Detector API",
+    "shortDescription": "Detect distribution drift between baseline and current datasets.",
+    "description": "Deterministic data-drift detector that compares baseline and current datasets column-by-column using Population Stability Index, categorical frequency shifts, numeric distribution stability, new and dropped categories, and missing-rate changes. Built for MLOps, ETL monitoring, and agent-driven dataset checks.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-drift-detector",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-drift-detector/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-drift-detector/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-quality", "drift-detection", "mlops", "datasets", "psi", "x402"],
+    "keywords": ["data drift", "dataset drift", "population stability index", "feature drift", "distribution shift", "ml monitoring"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/detect",
+            "pricePerCallUsdc": 0.008,
+            "description": "Detect column-level data drift"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.015,
+            "description": "One-call drift detection with reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/detect", "description": "Detect dataset drift" },
+      { "method": "POST", "path": "/lookup", "description": "Detect drift with reasoning" }
+    ]
+  },
+  {
+    "name": "Data Quality Rules API",
+    "shortDescription": "Validate datasets against configurable quality rules.",
+    "description": "Deterministic data-quality rules engine that evaluates row datasets against declarative rules such as not-null, uniqueness, type checks, range checks, regex patterns, allowed values, and length constraints. Returns pass/fail results, violation counts, sample offending rows, recommendations, and agent-readable reasoning.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-quality-rules",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-quality-rules/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-quality-rules/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-quality", "validation", "rules-engine", "etl", "governance", "x402"],
+    "keywords": ["data validation", "quality rules", "dataset rules", "etl validation", "row validation", "data governance"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.006,
+            "description": "Evaluate quality rules against a dataset"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "One-call quality-rule evaluation with reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/check", "description": "Check data quality rules" },
+      { "method": "POST", "path": "/lookup", "description": "Check rules with reasoning" }
+    ]
+  },
+  {
+    "name": "Data Completeness Checker API",
+    "shortDescription": "Measure missing values, required-column coverage, and dataset completeness.",
+    "description": "Deterministic data-completeness checker that measures present, missing, blank, and required-field coverage across posted row datasets. Returns per-column completeness, fully complete row counts, required-column gate status, overall score, grade, and prioritized remediation actions.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-completeness-checker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-completeness-checker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-completeness-checker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-quality", "completeness", "missing-values", "etl", "analytics", "x402"],
+    "keywords": ["missing values", "null analysis", "data completeness", "required columns", "dataset coverage", "etl completeness"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.01,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/check",
+            "pricePerCallUsdc": 0.005,
+            "description": "Check dataset completeness"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.01,
+            "description": "One-call completeness check with reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/check", "description": "Check dataset completeness" },
+      { "method": "POST", "path": "/lookup", "description": "Check completeness with reasoning" }
+    ]
+  },
+  {
+    "name": "Data Profiler API",
+    "shortDescription": "Generate column statistics, inferred types, cardinality, and quality signals.",
+    "description": "Deterministic data profiler for structured row datasets. Computes row count, column count, inferred column types, null rates, cardinality, numeric statistics, string statistics, top values, and profiling metadata for agent-driven data inspection and pipeline preparation.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-profiler",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-profiler/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-profiler/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-profiling", "data-quality", "statistics", "schema-discovery", "datasets", "x402"],
+    "keywords": ["data profiler", "column statistics", "dataset profile", "cardinality", "null rate", "schema discovery"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.015,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/profile",
+            "pricePerCallUsdc": 0.008,
+            "description": "Profile a structured dataset"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.015,
+            "description": "One-call dataset profile with reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/profile", "description": "Profile dataset columns" },
+      { "method": "POST", "path": "/lookup", "description": "Profile dataset with reasoning" }
+    ]
+  },
+  {
+    "name": "Data Pipeline Quality Scorer API",
+    "shortDescription": "Score dataset and pipeline health across completeness, uniqueness, and type quality.",
+    "description": "Deterministic data-pipeline quality scorer that evaluates posted row datasets across quality dimensions including completeness, uniqueness, type conformance, and schema consistency. Returns a composite pipeline quality score, grade, dimension breakdown, risks, recommended actions, and agent-readable reasoning for ETL, analytics, and AI data workflows.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-pipeline-quality-scorer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-pipeline-quality-scorer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-pipeline-quality-scorer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-pipelines", "quality-scoring", "etl", "mlops", "governance", "x402"],
+    "keywords": ["pipeline quality", "data quality score", "etl quality", "dataset health", "data governance", "pipeline scoring"],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.018,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/score",
+            "pricePerCallUsdc": 0.01,
+            "description": "Score dataset pipeline quality"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.018,
+            "description": "One-call pipeline quality score with reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/score", "description": "Score pipeline data quality" },
+      { "method": "POST", "path": "/lookup", "description": "Score pipeline quality with reasoning" }
+    ]
+  }
+]

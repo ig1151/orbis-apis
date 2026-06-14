@@ -735,6 +735,17 @@ import semverToolsRouter from './routes/semver-tools-api/routes/intelligence';
 import semverToolsOpenapiRouter from './routes/semver-tools-api/routes/openapi';
 import hashHmacRouter from './routes/hash-hmac-api/routes/intelligence';
 import hashHmacOpenapiRouter from './routes/hash-hmac-api/routes/openapi';
+// Data-Quality batch 1 — deterministic dataset quality/pipeline tools
+import dataDriftDetectorRouter from './routes/data-drift-detector-api/routes/intelligence';
+import dataDriftDetectorOpenapiRouter from './routes/data-drift-detector-api/routes/openapi';
+import dataQualityRulesRouter from './routes/data-quality-rules-api/routes/intelligence';
+import dataQualityRulesOpenapiRouter from './routes/data-quality-rules-api/routes/openapi';
+import dataCompletenessCheckerRouter from './routes/data-completeness-checker-api/routes/intelligence';
+import dataCompletenessCheckerOpenapiRouter from './routes/data-completeness-checker-api/routes/openapi';
+import dataProfilerRouter from './routes/data-profiler-api/routes/intelligence';
+import dataProfilerOpenapiRouter from './routes/data-profiler-api/routes/openapi';
+import dataPipelineQualityScorerRouter from './routes/data-pipeline-quality-scorer-api/routes/intelligence';
+import dataPipelineQualityScorerOpenapiRouter from './routes/data-pipeline-quality-scorer-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1085,8 +1096,10 @@ import { openapiRouterFromRouter } from './shared/openapiFromRouter';
 import nftArbitrageOpenapiRouter from './routes/nft-arbitrage-api/routes/openapi';
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// 1mb (up from the 100kb default) so dataset APIs (data-quality batch) can accept
+// reasonably-sized row arrays in the request body.
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // ─────────────────────────────────────────────────────────────────
 // O(1) route lookup map — replaces 906 sequential app.use() calls
@@ -1373,6 +1386,11 @@ const routerMap: Record<string, import("express").Router> = {
   'uuid-inspector': uuidInspectorRouter,
   'semver-tools': semverToolsRouter,
   'hash-hmac': hashHmacRouter,
+  'data-drift-detector': dataDriftDetectorRouter,
+  'data-quality-rules': dataQualityRulesRouter,
+  'data-completeness-checker': dataCompletenessCheckerRouter,
+  'data-profiler': dataProfilerRouter,
+  'data-pipeline-quality-scorer': dataPipelineQualityScorerRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1832,6 +1850,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'uuid-inspector': uuidInspectorOpenapiRouter,
   'semver-tools': semverToolsOpenapiRouter,
   'hash-hmac': hashHmacOpenapiRouter,
+  'data-drift-detector': dataDriftDetectorOpenapiRouter,
+  'data-quality-rules': dataQualityRulesOpenapiRouter,
+  'data-completeness-checker': dataCompletenessCheckerOpenapiRouter,
+  'data-profiler': dataProfilerOpenapiRouter,
+  'data-pipeline-quality-scorer': dataPipelineQualityScorerOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
