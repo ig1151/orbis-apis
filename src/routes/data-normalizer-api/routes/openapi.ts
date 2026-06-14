@@ -4,19 +4,21 @@ import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema, row
 const OP_ENUM = ['trim', 'collapse_whitespace', 'lowercase', 'uppercase', 'title_case', 'strip_accents', 'nfc', 'nfkc', 'remove_punctuation', 'remove_non_numeric', 'to_number', 'to_integer', 'to_boolean', 'to_date_iso'];
 const Row = rowSchema();
 const ColumnNorm = {
-  type: 'object', required: ['column', 'operations', 'cells_changed'], additionalProperties: false,
+  type: 'object', required: ['column', 'operations', 'cells_changed', 'cells_type_changed'], additionalProperties: false,
   properties: {
     column: { type: 'string' },
     operations: { type: 'array', items: { type: 'string', enum: OP_ENUM } },
     cells_changed: { type: 'integer', minimum: 0 },
+    cells_type_changed: { type: 'integer', minimum: 0, description: 'Subset of cells_changed whose JSON type changed (coercion, e.g. string→number/boolean/date).' },
   },
 };
 const NormalizeCore = {
-  type: 'object', required: ['row_count', 'columns_normalized', 'total_cells_changed', 'per_column', 'rows'],
+  type: 'object', required: ['row_count', 'columns_normalized', 'total_cells_changed', 'total_cells_type_changed', 'per_column', 'rows'],
   properties: {
     row_count: { type: 'integer', minimum: 0 },
     columns_normalized: { type: 'integer', minimum: 0 },
     total_cells_changed: { type: 'integer', minimum: 0 },
+    total_cells_type_changed: { type: 'integer', minimum: 0, description: 'Total cells whose JSON type changed via coercion ops (to_number/to_integer/to_boolean/to_date_iso).' },
     per_column: { type: 'array', items: ColumnNorm },
     rows: { type: 'array', items: Row },
   },
@@ -37,10 +39,10 @@ const NormalizeRequest = {
 };
 
 const CORE = {
-  row_count: 2, columns_normalized: 2, total_cells_changed: 4,
+  row_count: 2, columns_normalized: 2, total_cells_changed: 4, total_cells_type_changed: 0,
   per_column: [
-    { column: 'name', operations: ['trim', 'title_case'], cells_changed: 2 },
-    { column: 'city', operations: ['strip_accents', 'lowercase'], cells_changed: 2 },
+    { column: 'name', operations: ['trim', 'title_case'], cells_changed: 2, cells_type_changed: 0 },
+    { column: 'city', operations: ['strip_accents', 'lowercase'], cells_changed: 2, cells_type_changed: 0 },
   ],
   rows: [{ name: 'Alice', city: 'sao paulo' }, { name: 'Bob', city: 'sao paulo' }],
 };

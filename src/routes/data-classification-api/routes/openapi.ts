@@ -17,15 +17,17 @@ const ColumnClass = {
     match_rate: { type: 'number', minimum: 0, maximum: 1 },
     sample_size: { type: 'integer', minimum: 0 },
     distinct_count: { type: 'integer', minimum: 0 },
+    column_name_hint_used: { type: 'boolean', description: 'True when value matching fell below the 80% threshold but the column NAME hinted this type and >=50% of values still matched it (lower-confidence label — see match_rate).' },
   },
 };
 const ClassifyCore = {
-  type: 'object', required: ['row_count', 'column_count', 'pii_column_count', 'pii_columns', 'columns'],
+  type: 'object', required: ['row_count', 'column_count', 'pii_column_count', 'pii_columns', 'name_hint_used_count', 'columns'],
   properties: {
     row_count: { type: 'integer', minimum: 0 },
     column_count: { type: 'integer', minimum: 0 },
     pii_column_count: { type: 'integer', minimum: 0 },
     pii_columns: { type: 'array', items: { type: 'string' } },
+    name_hint_used_count: { type: 'integer', minimum: 0, description: 'Number of columns labeled via a column-name hint rather than value-first detection.' },
     columns: { type: 'array', items: ColumnClass },
   },
 };
@@ -34,16 +36,17 @@ const ClassifyRequest = {
   properties: {
     rows: { type: 'array', items: Row, minItems: 1, description: 'Dataset rows to classify.' },
     columns: { type: 'array', items: { type: 'string' }, description: 'Optional explicit column list (default: union of row keys).' },
+    use_column_name_hints: { type: 'boolean', description: 'Allow column-name hints to label a column when value matching is below threshold but >=50% of values still corroborate (default true). Set false for value-only classification.' },
   },
 };
 
 const CORE = {
-  row_count: 3, column_count: 4, pii_column_count: 2, pii_columns: ['email', 'phone'],
+  row_count: 3, column_count: 4, pii_column_count: 2, pii_columns: ['email', 'phone'], name_hint_used_count: 0,
   columns: [
-    { column: 'email', inferred_type: 'string', semantic_type: 'email', pii: true, pii_category: 'contact', match_rate: 1, sample_size: 3, distinct_count: 3 },
-    { column: 'phone', inferred_type: 'string', semantic_type: 'phone', pii: true, pii_category: 'contact', match_rate: 1, sample_size: 3, distinct_count: 3 },
-    { column: 'age', inferred_type: 'integer', semantic_type: 'integer', pii: false, pii_category: null, match_rate: 1, sample_size: 3, distinct_count: 3 },
-    { column: 'note', inferred_type: 'string', semantic_type: 'free_text', pii: false, pii_category: null, match_rate: 0, sample_size: 3, distinct_count: 3 },
+    { column: 'email', inferred_type: 'string', semantic_type: 'email', pii: true, pii_category: 'contact', match_rate: 1, sample_size: 3, distinct_count: 3, column_name_hint_used: false },
+    { column: 'phone', inferred_type: 'string', semantic_type: 'phone', pii: true, pii_category: 'contact', match_rate: 1, sample_size: 3, distinct_count: 3, column_name_hint_used: false },
+    { column: 'age', inferred_type: 'integer', semantic_type: 'integer', pii: false, pii_category: null, match_rate: 1, sample_size: 3, distinct_count: 3, column_name_hint_used: false },
+    { column: 'note', inferred_type: 'string', semantic_type: 'free_text', pii: false, pii_category: null, match_rate: 0, sample_size: 3, distinct_count: 3, column_name_hint_used: false },
   ],
 };
 const CHAIN = [
@@ -54,6 +57,7 @@ const INVALIDATORS = [
   'Classification is heuristic (regex + Luhn checksum), not authoritative: a 9-digit id can read as a phone, and free-form text columns may be mislabeled. Verify before acting on PII flags.',
   'A column is labeled only if at least 80% of sampled non-missing values match a detector; columns are sampled to the first 2000 values for speed.',
   'PII detection finds format-based identifiers (email/phone/ssn/credit_card/ip) only — it does NOT detect names, addresses, or free-text PII, so absence of a flag is not proof a column is PII-free.',
+  'Detection is value-first. column_name_hint_used=true means value matching fell below 80% but the column NAME hinted a type AND >=50% of values still matched it; treat those labels as lower-confidence (see match_rate). Set use_column_name_hints=false to disable.',
 ];
 const TAIL = {
   confidence_score: 0.8, confidence_per_section: { classification: 0.85, pii_detection: 0.8 },

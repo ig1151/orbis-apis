@@ -3,6 +3,13 @@ import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema, row
 
 const PRED_ENUM = ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'contains', 'in', 'not_null', 'is_null'];
 const Row = rowSchema();
+const FailureCodes = {
+  type: 'object', required: ['non_numeric_operand', 'divide_by_zero'], additionalProperties: false,
+  properties: {
+    non_numeric_operand: { type: 'integer', minimum: 0, description: 'Rows where an operand could not be parsed as a number; result set to null.' },
+    divide_by_zero: { type: 'integer', minimum: 0, description: 'Rows where a "/" operation hit a zero divisor; result set to null.' },
+  },
+};
 const OpResult = {
   type: 'object', required: ['op', 'detail'], additionalProperties: false,
   properties: {
@@ -11,6 +18,7 @@ const OpResult = {
     rows_removed: { type: 'integer', minimum: 0 },
     cells_written: { type: 'integer', minimum: 0 },
     failures: { type: 'integer', minimum: 0 },
+    failure_codes: { ...FailureCodes, description: 'Failure breakdown for arithmetic ops (present only on arithmetic).' },
   },
 };
 const TransformCore = {
@@ -41,7 +49,7 @@ const CORE = {
   rows_in: 3, rows_out: 2, operations_applied: 3,
   per_operation: [
     { op: 'concat', detail: 'first+last → full_name', cells_written: 3 },
-    { op: 'arithmetic', detail: 'qty * price → total', cells_written: 3, failures: 0 },
+    { op: 'arithmetic', detail: 'qty * price → total', cells_written: 3, failures: 0, failure_codes: { non_numeric_operand: 0, divide_by_zero: 0 } },
     { op: 'filter', detail: 'total gt 0', rows_removed: 1 },
   ],
   rows: [

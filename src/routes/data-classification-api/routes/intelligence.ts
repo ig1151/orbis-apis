@@ -58,16 +58,37 @@ export interface ColumnClass {
   match_rate: number;
   sample_size: number;
   distinct_count: number;
+  column_name_hint_used: boolean;
 }
 export interface ClassifyCore {
   row_count: number;
   column_count: number;
   pii_column_count: number;
   pii_columns: string[];
+  name_hint_used_count: number;
   columns: ColumnClass[];
 }
 
-function classifyColumn(col: string, rows: Row[]): ColumnClass {
+// Column-name → semantic-type hints. Used ONLY to lower the match threshold when
+// value-first detection finds no winner; the sampled values must still corroborate
+// the hinted type (>= HINT_THRESHOLD) so a name never fabricates a type the data
+// contradicts. Most specific names first.
+const NAME_HINTS: { re: RegExp; type: string }[] = [
+  { re: /datetime|timestamp/i, type: 'datetime' },
+  { re: /(^|[_\s])date([_\s]|$)|_at$|_on$|_dt$|birth|dob/i, type: 'date' },
+  { re: /e[-_\s]?mail/i, type: 'email' },
+  { re: /phone|mobile|telephone|msisdn|(^|[_\s])tel([_\s]|$)/i, type: 'phone' },
+  { re: /ssn|social[-_\s]?security/i, type: 'ssn' },
+  { re: /uuid|guid/i, type: 'uuid' },
+  { re: /url|link|href|website/i, type: 'url' },
+  { re: /(^|[_\s])ip([_\s]|$)|ip[-_\s]?addr/i, type: 'ipv4' },
+  { re: /credit[-_\s]?card|card[-_\s]?(no|num|number)|(^|[_\s])ccn?([_\s]|$)/i, type: 'credit_card' },
+  { re: /zip|postal/i, type: 'zip_code' },
+];
+const HINT_THRESHOLD = 0.5;
+const DETECTOR_BY_TYPE = new Map(DETECTORS.map((d) => [d.type, d]));
+
+function classifyColumn(col: string, rows: Row[], useHints: boolean): ColumnClass {
   const present = rows.map((r) => r[col]).filter((v) => !isMissing(v, false));
   const sample = present.slice(0, MAX_SAMPLE);
   const strs = sample.map((v) => String(v).trim());
@@ -82,14 +103,34 @@ function classifyColumn(col: string, rows: Row[]): ColumnClass {
     }
   }
   const inferred = inferType(present);
-  if (!best) {
-    return { column: col, inferred_type: inferred, semantic_type: strs.length ? 'free_text' : 'empty', pii: false, pii_category: null, match_rate: 0, sample_size: strs.length, distinct_count: distinct };
+  if (best) {
+    return {
+      column: col, inferred_type: inferred, semantic_type: best.d.type,
+      pii: best.d.pii, pii_category: best.d.pii_category,
+      match_rate: round(best.rate, 4), sample_size: strs.length, distinct_count: distinct,
+      column_name_hint_used: false,
+    };
   }
-  return {
-    column: col, inferred_type: inferred, semantic_type: best.d.type,
-    pii: best.d.pii, pii_category: best.d.pii_category,
-    match_rate: round(best.rate, 4), sample_size: strs.length, distinct_count: distinct,
-  };
+  // Value-first found no winner. Fall back to a column-name hint IF the values still
+  // corroborate the hinted type at >= HINT_THRESHOLD (never fabricate from the name alone).
+  if (useHints && strs.length > 0) {
+    const hint = NAME_HINTS.find((h) => h.re.test(col));
+    const d = hint && DETECTOR_BY_TYPE.get(hint.type);
+    if (d) {
+      let m = 0;
+      for (const s of strs) if (d.test(s)) m++;
+      const rate = m / strs.length;
+      if (rate >= HINT_THRESHOLD) {
+        return {
+          column: col, inferred_type: inferred, semantic_type: d.type,
+          pii: d.pii, pii_category: d.pii_category,
+          match_rate: round(rate, 4), sample_size: strs.length, distinct_count: distinct,
+          column_name_hint_used: true,
+        };
+      }
+    }
+  }
+  return { column: col, inferred_type: inferred, semantic_type: strs.length ? 'free_text' : 'empty', pii: false, pii_category: null, match_rate: 0, sample_size: strs.length, distinct_count: distinct, column_name_hint_used: false };
 }
 
 function classify(body: any): { error: string } | { result: ClassifyCore } {
@@ -98,9 +139,12 @@ function classify(body: any): { error: string } | { result: ClassifyCore } {
   if ('error' in p) return p;
   const cols = columnsOf(p.rows, body.columns);
   if (cols.length === 0) return { error: 'No columns found in the dataset.' };
-  const columns = cols.map((c) => classifyColumn(c, p.rows));
+  if (body.use_column_name_hints !== undefined && typeof body.use_column_name_hints !== 'boolean') return { error: '"use_column_name_hints" must be a boolean.' };
+  const useHints = body.use_column_name_hints === undefined ? true : body.use_column_name_hints;
+  const columns = cols.map((c) => classifyColumn(c, p.rows, useHints));
   const piiCols = columns.filter((c) => c.pii).map((c) => c.column);
-  return { result: { row_count: p.rows.length, column_count: cols.length, pii_column_count: piiCols.length, pii_columns: piiCols, columns } };
+  const hintCount = columns.filter((c) => c.column_name_hint_used).length;
+  return { result: { row_count: p.rows.length, column_count: cols.length, pii_column_count: piiCols.length, pii_columns: piiCols, name_hint_used_count: hintCount, columns } };
 }
 
 const CHAIN_TO = [
@@ -111,12 +155,14 @@ const INVALIDATORS = [
   'Classification is heuristic (regex + Luhn checksum), not authoritative: a 9-digit id can read as a phone, and free-form text columns may be mislabeled. Verify before acting on PII flags.',
   'A column is labeled only if at least 80% of sampled non-missing values match a detector; columns are sampled to the first 2000 values for speed.',
   'PII detection finds format-based identifiers (email/phone/ssn/credit_card/ip) only — it does NOT detect names, addresses, or free-text PII, so absence of a flag is not proof a column is PII-free.',
+  'Detection is value-first. column_name_hint_used=true means value matching fell below 80% but the column NAME hinted a type AND >=50% of values still matched it; treat those labels as lower-confidence (see match_rate). Set use_column_name_hints=false to disable.',
 ];
 
 function actions(r: ClassifyCore): string[] {
   const out: string[] = [];
   if (r.pii_column_count > 0) out.push(`${r.pii_column_count} likely-PII column(s): ${r.pii_columns.join(', ')} — review handling/encryption/retention before storing.`);
   else out.push('No format-based PII columns detected (note: names/addresses/free-text PII are not detected).');
+  if (r.name_hint_used_count > 0) out.push(`${r.name_hint_used_count} column(s) labeled via a column-name hint (value match <80%, >=50%) — verify these before acting; set use_column_name_hints=false to disable.`);
   out.push('Use the semantic types to generate validation rules (chain to data-quality-rules).');
   return out;
 }
@@ -141,11 +187,15 @@ router.get('/', (_req: Request, res: Response) => {
 
 // Confidence reflects the heuristic nature: detection is regex/checksum based, not
 // authoritative, and PII coverage is format-only (see INVALIDATORS).
-const TAIL = (_r: ClassifyCore) => ({
-  confidence_score: 0.8, confidence_per_section: { classification: 0.85, pii_detection: 0.8 },
-  recommended_actions_priority_order: actions(_r),
-  chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
-});
+const TAIL = (_r: ClassifyCore) => {
+  // Name-hint labels are below the value-match threshold → lower classification confidence.
+  const classification = _r.name_hint_used_count > 0 ? 0.7 : 0.85;
+  return {
+    confidence_score: Math.min(0.8, classification), confidence_per_section: { classification, pii_detection: 0.8 },
+    recommended_actions_priority_order: actions(_r),
+    chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
+  };
+};
 
 router.post('/classify', (req: Request, res: Response) => {
   const t0 = Date.now();

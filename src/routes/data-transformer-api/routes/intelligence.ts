@@ -14,7 +14,8 @@ const OPS = ['concat', 'arithmetic', 'split', 'filter'] as const;
 const ARITH = ['+', '-', '*', '/'] as const;
 const PREDS = ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'contains', 'in', 'not_null', 'is_null'] as const;
 
-export interface OpResult { op: string; detail: string; rows_removed?: number; cells_written?: number; failures?: number; }
+export interface FailureCodes { non_numeric_operand: number; divide_by_zero: number; }
+export interface OpResult { op: string; detail: string; rows_removed?: number; cells_written?: number; failures?: number; failure_codes?: FailureCodes; }
 export interface TransformCore {
   rows_in: number;
   rows_out: number;
@@ -92,14 +93,14 @@ function transform(body: any): { error: string } | { result: TransformCore } {
       }
       per_operation.push({ op: 'concat', detail: `${o.columns.join(`+`)} → ${o.target}`, cells_written: written });
     } else if (o.op === 'arithmetic') {
-      let written = 0, failures = 0;
+      let written = 0, nonNumeric = 0, divZero = 0;
       for (const row of rows) {
         const nums = o.columns.map((c: string) => asNum(row[c]));
-        if (nums.some((n: number | null) => n === null)) { row[o.target] = null; failures++; written++; continue; }
+        if (nums.some((n: number | null) => n === null)) { row[o.target] = null; nonNumeric++; written++; continue; }
         const res = arithmetic(nums as number[], o.operator);
-        row[o.target] = res === null ? null : round(res, 6); if (res === null) failures++; written++;
+        row[o.target] = res === null ? null : round(res, 6); if (res === null) divZero++; written++;
       }
-      per_operation.push({ op: 'arithmetic', detail: `${o.columns.join(` ${o.operator} `)} → ${o.target}`, cells_written: written, failures });
+      per_operation.push({ op: 'arithmetic', detail: `${o.columns.join(` ${o.operator} `)} → ${o.target}`, cells_written: written, failures: nonNumeric + divZero, failure_codes: { non_numeric_operand: nonNumeric, divide_by_zero: divZero } });
     } else if (o.op === 'split') {
       let written = 0;
       for (const row of rows) {
@@ -132,7 +133,11 @@ const INVALIDATORS = [
 function actions(r: TransformCore): string[] {
   const out = [`Applied ${r.operations_applied} operation(s): ${r.rows_in} → ${r.rows_out} row(s).`];
   const fails = r.per_operation.reduce((a, o) => a + (o.failures ?? 0), 0);
-  if (fails > 0) out.push(`${fails} derivation failure(s) set to null — check operand types.`);
+  if (fails > 0) {
+    const nn = r.per_operation.reduce((a, o) => a + (o.failure_codes?.non_numeric_operand ?? 0), 0);
+    const dz = r.per_operation.reduce((a, o) => a + (o.failure_codes?.divide_by_zero ?? 0), 0);
+    out.push(`${fails} derivation failure(s) set to null (non_numeric_operand: ${nn}, divide_by_zero: ${dz}) — see per_operation.failure_codes.`);
+  }
   out.push('Chain to data-aggregator or data-quality-rules on the transformed rows.');
   return out;
 }
