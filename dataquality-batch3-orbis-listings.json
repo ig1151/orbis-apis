@@ -1,0 +1,162 @@
+[
+  {
+    "name": "Data Lineage Tracker API",
+    "shortDescription": "Build lineage graphs from transform manifests.",
+    "description": "Deterministic data lineage tracker that turns transform steps with input and output datasets into a lineage graph with node roles, degrees, depth, sources, sinks, cycle detection, and topological order. No LLM, no fetch, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-lineage-tracker",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-lineage-tracker/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-lineage-tracker/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-lineage", "etl", "data-quality", "dag", "governance", "x402"],
+    "keywords": ["data lineage", "lineage graph", "topological order", "cycle detection", "etl dependencies"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/track", "pricePerCallUsdc": 0.007, "description": "Build a lineage graph from a transform manifest" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call lineage graph with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/track", "description": "Build lineage graph" },
+      { "method": "POST", "path": "/lookup", "description": "Build lineage graph with reasoning" }
+    ]
+  },
+  {
+    "name": "Data Catalog Builder API",
+    "shortDescription": "Build catalog entries from dataset rows or column definitions.",
+    "description": "Deterministic data catalog builder that converts sample rows or explicit column definitions into catalog entries with inferred types, null rates, cardinality, sample values, primary-key candidates, and heuristic tags. Primary-key candidates inferred from small samples are flagged via pk_sample_warning so agents do not overtrust them. No LLM, no fetch, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/data-catalog-builder",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-catalog-builder/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-catalog-builder/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-catalog", "metadata", "schema-inference", "data-quality", "governance", "x402"],
+    "keywords": ["data catalog", "schema catalog", "column metadata", "primary key candidates", "data inventory"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/build", "pricePerCallUsdc": 0.007, "description": "Build catalog entries for datasets" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call catalog build with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/build", "description": "Build dataset catalog" },
+      { "method": "POST", "path": "/lookup", "description": "Build catalog with reasoning" }
+    ]
+  },
+  {
+    "name": "Scrape Data Merger API",
+    "shortDescription": "Merge scraped record sets by key with explicit conflict strategy.",
+    "description": "Deterministic scrape-data merger that combines multiple scraped record sets, deduplicates by a single or composite key, and resolves field conflicts using explicit strategies: first, last, non_null, or coalesce. Returns merged records, duplicate counts, source stats, and conflict details. No LLM, no fetch, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/scrape-data-merger",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/scrape-data-merger/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/scrape-data-merger/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["scraping", "data-merge", "deduplication", "records", "data-quality", "x402"],
+    "keywords": ["scraped data merger", "record deduplication", "merge scraped records", "conflict resolution", "composite key merge"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/merge", "pricePerCallUsdc": 0.007, "description": "Deduplicate and merge scraped record sets by key" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call merge with reasoning and conflict guidance" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/merge", "description": "Merge scraped records" },
+      { "method": "POST", "path": "/lookup", "description": "Merge records with reasoning" }
+    ]
+  },
+  {
+    "name": "Scrape Data Enricher API",
+    "shortDescription": "Enrich scraped records with deterministic local rules.",
+    "description": "Deterministic scrape-data enricher that augments records using declarative rules: constant, concat, coalesce, lookup_map, and regex_extract. Regex extraction is guarded against unsafe flags and risky nested quantifiers. No external lookups, no LLM, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/scrape-data-enricher",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/scrape-data-enricher/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/scrape-data-enricher/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["scraping", "data-enrichment", "regex-extract", "normalization", "data-quality", "x402"],
+    "keywords": ["scraped data enrichment", "record enrichment", "regex extract", "lookup map", "coalesce fields", "concat fields"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/enrich", "pricePerCallUsdc": 0.007, "description": "Augment records with deterministic enrichment rules" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call enrichment with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/enrich", "description": "Enrich scraped records" },
+      { "method": "POST", "path": "/lookup", "description": "Enrich records with reasoning" }
+    ]
+  },
+  {
+    "name": "Scrape Data Pipeline Validator API",
+    "shortDescription": "Validate scrape output against expected schema and selector coverage.",
+    "description": "Deterministic scrape-data pipeline validator that checks records against an expected schema using presence, type, format, required-field coverage, per-record validity, and optional selector-to-field coverage. Returns field reports, selector health, a 0–100 score, and pass/fail. No LLM, no fetch, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/scrape-data-pipeline-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/scrape-data-pipeline-validator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/scrape-data-pipeline-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["scraping", "pipeline-validation", "schema-validation", "data-quality", "etl", "x402"],
+    "keywords": ["scrape pipeline validator", "scraped data validation", "selector coverage", "schema validation", "data quality score"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.007, "description": "Validate scrape output against schema and selector coverage" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call validation with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/validate", "description": "Validate scrape output" },
+      { "method": "POST", "path": "/lookup", "description": "Validate scrape output with reasoning" }
+    ]
+  }
+]
