@@ -17,13 +17,21 @@ const OPS = [
 ] as const;
 type Op = typeof OPS[number];
 
-export interface ColumnNorm { column: string; operations: Op[]; cells_changed: number; }
+export interface ColumnNorm { column: string; operations: Op[]; cells_changed: number; cells_type_changed: number; }
 export interface NormalizeCore {
   row_count: number;
   columns_normalized: number;
   total_cells_changed: number;
+  total_cells_type_changed: number;
   per_column: ColumnNorm[];
   rows: Row[];
+}
+
+// JSON-type category of a cell value, used to flag coercions (e.g. string→number).
+function jsType(v: unknown): string {
+  if (v === null || v === undefined) return 'null';
+  if (Array.isArray(v)) return 'array';
+  return typeof v;
 }
 
 const TRUE_SET = new Set(['true', '1', 'yes', 'y', 't']);
@@ -70,18 +78,24 @@ function normalize(body: any): { error: string } | { result: NormalizeCore } {
   const out: Row[] = p.rows.map((r) => ({ ...r }));
   const per_column: ColumnNorm[] = [];
   let totalChanged = 0;
+  let totalTypeChanged = 0;
   for (const rule of rules) {
     let changed = 0;
+    let typeChanged = 0;
     for (const row of out) {
       const orig = row[rule.column];
       if (isMissing(orig, false) && orig !== '') continue; // null/undefined pass through; '' is normalizable
       if (!(rule.column in row)) continue;
       let val: unknown = orig;
       for (const op of rule.operations) val = applyOp(val, op);
-      if (JSON.stringify(val) !== JSON.stringify(orig)) { row[rule.column] = val; changed++; }
+      if (JSON.stringify(val) !== JSON.stringify(orig)) {
+        row[rule.column] = val; changed++;
+        if (jsType(val) !== jsType(orig)) typeChanged++;
+      }
     }
     totalChanged += changed;
-    per_column.push({ column: rule.column, operations: rule.operations, cells_changed: changed });
+    totalTypeChanged += typeChanged;
+    per_column.push({ column: rule.column, operations: rule.operations, cells_changed: changed, cells_type_changed: typeChanged });
   }
 
   return {
@@ -89,6 +103,7 @@ function normalize(body: any): { error: string } | { result: NormalizeCore } {
       row_count: out.length,
       columns_normalized: per_column.length,
       total_cells_changed: totalChanged,
+      total_cells_type_changed: totalTypeChanged,
       per_column,
       rows: out,
     },
@@ -111,6 +126,7 @@ function actions(r: NormalizeCore): string[] {
   else {
     const top = [...r.per_column].sort((a, b) => b.cells_changed - a.cells_changed)[0];
     out.push(`Normalized ${r.total_cells_changed} cell(s) across ${r.columns_normalized} column(s); most changes in "${top.column}" (${top.cells_changed}).`);
+    if (r.total_cells_type_changed > 0) out.push(`${r.total_cells_type_changed} cell(s) changed JSON type (coercion, e.g. string→number/boolean/date) — confirm downstream consumers expect the new types.`);
   }
   out.push('Persist the returned rows or chain to data-quality-rules to confirm conformance.');
   return out;

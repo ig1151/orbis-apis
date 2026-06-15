@@ -13,14 +13,23 @@ const MappingStat = {
     cast_failures: { type: 'integer', minimum: 0 },
   },
 };
+const TargetCollision = {
+  type: 'object', required: ['target', 'sources', 'winner'], additionalProperties: false,
+  properties: {
+    target: { type: 'string', description: 'Output field written by more than one mapping.' },
+    sources: { type: 'array', items: { type: 'string' }, minItems: 2, description: 'Source columns mapped to this target, in spec order.' },
+    winner: { type: 'string', description: 'Source whose value wins (last mapping in order — last-write-wins).' },
+  },
+};
 const MapCore = {
-  type: 'object', required: ['row_count', 'mappings_applied', 'output_columns', 'total_cast_failures', 'total_defaults_used', 'per_mapping', 'rows'],
+  type: 'object', required: ['row_count', 'mappings_applied', 'output_columns', 'total_cast_failures', 'total_defaults_used', 'target_collisions', 'per_mapping', 'rows'],
   properties: {
     row_count: { type: 'integer', minimum: 0 },
     mappings_applied: { type: 'integer', minimum: 0 },
     output_columns: { type: 'array', items: { type: 'string' } },
     total_cast_failures: { type: 'integer', minimum: 0 },
     total_defaults_used: { type: 'integer', minimum: 0 },
+    target_collisions: { type: 'array', items: TargetCollision, description: 'Targets written by two or more mappings (last-write-wins).' },
     per_mapping: { type: 'array', items: MappingStat },
     rows: { type: 'array', items: Row },
   },
@@ -45,7 +54,7 @@ const MapRequest = {
 
 const CORE = {
   row_count: 2, mappings_applied: 3, output_columns: ['given_name', 'age', 'country'],
-  total_cast_failures: 1, total_defaults_used: 2,
+  total_cast_failures: 1, total_defaults_used: 2, target_collisions: [],
   per_mapping: [
     { from: 'first', to: 'given_name', cast: null, applied: 2, defaults_used: 0, cast_failures: 0 },
     { from: 'age', to: 'age', cast: 'integer', applied: 2, defaults_used: 0, cast_failures: 1 },
@@ -64,6 +73,7 @@ const INVALIDATORS = [
   'A source column missing in a row is skipped unless that mapping supplies a "default"; no value is fabricated.',
   'Failed casts (e.g. "abc" → number) set the target to null and are counted in cast_failures — they are not dropped silently.',
   'With drop_unmapped=false, unmapped source columns are carried through under their original names; a mapping target can overwrite them.',
+  'target_collisions lists targets written by two or more mappings (last-write-wins); it does NOT include a mapping overwriting a carried-through unmapped column of the same name.',
 ];
 const TAIL = {
   confidence_score: 1, confidence_per_section: { mapping: 1 },

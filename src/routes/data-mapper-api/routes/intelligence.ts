@@ -16,12 +16,14 @@ const TRUE_SET = new Set(['true', '1', 'yes', 'y', 't']);
 const FALSE_SET = new Set(['false', '0', 'no', 'n', 'f']);
 
 export interface MappingStat { from: string; to: string; cast: Cast | null; applied: number; defaults_used: number; cast_failures: number; }
+export interface TargetCollision { target: string; sources: string[]; winner: string; }
 export interface MapCore {
   row_count: number;
   mappings_applied: number;
   output_columns: string[];
   total_cast_failures: number;
   total_defaults_used: number;
+  target_collisions: TargetCollision[];
   per_mapping: MappingStat[];
   rows: Row[];
 }
@@ -59,6 +61,14 @@ function map(body: any): { error: string } | { result: MapCore } {
   const outColumns = new Set<string>();
   const rows: Row[] = [];
 
+  // Detect target collisions up front (deterministic from the spec): two+ mappings
+  // writing the same "to" field. Last mapping in order wins (last-write-wins).
+  const byTarget = new Map<string, string[]>();
+  for (const m of mappings) { const arr = byTarget.get(m.to) ?? []; arr.push(m.from); byTarget.set(m.to, arr); }
+  const target_collisions: TargetCollision[] = [...byTarget.entries()]
+    .filter(([, froms]) => froms.length > 1)
+    .map(([target, froms]) => ({ target, sources: froms, winner: froms[froms.length - 1] }));
+
   for (const row of p.rows) {
     const outRow: Row = {};
     if (!dropUnmapped) for (const k of Object.keys(row)) if (!mappedSources.has(k)) { outRow[k] = row[k]; outColumns.add(k); }
@@ -86,6 +96,7 @@ function map(body: any): { error: string } | { result: MapCore } {
       output_columns: [...outColumns],
       total_cast_failures: stats.reduce((a, s) => a + s.cast_failures, 0),
       total_defaults_used: stats.reduce((a, s) => a + s.defaults_used, 0),
+      target_collisions,
       per_mapping: stats,
       rows,
     },
@@ -100,13 +111,15 @@ const INVALIDATORS = [
   'A source column missing in a row is skipped unless that mapping supplies a "default"; no value is fabricated.',
   'Failed casts (e.g. "abc" → number) set the target to null and are counted in cast_failures — they are not dropped silently.',
   'With drop_unmapped=false, unmapped source columns are carried through under their original names; a mapping target can overwrite them.',
+  'target_collisions lists targets written by two or more mappings (last-write-wins); it does NOT include a mapping overwriting a carried-through unmapped column of the same name.',
 ];
 
 function actions(r: MapCore): string[] {
   const out = [`Mapped ${r.mappings_applied} field(s) over ${r.row_count} row(s) → ${r.output_columns.length} output column(s).`];
+  if (r.target_collisions.length > 0) out.push(`${r.target_collisions.length} target collision(s) — e.g. "${r.target_collisions[0].target}" written by [${r.target_collisions[0].sources.join(', ')}], "${r.target_collisions[0].winner}" wins (last-write). De-duplicate targets if unintended.`);
   if (r.total_cast_failures > 0) out.push(`${r.total_cast_failures} cast failure(s) set to null — inspect source values or relax the cast.`);
   if (r.total_defaults_used > 0) out.push(`${r.total_defaults_used} default(s) filled for missing sources.`);
-  if (r.total_cast_failures === 0 && r.total_defaults_used === 0) out.push('Clean mapping — no cast failures or defaults needed.');
+  if (r.total_cast_failures === 0 && r.total_defaults_used === 0 && r.target_collisions.length === 0) out.push('Clean mapping — no collisions, cast failures, or defaults needed.');
   return out;
 }
 

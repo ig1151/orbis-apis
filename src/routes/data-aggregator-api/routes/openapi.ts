@@ -1,8 +1,16 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema, rowSchema } from '../../_aplus/specparts';
+import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema, rowSchema, CellValue } from '../../_aplus/specparts';
 
 const FUNC_ENUM = ['count', 'count_distinct', 'sum', 'avg', 'min', 'max', 'median', 'percentile'];
 const Row = rowSchema();
+// A group output row is a typed cell-map (NOT a generic object): keys are the
+// group_by column values plus one field per aggregation (named by its `as`). Values
+// are either a group-key value or a numeric/null aggregation result.
+const GroupRow = {
+  type: 'object',
+  description: 'One aggregated group: group-key columns + one field per aggregation (numeric or null). Typed cell-map, not a free-form object.',
+  additionalProperties: CellValue,
+};
 const AggSpec = {
   type: 'object', required: ['column', 'func', 'percentile', 'as'], additionalProperties: false,
   properties: {
@@ -19,7 +27,7 @@ const AggregateCore = {
     group_count: { type: 'integer', minimum: 0 },
     group_by: { type: 'array', items: { type: 'string' } },
     aggregations: { type: 'array', items: AggSpec },
-    groups: { type: 'array', items: Row },
+    groups: { type: 'array', items: GroupRow },
   },
 };
 const Aggregation = {
