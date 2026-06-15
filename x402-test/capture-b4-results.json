@@ -1,0 +1,922 @@
+{
+  "website-structure-mapper": {
+    "main": {
+      "trace_id": "wsm-1780000000000",
+      "request_id": "wsm-1780000000000",
+      "computed_at": "2026-06-15T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "host": "shop.example.com",
+      "page_count": 6,
+      "internal_link_count": 8,
+      "external_link_count": 1,
+      "invalid_link_count": 0,
+      "home_url": "https://shop.example.com/",
+      "home_inferred": false,
+      "max_depth": 2,
+      "sections": [
+        {
+          "section": "products",
+          "page_count": 3
+        },
+        {
+          "section": "(root)",
+          "page_count": 1
+        },
+        {
+          "section": "about",
+          "page_count": 1
+        },
+        {
+          "section": "legacy",
+          "page_count": 1
+        }
+      ],
+      "orphan_pages": [
+        "https://shop.example.com/legacy"
+      ],
+      "dead_end_pages": [
+        "https://shop.example.com/legacy"
+      ],
+      "hub_pages": [],
+      "unreachable_pages": [
+        "https://shop.example.com/legacy"
+      ],
+      "dangling_internal_links": [
+        {
+          "from": "https://shop.example.com/products/gadget",
+          "to": "https://shop.example.com/missing-page"
+        }
+      ],
+      "nodes": [
+        {
+          "url": "https://shop.example.com/",
+          "path": "/",
+          "section": "(root)",
+          "depth": 0,
+          "in_degree": 2,
+          "out_degree": 2,
+          "role": "home",
+          "reachable": true
+        },
+        {
+          "url": "https://shop.example.com/about",
+          "path": "/about",
+          "section": "about",
+          "depth": 1,
+          "in_degree": 1,
+          "out_degree": 1,
+          "role": "normal",
+          "reachable": true
+        },
+        {
+          "url": "https://shop.example.com/legacy",
+          "path": "/legacy",
+          "section": "legacy",
+          "depth": null,
+          "in_degree": 0,
+          "out_degree": 0,
+          "role": "orphan",
+          "reachable": false
+        },
+        {
+          "url": "https://shop.example.com/products",
+          "path": "/products",
+          "section": "products",
+          "depth": 1,
+          "in_degree": 3,
+          "out_degree": 3,
+          "role": "normal",
+          "reachable": true
+        },
+        {
+          "url": "https://shop.example.com/products/gadget",
+          "path": "/products/gadget",
+          "section": "products",
+          "depth": 2,
+          "in_degree": 1,
+          "out_degree": 1,
+          "role": "normal",
+          "reachable": true
+        },
+        {
+          "url": "https://shop.example.com/products/widget",
+          "path": "/products/widget",
+          "section": "products",
+          "depth": 2,
+          "in_degree": 1,
+          "out_degree": 1,
+          "role": "normal",
+          "reachable": true
+        }
+      ],
+      "edges": [
+        {
+          "from": "https://shop.example.com/",
+          "to": "https://shop.example.com/about"
+        },
+        {
+          "from": "https://shop.example.com/",
+          "to": "https://shop.example.com/products"
+        },
+        {
+          "from": "https://shop.example.com/about",
+          "to": "https://shop.example.com/"
+        },
+        {
+          "from": "https://shop.example.com/products",
+          "to": "https://shop.example.com/"
+        },
+        {
+          "from": "https://shop.example.com/products",
+          "to": "https://shop.example.com/products/gadget"
+        },
+        {
+          "from": "https://shop.example.com/products",
+          "to": "https://shop.example.com/products/widget"
+        },
+        {
+          "from": "https://shop.example.com/products/gadget",
+          "to": "https://shop.example.com/products"
+        },
+        {
+          "from": "https://shop.example.com/products/widget",
+          "to": "https://shop.example.com/products"
+        }
+      ],
+      "sitemap_diff": {
+        "provided": true,
+        "missing_from_sitemap": [
+          "https://shop.example.com/about",
+          "https://shop.example.com/legacy",
+          "https://shop.example.com/products/gadget",
+          "https://shop.example.com/products/widget"
+        ],
+        "missing_from_crawl": [
+          "https://shop.example.com/contact"
+        ]
+      },
+      "confidence_score": 1,
+      "confidence_per_section": {
+        "structure": 1,
+        "navigation": 1
+      },
+      "recommended_actions_priority_order": [
+        "6 page(s), 8 internal link(s); home https://shop.example.com/, max click depth 2.",
+        "1 orphan page(s) with no inbound internal links — add navigation links to them.",
+        "1 page(s) unreachable from home — they cannot be navigated to.",
+        "1 dead-end page(s) with no outbound internal links.",
+        "1 dangling internal link(s) point to uncrawled/missing pages — verify they resolve.",
+        "Sitemap diff: 1 in sitemap but not crawled, 4 crawled but absent from sitemap."
+      ],
+      "chain_to": [
+        {
+          "api": "scrape-data-pipeline-validator",
+          "reason": "Validate the data scraped from these pages against an expected schema."
+        },
+        {
+          "api": "data-lineage-tracker",
+          "reason": "Model the crawl/transform steps that consume these pages as a lineage graph."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    },
+    "lookup": {
+      "trace_id": "wsm-1780000000000",
+      "request_id": "wsm-1780000000000",
+      "computed_at": "2026-06-15T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "host": "shop.example.com",
+      "page_count": 6,
+      "internal_link_count": 8,
+      "external_link_count": 1,
+      "invalid_link_count": 0,
+      "home_url": "https://shop.example.com/",
+      "home_inferred": false,
+      "max_depth": 2,
+      "sections": [
+        {
+          "section": "products",
+          "page_count": 3
+        },
+        {
+          "section": "(root)",
+          "page_count": 1
+        },
+        {
+          "section": "about",
+          "page_count": 1
+        },
+        {
+          "section": "legacy",
+          "page_count": 1
+        }
+      ],
+      "orphan_pages": [
+        "https://shop.example.com/legacy"
+      ],
+      "dead_end_pages": [
+        "https://shop.example.com/legacy"
+      ],
+      "hub_pages": [],
+      "unreachable_pages": [
+        "https://shop.example.com/legacy"
+      ],
+      "dangling_internal_links": [
+        {
+          "from": "https://shop.example.com/products/gadget",
+          "to": "https://shop.example.com/missing-page"
+        }
+      ],
+      "nodes": [
+        {
+          "url": "https://shop.example.com/",
+          "path": "/",
+          "section": "(root)",
+          "depth": 0,
+          "in_degree": 2,
+          "out_degree": 2,
+          "role": "home",
+          "reachable": true
+        },
+        {
+          "url": "https://shop.example.com/about",
+          "path": "/about",
+          "section": "about",
+          "depth": 1,
+          "in_degree": 1,
+          "out_degree": 1,
+          "role": "normal",
+          "reachable": true
+        },
+        {
+          "url": "https://shop.example.com/legacy",
+          "path": "/legacy",
+          "section": "legacy",
+          "depth": null,
+          "in_degree": 0,
+          "out_degree": 0,
+          "role": "orphan",
+          "reachable": false
+        },
+        {
+          "url": "https://shop.example.com/products",
+          "path": "/products",
+          "section": "products",
+          "depth": 1,
+          "in_degree": 3,
+          "out_degree": 3,
+          "role": "normal",
+          "reachable": true
+        },
+        {
+          "url": "https://shop.example.com/products/gadget",
+          "path": "/products/gadget",
+          "section": "products",
+          "depth": 2,
+          "in_degree": 1,
+          "out_degree": 1,
+          "role": "normal",
+          "reachable": true
+        },
+        {
+          "url": "https://shop.example.com/products/widget",
+          "path": "/products/widget",
+          "section": "products",
+          "depth": 2,
+          "in_degree": 1,
+          "out_degree": 1,
+          "role": "normal",
+          "reachable": true
+        }
+      ],
+      "edges": [
+        {
+          "from": "https://shop.example.com/",
+          "to": "https://shop.example.com/about"
+        },
+        {
+          "from": "https://shop.example.com/",
+          "to": "https://shop.example.com/products"
+        },
+        {
+          "from": "https://shop.example.com/about",
+          "to": "https://shop.example.com/"
+        },
+        {
+          "from": "https://shop.example.com/products",
+          "to": "https://shop.example.com/"
+        },
+        {
+          "from": "https://shop.example.com/products",
+          "to": "https://shop.example.com/products/gadget"
+        },
+        {
+          "from": "https://shop.example.com/products",
+          "to": "https://shop.example.com/products/widget"
+        },
+        {
+          "from": "https://shop.example.com/products/gadget",
+          "to": "https://shop.example.com/products"
+        },
+        {
+          "from": "https://shop.example.com/products/widget",
+          "to": "https://shop.example.com/products"
+        }
+      ],
+      "sitemap_diff": {
+        "provided": true,
+        "missing_from_sitemap": [
+          "https://shop.example.com/about",
+          "https://shop.example.com/legacy",
+          "https://shop.example.com/products/gadget",
+          "https://shop.example.com/products/widget"
+        ],
+        "missing_from_crawl": [
+          "https://shop.example.com/contact"
+        ]
+      },
+      "reasoning": {
+        "why_result_generated": "Mapped 6 page(s) and 8 internal link(s) into a navigation graph rooted at https://shop.example.com/.",
+        "key_factors": [
+          "Sections: products (3), (root) (1), about (1), legacy (1).",
+          "Orphans: 1, dead-ends: 1, unreachable: 1, max depth 2.",
+          "Sitemap diff: 1 missing-from-crawl, 4 missing-from-sitemap."
+        ],
+        "invalidators": [
+          "The graph is built only from the supplied pages/links; pages or links not provided are invisible — no live crawling is performed.",
+          "Click depth is measured from the supplied home_url over internal links only.",
+          "A \"dangling\" internal link points to a same-host URL that is not among the supplied pages — it may be uncrawled rather than broken (this API does not fetch to confirm).",
+          "URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash; query strings are kept, so ?a=1 and ?a=2 are distinct pages."
+        ]
+      },
+      "confidence_score": 1,
+      "confidence_per_section": {
+        "structure": 1,
+        "navigation": 1
+      },
+      "recommended_actions_priority_order": [
+        "6 page(s), 8 internal link(s); home https://shop.example.com/, max click depth 2.",
+        "1 orphan page(s) with no inbound internal links — add navigation links to them.",
+        "1 page(s) unreachable from home — they cannot be navigated to.",
+        "1 dead-end page(s) with no outbound internal links.",
+        "1 dangling internal link(s) point to uncrawled/missing pages — verify they resolve.",
+        "Sitemap diff: 1 in sitemap but not crawled, 4 crawled but absent from sitemap."
+      ],
+      "chain_to": [
+        {
+          "api": "scrape-data-pipeline-validator",
+          "reason": "Validate the data scraped from these pages against an expected schema."
+        },
+        {
+          "api": "data-lineage-tracker",
+          "reason": "Model the crawl/transform steps that consume these pages as a lineage graph."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    }
+  },
+  "scraper-test-suite": {
+    "main": {
+      "trace_id": "sts-1780000000000",
+      "request_id": "sts-1780000000000",
+      "computed_at": "2026-06-15T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "test_count": 4,
+      "passed_count": 4,
+      "failed_count": 0,
+      "all_passed": true,
+      "score": 100,
+      "grade": "A",
+      "results": [
+        {
+          "name": "title_text",
+          "selector": "h1.title",
+          "extraction_mode": "text",
+          "matched_count": 1,
+          "extracted_value": "Hello World",
+          "sample_values": [
+            "Hello World"
+          ],
+          "assertions": [
+            {
+              "type": "exists",
+              "expected": true,
+              "actual": true,
+              "pass": true
+            },
+            {
+              "type": "count",
+              "expected": 1,
+              "actual": 1,
+              "pass": true
+            },
+            {
+              "type": "equals",
+              "expected": "Hello World",
+              "actual": "Hello World",
+              "pass": true
+            }
+          ],
+          "error": null,
+          "passed": true
+        },
+        {
+          "name": "nav_links",
+          "selector": "a.nav",
+          "extraction_mode": "attr:href",
+          "matched_count": 2,
+          "extracted_value": "/about",
+          "sample_values": [
+            "/about",
+            "/contact"
+          ],
+          "assertions": [
+            {
+              "type": "min_count",
+              "expected": 2,
+              "actual": 2,
+              "pass": true
+            },
+            {
+              "type": "non_empty",
+              "expected": true,
+              "actual": true,
+              "pass": true
+            }
+          ],
+          "error": null,
+          "passed": true
+        },
+        {
+          "name": "price_format",
+          "selector": "p.price",
+          "extraction_mode": "text",
+          "matched_count": 1,
+          "extracted_value": "$19.99",
+          "sample_values": [
+            "$19.99"
+          ],
+          "assertions": [
+            {
+              "type": "matches",
+              "expected": "^\\$\\d+\\.\\d{2}$",
+              "actual": "$19.99",
+              "pass": true
+            }
+          ],
+          "error": null,
+          "passed": true
+        },
+        {
+          "name": "no_banner",
+          "selector": ".promo-banner",
+          "extraction_mode": "text",
+          "matched_count": 0,
+          "extracted_value": null,
+          "sample_values": [],
+          "assertions": [
+            {
+              "type": "exists",
+              "expected": false,
+              "actual": false,
+              "pass": true
+            }
+          ],
+          "error": null,
+          "passed": true
+        }
+      ],
+      "confidence_score": 1,
+      "confidence_per_section": {
+        "extraction": 1,
+        "assertions": 1
+      },
+      "recommended_actions_priority_order": [
+        "4/4 test(s) passed — score 100/100 (A), ALL PASSED."
+      ],
+      "chain_to": [
+        {
+          "api": "scrape-data-pipeline-validator",
+          "reason": "Validate the records these selectors extract against an expected schema across many pages."
+        },
+        {
+          "api": "website-structure-mapper",
+          "reason": "Map the site’s navigation graph to discover the pages these selectors should run against."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    },
+    "lookup": {
+      "trace_id": "sts-1780000000000",
+      "request_id": "sts-1780000000000",
+      "computed_at": "2026-06-15T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "test_count": 4,
+      "passed_count": 4,
+      "failed_count": 0,
+      "all_passed": true,
+      "score": 100,
+      "grade": "A",
+      "results": [
+        {
+          "name": "title_text",
+          "selector": "h1.title",
+          "extraction_mode": "text",
+          "matched_count": 1,
+          "extracted_value": "Hello World",
+          "sample_values": [
+            "Hello World"
+          ],
+          "assertions": [
+            {
+              "type": "exists",
+              "expected": true,
+              "actual": true,
+              "pass": true
+            },
+            {
+              "type": "count",
+              "expected": 1,
+              "actual": 1,
+              "pass": true
+            },
+            {
+              "type": "equals",
+              "expected": "Hello World",
+              "actual": "Hello World",
+              "pass": true
+            }
+          ],
+          "error": null,
+          "passed": true
+        },
+        {
+          "name": "nav_links",
+          "selector": "a.nav",
+          "extraction_mode": "attr:href",
+          "matched_count": 2,
+          "extracted_value": "/about",
+          "sample_values": [
+            "/about",
+            "/contact"
+          ],
+          "assertions": [
+            {
+              "type": "min_count",
+              "expected": 2,
+              "actual": 2,
+              "pass": true
+            },
+            {
+              "type": "non_empty",
+              "expected": true,
+              "actual": true,
+              "pass": true
+            }
+          ],
+          "error": null,
+          "passed": true
+        },
+        {
+          "name": "price_format",
+          "selector": "p.price",
+          "extraction_mode": "text",
+          "matched_count": 1,
+          "extracted_value": "$19.99",
+          "sample_values": [
+            "$19.99"
+          ],
+          "assertions": [
+            {
+              "type": "matches",
+              "expected": "^\\$\\d+\\.\\d{2}$",
+              "actual": "$19.99",
+              "pass": true
+            }
+          ],
+          "error": null,
+          "passed": true
+        },
+        {
+          "name": "no_banner",
+          "selector": ".promo-banner",
+          "extraction_mode": "text",
+          "matched_count": 0,
+          "extracted_value": null,
+          "sample_values": [],
+          "assertions": [
+            {
+              "type": "exists",
+              "expected": false,
+              "actual": false,
+              "pass": true
+            }
+          ],
+          "error": null,
+          "passed": true
+        }
+      ],
+      "reasoning": {
+        "why_result_generated": "Ran 4 selector test(s) against the supplied HTML: 4 passed, 0 failed (score 100/100).",
+        "key_factors": [
+          "Result: ALL PASSED (grade A).",
+          "Failing test(s): none.",
+          "Selector error(s): none."
+        ],
+        "invalidators": [
+          "Tests run only against the supplied HTML snapshot — they prove a selector works on this capture, not on the live (possibly changed) page.",
+          "HTML is parsed leniently by cheerio (like a browser): malformed markup is auto-corrected, so a selector may match more/less than a strict parser would.",
+          "Text extraction uses the concatenated text of all descendants, trimmed; attribute extraction reads the first matched element’s attribute (null if absent).",
+          "Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected before evaluation."
+        ]
+      },
+      "confidence_score": 1,
+      "confidence_per_section": {
+        "extraction": 1,
+        "assertions": 1
+      },
+      "recommended_actions_priority_order": [
+        "4/4 test(s) passed — score 100/100 (A), ALL PASSED."
+      ],
+      "chain_to": [
+        {
+          "api": "scrape-data-pipeline-validator",
+          "reason": "Validate the records these selectors extract against an expected schema across many pages."
+        },
+        {
+          "api": "website-structure-mapper",
+          "reason": "Map the site’s navigation graph to discover the pages these selectors should run against."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    }
+  },
+  "scraped-data-quality-scorer": {
+    "main": {
+      "trace_id": "sdq-1780000000000",
+      "request_id": "sdq-1780000000000",
+      "computed_at": "2026-06-15T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "row_count": 5,
+      "column_count": 4,
+      "total_cells": 20,
+      "duplicate_row_count": 1,
+      "placeholder_cell_count": 2,
+      "noise_cell_count": 3,
+      "missing_cell_count": 1,
+      "subscores": {
+        "completeness": 0.95,
+        "uniqueness": 0.8,
+        "cleanliness": 0.85,
+        "placeholder_freedom": 0.9,
+        "consistency": 0.95
+      },
+      "score": 89.8,
+      "grade": "B",
+      "weights_used": {
+        "completeness": 0.3,
+        "uniqueness": 0.15,
+        "cleanliness": 0.2,
+        "placeholder_freedom": 0.2,
+        "consistency": 0.15
+      },
+      "fields": [
+        {
+          "name": "title",
+          "fill_rate": 1,
+          "placeholder_rate": 0,
+          "noise_rate": 0.6,
+          "truncated_count": 1,
+          "dominant_type": "string",
+          "type_consistency": 1
+        },
+        {
+          "name": "price",
+          "fill_rate": 0.8,
+          "placeholder_rate": 0.2,
+          "noise_rate": 0,
+          "truncated_count": 0,
+          "dominant_type": "string",
+          "type_consistency": 1
+        },
+        {
+          "name": "url",
+          "fill_rate": 1,
+          "placeholder_rate": 0,
+          "noise_rate": 0,
+          "truncated_count": 0,
+          "dominant_type": "string",
+          "type_consistency": 1
+        },
+        {
+          "name": "stock",
+          "fill_rate": 1,
+          "placeholder_rate": 0.2,
+          "noise_rate": 0,
+          "truncated_count": 0,
+          "dominant_type": "number",
+          "type_consistency": 0.8
+        }
+      ],
+      "issues": [
+        "1 duplicate row(s) (20.0%) — likely double-extraction.",
+        "Column \"title\": 60.0% noisy values (whitespace/HTML entities/control chars/truncation).",
+        "Column \"price\": only 80.0% of rows populated.",
+        "Column \"price\": 20.0% placeholder/boilerplate values.",
+        "Column \"stock\": 20.0% placeholder/boilerplate values.",
+        "Column \"stock\": mixed value types (dominant number only 80.0% consistent)."
+      ],
+      "confidence_score": 0.8,
+      "confidence_per_section": {
+        "measurement": 1,
+        "scoring": 0.8
+      },
+      "recommended_actions_priority_order": [
+        "Quality score 89.8/100 (B) over 5 row(s) × 4 column(s).",
+        "Weakest dimension(s): uniqueness 80%, cleanliness 85%.",
+        "De-duplicate: 1 duplicate row(s) detected.",
+        "6 field issue(s) flagged — see issues[].",
+        "Chain to scrape-data-pipeline-validator to enforce an expected schema, or scrape-data-enricher to repair weak fields."
+      ],
+      "chain_to": [
+        {
+          "api": "scrape-data-pipeline-validator",
+          "reason": "Check these records against an explicit expected schema (presence/type/format) for pass/fail."
+        },
+        {
+          "api": "scrape-data-enricher",
+          "reason": "Repair low-fill or placeholder fields with deterministic enrichment rules."
+        },
+        {
+          "api": "data-quality-rules",
+          "reason": "Codify the quality thresholds found here as reusable not-null/range/regex rules."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    },
+    "lookup": {
+      "trace_id": "sdq-1780000000000",
+      "request_id": "sdq-1780000000000",
+      "computed_at": "2026-06-15T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "row_count": 5,
+      "column_count": 4,
+      "total_cells": 20,
+      "duplicate_row_count": 1,
+      "placeholder_cell_count": 2,
+      "noise_cell_count": 3,
+      "missing_cell_count": 1,
+      "subscores": {
+        "completeness": 0.95,
+        "uniqueness": 0.8,
+        "cleanliness": 0.85,
+        "placeholder_freedom": 0.9,
+        "consistency": 0.95
+      },
+      "score": 89.8,
+      "grade": "B",
+      "weights_used": {
+        "completeness": 0.3,
+        "uniqueness": 0.15,
+        "cleanliness": 0.2,
+        "placeholder_freedom": 0.2,
+        "consistency": 0.15
+      },
+      "fields": [
+        {
+          "name": "title",
+          "fill_rate": 1,
+          "placeholder_rate": 0,
+          "noise_rate": 0.6,
+          "truncated_count": 1,
+          "dominant_type": "string",
+          "type_consistency": 1
+        },
+        {
+          "name": "price",
+          "fill_rate": 0.8,
+          "placeholder_rate": 0.2,
+          "noise_rate": 0,
+          "truncated_count": 0,
+          "dominant_type": "string",
+          "type_consistency": 1
+        },
+        {
+          "name": "url",
+          "fill_rate": 1,
+          "placeholder_rate": 0,
+          "noise_rate": 0,
+          "truncated_count": 0,
+          "dominant_type": "string",
+          "type_consistency": 1
+        },
+        {
+          "name": "stock",
+          "fill_rate": 1,
+          "placeholder_rate": 0.2,
+          "noise_rate": 0,
+          "truncated_count": 0,
+          "dominant_type": "number",
+          "type_consistency": 0.8
+        }
+      ],
+      "issues": [
+        "1 duplicate row(s) (20.0%) — likely double-extraction.",
+        "Column \"title\": 60.0% noisy values (whitespace/HTML entities/control chars/truncation).",
+        "Column \"price\": only 80.0% of rows populated.",
+        "Column \"price\": 20.0% placeholder/boilerplate values.",
+        "Column \"stock\": 20.0% placeholder/boilerplate values.",
+        "Column \"stock\": mixed value types (dominant number only 80.0% consistent)."
+      ],
+      "reasoning": {
+        "why_result_generated": "Scored 5 row(s) × 4 column(s): 89.8/100 (B).",
+        "key_factors": [
+          "Subscores — completeness 0.95, uniqueness 0.8, cleanliness 0.85, placeholder_freedom 0.9, consistency 0.95.",
+          "1 missing, 2 placeholder, 3 noisy cell(s); 1 duplicate row(s).",
+          "Issues flagged: 6."
+        ],
+        "invalidators": [
+          "This scores intrinsic, schema-free quality of already-extracted data; it does NOT compare against an expected schema (use scrape-data-pipeline-validator) or score pipeline health (use data-pipeline-quality-scorer).",
+          "Placeholder detection matches a fixed token list (n/a, null, —, …, lorem ipsum, etc.); domain-specific sentinels (e.g. \"0\", \"999\") are NOT treated as placeholders.",
+          "Noise = leading/trailing whitespace, HTML entities (&amp;), control characters, or truncation markers (…/...); decoded-but-wrong text cannot be detected.",
+          "Type consistency folds integers into \"number\"; the overall score is a weighted blend (weights_used) — a heuristic, not a certified quality guarantee."
+        ]
+      },
+      "confidence_score": 0.8,
+      "confidence_per_section": {
+        "measurement": 1,
+        "scoring": 0.8
+      },
+      "recommended_actions_priority_order": [
+        "Quality score 89.8/100 (B) over 5 row(s) × 4 column(s).",
+        "Weakest dimension(s): uniqueness 80%, cleanliness 85%.",
+        "De-duplicate: 1 duplicate row(s) detected.",
+        "6 field issue(s) flagged — see issues[].",
+        "Chain to scrape-data-pipeline-validator to enforce an expected schema, or scrape-data-enricher to repair weak fields."
+      ],
+      "chain_to": [
+        {
+          "api": "scrape-data-pipeline-validator",
+          "reason": "Check these records against an explicit expected schema (presence/type/format) for pass/fail."
+        },
+        {
+          "api": "scrape-data-enricher",
+          "reason": "Repair low-fill or placeholder fields with deterministic enrichment rules."
+        },
+        {
+          "api": "data-quality-rules",
+          "reason": "Codify the quality thresholds found here as reusable not-null/range/regex rules."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    }
+  }
+}

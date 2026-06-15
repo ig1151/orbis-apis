@@ -1,0 +1,98 @@
+[
+  {
+    "name": "Website Structure & Navigation Mapper API",
+    "shortDescription": "Turn a crawl manifest into a navigation graph.",
+    "description": "Deterministic website structure and navigation mapper that turns a crawl manifest (pages with their outbound links, plus an optional sitemap) into an internal navigation graph: click depth from the home page, in/out degree, page roles (home/hub/orphan/dead_end), top-level sections, unreachable pages, dangling internal links, and a sitemap diff. No fetching, no LLM, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/website-structure-mapper",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/website-structure-mapper/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/website-structure-mapper/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["website-structure", "navigation-graph", "sitemap", "seo", "crawl", "x402"],
+    "keywords": ["site structure", "navigation graph", "orphan pages", "click depth", "sitemap diff"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.014,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/map", "pricePerCallUsdc": 0.008, "description": "Build a navigation graph from a crawl manifest" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.014, "description": "One-call structure map with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/map", "description": "Build a navigation graph from a crawl manifest" },
+      { "method": "POST", "path": "/lookup", "description": "Build a navigation graph with reasoning" }
+    ]
+  },
+  {
+    "name": "Web Scraper Test Suite & Validator API",
+    "shortDescription": "Assert scraper selectors against sample HTML.",
+    "description": "Deterministic web-scraper test suite. Parses a supplied HTML snapshot with a real HTML parser (cheerio) and runs selector assertions (exists, count, equals, contains, matches, non_empty, optionally on an attribute), returning per-test pass/fail, extracted values, an overall score and grade. Use it to verify a scraper's selectors still extract what they should. No fetching, no LLM, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/scraper-test-suite",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/scraper-test-suite/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/scraper-test-suite/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["web-scraping", "selector-testing", "html", "css-selectors", "validation", "x402"],
+    "keywords": ["scraper testing", "css selector assertions", "extraction validation", "html parsing", "regression tests"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.014,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/run", "pricePerCallUsdc": 0.008, "description": "Run selector assertions against sample HTML" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.014, "description": "One-call run with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/run", "description": "Run selector assertions against sample HTML" },
+      { "method": "POST", "path": "/lookup", "description": "Run selector assertions with reasoning" }
+    ]
+  },
+  {
+    "name": "Scraped Data Quality Scorer API",
+    "shortDescription": "Score the quality of scraped/extracted datasets.",
+    "description": "Deterministic quality scorer for scraped and extracted datasets. Scores extraction completeness, duplicate extraction, HTML/whitespace noise, placeholder/boilerplate values, and per-column type consistency into a 0-100 score with per-dimension subscores, a per-field breakdown, and issues. Schema-free (no reference schema required), no fetching, no LLM, nothing stored.",
+    "category": "data-quality",
+    "baseUrl": "https://orbis-apis.onrender.com/scraped-data-quality-scorer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/scraped-data-quality-scorer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/scraped-data-quality-scorer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["data-quality", "web-scraping", "data-scoring", "pii-noise", "deduplication", "x402"],
+    "keywords": ["scraped data quality", "extraction completeness", "placeholder detection", "duplicate rows", "type consistency"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.018,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/score", "pricePerCallUsdc": 0.01, "description": "Score a scraped/extracted dataset" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.018, "description": "One-call score with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/score", "description": "Score a scraped/extracted dataset" },
+      { "method": "POST", "path": "/lookup", "description": "Score a scraped/extracted dataset with reasoning" }
+    ]
+  }
+]
