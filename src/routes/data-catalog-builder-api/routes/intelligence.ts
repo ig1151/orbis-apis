@@ -11,6 +11,9 @@ import { parseRows, columnsOf, inferType, isMissing, asKey, Row } from '../../_a
 const router = Router();
 
 const MAX_DATASETS = 100;
+// Below this row count, an all-distinct column is trivially "unique" and a weak
+// primary-key signal — we still surface candidates but flag the small sample.
+const PK_MIN_ROWS = 20;
 const TYPE_ENUM = ['empty', 'boolean', 'integer', 'number', 'date', 'string'];
 type CellValue = string | number | boolean | null | unknown[] | Record<string, unknown>;
 
@@ -29,6 +32,7 @@ export interface CatalogDataset {
   row_count: number | null;
   column_count: number;
   primary_key_candidates: string[];
+  pk_sample_warning: boolean;
   columns: CatalogColumn[];
   tags: string[];
 }
@@ -72,7 +76,8 @@ function buildFromRows(name: string, rows: Row[]): CatalogDataset {
     if (unique) pkCandidates.push(c);
     columns.push({ name: c, type, nullable: nullCount > 0, null_rate: nullRate, distinct_count: distinct, sample_values: sample, tags: columnTags(c, type, unique, categorical) });
   }
-  return { name, source: 'rows', row_count: rowCount, column_count: columns.length, primary_key_candidates: pkCandidates, columns, tags: datasetTags(columns) };
+  const pkSampleWarning = pkCandidates.length > 0 && rowCount < PK_MIN_ROWS;
+  return { name, source: 'rows', row_count: rowCount, column_count: columns.length, primary_key_candidates: pkCandidates, pk_sample_warning: pkSampleWarning, columns, tags: datasetTags(columns) };
 }
 
 function buildFromColumns(name: string, decl: { name: string; type: string }[]): CatalogDataset {
@@ -80,7 +85,7 @@ function buildFromColumns(name: string, decl: { name: string; type: string }[]):
     name: d.name, type: d.type, nullable: true, null_rate: null, distinct_count: null, sample_values: [],
     tags: columnTags(d.name, d.type, false, false),
   }));
-  return { name, source: 'columns', row_count: null, column_count: columns.length, primary_key_candidates: [], columns, tags: datasetTags(columns) };
+  return { name, source: 'columns', row_count: null, column_count: columns.length, primary_key_candidates: [], pk_sample_warning: false, columns, tags: datasetTags(columns) };
 }
 
 function datasetTags(columns: CatalogColumn[]): string[] {
@@ -135,7 +140,7 @@ const CHAIN_TO = [
 const INVALIDATORS = [
   'Column types and stats are derived only from the supplied rows/columns; with explicit columns, null_rate/distinct_count/sample_values are null/empty (no data to measure).',
   'Tags are heuristic (name + type patterns): identifier/temporal/measure/pii_candidate/boolean_flag/categorical — verify before treating pii_candidate as authoritative PII.',
-  'primary_key_candidates require a fully-populated, all-distinct column over >1 row; they are candidates, not enforced keys.',
+  `primary_key_candidates require a fully-populated, all-distinct column over >1 row; they are candidates, not enforced keys. pk_sample_warning=true means they were inferred from a small sample (<${PK_MIN_ROWS} rows) where distinctness is trivially satisfied — treat as weak and confirm on more data.`,
 ];
 
 function actions(r: CatalogCore): string[] {
@@ -143,7 +148,11 @@ function actions(r: CatalogCore): string[] {
   const pii = r.datasets.filter((d) => d.tags.includes('has_pii')).map((d) => d.name);
   if (pii.length) out.push(`Possible PII in: ${pii.join(', ')} — review handling before publishing the catalog.`);
   const pk = r.datasets.filter((d) => d.primary_key_candidates.length > 0);
-  if (pk.length) out.push(`Primary-key candidate(s) found in ${pk.length} dataset(s); confirm before declaring keys.`);
+  if (pk.length) {
+    const weak = pk.filter((d) => d.pk_sample_warning).length;
+    const note = weak ? ` ${weak} from a small sample (<${PK_MIN_ROWS} rows) — treat as weak.` : '';
+    out.push(`Primary-key candidate(s) found in ${pk.length} dataset(s); confirm before declaring keys.${note}`);
+  }
   out.push('Chain to data-classification to validate semantic types from values.');
   return out;
 }

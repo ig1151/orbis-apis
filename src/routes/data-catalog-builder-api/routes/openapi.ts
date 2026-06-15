@@ -19,13 +19,14 @@ const CatalogColumn = {
   },
 };
 const CatalogDataset = {
-  type: 'object', required: ['name', 'source', 'row_count', 'column_count', 'primary_key_candidates', 'columns', 'tags'], additionalProperties: false,
+  type: 'object', required: ['name', 'source', 'row_count', 'column_count', 'primary_key_candidates', 'pk_sample_warning', 'columns', 'tags'], additionalProperties: false,
   properties: {
     name: { type: 'string' },
     source: { type: 'string', enum: ['rows', 'columns'], description: 'Whether the entry was built from sample rows or explicit column defs.' },
     row_count: { type: ['integer', 'null'], minimum: 0 },
     column_count: { type: 'integer', minimum: 0 },
     primary_key_candidates: { type: 'array', items: { type: 'string' }, description: 'Columns that are fully populated and all-distinct over >1 row.' },
+    pk_sample_warning: { type: 'boolean', description: 'True when primary_key_candidates were inferred from fewer than 20 rows (distinctness trivially satisfied — treat as weak).' },
     columns: { type: 'array', items: CatalogColumn },
     tags: { type: 'array', items: { type: 'string', enum: DS_TAG_ENUM } },
   },
@@ -64,7 +65,7 @@ const CORE = {
   datasets: [
     {
       name: 'users', source: 'rows', row_count: 3, column_count: 4,
-      primary_key_candidates: ['id', 'email', 'signup_date'],
+      primary_key_candidates: ['id', 'email', 'signup_date'], pk_sample_warning: true,
       columns: [
         { name: 'id', type: 'integer', nullable: false, null_rate: 0, distinct_count: 3, sample_values: [1, 2, 3], tags: ['identifier'] },
         { name: 'email', type: 'string', nullable: false, null_rate: 0, distinct_count: 3, sample_values: ['a@x.com', 'b@y.com', 'c@z.com'], tags: ['identifier', 'pii_candidate'] },
@@ -75,7 +76,7 @@ const CORE = {
     },
     {
       name: 'events', source: 'columns', row_count: null, column_count: 3,
-      primary_key_candidates: [],
+      primary_key_candidates: [], pk_sample_warning: false,
       columns: [
         { name: 'event_id', type: 'string', nullable: true, null_rate: null, distinct_count: null, sample_values: [], tags: ['identifier'] },
         { name: 'amount', type: 'number', nullable: true, null_rate: null, distinct_count: null, sample_values: [], tags: ['measure'] },
@@ -92,7 +93,7 @@ const CHAIN = [
 const INVALIDATORS = [
   'Column types and stats are derived only from the supplied rows/columns; with explicit columns, null_rate/distinct_count/sample_values are null/empty (no data to measure).',
   'Tags are heuristic (name + type patterns): identifier/temporal/measure/pii_candidate/boolean_flag/categorical — verify before treating pii_candidate as authoritative PII.',
-  'primary_key_candidates require a fully-populated, all-distinct column over >1 row; they are candidates, not enforced keys.',
+  'primary_key_candidates require a fully-populated, all-distinct column over >1 row; they are candidates, not enforced keys. pk_sample_warning=true means they were inferred from a small sample (<20 rows) where distinctness is trivially satisfied — treat as weak and confirm on more data.',
 ];
 const TAIL = {
   confidence_score: 0.85,
@@ -100,7 +101,7 @@ const TAIL = {
   recommended_actions_priority_order: [
     'Catalogued 2 dataset(s), 7 column(s) total.',
     'Possible PII in: users — review handling before publishing the catalog.',
-    'Primary-key candidate(s) found in 1 dataset(s); confirm before declaring keys.',
+    'Primary-key candidate(s) found in 1 dataset(s); confirm before declaring keys. 1 from a small sample (<20 rows) — treat as weak.',
     'Chain to data-classification to validate semantic types from values.',
   ],
   chain_to: CHAIN, privacy: { data_stored: false, retention: 'none' }, execution_metadata: { model: 'deterministic', automation_safe: true },
