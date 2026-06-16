@@ -50,12 +50,12 @@ const disc = {
   capabilities: ['glob_translation', 'path_matching', 'redos_safe_regex', 'batch_path_match'],
   endpoints: [
     { method: 'POST', path: '/convert', summary: 'Translate a glob into an anchored regex', price_usdc: 0.005 },
-    { method: 'POST', path: '/test', summary: 'Match paths against a glob', price_usdc: 0.006 },
+    { method: 'POST', path: '/test', summary: 'Match paths against a glob', price_usdc: 0.007 },
     { method: 'POST', path: '/lookup', summary: 'ONE-CALL match + reasoning', price_usdc: 0.01 },
   ],
   pricing: [
     { path: '/convert', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/test', price_usdc: 0.006, currency: 'USDC' },
+    { path: '/test', price_usdc: 0.007, currency: 'USDC' },
     { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
   ],
   x402_compatible: true,
@@ -64,7 +64,7 @@ const disc = {
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   { method: 'post', path: '/convert', summary: 'Translate a glob into an anchored regex', operationId: 'convert', priceUsdc: 0.005, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse', requestExample: convertReq, responseExample: convertExample },
-  { method: 'post', path: '/test', summary: 'Match paths against a glob', operationId: 'test', priceUsdc: 0.006, requestSchemaRef: 'TestRequest', responseSchemaRef: 'TestResponse', requestExample: testReq, responseExample: testExample },
+  { method: 'post', path: '/test', summary: 'Match paths against a glob', operationId: 'test', priceUsdc: 0.007, requestSchemaRef: 'TestRequest', responseSchemaRef: 'TestResponse', requestExample: testReq, responseExample: testExample },
   { method: 'post', path: '/lookup', summary: 'ONE-CALL match + reasoning', operationId: 'lookup', priceUsdc: 0.01, oneCall: true, requestSchemaRef: 'TestRequest', responseSchemaRef: 'LookupResponse', requestExample: testReq, responseExample: lookupExample },
 ];
 

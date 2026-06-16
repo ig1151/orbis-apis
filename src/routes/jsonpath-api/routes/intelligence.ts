@@ -281,16 +281,16 @@ const DISCOVERY = {
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: CAPABILITIES,
   endpoints: [
-    { method: 'POST', path: '/query', summary: 'Evaluate a JSONPath → all matches', price_usdc: 0.007 },
-    { method: 'POST', path: '/value', summary: 'First match value (or null)', price_usdc: 0.006 },
+    { method: 'POST', path: '/query', summary: 'Evaluate a JSONPath → all matches', price_usdc: 0.009 },
+    { method: 'POST', path: '/value', summary: 'First match value (or null)', price_usdc: 0.007 },
     { method: 'POST', path: '/batch', summary: 'Evaluate many JSONPaths in one call', price_usdc: 0.013 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL query + reasoning', price_usdc: 0.012 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL query + reasoning', price_usdc: 0.014 },
   ],
   pricing: [
-    { path: '/query', price_usdc: 0.007, currency: 'USDC' },
-    { path: '/value', price_usdc: 0.006, currency: 'USDC' },
+    { path: '/query', price_usdc: 0.009, currency: 'USDC' },
+    { path: '/value', price_usdc: 0.007, currency: 'USDC' },
     { path: '/batch', price_usdc: 0.013, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.012, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.014, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
