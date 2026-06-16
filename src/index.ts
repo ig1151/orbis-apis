@@ -778,6 +778,16 @@ import jsonPatchRouter from './routes/json-patch-api/routes/intelligence';
 import jsonPatchOpenapiRouter from './routes/json-patch-api/routes/openapi';
 import regexTesterRouter from './routes/regex-tester-api/routes/intelligence';
 import regexTesterOpenapiRouter from './routes/regex-tester-api/routes/openapi';
+import colorConverterRouter from './routes/color-converter-api/routes/intelligence';
+import colorConverterOpenapiRouter from './routes/color-converter-api/routes/openapi';
+import caseConverterRouter from './routes/case-converter-api/routes/intelligence';
+import caseConverterOpenapiRouter from './routes/case-converter-api/routes/openapi';
+import urlToolsRouter from './routes/url-tools-api/routes/intelligence';
+import urlToolsOpenapiRouter from './routes/url-tools-api/routes/openapi';
+import globToRegexRouter from './routes/glob-to-regex-api/routes/intelligence';
+import globToRegexOpenapiRouter from './routes/glob-to-regex-api/routes/openapi';
+import jsonpathRouter from './routes/jsonpath-api/routes/intelligence';
+import jsonpathOpenapiRouter from './routes/jsonpath-api/routes/openapi';
 import sensitiveDataDetectorRouter from './routes/sensitive-data-detector-api/routes/intelligence';
 import sensitiveDataDetectorOpenapiRouter from './routes/sensitive-data-detector-api/routes/openapi';
 import dataEncryptionAdvisorRouter from './routes/data-encryption-advisor-api/routes/intelligence';
@@ -1445,6 +1455,11 @@ const routerMap: Record<string, import("express").Router> = {
   'json-pointer': jsonPointerRouter,
   'json-patch': jsonPatchRouter,
   'regex-tester': regexTesterRouter,
+  'color-converter': colorConverterRouter,
+  'case-converter': caseConverterRouter,
+  'url-tools': urlToolsRouter,
+  'glob-to-regex': globToRegexRouter,
+  'jsonpath': jsonpathRouter,
   'sensitive-data-detector': sensitiveDataDetectorRouter,
   'data-encryption-advisor': dataEncryptionAdvisorRouter,
   'jwt-claims-designer': jwtClaimsDesignerRouter,
@@ -1928,6 +1943,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'json-pointer': jsonPointerOpenapiRouter,
   'json-patch': jsonPatchOpenapiRouter,
   'regex-tester': regexTesterOpenapiRouter,
+  'color-converter': colorConverterOpenapiRouter,
+  'case-converter': caseConverterOpenapiRouter,
+  'url-tools': urlToolsOpenapiRouter,
+  'glob-to-regex': globToRegexOpenapiRouter,
+  'jsonpath': jsonpathOpenapiRouter,
   'sensitive-data-detector': sensitiveDataDetectorOpenapiRouter,
   'data-encryption-advisor': dataEncryptionAdvisorOpenapiRouter,
   'jwt-claims-designer': jwtClaimsDesignerOpenapiRouter,

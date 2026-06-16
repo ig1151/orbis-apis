@@ -1,0 +1,1185 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "URL Tools API",
+        "version": "1.0.0",
+        "description": "Deterministic URL parser / builder / normalizer on the WHATWG URL API \u2014 component decomposition, query expansion, component assembly, conservative canonical form. No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-developer-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/url-tools"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "URL Tools API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic URL parser / builder / normalizer on the WHATWG URL API. /parse decomposes a URL (query expanded to an object, repeated keys as arrays); /build assembles a URL from components over an optional base; /lookup parses and returns a normalized canonical form. No LLM, nothing fetched, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/url-tools/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/parse",
+                                            "summary": "Decompose a URL into components",
+                                            "price_usdc": 0.005
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/build",
+                                            "summary": "Assemble a URL from components",
+                                            "price_usdc": 0.006
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL parse + normalize + reasoning",
+                                            "price_usdc": 0.01
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/parse",
+                                            "price_usdc": 0.005,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/build",
+                                            "price_usdc": 0.006,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.01,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/parse": {
+            "post": {
+                "operationId": "parse",
+                "summary": "Decompose a URL into components",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ParseResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "input": "https://user:pw@Example.com:443/a//b?z=2&a=1&a=3#frag",
+                                    "components": {
+                                        "href": "https://user:pw@example.com/a//b?z=2&a=1&a=3#frag",
+                                        "protocol": "https:",
+                                        "username": "user",
+                                        "password": "pw",
+                                        "host": "example.com",
+                                        "hostname": "example.com",
+                                        "port": "",
+                                        "origin": "https://example.com",
+                                        "pathname": "/a//b",
+                                        "path_segments": [
+                                            "a",
+                                            "b"
+                                        ],
+                                        "search": "?z=2&a=1&a=3",
+                                        "query": {
+                                            "z": "2",
+                                            "a": [
+                                                "1",
+                                                "3"
+                                            ]
+                                        },
+                                        "hash": "#frag"
+                                    },
+                                    "normalized": "https://user:pw@example.com/a//b?a=1&a=3&z=2#frag",
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "parse": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Parsed https://example.com/a//b with 2 query key(s)."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "web-content-type-classifier",
+                                            "reason": "Classify the resource a built/parsed URL points to."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ParseRequest"
+                            },
+                            "example": {
+                                "url": "https://user:pw@Example.com:443/a//b?z=2&a=1&a=3#frag"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.005,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/build": {
+            "post": {
+                "operationId": "build",
+                "summary": "Assemble a URL from components",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BuildResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "href": "https://api.example.com/v1/search?q=agent+native&page=2&tag=a&tag=b",
+                                    "components": {
+                                        "href": "https://api.example.com/v1/search?q=agent+native&page=2&tag=a&tag=b",
+                                        "protocol": "https:",
+                                        "username": "",
+                                        "password": "",
+                                        "host": "api.example.com",
+                                        "hostname": "api.example.com",
+                                        "port": "",
+                                        "origin": "https://api.example.com",
+                                        "pathname": "/v1/search",
+                                        "path_segments": [
+                                            "v1",
+                                            "search"
+                                        ],
+                                        "search": "?q=agent+native&page=2&tag=a&tag=b",
+                                        "query": {
+                                            "q": "agent native",
+                                            "page": "2",
+                                            "tag": [
+                                                "a",
+                                                "b"
+                                            ]
+                                        },
+                                        "hash": ""
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "build": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Built https://api.example.com/v1/search?q=agent+native&page=2&tag=a&tag=b."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "web-content-type-classifier",
+                                            "reason": "Classify the resource a built/parsed URL points to."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BuildRequest"
+                            },
+                            "example": {
+                                "protocol": "https",
+                                "hostname": "api.example.com",
+                                "pathname": "/v1/search",
+                                "query": {
+                                    "q": "agent native",
+                                    "page": 2,
+                                    "tag": [
+                                        "a",
+                                        "b"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.006,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL parse + normalize + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "input": "https://user:pw@Example.com:443/a//b?z=2&a=1&a=3#frag",
+                                    "components": {
+                                        "href": "https://user:pw@example.com/a//b?z=2&a=1&a=3#frag",
+                                        "protocol": "https:",
+                                        "username": "user",
+                                        "password": "pw",
+                                        "host": "example.com",
+                                        "hostname": "example.com",
+                                        "port": "",
+                                        "origin": "https://example.com",
+                                        "pathname": "/a//b",
+                                        "path_segments": [
+                                            "a",
+                                            "b"
+                                        ],
+                                        "search": "?z=2&a=1&a=3",
+                                        "query": {
+                                            "z": "2",
+                                            "a": [
+                                                "1",
+                                                "3"
+                                            ]
+                                        },
+                                        "hash": "#frag"
+                                    },
+                                    "normalized": "https://user:pw@example.com/a//b?a=1&a=3&z=2#frag",
+                                    "reasoning": {
+                                        "why_result_generated": "Parsed \"https://user:pw@Example.com:443/a//b?z=2&a=1&a=3#frag\" with the WHATWG URL parser and produced a conservative canonical form.",
+                                        "key_factors": [
+                                            "Origin: https://example.com.",
+                                            "Path segments: 2; query keys: 2.",
+                                            "Normalized: https://user:pw@example.com/a//b?a=1&a=3&z=2#frag."
+                                        ],
+                                        "invalidators": [
+                                            "Parsing follows the WHATWG URL Standard (the same parser browsers use); component values are exact. Relative URLs require a \"base\" to resolve.",
+                                            "The query object collapses a single occurrence of a key to a string and multiple occurrences to an array \u2014 order within an array is preserved, but two semantically different encodings (e.g. \"a=1&a=2\" vs \"a[]=1&a[]=2\") are NOT unified.",
+                                            "Normalization lowercases scheme+host (per the URL spec), drops the protocol default port, sorts query params by key then value, and trims an empty \"?\"/\"#\". It does NOT collapse \".\" / \"..\" path segments beyond what the URL parser already resolves, nor change path case or percent-encoding \u2014 so it is a conservative canonical form, not an aggressive one."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "parse": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Normalized to https://user:pw@example.com/a//b?a=1&a=3&z=2#frag."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "web-content-type-classifier",
+                                            "reason": "Classify the resource a built/parsed URL points to."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ParseRequest"
+                            },
+                            "example": {
+                                "url": "https://user:pw@Example.com:443/a//b?z=2&a=1&a=3#frag"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.01,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "parse": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "build": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "QueryValue": {
+                "type": [
+                    "string",
+                    "array"
+                ],
+                "items": {
+                    "type": "string"
+                },
+                "description": "A single value (string) or repeated values (array of strings)."
+            },
+            "UrlComponents": {
+                "type": "object",
+                "required": [
+                    "href",
+                    "protocol",
+                    "username",
+                    "password",
+                    "host",
+                    "hostname",
+                    "port",
+                    "origin",
+                    "pathname",
+                    "path_segments",
+                    "search",
+                    "query",
+                    "hash"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "href": {
+                        "type": "string"
+                    },
+                    "protocol": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "host": {
+                        "type": "string"
+                    },
+                    "hostname": {
+                        "type": "string"
+                    },
+                    "port": {
+                        "type": "string"
+                    },
+                    "origin": {
+                        "type": "string"
+                    },
+                    "pathname": {
+                        "type": "string"
+                    },
+                    "path_segments": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "search": {
+                        "type": "string"
+                    },
+                    "query": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": [
+                                "string",
+                                "array"
+                            ],
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "A single value (string) or repeated values (array of strings)."
+                        }
+                    },
+                    "hash": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ParseCore": {
+                "type": "object",
+                "required": [
+                    "input",
+                    "components",
+                    "normalized"
+                ],
+                "properties": {
+                    "input": {
+                        "type": "string"
+                    },
+                    "components": {
+                        "type": "object",
+                        "required": [
+                            "href",
+                            "protocol",
+                            "username",
+                            "password",
+                            "host",
+                            "hostname",
+                            "port",
+                            "origin",
+                            "pathname",
+                            "path_segments",
+                            "search",
+                            "query",
+                            "hash"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "href": {
+                                "type": "string"
+                            },
+                            "protocol": {
+                                "type": "string"
+                            },
+                            "username": {
+                                "type": "string"
+                            },
+                            "password": {
+                                "type": "string"
+                            },
+                            "host": {
+                                "type": "string"
+                            },
+                            "hostname": {
+                                "type": "string"
+                            },
+                            "port": {
+                                "type": "string"
+                            },
+                            "origin": {
+                                "type": "string"
+                            },
+                            "pathname": {
+                                "type": "string"
+                            },
+                            "path_segments": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "search": {
+                                "type": "string"
+                            },
+                            "query": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": [
+                                        "string",
+                                        "array"
+                                    ],
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "A single value (string) or repeated values (array of strings)."
+                                }
+                            },
+                            "hash": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "normalized": {
+                        "type": "string"
+                    }
+                }
+            },
+            "BuildCore": {
+                "type": "object",
+                "required": [
+                    "href",
+                    "components"
+                ],
+                "properties": {
+                    "href": {
+                        "type": "string"
+                    },
+                    "components": {
+                        "type": "object",
+                        "required": [
+                            "href",
+                            "protocol",
+                            "username",
+                            "password",
+                            "host",
+                            "hostname",
+                            "port",
+                            "origin",
+                            "pathname",
+                            "path_segments",
+                            "search",
+                            "query",
+                            "hash"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "href": {
+                                "type": "string"
+                            },
+                            "protocol": {
+                                "type": "string"
+                            },
+                            "username": {
+                                "type": "string"
+                            },
+                            "password": {
+                                "type": "string"
+                            },
+                            "host": {
+                                "type": "string"
+                            },
+                            "hostname": {
+                                "type": "string"
+                            },
+                            "port": {
+                                "type": "string"
+                            },
+                            "origin": {
+                                "type": "string"
+                            },
+                            "pathname": {
+                                "type": "string"
+                            },
+                            "path_segments": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "search": {
+                                "type": "string"
+                            },
+                            "query": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": [
+                                        "string",
+                                        "array"
+                                    ],
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "A single value (string) or repeated values (array of strings)."
+                                }
+                            },
+                            "hash": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "ParseRequest": {
+                "type": "object",
+                "required": [
+                    "url"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "maxLength": 8192
+                    },
+                    "base": {
+                        "type": "string",
+                        "description": "Base URL to resolve a relative \"url\" against."
+                    }
+                }
+            },
+            "BuildRequest": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "base": {
+                        "type": "string",
+                        "description": "Full base URL to start from (alternative to protocol+hostname)."
+                    },
+                    "protocol": {
+                        "type": "string"
+                    },
+                    "hostname": {
+                        "type": "string"
+                    },
+                    "port": {
+                        "type": [
+                            "string",
+                            "number"
+                        ]
+                    },
+                    "pathname": {
+                        "type": "string"
+                    },
+                    "hash": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "query": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": [
+                                "string",
+                                "number",
+                                "boolean",
+                                "array"
+                            ],
+                            "items": {
+                                "type": [
+                                    "string",
+                                    "number",
+                                    "boolean"
+                                ]
+                            }
+                        },
+                        "description": "Key \u2192 value or array of values."
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ParseResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ParseCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "BuildResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/BuildCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ParseCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}
