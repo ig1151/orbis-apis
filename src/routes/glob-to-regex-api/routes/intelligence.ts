@@ -118,12 +118,12 @@ const DISCOVERY = {
   capabilities: ['glob_translation', 'path_matching', 'redos_safe_regex', 'batch_path_match'],
   endpoints: [
     { method: 'POST', path: '/convert', summary: 'Translate a glob into an anchored regex', price_usdc: 0.005 },
-    { method: 'POST', path: '/test', summary: 'Match paths against a glob', price_usdc: 0.006 },
+    { method: 'POST', path: '/test', summary: 'Match paths against a glob', price_usdc: 0.007 },
     { method: 'POST', path: '/lookup', summary: 'ONE-CALL match + reasoning', price_usdc: 0.01 },
   ],
   pricing: [
     { path: '/convert', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/test', price_usdc: 0.006, currency: 'USDC' },
+    { path: '/test', price_usdc: 0.007, currency: 'USDC' },
     { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
   ],
   x402_compatible: true,

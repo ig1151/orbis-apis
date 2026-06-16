@@ -67,26 +67,26 @@ const disc = {
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['json_query', 'json_extraction', 'json_navigation', 'batch_query', 'path_resolution'],
   endpoints: [
-    { method: 'POST', path: '/query', summary: 'Evaluate a JSONPath → all matches', price_usdc: 0.007 },
-    { method: 'POST', path: '/value', summary: 'First match value (or null)', price_usdc: 0.006 },
+    { method: 'POST', path: '/query', summary: 'Evaluate a JSONPath → all matches', price_usdc: 0.009 },
+    { method: 'POST', path: '/value', summary: 'First match value (or null)', price_usdc: 0.007 },
     { method: 'POST', path: '/batch', summary: 'Evaluate many JSONPaths in one call', price_usdc: 0.013 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL query + reasoning', price_usdc: 0.012 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL query + reasoning', price_usdc: 0.014 },
   ],
   pricing: [
-    { path: '/query', price_usdc: 0.007, currency: 'USDC' },
-    { path: '/value', price_usdc: 0.006, currency: 'USDC' },
+    { path: '/query', price_usdc: 0.009, currency: 'USDC' },
+    { path: '/value', price_usdc: 0.007, currency: 'USDC' },
     { path: '/batch', price_usdc: 0.013, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.012, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.014, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
-  { method: 'post', path: '/query', summary: 'Evaluate a JSONPath → all matches', operationId: 'query', priceUsdc: 0.007, requestSchemaRef: 'QueryRequest', responseSchemaRef: 'QueryResponse', requestExample: queryReq, responseExample: queryExample },
-  { method: 'post', path: '/value', summary: 'First match value (or null)', operationId: 'value', priceUsdc: 0.006, requestSchemaRef: 'QueryRequest', responseSchemaRef: 'ValueResponse', requestExample: valueReq, responseExample: valueExample },
+  { method: 'post', path: '/query', summary: 'Evaluate a JSONPath → all matches', operationId: 'query', priceUsdc: 0.009, requestSchemaRef: 'QueryRequest', responseSchemaRef: 'QueryResponse', requestExample: queryReq, responseExample: queryExample },
+  { method: 'post', path: '/value', summary: 'First match value (or null)', operationId: 'value', priceUsdc: 0.007, requestSchemaRef: 'QueryRequest', responseSchemaRef: 'ValueResponse', requestExample: valueReq, responseExample: valueExample },
   { method: 'post', path: '/batch', summary: 'Evaluate many JSONPaths in one call', operationId: 'batch', priceUsdc: 0.013, requestSchemaRef: 'BatchRequest', responseSchemaRef: 'BatchResponse', requestExample: batchReq, responseExample: batchExample },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL query + reasoning', operationId: 'lookup', priceUsdc: 0.012, oneCall: true, requestSchemaRef: 'QueryRequest', responseSchemaRef: 'LookupResponse', requestExample: queryReq, responseExample: lookupExample },
+  { method: 'post', path: '/lookup', summary: 'ONE-CALL query + reasoning', operationId: 'lookup', priceUsdc: 0.014, oneCall: true, requestSchemaRef: 'QueryRequest', responseSchemaRef: 'LookupResponse', requestExample: queryReq, responseExample: lookupExample },
 ];
 
 export const spec = buildAplusSpec({

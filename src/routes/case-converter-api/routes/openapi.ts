@@ -72,26 +72,26 @@ const disc = {
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['case_conversion', 'case_detection', 'string_tokenization', 'schema_key_normalization'],
   endpoints: [
-    { method: 'POST', path: '/convert', summary: 'Convert a string to a target case', price_usdc: 0.005 },
-    { method: 'POST', path: '/detect', summary: 'Detect source case + emit all cases', price_usdc: 0.005 },
+    { method: 'POST', path: '/convert', summary: 'Convert a string to a target case', price_usdc: 0.004 },
+    { method: 'POST', path: '/detect', summary: 'Detect source case + emit all cases', price_usdc: 0.004 },
     { method: 'POST', path: '/normalize-keys', summary: 'Recursively re-case all keys of a JSON object', price_usdc: 0.008 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL all-cases + reasoning', price_usdc: 0.01 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL all-cases + reasoning', price_usdc: 0.007 },
   ],
   pricing: [
-    { path: '/convert', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/detect', price_usdc: 0.005, currency: 'USDC' },
+    { path: '/convert', price_usdc: 0.004, currency: 'USDC' },
+    { path: '/detect', price_usdc: 0.004, currency: 'USDC' },
     { path: '/normalize-keys', price_usdc: 0.008, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.007, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
-  { method: 'post', path: '/convert', summary: 'Convert a string to a target case', operationId: 'convert', priceUsdc: 0.005, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse', requestExample: convertReq, responseExample: convertExample },
-  { method: 'post', path: '/detect', summary: 'Detect source case + emit all cases', operationId: 'detect', priceUsdc: 0.005, requestSchemaRef: 'DetectRequest', responseSchemaRef: 'DetectResponse', requestExample: detectReq, responseExample: detectExample },
+  { method: 'post', path: '/convert', summary: 'Convert a string to a target case', operationId: 'convert', priceUsdc: 0.004, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse', requestExample: convertReq, responseExample: convertExample },
+  { method: 'post', path: '/detect', summary: 'Detect source case + emit all cases', operationId: 'detect', priceUsdc: 0.004, requestSchemaRef: 'DetectRequest', responseSchemaRef: 'DetectResponse', requestExample: detectReq, responseExample: detectExample },
   { method: 'post', path: '/normalize-keys', summary: 'Recursively re-case all keys of a JSON object', operationId: 'normalizeKeys', priceUsdc: 0.008, requestSchemaRef: 'NormalizeKeysRequest', responseSchemaRef: 'NormalizeKeysResponse', requestExample: normalizeReq, responseExample: normalizeKeysExample },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL all-cases + reasoning', operationId: 'lookup', priceUsdc: 0.01, oneCall: true, requestSchemaRef: 'DetectRequest', responseSchemaRef: 'LookupResponse', requestExample: detectReq, responseExample: lookupExample },
+  { method: 'post', path: '/lookup', summary: 'ONE-CALL all-cases + reasoning', operationId: 'lookup', priceUsdc: 0.007, oneCall: true, requestSchemaRef: 'DetectRequest', responseSchemaRef: 'LookupResponse', requestExample: detectReq, responseExample: lookupExample },
 ];
 
 export const spec = buildAplusSpec({

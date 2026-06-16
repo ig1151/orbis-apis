@@ -185,13 +185,13 @@ const DISCOVERY = {
     { method: 'POST', path: '/parse', summary: 'Decompose a URL into components', price_usdc: 0.005 },
     { method: 'POST', path: '/build', summary: 'Assemble a URL from components', price_usdc: 0.006 },
     { method: 'POST', path: '/canonicalize', summary: 'Report exact canonicalization steps', price_usdc: 0.007 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL parse + normalize + reasoning', price_usdc: 0.01 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL parse + normalize + reasoning', price_usdc: 0.009 },
   ],
   pricing: [
     { path: '/parse', price_usdc: 0.005, currency: 'USDC' },
     { path: '/build', price_usdc: 0.006, currency: 'USDC' },
     { path: '/canonicalize', price_usdc: 0.007, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
   ],
   x402_compatible: true,
 };

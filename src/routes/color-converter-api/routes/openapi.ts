@@ -79,26 +79,26 @@ const disc = {
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['color_conversion', 'wcag_contrast', 'accessibility_remediation', 'relative_luminance'],
   endpoints: [
-    { method: 'POST', path: '/convert', summary: 'Parse a color and emit all representations', price_usdc: 0.006 },
-    { method: 'POST', path: '/contrast', summary: 'WCAG 2.1 contrast ratio + AA/AAA pass/fail', price_usdc: 0.007 },
+    { method: 'POST', path: '/convert', summary: 'Parse a color and emit all representations', price_usdc: 0.004 },
+    { method: 'POST', path: '/contrast', summary: 'WCAG 2.1 contrast ratio + AA/AAA pass/fail', price_usdc: 0.005 },
     { method: 'POST', path: '/suggest-accessible', summary: 'Recommend an accessible foreground (AA/AAA)', price_usdc: 0.009 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL convert + reasoning', price_usdc: 0.012 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL convert + reasoning', price_usdc: 0.008 },
   ],
   pricing: [
-    { path: '/convert', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/contrast', price_usdc: 0.007, currency: 'USDC' },
+    { path: '/convert', price_usdc: 0.004, currency: 'USDC' },
+    { path: '/contrast', price_usdc: 0.005, currency: 'USDC' },
     { path: '/suggest-accessible', price_usdc: 0.009, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.012, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
-  { method: 'post', path: '/convert', summary: 'Parse a color and emit all representations', operationId: 'convert', priceUsdc: 0.006, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse', requestExample: convertReq, responseExample: convertExample },
-  { method: 'post', path: '/contrast', summary: 'WCAG 2.1 contrast ratio + AA/AAA pass/fail', operationId: 'contrast', priceUsdc: 0.007, requestSchemaRef: 'ContrastRequest', responseSchemaRef: 'ContrastResponse', requestExample: contrastReq, responseExample: contrastExample },
+  { method: 'post', path: '/convert', summary: 'Parse a color and emit all representations', operationId: 'convert', priceUsdc: 0.004, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'ConvertResponse', requestExample: convertReq, responseExample: convertExample },
+  { method: 'post', path: '/contrast', summary: 'WCAG 2.1 contrast ratio + AA/AAA pass/fail', operationId: 'contrast', priceUsdc: 0.005, requestSchemaRef: 'ContrastRequest', responseSchemaRef: 'ContrastResponse', requestExample: contrastReq, responseExample: contrastExample },
   { method: 'post', path: '/suggest-accessible', summary: 'Recommend an accessible foreground (AA/AAA)', operationId: 'suggestAccessible', priceUsdc: 0.009, requestSchemaRef: 'SuggestRequest', responseSchemaRef: 'SuggestResponse', requestExample: suggestReq, responseExample: suggestExample },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL convert + reasoning', operationId: 'lookup', priceUsdc: 0.012, oneCall: true, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'LookupResponse', requestExample: convertReq, responseExample: lookupExample },
+  { method: 'post', path: '/lookup', summary: 'ONE-CALL convert + reasoning', operationId: 'lookup', priceUsdc: 0.008, oneCall: true, requestSchemaRef: 'ConvertRequest', responseSchemaRef: 'LookupResponse', requestExample: convertReq, responseExample: lookupExample },
 ];
 
 export const spec = buildAplusSpec({

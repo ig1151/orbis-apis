@@ -128,16 +128,16 @@ const DISCOVERY = {
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: CAPABILITIES,
   endpoints: [
-    { method: 'POST', path: '/convert', summary: 'Convert a string to a target case', price_usdc: 0.005 },
-    { method: 'POST', path: '/detect', summary: 'Detect source case + emit all cases', price_usdc: 0.005 },
+    { method: 'POST', path: '/convert', summary: 'Convert a string to a target case', price_usdc: 0.004 },
+    { method: 'POST', path: '/detect', summary: 'Detect source case + emit all cases', price_usdc: 0.004 },
     { method: 'POST', path: '/normalize-keys', summary: 'Recursively re-case all keys of a JSON object', price_usdc: 0.008 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL all-cases + reasoning', price_usdc: 0.01 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL all-cases + reasoning', price_usdc: 0.007 },
   ],
   pricing: [
-    { path: '/convert', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/detect', price_usdc: 0.005, currency: 'USDC' },
+    { path: '/convert', price_usdc: 0.004, currency: 'USDC' },
+    { path: '/detect', price_usdc: 0.004, currency: 'USDC' },
     { path: '/normalize-keys', price_usdc: 0.008, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.007, currency: 'USDC' },
   ],
   x402_compatible: true,
 };

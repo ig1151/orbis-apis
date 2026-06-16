@@ -81,13 +81,13 @@ const disc = {
     { method: 'POST', path: '/parse', summary: 'Decompose a URL into components', price_usdc: 0.005 },
     { method: 'POST', path: '/build', summary: 'Assemble a URL from components', price_usdc: 0.006 },
     { method: 'POST', path: '/canonicalize', summary: 'Report exact canonicalization steps', price_usdc: 0.007 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL parse + normalize + reasoning', price_usdc: 0.01 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL parse + normalize + reasoning', price_usdc: 0.009 },
   ],
   pricing: [
     { path: '/parse', price_usdc: 0.005, currency: 'USDC' },
     { path: '/build', price_usdc: 0.006, currency: 'USDC' },
     { path: '/canonicalize', price_usdc: 0.007, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
@@ -97,7 +97,7 @@ const endpoints: AplusEndpoint[] = [
   { method: 'post', path: '/parse', summary: 'Decompose a URL into components', operationId: 'parse', priceUsdc: 0.005, requestSchemaRef: 'ParseRequest', responseSchemaRef: 'ParseResponse', requestExample: parseReq, responseExample: parseExample },
   { method: 'post', path: '/build', summary: 'Assemble a URL from components', operationId: 'build', priceUsdc: 0.006, requestSchemaRef: 'BuildRequest', responseSchemaRef: 'BuildResponse', requestExample: buildReq, responseExample: buildExample },
   { method: 'post', path: '/canonicalize', summary: 'Report exact canonicalization steps', operationId: 'canonicalize', priceUsdc: 0.007, requestSchemaRef: 'CanonicalizeRequest', responseSchemaRef: 'CanonicalizeResponse', requestExample: canonicalizeReq, responseExample: canonicalizeExample },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL parse + normalize + reasoning', operationId: 'lookup', priceUsdc: 0.01, oneCall: true, requestSchemaRef: 'ParseRequest', responseSchemaRef: 'LookupResponse', requestExample: parseReq, responseExample: lookupExample },
+  { method: 'post', path: '/lookup', summary: 'ONE-CALL parse + normalize + reasoning', operationId: 'lookup', priceUsdc: 0.009, oneCall: true, requestSchemaRef: 'ParseRequest', responseSchemaRef: 'LookupResponse', requestExample: parseReq, responseExample: lookupExample },
 ];
 
 export const spec = buildAplusSpec({
