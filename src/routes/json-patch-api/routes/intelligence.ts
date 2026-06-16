@@ -209,14 +209,14 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/json-patch/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/apply', summary: 'Apply an RFC 6902 patch to a document', price_usdc: 0.006 },
-      { method: 'POST', path: '/diff', summary: 'Generate a patch transforming from→to', price_usdc: 0.007 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL apply + reasoning', price_usdc: 0.011 },
+      { method: 'POST', path: '/apply', summary: 'Apply an RFC 6902 patch to a document', price_usdc: 0.007 },
+      { method: 'POST', path: '/diff', summary: 'Generate a patch transforming from→to', price_usdc: 0.012 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL apply + reasoning', price_usdc: 0.015 },
     ],
     pricing: [
-      { path: '/apply', price_usdc: 0.006, currency: 'USDC' },
-      { path: '/diff', price_usdc: 0.007, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.011, currency: 'USDC' },
+      { path: '/apply', price_usdc: 0.007, currency: 'USDC' },
+      { path: '/diff', price_usdc: 0.012, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

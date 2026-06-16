@@ -139,12 +139,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/data-encryption-advisor/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/advise', summary: 'Get an encryption rubric for the supplied data', price_usdc: 0.009 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL advice + reasoning', price_usdc: 0.016 },
+      { method: 'POST', path: '/advise', summary: 'Get an encryption rubric for the supplied data', price_usdc: 0.020 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL advice + reasoning', price_usdc: 0.035 },
     ],
     pricing: [
-      { path: '/advise', price_usdc: 0.009, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.016, currency: 'USDC' },
+      { path: '/advise', price_usdc: 0.020, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.035, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

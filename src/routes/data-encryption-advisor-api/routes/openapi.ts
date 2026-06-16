@@ -60,12 +60,12 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/data-encryption-advisor/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/advise', summary: 'Get an encryption rubric for the supplied data', price_usdc: 0.009 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL advice + reasoning', price_usdc: 0.016 },
+    { method: 'POST', path: '/advise', summary: 'Get an encryption rubric for the supplied data', price_usdc: 0.020 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL advice + reasoning', price_usdc: 0.035 },
   ],
   pricing: [
-    { path: '/advise', price_usdc: 0.009, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.016, currency: 'USDC' },
+    { path: '/advise', price_usdc: 0.020, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.035, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
@@ -85,8 +85,8 @@ const schemas = {
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
-  { method: 'post', path: '/advise', summary: 'Get an encryption rubric for the supplied data', operationId: 'advise', priceUsdc: 0.009, requestSchemaRef: 'AdviseRequest', responseSchemaRef: 'AdviseResponse', requestExample: adviseReq, responseExample: adviseExample },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL advice + reasoning', operationId: 'lookup', priceUsdc: 0.016, oneCall: true, requestSchemaRef: 'AdviseRequest', responseSchemaRef: 'LookupResponse', requestExample: adviseReq, responseExample: lookupExample },
+  { method: 'post', path: '/advise', summary: 'Get an encryption rubric for the supplied data', operationId: 'advise', priceUsdc: 0.020, requestSchemaRef: 'AdviseRequest', responseSchemaRef: 'AdviseResponse', requestExample: adviseReq, responseExample: adviseExample },
+  { method: 'post', path: '/lookup', summary: 'ONE-CALL advice + reasoning', operationId: 'lookup', priceUsdc: 0.035, oneCall: true, requestSchemaRef: 'AdviseRequest', responseSchemaRef: 'LookupResponse', requestExample: adviseReq, responseExample: lookupExample },
 ];
 
 export const spec = buildAplusSpec({

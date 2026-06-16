@@ -44,12 +44,12 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/sensitive-data-detector/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/scan', summary: 'Detect & redact PII in text', price_usdc: 0.008 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL scan + reasoning', price_usdc: 0.015 },
+    { method: 'POST', path: '/scan', summary: 'Detect & redact PII in text', price_usdc: 0.020 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL scan + reasoning', price_usdc: 0.035 },
   ],
   pricing: [
-    { path: '/scan', price_usdc: 0.008, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
+    { path: '/scan', price_usdc: 0.020, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.035, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
@@ -69,8 +69,8 @@ const schemas = {
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
-  { method: 'post', path: '/scan', summary: 'Detect & redact PII in text', operationId: 'scan', priceUsdc: 0.008, requestSchemaRef: 'ScanRequest', responseSchemaRef: 'ScanResponse', requestExample: scanReq, responseExample: scanExample },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL scan + reasoning', operationId: 'lookup', priceUsdc: 0.015, oneCall: true, requestSchemaRef: 'ScanRequest', responseSchemaRef: 'LookupResponse', requestExample: scanReq, responseExample: lookupExample },
+  { method: 'post', path: '/scan', summary: 'Detect & redact PII in text', operationId: 'scan', priceUsdc: 0.020, requestSchemaRef: 'ScanRequest', responseSchemaRef: 'ScanResponse', requestExample: scanReq, responseExample: scanExample },
+  { method: 'post', path: '/lookup', summary: 'ONE-CALL scan + reasoning', operationId: 'lookup', priceUsdc: 0.035, oneCall: true, requestSchemaRef: 'ScanRequest', responseSchemaRef: 'LookupResponse', requestExample: scanReq, responseExample: lookupExample },
 ];
 
 export const spec = buildAplusSpec({
