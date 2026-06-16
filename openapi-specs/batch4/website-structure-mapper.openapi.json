@@ -266,6 +266,10 @@
                                             "https://shop.example.com/contact"
                                         ]
                                     },
+                                    "normalization": {
+                                        "ignore_query": false,
+                                        "strip_query_params": []
+                                    },
                                     "confidence_score": 1,
                                     "confidence_per_section": {
                                         "structure": 1,
@@ -556,6 +560,10 @@
                                             "https://shop.example.com/contact"
                                         ]
                                     },
+                                    "normalization": {
+                                        "ignore_query": false,
+                                        "strip_query_params": []
+                                    },
                                     "reasoning": {
                                         "why_result_generated": "Mapped 6 page(s) and 8 internal link(s) into a navigation graph rooted at https://shop.example.com/.",
                                         "key_factors": [
@@ -567,7 +575,7 @@
                                             "The graph is built only from the supplied pages/links; pages or links not provided are invisible \u2014 no live crawling is performed.",
                                             "Click depth is measured from the supplied home_url over internal links only.",
                                             "A \"dangling\" internal link points to a same-host URL that is not among the supplied pages \u2014 it may be uncrawled rather than broken (this API does not fetch to confirm).",
-                                            "URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash; query strings are kept, so ?a=1 and ?a=2 are distinct pages."
+                                            "URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash. Query strings are kept by default; set ignore_query or strip_query_params (e.g. [\"utm_*\"]) to collapse tracking params."
                                         ]
                                     },
                                     "confidence_score": 1,
@@ -1081,7 +1089,8 @@
                     "dangling_internal_links",
                     "nodes",
                     "edges",
-                    "sitemap_diff"
+                    "sitemap_diff",
+                    "normalization"
                 ],
                 "properties": {
                     "host": {
@@ -1281,6 +1290,27 @@
                                 "description": "Sitemap URLs not present among crawled pages."
                             }
                         }
+                    },
+                    "normalization": {
+                        "type": "object",
+                        "required": [
+                            "ignore_query",
+                            "strip_query_params"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "ignore_query": {
+                                "type": "boolean",
+                                "description": "Whether the entire query string was dropped during normalization."
+                            },
+                            "strip_query_params": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Query-param name patterns removed during normalization (trailing \"*\" = prefix match)."
+                            }
+                        }
                     }
                 }
             },
@@ -1351,6 +1381,17 @@
                         "type": "integer",
                         "minimum": 1,
                         "description": "Out-degree at/above which a page is labeled a hub (default 5)."
+                    },
+                    "ignore_query": {
+                        "type": "boolean",
+                        "description": "Drop the entire query string when normalizing URLs (default false)."
+                    },
+                    "strip_query_params": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Query-param names to strip during normalization; a trailing \"*\" matches by prefix (e.g. \"utm_*\"). Case-insensitive."
                     }
                 }
             },

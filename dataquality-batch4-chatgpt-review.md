@@ -599,6 +599,7 @@ export interface Edge { from: string; to: string; }
 export interface SectionCount { section: string; page_count: number; }
 export interface DanglingLink { from: string; to: string; }
 export interface SitemapDiff { provided: boolean; missing_from_sitemap: string[]; missing_from_crawl: string[]; }
+export interface NormalizationInfo { ignore_query: boolean; strip_query_params: string[]; }
 
 export interface StructureCore {
   host: string;
@@ -618,15 +619,39 @@ export interface StructureCore {
   nodes: NodeInfo[];
   edges: Edge[];
   sitemap_diff: SitemapDiff;
+  normalization: NormalizationInfo;
 }
 
 interface PageIn { url: string; links: string[]; }
 
-function normUrl(u: URL): string {
+// URL-normalization options. By default the full query string is kept (two URLs
+// differing only in query are distinct pages). `ignoreQuery` drops the query
+// entirely; `stripParams` drops named params (case-insensitive; a trailing "*"
+// matches by prefix, e.g. "utm_*"), so tracking params can be collapsed.
+interface NormOpts { ignoreQuery: boolean; stripParams: string[]; }
+
+function paramStripped(key: string, patterns: string[]): boolean {
+  const k = key.toLowerCase();
+  return patterns.some((p) => {
+    const pat = p.toLowerCase();
+    return pat.endsWith('*') ? k.startsWith(pat.slice(0, -1)) : k === pat;
+  });
+}
+
+function normUrl(u: URL, opts: NormOpts): string {
   let path = u.pathname || '/';
   if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
-  // drop hash; keep query string; lowercase scheme + host (host includes port)
-  return `${u.protocol}//${u.host.toLowerCase()}${path}${u.search}`;
+  // drop hash; lowercase scheme + host (host includes port).
+  let search = u.search;
+  if (opts.ignoreQuery) {
+    search = '';
+  } else if (opts.stripParams.length && u.search) {
+    const sp = new URLSearchParams(u.search);
+    for (const key of [...sp.keys()]) if (paramStripped(key, opts.stripParams)) sp.delete(key);
+    const s = sp.toString();
+    search = s ? `?${s}` : '';
+  }
+  return `${u.protocol}//${u.host.toLowerCase()}${path}${search}`;
 }
 
 function pathOf(normalized: string): string {
@@ -638,7 +663,7 @@ function sectionOf(path: string): string {
   return seg.length === 0 ? '(root)' : seg[0];
 }
 
-function parse(body: any): { error: string } | { pages: PageIn[]; homeRaw: string | null; sitemap: string[] | null; hubMin: number } {
+function parse(body: any): { error: string } | { pages: PageIn[]; homeRaw: string | null; sitemap: string[] | null; hubMin: number; norm: NormOpts } {
   if (body === null || typeof body !== 'object' || Array.isArray(body)) return { error: 'Provide an object with a "pages" array.' };
   if (!Array.isArray(body.pages) || body.pages.length === 0) return { error: '"pages" must be a non-empty array of { url, links } objects.' };
   if (body.pages.length > MAX_PAGES) return { error: `"pages" exceeds the ${MAX_PAGES}-page limit (got ${body.pages.length}).` };
@@ -678,11 +703,24 @@ function parse(body: any): { error: string } | { pages: PageIn[]; homeRaw: strin
     hubMin = body.hub_min_out_degree;
   }
 
-  return { pages, homeRaw, sitemap, hubMin };
+  let ignoreQuery = false;
+  if (body.ignore_query !== undefined) {
+    if (typeof body.ignore_query !== 'boolean') return { error: '"ignore_query" must be a boolean when provided.' };
+    ignoreQuery = body.ignore_query;
+  }
+  let stripParams: string[] = [];
+  if (body.strip_query_params !== undefined) {
+    if (!Array.isArray(body.strip_query_params) || !body.strip_query_params.every((s: unknown) => typeof s === 'string' && s !== '')) {
+      return { error: '"strip_query_params" must be an array of non-empty param-name strings (a trailing "*" matches by prefix).' };
+    }
+    stripParams = body.strip_query_params as string[];
+  }
+
+  return { pages, homeRaw, sitemap, hubMin, norm: { ignoreQuery, stripParams } };
 }
 
-function build(input: { pages: PageIn[]; homeRaw: string | null; sitemap: string[] | null; hubMin: number }): { error: string } | { result: StructureCore } {
-  const { pages, homeRaw, sitemap, hubMin } = input;
+function build(input: { pages: PageIn[]; homeRaw: string | null; sitemap: string[] | null; hubMin: number; norm: NormOpts }): { error: string } | { result: StructureCore } {
+  const { pages, homeRaw, sitemap, hubMin, norm } = input;
 
   // Normalize page URLs (invalid → error: pages are the graph's spine).
   const nodeSet = new Set<string>();
@@ -691,7 +729,7 @@ function build(input: { pages: PageIn[]; homeRaw: string | null; sitemap: string
     let u: URL;
     try { u = new URL(pages[i].url); } catch { return { error: `pages[${i}].url "${pages[i].url}" is not a valid absolute URL.` }; }
     if (u.protocol !== 'http:' && u.protocol !== 'https:') return { error: `pages[${i}].url must use http(s).` };
-    const n = normUrl(u);
+    const n = normUrl(u, norm);
     normalizedPages.push(n);
     nodeSet.add(n);
   }
@@ -705,7 +743,7 @@ function build(input: { pages: PageIn[]; homeRaw: string | null; sitemap: string
     let hu: URL;
     try { hu = new URL(homeRaw); } catch { return { error: `"home_url" "${homeRaw}" is not a valid absolute URL.` }; }
     siteHost = hu.host.toLowerCase();
-    homeNorm = normUrl(hu);
+    homeNorm = normUrl(hu, norm);
     homeInferred = false;
   } else {
     const hostCounts = new Map<string, number>();
@@ -742,7 +780,7 @@ function build(input: { pages: PageIn[]; homeRaw: string | null; sitemap: string
       let lu: URL;
       try { lu = new URL(raw, pages[i].url); } catch { invalidLinks++; continue; }
       if (lu.protocol !== 'http:' && lu.protocol !== 'https:') { invalidLinks++; continue; }
-      const target = normUrl(lu);
+      const target = normUrl(lu, norm);
       const sameHost = lu.host.toLowerCase() === siteHost;
       if (!sameHost) {
         const k = `${fromNorm} ${target}`;
@@ -806,7 +844,7 @@ function build(input: { pages: PageIn[]; homeRaw: string | null; sitemap: string
   if (sitemap) {
     const smSet = new Set<string>();
     for (const s of sitemap) {
-      try { const su = new URL(s); if (su.host.toLowerCase() === siteHost) smSet.add(normUrl(su)); } catch { /* skip unparseable sitemap entries */ }
+      try { const su = new URL(s); if (su.host.toLowerCase() === siteHost) smSet.add(normUrl(su, norm)); } catch { /* skip unparseable sitemap entries */ }
     }
     const crawled = new Set([...nodeSet].filter((n) => new URL(n).host.toLowerCase() === siteHost));
     sitemap_diff = {
@@ -830,6 +868,7 @@ function build(input: { pages: PageIn[]; homeRaw: string | null; sitemap: string
       orphan_pages, dead_end_pages, hub_pages, unreachable_pages,
       dangling_internal_links: dangling.sort((a, b) => (a.from + a.to < b.from + b.to ? -1 : 1)),
       nodes, edges, sitemap_diff,
+      normalization: { ignore_query: norm.ignoreQuery, strip_query_params: norm.stripParams },
     },
   };
 }
@@ -846,7 +885,7 @@ function invalidators(r: StructureCore): string[] {
       ? `home_url was inferred (${r.home_url}); pass home_url explicitly to fix the depth-0 root and recompute click depths.`
       : 'Click depth is measured from the supplied home_url over internal links only.',
     'A "dangling" internal link points to a same-host URL that is not among the supplied pages — it may be uncrawled rather than broken (this API does not fetch to confirm).',
-    'URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash; query strings are kept, so ?a=1 and ?a=2 are distinct pages.',
+    `URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash. Query strings are ${r.normalization.ignore_query ? 'dropped (ignore_query=true)' : r.normalization.strip_query_params.length ? `kept except stripped params [${r.normalization.strip_query_params.join(', ')}]` : 'kept by default'}; set ignore_query or strip_query_params (e.g. ["utm_*"]) to collapse tracking params.`,
   ];
 }
 
@@ -963,9 +1002,16 @@ const SitemapDiff = {
     missing_from_crawl: { type: 'array', items: { type: 'string' }, description: 'Sitemap URLs not present among crawled pages.' },
   },
 };
+const NormalizationInfo = {
+  type: 'object', required: ['ignore_query', 'strip_query_params'], additionalProperties: false,
+  properties: {
+    ignore_query: { type: 'boolean', description: 'Whether the entire query string was dropped during normalization.' },
+    strip_query_params: { type: 'array', items: { type: 'string' }, description: 'Query-param name patterns removed during normalization (trailing "*" = prefix match).' },
+  },
+};
 const StructureCore = {
   type: 'object',
-  required: ['host', 'page_count', 'internal_link_count', 'external_link_count', 'invalid_link_count', 'home_url', 'home_inferred', 'max_depth', 'sections', 'orphan_pages', 'dead_end_pages', 'hub_pages', 'unreachable_pages', 'dangling_internal_links', 'nodes', 'edges', 'sitemap_diff'],
+  required: ['host', 'page_count', 'internal_link_count', 'external_link_count', 'invalid_link_count', 'home_url', 'home_inferred', 'max_depth', 'sections', 'orphan_pages', 'dead_end_pages', 'hub_pages', 'unreachable_pages', 'dangling_internal_links', 'nodes', 'edges', 'sitemap_diff', 'normalization'],
   properties: {
     host: { type: 'string' },
     page_count: { type: 'integer', minimum: 0 },
@@ -984,6 +1030,7 @@ const StructureCore = {
     nodes: { type: 'array', items: NodeInfo },
     edges: { type: 'array', items: Edge },
     sitemap_diff: SitemapDiff,
+    normalization: NormalizationInfo,
   },
 };
 const PageInput = {
@@ -1000,6 +1047,8 @@ const MapRequest = {
     home_url: { type: 'string', description: 'Optional entry/home URL (fixes the depth-0 root). Inferred when omitted.' },
     sitemap: { type: 'array', items: { type: 'string' }, description: 'Optional declared sitemap URLs to diff against the crawl.' },
     hub_min_out_degree: { type: 'integer', minimum: 1, description: 'Out-degree at/above which a page is labeled a hub (default 5).' },
+    ignore_query: { type: 'boolean', description: 'Drop the entire query string when normalizing URLs (default false).' },
+    strip_query_params: { type: 'array', items: { type: 'string' }, description: 'Query-param names to strip during normalization; a trailing "*" matches by prefix (e.g. "utm_*"). Case-insensitive.' },
   },
 };
 
@@ -1338,6 +1387,10 @@ export default specRouter(spec);
                       "https://shop.example.com/contact"
                     ]
                   },
+                  "normalization": {
+                    "ignore_query": false,
+                    "strip_query_params": []
+                  },
                   "confidence_score": 1,
                   "confidence_per_section": {
                     "structure": 1,
@@ -1628,6 +1681,10 @@ export default specRouter(spec);
                       "https://shop.example.com/contact"
                     ]
                   },
+                  "normalization": {
+                    "ignore_query": false,
+                    "strip_query_params": []
+                  },
                   "reasoning": {
                     "why_result_generated": "Mapped 6 page(s) and 8 internal link(s) into a navigation graph rooted at https://shop.example.com/.",
                     "key_factors": [
@@ -1639,7 +1696,7 @@ export default specRouter(spec);
                       "The graph is built only from the supplied pages/links; pages or links not provided are invisible — no live crawling is performed.",
                       "Click depth is measured from the supplied home_url over internal links only.",
                       "A \"dangling\" internal link points to a same-host URL that is not among the supplied pages — it may be uncrawled rather than broken (this API does not fetch to confirm).",
-                      "URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash; query strings are kept, so ?a=1 and ?a=2 are distinct pages."
+                      "URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash. Query strings are kept by default; set ignore_query or strip_query_params (e.g. [\"utm_*\"]) to collapse tracking params."
                     ]
                   },
                   "confidence_score": 1,
@@ -2153,7 +2210,8 @@ export default specRouter(spec);
           "dangling_internal_links",
           "nodes",
           "edges",
-          "sitemap_diff"
+          "sitemap_diff",
+          "normalization"
         ],
         "properties": {
           "host": {
@@ -2353,6 +2411,27 @@ export default specRouter(spec);
                 "description": "Sitemap URLs not present among crawled pages."
               }
             }
+          },
+          "normalization": {
+            "type": "object",
+            "required": [
+              "ignore_query",
+              "strip_query_params"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "ignore_query": {
+                "type": "boolean",
+                "description": "Whether the entire query string was dropped during normalization."
+              },
+              "strip_query_params": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Query-param name patterns removed during normalization (trailing \"*\" = prefix match)."
+              }
+            }
           }
         }
       },
@@ -2423,6 +2502,17 @@ export default specRouter(spec);
             "type": "integer",
             "minimum": 1,
             "description": "Out-degree at/above which a page is labeled a hub (default 5)."
+          },
+          "ignore_query": {
+            "type": "boolean",
+            "description": "Drop the entire query string when normalizing URLs (default false)."
+          },
+          "strip_query_params": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Query-param names to strip during normalization; a trailing \"*\" matches by prefix (e.g. \"utm_*\"). Case-insensitive."
           }
         }
       },
@@ -2628,11 +2718,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "o817ooio-1781567165456",
-  "request_id": "o817ooio-1781567165456",
-  "computed_at": "2026-06-15T23:46:05.456Z",
+  "trace_id": "8il9y01l-1781571839550",
+  "request_id": "8il9y01l-1781571839550",
+  "computed_at": "2026-06-16T01:03:59.550Z",
   "success": true,
-  "latency_ms": 2,
+  "latency_ms": 1,
   "host": "shop.example.com",
   "page_count": 6,
   "internal_link_count": 8,
@@ -2783,6 +2873,10 @@ Response (HTTP 200):
       "https://shop.example.com/contact"
     ]
   },
+  "normalization": {
+    "ignore_query": false,
+    "strip_query_params": []
+  },
   "confidence_score": 1,
   "confidence_per_section": {
     "structure": 1,
@@ -2840,11 +2934,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "8uwycv34-1781567165472",
-  "request_id": "8uwycv34-1781567165472",
-  "computed_at": "2026-06-15T23:46:05.472Z",
+  "trace_id": "3h0712nu-1781571839557",
+  "request_id": "3h0712nu-1781571839557",
+  "computed_at": "2026-06-16T01:03:59.557Z",
   "success": true,
-  "latency_ms": 5,
+  "latency_ms": 1,
   "host": "blog.example.com",
   "page_count": 2,
   "internal_link_count": 2,
@@ -2901,6 +2995,10 @@ Response (HTTP 200):
     "missing_from_sitemap": [],
     "missing_from_crawl": []
   },
+  "normalization": {
+    "ignore_query": false,
+    "strip_query_params": []
+  },
   "reasoning": {
     "why_result_generated": "Mapped 2 page(s) and 2 internal link(s) into a navigation graph rooted at https://blog.example.com/posts/a.",
     "key_factors": [
@@ -2912,7 +3010,7 @@ Response (HTTP 200):
       "The graph is built only from the supplied pages/links; pages or links not provided are invisible — no live crawling is performed.",
       "home_url was inferred (https://blog.example.com/posts/a); pass home_url explicitly to fix the depth-0 root and recompute click depths.",
       "A \"dangling\" internal link points to a same-host URL that is not among the supplied pages — it may be uncrawled rather than broken (this API does not fetch to confirm).",
-      "URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash; query strings are kept, so ?a=1 and ?a=2 are distinct pages."
+      "URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash. Query strings are kept by default; set ignore_query or strip_query_params (e.g. [\"utm_*\"]) to collapse tracking params."
     ]
   },
   "confidence_score": 0.9,
@@ -2971,9 +3069,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "p7oe05sa-1781567165481",
-  "request_id": "p7oe05sa-1781567165481",
-  "computed_at": "2026-06-15T23:46:05.481Z",
+  "trace_id": "7qypl1xn-1781571839559",
+  "request_id": "7qypl1xn-1781571839559",
+  "computed_at": "2026-06-16T01:03:59.559Z",
   "success": true,
   "latency_ms": 0,
   "host": "site.test",
@@ -3036,6 +3134,10 @@ Response (HTTP 200):
     "missing_from_sitemap": [],
     "missing_from_crawl": []
   },
+  "normalization": {
+    "ignore_query": false,
+    "strip_query_params": []
+  },
   "confidence_score": 1,
   "confidence_per_section": {
     "structure": 1,
@@ -3043,6 +3145,130 @@ Response (HTTP 200):
   },
   "recommended_actions_priority_order": [
     "2 page(s), 2 internal link(s); home https://site.test/, max click depth 1."
+  ],
+  "chain_to": [
+    {
+      "api": "scrape-data-pipeline-validator",
+      "reason": "Validate the data scraped from these pages against an expected schema."
+    },
+    {
+      "api": "data-lineage-tracker",
+      "reason": "Model the crawl/transform steps that consume these pages as a lineage graph."
+    }
+  ],
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "execution_metadata": {
+    "model": "deterministic",
+    "automation_safe": true
+  }
+}
+```
+
+### POST /map (REVIEW FIX: strip_query_params ["utm_*"] collapses tracking params so the link resolves to the page)
+Request:
+```json
+{
+  "pages": [
+    {
+      "url": "https://s.com/?utm_source=x&id=1",
+      "links": [
+        "/a?utm_medium=cpc&keep=1"
+      ]
+    },
+    {
+      "url": "https://s.com/a?keep=1",
+      "links": []
+    }
+  ],
+  "home_url": "https://s.com/",
+  "strip_query_params": [
+    "utm_*"
+  ]
+}
+```
+Response (HTTP 200):
+```json
+{
+  "trace_id": "8le4nuh1-1781571839569",
+  "request_id": "8le4nuh1-1781571839569",
+  "computed_at": "2026-06-16T01:03:59.569Z",
+  "success": true,
+  "latency_ms": 0,
+  "host": "s.com",
+  "page_count": 2,
+  "internal_link_count": 1,
+  "external_link_count": 0,
+  "invalid_link_count": 0,
+  "home_url": "https://s.com/?id=1",
+  "home_inferred": true,
+  "max_depth": 1,
+  "sections": [
+    {
+      "section": "(root)",
+      "page_count": 1
+    },
+    {
+      "section": "a",
+      "page_count": 1
+    }
+  ],
+  "orphan_pages": [],
+  "dead_end_pages": [
+    "https://s.com/a?keep=1"
+  ],
+  "hub_pages": [],
+  "unreachable_pages": [],
+  "dangling_internal_links": [],
+  "nodes": [
+    {
+      "url": "https://s.com/?id=1",
+      "path": "/",
+      "section": "(root)",
+      "depth": 0,
+      "in_degree": 0,
+      "out_degree": 1,
+      "role": "home",
+      "reachable": true
+    },
+    {
+      "url": "https://s.com/a?keep=1",
+      "path": "/a",
+      "section": "a",
+      "depth": 1,
+      "in_degree": 1,
+      "out_degree": 0,
+      "role": "dead_end",
+      "reachable": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "https://s.com/?id=1",
+      "to": "https://s.com/a?keep=1"
+    }
+  ],
+  "sitemap_diff": {
+    "provided": false,
+    "missing_from_sitemap": [],
+    "missing_from_crawl": []
+  },
+  "normalization": {
+    "ignore_query": false,
+    "strip_query_params": [
+      "utm_*"
+    ]
+  },
+  "confidence_score": 0.9,
+  "confidence_per_section": {
+    "structure": 1,
+    "navigation": 0.9
+  },
+  "recommended_actions_priority_order": [
+    "2 page(s), 1 internal link(s); home https://s.com/?id=1 (inferred), max click depth 1.",
+    "1 dead-end page(s) with no outbound internal links."
   ],
   "chain_to": [
     {
@@ -3075,9 +3301,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "qerp0bpx-1781567165486",
-  "request_id": "qerp0bpx-1781567165486",
-  "computed_at": "2026-06-15T23:46:05.486Z",
+  "trace_id": "8dzwvkvs-1781571839577",
+  "request_id": "8dzwvkvs-1781571839577",
+  "computed_at": "2026-06-16T01:03:59.577Z",
   "success": false,
   "latency_ms": 0,
   "error": {
@@ -3112,6 +3338,7 @@ const MAX_HTML = 1_000_000;        // chars; bounds the parse surface (≈ reque
 const MAX_TESTS = 200;
 const MAX_SAMPLE_VALUES = 50;
 const MAX_REGEX_LEN = 300;
+const REGEX_TEST_MAX = 8192;       // cap the string a `matches` regex is tested against (ReDoS input bound)
 
 // Conservative catastrophic-backtracking ("ReDoS") guard — flags a group that is
 // itself quantified by */+ and whose body contains another unbounded quantifier,
@@ -3211,7 +3438,13 @@ function runTest($: cheerio.CheerioAPI, t: TestSpec): TestResult {
   if (typeof a.max_count === 'number') push('max_count', a.max_count, matched_count, matched_count <= a.max_count);
   if (typeof a.equals === 'string') push('equals', a.equals, extracted_value, extracted_value === a.equals);
   if (typeof a.contains === 'string') push('contains', a.contains, extracted_value, typeof extracted_value === 'string' && extracted_value.includes(a.contains));
-  if (typeof a.matches === 'string') { const re = new RegExp(a.matches); push('matches', a.matches, extracted_value, typeof extracted_value === 'string' && re.test(extracted_value)); }
+  if (typeof a.matches === 'string') {
+    const re = new RegExp(a.matches);
+    // Bound the subject length: catastrophic backtracking blows up with input size, so
+    // even a pattern that slips past the static guard cannot hang on a giant string.
+    const subject = typeof extracted_value === 'string' ? extracted_value.slice(0, REGEX_TEST_MAX) : null;
+    push('matches', a.matches, extracted_value, subject !== null && re.test(subject));
+  }
   if (typeof a.non_empty === 'boolean') { const ne = extracted_value !== null && extracted_value.trim() !== ''; push('non_empty', a.non_empty, ne, ne === a.non_empty); }
   // No explicit assertions → implicit "element exists".
   if (assertions.length === 0) push('exists', true, matched_count > 0, matched_count > 0);
@@ -3240,7 +3473,7 @@ const INVALIDATORS = [
   'Tests run only against the supplied HTML snapshot — they prove a selector works on this capture, not on the live (possibly changed) page.',
   'HTML is parsed leniently by cheerio (like a browser): malformed markup is auto-corrected, so a selector may match more/less than a strict parser would.',
   'Text extraction uses the concatenated text of all descendants, trimmed; attribute extraction reads the first matched element’s attribute (null if absent).',
-  'Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected before evaluation.',
+  'Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected, and the pattern is tested against at most the first 8192 chars of the extracted value (an input bound limiting catastrophic-backtracking cost on the single-threaded engine).',
 ];
 
 function actions(r: SuiteCore): string[] {
@@ -3911,7 +4144,7 @@ export default specRouter(spec);
                       "Tests run only against the supplied HTML snapshot — they prove a selector works on this capture, not on the live (possibly changed) page.",
                       "HTML is parsed leniently by cheerio (like a browser): malformed markup is auto-corrected, so a selector may match more/less than a strict parser would.",
                       "Text extraction uses the concatenated text of all descendants, trimmed; attribute extraction reads the first matched element’s attribute (null if absent).",
-                      "Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected before evaluation."
+                      "Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected, and the pattern is tested against at most the first 8192 chars of the extracted value (an input bound limiting catastrophic-backtracking cost on the single-threaded engine)."
                     ]
                   },
                   "confidence_score": 1,
@@ -4940,11 +5173,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "6qpf78x7-1781567165541",
-  "request_id": "6qpf78x7-1781567165541",
-  "computed_at": "2026-06-15T23:46:05.541Z",
+  "trace_id": "suan9k0c-1781571839589",
+  "request_id": "suan9k0c-1781571839589",
+  "computed_at": "2026-06-16T01:03:59.589Z",
   "success": true,
-  "latency_ms": 43,
+  "latency_ms": 2,
   "test_count": 5,
   "passed_count": 2,
   "failed_count": 3,
@@ -5131,11 +5364,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "md0pj1hk-1781567165553",
-  "request_id": "md0pj1hk-1781567165553",
-  "computed_at": "2026-06-15T23:46:05.553Z",
+  "trace_id": "o4iz0ucm-1781571839596",
+  "request_id": "o4iz0ucm-1781571839596",
+  "computed_at": "2026-06-16T01:03:59.596Z",
   "success": true,
-  "latency_ms": 6,
+  "latency_ms": 2,
   "test_count": 4,
   "passed_count": 4,
   "failed_count": 0,
@@ -5252,7 +5485,7 @@ Response (HTTP 200):
       "Tests run only against the supplied HTML snapshot — they prove a selector works on this capture, not on the live (possibly changed) page.",
       "HTML is parsed leniently by cheerio (like a browser): malformed markup is auto-corrected, so a selector may match more/less than a strict parser would.",
       "Text extraction uses the concatenated text of all descendants, trimmed; attribute extraction reads the first matched element’s attribute (null if absent).",
-      "Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected before evaluation."
+      "Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected, and the pattern is tested against at most the first 8192 chars of the extracted value (an input bound limiting catastrophic-backtracking cost on the single-threaded engine)."
     ]
   },
   "confidence_score": 1,
@@ -5303,9 +5536,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "lsr6xlug-1781567165560",
-  "request_id": "lsr6xlug-1781567165560",
-  "computed_at": "2026-06-15T23:46:05.560Z",
+  "trace_id": "zwo391rb-1781571839598",
+  "request_id": "zwo391rb-1781571839598",
+  "computed_at": "2026-06-16T01:03:59.598Z",
   "success": false,
   "latency_ms": 0,
   "error": {
@@ -5325,9 +5558,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "ggu1g8wy-1781567165567",
-  "request_id": "ggu1g8wy-1781567165567",
-  "computed_at": "2026-06-15T23:46:05.567Z",
+  "trace_id": "90pi1v6t-1781571839604",
+  "request_id": "90pi1v6t-1781571839604",
+  "computed_at": "2026-06-16T01:03:59.604Z",
   "success": false,
   "latency_ms": 0,
   "error": {
@@ -7009,11 +7242,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "m5nlg1w5-1781567165583",
-  "request_id": "m5nlg1w5-1781567165583",
-  "computed_at": "2026-06-15T23:46:05.583Z",
+  "trace_id": "jy0hdonx-1781571839613",
+  "request_id": "jy0hdonx-1781571839613",
+  "computed_at": "2026-06-16T01:03:59.613Z",
   "success": true,
-  "latency_ms": 3,
+  "latency_ms": 0,
   "row_count": 5,
   "column_count": 4,
   "total_cells": 20,
@@ -7146,9 +7379,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "0k26wo2m-1781567165588",
-  "request_id": "0k26wo2m-1781567165588",
-  "computed_at": "2026-06-15T23:46:05.588Z",
+  "trace_id": "grdkbhdd-1781571839615",
+  "request_id": "grdkbhdd-1781571839615",
+  "computed_at": "2026-06-16T01:03:59.615Z",
   "success": true,
   "latency_ms": 0,
   "row_count": 3,
@@ -7279,9 +7512,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "nkgsvfk8-1781567165590",
-  "request_id": "nkgsvfk8-1781567165590",
-  "computed_at": "2026-06-15T23:46:05.590Z",
+  "trace_id": "qqzxamgx-1781571839616",
+  "request_id": "qqzxamgx-1781571839616",
+  "computed_at": "2026-06-16T01:03:59.616Z",
   "success": true,
   "latency_ms": 0,
   "row_count": 4,
@@ -7375,9 +7608,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "2t38pjou-1781567165591",
-  "request_id": "2t38pjou-1781567165591",
-  "computed_at": "2026-06-15T23:46:05.591Z",
+  "trace_id": "f631ydjo-1781571839618",
+  "request_id": "f631ydjo-1781571839618",
+  "computed_at": "2026-06-16T01:03:59.618Z",
   "success": false,
   "latency_ms": 0,
   "error": {

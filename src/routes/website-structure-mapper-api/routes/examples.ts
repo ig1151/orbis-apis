@@ -156,6 +156,10 @@ export const mapExample = {
       "https://shop.example.com/contact"
     ]
   },
+  "normalization": {
+    "ignore_query": false,
+    "strip_query_params": []
+  },
   "confidence_score": 1,
   "confidence_per_section": {
     "structure": 1,
@@ -345,6 +349,10 @@ export const lookupExample = {
       "https://shop.example.com/contact"
     ]
   },
+  "normalization": {
+    "ignore_query": false,
+    "strip_query_params": []
+  },
   "reasoning": {
     "why_result_generated": "Mapped 6 page(s) and 8 internal link(s) into a navigation graph rooted at https://shop.example.com/.",
     "key_factors": [
@@ -356,7 +364,7 @@ export const lookupExample = {
       "The graph is built only from the supplied pages/links; pages or links not provided are invisible — no live crawling is performed.",
       "Click depth is measured from the supplied home_url over internal links only.",
       "A \"dangling\" internal link points to a same-host URL that is not among the supplied pages — it may be uncrawled rather than broken (this API does not fetch to confirm).",
-      "URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash; query strings are kept, so ?a=1 and ?a=2 are distinct pages."
+      "URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash. Query strings are kept by default; set ignore_query or strip_query_params (e.g. [\"utm_*\"]) to collapse tracking params."
     ]
   },
   "confidence_score": 1,

@@ -17,6 +17,7 @@ const MAX_HTML = 1_000_000;        // chars; bounds the parse surface (≈ reque
 const MAX_TESTS = 200;
 const MAX_SAMPLE_VALUES = 50;
 const MAX_REGEX_LEN = 300;
+const REGEX_TEST_MAX = 8192;       // cap the string a `matches` regex is tested against (ReDoS input bound)
 
 // Conservative catastrophic-backtracking ("ReDoS") guard — flags a group that is
 // itself quantified by */+ and whose body contains another unbounded quantifier,
@@ -116,7 +117,13 @@ function runTest($: cheerio.CheerioAPI, t: TestSpec): TestResult {
   if (typeof a.max_count === 'number') push('max_count', a.max_count, matched_count, matched_count <= a.max_count);
   if (typeof a.equals === 'string') push('equals', a.equals, extracted_value, extracted_value === a.equals);
   if (typeof a.contains === 'string') push('contains', a.contains, extracted_value, typeof extracted_value === 'string' && extracted_value.includes(a.contains));
-  if (typeof a.matches === 'string') { const re = new RegExp(a.matches); push('matches', a.matches, extracted_value, typeof extracted_value === 'string' && re.test(extracted_value)); }
+  if (typeof a.matches === 'string') {
+    const re = new RegExp(a.matches);
+    // Bound the subject length: catastrophic backtracking blows up with input size, so
+    // even a pattern that slips past the static guard cannot hang on a giant string.
+    const subject = typeof extracted_value === 'string' ? extracted_value.slice(0, REGEX_TEST_MAX) : null;
+    push('matches', a.matches, extracted_value, subject !== null && re.test(subject));
+  }
   if (typeof a.non_empty === 'boolean') { const ne = extracted_value !== null && extracted_value.trim() !== ''; push('non_empty', a.non_empty, ne, ne === a.non_empty); }
   // No explicit assertions → implicit "element exists".
   if (assertions.length === 0) push('exists', true, matched_count > 0, matched_count > 0);
@@ -145,7 +152,7 @@ const INVALIDATORS = [
   'Tests run only against the supplied HTML snapshot — they prove a selector works on this capture, not on the live (possibly changed) page.',
   'HTML is parsed leniently by cheerio (like a browser): malformed markup is auto-corrected, so a selector may match more/less than a strict parser would.',
   'Text extraction uses the concatenated text of all descendants, trimmed; attribute extraction reads the first matched element’s attribute (null if absent).',
-  'Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected before evaluation.',
+  'Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected, and the pattern is tested against at most the first 8192 chars of the extracted value (an input bound limiting catastrophic-backtracking cost on the single-threaded engine).',
 ];
 
 function actions(r: SuiteCore): string[] {

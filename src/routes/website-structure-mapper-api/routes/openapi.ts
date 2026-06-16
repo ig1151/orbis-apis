@@ -37,9 +37,16 @@ const SitemapDiff = {
     missing_from_crawl: { type: 'array', items: { type: 'string' }, description: 'Sitemap URLs not present among crawled pages.' },
   },
 };
+const NormalizationInfo = {
+  type: 'object', required: ['ignore_query', 'strip_query_params'], additionalProperties: false,
+  properties: {
+    ignore_query: { type: 'boolean', description: 'Whether the entire query string was dropped during normalization.' },
+    strip_query_params: { type: 'array', items: { type: 'string' }, description: 'Query-param name patterns removed during normalization (trailing "*" = prefix match).' },
+  },
+};
 const StructureCore = {
   type: 'object',
-  required: ['host', 'page_count', 'internal_link_count', 'external_link_count', 'invalid_link_count', 'home_url', 'home_inferred', 'max_depth', 'sections', 'orphan_pages', 'dead_end_pages', 'hub_pages', 'unreachable_pages', 'dangling_internal_links', 'nodes', 'edges', 'sitemap_diff'],
+  required: ['host', 'page_count', 'internal_link_count', 'external_link_count', 'invalid_link_count', 'home_url', 'home_inferred', 'max_depth', 'sections', 'orphan_pages', 'dead_end_pages', 'hub_pages', 'unreachable_pages', 'dangling_internal_links', 'nodes', 'edges', 'sitemap_diff', 'normalization'],
   properties: {
     host: { type: 'string' },
     page_count: { type: 'integer', minimum: 0 },
@@ -58,6 +65,7 @@ const StructureCore = {
     nodes: { type: 'array', items: NodeInfo },
     edges: { type: 'array', items: Edge },
     sitemap_diff: SitemapDiff,
+    normalization: NormalizationInfo,
   },
 };
 const PageInput = {
@@ -74,6 +82,8 @@ const MapRequest = {
     home_url: { type: 'string', description: 'Optional entry/home URL (fixes the depth-0 root). Inferred when omitted.' },
     sitemap: { type: 'array', items: { type: 'string' }, description: 'Optional declared sitemap URLs to diff against the crawl.' },
     hub_min_out_degree: { type: 'integer', minimum: 1, description: 'Out-degree at/above which a page is labeled a hub (default 5).' },
+    ignore_query: { type: 'boolean', description: 'Drop the entire query string when normalizing URLs (default false).' },
+    strip_query_params: { type: 'array', items: { type: 'string' }, description: 'Query-param names to strip during normalization; a trailing "*" matches by prefix (e.g. "utm_*"). Case-insensitive.' },
   },
 };
 

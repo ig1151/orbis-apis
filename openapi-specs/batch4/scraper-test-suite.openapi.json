@@ -460,7 +460,7 @@
                                             "Tests run only against the supplied HTML snapshot \u2014 they prove a selector works on this capture, not on the live (possibly changed) page.",
                                             "HTML is parsed leniently by cheerio (like a browser): malformed markup is auto-corrected, so a selector may match more/less than a strict parser would.",
                                             "Text extraction uses the concatenated text of all descendants, trimmed; attribute extraction reads the first matched element\u2019s attribute (null if absent).",
-                                            "Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected before evaluation."
+                                            "Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected, and the pattern is tested against at most the first 8192 chars of the extracted value (an input bound limiting catastrophic-backtracking cost on the single-threaded engine)."
                                         ]
                                     },
                                     "confidence_score": 1,

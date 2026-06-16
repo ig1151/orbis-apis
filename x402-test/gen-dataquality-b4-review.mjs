@@ -35,6 +35,14 @@ const APIS = [
         ],
         home_url: 'https://site.test/',
       }],
+      ['POST /map (REVIEW FIX: strip_query_params ["utm_*"] collapses tracking params so the link resolves to the page)', '/map', {
+        pages: [
+          { url: 'https://s.com/?utm_source=x&id=1', links: ['/a?utm_medium=cpc&keep=1'] },
+          { url: 'https://s.com/a?keep=1', links: [] },
+        ],
+        home_url: 'https://s.com/',
+        strip_query_params: ['utm_*'],
+      }],
       ['POST /map (error: empty pages)', '/map', { pages: [] }],
     ],
   },
