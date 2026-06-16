@@ -1,0 +1,1314 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Regex Tester API",
+        "version": "1.0.0",
+        "description": "Deterministic ECMAScript regex tester & analyzer \u2014 static /analyze (validity, groups, features, ReDoS risk) + executing /test (matches with capture & named groups), refusing catastrophic patterns. No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-developer-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/regex-tester"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "Regex Tester API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic regular-expression tester & analyzer (ECMAScript engine). /analyze statically inspects a pattern (compile validity, capture/named groups, features, catastrophic-backtracking risk) without executing it; /test runs the pattern against caller inputs and returns matches with groups, refusing patterns that look catastrophic. No LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/regex-tester/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/analyze",
+                                            "summary": "Statically analyze a regex (no execution)",
+                                            "price_usdc": 0.006
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/test",
+                                            "summary": "Run a regex against inputs and return matches",
+                                            "price_usdc": 0.008
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL test + reasoning",
+                                            "price_usdc": 0.013
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/analyze",
+                                            "price_usdc": 0.006,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/test",
+                                            "price_usdc": 0.008,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.013,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analyze": {
+            "post": {
+                "operationId": "analyze",
+                "summary": "Statically analyze a regex (no execution)",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AnalyzeResponse"
+                                },
+                                "example": {
+                                    "trace_id": "regx-1780000000000",
+                                    "request_id": "regx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "pattern": "(?<year>\\d{4})-(\\d{2})",
+                                    "flags": "",
+                                    "valid": true,
+                                    "compile_error": null,
+                                    "capture_groups": 2,
+                                    "named_groups": [
+                                        "year"
+                                    ],
+                                    "anchored_start": false,
+                                    "anchored_end": false,
+                                    "features": {
+                                        "has_alternation": false,
+                                        "has_lookahead": false,
+                                        "has_lookbehind": false,
+                                        "has_backreference": false,
+                                        "has_quantifier": true,
+                                        "has_character_class": false
+                                    },
+                                    "catastrophic_risk": false,
+                                    "risk_reason": "No nested-unbounded-quantifier structure detected by the static guard.",
+                                    "confidence_score": 0.9,
+                                    "confidence_per_section": {
+                                        "validity": 1,
+                                        "structure": 1,
+                                        "safety": 0.7
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Pattern is valid with 2 capture group(s) (named: year)."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "data-quality-rules",
+                                            "reason": "Apply this validated pattern as a \"regex\" rule across an entire dataset."
+                                        },
+                                        {
+                                            "api": "scraper-test-suite",
+                                            "reason": "Use this pattern in a \"matches\" selector assertion against scraped HTML."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AnalyzeRequest"
+                            },
+                            "example": {
+                                "pattern": "(?<year>\\d{4})-(\\d{2})",
+                                "flags": ""
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.006,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/test": {
+            "post": {
+                "operationId": "test",
+                "summary": "Run a regex against inputs and return matches",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TestResponse"
+                                },
+                                "example": {
+                                    "trace_id": "regx-1780000000000",
+                                    "request_id": "regx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "pattern": "(\\w+)@(\\w+)",
+                                    "flags": "g",
+                                    "global": true,
+                                    "input_count": 2,
+                                    "total_matches": 2,
+                                    "any_matched": true,
+                                    "results": [
+                                        {
+                                            "input_index": 0,
+                                            "matched": true,
+                                            "match_count": 2,
+                                            "truncated": false,
+                                            "matches": [
+                                                {
+                                                    "match": "ada@dev",
+                                                    "index": 0,
+                                                    "length": 7,
+                                                    "groups": [
+                                                        "ada",
+                                                        "dev"
+                                                    ],
+                                                    "named_groups": {}
+                                                },
+                                                {
+                                                    "match": "grace@io",
+                                                    "index": 12,
+                                                    "length": 8,
+                                                    "groups": [
+                                                        "grace",
+                                                        "io"
+                                                    ],
+                                                    "named_groups": {}
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "input_index": 1,
+                                            "matched": false,
+                                            "match_count": 0,
+                                            "truncated": false,
+                                            "matches": []
+                                        }
+                                    ],
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "matching": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Matched 1/2 input(s); 2 total match(es)."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "data-quality-rules",
+                                            "reason": "Apply this validated pattern as a \"regex\" rule across an entire dataset."
+                                        },
+                                        {
+                                            "api": "scraper-test-suite",
+                                            "reason": "Use this pattern in a \"matches\" selector assertion against scraped HTML."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TestRequest"
+                            },
+                            "example": {
+                                "pattern": "(\\w+)@(\\w+)",
+                                "flags": "g",
+                                "inputs": [
+                                    "ada@dev and grace@io",
+                                    "no-email-here"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.008,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL test + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "regx-1780000000000",
+                                    "request_id": "regx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "pattern": "(\\w+)@(\\w+)",
+                                    "flags": "g",
+                                    "global": true,
+                                    "input_count": 2,
+                                    "total_matches": 2,
+                                    "any_matched": true,
+                                    "results": [
+                                        {
+                                            "input_index": 0,
+                                            "matched": true,
+                                            "match_count": 2,
+                                            "truncated": false,
+                                            "matches": [
+                                                {
+                                                    "match": "ada@dev",
+                                                    "index": 0,
+                                                    "length": 7,
+                                                    "groups": [
+                                                        "ada",
+                                                        "dev"
+                                                    ],
+                                                    "named_groups": {}
+                                                },
+                                                {
+                                                    "match": "grace@io",
+                                                    "index": 12,
+                                                    "length": 8,
+                                                    "groups": [
+                                                        "grace",
+                                                        "io"
+                                                    ],
+                                                    "named_groups": {}
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "input_index": 1,
+                                            "matched": false,
+                                            "match_count": 0,
+                                            "truncated": false,
+                                            "matches": []
+                                        }
+                                    ],
+                                    "reasoning": {
+                                        "why_result_generated": "Ran the global pattern against 2 input(s) using the ECMAScript engine; 2 total match(es) across 1 matching input(s).",
+                                        "key_factors": [
+                                            "Pattern: (\\w+)@(\\w+)",
+                                            "Flags: g; global=true.",
+                                            "Total matches: 2."
+                                        ],
+                                        "invalidators": [
+                                            "Results follow ECMAScript (JavaScript) regex semantics \u2014 backreferences, lookbehind, and unicode behavior may differ from PCRE, RE2, Python re, or Go regexp. A pattern that matches here may behave differently in another engine.",
+                                            "Match count depends on the \"g\" (global) flag: without it /test returns at most one match per input; with it all non-overlapping matches are returned (capped at 1000 per input \u2014 \"truncated\" flags when the cap is hit).",
+                                            "Catastrophic-backtracking detection is a conservative structural heuristic: it may flag some safe patterns and (rarely) miss exotic ones. A flagged pattern is refused by /test by design; use /analyze to inspect it without execution.",
+                                            "Feature flags (lookahead/lookbehind/backreference/quantifier/character-class) are detected structurally and are indicative, not a full parse; capture-group counts and named-group names ARE exact."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "matching": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Matched 1/2 input(s); 2 total match(es)."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "data-quality-rules",
+                                            "reason": "Apply this validated pattern as a \"regex\" rule across an entire dataset."
+                                        },
+                                        {
+                                            "api": "scraper-test-suite",
+                                            "reason": "Use this pattern in a \"matches\" selector assertion against scraped HTML."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TestRequest"
+                            },
+                            "example": {
+                                "pattern": "(\\w+)@(\\w+)",
+                                "flags": "g",
+                                "inputs": [
+                                    "ada@dev and grace@io",
+                                    "no-email-here"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.013,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "validity": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "structure": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "safety": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "matching": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "Features": {
+                "type": "object",
+                "required": [
+                    "has_alternation",
+                    "has_lookahead",
+                    "has_lookbehind",
+                    "has_backreference",
+                    "has_quantifier",
+                    "has_character_class"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "has_alternation": {
+                        "type": "boolean"
+                    },
+                    "has_lookahead": {
+                        "type": "boolean"
+                    },
+                    "has_lookbehind": {
+                        "type": "boolean"
+                    },
+                    "has_backreference": {
+                        "type": "boolean"
+                    },
+                    "has_quantifier": {
+                        "type": "boolean"
+                    },
+                    "has_character_class": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "AnalyzeCore": {
+                "type": "object",
+                "required": [
+                    "pattern",
+                    "flags",
+                    "valid",
+                    "compile_error",
+                    "capture_groups",
+                    "named_groups",
+                    "anchored_start",
+                    "anchored_end",
+                    "features",
+                    "catastrophic_risk",
+                    "risk_reason"
+                ],
+                "properties": {
+                    "pattern": {
+                        "type": "string"
+                    },
+                    "flags": {
+                        "type": "string"
+                    },
+                    "valid": {
+                        "type": "boolean"
+                    },
+                    "compile_error": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Compile error message when valid=false, else null."
+                    },
+                    "capture_groups": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Exact count of capturing groups (named + positional)."
+                    },
+                    "named_groups": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Exact list of named-group names."
+                    },
+                    "anchored_start": {
+                        "type": "boolean"
+                    },
+                    "anchored_end": {
+                        "type": "boolean"
+                    },
+                    "features": {
+                        "type": "object",
+                        "required": [
+                            "has_alternation",
+                            "has_lookahead",
+                            "has_lookbehind",
+                            "has_backreference",
+                            "has_quantifier",
+                            "has_character_class"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "has_alternation": {
+                                "type": "boolean"
+                            },
+                            "has_lookahead": {
+                                "type": "boolean"
+                            },
+                            "has_lookbehind": {
+                                "type": "boolean"
+                            },
+                            "has_backreference": {
+                                "type": "boolean"
+                            },
+                            "has_quantifier": {
+                                "type": "boolean"
+                            },
+                            "has_character_class": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "catastrophic_risk": {
+                        "type": "boolean",
+                        "description": "Heuristic nested-unbounded-quantifier detection; /test refuses patterns where true."
+                    },
+                    "risk_reason": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RegexMatch": {
+                "type": "object",
+                "required": [
+                    "match",
+                    "index",
+                    "length",
+                    "groups",
+                    "named_groups"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "match": {
+                        "type": "string",
+                        "description": "The full matched substring."
+                    },
+                    "index": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "length": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "groups": {
+                        "type": "array",
+                        "items": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "description": "Positional capture groups (null when a group did not participate)."
+                    },
+                    "named_groups": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        }
+                    }
+                }
+            },
+            "InputResult": {
+                "type": "object",
+                "required": [
+                    "input_index",
+                    "matched",
+                    "match_count",
+                    "truncated",
+                    "matches"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "input_index": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "matched": {
+                        "type": "boolean"
+                    },
+                    "match_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "truncated": {
+                        "type": "boolean",
+                        "description": "True when the 1000-match-per-input cap was hit."
+                    },
+                    "matches": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "match",
+                                "index",
+                                "length",
+                                "groups",
+                                "named_groups"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "match": {
+                                    "type": "string",
+                                    "description": "The full matched substring."
+                                },
+                                "index": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "length": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "groups": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "description": "Positional capture groups (null when a group did not participate)."
+                                },
+                                "named_groups": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "TestCore": {
+                "type": "object",
+                "required": [
+                    "pattern",
+                    "flags",
+                    "global",
+                    "input_count",
+                    "total_matches",
+                    "any_matched",
+                    "results"
+                ],
+                "properties": {
+                    "pattern": {
+                        "type": "string"
+                    },
+                    "flags": {
+                        "type": "string"
+                    },
+                    "global": {
+                        "type": "boolean"
+                    },
+                    "input_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "total_matches": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "any_matched": {
+                        "type": "boolean"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "input_index",
+                                "matched",
+                                "match_count",
+                                "truncated",
+                                "matches"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "input_index": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "matched": {
+                                    "type": "boolean"
+                                },
+                                "match_count": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "truncated": {
+                                    "type": "boolean",
+                                    "description": "True when the 1000-match-per-input cap was hit."
+                                },
+                                "matches": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "match",
+                                            "index",
+                                            "length",
+                                            "groups",
+                                            "named_groups"
+                                        ],
+                                        "additionalProperties": false,
+                                        "properties": {
+                                            "match": {
+                                                "type": "string",
+                                                "description": "The full matched substring."
+                                            },
+                                            "index": {
+                                                "type": "integer",
+                                                "minimum": 0
+                                            },
+                                            "length": {
+                                                "type": "integer",
+                                                "minimum": 0
+                                            },
+                                            "groups": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                },
+                                                "description": "Positional capture groups (null when a group did not participate)."
+                                            },
+                                            "named_groups": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "AnalyzeRequest": {
+                "type": "object",
+                "required": [
+                    "pattern"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "pattern": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000,
+                        "description": "The regular-expression source (no delimiters)."
+                    },
+                    "flags": {
+                        "type": "string",
+                        "description": "ECMAScript flags from the set d,g,i,m,s,u,y."
+                    }
+                }
+            },
+            "TestRequest": {
+                "type": "object",
+                "required": [
+                    "pattern",
+                    "inputs"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "pattern": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1000,
+                        "description": "The regular-expression source (no delimiters)."
+                    },
+                    "flags": {
+                        "type": "string",
+                        "description": "ECMAScript flags from the set d,g,i,m,s,u,y."
+                    },
+                    "inputs": {
+                        "type": "array",
+                        "maxItems": 100,
+                        "items": {
+                            "type": "string",
+                            "maxLength": 100000
+                        },
+                        "description": "Strings to test the pattern against."
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "AnalyzeResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/AnalyzeCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "TestResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TestCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TestCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}
