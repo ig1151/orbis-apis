@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Regex Tester API",
+    "shortDescription": "Test & statically analyze regular expressions (ReDoS-safe).",
+    "description": "Deterministic regular-expression tester & analyzer running on the ECMAScript (JavaScript) engine. /analyze statically inspects a pattern — compile validity, exact capture-group count and named-group names, anchors, feature flags (alternation/lookahead/lookbehind/backreference/quantifier/character-class) and a conservative catastrophic-backtracking (ReDoS) risk check — without ever executing it. /test compiles and runs the pattern against caller-supplied inputs, returning every match with positional and named capture groups, but refuses to execute patterns whose structure looks catastrophic. No LLM, nothing fetched, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/regex-tester",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/regex-tester/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/regex-tester/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "regex",
+      "regular-expression",
+      "redos",
+      "developer-tools",
+      "validation",
+      "x402"
+    ],
+    "keywords": [
+      "regex tester",
+      "regular expression",
+      "redos detection",
+      "catastrophic backtracking",
+      "named capture groups",
+      "pattern matching"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.013,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.006,
+            "description": "Statically analyze a regex (validity, groups, features, ReDoS risk) — no execution"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/test",
+            "pricePerCallUsdc": 0.008,
+            "description": "Run a regex against inputs and return matches with capture & named groups"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.013,
+            "description": "One-call test with reasoning"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/analyze",
+        "description": "Statically analyze a regex (no execution)"
+      },
+      {
+        "method": "POST",
+        "path": "/test",
+        "description": "Run a regex against inputs and return matches"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "Run a regex with reasoning"
+      }
+    ]
+  }
+]

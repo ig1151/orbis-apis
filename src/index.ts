@@ -776,6 +776,8 @@ import jsonPointerRouter from './routes/json-pointer-api/routes/intelligence';
 import jsonPointerOpenapiRouter from './routes/json-pointer-api/routes/openapi';
 import jsonPatchRouter from './routes/json-patch-api/routes/intelligence';
 import jsonPatchOpenapiRouter from './routes/json-patch-api/routes/openapi';
+import regexTesterRouter from './routes/regex-tester-api/routes/intelligence';
+import regexTesterOpenapiRouter from './routes/regex-tester-api/routes/openapi';
 import sensitiveDataDetectorRouter from './routes/sensitive-data-detector-api/routes/intelligence';
 import sensitiveDataDetectorOpenapiRouter from './routes/sensitive-data-detector-api/routes/openapi';
 import dataEncryptionAdvisorRouter from './routes/data-encryption-advisor-api/routes/intelligence';
@@ -1442,6 +1444,7 @@ const routerMap: Record<string, import("express").Router> = {
   'scraped-data-quality-scorer': scrapedDataQualityScorerRouter,
   'json-pointer': jsonPointerRouter,
   'json-patch': jsonPatchRouter,
+  'regex-tester': regexTesterRouter,
   'sensitive-data-detector': sensitiveDataDetectorRouter,
   'data-encryption-advisor': dataEncryptionAdvisorRouter,
   'jwt-claims-designer': jwtClaimsDesignerRouter,
@@ -1924,6 +1927,7 @@ const openapiMap: Record<string, import("express").Router> = {
   'scraped-data-quality-scorer': scrapedDataQualityScorerOpenapiRouter,
   'json-pointer': jsonPointerOpenapiRouter,
   'json-patch': jsonPatchOpenapiRouter,
+  'regex-tester': regexTesterOpenapiRouter,
   'sensitive-data-detector': sensitiveDataDetectorOpenapiRouter,
   'data-encryption-advisor': dataEncryptionAdvisorOpenapiRouter,
   'jwt-claims-designer': jwtClaimsDesignerOpenapiRouter,
