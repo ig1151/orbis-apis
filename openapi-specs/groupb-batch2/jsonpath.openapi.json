@@ -1,0 +1,985 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "JSONPath API",
+        "version": "1.0.0",
+        "description": "Deterministic JSONPath evaluator \u2014 root/child/wildcard/recursive-descent/index/slice/union over a supplied JSON document, matches with normalized paths. No filter expressions. No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-developer-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/jsonpath"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "JSONPath API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic JSONPath evaluator over a supplied JSON document. Supports root, child, wildcard, recursive descent, index (incl. negative), slice, and union; filter/script expressions are not supported. /query returns all matches with normalized paths; /value returns the first match. No LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/jsonpath/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/query",
+                                            "summary": "Evaluate a JSONPath \u2192 all matches",
+                                            "price_usdc": 0.007
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/value",
+                                            "summary": "First match value (or null)",
+                                            "price_usdc": 0.006
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL query + reasoning",
+                                            "price_usdc": 0.012
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/query",
+                                            "price_usdc": 0.007,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/value",
+                                            "price_usdc": 0.006,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.012,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/query": {
+            "post": {
+                "operationId": "query",
+                "summary": "Evaluate a JSONPath \u2192 all matches",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/QueryResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "path": "$.store.book[*].title",
+                                    "match_count": 2,
+                                    "matches": [
+                                        {
+                                            "path": "$['store']['book'][0]['title']",
+                                            "value": "A"
+                                        },
+                                        {
+                                            "path": "$['store']['book'][1]['title']",
+                                            "value": "B"
+                                        }
+                                    ],
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "query": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "2 match(es) for $.store.book[*].title."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "json-pointer",
+                                            "reason": "Resolve a single matched path as an exact RFC 6901 pointer."
+                                        },
+                                        {
+                                            "api": "json-patch",
+                                            "reason": "Apply an RFC 6902 patch at a located path."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/QueryRequest"
+                            },
+                            "example": {
+                                "document": {
+                                    "store": {
+                                        "book": [
+                                            {
+                                                "title": "A",
+                                                "price": 8
+                                            },
+                                            {
+                                                "title": "B",
+                                                "price": 12
+                                            }
+                                        ]
+                                    }
+                                },
+                                "path": "$.store.book[*].title"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.007,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/value": {
+            "post": {
+                "operationId": "value",
+                "summary": "First match value (or null)",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValueResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "path": "$..book[-1].title",
+                                    "found": true,
+                                    "value": "B",
+                                    "matched_path": "$['store']['book'][1]['title']",
+                                    "match_count": 1,
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "query": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "First match at $['store']['book'][1]['title']."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "json-pointer",
+                                            "reason": "Resolve a single matched path as an exact RFC 6901 pointer."
+                                        },
+                                        {
+                                            "api": "json-patch",
+                                            "reason": "Apply an RFC 6902 patch at a located path."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/QueryRequest"
+                            },
+                            "example": {
+                                "document": {
+                                    "store": {
+                                        "book": [
+                                            {
+                                                "title": "A",
+                                                "price": 8
+                                            },
+                                            {
+                                                "title": "B",
+                                                "price": 12
+                                            }
+                                        ]
+                                    }
+                                },
+                                "path": "$..book[-1].title"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.006,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL query + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "path": "$.store.book[*].title",
+                                    "match_count": 2,
+                                    "matches": [
+                                        {
+                                            "path": "$['store']['book'][0]['title']",
+                                            "value": "A"
+                                        },
+                                        {
+                                            "path": "$['store']['book'][1]['title']",
+                                            "value": "B"
+                                        }
+                                    ],
+                                    "reasoning": {
+                                        "why_result_generated": "Parsed JSONPath \"$.store.book[*].title\" into its selector steps and evaluated it against the document in document order, yielding 2 match(es).",
+                                        "key_factors": [
+                                            "Match count: 2.",
+                                            "First path: $['store']['book'][0]['title']."
+                                        ],
+                                        "invalidators": [
+                                            "Supported JSONPath subset: $ (root), .name and ['name'] (child), * and [*] (wildcard), .. (recursive descent), [n] (index, negative allowed), [start:end:step] (slice, Python-style, negative/step), and unions [0,2] / ['a','b']. Evaluation is exact within this subset.",
+                                            "NOT supported: filter expressions [?(@.price<10)], script expressions [(...)], and current-node (@) references. Such a path is rejected with a parse error rather than silently mis-evaluated.",
+                                            "Match ORDER follows document order (object keys in insertion order, array indices ascending); recursive descent visits a node before its children. Unions preserve the order written. Duplicate matches from overlapping unions are NOT de-duplicated.",
+                                            "Matched paths are emitted in normalized bracket form ($['a'][0]); object keys are quoted, array indices are bracketed integers."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "query": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "2 match(es) for $.store.book[*].title."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "json-pointer",
+                                            "reason": "Resolve a single matched path as an exact RFC 6901 pointer."
+                                        },
+                                        {
+                                            "api": "json-patch",
+                                            "reason": "Apply an RFC 6902 patch at a located path."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/QueryRequest"
+                            },
+                            "example": {
+                                "document": {
+                                    "store": {
+                                        "book": [
+                                            {
+                                                "title": "A",
+                                                "price": 8
+                                            },
+                                            {
+                                                "title": "B",
+                                                "price": 12
+                                            }
+                                        ]
+                                    }
+                                },
+                                "path": "$.store.book[*].title"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.012,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "query": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "MatchItem": {
+                "type": "object",
+                "required": [
+                    "path",
+                    "value"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "Normalized bracket path of the match, e.g. $['a'][0]."
+                    },
+                    "value": {
+                        "description": "The matched value.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    }
+                }
+            },
+            "QueryCore": {
+                "type": "object",
+                "required": [
+                    "path",
+                    "match_count",
+                    "matches"
+                ],
+                "properties": {
+                    "path": {
+                        "type": "string"
+                    },
+                    "match_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "matches": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "value"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string",
+                                    "description": "Normalized bracket path of the match, e.g. $['a'][0]."
+                                },
+                                "value": {
+                                    "description": "The matched value.",
+                                    "type": [
+                                        "string",
+                                        "number",
+                                        "boolean",
+                                        "null",
+                                        "array",
+                                        "object"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ValueCore": {
+                "type": "object",
+                "required": [
+                    "path",
+                    "found",
+                    "value",
+                    "matched_path",
+                    "match_count"
+                ],
+                "properties": {
+                    "path": {
+                        "type": "string"
+                    },
+                    "found": {
+                        "type": "boolean"
+                    },
+                    "value": {
+                        "description": "First match value, or null when not found.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "matched_path": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Normalized path of the first match, or null."
+                    },
+                    "match_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "QueryRequest": {
+                "type": "object",
+                "required": [
+                    "document",
+                    "path"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "document": {
+                        "description": "Any JSON document to query.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "path": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000,
+                        "description": "A JSONPath expression starting with \"$\"."
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "QueryResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/QueryCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "ValueResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ValueCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/QueryCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}

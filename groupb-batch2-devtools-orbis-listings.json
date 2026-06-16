@@ -1,0 +1,152 @@
+[
+  {
+    "name": "Color Converter API",
+    "shortDescription": "Convert colors (hex/rgb/hsl/hsv + named) & WCAG contrast.",
+    "description": "Deterministic color converter & WCAG 2.1 contrast checker. /convert parses a hex, rgb()/rgba(), hsl()/hsla(), or CSS Color Level 4 named color and emits every representation (hex, hex8, rgb, rgba, hsl, hsv, objects) plus relative luminance. /contrast computes the contrast ratio between two colors and the AA/AAA pass-fail for normal and large text. Pure sRGB math, no LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/color-converter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/color-converter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/color-converter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["color", "css", "wcag", "contrast", "developer-tools", "x402"],
+    "keywords": ["color converter", "hex to rgb", "hsl", "wcag contrast", "accessibility", "relative luminance"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.006, "description": "Parse a color and emit all representations" },
+          { "method": "POST", "pathPattern": "/contrast", "pricePerCallUsdc": 0.007, "description": "WCAG 2.1 contrast ratio + AA/AAA pass-fail" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call convert with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/convert", "description": "Parse a color and emit all representations" },
+      { "method": "POST", "path": "/contrast", "description": "WCAG 2.1 contrast ratio + AA/AAA pass-fail" },
+      { "method": "POST", "path": "/lookup", "description": "Convert with reasoning" }
+    ]
+  },
+  {
+    "name": "Case Converter API",
+    "shortDescription": "Convert identifiers between 11 cases + detect source case.",
+    "description": "Deterministic identifier case converter. /convert tokenizes a string (camelCase, acronym, and letter/digit aware) and renders it in a target case: camel, pascal, snake, kebab, constant, dot, path, title, sentence, lower, or upper. /detect reports the most likely source case and the token split and emits all 11 cases at once. Conversion is exact; source-case detection is a documented heuristic. No LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/case-converter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/case-converter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/case-converter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["case", "string", "identifier", "camelcase", "developer-tools", "x402"],
+    "keywords": ["case converter", "camel case", "snake case", "kebab case", "string transform", "slugify"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.005, "description": "Convert a string to a target case" },
+          { "method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.005, "description": "Detect source case + emit all cases" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "One-call all-cases with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/convert", "description": "Convert a string to a target case" },
+      { "method": "POST", "path": "/detect", "description": "Detect source case + emit all cases" },
+      { "method": "POST", "path": "/lookup", "description": "All-cases with reasoning" }
+    ]
+  },
+  {
+    "name": "URL Tools API",
+    "shortDescription": "Parse, build & normalize URLs and query strings.",
+    "description": "Deterministic URL parser / builder / normalizer built on the WHATWG URL Standard. /parse decomposes a URL into its components with the query string expanded into an object (repeated keys become arrays). /build assembles a URL from components over an optional base. /lookup parses and returns a conservative canonical form (lowercased scheme/host, default port dropped, query sorted). No LLM, nothing fetched, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/url-tools",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/url-tools/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/url-tools/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["url", "uri", "query-string", "parser", "developer-tools", "x402"],
+    "keywords": ["url parser", "url builder", "query string", "url normalize", "whatwg url", "canonical url"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/parse", "pricePerCallUsdc": 0.005, "description": "Decompose a URL into components" },
+          { "method": "POST", "pathPattern": "/build", "pricePerCallUsdc": 0.006, "description": "Assemble a URL from components" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "One-call parse + normalize with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/parse", "description": "Decompose a URL into components" },
+      { "method": "POST", "path": "/build", "description": "Assemble a URL from components" },
+      { "method": "POST", "path": "/lookup", "description": "Parse + normalize with reasoning" }
+    ]
+  },
+  {
+    "name": "Glob to Regex API",
+    "shortDescription": "Translate shell globs to regex & match paths (ReDoS-safe).",
+    "description": "Deterministic glob → regular-expression translator & path matcher. /convert translates a shell-style glob (*, **, ?, [..], {a,b}) into an anchored ECMAScript regex. /test reports which of the supplied paths match the glob. The generated regex uses only bounded constructs with no nested unbounded quantifiers, so it is ReDoS-safe by construction. No LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/glob-to-regex",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/glob-to-regex/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/glob-to-regex/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["glob", "regex", "path-matching", "minimatch", "developer-tools", "x402"],
+    "keywords": ["glob to regex", "wildcard match", "path matching", "globstar", "minimatch", "file pattern"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.005, "description": "Translate a glob into an anchored regex" },
+          { "method": "POST", "pathPattern": "/test", "pricePerCallUsdc": 0.006, "description": "Match paths against a glob" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "One-call match with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/convert", "description": "Translate a glob into an anchored regex" },
+      { "method": "POST", "path": "/test", "description": "Match paths against a glob" },
+      { "method": "POST", "path": "/lookup", "description": "Match with reasoning" }
+    ]
+  },
+  {
+    "name": "JSONPath API",
+    "shortDescription": "Query a JSON document with JSONPath expressions.",
+    "description": "Deterministic JSONPath evaluator over a supplied JSON document. Supports a documented subset: root ($), child (.name / ['name']), wildcard (* / [*]), recursive descent (..), array index incl. negative ([n]), slice ([start:end:step]), and union ([0,2] / ['a','b']). Filter/script expressions are not supported (rejected with a clear parse error). /query returns every match with its normalized path; /value returns the first match. No LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/jsonpath",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/jsonpath/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/jsonpath/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["jsonpath", "json", "query", "data-extraction", "developer-tools", "x402"],
+    "keywords": ["jsonpath", "json query", "json path eval", "extract json", "recursive descent", "json selector"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/query", "pricePerCallUsdc": 0.007, "description": "Evaluate a JSONPath into all matches" },
+          { "method": "POST", "pathPattern": "/value", "pricePerCallUsdc": 0.006, "description": "First match value (or null)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call query with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/query", "description": "Evaluate a JSONPath into all matches" },
+      { "method": "POST", "path": "/value", "description": "First match value (or null)" },
+      { "method": "POST", "path": "/lookup", "description": "Query with reasoning" }
+    ]
+  }
+]

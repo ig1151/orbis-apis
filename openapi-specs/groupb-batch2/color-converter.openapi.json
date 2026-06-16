@@ -1,0 +1,1233 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Color Converter API",
+        "version": "1.0.0",
+        "description": "Deterministic color converter & WCAG contrast checker \u2014 hex/rgb/hsl/hsv + CSS named colors, relative luminance, AA/AAA contrast. No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-developer-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/color-converter"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "Color Converter API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic color converter & WCAG contrast checker. /convert parses a hex, rgb(), hsl(), or CSS named color and emits every representation plus relative luminance; /contrast computes the WCAG 2.1 contrast ratio between two colors with AA/AAA pass/fail. No LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/color-converter/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/convert",
+                                            "summary": "Parse a color and emit all representations",
+                                            "price_usdc": 0.006
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/contrast",
+                                            "summary": "WCAG 2.1 contrast ratio + AA/AAA pass/fail",
+                                            "price_usdc": 0.007
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL convert + reasoning",
+                                            "price_usdc": 0.012
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/convert",
+                                            "price_usdc": 0.006,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/contrast",
+                                            "price_usdc": 0.007,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.012,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/convert": {
+            "post": {
+                "operationId": "convert",
+                "summary": "Parse a color and emit all representations",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConvertResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "input": "hsl(204, 70%, 53%)",
+                                    "matched_format": "hsl",
+                                    "color": {
+                                        "hex": "#3398db",
+                                        "hex8": "#3398dbff",
+                                        "rgb": "rgb(51, 152, 219)",
+                                        "rgba": "rgba(51, 152, 219, 1)",
+                                        "hsl": "hsl(204, 70%, 53%)",
+                                        "hsv": "hsv(204, 77%, 86%)",
+                                        "rgb_object": {
+                                            "r": 51,
+                                            "g": 152,
+                                            "b": 219,
+                                            "a": 1
+                                        },
+                                        "hsl_object": {
+                                            "h": 204,
+                                            "s": 70,
+                                            "l": 53
+                                        },
+                                        "hsv_object": {
+                                            "h": 204,
+                                            "s": 77,
+                                            "v": 86
+                                        },
+                                        "relative_luminance": 0.28275
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "conversion": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Parsed as hsl; canonical hex #3398db."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "accessibility-audit-lite-api",
+                                            "reason": "Roll this contrast check into a fuller page accessibility audit."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ConvertRequest"
+                            },
+                            "example": {
+                                "color": "hsl(204, 70%, 53%)"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.006,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/contrast": {
+            "post": {
+                "operationId": "contrast",
+                "summary": "WCAG 2.1 contrast ratio + AA/AAA pass/fail",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ContrastResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "foreground": "#777777",
+                                    "background": "#ffffff",
+                                    "contrast_ratio": 4.48,
+                                    "passes": {
+                                        "aa_normal": false,
+                                        "aa_large": true,
+                                        "aaa_normal": false,
+                                        "aaa_large": false
+                                    },
+                                    "highest_level": "AA large only",
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "contrast": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Contrast 4.48:1 \u2014 AA large only."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "accessibility-audit-lite-api",
+                                            "reason": "Roll this contrast check into a fuller page accessibility audit."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ContrastRequest"
+                            },
+                            "example": {
+                                "foreground": "#777777",
+                                "background": "#ffffff"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.007,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL convert + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "input": "hsl(204, 70%, 53%)",
+                                    "matched_format": "hsl",
+                                    "color": {
+                                        "hex": "#3398db",
+                                        "hex8": "#3398dbff",
+                                        "rgb": "rgb(51, 152, 219)",
+                                        "rgba": "rgba(51, 152, 219, 1)",
+                                        "hsl": "hsl(204, 70%, 53%)",
+                                        "hsv": "hsv(204, 77%, 86%)",
+                                        "rgb_object": {
+                                            "r": 51,
+                                            "g": 152,
+                                            "b": 219,
+                                            "a": 1
+                                        },
+                                        "hsl_object": {
+                                            "h": 204,
+                                            "s": 70,
+                                            "l": 53
+                                        },
+                                        "hsv_object": {
+                                            "h": 204,
+                                            "s": 77,
+                                            "v": 86
+                                        },
+                                        "relative_luminance": 0.28275
+                                    },
+                                    "reasoning": {
+                                        "why_result_generated": "Parsed \"hsl(204, 70%, 53%)\" as a hsl color and converted it to every supported representation using exact sRGB math.",
+                                        "key_factors": [
+                                            "Matched format: hsl.",
+                                            "Canonical hex: #3398db (alpha 1).",
+                                            "Relative luminance: 0.28275."
+                                        ],
+                                        "invalidators": [
+                                            "Conversions are exact sRGB math. HSL/HSV components are rounded to whole numbers (hue 0\u2013360, sat/light/value 0\u2013100%); the rgb\u2192hex\u2192rgb round trip is lossless but hex\u2192hsl\u2192hex may differ by \u00b11 due to rounding.",
+                                            "WCAG contrast uses relative luminance per WCAG 2.1; alpha is ignored for contrast (the ratio assumes fully opaque colors composited on no background). AA normal \u22654.5, AA large \u22653, AAA normal \u22657, AAA large \u22654.5.",
+                                            "Only CSS Color Level 4 named colors, hex (#rgb/#rgba/#rrggbb/#rrggbbaa), rgb()/rgba(), and hsl()/hsla() are parsed; lab()/lch()/color() and other functional notations are not supported."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "conversion": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Parsed as hsl; canonical hex #3398db."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "accessibility-audit-lite-api",
+                                            "reason": "Roll this contrast check into a fuller page accessibility audit."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ConvertRequest"
+                            },
+                            "example": {
+                                "color": "hsl(204, 70%, 53%)"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.012,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "conversion": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "contrast": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "RgbObject": {
+                "type": "object",
+                "required": [
+                    "r",
+                    "g",
+                    "b",
+                    "a"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "r": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 255
+                    },
+                    "g": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 255
+                    },
+                    "b": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 255
+                    },
+                    "a": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "HslObject": {
+                "type": "object",
+                "required": [
+                    "h",
+                    "s",
+                    "l"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "h": {
+                        "type": "integer"
+                    },
+                    "s": {
+                        "type": "integer"
+                    },
+                    "l": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "HsvObject": {
+                "type": "object",
+                "required": [
+                    "h",
+                    "s",
+                    "v"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "h": {
+                        "type": "integer"
+                    },
+                    "s": {
+                        "type": "integer"
+                    },
+                    "v": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "ColorForms": {
+                "type": "object",
+                "required": [
+                    "hex",
+                    "hex8",
+                    "rgb",
+                    "rgba",
+                    "hsl",
+                    "hsv",
+                    "rgb_object",
+                    "hsl_object",
+                    "hsv_object",
+                    "relative_luminance"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "hex": {
+                        "type": "string"
+                    },
+                    "hex8": {
+                        "type": "string"
+                    },
+                    "rgb": {
+                        "type": "string"
+                    },
+                    "rgba": {
+                        "type": "string"
+                    },
+                    "hsl": {
+                        "type": "string"
+                    },
+                    "hsv": {
+                        "type": "string"
+                    },
+                    "rgb_object": {
+                        "type": "object",
+                        "required": [
+                            "r",
+                            "g",
+                            "b",
+                            "a"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "r": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 255
+                            },
+                            "g": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 255
+                            },
+                            "b": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 255
+                            },
+                            "a": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                            }
+                        }
+                    },
+                    "hsl_object": {
+                        "type": "object",
+                        "required": [
+                            "h",
+                            "s",
+                            "l"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "h": {
+                                "type": "integer"
+                            },
+                            "s": {
+                                "type": "integer"
+                            },
+                            "l": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "hsv_object": {
+                        "type": "object",
+                        "required": [
+                            "h",
+                            "s",
+                            "v"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "h": {
+                                "type": "integer"
+                            },
+                            "s": {
+                                "type": "integer"
+                            },
+                            "v": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "relative_luminance": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "ConvertCore": {
+                "type": "object",
+                "required": [
+                    "input",
+                    "matched_format",
+                    "color"
+                ],
+                "properties": {
+                    "input": {
+                        "type": "string"
+                    },
+                    "matched_format": {
+                        "type": "string",
+                        "enum": [
+                            "hex",
+                            "rgb",
+                            "hsl",
+                            "named"
+                        ]
+                    },
+                    "color": {
+                        "type": "object",
+                        "required": [
+                            "hex",
+                            "hex8",
+                            "rgb",
+                            "rgba",
+                            "hsl",
+                            "hsv",
+                            "rgb_object",
+                            "hsl_object",
+                            "hsv_object",
+                            "relative_luminance"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "hex": {
+                                "type": "string"
+                            },
+                            "hex8": {
+                                "type": "string"
+                            },
+                            "rgb": {
+                                "type": "string"
+                            },
+                            "rgba": {
+                                "type": "string"
+                            },
+                            "hsl": {
+                                "type": "string"
+                            },
+                            "hsv": {
+                                "type": "string"
+                            },
+                            "rgb_object": {
+                                "type": "object",
+                                "required": [
+                                    "r",
+                                    "g",
+                                    "b",
+                                    "a"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "r": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 255
+                                    },
+                                    "g": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 255
+                                    },
+                                    "b": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 255
+                                    },
+                                    "a": {
+                                        "type": "number",
+                                        "minimum": 0,
+                                        "maximum": 1
+                                    }
+                                }
+                            },
+                            "hsl_object": {
+                                "type": "object",
+                                "required": [
+                                    "h",
+                                    "s",
+                                    "l"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "h": {
+                                        "type": "integer"
+                                    },
+                                    "s": {
+                                        "type": "integer"
+                                    },
+                                    "l": {
+                                        "type": "integer"
+                                    }
+                                }
+                            },
+                            "hsv_object": {
+                                "type": "object",
+                                "required": [
+                                    "h",
+                                    "s",
+                                    "v"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "h": {
+                                        "type": "integer"
+                                    },
+                                    "s": {
+                                        "type": "integer"
+                                    },
+                                    "v": {
+                                        "type": "integer"
+                                    }
+                                }
+                            },
+                            "relative_luminance": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                            }
+                        }
+                    }
+                }
+            },
+            "ContrastCore": {
+                "type": "object",
+                "required": [
+                    "foreground",
+                    "background",
+                    "contrast_ratio",
+                    "passes",
+                    "highest_level"
+                ],
+                "properties": {
+                    "foreground": {
+                        "type": "string"
+                    },
+                    "background": {
+                        "type": "string"
+                    },
+                    "contrast_ratio": {
+                        "type": "number",
+                        "minimum": 1
+                    },
+                    "passes": {
+                        "type": "object",
+                        "required": [
+                            "aa_normal",
+                            "aa_large",
+                            "aaa_normal",
+                            "aaa_large"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "aa_normal": {
+                                "type": "boolean"
+                            },
+                            "aa_large": {
+                                "type": "boolean"
+                            },
+                            "aaa_normal": {
+                                "type": "boolean"
+                            },
+                            "aaa_large": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "highest_level": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ConvertRequest": {
+                "type": "object",
+                "required": [
+                    "color"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "color": {
+                        "type": "string",
+                        "description": "A hex, rgb()/rgba(), hsl()/hsla(), or CSS named color."
+                    }
+                }
+            },
+            "ContrastRequest": {
+                "type": "object",
+                "required": [
+                    "foreground",
+                    "background"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "foreground": {
+                        "type": "string"
+                    },
+                    "background": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConvertResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ConvertCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "ContrastResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ContrastCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ConvertCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}

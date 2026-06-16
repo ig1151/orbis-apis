@@ -1,0 +1,1036 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Case Converter API",
+        "version": "1.0.0",
+        "description": "Deterministic identifier case converter \u2014 11 cases (camel/pascal/snake/kebab/constant/dot/path/title/sentence/lower/upper), camelCase + acronym-aware tokenization, heuristic source-case detection. No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-developer-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/case-converter"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "Case Converter API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic identifier case converter. /convert tokenizes a string and renders it in a target case (camel, pascal, snake, kebab, constant, dot, path, title, sentence, lower, upper); /detect reports the most likely source case and the token split. Conversion is exact; detection is heuristic. No LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/case-converter/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/convert",
+                                            "summary": "Convert a string to a target case",
+                                            "price_usdc": 0.005
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/detect",
+                                            "summary": "Detect source case + emit all cases",
+                                            "price_usdc": 0.005
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL all-cases + reasoning",
+                                            "price_usdc": 0.01
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/convert",
+                                            "price_usdc": 0.005,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/detect",
+                                            "price_usdc": 0.005,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.01,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/convert": {
+            "post": {
+                "operationId": "convert",
+                "summary": "Convert a string to a target case",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConvertResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "input": "XMLHttpRequest",
+                                    "to": "snake",
+                                    "converted": "xml_http_request",
+                                    "tokens": [
+                                        "xml",
+                                        "http",
+                                        "request"
+                                    ],
+                                    "detected_case": "pascal",
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "conversion": 1,
+                                        "detection": 0.9
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Converted to snake: \"xml_http_request\"."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "semver-tools",
+                                            "reason": "Normalize and compare version identifiers after casing field names."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ConvertRequest"
+                            },
+                            "example": {
+                                "text": "XMLHttpRequest",
+                                "to": "snake"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.005,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/detect": {
+            "post": {
+                "operationId": "detect",
+                "summary": "Detect source case + emit all cases",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetectResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "input": "user_profile_id",
+                                    "detected_case": "snake",
+                                    "tokens": [
+                                        "user",
+                                        "profile",
+                                        "id"
+                                    ],
+                                    "all_cases": {
+                                        "camel": "userProfileId",
+                                        "pascal": "UserProfileId",
+                                        "snake": "user_profile_id",
+                                        "kebab": "user-profile-id",
+                                        "constant": "USER_PROFILE_ID",
+                                        "dot": "user.profile.id",
+                                        "path": "user/profile/id",
+                                        "title": "User Profile Id",
+                                        "sentence": "User profile id",
+                                        "lower": "user profile id",
+                                        "upper": "USER PROFILE ID"
+                                    },
+                                    "confidence_score": 0.9,
+                                    "confidence_per_section": {
+                                        "detection": 0.9,
+                                        "conversion": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Detected source case: snake."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "semver-tools",
+                                            "reason": "Normalize and compare version identifiers after casing field names."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DetectRequest"
+                            },
+                            "example": {
+                                "text": "user_profile_id"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.005,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL all-cases + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "input": "user_profile_id",
+                                    "detected_case": "snake",
+                                    "tokens": [
+                                        "user",
+                                        "profile",
+                                        "id"
+                                    ],
+                                    "all_cases": {
+                                        "camel": "userProfileId",
+                                        "pascal": "UserProfileId",
+                                        "snake": "user_profile_id",
+                                        "kebab": "user-profile-id",
+                                        "constant": "USER_PROFILE_ID",
+                                        "dot": "user.profile.id",
+                                        "path": "user/profile/id",
+                                        "title": "User Profile Id",
+                                        "sentence": "User profile id",
+                                        "lower": "user profile id",
+                                        "upper": "USER PROFILE ID"
+                                    },
+                                    "reasoning": {
+                                        "why_result_generated": "Tokenized \"user_profile_id\" into [user, profile, id] and rendered every supported case; detected source case heuristically as \"snake\".",
+                                        "key_factors": [
+                                            "Token count: 3.",
+                                            "Detected case: snake."
+                                        ],
+                                        "invalidators": [
+                                            "Tokenization breaks on separators (_ - . / whitespace and other non-alphanumerics) and on camelCase, acronym (HTTPServer\u2192HTTP Server), and letter\u2194digit boundaries; the conversion of those tokens into the target case is exact and reversible up to separator/casing loss.",
+                                            "Source-case \"detection\" is a structural heuristic (which separators/capitalization are present); ambiguous inputs (e.g. a single all-lowercase word, or a string with no separators) may report a plausible-but-debatable case. The token split and the converted output are NOT heuristic.",
+                                            "Original separators are not preserved: converting \"a.b-c\" to snake yields \"a_b_c\". Round-tripping is exact only within a single separator convention."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "detection": 0.9,
+                                        "conversion": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Tokenized into 3 token(s); emitted all 11 cases."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "semver-tools",
+                                            "reason": "Normalize and compare version identifiers after casing field names."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DetectRequest"
+                            },
+                            "example": {
+                                "text": "user_profile_id"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.01,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "conversion": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "detection": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "AllCases": {
+                "type": "object",
+                "required": [
+                    "camel",
+                    "pascal",
+                    "snake",
+                    "kebab",
+                    "constant",
+                    "dot",
+                    "path",
+                    "title",
+                    "sentence",
+                    "lower",
+                    "upper"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "camel": {
+                        "type": "string"
+                    },
+                    "pascal": {
+                        "type": "string"
+                    },
+                    "snake": {
+                        "type": "string"
+                    },
+                    "kebab": {
+                        "type": "string"
+                    },
+                    "constant": {
+                        "type": "string"
+                    },
+                    "dot": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "sentence": {
+                        "type": "string"
+                    },
+                    "lower": {
+                        "type": "string"
+                    },
+                    "upper": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ConvertCore": {
+                "type": "object",
+                "required": [
+                    "input",
+                    "to",
+                    "converted",
+                    "tokens",
+                    "detected_case"
+                ],
+                "properties": {
+                    "input": {
+                        "type": "string"
+                    },
+                    "to": {
+                        "type": "string",
+                        "enum": [
+                            "camel",
+                            "pascal",
+                            "snake",
+                            "kebab",
+                            "constant",
+                            "dot",
+                            "path",
+                            "title",
+                            "sentence",
+                            "lower",
+                            "upper"
+                        ]
+                    },
+                    "converted": {
+                        "type": "string"
+                    },
+                    "tokens": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "detected_case": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DetectCore": {
+                "type": "object",
+                "required": [
+                    "input",
+                    "detected_case",
+                    "tokens",
+                    "all_cases"
+                ],
+                "properties": {
+                    "input": {
+                        "type": "string"
+                    },
+                    "detected_case": {
+                        "type": "string"
+                    },
+                    "tokens": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "all_cases": {
+                        "type": "object",
+                        "required": [
+                            "camel",
+                            "pascal",
+                            "snake",
+                            "kebab",
+                            "constant",
+                            "dot",
+                            "path",
+                            "title",
+                            "sentence",
+                            "lower",
+                            "upper"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "camel": {
+                                "type": "string"
+                            },
+                            "pascal": {
+                                "type": "string"
+                            },
+                            "snake": {
+                                "type": "string"
+                            },
+                            "kebab": {
+                                "type": "string"
+                            },
+                            "constant": {
+                                "type": "string"
+                            },
+                            "dot": {
+                                "type": "string"
+                            },
+                            "path": {
+                                "type": "string"
+                            },
+                            "title": {
+                                "type": "string"
+                            },
+                            "sentence": {
+                                "type": "string"
+                            },
+                            "lower": {
+                                "type": "string"
+                            },
+                            "upper": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "ConvertRequest": {
+                "type": "object",
+                "required": [
+                    "text",
+                    "to"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "maxLength": 10000
+                    },
+                    "to": {
+                        "type": "string",
+                        "enum": [
+                            "camel",
+                            "pascal",
+                            "snake",
+                            "kebab",
+                            "constant",
+                            "dot",
+                            "path",
+                            "title",
+                            "sentence",
+                            "lower",
+                            "upper"
+                        ],
+                        "description": "Target case."
+                    }
+                }
+            },
+            "DetectRequest": {
+                "type": "object",
+                "required": [
+                    "text"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "maxLength": 10000
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConvertResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ConvertCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "DetectResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DetectCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DetectCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}
