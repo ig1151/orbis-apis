@@ -1,0 +1,1438 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Web Scraper Test Suite & Validator API",
+        "version": "1.0.0",
+        "description": "Deterministic scraper test suite \u2014 sample HTML + selector assertions \u2192 per-test pass/fail, extracted values, score and grade (cheerio-parsed). No fetching, no LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-data-quality": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/scraper-test-suite"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "Web Scraper Test Suite & Validator API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic scraper test suite. Parses a supplied HTML snapshot with a real HTML parser (cheerio) and runs selector assertions (exists/count/equals/contains/matches/non_empty, optionally on an attribute), returning per-test pass/fail, extracted values, score and grade. No fetching, no LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/scraper-test-suite/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/run",
+                                            "summary": "Run selector assertions against sample HTML",
+                                            "price_usdc": 0.008
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL run + reasoning",
+                                            "price_usdc": 0.014
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/run",
+                                            "price_usdc": 0.008,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.014,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/run": {
+            "post": {
+                "operationId": "run",
+                "summary": "Run selector assertions against sample HTML",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RunResponse"
+                                },
+                                "example": {
+                                    "trace_id": "sts-1780000000000",
+                                    "request_id": "sts-1780000000000",
+                                    "computed_at": "2026-06-15T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "test_count": 4,
+                                    "passed_count": 4,
+                                    "failed_count": 0,
+                                    "all_passed": true,
+                                    "score": 100,
+                                    "grade": "A",
+                                    "results": [
+                                        {
+                                            "name": "title_text",
+                                            "selector": "h1.title",
+                                            "extraction_mode": "text",
+                                            "matched_count": 1,
+                                            "extracted_value": "Hello World",
+                                            "sample_values": [
+                                                "Hello World"
+                                            ],
+                                            "assertions": [
+                                                {
+                                                    "type": "exists",
+                                                    "expected": true,
+                                                    "actual": true,
+                                                    "pass": true
+                                                },
+                                                {
+                                                    "type": "count",
+                                                    "expected": 1,
+                                                    "actual": 1,
+                                                    "pass": true
+                                                },
+                                                {
+                                                    "type": "equals",
+                                                    "expected": "Hello World",
+                                                    "actual": "Hello World",
+                                                    "pass": true
+                                                }
+                                            ],
+                                            "error": null,
+                                            "passed": true
+                                        },
+                                        {
+                                            "name": "nav_links",
+                                            "selector": "a.nav",
+                                            "extraction_mode": "attr:href",
+                                            "matched_count": 2,
+                                            "extracted_value": "/about",
+                                            "sample_values": [
+                                                "/about",
+                                                "/contact"
+                                            ],
+                                            "assertions": [
+                                                {
+                                                    "type": "min_count",
+                                                    "expected": 2,
+                                                    "actual": 2,
+                                                    "pass": true
+                                                },
+                                                {
+                                                    "type": "non_empty",
+                                                    "expected": true,
+                                                    "actual": true,
+                                                    "pass": true
+                                                }
+                                            ],
+                                            "error": null,
+                                            "passed": true
+                                        },
+                                        {
+                                            "name": "price_format",
+                                            "selector": "p.price",
+                                            "extraction_mode": "text",
+                                            "matched_count": 1,
+                                            "extracted_value": "$19.99",
+                                            "sample_values": [
+                                                "$19.99"
+                                            ],
+                                            "assertions": [
+                                                {
+                                                    "type": "matches",
+                                                    "expected": "^\\$\\d+\\.\\d{2}$",
+                                                    "actual": "$19.99",
+                                                    "pass": true
+                                                }
+                                            ],
+                                            "error": null,
+                                            "passed": true
+                                        },
+                                        {
+                                            "name": "no_banner",
+                                            "selector": ".promo-banner",
+                                            "extraction_mode": "text",
+                                            "matched_count": 0,
+                                            "extracted_value": null,
+                                            "sample_values": [],
+                                            "assertions": [
+                                                {
+                                                    "type": "exists",
+                                                    "expected": false,
+                                                    "actual": false,
+                                                    "pass": true
+                                                }
+                                            ],
+                                            "error": null,
+                                            "passed": true
+                                        }
+                                    ],
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "extraction": 1,
+                                        "assertions": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "4/4 test(s) passed \u2014 score 100/100 (A), ALL PASSED."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "scrape-data-pipeline-validator",
+                                            "reason": "Validate the records these selectors extract against an expected schema across many pages."
+                                        },
+                                        {
+                                            "api": "website-structure-mapper",
+                                            "reason": "Map the site\u2019s navigation graph to discover the pages these selectors should run against."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RunRequest"
+                            },
+                            "example": {
+                                "html": "<html><body><h1 class=\"title\">Hello World</h1><a class=\"nav\" href=\"/about\">About</a><a class=\"nav\" href=\"/contact\">Contact</a><p class=\"price\">$19.99</p></body></html>",
+                                "tests": [
+                                    {
+                                        "name": "title_text",
+                                        "selector": "h1.title",
+                                        "assert": {
+                                            "exists": true,
+                                            "count": 1,
+                                            "equals": "Hello World"
+                                        }
+                                    },
+                                    {
+                                        "name": "nav_links",
+                                        "selector": "a.nav",
+                                        "assert": {
+                                            "min_count": 2,
+                                            "attr": "href",
+                                            "non_empty": true
+                                        }
+                                    },
+                                    {
+                                        "name": "price_format",
+                                        "selector": "p.price",
+                                        "assert": {
+                                            "matches": "^\\$\\d+\\.\\d{2}$"
+                                        }
+                                    },
+                                    {
+                                        "name": "no_banner",
+                                        "selector": ".promo-banner",
+                                        "assert": {
+                                            "exists": false
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.008,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL run + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "sts-1780000000000",
+                                    "request_id": "sts-1780000000000",
+                                    "computed_at": "2026-06-15T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "test_count": 4,
+                                    "passed_count": 4,
+                                    "failed_count": 0,
+                                    "all_passed": true,
+                                    "score": 100,
+                                    "grade": "A",
+                                    "results": [
+                                        {
+                                            "name": "title_text",
+                                            "selector": "h1.title",
+                                            "extraction_mode": "text",
+                                            "matched_count": 1,
+                                            "extracted_value": "Hello World",
+                                            "sample_values": [
+                                                "Hello World"
+                                            ],
+                                            "assertions": [
+                                                {
+                                                    "type": "exists",
+                                                    "expected": true,
+                                                    "actual": true,
+                                                    "pass": true
+                                                },
+                                                {
+                                                    "type": "count",
+                                                    "expected": 1,
+                                                    "actual": 1,
+                                                    "pass": true
+                                                },
+                                                {
+                                                    "type": "equals",
+                                                    "expected": "Hello World",
+                                                    "actual": "Hello World",
+                                                    "pass": true
+                                                }
+                                            ],
+                                            "error": null,
+                                            "passed": true
+                                        },
+                                        {
+                                            "name": "nav_links",
+                                            "selector": "a.nav",
+                                            "extraction_mode": "attr:href",
+                                            "matched_count": 2,
+                                            "extracted_value": "/about",
+                                            "sample_values": [
+                                                "/about",
+                                                "/contact"
+                                            ],
+                                            "assertions": [
+                                                {
+                                                    "type": "min_count",
+                                                    "expected": 2,
+                                                    "actual": 2,
+                                                    "pass": true
+                                                },
+                                                {
+                                                    "type": "non_empty",
+                                                    "expected": true,
+                                                    "actual": true,
+                                                    "pass": true
+                                                }
+                                            ],
+                                            "error": null,
+                                            "passed": true
+                                        },
+                                        {
+                                            "name": "price_format",
+                                            "selector": "p.price",
+                                            "extraction_mode": "text",
+                                            "matched_count": 1,
+                                            "extracted_value": "$19.99",
+                                            "sample_values": [
+                                                "$19.99"
+                                            ],
+                                            "assertions": [
+                                                {
+                                                    "type": "matches",
+                                                    "expected": "^\\$\\d+\\.\\d{2}$",
+                                                    "actual": "$19.99",
+                                                    "pass": true
+                                                }
+                                            ],
+                                            "error": null,
+                                            "passed": true
+                                        },
+                                        {
+                                            "name": "no_banner",
+                                            "selector": ".promo-banner",
+                                            "extraction_mode": "text",
+                                            "matched_count": 0,
+                                            "extracted_value": null,
+                                            "sample_values": [],
+                                            "assertions": [
+                                                {
+                                                    "type": "exists",
+                                                    "expected": false,
+                                                    "actual": false,
+                                                    "pass": true
+                                                }
+                                            ],
+                                            "error": null,
+                                            "passed": true
+                                        }
+                                    ],
+                                    "reasoning": {
+                                        "why_result_generated": "Ran 4 selector test(s) against the supplied HTML: 4 passed, 0 failed (score 100/100).",
+                                        "key_factors": [
+                                            "Result: ALL PASSED (grade A).",
+                                            "Failing test(s): none.",
+                                            "Selector error(s): none."
+                                        ],
+                                        "invalidators": [
+                                            "Tests run only against the supplied HTML snapshot \u2014 they prove a selector works on this capture, not on the live (possibly changed) page.",
+                                            "HTML is parsed leniently by cheerio (like a browser): malformed markup is auto-corrected, so a selector may match more/less than a strict parser would.",
+                                            "Text extraction uses the concatenated text of all descendants, trimmed; attribute extraction reads the first matched element\u2019s attribute (null if absent).",
+                                            "Regex assertions are safety-bounded: patterns over 300 chars or with nested unbounded quantifiers (e.g. (a+)+) are rejected, and the pattern is tested against at most the first 8192 chars of the extracted value (an input bound limiting catastrophic-backtracking cost on the single-threaded engine)."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "extraction": 1,
+                                        "assertions": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "4/4 test(s) passed \u2014 score 100/100 (A), ALL PASSED."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "scrape-data-pipeline-validator",
+                                            "reason": "Validate the records these selectors extract against an expected schema across many pages."
+                                        },
+                                        {
+                                            "api": "website-structure-mapper",
+                                            "reason": "Map the site\u2019s navigation graph to discover the pages these selectors should run against."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RunRequest"
+                            },
+                            "example": {
+                                "html": "<html><body><h1 class=\"title\">Hello World</h1><a class=\"nav\" href=\"/about\">About</a><a class=\"nav\" href=\"/contact\">Contact</a><p class=\"price\">$19.99</p></body></html>",
+                                "tests": [
+                                    {
+                                        "name": "title_text",
+                                        "selector": "h1.title",
+                                        "assert": {
+                                            "exists": true,
+                                            "count": 1,
+                                            "equals": "Hello World"
+                                        }
+                                    },
+                                    {
+                                        "name": "nav_links",
+                                        "selector": "a.nav",
+                                        "assert": {
+                                            "min_count": 2,
+                                            "attr": "href",
+                                            "non_empty": true
+                                        }
+                                    },
+                                    {
+                                        "name": "price_format",
+                                        "selector": "p.price",
+                                        "assert": {
+                                            "matches": "^\\$\\d+\\.\\d{2}$"
+                                        }
+                                    },
+                                    {
+                                        "name": "no_banner",
+                                        "selector": ".promo-banner",
+                                        "assert": {
+                                            "exists": false
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.014,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "extraction": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "assertions": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "AssertSpec": {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "Assertions for one selector. Any subset; with none provided, an implicit exists=true is checked.",
+                "properties": {
+                    "exists": {
+                        "type": "boolean",
+                        "description": "Whether the selector should match \u22651 element."
+                    },
+                    "count": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Exact match count."
+                    },
+                    "min_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "max_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "equals": {
+                        "type": "string",
+                        "description": "Extracted value must equal this exactly."
+                    },
+                    "contains": {
+                        "type": "string",
+                        "description": "Extracted value must contain this substring."
+                    },
+                    "matches": {
+                        "type": "string",
+                        "description": "Extracted value must match this regex (\u2264300 chars, no nested unbounded quantifiers)."
+                    },
+                    "attr": {
+                        "type": "string",
+                        "description": "Extract this attribute of the first match instead of its text."
+                    },
+                    "non_empty": {
+                        "type": "boolean",
+                        "description": "Whether the extracted value must be non-empty."
+                    }
+                }
+            },
+            "TestSpec": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "selector"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Unique test name."
+                    },
+                    "selector": {
+                        "type": "string",
+                        "description": "CSS selector to evaluate."
+                    },
+                    "assert": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "description": "Assertions for one selector. Any subset; with none provided, an implicit exists=true is checked.",
+                        "properties": {
+                            "exists": {
+                                "type": "boolean",
+                                "description": "Whether the selector should match \u22651 element."
+                            },
+                            "count": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "description": "Exact match count."
+                            },
+                            "min_count": {
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "max_count": {
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "equals": {
+                                "type": "string",
+                                "description": "Extracted value must equal this exactly."
+                            },
+                            "contains": {
+                                "type": "string",
+                                "description": "Extracted value must contain this substring."
+                            },
+                            "matches": {
+                                "type": "string",
+                                "description": "Extracted value must match this regex (\u2264300 chars, no nested unbounded quantifiers)."
+                            },
+                            "attr": {
+                                "type": "string",
+                                "description": "Extract this attribute of the first match instead of its text."
+                            },
+                            "non_empty": {
+                                "type": "boolean",
+                                "description": "Whether the extracted value must be non-empty."
+                            }
+                        }
+                    }
+                }
+            },
+            "RunRequest": {
+                "type": "object",
+                "required": [
+                    "html",
+                    "tests"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "html": {
+                        "type": "string",
+                        "description": "HTML snapshot to test against (\u22641,000,000 chars)."
+                    },
+                    "tests": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "selector"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "Unique test name."
+                                },
+                                "selector": {
+                                    "type": "string",
+                                    "description": "CSS selector to evaluate."
+                                },
+                                "assert": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "description": "Assertions for one selector. Any subset; with none provided, an implicit exists=true is checked.",
+                                    "properties": {
+                                        "exists": {
+                                            "type": "boolean",
+                                            "description": "Whether the selector should match \u22651 element."
+                                        },
+                                        "count": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "Exact match count."
+                                        },
+                                        "min_count": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        },
+                                        "max_count": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        },
+                                        "equals": {
+                                            "type": "string",
+                                            "description": "Extracted value must equal this exactly."
+                                        },
+                                        "contains": {
+                                            "type": "string",
+                                            "description": "Extracted value must contain this substring."
+                                        },
+                                        "matches": {
+                                            "type": "string",
+                                            "description": "Extracted value must match this regex (\u2264300 chars, no nested unbounded quantifiers)."
+                                        },
+                                        "attr": {
+                                            "type": "string",
+                                            "description": "Extract this attribute of the first match instead of its text."
+                                        },
+                                        "non_empty": {
+                                            "type": "boolean",
+                                            "description": "Whether the extracted value must be non-empty."
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Selector tests with assertions."
+                    }
+                }
+            },
+            "AssertionResult": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "expected",
+                    "actual",
+                    "pass"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "exists",
+                            "count",
+                            "min_count",
+                            "max_count",
+                            "equals",
+                            "contains",
+                            "matches",
+                            "non_empty"
+                        ]
+                    },
+                    "expected": {
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "actual": {
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                        ]
+                    },
+                    "pass": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "TestResult": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "selector",
+                    "extraction_mode",
+                    "matched_count",
+                    "extracted_value",
+                    "sample_values",
+                    "assertions",
+                    "error",
+                    "passed"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "selector": {
+                        "type": "string"
+                    },
+                    "extraction_mode": {
+                        "type": "string",
+                        "description": "\"text\" or \"attr:<name>\"."
+                    },
+                    "matched_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "extracted_value": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Value from the first matched element (text or attribute)."
+                    },
+                    "sample_values": {
+                        "type": "array",
+                        "items": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "description": "Up to 50 extracted values."
+                    },
+                    "assertions": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "type",
+                                "expected",
+                                "actual",
+                                "pass"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "exists",
+                                        "count",
+                                        "min_count",
+                                        "max_count",
+                                        "equals",
+                                        "contains",
+                                        "matches",
+                                        "non_empty"
+                                    ]
+                                },
+                                "expected": {
+                                    "type": [
+                                        "string",
+                                        "number",
+                                        "boolean",
+                                        "null"
+                                    ]
+                                },
+                                "actual": {
+                                    "type": [
+                                        "string",
+                                        "number",
+                                        "boolean",
+                                        "null"
+                                    ]
+                                },
+                                "pass": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "error": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Non-null when the selector itself is invalid."
+                    },
+                    "passed": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "SuiteCore": {
+                "type": "object",
+                "required": [
+                    "test_count",
+                    "passed_count",
+                    "failed_count",
+                    "all_passed",
+                    "score",
+                    "grade",
+                    "results"
+                ],
+                "properties": {
+                    "test_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "passed_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "failed_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "all_passed": {
+                        "type": "boolean"
+                    },
+                    "score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100
+                    },
+                    "grade": {
+                        "type": "string",
+                        "enum": [
+                            "A",
+                            "B",
+                            "C",
+                            "D",
+                            "F"
+                        ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "selector",
+                                "extraction_mode",
+                                "matched_count",
+                                "extracted_value",
+                                "sample_values",
+                                "assertions",
+                                "error",
+                                "passed"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "selector": {
+                                    "type": "string"
+                                },
+                                "extraction_mode": {
+                                    "type": "string",
+                                    "description": "\"text\" or \"attr:<name>\"."
+                                },
+                                "matched_count": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "extracted_value": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Value from the first matched element (text or attribute)."
+                                },
+                                "sample_values": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
+                                    },
+                                    "description": "Up to 50 extracted values."
+                                },
+                                "assertions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "type",
+                                            "expected",
+                                            "actual",
+                                            "pass"
+                                        ],
+                                        "additionalProperties": false,
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "exists",
+                                                    "count",
+                                                    "min_count",
+                                                    "max_count",
+                                                    "equals",
+                                                    "contains",
+                                                    "matches",
+                                                    "non_empty"
+                                                ]
+                                            },
+                                            "expected": {
+                                                "type": [
+                                                    "string",
+                                                    "number",
+                                                    "boolean",
+                                                    "null"
+                                                ]
+                                            },
+                                            "actual": {
+                                                "type": [
+                                                    "string",
+                                                    "number",
+                                                    "boolean",
+                                                    "null"
+                                                ]
+                                            },
+                                            "pass": {
+                                                "type": "boolean"
+                                            }
+                                        }
+                                    }
+                                },
+                                "error": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Non-null when the selector itself is invalid."
+                                },
+                                "passed": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "RunResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/SuiteCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/SuiteCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}

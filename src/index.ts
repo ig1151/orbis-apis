@@ -766,6 +766,12 @@ import scrapeDataEnricherRouter from './routes/scrape-data-enricher-api/routes/i
 import scrapeDataEnricherOpenapiRouter from './routes/scrape-data-enricher-api/routes/openapi';
 import scrapeDataPipelineValidatorRouter from './routes/scrape-data-pipeline-validator-api/routes/intelligence';
 import scrapeDataPipelineValidatorOpenapiRouter from './routes/scrape-data-pipeline-validator-api/routes/openapi';
+import websiteStructureMapperRouter from './routes/website-structure-mapper-api/routes/intelligence';
+import websiteStructureMapperOpenapiRouter from './routes/website-structure-mapper-api/routes/openapi';
+import scraperTestSuiteRouter from './routes/scraper-test-suite-api/routes/intelligence';
+import scraperTestSuiteOpenapiRouter from './routes/scraper-test-suite-api/routes/openapi';
+import scrapedDataQualityScorerRouter from './routes/scraped-data-quality-scorer-api/routes/intelligence';
+import scrapedDataQualityScorerOpenapiRouter from './routes/scraped-data-quality-scorer-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1421,6 +1427,9 @@ const routerMap: Record<string, import("express").Router> = {
   'scrape-data-merger': scrapeDataMergerRouter,
   'scrape-data-enricher': scrapeDataEnricherRouter,
   'scrape-data-pipeline-validator': scrapeDataPipelineValidatorRouter,
+  'website-structure-mapper': websiteStructureMapperRouter,
+  'scraper-test-suite': scraperTestSuiteRouter,
+  'scraped-data-quality-scorer': scrapedDataQualityScorerRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1895,6 +1904,9 @@ const openapiMap: Record<string, import("express").Router> = {
   'scrape-data-merger': scrapeDataMergerOpenapiRouter,
   'scrape-data-enricher': scrapeDataEnricherOpenapiRouter,
   'scrape-data-pipeline-validator': scrapeDataPipelineValidatorOpenapiRouter,
+  'website-structure-mapper': websiteStructureMapperOpenapiRouter,
+  'scraper-test-suite': scraperTestSuiteOpenapiRouter,
+  'scraped-data-quality-scorer': scrapedDataQualityScorerOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,

@@ -1,0 +1,388 @@
+import { Router, Request, Response } from 'express';
+import { respond, fail } from '../../_aplus/scaffold';
+import { EXECUTION_METADATA, PRIVACY, round } from '../../_aplus/util';
+
+// Deterministic website structure & navigation mapper. Given a crawl manifest
+// (pages, each with its outbound links) — plus an optional declared sitemap —
+// computes the internal navigation graph: per-page click depth from the home
+// page, in/out degree, roles (home/hub/orphan/dead_end/normal), top-level
+// sections, unreachable pages, dangling internal links, and a sitemap diff.
+// Pure graph computation over the SUPPLIED manifest — no fetching, no LLM,
+// nothing stored.
+
+const router = Router();
+
+const MAX_PAGES = 5000;
+const MAX_LINKS_PER_PAGE = 3000;
+
+type Role = 'home' | 'hub' | 'orphan' | 'dead_end' | 'normal';
+
+export interface NodeInfo {
+  url: string; path: string; section: string;
+  depth: number | null; in_degree: number; out_degree: number;
+  role: Role; reachable: boolean;
+}
+export interface Edge { from: string; to: string; }
+export interface SectionCount { section: string; page_count: number; }
+export interface DanglingLink { from: string; to: string; }
+export interface SitemapDiff { provided: boolean; missing_from_sitemap: string[]; missing_from_crawl: string[]; }
+export interface NormalizationInfo { ignore_query: boolean; strip_query_params: string[]; }
+
+export interface StructureCore {
+  host: string;
+  page_count: number;
+  internal_link_count: number;
+  external_link_count: number;
+  invalid_link_count: number;
+  home_url: string;
+  home_inferred: boolean;
+  max_depth: number;
+  sections: SectionCount[];
+  orphan_pages: string[];
+  dead_end_pages: string[];
+  hub_pages: string[];
+  unreachable_pages: string[];
+  dangling_internal_links: DanglingLink[];
+  nodes: NodeInfo[];
+  edges: Edge[];
+  sitemap_diff: SitemapDiff;
+  normalization: NormalizationInfo;
+}
+
+interface PageIn { url: string; links: string[]; }
+
+// URL-normalization options. By default the full query string is kept (two URLs
+// differing only in query are distinct pages). `ignoreQuery` drops the query
+// entirely; `stripParams` drops named params (case-insensitive; a trailing "*"
+// matches by prefix, e.g. "utm_*"), so tracking params can be collapsed.
+interface NormOpts { ignoreQuery: boolean; stripParams: string[]; }
+
+function paramStripped(key: string, patterns: string[]): boolean {
+  const k = key.toLowerCase();
+  return patterns.some((p) => {
+    const pat = p.toLowerCase();
+    return pat.endsWith('*') ? k.startsWith(pat.slice(0, -1)) : k === pat;
+  });
+}
+
+function normUrl(u: URL, opts: NormOpts): string {
+  let path = u.pathname || '/';
+  if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
+  // drop hash; lowercase scheme + host (host includes port).
+  let search = u.search;
+  if (opts.ignoreQuery) {
+    search = '';
+  } else if (opts.stripParams.length && u.search) {
+    const sp = new URLSearchParams(u.search);
+    for (const key of [...sp.keys()]) if (paramStripped(key, opts.stripParams)) sp.delete(key);
+    const s = sp.toString();
+    search = s ? `?${s}` : '';
+  }
+  return `${u.protocol}//${u.host.toLowerCase()}${path}${search}`;
+}
+
+function pathOf(normalized: string): string {
+  try { const u = new URL(normalized); return (u.pathname || '/'); } catch { return '/'; }
+}
+
+function sectionOf(path: string): string {
+  const seg = path.split('/').filter((s) => s !== '');
+  return seg.length === 0 ? '(root)' : seg[0];
+}
+
+function parse(body: any): { error: string } | { pages: PageIn[]; homeRaw: string | null; sitemap: string[] | null; hubMin: number; norm: NormOpts } {
+  if (body === null || typeof body !== 'object' || Array.isArray(body)) return { error: 'Provide an object with a "pages" array.' };
+  if (!Array.isArray(body.pages) || body.pages.length === 0) return { error: '"pages" must be a non-empty array of { url, links } objects.' };
+  if (body.pages.length > MAX_PAGES) return { error: `"pages" exceeds the ${MAX_PAGES}-page limit (got ${body.pages.length}).` };
+
+  const pages: PageIn[] = [];
+  for (let i = 0; i < body.pages.length; i++) {
+    const p = body.pages[i];
+    if (p === null || typeof p !== 'object' || Array.isArray(p)) return { error: `pages[${i}] must be an object.` };
+    if (typeof p.url !== 'string' || p.url === '') return { error: `pages[${i}].url must be a non-empty string.` };
+    let links: string[] = [];
+    if (p.links !== undefined) {
+      if (!Array.isArray(p.links)) return { error: `pages[${i}].links must be an array of URL strings.` };
+      if (p.links.length > MAX_LINKS_PER_PAGE) return { error: `pages[${i}].links exceeds the ${MAX_LINKS_PER_PAGE}-link limit.` };
+      if (!p.links.every((l: unknown) => typeof l === 'string')) return { error: `pages[${i}].links must contain only URL strings.` };
+      links = p.links as string[];
+    }
+    pages.push({ url: p.url, links });
+  }
+
+  let homeRaw: string | null = null;
+  if (body.home_url !== undefined) {
+    if (typeof body.home_url !== 'string' || body.home_url === '') return { error: '"home_url" must be a non-empty string when provided.' };
+    homeRaw = body.home_url;
+  }
+
+  let sitemap: string[] | null = null;
+  if (body.sitemap !== undefined) {
+    if (!Array.isArray(body.sitemap) || !body.sitemap.every((s: unknown) => typeof s === 'string')) return { error: '"sitemap" must be an array of URL strings when provided.' };
+    sitemap = body.sitemap as string[];
+  }
+
+  let hubMin = 5;
+  if (body.hub_min_out_degree !== undefined) {
+    if (typeof body.hub_min_out_degree !== 'number' || !Number.isInteger(body.hub_min_out_degree) || body.hub_min_out_degree < 1) {
+      return { error: '"hub_min_out_degree" must be a positive integer when provided.' };
+    }
+    hubMin = body.hub_min_out_degree;
+  }
+
+  let ignoreQuery = false;
+  if (body.ignore_query !== undefined) {
+    if (typeof body.ignore_query !== 'boolean') return { error: '"ignore_query" must be a boolean when provided.' };
+    ignoreQuery = body.ignore_query;
+  }
+  let stripParams: string[] = [];
+  if (body.strip_query_params !== undefined) {
+    if (!Array.isArray(body.strip_query_params) || !body.strip_query_params.every((s: unknown) => typeof s === 'string' && s !== '')) {
+      return { error: '"strip_query_params" must be an array of non-empty param-name strings (a trailing "*" matches by prefix).' };
+    }
+    stripParams = body.strip_query_params as string[];
+  }
+
+  return { pages, homeRaw, sitemap, hubMin, norm: { ignoreQuery, stripParams } };
+}
+
+function build(input: { pages: PageIn[]; homeRaw: string | null; sitemap: string[] | null; hubMin: number; norm: NormOpts }): { error: string } | { result: StructureCore } {
+  const { pages, homeRaw, sitemap, hubMin, norm } = input;
+
+  // Normalize page URLs (invalid → error: pages are the graph's spine).
+  const nodeSet = new Set<string>();
+  const normalizedPages: string[] = [];
+  for (let i = 0; i < pages.length; i++) {
+    let u: URL;
+    try { u = new URL(pages[i].url); } catch { return { error: `pages[${i}].url "${pages[i].url}" is not a valid absolute URL.` }; }
+    if (u.protocol !== 'http:' && u.protocol !== 'https:') return { error: `pages[${i}].url must use http(s).` };
+    const n = normUrl(u, norm);
+    normalizedPages.push(n);
+    nodeSet.add(n);
+  }
+
+  // Determine the site host: from home_url if given, else the most common page host
+  // (ties broken lexicographically) so the result is deterministic.
+  let siteHost: string;
+  let homeNorm: string | null = null;
+  let homeInferred = true;
+  if (homeRaw) {
+    let hu: URL;
+    try { hu = new URL(homeRaw); } catch { return { error: `"home_url" "${homeRaw}" is not a valid absolute URL.` }; }
+    siteHost = hu.host.toLowerCase();
+    homeNorm = normUrl(hu, norm);
+    homeInferred = false;
+  } else {
+    const hostCounts = new Map<string, number>();
+    for (const n of normalizedPages) { const h = new URL(n).host.toLowerCase(); hostCounts.set(h, (hostCounts.get(h) || 0) + 1); }
+    siteHost = [...hostCounts.entries()].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))[0][0];
+  }
+
+  // Infer home: prefer the root path on the site host, else the on-host page with the
+  // fewest path segments (ties lexicographic).
+  if (!homeNorm || !nodeSet.has(homeNorm)) {
+    const onHost = normalizedPages.filter((n) => new URL(n).host.toLowerCase() === siteHost);
+    const ranked = [...new Set(onHost)].sort((a, b) => {
+      const sa = pathOf(a).split('/').filter(Boolean).length, sb = pathOf(b).split('/').filter(Boolean).length;
+      return sa - sb || (a < b ? -1 : 1);
+    });
+    homeNorm = ranked[0] ?? normalizedPages.slice().sort()[0];
+    homeInferred = true;
+  }
+
+  // Build internal edges (deduped), tally external / invalid / dangling links.
+  const adj = new Map<string, Set<string>>();
+  const inDeg = new Map<string, number>();
+  const outDeg = new Map<string, number>();
+  for (const n of nodeSet) { adj.set(n, new Set()); inDeg.set(n, 0); outDeg.set(n, 0); }
+
+  let externalLinks = 0, invalidLinks = 0;
+  const externalSeen = new Set<string>();
+  const danglingSeen = new Set<string>();
+  const dangling: DanglingLink[] = [];
+
+  for (let i = 0; i < pages.length; i++) {
+    const fromNorm = normalizedPages[i];
+    for (const raw of pages[i].links) {
+      let lu: URL;
+      try { lu = new URL(raw, pages[i].url); } catch { invalidLinks++; continue; }
+      if (lu.protocol !== 'http:' && lu.protocol !== 'https:') { invalidLinks++; continue; }
+      const target = normUrl(lu, norm);
+      const sameHost = lu.host.toLowerCase() === siteHost;
+      if (!sameHost) {
+        const k = `${fromNorm} ${target}`;
+        if (!externalSeen.has(k)) { externalSeen.add(k); externalLinks++; }
+        continue;
+      }
+      if (target === fromNorm) continue; // self-link is not a navigation hop
+      if (nodeSet.has(target)) {
+        if (!adj.get(fromNorm)!.has(target)) {
+          adj.get(fromNorm)!.add(target);
+          outDeg.set(fromNorm, outDeg.get(fromNorm)! + 1);
+          inDeg.set(target, inDeg.get(target)! + 1);
+        }
+      } else {
+        const k = `${fromNorm} ${target}`;
+        if (!danglingSeen.has(k)) { danglingSeen.add(k); dangling.push({ from: fromNorm, to: target }); }
+      }
+    }
+  }
+
+  const edges: Edge[] = [];
+  for (const from of [...nodeSet].sort()) for (const to of [...adj.get(from)!].sort()) edges.push({ from, to });
+
+  // BFS click-depth from home over internal edges.
+  const depth = new Map<string, number>();
+  depth.set(homeNorm, 0);
+  const queue = [homeNorm];
+  while (queue.length) {
+    const cur = queue.shift()!;
+    const d = depth.get(cur)!;
+    for (const nb of [...adj.get(cur)!].sort()) {
+      if (!depth.has(nb)) { depth.set(nb, d + 1); queue.push(nb); }
+    }
+  }
+
+  const nodes: NodeInfo[] = [...nodeSet].sort().map((n) => {
+    const ind = inDeg.get(n)!, outd = outDeg.get(n)!;
+    const reachable = depth.has(n);
+    const path = pathOf(n);
+    let role: Role;
+    if (n === homeNorm) role = 'home';
+    else if (ind === 0) role = 'orphan';
+    else if (outd === 0) role = 'dead_end';
+    else if (outd >= hubMin) role = 'hub';
+    else role = 'normal';
+    return { url: n, path, section: sectionOf(path), depth: reachable ? depth.get(n)! : null, in_degree: ind, out_degree: outd, role, reachable };
+  });
+
+  const sectionMap = new Map<string, number>();
+  for (const node of nodes) sectionMap.set(node.section, (sectionMap.get(node.section) || 0) + 1);
+  const sections: SectionCount[] = [...sectionMap.entries()].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).map(([section, page_count]) => ({ section, page_count }));
+
+  const orphan_pages = nodes.filter((n) => n.role !== 'home' && n.in_degree === 0).map((n) => n.url);
+  const dead_end_pages = nodes.filter((n) => n.out_degree === 0).map((n) => n.url);
+  const hub_pages = nodes.filter((n) => n.out_degree >= hubMin).map((n) => n.url);
+  const unreachable_pages = nodes.filter((n) => !n.reachable).map((n) => n.url);
+  const max_depth = nodes.reduce((m, n) => (n.depth !== null && n.depth > m ? n.depth : m), 0);
+
+  // Sitemap diff (host-filtered, normalized).
+  let sitemap_diff: SitemapDiff = { provided: false, missing_from_sitemap: [], missing_from_crawl: [] };
+  if (sitemap) {
+    const smSet = new Set<string>();
+    for (const s of sitemap) {
+      try { const su = new URL(s); if (su.host.toLowerCase() === siteHost) smSet.add(normUrl(su, norm)); } catch { /* skip unparseable sitemap entries */ }
+    }
+    const crawled = new Set([...nodeSet].filter((n) => new URL(n).host.toLowerCase() === siteHost));
+    sitemap_diff = {
+      provided: true,
+      missing_from_sitemap: [...crawled].filter((n) => !smSet.has(n)).sort(),
+      missing_from_crawl: [...smSet].filter((n) => !crawled.has(n)).sort(),
+    };
+  }
+
+  return {
+    result: {
+      host: siteHost,
+      page_count: nodeSet.size,
+      internal_link_count: edges.length,
+      external_link_count: externalLinks,
+      invalid_link_count: invalidLinks,
+      home_url: homeNorm,
+      home_inferred: homeInferred,
+      max_depth,
+      sections,
+      orphan_pages, dead_end_pages, hub_pages, unreachable_pages,
+      dangling_internal_links: dangling.sort((a, b) => (a.from + a.to < b.from + b.to ? -1 : 1)),
+      nodes, edges, sitemap_diff,
+      normalization: { ignore_query: norm.ignoreQuery, strip_query_params: norm.stripParams },
+    },
+  };
+}
+
+const CHAIN_TO = [
+  { api: 'scrape-data-pipeline-validator', reason: 'Validate the data scraped from these pages against an expected schema.' },
+  { api: 'data-lineage-tracker', reason: 'Model the crawl/transform steps that consume these pages as a lineage graph.' },
+];
+
+function invalidators(r: StructureCore): string[] {
+  return [
+    'The graph is built only from the supplied pages/links; pages or links not provided are invisible — no live crawling is performed.',
+    r.home_inferred
+      ? `home_url was inferred (${r.home_url}); pass home_url explicitly to fix the depth-0 root and recompute click depths.`
+      : 'Click depth is measured from the supplied home_url over internal links only.',
+    'A "dangling" internal link points to a same-host URL that is not among the supplied pages — it may be uncrawled rather than broken (this API does not fetch to confirm).',
+    `URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash. Query strings are ${r.normalization.ignore_query ? 'dropped (ignore_query=true)' : r.normalization.strip_query_params.length ? `kept except stripped params [${r.normalization.strip_query_params.join(', ')}]` : 'kept by default'}; set ignore_query or strip_query_params (e.g. ["utm_*"]) to collapse tracking params.`,
+  ];
+}
+
+function actions(r: StructureCore): string[] {
+  const out: string[] = [];
+  out.push(`${r.page_count} page(s), ${r.internal_link_count} internal link(s); home ${r.home_url}${r.home_inferred ? ' (inferred)' : ''}, max click depth ${r.max_depth}.`);
+  if (r.orphan_pages.length) out.push(`${r.orphan_pages.length} orphan page(s) with no inbound internal links — add navigation links to them.`);
+  if (r.unreachable_pages.length) out.push(`${r.unreachable_pages.length} page(s) unreachable from home — they cannot be navigated to.`);
+  if (r.dead_end_pages.length) out.push(`${r.dead_end_pages.length} dead-end page(s) with no outbound internal links.`);
+  if (r.dangling_internal_links.length) out.push(`${r.dangling_internal_links.length} dangling internal link(s) point to uncrawled/missing pages — verify they resolve.`);
+  if (r.sitemap_diff.provided && (r.sitemap_diff.missing_from_crawl.length || r.sitemap_diff.missing_from_sitemap.length)) {
+    out.push(`Sitemap diff: ${r.sitemap_diff.missing_from_crawl.length} in sitemap but not crawled, ${r.sitemap_diff.missing_from_sitemap.length} crawled but absent from sitemap.`);
+  }
+  return out;
+}
+
+const TAIL = (r: StructureCore) => ({
+  confidence_score: r.home_inferred ? 0.9 : 1,
+  confidence_per_section: { structure: 1, navigation: r.home_inferred ? 0.9 : 1 },
+  recommended_actions_priority_order: actions(r),
+  chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
+});
+
+router.get('/', (_req: Request, res: Response) => {
+  res.json({
+    name: 'Website Structure & Navigation Mapper API', version: '1.0.0',
+    description: 'Deterministic website structure & navigation mapper. Turns a crawl manifest (pages + their outbound links, optional sitemap) into an internal navigation graph: click depth from home, in/out degree, page roles (home/hub/orphan/dead_end), top-level sections, unreachable pages, dangling links, and a sitemap diff. No fetching, no LLM, nothing stored.',
+    openapi_url: 'https://orbis-apis.onrender.com/website-structure-mapper/openapi.json',
+    auth: { type: 'apiKey', header: 'X-API-Key' },
+    endpoints: [
+      { method: 'POST', path: '/map', summary: 'Build a navigation graph from a crawl manifest', price_usdc: 0.008 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL structure map + reasoning', price_usdc: 0.014 },
+    ],
+    pricing: [
+      { path: '/map', price_usdc: 0.008, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.014, currency: 'USDC' },
+    ],
+    x402_compatible: true,
+  });
+});
+
+router.post('/map', (req: Request, res: Response) => {
+  const t0 = Date.now();
+  const p = parse(req.body);
+  if ('error' in p) return fail(res, t0, 400, 'invalid_request', p.error);
+  const r = build(p);
+  if ('error' in r) return fail(res, t0, 400, 'invalid_request', r.error);
+  respond(res, t0, { ...r.result, ...TAIL(r.result) });
+});
+
+router.post('/lookup', (req: Request, res: Response) => {
+  const t0 = Date.now();
+  const p = parse(req.body);
+  if ('error' in p) return fail(res, t0, 400, 'invalid_request', p.error);
+  const r = build(p);
+  if ('error' in r) return fail(res, t0, 400, 'invalid_request', r.error);
+  const v = r.result;
+  respond(res, t0, {
+    ...v,
+    reasoning: {
+      why_result_generated: `Mapped ${v.page_count} page(s) and ${v.internal_link_count} internal link(s) into a navigation graph rooted at ${v.home_url}.`,
+      key_factors: [
+        `Sections: ${v.sections.map((s) => `${s.section} (${s.page_count})`).join(', ') || '(none)'}.`,
+        `Orphans: ${v.orphan_pages.length}, dead-ends: ${v.dead_end_pages.length}, unreachable: ${v.unreachable_pages.length}, max depth ${v.max_depth}.`,
+        v.sitemap_diff.provided ? `Sitemap diff: ${v.sitemap_diff.missing_from_crawl.length} missing-from-crawl, ${v.sitemap_diff.missing_from_sitemap.length} missing-from-sitemap.` : 'No sitemap supplied for comparison.',
+      ],
+      invalidators: invalidators(v),
+    },
+    ...TAIL(v),
+  });
+});
+
+export default router;

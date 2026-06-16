@@ -1,0 +1,1540 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Website Structure & Navigation Mapper API",
+        "version": "1.0.0",
+        "description": "Deterministic website structure & navigation mapper \u2014 crawl manifest \u2192 internal navigation graph (click depth, roles, sections, orphans, dead-ends, dangling links, sitemap diff). No fetching, no LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-data-quality": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/website-structure-mapper"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "Website Structure & Navigation Mapper API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic website structure & navigation mapper. Turns a crawl manifest (pages + their outbound links, optional sitemap) into an internal navigation graph: click depth from home, in/out degree, page roles (home/hub/orphan/dead_end), top-level sections, unreachable pages, dangling links, and a sitemap diff. No fetching, no LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/website-structure-mapper/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/map",
+                                            "summary": "Build a navigation graph from a crawl manifest",
+                                            "price_usdc": 0.008
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL structure map + reasoning",
+                                            "price_usdc": 0.014
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/map",
+                                            "price_usdc": 0.008,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.014,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/map": {
+            "post": {
+                "operationId": "map",
+                "summary": "Build a navigation graph from a crawl manifest",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MapResponse"
+                                },
+                                "example": {
+                                    "trace_id": "wsm-1780000000000",
+                                    "request_id": "wsm-1780000000000",
+                                    "computed_at": "2026-06-15T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "host": "shop.example.com",
+                                    "page_count": 6,
+                                    "internal_link_count": 8,
+                                    "external_link_count": 1,
+                                    "invalid_link_count": 0,
+                                    "home_url": "https://shop.example.com/",
+                                    "home_inferred": false,
+                                    "max_depth": 2,
+                                    "sections": [
+                                        {
+                                            "section": "products",
+                                            "page_count": 3
+                                        },
+                                        {
+                                            "section": "(root)",
+                                            "page_count": 1
+                                        },
+                                        {
+                                            "section": "about",
+                                            "page_count": 1
+                                        },
+                                        {
+                                            "section": "legacy",
+                                            "page_count": 1
+                                        }
+                                    ],
+                                    "orphan_pages": [
+                                        "https://shop.example.com/legacy"
+                                    ],
+                                    "dead_end_pages": [
+                                        "https://shop.example.com/legacy"
+                                    ],
+                                    "hub_pages": [],
+                                    "unreachable_pages": [
+                                        "https://shop.example.com/legacy"
+                                    ],
+                                    "dangling_internal_links": [
+                                        {
+                                            "from": "https://shop.example.com/products/gadget",
+                                            "to": "https://shop.example.com/missing-page"
+                                        }
+                                    ],
+                                    "nodes": [
+                                        {
+                                            "url": "https://shop.example.com/",
+                                            "path": "/",
+                                            "section": "(root)",
+                                            "depth": 0,
+                                            "in_degree": 2,
+                                            "out_degree": 2,
+                                            "role": "home",
+                                            "reachable": true
+                                        },
+                                        {
+                                            "url": "https://shop.example.com/about",
+                                            "path": "/about",
+                                            "section": "about",
+                                            "depth": 1,
+                                            "in_degree": 1,
+                                            "out_degree": 1,
+                                            "role": "normal",
+                                            "reachable": true
+                                        },
+                                        {
+                                            "url": "https://shop.example.com/legacy",
+                                            "path": "/legacy",
+                                            "section": "legacy",
+                                            "depth": null,
+                                            "in_degree": 0,
+                                            "out_degree": 0,
+                                            "role": "orphan",
+                                            "reachable": false
+                                        },
+                                        {
+                                            "url": "https://shop.example.com/products",
+                                            "path": "/products",
+                                            "section": "products",
+                                            "depth": 1,
+                                            "in_degree": 3,
+                                            "out_degree": 3,
+                                            "role": "normal",
+                                            "reachable": true
+                                        },
+                                        {
+                                            "url": "https://shop.example.com/products/gadget",
+                                            "path": "/products/gadget",
+                                            "section": "products",
+                                            "depth": 2,
+                                            "in_degree": 1,
+                                            "out_degree": 1,
+                                            "role": "normal",
+                                            "reachable": true
+                                        },
+                                        {
+                                            "url": "https://shop.example.com/products/widget",
+                                            "path": "/products/widget",
+                                            "section": "products",
+                                            "depth": 2,
+                                            "in_degree": 1,
+                                            "out_degree": 1,
+                                            "role": "normal",
+                                            "reachable": true
+                                        }
+                                    ],
+                                    "edges": [
+                                        {
+                                            "from": "https://shop.example.com/",
+                                            "to": "https://shop.example.com/about"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/",
+                                            "to": "https://shop.example.com/products"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/about",
+                                            "to": "https://shop.example.com/"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/products",
+                                            "to": "https://shop.example.com/"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/products",
+                                            "to": "https://shop.example.com/products/gadget"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/products",
+                                            "to": "https://shop.example.com/products/widget"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/products/gadget",
+                                            "to": "https://shop.example.com/products"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/products/widget",
+                                            "to": "https://shop.example.com/products"
+                                        }
+                                    ],
+                                    "sitemap_diff": {
+                                        "provided": true,
+                                        "missing_from_sitemap": [
+                                            "https://shop.example.com/about",
+                                            "https://shop.example.com/legacy",
+                                            "https://shop.example.com/products/gadget",
+                                            "https://shop.example.com/products/widget"
+                                        ],
+                                        "missing_from_crawl": [
+                                            "https://shop.example.com/contact"
+                                        ]
+                                    },
+                                    "normalization": {
+                                        "ignore_query": false,
+                                        "strip_query_params": []
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "structure": 1,
+                                        "navigation": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "6 page(s), 8 internal link(s); home https://shop.example.com/, max click depth 2.",
+                                        "1 orphan page(s) with no inbound internal links \u2014 add navigation links to them.",
+                                        "1 page(s) unreachable from home \u2014 they cannot be navigated to.",
+                                        "1 dead-end page(s) with no outbound internal links.",
+                                        "1 dangling internal link(s) point to uncrawled/missing pages \u2014 verify they resolve.",
+                                        "Sitemap diff: 1 in sitemap but not crawled, 4 crawled but absent from sitemap."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "scrape-data-pipeline-validator",
+                                            "reason": "Validate the data scraped from these pages against an expected schema."
+                                        },
+                                        {
+                                            "api": "data-lineage-tracker",
+                                            "reason": "Model the crawl/transform steps that consume these pages as a lineage graph."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MapRequest"
+                            },
+                            "example": {
+                                "pages": [
+                                    {
+                                        "url": "https://shop.example.com/",
+                                        "links": [
+                                            "/products",
+                                            "/about",
+                                            "https://twitter.com/shop"
+                                        ]
+                                    },
+                                    {
+                                        "url": "https://shop.example.com/products",
+                                        "links": [
+                                            "/",
+                                            "/products/widget",
+                                            "/products/gadget"
+                                        ]
+                                    },
+                                    {
+                                        "url": "https://shop.example.com/products/widget",
+                                        "links": [
+                                            "/products"
+                                        ]
+                                    },
+                                    {
+                                        "url": "https://shop.example.com/products/gadget",
+                                        "links": [
+                                            "/products",
+                                            "/missing-page"
+                                        ]
+                                    },
+                                    {
+                                        "url": "https://shop.example.com/about",
+                                        "links": [
+                                            "/"
+                                        ]
+                                    },
+                                    {
+                                        "url": "https://shop.example.com/legacy",
+                                        "links": []
+                                    }
+                                ],
+                                "home_url": "https://shop.example.com/",
+                                "sitemap": [
+                                    "https://shop.example.com/",
+                                    "https://shop.example.com/products",
+                                    "https://shop.example.com/contact"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.008,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL structure map + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "wsm-1780000000000",
+                                    "request_id": "wsm-1780000000000",
+                                    "computed_at": "2026-06-15T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "host": "shop.example.com",
+                                    "page_count": 6,
+                                    "internal_link_count": 8,
+                                    "external_link_count": 1,
+                                    "invalid_link_count": 0,
+                                    "home_url": "https://shop.example.com/",
+                                    "home_inferred": false,
+                                    "max_depth": 2,
+                                    "sections": [
+                                        {
+                                            "section": "products",
+                                            "page_count": 3
+                                        },
+                                        {
+                                            "section": "(root)",
+                                            "page_count": 1
+                                        },
+                                        {
+                                            "section": "about",
+                                            "page_count": 1
+                                        },
+                                        {
+                                            "section": "legacy",
+                                            "page_count": 1
+                                        }
+                                    ],
+                                    "orphan_pages": [
+                                        "https://shop.example.com/legacy"
+                                    ],
+                                    "dead_end_pages": [
+                                        "https://shop.example.com/legacy"
+                                    ],
+                                    "hub_pages": [],
+                                    "unreachable_pages": [
+                                        "https://shop.example.com/legacy"
+                                    ],
+                                    "dangling_internal_links": [
+                                        {
+                                            "from": "https://shop.example.com/products/gadget",
+                                            "to": "https://shop.example.com/missing-page"
+                                        }
+                                    ],
+                                    "nodes": [
+                                        {
+                                            "url": "https://shop.example.com/",
+                                            "path": "/",
+                                            "section": "(root)",
+                                            "depth": 0,
+                                            "in_degree": 2,
+                                            "out_degree": 2,
+                                            "role": "home",
+                                            "reachable": true
+                                        },
+                                        {
+                                            "url": "https://shop.example.com/about",
+                                            "path": "/about",
+                                            "section": "about",
+                                            "depth": 1,
+                                            "in_degree": 1,
+                                            "out_degree": 1,
+                                            "role": "normal",
+                                            "reachable": true
+                                        },
+                                        {
+                                            "url": "https://shop.example.com/legacy",
+                                            "path": "/legacy",
+                                            "section": "legacy",
+                                            "depth": null,
+                                            "in_degree": 0,
+                                            "out_degree": 0,
+                                            "role": "orphan",
+                                            "reachable": false
+                                        },
+                                        {
+                                            "url": "https://shop.example.com/products",
+                                            "path": "/products",
+                                            "section": "products",
+                                            "depth": 1,
+                                            "in_degree": 3,
+                                            "out_degree": 3,
+                                            "role": "normal",
+                                            "reachable": true
+                                        },
+                                        {
+                                            "url": "https://shop.example.com/products/gadget",
+                                            "path": "/products/gadget",
+                                            "section": "products",
+                                            "depth": 2,
+                                            "in_degree": 1,
+                                            "out_degree": 1,
+                                            "role": "normal",
+                                            "reachable": true
+                                        },
+                                        {
+                                            "url": "https://shop.example.com/products/widget",
+                                            "path": "/products/widget",
+                                            "section": "products",
+                                            "depth": 2,
+                                            "in_degree": 1,
+                                            "out_degree": 1,
+                                            "role": "normal",
+                                            "reachable": true
+                                        }
+                                    ],
+                                    "edges": [
+                                        {
+                                            "from": "https://shop.example.com/",
+                                            "to": "https://shop.example.com/about"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/",
+                                            "to": "https://shop.example.com/products"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/about",
+                                            "to": "https://shop.example.com/"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/products",
+                                            "to": "https://shop.example.com/"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/products",
+                                            "to": "https://shop.example.com/products/gadget"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/products",
+                                            "to": "https://shop.example.com/products/widget"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/products/gadget",
+                                            "to": "https://shop.example.com/products"
+                                        },
+                                        {
+                                            "from": "https://shop.example.com/products/widget",
+                                            "to": "https://shop.example.com/products"
+                                        }
+                                    ],
+                                    "sitemap_diff": {
+                                        "provided": true,
+                                        "missing_from_sitemap": [
+                                            "https://shop.example.com/about",
+                                            "https://shop.example.com/legacy",
+                                            "https://shop.example.com/products/gadget",
+                                            "https://shop.example.com/products/widget"
+                                        ],
+                                        "missing_from_crawl": [
+                                            "https://shop.example.com/contact"
+                                        ]
+                                    },
+                                    "normalization": {
+                                        "ignore_query": false,
+                                        "strip_query_params": []
+                                    },
+                                    "reasoning": {
+                                        "why_result_generated": "Mapped 6 page(s) and 8 internal link(s) into a navigation graph rooted at https://shop.example.com/.",
+                                        "key_factors": [
+                                            "Sections: products (3), (root) (1), about (1), legacy (1).",
+                                            "Orphans: 1, dead-ends: 1, unreachable: 1, max depth 2.",
+                                            "Sitemap diff: 1 missing-from-crawl, 4 missing-from-sitemap."
+                                        ],
+                                        "invalidators": [
+                                            "The graph is built only from the supplied pages/links; pages or links not provided are invisible \u2014 no live crawling is performed.",
+                                            "Click depth is measured from the supplied home_url over internal links only.",
+                                            "A \"dangling\" internal link points to a same-host URL that is not among the supplied pages \u2014 it may be uncrawled rather than broken (this API does not fetch to confirm).",
+                                            "URLs are normalized by lowercasing host, dropping the fragment, and trimming a trailing slash. Query strings are kept by default; set ignore_query or strip_query_params (e.g. [\"utm_*\"]) to collapse tracking params."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "structure": 1,
+                                        "navigation": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "6 page(s), 8 internal link(s); home https://shop.example.com/, max click depth 2.",
+                                        "1 orphan page(s) with no inbound internal links \u2014 add navigation links to them.",
+                                        "1 page(s) unreachable from home \u2014 they cannot be navigated to.",
+                                        "1 dead-end page(s) with no outbound internal links.",
+                                        "1 dangling internal link(s) point to uncrawled/missing pages \u2014 verify they resolve.",
+                                        "Sitemap diff: 1 in sitemap but not crawled, 4 crawled but absent from sitemap."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "scrape-data-pipeline-validator",
+                                            "reason": "Validate the data scraped from these pages against an expected schema."
+                                        },
+                                        {
+                                            "api": "data-lineage-tracker",
+                                            "reason": "Model the crawl/transform steps that consume these pages as a lineage graph."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MapRequest"
+                            },
+                            "example": {
+                                "pages": [
+                                    {
+                                        "url": "https://shop.example.com/",
+                                        "links": [
+                                            "/products",
+                                            "/about",
+                                            "https://twitter.com/shop"
+                                        ]
+                                    },
+                                    {
+                                        "url": "https://shop.example.com/products",
+                                        "links": [
+                                            "/",
+                                            "/products/widget",
+                                            "/products/gadget"
+                                        ]
+                                    },
+                                    {
+                                        "url": "https://shop.example.com/products/widget",
+                                        "links": [
+                                            "/products"
+                                        ]
+                                    },
+                                    {
+                                        "url": "https://shop.example.com/products/gadget",
+                                        "links": [
+                                            "/products",
+                                            "/missing-page"
+                                        ]
+                                    },
+                                    {
+                                        "url": "https://shop.example.com/about",
+                                        "links": [
+                                            "/"
+                                        ]
+                                    },
+                                    {
+                                        "url": "https://shop.example.com/legacy",
+                                        "links": []
+                                    }
+                                ],
+                                "home_url": "https://shop.example.com/",
+                                "sitemap": [
+                                    "https://shop.example.com/",
+                                    "https://shop.example.com/products",
+                                    "https://shop.example.com/contact"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.014,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "structure": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "navigation": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "NodeInfo": {
+                "type": "object",
+                "required": [
+                    "url",
+                    "path",
+                    "section",
+                    "depth",
+                    "in_degree",
+                    "out_degree",
+                    "role",
+                    "reachable"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "section": {
+                        "type": "string",
+                        "description": "Top-level path segment, or \"(root)\" for the site root."
+                    },
+                    "depth": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ],
+                        "minimum": 0,
+                        "description": "Click depth from home over internal links; null if unreachable from home."
+                    },
+                    "in_degree": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "out_degree": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "home",
+                            "hub",
+                            "orphan",
+                            "dead_end",
+                            "normal"
+                        ]
+                    },
+                    "reachable": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "Edge": {
+                "type": "object",
+                "required": [
+                    "from",
+                    "to"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "from": {
+                        "type": "string"
+                    },
+                    "to": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SectionCount": {
+                "type": "object",
+                "required": [
+                    "section",
+                    "page_count"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "section": {
+                        "type": "string"
+                    },
+                    "page_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "DanglingLink": {
+                "type": "object",
+                "required": [
+                    "from",
+                    "to"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "from": {
+                        "type": "string"
+                    },
+                    "to": {
+                        "type": "string",
+                        "description": "Same-host URL not among the supplied pages."
+                    }
+                }
+            },
+            "SitemapDiff": {
+                "type": "object",
+                "required": [
+                    "provided",
+                    "missing_from_sitemap",
+                    "missing_from_crawl"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "provided": {
+                        "type": "boolean"
+                    },
+                    "missing_from_sitemap": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Crawled pages absent from the declared sitemap."
+                    },
+                    "missing_from_crawl": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Sitemap URLs not present among crawled pages."
+                    }
+                }
+            },
+            "StructureCore": {
+                "type": "object",
+                "required": [
+                    "host",
+                    "page_count",
+                    "internal_link_count",
+                    "external_link_count",
+                    "invalid_link_count",
+                    "home_url",
+                    "home_inferred",
+                    "max_depth",
+                    "sections",
+                    "orphan_pages",
+                    "dead_end_pages",
+                    "hub_pages",
+                    "unreachable_pages",
+                    "dangling_internal_links",
+                    "nodes",
+                    "edges",
+                    "sitemap_diff",
+                    "normalization"
+                ],
+                "properties": {
+                    "host": {
+                        "type": "string"
+                    },
+                    "page_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "internal_link_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "external_link_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "invalid_link_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "home_url": {
+                        "type": "string"
+                    },
+                    "home_inferred": {
+                        "type": "boolean"
+                    },
+                    "max_depth": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "sections": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "section",
+                                "page_count"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "section": {
+                                    "type": "string"
+                                },
+                                "page_count": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                }
+                            }
+                        }
+                    },
+                    "orphan_pages": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "dead_end_pages": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "hub_pages": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "unreachable_pages": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "dangling_internal_links": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "from",
+                                "to"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "from": {
+                                    "type": "string"
+                                },
+                                "to": {
+                                    "type": "string",
+                                    "description": "Same-host URL not among the supplied pages."
+                                }
+                            }
+                        }
+                    },
+                    "nodes": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "url",
+                                "path",
+                                "section",
+                                "depth",
+                                "in_degree",
+                                "out_degree",
+                                "role",
+                                "reachable"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "url": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "section": {
+                                    "type": "string",
+                                    "description": "Top-level path segment, or \"(root)\" for the site root."
+                                },
+                                "depth": {
+                                    "type": [
+                                        "integer",
+                                        "null"
+                                    ],
+                                    "minimum": 0,
+                                    "description": "Click depth from home over internal links; null if unreachable from home."
+                                },
+                                "in_degree": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "out_degree": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "role": {
+                                    "type": "string",
+                                    "enum": [
+                                        "home",
+                                        "hub",
+                                        "orphan",
+                                        "dead_end",
+                                        "normal"
+                                    ]
+                                },
+                                "reachable": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "edges": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "from",
+                                "to"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "from": {
+                                    "type": "string"
+                                },
+                                "to": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "sitemap_diff": {
+                        "type": "object",
+                        "required": [
+                            "provided",
+                            "missing_from_sitemap",
+                            "missing_from_crawl"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "provided": {
+                                "type": "boolean"
+                            },
+                            "missing_from_sitemap": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Crawled pages absent from the declared sitemap."
+                            },
+                            "missing_from_crawl": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Sitemap URLs not present among crawled pages."
+                            }
+                        }
+                    },
+                    "normalization": {
+                        "type": "object",
+                        "required": [
+                            "ignore_query",
+                            "strip_query_params"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "ignore_query": {
+                                "type": "boolean",
+                                "description": "Whether the entire query string was dropped during normalization."
+                            },
+                            "strip_query_params": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Query-param name patterns removed during normalization (trailing \"*\" = prefix match)."
+                            }
+                        }
+                    }
+                }
+            },
+            "PageInput": {
+                "type": "object",
+                "required": [
+                    "url"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "Absolute http(s) page URL."
+                    },
+                    "links": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Outbound link URLs found on the page (absolute or relative to url)."
+                    }
+                }
+            },
+            "MapRequest": {
+                "type": "object",
+                "required": [
+                    "pages"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "pages": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "url"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "url": {
+                                    "type": "string",
+                                    "description": "Absolute http(s) page URL."
+                                },
+                                "links": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "Outbound link URLs found on the page (absolute or relative to url)."
+                                }
+                            }
+                        },
+                        "description": "Crawl manifest: each page with its outbound links."
+                    },
+                    "home_url": {
+                        "type": "string",
+                        "description": "Optional entry/home URL (fixes the depth-0 root). Inferred when omitted."
+                    },
+                    "sitemap": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Optional declared sitemap URLs to diff against the crawl."
+                    },
+                    "hub_min_out_degree": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "Out-degree at/above which a page is labeled a hub (default 5)."
+                    },
+                    "ignore_query": {
+                        "type": "boolean",
+                        "description": "Drop the entire query string when normalizing URLs (default false)."
+                    },
+                    "strip_query_params": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Query-param names to strip during normalization; a trailing \"*\" matches by prefix (e.g. \"utm_*\"). Case-insensitive."
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "MapResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/StructureCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/StructureCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}
