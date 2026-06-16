@@ -62,6 +62,7 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/risk-ratios/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['sharpe_ratio', 'sortino_ratio', 'volatility', 'downside_risk', 'risk_adjusted_return'],
+  typical_use_cases: ['Score a strategy risk-adjusted return with the Sharpe ratio', 'Measure downside-only risk with Sortino vs a target', 'Compare annualized return and volatility across strategies'],
   endpoints: [
     { method: 'POST', path: '/sharpe', summary: 'Sharpe ratio + annualized return/vol', price_usdc: 0.007 },
     { method: 'POST', path: '/sortino', summary: 'Sortino ratio + downside deviation', price_usdc: 0.007 },
@@ -85,7 +86,7 @@ const endpoints: AplusEndpoint[] = [
 export const spec = buildAplusSpec({
   slug: 'risk-ratios', title: 'Sharpe / Sortino Risk Ratios API', version: '1.0.0',
   description: 'Deterministic Sharpe & Sortino ratios from periodic returns — total vs downside risk, annualized return/vol. No LLM.',
-  endpoints, schemas, infoExtensions: { 'x-finance-tool': true, 'x-human-approval-required': false },
+  endpoints, schemas, infoExtensions: { 'x-finance-tool': true, 'x-financial-calculation': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

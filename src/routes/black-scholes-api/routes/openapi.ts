@@ -57,6 +57,7 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/black-scholes/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['option_pricing', 'black_scholes', 'option_greeks', 'derivatives', 'implied_value'],
+  typical_use_cases: ['Price a European option from spot/strike/volatility/rate', 'Derive delta for a hedge ratio', 'Estimate theta decay and vega exposure of a position'],
   endpoints: [
     { method: 'POST', path: '/price', summary: 'Black-Scholes model price + d1/d2', price_usdc: 0.01 },
     { method: 'POST', path: '/greeks', summary: 'Delta, gamma, vega, theta, rho', price_usdc: 0.012 },
@@ -80,7 +81,7 @@ const endpoints: AplusEndpoint[] = [
 export const spec = buildAplusSpec({
   slug: 'black-scholes', title: 'Black-Scholes Option Pricing API', version: '1.0.0',
   description: 'Deterministic Black-Scholes-Merton European option pricing + greeks (continuous dividend yield). Closed-form; model value, not a market quote. No LLM.',
-  endpoints, schemas, infoExtensions: { 'x-finance-tool': true, 'x-human-approval-required': false },
+  endpoints, schemas, infoExtensions: { 'x-finance-tool': true, 'x-financial-calculation': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

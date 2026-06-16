@@ -47,6 +47,7 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/dcf-valuation/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['dcf', 'valuation', 'enterprise_value', 'terminal_value', 'equity_value'],
+  typical_use_cases: ['Value a company from projected free cash flows', 'Derive an implied per-share value net of debt', 'Stress-test enterprise value across discount rates'],
   endpoints: [
     { method: 'POST', path: '/value', summary: 'Enterprise / equity value from projected FCF', price_usdc: 0.01 },
     { method: 'POST', path: '/lookup', summary: 'ONE-CALL valuation + sensitivity + reasoning', price_usdc: 0.016 },
@@ -67,7 +68,7 @@ const endpoints: AplusEndpoint[] = [
 export const spec = buildAplusSpec({
   slug: 'dcf-valuation', title: 'DCF Valuation API', version: '1.0.0',
   description: 'Deterministic DCF valuation — PV of projected free cash flows + optional Gordon terminal value, equity & per-share value, discount-rate sensitivity. No LLM.',
-  endpoints, schemas, infoExtensions: { 'x-finance-tool': true, 'x-human-approval-required': false },
+  endpoints, schemas, infoExtensions: { 'x-finance-tool': true, 'x-financial-calculation': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

@@ -53,6 +53,7 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/npv-irr/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['npv', 'irr', 'cashflow_analysis', 'discounting', 'capital_budgeting'],
+  typical_use_cases: ['Rank capital projects by NPV at the firm cost of capital', 'Compute the IRR of an investment cashflow series', 'Screen a lease-vs-buy or build-vs-defer decision'],
   endpoints: [
     { method: 'POST', path: '/npv', summary: 'Net present value at a per-period rate', price_usdc: 0.006 },
     { method: 'POST', path: '/irr', summary: 'Internal rate of return of a cashflow series', price_usdc: 0.008 },
@@ -76,7 +77,7 @@ const endpoints: AplusEndpoint[] = [
 export const spec = buildAplusSpec({
   slug: 'npv-irr', title: 'NPV / IRR API', version: '1.0.0',
   description: 'Deterministic NPV + IRR for a cashflow series — discount at a per-period rate, or solve the breakeven rate via bracket scan + bisection. No LLM.',
-  endpoints, schemas, infoExtensions: { 'x-finance-tool': true, 'x-human-approval-required': false },
+  endpoints, schemas, infoExtensions: { 'x-finance-tool': true, 'x-financial-calculation': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

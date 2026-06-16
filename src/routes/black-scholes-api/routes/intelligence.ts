@@ -93,6 +93,7 @@ const DISCOVERY = {
   openapi_url: 'https://orbis-apis.onrender.com/black-scholes/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['option_pricing', 'black_scholes', 'option_greeks', 'derivatives', 'implied_value'],
+  typical_use_cases: ['Price a European option from spot/strike/volatility/rate', 'Derive delta for a hedge ratio', 'Estimate theta decay and vega exposure of a position'],
   endpoints: [
     { method: 'POST', path: '/price', summary: 'Black-Scholes model price + d1/d2', price_usdc: 0.01 },
     { method: 'POST', path: '/greeks', summary: 'Delta, gamma, vega, theta, rho', price_usdc: 0.012 },
