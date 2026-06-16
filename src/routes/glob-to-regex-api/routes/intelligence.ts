@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { respond, fail } from '../../_aplus/scaffold';
-import { EXECUTION_METADATA, PRIVACY } from '../../_aplus/util';
+import { PRIVACY } from '../../_aplus/util';
+import { EXECUTION_METADATA_PLUS } from '../../_aplus/specparts-plus';
 
 // Deterministic glob → regular-expression translator & path matcher. /convert
 // translates a shell-style glob (*, **, ?, [..], {a,b}) into an anchored regex
@@ -93,7 +94,10 @@ function build(glob: unknown, optsRaw: any): { error: string } | { core: Convert
   return { core: { glob, regex_source: g.source, regex: anchored, flags, options: po.opts }, re };
 }
 
-const CHAIN_TO = [{ api: 'regex-tester', reason: 'Run or further analyze the generated regular expression against more inputs.' }];
+const CHAIN_TO = [
+  { api: 'regex-tester', reason: 'Statically analyze or run the generated regular expression against more inputs.' },
+  { api: 'url-tools', reason: 'Canonicalize URL paths before matching them against this glob.' },
+];
 const INVALIDATORS = [
   'Translation targets ECMAScript regex and matches a WHOLE path (the regex is anchored ^…$). Supported glob syntax: * (any run of non-slash chars), ** (any chars incl. slash, when globstar is on), ? (one non-slash char), [abc]/[a-z]/[!abc] classes, {a,b,c} brace alternation, and \\ escaping.',
   'The generated regex uses only bounded/possessive-free constructs with no nested unbounded quantifiers, so it cannot exhibit catastrophic backtracking — it is ReDoS-safe by construction.',
@@ -103,14 +107,15 @@ const INVALIDATORS = [
 const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
   confidence_score: 1, confidence_per_section: sectionConf,
   recommended_actions_priority_order: actions,
-  chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
+  chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA_PLUS,
 });
 
 const DISCOVERY = {
   name: 'Glob to Regex API', version: '1.0.0',
-  description: 'Deterministic glob → regular-expression translator & path matcher. /convert translates a shell-style glob (*, **, ?, [..], {a,b}) into an anchored ECMAScript regex; /test reports which supplied paths match. The generated regex is ReDoS-safe by construction. No LLM, nothing stored.',
+  description: 'Deterministic glob → regular-expression translator & path matcher. /convert translates a shell-style glob (*, **, ?, [..], {a,b}) into an anchored ECMAScript regex; /test reports which supplied paths match (batched in one call). The generated regex is ReDoS-safe by construction. No LLM, nothing stored.',
   openapi_url: 'https://orbis-apis.onrender.com/glob-to-regex/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
+  capabilities: ['glob_translation', 'path_matching', 'redos_safe_regex', 'batch_path_match'],
   endpoints: [
     { method: 'POST', path: '/convert', summary: 'Translate a glob into an anchored regex', price_usdc: 0.005 },
     { method: 'POST', path: '/test', summary: 'Match paths against a glob', price_usdc: 0.006 },

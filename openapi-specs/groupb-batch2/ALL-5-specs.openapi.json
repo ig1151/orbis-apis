@@ -45,6 +45,12 @@
                       "type": "apiKey",
                       "header": "X-API-Key"
                     },
+                    "capabilities": [
+                      "color_conversion",
+                      "wcag_contrast",
+                      "accessibility_remediation",
+                      "relative_luminance"
+                    ],
                     "endpoints": [
                       {
                         "method": "POST",
@@ -57,6 +63,12 @@
                         "path": "/contrast",
                         "summary": "WCAG 2.1 contrast ratio + AA/AAA pass/fail",
                         "price_usdc": 0.007
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/suggest-accessible",
+                        "summary": "Recommend an accessible foreground (AA/AAA)",
+                        "price_usdc": 0.009
                       },
                       {
                         "method": "POST",
@@ -74,6 +86,11 @@
                       {
                         "path": "/contrast",
                         "price_usdc": 0.007,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/suggest-accessible",
+                        "price_usdc": 0.009,
                         "currency": "USDC"
                       },
                       {
@@ -157,15 +174,17 @@
                     },
                     "confidence_score": 1,
                     "confidence_per_section": {
+                      "parse": 1,
                       "conversion": 1
                     },
                     "recommended_actions_priority_order": [
-                      "Parsed as hsl; canonical hex #3398db."
+                      "Use the canonical hex #3398db (or any emitted representation).",
+                      "Check contrast against a background via /contrast."
                     ],
                     "chain_to": [
                       {
                         "api": "accessibility-audit-lite-api",
-                        "reason": "Roll this contrast check into a fuller page accessibility audit."
+                        "reason": "Roll this contrast check into a full-page WCAG accessibility audit."
                       }
                     ],
                     "privacy": {
@@ -174,7 +193,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -251,15 +272,17 @@
                     "highest_level": "AA large only",
                     "confidence_score": 1,
                     "confidence_per_section": {
+                      "parse": 1,
                       "contrast": 1
                     },
                     "recommended_actions_priority_order": [
-                      "Contrast 4.48:1 — AA large only."
+                      "Contrast 4.48:1 is below AA normal.",
+                      "Call /suggest-accessible for a compliant foreground."
                     ],
                     "chain_to": [
                       {
                         "api": "accessibility-audit-lite-api",
-                        "reason": "Roll this contrast check into a fuller page accessibility audit."
+                        "reason": "Roll this contrast check into a full-page WCAG accessibility audit."
                       }
                     ],
                     "privacy": {
@@ -268,7 +291,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -312,6 +337,108 @@
           "x-pricing": {
             "model": "per_call",
             "price_usdc": 0.007,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/suggest-accessible": {
+        "post": {
+          "operationId": "suggestAccessible",
+          "summary": "Recommend an accessible foreground (AA/AAA)",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SuggestResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "foreground": "#9bbcd6",
+                    "background": "#ffffff",
+                    "level": "AA",
+                    "text_size": "normal",
+                    "target_ratio": 4.5,
+                    "original_ratio": 1.99,
+                    "meets_target": false,
+                    "adjusted": true,
+                    "direction": "darker",
+                    "recommended_foreground": "#4379a3",
+                    "recommended_ratio": 4.66,
+                    "recommended_meets_target": true,
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "parse": 1,
+                      "contrast": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Adopt #4379a3 (darker) for 4.66:1, meeting AA."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "accessibility-audit-lite-api",
+                        "reason": "Roll this contrast check into a full-page WCAG accessibility audit."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuggestRequest"
+                },
+                "example": {
+                  "foreground": "#9bbcd6",
+                  "background": "#ffffff",
+                  "level": "AA",
+                  "text_size": "normal"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.009,
             "currency": "USDC"
           }
         }
@@ -371,20 +498,23 @@
                       "invalidators": [
                         "Conversions are exact sRGB math. HSL/HSV components are rounded to whole numbers (hue 0–360, sat/light/value 0–100%); the rgb→hex→rgb round trip is lossless but hex→hsl→hex may differ by ±1 due to rounding.",
                         "WCAG contrast uses relative luminance per WCAG 2.1; alpha is ignored for contrast (the ratio assumes fully opaque colors composited on no background). AA normal ≥4.5, AA large ≥3, AAA normal ≥7, AAA large ≥4.5.",
-                        "Only CSS Color Level 4 named colors, hex (#rgb/#rgba/#rrggbb/#rrggbbaa), rgb()/rgba(), and hsl()/hsla() are parsed; lab()/lch()/color() and other functional notations are not supported."
+                        "Only CSS Color Level 4 named colors, hex (#rgb/#rgba/#rrggbb/#rrggbbaa), rgb()/rgba(), and hsl()/hsla() are parsed; lab()/lch()/color() and other functional notations are not supported.",
+                        "/suggest-accessible holds hue+saturation and steps lightness toward black/white in 1% increments; the recommended color is the first that meets the target (or the nearest extreme if none can). It optimizes contrast only — not brand fidelity. recommended_meets_target=false means even pure black/white against this background cannot reach the target."
                       ]
                     },
                     "confidence_score": 1,
                     "confidence_per_section": {
+                      "parse": 1,
                       "conversion": 1
                     },
                     "recommended_actions_priority_order": [
-                      "Parsed as hsl; canonical hex #3398db."
+                      "Use the canonical hex #3398db (or any emitted representation).",
+                      "Check contrast against a background via /contrast."
                     ],
                     "chain_to": [
                       {
                         "api": "accessibility-audit-lite-api",
-                        "reason": "Roll this contrast check into a fuller page accessibility audit."
+                        "reason": "Roll this contrast check into a full-page WCAG accessibility audit."
                       }
                     ],
                     "privacy": {
@@ -393,7 +523,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -536,6 +668,7 @@
           "type": "object",
           "required": [
             "trace_id",
+            "request_id",
             "computed_at",
             "success",
             "latency_ms",
@@ -577,7 +710,8 @@
             "trace_id",
             "computed_at",
             "success",
-            "latency_ms"
+            "latency_ms",
+            "request_id"
           ],
           "properties": {
             "trace_id": {
@@ -607,7 +741,9 @@
           "type": "object",
           "required": [
             "model",
-            "automation_safe"
+            "automation_safe",
+            "side_effects",
+            "estimated_compute_class"
           ],
           "additionalProperties": false,
           "properties": {
@@ -619,6 +755,19 @@
             },
             "automation_safe": {
               "type": "boolean"
+            },
+            "side_effects": {
+              "type": "boolean",
+              "description": "Whether a call mutates external state (always false — pure computation)."
+            },
+            "estimated_compute_class": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Rough CPU cost band for planning."
             }
           }
         },
@@ -626,6 +775,11 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "parse": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
             "conversion": {
               "type": "number",
               "minimum": 0,
@@ -1046,6 +1200,74 @@
             }
           }
         },
+        "SuggestCore": {
+          "type": "object",
+          "required": [
+            "foreground",
+            "background",
+            "level",
+            "text_size",
+            "target_ratio",
+            "original_ratio",
+            "meets_target",
+            "adjusted",
+            "direction",
+            "recommended_foreground",
+            "recommended_ratio",
+            "recommended_meets_target"
+          ],
+          "properties": {
+            "foreground": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "level": {
+              "type": "string",
+              "enum": [
+                "AA",
+                "AAA"
+              ]
+            },
+            "text_size": {
+              "type": "string",
+              "enum": [
+                "normal",
+                "large"
+              ]
+            },
+            "target_ratio": {
+              "type": "number"
+            },
+            "original_ratio": {
+              "type": "number"
+            },
+            "meets_target": {
+              "type": "boolean"
+            },
+            "adjusted": {
+              "type": "boolean"
+            },
+            "direction": {
+              "type": "string",
+              "enum": [
+                "none",
+                "darker",
+                "lighter"
+              ]
+            },
+            "recommended_foreground": {
+              "type": "string"
+            },
+            "recommended_ratio": {
+              "type": "number"
+            },
+            "recommended_meets_target": {
+              "type": "boolean"
+            }
+          }
+        },
         "ConvertRequest": {
           "type": "object",
           "required": [
@@ -1075,6 +1297,38 @@
             }
           }
         },
+        "SuggestRequest": {
+          "type": "object",
+          "required": [
+            "foreground",
+            "background"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "foreground": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "level": {
+              "type": "string",
+              "enum": [
+                "AA",
+                "AAA"
+              ],
+              "description": "WCAG target level (default AA)."
+            },
+            "text_size": {
+              "type": "string",
+              "enum": [
+                "normal",
+                "large"
+              ],
+              "description": "Text size class (default normal)."
+            }
+          }
+        },
         "DiscoveryResponse": {
           "type": "object",
           "required": [
@@ -1085,7 +1339,8 @@
             "auth",
             "endpoints",
             "pricing",
-            "x402_compatible"
+            "x402_compatible",
+            "capabilities"
           ],
           "additionalProperties": false,
           "properties": {
@@ -1173,6 +1428,13 @@
             },
             "x402_compatible": {
               "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
             }
           }
         },
@@ -1197,6 +1459,20 @@
             },
             {
               "$ref": "#/components/schemas/ContrastCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "SuggestResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/SuggestCore"
             },
             {
               "$ref": "#/components/schemas/_Tail"
@@ -1278,6 +1554,12 @@
                       "type": "apiKey",
                       "header": "X-API-Key"
                     },
+                    "capabilities": [
+                      "case_conversion",
+                      "case_detection",
+                      "string_tokenization",
+                      "schema_key_normalization"
+                    ],
                     "endpoints": [
                       {
                         "method": "POST",
@@ -1290,6 +1572,12 @@
                         "path": "/detect",
                         "summary": "Detect source case + emit all cases",
                         "price_usdc": 0.005
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/normalize-keys",
+                        "summary": "Recursively re-case all keys of a JSON object",
+                        "price_usdc": 0.008
                       },
                       {
                         "method": "POST",
@@ -1307,6 +1595,11 @@
                       {
                         "path": "/detect",
                         "price_usdc": 0.005,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/normalize-keys",
+                        "price_usdc": 0.008,
                         "currency": "USDC"
                       },
                       {
@@ -1372,16 +1665,26 @@
                     "detected_case": "pascal",
                     "confidence_score": 1,
                     "confidence_per_section": {
+                      "tokenization": 1,
                       "conversion": 1,
                       "detection": 0.9
                     },
                     "recommended_actions_priority_order": [
-                      "Converted to snake: \"xml_http_request\"."
+                      "Apply \"xml_http_request\" as the snake-cased identifier.",
+                      "Use /normalize-keys to re-case an entire object the same way."
                     ],
                     "chain_to": [
                       {
-                        "api": "semver-tools",
-                        "reason": "Normalize and compare version identifiers after casing field names."
+                        "api": "data-mapper",
+                        "reason": "Remap records onto the freshly re-cased field names."
+                      },
+                      {
+                        "api": "json-schema-validator",
+                        "reason": "Validate the re-cased object against a target JSON Schema."
+                      },
+                      {
+                        "api": "jsonpath",
+                        "reason": "Query the normalized object by the new key names."
                       }
                     ],
                     "privacy": {
@@ -1390,7 +1693,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -1478,16 +1783,25 @@
                     },
                     "confidence_score": 0.9,
                     "confidence_per_section": {
-                      "detection": 0.9,
-                      "conversion": 1
+                      "tokenization": 1,
+                      "conversion": 1,
+                      "detection": 0.9
                     },
                     "recommended_actions_priority_order": [
-                      "Detected source case: snake."
+                      "Pick the target case from all_cases (detected source: snake)."
                     ],
                     "chain_to": [
                       {
-                        "api": "semver-tools",
-                        "reason": "Normalize and compare version identifiers after casing field names."
+                        "api": "data-mapper",
+                        "reason": "Remap records onto the freshly re-cased field names."
+                      },
+                      {
+                        "api": "json-schema-validator",
+                        "reason": "Validate the re-cased object against a target JSON Schema."
+                      },
+                      {
+                        "api": "jsonpath",
+                        "reason": "Query the normalized object by the new key names."
                       }
                     ],
                     "privacy": {
@@ -1496,7 +1810,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -1539,6 +1855,129 @@
           "x-pricing": {
             "model": "per_call",
             "price_usdc": 0.005,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/normalize-keys": {
+        "post": {
+          "operationId": "normalizeKeys",
+          "summary": "Recursively re-case all keys of a JSON object",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/NormalizeKeysResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "to": "snake",
+                    "normalized": {
+                      "user_id": 1,
+                      "shipping_address": {
+                        "zip_code": "94103",
+                        "country_code": "US"
+                      },
+                      "line_items": [
+                        {
+                          "product_id": "a"
+                        }
+                      ]
+                    },
+                    "keys_renamed": 6,
+                    "collisions": [],
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "tokenization": 1,
+                      "conversion": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Re-cased 6 key(s) to snake.",
+                      "Pass the normalized object to data-mapper or a schema validator."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "data-mapper",
+                        "reason": "Remap records onto the freshly re-cased field names."
+                      },
+                      {
+                        "api": "json-schema-validator",
+                        "reason": "Validate the re-cased object against a target JSON Schema."
+                      },
+                      {
+                        "api": "jsonpath",
+                        "reason": "Query the normalized object by the new key names."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NormalizeKeysRequest"
+                },
+                "example": {
+                  "value": {
+                    "userId": 1,
+                    "ShippingAddress": {
+                      "zipCode": "94103",
+                      "CountryCode": "US"
+                    },
+                    "lineItems": [
+                      {
+                        "ProductId": "a"
+                      }
+                    ]
+                  },
+                  "to": "snake"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.008,
             "currency": "USDC"
           }
         }
@@ -1590,21 +2029,32 @@
                       "invalidators": [
                         "Tokenization breaks on separators (_ - . / whitespace and other non-alphanumerics) and on camelCase, acronym (HTTPServer→HTTP Server), and letter↔digit boundaries; the conversion of those tokens into the target case is exact and reversible up to separator/casing loss.",
                         "Source-case \"detection\" is a structural heuristic (which separators/capitalization are present); ambiguous inputs (e.g. a single all-lowercase word, or a string with no separators) may report a plausible-but-debatable case. The token split and the converted output are NOT heuristic.",
-                        "Original separators are not preserved: converting \"a.b-c\" to snake yields \"a_b_c\". Round-tripping is exact only within a single separator convention."
+                        "Original separators are not preserved: converting \"a.b-c\" to snake yields \"a_b_c\". Round-tripping is exact only within a single separator convention.",
+                        "/normalize-keys re-cases OBJECT KEYS only (recursively); array order and all scalar/values are preserved. When two distinct keys collapse to the same cased key the last one wins and the key is reported in \"collisions\"."
                       ]
                     },
                     "confidence_score": 1,
                     "confidence_per_section": {
-                      "detection": 0.9,
-                      "conversion": 1
+                      "tokenization": 1,
+                      "conversion": 1,
+                      "detection": 0.9
                     },
                     "recommended_actions_priority_order": [
-                      "Tokenized into 3 token(s); emitted all 11 cases."
+                      "Pick the target case from all_cases.",
+                      "Use /normalize-keys to apply it across an entire object."
                     ],
                     "chain_to": [
                       {
-                        "api": "semver-tools",
-                        "reason": "Normalize and compare version identifiers after casing field names."
+                        "api": "data-mapper",
+                        "reason": "Remap records onto the freshly re-cased field names."
+                      },
+                      {
+                        "api": "json-schema-validator",
+                        "reason": "Validate the re-cased object against a target JSON Schema."
+                      },
+                      {
+                        "api": "jsonpath",
+                        "reason": "Query the normalized object by the new key names."
                       }
                     ],
                     "privacy": {
@@ -1613,7 +2063,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -1756,6 +2208,7 @@
           "type": "object",
           "required": [
             "trace_id",
+            "request_id",
             "computed_at",
             "success",
             "latency_ms",
@@ -1797,7 +2250,8 @@
             "trace_id",
             "computed_at",
             "success",
-            "latency_ms"
+            "latency_ms",
+            "request_id"
           ],
           "properties": {
             "trace_id": {
@@ -1827,7 +2281,9 @@
           "type": "object",
           "required": [
             "model",
-            "automation_safe"
+            "automation_safe",
+            "side_effects",
+            "estimated_compute_class"
           ],
           "additionalProperties": false,
           "properties": {
@@ -1839,6 +2295,19 @@
             },
             "automation_safe": {
               "type": "boolean"
+            },
+            "side_effects": {
+              "type": "boolean",
+              "description": "Whether a call mutates external state (always false — pure computation)."
+            },
+            "estimated_compute_class": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Rough CPU cost band for planning."
             }
           }
         },
@@ -1846,6 +2315,11 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
+            "tokenization": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
             "conversion": {
               "type": "number",
               "minimum": 0,
@@ -2067,6 +2541,55 @@
             }
           }
         },
+        "NormalizeKeysCore": {
+          "type": "object",
+          "required": [
+            "to",
+            "normalized",
+            "keys_renamed",
+            "collisions"
+          ],
+          "properties": {
+            "to": {
+              "type": "string",
+              "enum": [
+                "camel",
+                "pascal",
+                "snake",
+                "kebab",
+                "constant",
+                "dot",
+                "path",
+                "title",
+                "sentence",
+                "lower",
+                "upper"
+              ]
+            },
+            "normalized": {
+              "description": "The input with every object key re-cased.",
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null",
+                "array",
+                "object"
+              ]
+            },
+            "keys_renamed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "collisions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Cased keys that two source keys collapsed onto (last value won)."
+            }
+          }
+        },
         "ConvertRequest": {
           "type": "object",
           "required": [
@@ -2111,6 +2634,44 @@
             }
           }
         },
+        "NormalizeKeysRequest": {
+          "type": "object",
+          "required": [
+            "value",
+            "to"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "value": {
+              "description": "Any JSON value; object keys are re-cased recursively.",
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null",
+                "array",
+                "object"
+              ]
+            },
+            "to": {
+              "type": "string",
+              "enum": [
+                "camel",
+                "pascal",
+                "snake",
+                "kebab",
+                "constant",
+                "dot",
+                "path",
+                "title",
+                "sentence",
+                "lower",
+                "upper"
+              ],
+              "description": "Target case for keys."
+            }
+          }
+        },
         "DiscoveryResponse": {
           "type": "object",
           "required": [
@@ -2121,7 +2682,8 @@
             "auth",
             "endpoints",
             "pricing",
-            "x402_compatible"
+            "x402_compatible",
+            "capabilities"
           ],
           "additionalProperties": false,
           "properties": {
@@ -2209,6 +2771,13 @@
             },
             "x402_compatible": {
               "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
             }
           }
         },
@@ -2233,6 +2802,20 @@
             },
             {
               "$ref": "#/components/schemas/DetectCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "NormalizeKeysResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/NormalizeKeysCore"
             },
             {
               "$ref": "#/components/schemas/_Tail"
@@ -2314,6 +2897,12 @@
                       "type": "apiKey",
                       "header": "X-API-Key"
                     },
+                    "capabilities": [
+                      "url_parsing",
+                      "url_building",
+                      "query_string_expansion",
+                      "url_canonicalization"
+                    ],
                     "endpoints": [
                       {
                         "method": "POST",
@@ -2326,6 +2915,12 @@
                         "path": "/build",
                         "summary": "Assemble a URL from components",
                         "price_usdc": 0.006
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/canonicalize",
+                        "summary": "Report exact canonicalization steps",
+                        "price_usdc": 0.007
                       },
                       {
                         "method": "POST",
@@ -2343,6 +2938,11 @@
                       {
                         "path": "/build",
                         "price_usdc": 0.006,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/canonicalize",
+                        "price_usdc": 0.007,
                         "currency": "USDC"
                       },
                       {
@@ -2425,15 +3025,21 @@
                     "normalized": "https://user:pw@example.com/a//b?a=1&a=3&z=2#frag",
                     "confidence_score": 1,
                     "confidence_per_section": {
-                      "parse": 1
+                      "parse": 1,
+                      "normalization": 1
                     },
                     "recommended_actions_priority_order": [
-                      "Parsed https://example.com/a//b with 2 query key(s)."
+                      "Read components of https://example.com/a//b (2 query key(s)).",
+                      "Use /canonicalize to dedupe against other URLs."
                     ],
                     "chain_to": [
                       {
                         "api": "web-content-type-classifier",
-                        "reason": "Classify the resource a built/parsed URL points to."
+                        "reason": "Classify the resource a parsed/built URL points to."
+                      },
+                      {
+                        "api": "glob-to-regex",
+                        "reason": "Match canonicalized paths against a route/glob pattern."
                       }
                     ],
                     "privacy": {
@@ -2442,7 +3048,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -2538,12 +3146,16 @@
                       "build": 1
                     },
                     "recommended_actions_priority_order": [
-                      "Built https://api.example.com/v1/search?q=agent+native&page=2&tag=a&tag=b."
+                      "Use the built URL https://api.example.com/v1/search?q=agent+native&page=2&tag=a&tag=b."
                     ],
                     "chain_to": [
                       {
                         "api": "web-content-type-classifier",
-                        "reason": "Classify the resource a built/parsed URL points to."
+                        "reason": "Classify the resource a parsed/built URL points to."
+                      },
+                      {
+                        "api": "glob-to-regex",
+                        "reason": "Match canonicalized paths against a route/glob pattern."
                       }
                     ],
                     "privacy": {
@@ -2552,7 +3164,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -2605,6 +3219,106 @@
           "x-pricing": {
             "model": "per_call",
             "price_usdc": 0.006,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/canonicalize": {
+        "post": {
+          "operationId": "canonicalize",
+          "summary": "Report exact canonicalization steps",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CanonicalizeResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "input": "https://Example.com:443/path?b=2&a=1",
+                    "parsed_href": "https://example.com/path?b=2&a=1",
+                    "normalized": "https://example.com/path?a=1&b=2",
+                    "canonicalization_needed": true,
+                    "changes": [
+                      "host_lowercased",
+                      "query_sorted"
+                    ],
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "parse": 1,
+                      "normalization": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Store/compare by the canonical form https://example.com/path?a=1&b=2 (changes: host_lowercased, query_sorted).",
+                      "Two URLs with the same canonical form are duplicates."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "web-content-type-classifier",
+                        "reason": "Classify the resource a parsed/built URL points to."
+                      },
+                      {
+                        "api": "glob-to-regex",
+                        "reason": "Match canonicalized paths against a route/glob pattern."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CanonicalizeRequest"
+                },
+                "example": {
+                  "url": "https://Example.com:443/path?b=2&a=1"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.007,
             "currency": "USDC"
           }
         }
@@ -2663,20 +3377,26 @@
                       "invalidators": [
                         "Parsing follows the WHATWG URL Standard (the same parser browsers use); component values are exact. Relative URLs require a \"base\" to resolve.",
                         "The query object collapses a single occurrence of a key to a string and multiple occurrences to an array — order within an array is preserved, but two semantically different encodings (e.g. \"a=1&a=2\" vs \"a[]=1&a[]=2\") are NOT unified.",
-                        "Normalization lowercases scheme+host (per the URL spec), drops the protocol default port, sorts query params by key then value, and trims an empty \"?\"/\"#\". It does NOT collapse \".\" / \"..\" path segments beyond what the URL parser already resolves, nor change path case or percent-encoding — so it is a conservative canonical form, not an aggressive one."
+                        "Normalization lowercases scheme+host (per the URL spec), drops the protocol default port, sorts query params by key then value, and trims an empty \"?\"/\"#\". It does NOT collapse \".\" / \"..\" path segments beyond what the URL parser already resolves, nor change path case or percent-encoding — so it is a conservative canonical form, not an aggressive one.",
+                        "/canonicalize reports the exact transformation steps in \"changes\" and a single canonicalization_needed boolean. It deliberately emits NO heuristic \"quality\" or \"duplicate-risk\" score — those would be fabricated; equivalence is decided by exact string comparison of the canonical form."
                       ]
                     },
                     "confidence_score": 1,
                     "confidence_per_section": {
-                      "parse": 1
+                      "parse": 1,
+                      "normalization": 1
                     },
                     "recommended_actions_priority_order": [
-                      "Normalized to https://user:pw@example.com/a//b?a=1&a=3&z=2#frag."
+                      "Use components for routing; store https://user:pw@example.com/a//b?a=1&a=3&z=2#frag as the canonical/dedup key."
                     ],
                     "chain_to": [
                       {
                         "api": "web-content-type-classifier",
-                        "reason": "Classify the resource a built/parsed URL points to."
+                        "reason": "Classify the resource a parsed/built URL points to."
+                      },
+                      {
+                        "api": "glob-to-regex",
+                        "reason": "Match canonicalized paths against a route/glob pattern."
                       }
                     ],
                     "privacy": {
@@ -2685,7 +3405,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -2828,6 +3550,7 @@
           "type": "object",
           "required": [
             "trace_id",
+            "request_id",
             "computed_at",
             "success",
             "latency_ms",
@@ -2869,7 +3592,8 @@
             "trace_id",
             "computed_at",
             "success",
-            "latency_ms"
+            "latency_ms",
+            "request_id"
           ],
           "properties": {
             "trace_id": {
@@ -2899,7 +3623,9 @@
           "type": "object",
           "required": [
             "model",
-            "automation_safe"
+            "automation_safe",
+            "side_effects",
+            "estimated_compute_class"
           ],
           "additionalProperties": false,
           "properties": {
@@ -2911,6 +3637,19 @@
             },
             "automation_safe": {
               "type": "boolean"
+            },
+            "side_effects": {
+              "type": "boolean",
+              "description": "Whether a call mutates external state (always false — pure computation)."
+            },
+            "estimated_compute_class": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Rough CPU cost band for planning."
             }
           }
         },
@@ -2924,6 +3663,11 @@
               "maximum": 1
             },
             "build": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "normalization": {
               "type": "number",
               "minimum": 0,
               "maximum": 1
@@ -3226,6 +3970,46 @@
             }
           }
         },
+        "CanonicalizeCore": {
+          "type": "object",
+          "required": [
+            "input",
+            "parsed_href",
+            "normalized",
+            "canonicalization_needed",
+            "changes"
+          ],
+          "properties": {
+            "input": {
+              "type": "string"
+            },
+            "parsed_href": {
+              "type": "string",
+              "description": "The URL as parsed by the WHATWG parser."
+            },
+            "normalized": {
+              "type": "string",
+              "description": "The conservative canonical form (use as a dedup key)."
+            },
+            "canonicalization_needed": {
+              "type": "boolean",
+              "description": "True when the canonical form differs from the raw input."
+            },
+            "changes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "host_lowercased",
+                  "default_port_removed",
+                  "query_sorted",
+                  "parser_normalized"
+                ]
+              },
+              "description": "Exact transformation steps that altered the URL."
+            }
+          }
+        },
         "ParseRequest": {
           "type": "object",
           "required": [
@@ -3296,6 +4080,23 @@
             }
           }
         },
+        "CanonicalizeRequest": {
+          "type": "object",
+          "required": [
+            "url"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "maxLength": 8192
+            },
+            "base": {
+              "type": "string",
+              "description": "Base URL to resolve a relative \"url\" against."
+            }
+          }
+        },
         "DiscoveryResponse": {
           "type": "object",
           "required": [
@@ -3306,7 +4107,8 @@
             "auth",
             "endpoints",
             "pricing",
-            "x402_compatible"
+            "x402_compatible",
+            "capabilities"
           ],
           "additionalProperties": false,
           "properties": {
@@ -3394,6 +4196,13 @@
             },
             "x402_compatible": {
               "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
             }
           }
         },
@@ -3418,6 +4227,20 @@
             },
             {
               "$ref": "#/components/schemas/BuildCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "CanonicalizeResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/CanonicalizeCore"
             },
             {
               "$ref": "#/components/schemas/_Tail"
@@ -3499,6 +4322,12 @@
                       "type": "apiKey",
                       "header": "X-API-Key"
                     },
+                    "capabilities": [
+                      "glob_translation",
+                      "path_matching",
+                      "redos_safe_regex",
+                      "batch_path_match"
+                    ],
                     "endpoints": [
                       {
                         "method": "POST",
@@ -3600,7 +4429,11 @@
                     "chain_to": [
                       {
                         "api": "regex-tester",
-                        "reason": "Run or further analyze the generated regular expression against more inputs."
+                        "reason": "Statically analyze or run the generated regular expression against more inputs."
+                      },
+                      {
+                        "api": "url-tools",
+                        "reason": "Canonicalize URL paths before matching them against this glob."
                       }
                     ],
                     "privacy": {
@@ -3609,7 +4442,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -3712,7 +4547,11 @@
                     "chain_to": [
                       {
                         "api": "regex-tester",
-                        "reason": "Run or further analyze the generated regular expression against more inputs."
+                        "reason": "Statically analyze or run the generated regular expression against more inputs."
+                      },
+                      {
+                        "api": "url-tools",
+                        "reason": "Canonicalize URL paths before matching them against this glob."
                       }
                     ],
                     "privacy": {
@@ -3721,7 +4560,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -3843,7 +4684,11 @@
                     "chain_to": [
                       {
                         "api": "regex-tester",
-                        "reason": "Run or further analyze the generated regular expression against more inputs."
+                        "reason": "Statically analyze or run the generated regular expression against more inputs."
+                      },
+                      {
+                        "api": "url-tools",
+                        "reason": "Canonicalize URL paths before matching them against this glob."
                       }
                     ],
                     "privacy": {
@@ -3852,7 +4697,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -4001,6 +4848,7 @@
           "type": "object",
           "required": [
             "trace_id",
+            "request_id",
             "computed_at",
             "success",
             "latency_ms",
@@ -4042,7 +4890,8 @@
             "trace_id",
             "computed_at",
             "success",
-            "latency_ms"
+            "latency_ms",
+            "request_id"
           ],
           "properties": {
             "trace_id": {
@@ -4072,7 +4921,9 @@
           "type": "object",
           "required": [
             "model",
-            "automation_safe"
+            "automation_safe",
+            "side_effects",
+            "estimated_compute_class"
           ],
           "additionalProperties": false,
           "properties": {
@@ -4084,6 +4935,19 @@
             },
             "automation_safe": {
               "type": "boolean"
+            },
+            "side_effects": {
+              "type": "boolean",
+              "description": "Whether a call mutates external state (always false — pure computation)."
+            },
+            "estimated_compute_class": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Rough CPU cost band for planning."
             }
           }
         },
@@ -4370,7 +5234,8 @@
             "auth",
             "endpoints",
             "pricing",
-            "x402_compatible"
+            "x402_compatible",
+            "capabilities"
           ],
           "additionalProperties": false,
           "properties": {
@@ -4458,6 +5323,13 @@
             },
             "x402_compatible": {
               "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
             }
           }
         },
@@ -4563,6 +5435,13 @@
                       "type": "apiKey",
                       "header": "X-API-Key"
                     },
+                    "capabilities": [
+                      "json_query",
+                      "json_extraction",
+                      "json_navigation",
+                      "batch_query",
+                      "path_resolution"
+                    ],
                     "endpoints": [
                       {
                         "method": "POST",
@@ -4575,6 +5454,12 @@
                         "path": "/value",
                         "summary": "First match value (or null)",
                         "price_usdc": 0.006
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/batch",
+                        "summary": "Evaluate many JSONPaths in one call",
+                        "price_usdc": 0.013
                       },
                       {
                         "method": "POST",
@@ -4592,6 +5477,11 @@
                       {
                         "path": "/value",
                         "price_usdc": 0.006,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/batch",
+                        "price_usdc": 0.013,
                         "currency": "USDC"
                       },
                       {
@@ -4660,19 +5550,27 @@
                     ],
                     "confidence_score": 1,
                     "confidence_per_section": {
-                      "query": 1
+                      "parse": 1,
+                      "evaluation": 1,
+                      "path_resolution": 1
                     },
                     "recommended_actions_priority_order": [
-                      "2 match(es) for $.store.book[*].title."
+                      "Extract the 2 matched value(s) for downstream use.",
+                      "Resolve a match path (e.g. $['store']['book'][0]['title']) via json-pointer for exact read/write.",
+                      "Validate the extracted values against a JSON Schema before passing them on."
                     ],
                     "chain_to": [
                       {
                         "api": "json-pointer",
-                        "reason": "Resolve a single matched path as an exact RFC 6901 pointer."
+                        "reason": "Resolve a matched path as an exact RFC 6901 pointer before reading or writing it."
                       },
                       {
                         "api": "json-patch",
-                        "reason": "Apply an RFC 6902 patch at a located path."
+                        "reason": "Apply an RFC 6902 add/replace/remove at a located path to mutate the document."
+                      },
+                      {
+                        "api": "json-schema-validator",
+                        "reason": "Validate the extracted values against a JSON Schema before passing them downstream."
                       }
                     ],
                     "privacy": {
@@ -4681,7 +5579,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -4767,19 +5667,26 @@
                     "match_count": 1,
                     "confidence_score": 1,
                     "confidence_per_section": {
-                      "query": 1
+                      "parse": 1,
+                      "evaluation": 1,
+                      "path_resolution": 1
                     },
                     "recommended_actions_priority_order": [
-                      "First match at $['store']['book'][1]['title']."
+                      "Use the value at $['store']['book'][1]['title'].",
+                      "Resolve that path via json-pointer for exact read/write."
                     ],
                     "chain_to": [
                       {
                         "api": "json-pointer",
-                        "reason": "Resolve a single matched path as an exact RFC 6901 pointer."
+                        "reason": "Resolve a matched path as an exact RFC 6901 pointer before reading or writing it."
                       },
                       {
                         "api": "json-patch",
-                        "reason": "Apply an RFC 6902 patch at a located path."
+                        "reason": "Apply an RFC 6902 add/replace/remove at a located path to mutate the document."
+                      },
+                      {
+                        "api": "json-schema-validator",
+                        "reason": "Validate the extracted values against a JSON Schema before passing them downstream."
                       }
                     ],
                     "privacy": {
@@ -4788,7 +5695,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -4849,6 +5758,162 @@
           }
         }
       },
+      "/batch": {
+        "post": {
+          "operationId": "batch",
+          "summary": "Evaluate many JSONPaths in one call",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "document_evaluated": true,
+                    "query_count": 3,
+                    "total_matches": 4,
+                    "results": [
+                      {
+                        "path": "$.store.book[*].title",
+                        "match_count": 2,
+                        "matches": [
+                          {
+                            "path": "$['store']['book'][0]['title']",
+                            "value": "A"
+                          },
+                          {
+                            "path": "$['store']['book'][1]['title']",
+                            "value": "B"
+                          }
+                        ],
+                        "error": null
+                      },
+                      {
+                        "path": "$.store.book[*].price",
+                        "match_count": 2,
+                        "matches": [
+                          {
+                            "path": "$['store']['book'][0]['price']",
+                            "value": 8
+                          },
+                          {
+                            "path": "$['store']['book'][1]['price']",
+                            "value": 12
+                          }
+                        ],
+                        "error": null
+                      },
+                      {
+                        "path": "$.store.missing",
+                        "match_count": 0,
+                        "matches": [],
+                        "error": null
+                      }
+                    ],
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "parse": 1,
+                      "evaluation": 1,
+                      "path_resolution": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Collected 4 match(es) across 3 path(s) in one call.",
+                      "Extract per-path values and route them to downstream steps."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "json-pointer",
+                        "reason": "Resolve a matched path as an exact RFC 6901 pointer before reading or writing it."
+                      },
+                      {
+                        "api": "json-patch",
+                        "reason": "Apply an RFC 6902 add/replace/remove at a located path to mutate the document."
+                      },
+                      {
+                        "api": "json-schema-validator",
+                        "reason": "Validate the extracted values against a JSON Schema before passing them downstream."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchRequest"
+                },
+                "example": {
+                  "document": {
+                    "store": {
+                      "book": [
+                        {
+                          "title": "A",
+                          "price": 8
+                        },
+                        {
+                          "title": "B",
+                          "price": 12
+                        }
+                      ]
+                    }
+                  },
+                  "paths": [
+                    "$.store.book[*].title",
+                    "$.store.book[*].price",
+                    "$.store.missing"
+                  ]
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.013,
+            "currency": "USDC"
+          }
+        }
+      },
       "/lookup": {
         "post": {
           "operationId": "lookup",
@@ -4889,24 +5954,33 @@
                         "Supported JSONPath subset: $ (root), .name and ['name'] (child), * and [*] (wildcard), .. (recursive descent), [n] (index, negative allowed), [start:end:step] (slice, Python-style, negative/step), and unions [0,2] / ['a','b']. Evaluation is exact within this subset.",
                         "NOT supported: filter expressions [?(@.price<10)], script expressions [(...)], and current-node (@) references. Such a path is rejected with a parse error rather than silently mis-evaluated.",
                         "Match ORDER follows document order (object keys in insertion order, array indices ascending); recursive descent visits a node before its children. Unions preserve the order written. Duplicate matches from overlapping unions are NOT de-duplicated.",
-                        "Matched paths are emitted in normalized bracket form ($['a'][0]); object keys are quoted, array indices are bracketed integers."
+                        "Matched paths are emitted in normalized bracket form ($['a'][0]); object keys are quoted, array indices are bracketed integers.",
+                        "/batch evaluates many paths against ONE document in a single paid call; a path that fails to parse/evaluate is returned with its \"error\" set and empty matches — it never fails the whole batch."
                       ]
                     },
                     "confidence_score": 1,
                     "confidence_per_section": {
-                      "query": 1
+                      "parse": 1,
+                      "evaluation": 1,
+                      "path_resolution": 1
                     },
                     "recommended_actions_priority_order": [
-                      "2 match(es) for $.store.book[*].title."
+                      "Extract the 2 matched value(s) for downstream use.",
+                      "Resolve a match path (e.g. $['store']['book'][0]['title']) via json-pointer for exact read/write.",
+                      "Validate the extracted values against a JSON Schema before passing them on."
                     ],
                     "chain_to": [
                       {
                         "api": "json-pointer",
-                        "reason": "Resolve a single matched path as an exact RFC 6901 pointer."
+                        "reason": "Resolve a matched path as an exact RFC 6901 pointer before reading or writing it."
                       },
                       {
                         "api": "json-patch",
-                        "reason": "Apply an RFC 6902 patch at a located path."
+                        "reason": "Apply an RFC 6902 add/replace/remove at a located path to mutate the document."
+                      },
+                      {
+                        "api": "json-schema-validator",
+                        "reason": "Validate the extracted values against a JSON Schema before passing them downstream."
                       }
                     ],
                     "privacy": {
@@ -4915,7 +5989,9 @@
                     },
                     "execution_metadata": {
                       "model": "deterministic",
-                      "automation_safe": true
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
                     }
                   }
                 }
@@ -5072,6 +6148,7 @@
           "type": "object",
           "required": [
             "trace_id",
+            "request_id",
             "computed_at",
             "success",
             "latency_ms",
@@ -5113,7 +6190,8 @@
             "trace_id",
             "computed_at",
             "success",
-            "latency_ms"
+            "latency_ms",
+            "request_id"
           ],
           "properties": {
             "trace_id": {
@@ -5143,7 +6221,9 @@
           "type": "object",
           "required": [
             "model",
-            "automation_safe"
+            "automation_safe",
+            "side_effects",
+            "estimated_compute_class"
           ],
           "additionalProperties": false,
           "properties": {
@@ -5155,6 +6235,19 @@
             },
             "automation_safe": {
               "type": "boolean"
+            },
+            "side_effects": {
+              "type": "boolean",
+              "description": "Whether a call mutates external state (always false — pure computation)."
+            },
+            "estimated_compute_class": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Rough CPU cost band for planning."
             }
           }
         },
@@ -5162,7 +6255,17 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "query": {
+            "parse": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "evaluation": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "path_resolution": {
               "type": "number",
               "minimum": 0,
               "maximum": 1
@@ -5318,6 +6421,139 @@
             }
           }
         },
+        "BatchItem": {
+          "type": "object",
+          "required": [
+            "path",
+            "match_count",
+            "matches",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "match_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "matches": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "value"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "description": "Normalized bracket path of the match, e.g. $['a'][0]."
+                  },
+                  "value": {
+                    "description": "The matched value.",
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "null",
+                      "array",
+                      "object"
+                    ]
+                  }
+                }
+              }
+            },
+            "error": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Parse/eval error for this path, or null."
+            }
+          }
+        },
+        "BatchCore": {
+          "type": "object",
+          "required": [
+            "document_evaluated",
+            "query_count",
+            "total_matches",
+            "results"
+          ],
+          "properties": {
+            "document_evaluated": {
+              "type": "boolean"
+            },
+            "query_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "total_matches": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "match_count",
+                  "matches",
+                  "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "match_count": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "matches": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "path",
+                        "value"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "description": "Normalized bracket path of the match, e.g. $['a'][0]."
+                        },
+                        "value": {
+                          "description": "The matched value.",
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "error": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Parse/eval error for this path, or null."
+                  }
+                }
+              }
+            }
+          }
+        },
         "QueryRequest": {
           "type": "object",
           "required": [
@@ -5345,6 +6581,38 @@
             }
           }
         },
+        "BatchRequest": {
+          "type": "object",
+          "required": [
+            "document",
+            "paths"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "document": {
+              "description": "Any JSON document to query.",
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null",
+                "array",
+                "object"
+              ]
+            },
+            "paths": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 100,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              },
+              "description": "JSONPath expressions to evaluate against the same document."
+            }
+          }
+        },
         "DiscoveryResponse": {
           "type": "object",
           "required": [
@@ -5355,7 +6623,8 @@
             "auth",
             "endpoints",
             "pricing",
-            "x402_compatible"
+            "x402_compatible",
+            "capabilities"
           ],
           "additionalProperties": false,
           "properties": {
@@ -5443,6 +6712,13 @@
             },
             "x402_compatible": {
               "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
             }
           }
         },
@@ -5467,6 +6743,20 @@
             },
             {
               "$ref": "#/components/schemas/ValueCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "BatchResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/BatchCore"
             },
             {
               "$ref": "#/components/schemas/_Tail"

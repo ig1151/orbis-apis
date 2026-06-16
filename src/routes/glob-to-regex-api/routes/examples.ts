@@ -23,7 +23,11 @@ export const convertExample = {
   "chain_to": [
     {
       "api": "regex-tester",
-      "reason": "Run or further analyze the generated regular expression against more inputs."
+      "reason": "Statically analyze or run the generated regular expression against more inputs."
+    },
+    {
+      "api": "url-tools",
+      "reason": "Canonicalize URL paths before matching them against this glob."
     }
   ],
   "privacy": {
@@ -32,7 +36,9 @@ export const convertExample = {
   },
   "execution_metadata": {
     "model": "deterministic",
-    "automation_safe": true
+    "automation_safe": true,
+    "side_effects": false,
+    "estimated_compute_class": "low"
   }
 };
 export const testExample = {
@@ -79,7 +85,11 @@ export const testExample = {
   "chain_to": [
     {
       "api": "regex-tester",
-      "reason": "Run or further analyze the generated regular expression against more inputs."
+      "reason": "Statically analyze or run the generated regular expression against more inputs."
+    },
+    {
+      "api": "url-tools",
+      "reason": "Canonicalize URL paths before matching them against this glob."
     }
   ],
   "privacy": {
@@ -88,7 +98,9 @@ export const testExample = {
   },
   "execution_metadata": {
     "model": "deterministic",
-    "automation_safe": true
+    "automation_safe": true,
+    "side_effects": false,
+    "estimated_compute_class": "low"
   }
 };
 export const lookupExample = {
@@ -148,7 +160,11 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "regex-tester",
-      "reason": "Run or further analyze the generated regular expression against more inputs."
+      "reason": "Statically analyze or run the generated regular expression against more inputs."
+    },
+    {
+      "api": "url-tools",
+      "reason": "Canonicalize URL paths before matching them against this glob."
     }
   ],
   "privacy": {
@@ -157,6 +173,8 @@ export const lookupExample = {
   },
   "execution_metadata": {
     "model": "deterministic",
-    "automation_safe": true
+    "automation_safe": true,
+    "side_effects": false,
+    "estimated_compute_class": "low"
   }
 };

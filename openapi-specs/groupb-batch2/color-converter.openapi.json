@@ -44,6 +44,12 @@
                                         "type": "apiKey",
                                         "header": "X-API-Key"
                                     },
+                                    "capabilities": [
+                                        "color_conversion",
+                                        "wcag_contrast",
+                                        "accessibility_remediation",
+                                        "relative_luminance"
+                                    ],
                                     "endpoints": [
                                         {
                                             "method": "POST",
@@ -56,6 +62,12 @@
                                             "path": "/contrast",
                                             "summary": "WCAG 2.1 contrast ratio + AA/AAA pass/fail",
                                             "price_usdc": 0.007
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/suggest-accessible",
+                                            "summary": "Recommend an accessible foreground (AA/AAA)",
+                                            "price_usdc": 0.009
                                         },
                                         {
                                             "method": "POST",
@@ -73,6 +85,11 @@
                                         {
                                             "path": "/contrast",
                                             "price_usdc": 0.007,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/suggest-accessible",
+                                            "price_usdc": 0.009,
                                             "currency": "USDC"
                                         },
                                         {
@@ -156,15 +173,17 @@
                                     },
                                     "confidence_score": 1,
                                     "confidence_per_section": {
+                                        "parse": 1,
                                         "conversion": 1
                                     },
                                     "recommended_actions_priority_order": [
-                                        "Parsed as hsl; canonical hex #3398db."
+                                        "Use the canonical hex #3398db (or any emitted representation).",
+                                        "Check contrast against a background via /contrast."
                                     ],
                                     "chain_to": [
                                         {
                                             "api": "accessibility-audit-lite-api",
-                                            "reason": "Roll this contrast check into a fuller page accessibility audit."
+                                            "reason": "Roll this contrast check into a full-page WCAG accessibility audit."
                                         }
                                     ],
                                     "privacy": {
@@ -173,7 +192,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -250,15 +271,17 @@
                                     "highest_level": "AA large only",
                                     "confidence_score": 1,
                                     "confidence_per_section": {
+                                        "parse": 1,
                                         "contrast": 1
                                     },
                                     "recommended_actions_priority_order": [
-                                        "Contrast 4.48:1 \u2014 AA large only."
+                                        "Contrast 4.48:1 is below AA normal.",
+                                        "Call /suggest-accessible for a compliant foreground."
                                     ],
                                     "chain_to": [
                                         {
                                             "api": "accessibility-audit-lite-api",
-                                            "reason": "Roll this contrast check into a fuller page accessibility audit."
+                                            "reason": "Roll this contrast check into a full-page WCAG accessibility audit."
                                         }
                                     ],
                                     "privacy": {
@@ -267,7 +290,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -311,6 +336,108 @@
                 "x-pricing": {
                     "model": "per_call",
                     "price_usdc": 0.007,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/suggest-accessible": {
+            "post": {
+                "operationId": "suggestAccessible",
+                "summary": "Recommend an accessible foreground (AA/AAA)",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuggestResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "foreground": "#9bbcd6",
+                                    "background": "#ffffff",
+                                    "level": "AA",
+                                    "text_size": "normal",
+                                    "target_ratio": 4.5,
+                                    "original_ratio": 1.99,
+                                    "meets_target": false,
+                                    "adjusted": true,
+                                    "direction": "darker",
+                                    "recommended_foreground": "#4379a3",
+                                    "recommended_ratio": 4.66,
+                                    "recommended_meets_target": true,
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "parse": 1,
+                                        "contrast": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Adopt #4379a3 (darker) for 4.66:1, meeting AA."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "accessibility-audit-lite-api",
+                                            "reason": "Roll this contrast check into a full-page WCAG accessibility audit."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SuggestRequest"
+                            },
+                            "example": {
+                                "foreground": "#9bbcd6",
+                                "background": "#ffffff",
+                                "level": "AA",
+                                "text_size": "normal"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.009,
                     "currency": "USDC"
                 }
             }
@@ -370,20 +497,23 @@
                                         "invalidators": [
                                             "Conversions are exact sRGB math. HSL/HSV components are rounded to whole numbers (hue 0\u2013360, sat/light/value 0\u2013100%); the rgb\u2192hex\u2192rgb round trip is lossless but hex\u2192hsl\u2192hex may differ by \u00b11 due to rounding.",
                                             "WCAG contrast uses relative luminance per WCAG 2.1; alpha is ignored for contrast (the ratio assumes fully opaque colors composited on no background). AA normal \u22654.5, AA large \u22653, AAA normal \u22657, AAA large \u22654.5.",
-                                            "Only CSS Color Level 4 named colors, hex (#rgb/#rgba/#rrggbb/#rrggbbaa), rgb()/rgba(), and hsl()/hsla() are parsed; lab()/lch()/color() and other functional notations are not supported."
+                                            "Only CSS Color Level 4 named colors, hex (#rgb/#rgba/#rrggbb/#rrggbbaa), rgb()/rgba(), and hsl()/hsla() are parsed; lab()/lch()/color() and other functional notations are not supported.",
+                                            "/suggest-accessible holds hue+saturation and steps lightness toward black/white in 1% increments; the recommended color is the first that meets the target (or the nearest extreme if none can). It optimizes contrast only \u2014 not brand fidelity. recommended_meets_target=false means even pure black/white against this background cannot reach the target."
                                         ]
                                     },
                                     "confidence_score": 1,
                                     "confidence_per_section": {
+                                        "parse": 1,
                                         "conversion": 1
                                     },
                                     "recommended_actions_priority_order": [
-                                        "Parsed as hsl; canonical hex #3398db."
+                                        "Use the canonical hex #3398db (or any emitted representation).",
+                                        "Check contrast against a background via /contrast."
                                     ],
                                     "chain_to": [
                                         {
                                             "api": "accessibility-audit-lite-api",
-                                            "reason": "Roll this contrast check into a fuller page accessibility audit."
+                                            "reason": "Roll this contrast check into a full-page WCAG accessibility audit."
                                         }
                                     ],
                                     "privacy": {
@@ -392,7 +522,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -535,6 +667,7 @@
                 "type": "object",
                 "required": [
                     "trace_id",
+                    "request_id",
                     "computed_at",
                     "success",
                     "latency_ms",
@@ -576,7 +709,8 @@
                     "trace_id",
                     "computed_at",
                     "success",
-                    "latency_ms"
+                    "latency_ms",
+                    "request_id"
                 ],
                 "properties": {
                     "trace_id": {
@@ -606,7 +740,9 @@
                 "type": "object",
                 "required": [
                     "model",
-                    "automation_safe"
+                    "automation_safe",
+                    "side_effects",
+                    "estimated_compute_class"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -618,6 +754,19 @@
                     },
                     "automation_safe": {
                         "type": "boolean"
+                    },
+                    "side_effects": {
+                        "type": "boolean",
+                        "description": "Whether a call mutates external state (always false \u2014 pure computation)."
+                    },
+                    "estimated_compute_class": {
+                        "type": "string",
+                        "enum": [
+                            "low",
+                            "medium",
+                            "high"
+                        ],
+                        "description": "Rough CPU cost band for planning."
                     }
                 }
             },
@@ -625,6 +774,11 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
+                    "parse": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
                     "conversion": {
                         "type": "number",
                         "minimum": 0,
@@ -1045,6 +1199,74 @@
                     }
                 }
             },
+            "SuggestCore": {
+                "type": "object",
+                "required": [
+                    "foreground",
+                    "background",
+                    "level",
+                    "text_size",
+                    "target_ratio",
+                    "original_ratio",
+                    "meets_target",
+                    "adjusted",
+                    "direction",
+                    "recommended_foreground",
+                    "recommended_ratio",
+                    "recommended_meets_target"
+                ],
+                "properties": {
+                    "foreground": {
+                        "type": "string"
+                    },
+                    "background": {
+                        "type": "string"
+                    },
+                    "level": {
+                        "type": "string",
+                        "enum": [
+                            "AA",
+                            "AAA"
+                        ]
+                    },
+                    "text_size": {
+                        "type": "string",
+                        "enum": [
+                            "normal",
+                            "large"
+                        ]
+                    },
+                    "target_ratio": {
+                        "type": "number"
+                    },
+                    "original_ratio": {
+                        "type": "number"
+                    },
+                    "meets_target": {
+                        "type": "boolean"
+                    },
+                    "adjusted": {
+                        "type": "boolean"
+                    },
+                    "direction": {
+                        "type": "string",
+                        "enum": [
+                            "none",
+                            "darker",
+                            "lighter"
+                        ]
+                    },
+                    "recommended_foreground": {
+                        "type": "string"
+                    },
+                    "recommended_ratio": {
+                        "type": "number"
+                    },
+                    "recommended_meets_target": {
+                        "type": "boolean"
+                    }
+                }
+            },
             "ConvertRequest": {
                 "type": "object",
                 "required": [
@@ -1074,6 +1296,38 @@
                     }
                 }
             },
+            "SuggestRequest": {
+                "type": "object",
+                "required": [
+                    "foreground",
+                    "background"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "foreground": {
+                        "type": "string"
+                    },
+                    "background": {
+                        "type": "string"
+                    },
+                    "level": {
+                        "type": "string",
+                        "enum": [
+                            "AA",
+                            "AAA"
+                        ],
+                        "description": "WCAG target level (default AA)."
+                    },
+                    "text_size": {
+                        "type": "string",
+                        "enum": [
+                            "normal",
+                            "large"
+                        ],
+                        "description": "Text size class (default normal)."
+                    }
+                }
+            },
             "DiscoveryResponse": {
                 "type": "object",
                 "required": [
@@ -1084,7 +1338,8 @@
                     "auth",
                     "endpoints",
                     "pricing",
-                    "x402_compatible"
+                    "x402_compatible",
+                    "capabilities"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -1172,6 +1427,13 @@
                     },
                     "x402_compatible": {
                         "type": "boolean"
+                    },
+                    "capabilities": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Machine-readable capability tags for agent matching."
                     }
                 }
             },
@@ -1196,6 +1458,20 @@
                     },
                     {
                         "$ref": "#/components/schemas/ContrastCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "SuggestResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/SuggestCore"
                     },
                     {
                         "$ref": "#/components/schemas/_Tail"

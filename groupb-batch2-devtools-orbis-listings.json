@@ -19,6 +19,7 @@
         "endpointPricing": [
           { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.006, "description": "Parse a color and emit all representations" },
           { "method": "POST", "pathPattern": "/contrast", "pricePerCallUsdc": 0.007, "description": "WCAG 2.1 contrast ratio + AA/AAA pass-fail" },
+          { "method": "POST", "pathPattern": "/suggest-accessible", "pricePerCallUsdc": 0.009, "description": "Recommend an accessible foreground meeting AA/AAA" },
           { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call convert with reasoning" }
         ]
       }
@@ -26,6 +27,7 @@
     "endpoints": [
       { "method": "POST", "path": "/convert", "description": "Parse a color and emit all representations" },
       { "method": "POST", "path": "/contrast", "description": "WCAG 2.1 contrast ratio + AA/AAA pass-fail" },
+      { "method": "POST", "path": "/suggest-accessible", "description": "Recommend an accessible foreground (AA/AAA)" },
       { "method": "POST", "path": "/lookup", "description": "Convert with reasoning" }
     ]
   },
@@ -49,6 +51,7 @@
         "endpointPricing": [
           { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.005, "description": "Convert a string to a target case" },
           { "method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.005, "description": "Detect source case + emit all cases" },
+          { "method": "POST", "pathPattern": "/normalize-keys", "pricePerCallUsdc": 0.008, "description": "Recursively re-case every key of a JSON object" },
           { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "One-call all-cases with reasoning" }
         ]
       }
@@ -56,6 +59,7 @@
     "endpoints": [
       { "method": "POST", "path": "/convert", "description": "Convert a string to a target case" },
       { "method": "POST", "path": "/detect", "description": "Detect source case + emit all cases" },
+      { "method": "POST", "path": "/normalize-keys", "description": "Recursively re-case all keys of a JSON object" },
       { "method": "POST", "path": "/lookup", "description": "All-cases with reasoning" }
     ]
   },
@@ -79,6 +83,7 @@
         "endpointPricing": [
           { "method": "POST", "pathPattern": "/parse", "pricePerCallUsdc": 0.005, "description": "Decompose a URL into components" },
           { "method": "POST", "pathPattern": "/build", "pricePerCallUsdc": 0.006, "description": "Assemble a URL from components" },
+          { "method": "POST", "pathPattern": "/canonicalize", "pricePerCallUsdc": 0.007, "description": "Report the exact canonicalization steps applied" },
           { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "One-call parse + normalize with reasoning" }
         ]
       }
@@ -86,6 +91,7 @@
     "endpoints": [
       { "method": "POST", "path": "/parse", "description": "Decompose a URL into components" },
       { "method": "POST", "path": "/build", "description": "Assemble a URL from components" },
+      { "method": "POST", "path": "/canonicalize", "description": "Report exact canonicalization steps" },
       { "method": "POST", "path": "/lookup", "description": "Parse + normalize with reasoning" }
     ]
   },
@@ -134,11 +140,12 @@
     "tiers": [
       { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
       {
-        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.013,
         "requestsPerDay": 100000, "requestsPerMonth": 3000000,
         "endpointPricing": [
           { "method": "POST", "pathPattern": "/query", "pricePerCallUsdc": 0.007, "description": "Evaluate a JSONPath into all matches" },
           { "method": "POST", "pathPattern": "/value", "pricePerCallUsdc": 0.006, "description": "First match value (or null)" },
+          { "method": "POST", "pathPattern": "/batch", "pricePerCallUsdc": 0.013, "description": "Evaluate many JSONPaths against one document in one call" },
           { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call query with reasoning" }
         ]
       }
@@ -146,6 +153,7 @@
     "endpoints": [
       { "method": "POST", "path": "/query", "description": "Evaluate a JSONPath into all matches" },
       { "method": "POST", "path": "/value", "description": "First match value (or null)" },
+      { "method": "POST", "path": "/batch", "description": "Evaluate many JSONPaths in one call" },
       { "method": "POST", "path": "/lookup", "description": "Query with reasoning" }
     ]
   }
