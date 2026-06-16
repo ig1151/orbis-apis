@@ -164,12 +164,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/jwt-claims-designer/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/design', summary: 'Design a recommended JWT claim set', price_usdc: 0.008 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL design + reasoning', price_usdc: 0.014 },
+      { method: 'POST', path: '/design', summary: 'Design a recommended JWT claim set', price_usdc: 0.015 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL design + reasoning', price_usdc: 0.030 },
     ],
     pricing: [
-      { path: '/design', price_usdc: 0.008, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.014, currency: 'USDC' },
+      { path: '/design', price_usdc: 0.015, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.030, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

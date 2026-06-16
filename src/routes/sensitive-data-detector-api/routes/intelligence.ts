@@ -138,12 +138,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/sensitive-data-detector/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/scan', summary: 'Detect & redact PII in text', price_usdc: 0.008 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL scan + reasoning', price_usdc: 0.015 },
+      { method: 'POST', path: '/scan', summary: 'Detect & redact PII in text', price_usdc: 0.020 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL scan + reasoning', price_usdc: 0.035 },
     ],
     pricing: [
-      { path: '/scan', price_usdc: 0.008, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.015, currency: 'USDC' },
+      { path: '/scan', price_usdc: 0.020, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.035, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

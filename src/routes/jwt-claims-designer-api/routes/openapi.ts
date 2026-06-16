@@ -64,12 +64,12 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/jwt-claims-designer/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   endpoints: [
-    { method: 'POST', path: '/design', summary: 'Design a recommended JWT claim set', price_usdc: 0.008 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL design + reasoning', price_usdc: 0.014 },
+    { method: 'POST', path: '/design', summary: 'Design a recommended JWT claim set', price_usdc: 0.015 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL design + reasoning', price_usdc: 0.030 },
   ],
   pricing: [
-    { path: '/design', price_usdc: 0.008, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.014, currency: 'USDC' },
+    { path: '/design', price_usdc: 0.015, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.030, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
@@ -89,8 +89,8 @@ const schemas = {
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
-  { method: 'post', path: '/design', summary: 'Design a recommended JWT claim set', operationId: 'design', priceUsdc: 0.008, requestSchemaRef: 'DesignRequest', responseSchemaRef: 'DesignResponse', requestExample: designReq, responseExample: designExample },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL design + reasoning', operationId: 'lookup', priceUsdc: 0.014, oneCall: true, requestSchemaRef: 'DesignRequest', responseSchemaRef: 'LookupResponse', requestExample: designReq, responseExample: lookupExample },
+  { method: 'post', path: '/design', summary: 'Design a recommended JWT claim set', operationId: 'design', priceUsdc: 0.015, requestSchemaRef: 'DesignRequest', responseSchemaRef: 'DesignResponse', requestExample: designReq, responseExample: designExample },
+  { method: 'post', path: '/lookup', summary: 'ONE-CALL design + reasoning', operationId: 'lookup', priceUsdc: 0.030, oneCall: true, requestSchemaRef: 'DesignRequest', responseSchemaRef: 'LookupResponse', requestExample: designReq, responseExample: lookupExample },
 ];
 
 export const spec = buildAplusSpec({

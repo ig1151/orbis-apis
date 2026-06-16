@@ -86,12 +86,12 @@ router.get('/', (_req: Request, res: Response) => {
     endpoints: [
       { method: 'POST', path: '/resolve', summary: 'Resolve one or many JSON Pointers', price_usdc: 0.005 },
       { method: 'POST', path: '/enumerate', summary: 'List every leaf pointer in a document', price_usdc: 0.006 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL resolve + reasoning', price_usdc: 0.009 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL resolve + reasoning', price_usdc: 0.010 },
     ],
     pricing: [
       { path: '/resolve', price_usdc: 0.005, currency: 'USDC' },
       { path: '/enumerate', price_usdc: 0.006, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.010, currency: 'USDC' },
     ],
     x402_compatible: true,
   });

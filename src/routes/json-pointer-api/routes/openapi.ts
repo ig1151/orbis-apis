@@ -65,12 +65,12 @@ const disc = {
   endpoints: [
     { method: 'POST', path: '/resolve', summary: 'Resolve one or many JSON Pointers', price_usdc: 0.005 },
     { method: 'POST', path: '/enumerate', summary: 'List every leaf pointer in a document', price_usdc: 0.006 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL resolve + reasoning', price_usdc: 0.009 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL resolve + reasoning', price_usdc: 0.010 },
   ],
   pricing: [
     { path: '/resolve', price_usdc: 0.005, currency: 'USDC' },
     { path: '/enumerate', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.010, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
@@ -93,7 +93,7 @@ const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
   { method: 'post', path: '/resolve', summary: 'Resolve one or many JSON Pointers', operationId: 'resolve', priceUsdc: 0.005, requestSchemaRef: 'ResolveRequest', responseSchemaRef: 'ResolveResponse', requestExample: resolveReq, responseExample: resolveExample },
   { method: 'post', path: '/enumerate', summary: 'List every leaf pointer in a document', operationId: 'enumerate', priceUsdc: 0.006, requestSchemaRef: 'EnumerateRequest', responseSchemaRef: 'EnumerateResponse', requestExample: enumerateReq, responseExample: enumerateExample },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL resolve + reasoning', operationId: 'lookup', priceUsdc: 0.009, oneCall: true, requestSchemaRef: 'ResolveRequest', responseSchemaRef: 'LookupResponse', requestExample: resolveReq, responseExample: lookupExample },
+  { method: 'post', path: '/lookup', summary: 'ONE-CALL resolve + reasoning', operationId: 'lookup', priceUsdc: 0.010, oneCall: true, requestSchemaRef: 'ResolveRequest', responseSchemaRef: 'LookupResponse', requestExample: resolveReq, responseExample: lookupExample },
 ];
 
 export const spec = buildAplusSpec({
