@@ -33,15 +33,21 @@ export const parseExample = {
   "normalized": "https://user:pw@example.com/a//b?a=1&a=3&z=2#frag",
   "confidence_score": 1,
   "confidence_per_section": {
-    "parse": 1
+    "parse": 1,
+    "normalization": 1
   },
   "recommended_actions_priority_order": [
-    "Parsed https://example.com/a//b with 2 query key(s)."
+    "Read components of https://example.com/a//b (2 query key(s)).",
+    "Use /canonicalize to dedupe against other URLs."
   ],
   "chain_to": [
     {
       "api": "web-content-type-classifier",
-      "reason": "Classify the resource a built/parsed URL points to."
+      "reason": "Classify the resource a parsed/built URL points to."
+    },
+    {
+      "api": "glob-to-regex",
+      "reason": "Match canonicalized paths against a route/glob pattern."
     }
   ],
   "privacy": {
@@ -50,7 +56,9 @@ export const parseExample = {
   },
   "execution_metadata": {
     "model": "deterministic",
-    "automation_safe": true
+    "automation_safe": true,
+    "side_effects": false,
+    "estimated_compute_class": "low"
   }
 };
 export const buildExample = {
@@ -90,12 +98,16 @@ export const buildExample = {
     "build": 1
   },
   "recommended_actions_priority_order": [
-    "Built https://api.example.com/v1/search?q=agent+native&page=2&tag=a&tag=b."
+    "Use the built URL https://api.example.com/v1/search?q=agent+native&page=2&tag=a&tag=b."
   ],
   "chain_to": [
     {
       "api": "web-content-type-classifier",
-      "reason": "Classify the resource a built/parsed URL points to."
+      "reason": "Classify the resource a parsed/built URL points to."
+    },
+    {
+      "api": "glob-to-regex",
+      "reason": "Match canonicalized paths against a route/glob pattern."
     }
   ],
   "privacy": {
@@ -104,7 +116,53 @@ export const buildExample = {
   },
   "execution_metadata": {
     "model": "deterministic",
-    "automation_safe": true
+    "automation_safe": true,
+    "side_effects": false,
+    "estimated_compute_class": "low"
+  }
+};
+export const canonicalizeExample = {
+  "trace_id": "gbx-1780000000000",
+  "request_id": "gbx-1780000000000",
+  "computed_at": "2026-06-16T12:00:00.000Z",
+  "success": true,
+  "latency_ms": 1,
+  "input": "https://Example.com:443/path?b=2&a=1",
+  "parsed_href": "https://example.com/path?b=2&a=1",
+  "normalized": "https://example.com/path?a=1&b=2",
+  "canonicalization_needed": true,
+  "changes": [
+    "host_lowercased",
+    "query_sorted"
+  ],
+  "confidence_score": 1,
+  "confidence_per_section": {
+    "parse": 1,
+    "normalization": 1
+  },
+  "recommended_actions_priority_order": [
+    "Store/compare by the canonical form https://example.com/path?a=1&b=2 (changes: host_lowercased, query_sorted).",
+    "Two URLs with the same canonical form are duplicates."
+  ],
+  "chain_to": [
+    {
+      "api": "web-content-type-classifier",
+      "reason": "Classify the resource a parsed/built URL points to."
+    },
+    {
+      "api": "glob-to-regex",
+      "reason": "Match canonicalized paths against a route/glob pattern."
+    }
+  ],
+  "privacy": {
+    "data_stored": false,
+    "retention": "none"
+  },
+  "execution_metadata": {
+    "model": "deterministic",
+    "automation_safe": true,
+    "side_effects": false,
+    "estimated_compute_class": "low"
   }
 };
 export const lookupExample = {
@@ -149,20 +207,26 @@ export const lookupExample = {
     "invalidators": [
       "Parsing follows the WHATWG URL Standard (the same parser browsers use); component values are exact. Relative URLs require a \"base\" to resolve.",
       "The query object collapses a single occurrence of a key to a string and multiple occurrences to an array — order within an array is preserved, but two semantically different encodings (e.g. \"a=1&a=2\" vs \"a[]=1&a[]=2\") are NOT unified.",
-      "Normalization lowercases scheme+host (per the URL spec), drops the protocol default port, sorts query params by key then value, and trims an empty \"?\"/\"#\". It does NOT collapse \".\" / \"..\" path segments beyond what the URL parser already resolves, nor change path case or percent-encoding — so it is a conservative canonical form, not an aggressive one."
+      "Normalization lowercases scheme+host (per the URL spec), drops the protocol default port, sorts query params by key then value, and trims an empty \"?\"/\"#\". It does NOT collapse \".\" / \"..\" path segments beyond what the URL parser already resolves, nor change path case or percent-encoding — so it is a conservative canonical form, not an aggressive one.",
+      "/canonicalize reports the exact transformation steps in \"changes\" and a single canonicalization_needed boolean. It deliberately emits NO heuristic \"quality\" or \"duplicate-risk\" score — those would be fabricated; equivalence is decided by exact string comparison of the canonical form."
     ]
   },
   "confidence_score": 1,
   "confidence_per_section": {
-    "parse": 1
+    "parse": 1,
+    "normalization": 1
   },
   "recommended_actions_priority_order": [
-    "Normalized to https://user:pw@example.com/a//b?a=1&a=3&z=2#frag."
+    "Use components for routing; store https://user:pw@example.com/a//b?a=1&a=3&z=2#frag as the canonical/dedup key."
   ],
   "chain_to": [
     {
       "api": "web-content-type-classifier",
-      "reason": "Classify the resource a built/parsed URL points to."
+      "reason": "Classify the resource a parsed/built URL points to."
+    },
+    {
+      "api": "glob-to-regex",
+      "reason": "Match canonicalized paths against a route/glob pattern."
     }
   ],
   "privacy": {
@@ -171,6 +235,8 @@ export const lookupExample = {
   },
   "execution_metadata": {
     "model": "deterministic",
-    "automation_safe": true
+    "automation_safe": true,
+    "side_effects": false,
+    "estimated_compute_class": "low"
   }
 };

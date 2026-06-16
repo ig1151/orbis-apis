@@ -57,6 +57,10 @@ const errs = [
   ['glob-to-regex/test', { glob: '*', paths: 'nope' }],
   ['jsonpath/query', { document: {}, path: 'no-dollar' }],
   ['jsonpath/query', { document: {}, path: '$[?(@.x)]' }],
+  ['color-converter/suggest-accessible', { foreground: '#000' }],
+  ['case-converter/normalize-keys', { to: 'snake' }],
+  ['url-tools/canonicalize', {}],
+  ['jsonpath/batch', { document: {} }],
 ];
 for (const [p, body] of errs) {
   const { status, json } = await getJson(`${B}/${p}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });

@@ -12,16 +12,19 @@ const APIS = {
   'color-converter': {
     convertExample: ['/color-converter/convert', { color: 'hsl(204, 70%, 53%)' }],
     contrastExample: ['/color-converter/contrast', { foreground: '#777777', background: '#ffffff' }],
+    suggestExample: ['/color-converter/suggest-accessible', { foreground: '#9bbcd6', background: '#ffffff', level: 'AA', text_size: 'normal' }],
     lookupExample: ['/color-converter/lookup', { color: 'hsl(204, 70%, 53%)' }],
   },
   'case-converter': {
     convertExample: ['/case-converter/convert', { text: 'XMLHttpRequest', to: 'snake' }],
     detectExample: ['/case-converter/detect', { text: 'user_profile_id' }],
+    normalizeKeysExample: ['/case-converter/normalize-keys', { value: { userId: 1, ShippingAddress: { zipCode: '94103', CountryCode: 'US' }, lineItems: [{ ProductId: 'a' }] }, to: 'snake' }],
     lookupExample: ['/case-converter/lookup', { text: 'user_profile_id' }],
   },
   'url-tools': {
     parseExample: ['/url-tools/parse', { url: 'https://user:pw@Example.com:443/a//b?z=2&a=1&a=3#frag' }],
     buildExample: ['/url-tools/build', { protocol: 'https', hostname: 'api.example.com', pathname: '/v1/search', query: { q: 'agent native', page: 2, tag: ['a', 'b'] } }],
+    canonicalizeExample: ['/url-tools/canonicalize', { url: 'https://Example.com:443/path?b=2&a=1' }],
     lookupExample: ['/url-tools/lookup', { url: 'https://user:pw@Example.com:443/a//b?z=2&a=1&a=3#frag' }],
   },
   'glob-to-regex': {
@@ -32,6 +35,7 @@ const APIS = {
   'jsonpath': {
     queryExample: ['/jsonpath/query', { document: book, path: '$.store.book[*].title' }],
     valueExample: ['/jsonpath/value', { document: book, path: '$..book[-1].title' }],
+    batchExample: ['/jsonpath/batch', { document: book, paths: ['$.store.book[*].title', '$.store.book[*].price', '$.store.missing'] }],
     lookupExample: ['/jsonpath/lookup', { document: book, path: '$.store.book[*].title' }],
   },
 };

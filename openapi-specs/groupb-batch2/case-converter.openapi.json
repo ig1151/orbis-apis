@@ -44,6 +44,12 @@
                                         "type": "apiKey",
                                         "header": "X-API-Key"
                                     },
+                                    "capabilities": [
+                                        "case_conversion",
+                                        "case_detection",
+                                        "string_tokenization",
+                                        "schema_key_normalization"
+                                    ],
                                     "endpoints": [
                                         {
                                             "method": "POST",
@@ -56,6 +62,12 @@
                                             "path": "/detect",
                                             "summary": "Detect source case + emit all cases",
                                             "price_usdc": 0.005
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/normalize-keys",
+                                            "summary": "Recursively re-case all keys of a JSON object",
+                                            "price_usdc": 0.008
                                         },
                                         {
                                             "method": "POST",
@@ -73,6 +85,11 @@
                                         {
                                             "path": "/detect",
                                             "price_usdc": 0.005,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/normalize-keys",
+                                            "price_usdc": 0.008,
                                             "currency": "USDC"
                                         },
                                         {
@@ -138,16 +155,26 @@
                                     "detected_case": "pascal",
                                     "confidence_score": 1,
                                     "confidence_per_section": {
+                                        "tokenization": 1,
                                         "conversion": 1,
                                         "detection": 0.9
                                     },
                                     "recommended_actions_priority_order": [
-                                        "Converted to snake: \"xml_http_request\"."
+                                        "Apply \"xml_http_request\" as the snake-cased identifier.",
+                                        "Use /normalize-keys to re-case an entire object the same way."
                                     ],
                                     "chain_to": [
                                         {
-                                            "api": "semver-tools",
-                                            "reason": "Normalize and compare version identifiers after casing field names."
+                                            "api": "data-mapper",
+                                            "reason": "Remap records onto the freshly re-cased field names."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the re-cased object against a target JSON Schema."
+                                        },
+                                        {
+                                            "api": "jsonpath",
+                                            "reason": "Query the normalized object by the new key names."
                                         }
                                     ],
                                     "privacy": {
@@ -156,7 +183,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -244,16 +273,25 @@
                                     },
                                     "confidence_score": 0.9,
                                     "confidence_per_section": {
-                                        "detection": 0.9,
-                                        "conversion": 1
+                                        "tokenization": 1,
+                                        "conversion": 1,
+                                        "detection": 0.9
                                     },
                                     "recommended_actions_priority_order": [
-                                        "Detected source case: snake."
+                                        "Pick the target case from all_cases (detected source: snake)."
                                     ],
                                     "chain_to": [
                                         {
-                                            "api": "semver-tools",
-                                            "reason": "Normalize and compare version identifiers after casing field names."
+                                            "api": "data-mapper",
+                                            "reason": "Remap records onto the freshly re-cased field names."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the re-cased object against a target JSON Schema."
+                                        },
+                                        {
+                                            "api": "jsonpath",
+                                            "reason": "Query the normalized object by the new key names."
                                         }
                                     ],
                                     "privacy": {
@@ -262,7 +300,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -305,6 +345,129 @@
                 "x-pricing": {
                     "model": "per_call",
                     "price_usdc": 0.005,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/normalize-keys": {
+            "post": {
+                "operationId": "normalizeKeys",
+                "summary": "Recursively re-case all keys of a JSON object",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NormalizeKeysResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "to": "snake",
+                                    "normalized": {
+                                        "user_id": 1,
+                                        "shipping_address": {
+                                            "zip_code": "94103",
+                                            "country_code": "US"
+                                        },
+                                        "line_items": [
+                                            {
+                                                "product_id": "a"
+                                            }
+                                        ]
+                                    },
+                                    "keys_renamed": 6,
+                                    "collisions": [],
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "tokenization": 1,
+                                        "conversion": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Re-cased 6 key(s) to snake.",
+                                        "Pass the normalized object to data-mapper or a schema validator."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "data-mapper",
+                                            "reason": "Remap records onto the freshly re-cased field names."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the re-cased object against a target JSON Schema."
+                                        },
+                                        {
+                                            "api": "jsonpath",
+                                            "reason": "Query the normalized object by the new key names."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NormalizeKeysRequest"
+                            },
+                            "example": {
+                                "value": {
+                                    "userId": 1,
+                                    "ShippingAddress": {
+                                        "zipCode": "94103",
+                                        "CountryCode": "US"
+                                    },
+                                    "lineItems": [
+                                        {
+                                            "ProductId": "a"
+                                        }
+                                    ]
+                                },
+                                "to": "snake"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.008,
                     "currency": "USDC"
                 }
             }
@@ -356,21 +519,32 @@
                                         "invalidators": [
                                             "Tokenization breaks on separators (_ - . / whitespace and other non-alphanumerics) and on camelCase, acronym (HTTPServer\u2192HTTP Server), and letter\u2194digit boundaries; the conversion of those tokens into the target case is exact and reversible up to separator/casing loss.",
                                             "Source-case \"detection\" is a structural heuristic (which separators/capitalization are present); ambiguous inputs (e.g. a single all-lowercase word, or a string with no separators) may report a plausible-but-debatable case. The token split and the converted output are NOT heuristic.",
-                                            "Original separators are not preserved: converting \"a.b-c\" to snake yields \"a_b_c\". Round-tripping is exact only within a single separator convention."
+                                            "Original separators are not preserved: converting \"a.b-c\" to snake yields \"a_b_c\". Round-tripping is exact only within a single separator convention.",
+                                            "/normalize-keys re-cases OBJECT KEYS only (recursively); array order and all scalar/values are preserved. When two distinct keys collapse to the same cased key the last one wins and the key is reported in \"collisions\"."
                                         ]
                                     },
                                     "confidence_score": 1,
                                     "confidence_per_section": {
-                                        "detection": 0.9,
-                                        "conversion": 1
+                                        "tokenization": 1,
+                                        "conversion": 1,
+                                        "detection": 0.9
                                     },
                                     "recommended_actions_priority_order": [
-                                        "Tokenized into 3 token(s); emitted all 11 cases."
+                                        "Pick the target case from all_cases.",
+                                        "Use /normalize-keys to apply it across an entire object."
                                     ],
                                     "chain_to": [
                                         {
-                                            "api": "semver-tools",
-                                            "reason": "Normalize and compare version identifiers after casing field names."
+                                            "api": "data-mapper",
+                                            "reason": "Remap records onto the freshly re-cased field names."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the re-cased object against a target JSON Schema."
+                                        },
+                                        {
+                                            "api": "jsonpath",
+                                            "reason": "Query the normalized object by the new key names."
                                         }
                                     ],
                                     "privacy": {
@@ -379,7 +553,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -522,6 +698,7 @@
                 "type": "object",
                 "required": [
                     "trace_id",
+                    "request_id",
                     "computed_at",
                     "success",
                     "latency_ms",
@@ -563,7 +740,8 @@
                     "trace_id",
                     "computed_at",
                     "success",
-                    "latency_ms"
+                    "latency_ms",
+                    "request_id"
                 ],
                 "properties": {
                     "trace_id": {
@@ -593,7 +771,9 @@
                 "type": "object",
                 "required": [
                     "model",
-                    "automation_safe"
+                    "automation_safe",
+                    "side_effects",
+                    "estimated_compute_class"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -605,6 +785,19 @@
                     },
                     "automation_safe": {
                         "type": "boolean"
+                    },
+                    "side_effects": {
+                        "type": "boolean",
+                        "description": "Whether a call mutates external state (always false \u2014 pure computation)."
+                    },
+                    "estimated_compute_class": {
+                        "type": "string",
+                        "enum": [
+                            "low",
+                            "medium",
+                            "high"
+                        ],
+                        "description": "Rough CPU cost band for planning."
                     }
                 }
             },
@@ -612,6 +805,11 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
+                    "tokenization": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
                     "conversion": {
                         "type": "number",
                         "minimum": 0,
@@ -833,6 +1031,55 @@
                     }
                 }
             },
+            "NormalizeKeysCore": {
+                "type": "object",
+                "required": [
+                    "to",
+                    "normalized",
+                    "keys_renamed",
+                    "collisions"
+                ],
+                "properties": {
+                    "to": {
+                        "type": "string",
+                        "enum": [
+                            "camel",
+                            "pascal",
+                            "snake",
+                            "kebab",
+                            "constant",
+                            "dot",
+                            "path",
+                            "title",
+                            "sentence",
+                            "lower",
+                            "upper"
+                        ]
+                    },
+                    "normalized": {
+                        "description": "The input with every object key re-cased.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "keys_renamed": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "collisions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Cased keys that two source keys collapsed onto (last value won)."
+                    }
+                }
+            },
             "ConvertRequest": {
                 "type": "object",
                 "required": [
@@ -877,6 +1124,44 @@
                     }
                 }
             },
+            "NormalizeKeysRequest": {
+                "type": "object",
+                "required": [
+                    "value",
+                    "to"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "value": {
+                        "description": "Any JSON value; object keys are re-cased recursively.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "to": {
+                        "type": "string",
+                        "enum": [
+                            "camel",
+                            "pascal",
+                            "snake",
+                            "kebab",
+                            "constant",
+                            "dot",
+                            "path",
+                            "title",
+                            "sentence",
+                            "lower",
+                            "upper"
+                        ],
+                        "description": "Target case for keys."
+                    }
+                }
+            },
             "DiscoveryResponse": {
                 "type": "object",
                 "required": [
@@ -887,7 +1172,8 @@
                     "auth",
                     "endpoints",
                     "pricing",
-                    "x402_compatible"
+                    "x402_compatible",
+                    "capabilities"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -975,6 +1261,13 @@
                     },
                     "x402_compatible": {
                         "type": "boolean"
+                    },
+                    "capabilities": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Machine-readable capability tags for agent matching."
                     }
                 }
             },
@@ -999,6 +1292,20 @@
                     },
                     {
                         "$ref": "#/components/schemas/DetectCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "NormalizeKeysResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/NormalizeKeysCore"
                     },
                     {
                         "$ref": "#/components/schemas/_Tail"

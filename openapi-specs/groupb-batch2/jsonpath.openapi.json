@@ -44,6 +44,13 @@
                                         "type": "apiKey",
                                         "header": "X-API-Key"
                                     },
+                                    "capabilities": [
+                                        "json_query",
+                                        "json_extraction",
+                                        "json_navigation",
+                                        "batch_query",
+                                        "path_resolution"
+                                    ],
                                     "endpoints": [
                                         {
                                             "method": "POST",
@@ -56,6 +63,12 @@
                                             "path": "/value",
                                             "summary": "First match value (or null)",
                                             "price_usdc": 0.006
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/batch",
+                                            "summary": "Evaluate many JSONPaths in one call",
+                                            "price_usdc": 0.013
                                         },
                                         {
                                             "method": "POST",
@@ -73,6 +86,11 @@
                                         {
                                             "path": "/value",
                                             "price_usdc": 0.006,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/batch",
+                                            "price_usdc": 0.013,
                                             "currency": "USDC"
                                         },
                                         {
@@ -141,19 +159,27 @@
                                     ],
                                     "confidence_score": 1,
                                     "confidence_per_section": {
-                                        "query": 1
+                                        "parse": 1,
+                                        "evaluation": 1,
+                                        "path_resolution": 1
                                     },
                                     "recommended_actions_priority_order": [
-                                        "2 match(es) for $.store.book[*].title."
+                                        "Extract the 2 matched value(s) for downstream use.",
+                                        "Resolve a match path (e.g. $['store']['book'][0]['title']) via json-pointer for exact read/write.",
+                                        "Validate the extracted values against a JSON Schema before passing them on."
                                     ],
                                     "chain_to": [
                                         {
                                             "api": "json-pointer",
-                                            "reason": "Resolve a single matched path as an exact RFC 6901 pointer."
+                                            "reason": "Resolve a matched path as an exact RFC 6901 pointer before reading or writing it."
                                         },
                                         {
                                             "api": "json-patch",
-                                            "reason": "Apply an RFC 6902 patch at a located path."
+                                            "reason": "Apply an RFC 6902 add/replace/remove at a located path to mutate the document."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the extracted values against a JSON Schema before passing them downstream."
                                         }
                                     ],
                                     "privacy": {
@@ -162,7 +188,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -248,19 +276,26 @@
                                     "match_count": 1,
                                     "confidence_score": 1,
                                     "confidence_per_section": {
-                                        "query": 1
+                                        "parse": 1,
+                                        "evaluation": 1,
+                                        "path_resolution": 1
                                     },
                                     "recommended_actions_priority_order": [
-                                        "First match at $['store']['book'][1]['title']."
+                                        "Use the value at $['store']['book'][1]['title'].",
+                                        "Resolve that path via json-pointer for exact read/write."
                                     ],
                                     "chain_to": [
                                         {
                                             "api": "json-pointer",
-                                            "reason": "Resolve a single matched path as an exact RFC 6901 pointer."
+                                            "reason": "Resolve a matched path as an exact RFC 6901 pointer before reading or writing it."
                                         },
                                         {
                                             "api": "json-patch",
-                                            "reason": "Apply an RFC 6902 patch at a located path."
+                                            "reason": "Apply an RFC 6902 add/replace/remove at a located path to mutate the document."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the extracted values against a JSON Schema before passing them downstream."
                                         }
                                     ],
                                     "privacy": {
@@ -269,7 +304,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -330,6 +367,162 @@
                 }
             }
         },
+        "/batch": {
+            "post": {
+                "operationId": "batch",
+                "summary": "Evaluate many JSONPaths in one call",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BatchResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gbx-1780000000000",
+                                    "request_id": "gbx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "document_evaluated": true,
+                                    "query_count": 3,
+                                    "total_matches": 4,
+                                    "results": [
+                                        {
+                                            "path": "$.store.book[*].title",
+                                            "match_count": 2,
+                                            "matches": [
+                                                {
+                                                    "path": "$['store']['book'][0]['title']",
+                                                    "value": "A"
+                                                },
+                                                {
+                                                    "path": "$['store']['book'][1]['title']",
+                                                    "value": "B"
+                                                }
+                                            ],
+                                            "error": null
+                                        },
+                                        {
+                                            "path": "$.store.book[*].price",
+                                            "match_count": 2,
+                                            "matches": [
+                                                {
+                                                    "path": "$['store']['book'][0]['price']",
+                                                    "value": 8
+                                                },
+                                                {
+                                                    "path": "$['store']['book'][1]['price']",
+                                                    "value": 12
+                                                }
+                                            ],
+                                            "error": null
+                                        },
+                                        {
+                                            "path": "$.store.missing",
+                                            "match_count": 0,
+                                            "matches": [],
+                                            "error": null
+                                        }
+                                    ],
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "parse": 1,
+                                        "evaluation": 1,
+                                        "path_resolution": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Collected 4 match(es) across 3 path(s) in one call.",
+                                        "Extract per-path values and route them to downstream steps."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "json-pointer",
+                                            "reason": "Resolve a matched path as an exact RFC 6901 pointer before reading or writing it."
+                                        },
+                                        {
+                                            "api": "json-patch",
+                                            "reason": "Apply an RFC 6902 add/replace/remove at a located path to mutate the document."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the extracted values against a JSON Schema before passing them downstream."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BatchRequest"
+                            },
+                            "example": {
+                                "document": {
+                                    "store": {
+                                        "book": [
+                                            {
+                                                "title": "A",
+                                                "price": 8
+                                            },
+                                            {
+                                                "title": "B",
+                                                "price": 12
+                                            }
+                                        ]
+                                    }
+                                },
+                                "paths": [
+                                    "$.store.book[*].title",
+                                    "$.store.book[*].price",
+                                    "$.store.missing"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.013,
+                    "currency": "USDC"
+                }
+            }
+        },
         "/lookup": {
             "post": {
                 "operationId": "lookup",
@@ -370,24 +563,33 @@
                                             "Supported JSONPath subset: $ (root), .name and ['name'] (child), * and [*] (wildcard), .. (recursive descent), [n] (index, negative allowed), [start:end:step] (slice, Python-style, negative/step), and unions [0,2] / ['a','b']. Evaluation is exact within this subset.",
                                             "NOT supported: filter expressions [?(@.price<10)], script expressions [(...)], and current-node (@) references. Such a path is rejected with a parse error rather than silently mis-evaluated.",
                                             "Match ORDER follows document order (object keys in insertion order, array indices ascending); recursive descent visits a node before its children. Unions preserve the order written. Duplicate matches from overlapping unions are NOT de-duplicated.",
-                                            "Matched paths are emitted in normalized bracket form ($['a'][0]); object keys are quoted, array indices are bracketed integers."
+                                            "Matched paths are emitted in normalized bracket form ($['a'][0]); object keys are quoted, array indices are bracketed integers.",
+                                            "/batch evaluates many paths against ONE document in a single paid call; a path that fails to parse/evaluate is returned with its \"error\" set and empty matches \u2014 it never fails the whole batch."
                                         ]
                                     },
                                     "confidence_score": 1,
                                     "confidence_per_section": {
-                                        "query": 1
+                                        "parse": 1,
+                                        "evaluation": 1,
+                                        "path_resolution": 1
                                     },
                                     "recommended_actions_priority_order": [
-                                        "2 match(es) for $.store.book[*].title."
+                                        "Extract the 2 matched value(s) for downstream use.",
+                                        "Resolve a match path (e.g. $['store']['book'][0]['title']) via json-pointer for exact read/write.",
+                                        "Validate the extracted values against a JSON Schema before passing them on."
                                     ],
                                     "chain_to": [
                                         {
                                             "api": "json-pointer",
-                                            "reason": "Resolve a single matched path as an exact RFC 6901 pointer."
+                                            "reason": "Resolve a matched path as an exact RFC 6901 pointer before reading or writing it."
                                         },
                                         {
                                             "api": "json-patch",
-                                            "reason": "Apply an RFC 6902 patch at a located path."
+                                            "reason": "Apply an RFC 6902 add/replace/remove at a located path to mutate the document."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the extracted values against a JSON Schema before passing them downstream."
                                         }
                                     ],
                                     "privacy": {
@@ -396,7 +598,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -553,6 +757,7 @@
                 "type": "object",
                 "required": [
                     "trace_id",
+                    "request_id",
                     "computed_at",
                     "success",
                     "latency_ms",
@@ -594,7 +799,8 @@
                     "trace_id",
                     "computed_at",
                     "success",
-                    "latency_ms"
+                    "latency_ms",
+                    "request_id"
                 ],
                 "properties": {
                     "trace_id": {
@@ -624,7 +830,9 @@
                 "type": "object",
                 "required": [
                     "model",
-                    "automation_safe"
+                    "automation_safe",
+                    "side_effects",
+                    "estimated_compute_class"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -636,6 +844,19 @@
                     },
                     "automation_safe": {
                         "type": "boolean"
+                    },
+                    "side_effects": {
+                        "type": "boolean",
+                        "description": "Whether a call mutates external state (always false \u2014 pure computation)."
+                    },
+                    "estimated_compute_class": {
+                        "type": "string",
+                        "enum": [
+                            "low",
+                            "medium",
+                            "high"
+                        ],
+                        "description": "Rough CPU cost band for planning."
                     }
                 }
             },
@@ -643,7 +864,17 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
-                    "query": {
+                    "parse": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "evaluation": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "path_resolution": {
                         "type": "number",
                         "minimum": 0,
                         "maximum": 1
@@ -799,6 +1030,139 @@
                     }
                 }
             },
+            "BatchItem": {
+                "type": "object",
+                "required": [
+                    "path",
+                    "match_count",
+                    "matches",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "path": {
+                        "type": "string"
+                    },
+                    "match_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "matches": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "value"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string",
+                                    "description": "Normalized bracket path of the match, e.g. $['a'][0]."
+                                },
+                                "value": {
+                                    "description": "The matched value.",
+                                    "type": [
+                                        "string",
+                                        "number",
+                                        "boolean",
+                                        "null",
+                                        "array",
+                                        "object"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "error": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Parse/eval error for this path, or null."
+                    }
+                }
+            },
+            "BatchCore": {
+                "type": "object",
+                "required": [
+                    "document_evaluated",
+                    "query_count",
+                    "total_matches",
+                    "results"
+                ],
+                "properties": {
+                    "document_evaluated": {
+                        "type": "boolean"
+                    },
+                    "query_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "total_matches": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "match_count",
+                                "matches",
+                                "error"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "match_count": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "matches": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "path",
+                                            "value"
+                                        ],
+                                        "additionalProperties": false,
+                                        "properties": {
+                                            "path": {
+                                                "type": "string",
+                                                "description": "Normalized bracket path of the match, e.g. $['a'][0]."
+                                            },
+                                            "value": {
+                                                "description": "The matched value.",
+                                                "type": [
+                                                    "string",
+                                                    "number",
+                                                    "boolean",
+                                                    "null",
+                                                    "array",
+                                                    "object"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                },
+                                "error": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Parse/eval error for this path, or null."
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "QueryRequest": {
                 "type": "object",
                 "required": [
@@ -826,6 +1190,38 @@
                     }
                 }
             },
+            "BatchRequest": {
+                "type": "object",
+                "required": [
+                    "document",
+                    "paths"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "document": {
+                        "description": "Any JSON document to query.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "paths": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2000
+                        },
+                        "description": "JSONPath expressions to evaluate against the same document."
+                    }
+                }
+            },
             "DiscoveryResponse": {
                 "type": "object",
                 "required": [
@@ -836,7 +1232,8 @@
                     "auth",
                     "endpoints",
                     "pricing",
-                    "x402_compatible"
+                    "x402_compatible",
+                    "capabilities"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -924,6 +1321,13 @@
                     },
                     "x402_compatible": {
                         "type": "boolean"
+                    },
+                    "capabilities": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Machine-readable capability tags for agent matching."
                     }
                 }
             },
@@ -948,6 +1352,20 @@
                     },
                     {
                         "$ref": "#/components/schemas/ValueCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "BatchResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/BatchCore"
                     },
                     {
                         "$ref": "#/components/schemas/_Tail"

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { respond, fail } from '../../_aplus/scaffold';
-import { EXECUTION_METADATA, PRIVACY } from '../../_aplus/util';
+import { PRIVACY } from '../../_aplus/util';
+import { EXECUTION_METADATA_PLUS } from '../../_aplus/specparts-plus';
 
 // Deterministic color converter & WCAG contrast checker. /convert parses a color
 // (hex, rgb()/rgba(), hsl()/hsla(), or a CSS named color) and emits every common
@@ -205,34 +206,105 @@ function doContrast(body: any): { error: string } | { result: ContrastCore } {
   };
 }
 
+const WCAG_TARGET = (level: string, size: string) => (level === 'AAA' ? (size === 'large' ? 4.5 : 7) : (size === 'large' ? 3 : 4.5));
+const ratioOf = (a: RGBA, b: RGBA) => {
+  const la = relLuminance(a.r, a.g, a.b), lb = relLuminance(b.r, b.g, b.b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+};
+
+export interface SuggestCore {
+  foreground: string;
+  background: string;
+  level: string;
+  text_size: string;
+  target_ratio: number;
+  original_ratio: number;
+  meets_target: boolean;
+  adjusted: boolean;
+  direction: string;
+  recommended_foreground: string;
+  recommended_ratio: number;
+  recommended_meets_target: boolean;
+}
+
+// Deterministically search for an accessible foreground: hold hue+saturation, step
+// lightness 1% toward black or white (whichever raises contrast against the given
+// background) until the WCAG target ratio is met or the extreme is reached.
+function doSuggest(body: any): { error: string } | { result: SuggestCore } {
+  if (body === null || typeof body !== 'object' || Array.isArray(body)) return { error: 'Provide "foreground" and "background" colors.' };
+  const fg = parseColor(body.foreground), bg = parseColor(body.background);
+  if ('error' in fg) return { error: `foreground: ${fg.error}` };
+  if ('error' in bg) return { error: `background: ${bg.error}` };
+  const level = body.level === 'AAA' ? 'AAA' : 'AA';
+  const size = body.text_size === 'large' ? 'large' : 'normal';
+  if (body.level !== undefined && !['AA', 'AAA'].includes(body.level)) return { error: '"level" must be "AA" or "AAA".' };
+  if (body.text_size !== undefined && !['normal', 'large'].includes(body.text_size)) return { error: '"text_size" must be "normal" or "large".' };
+  const target = WCAG_TARGET(level, size);
+  const r0 = Math.round(ratioOf(fg.rgba, bg.rgba) * 100) / 100;
+
+  const base: SuggestCore = {
+    foreground: String(body.foreground).trim(), background: String(body.background).trim(),
+    level, text_size: size, target_ratio: target, original_ratio: r0, meets_target: r0 >= target,
+    adjusted: false, direction: 'none', recommended_foreground: forms(fg.rgba).hex, recommended_ratio: r0, recommended_meets_target: r0 >= target,
+  };
+  if (r0 >= target) return { result: base };
+
+  const goDarker = relLuminance(bg.rgba.r, bg.rgba.g, bg.rgba.b) >= relLuminance(fg.rgba.r, fg.rgba.g, fg.rgba.b);
+  const hsl = rgbToHsl(fg.rgba.r, fg.rgba.g, fg.rgba.b);
+  let best = { rgba: fg.rgba, ratio: r0 };
+  for (let step = 1; step <= 100; step++) {
+    const L = goDarker ? hsl.l - step : hsl.l + step;
+    if (L < 0 || L > 100) break;
+    const rgb = hslToRgb(hsl.h, hsl.s / 100, L / 100);
+    const cand: RGBA = { ...rgb, a: 1 };
+    const r = ratioOf(cand, bg.rgba);
+    best = { rgba: cand, ratio: r };
+    if (r >= target) break;
+  }
+  const rr = Math.round(best.ratio * 100) / 100;
+  return {
+    result: {
+      ...base,
+      adjusted: true, direction: goDarker ? 'darker' : 'lighter',
+      recommended_foreground: forms(best.rgba).hex, recommended_ratio: rr, recommended_meets_target: rr >= target,
+    },
+  };
+}
+
 const CHAIN_TO = [
-  { api: 'accessibility-audit-lite-api', reason: 'Roll this contrast check into a fuller page accessibility audit.' },
+  { api: 'accessibility-audit-lite-api', reason: 'Roll this contrast check into a full-page WCAG accessibility audit.' },
 ];
 const INVALIDATORS = [
   'Conversions are exact sRGB math. HSL/HSV components are rounded to whole numbers (hue 0–360, sat/light/value 0–100%); the rgb→hex→rgb round trip is lossless but hex→hsl→hex may differ by ±1 due to rounding.',
   'WCAG contrast uses relative luminance per WCAG 2.1; alpha is ignored for contrast (the ratio assumes fully opaque colors composited on no background). AA normal ≥4.5, AA large ≥3, AAA normal ≥7, AAA large ≥4.5.',
   'Only CSS Color Level 4 named colors, hex (#rgb/#rgba/#rrggbb/#rrggbbaa), rgb()/rgba(), and hsl()/hsla() are parsed; lab()/lch()/color() and other functional notations are not supported.',
+  '/suggest-accessible holds hue+saturation and steps lightness toward black/white in 1% increments; the recommended color is the first that meets the target (or the nearest extreme if none can). It optimizes contrast only — not brand fidelity. recommended_meets_target=false means even pure black/white against this background cannot reach the target.',
 ];
 
 const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
   confidence_score: 1, confidence_per_section: sectionConf,
   recommended_actions_priority_order: actions,
-  chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA,
+  chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA_PLUS,
 });
+
+const CAPABILITIES = ['color_conversion', 'wcag_contrast', 'accessibility_remediation', 'relative_luminance'];
 
 const DISCOVERY = {
   name: 'Color Converter API', version: '1.0.0',
-  description: 'Deterministic color converter & WCAG contrast checker. /convert parses a hex, rgb(), hsl(), or CSS named color and emits every representation plus relative luminance; /contrast computes the WCAG 2.1 contrast ratio between two colors with AA/AAA pass/fail. No LLM, nothing stored.',
+  description: 'Deterministic color converter & WCAG contrast checker. /convert parses a hex, rgb(), hsl(), or CSS named color and emits every representation plus relative luminance; /contrast computes the WCAG 2.1 contrast ratio between two colors; /suggest-accessible recommends an accessible foreground that meets AA/AAA. No LLM, nothing stored.',
   openapi_url: 'https://orbis-apis.onrender.com/color-converter/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
+  capabilities: CAPABILITIES,
   endpoints: [
     { method: 'POST', path: '/convert', summary: 'Parse a color and emit all representations', price_usdc: 0.006 },
     { method: 'POST', path: '/contrast', summary: 'WCAG 2.1 contrast ratio + AA/AAA pass/fail', price_usdc: 0.007 },
+    { method: 'POST', path: '/suggest-accessible', summary: 'Recommend an accessible foreground (AA/AAA)', price_usdc: 0.009 },
     { method: 'POST', path: '/lookup', summary: 'ONE-CALL convert + reasoning', price_usdc: 0.012 },
   ],
   pricing: [
     { path: '/convert', price_usdc: 0.006, currency: 'USDC' },
     { path: '/contrast', price_usdc: 0.007, currency: 'USDC' },
+    { path: '/suggest-accessible', price_usdc: 0.009, currency: 'USDC' },
     { path: '/lookup', price_usdc: 0.012, currency: 'USDC' },
   ],
   x402_compatible: true,
@@ -245,7 +317,7 @@ router.post('/convert', (req: Request, res: Response) => {
   const r = doConvert(req.body);
   if ('error' in r) return fail(res, t0, 400, 'invalid_request', r.error);
   const v = r.result;
-  respond(res, t0, { ...v, ...TAIL({ conversion: 1 }, [`Parsed as ${v.matched_format}; canonical hex ${v.color.hex}.`]) });
+  respond(res, t0, { ...v, ...TAIL({ parse: 1, conversion: 1 }, [`Use the canonical hex ${v.color.hex} (or any emitted representation).`, 'Check contrast against a background via /contrast.']) });
 });
 
 router.post('/contrast', (req: Request, res: Response) => {
@@ -253,7 +325,21 @@ router.post('/contrast', (req: Request, res: Response) => {
   const r = doContrast(req.body);
   if ('error' in r) return fail(res, t0, 400, 'invalid_request', r.error);
   const v = r.result;
-  respond(res, t0, { ...v, ...TAIL({ contrast: 1 }, [`Contrast ${v.contrast_ratio}:1 — ${v.highest_level}.`]) });
+  respond(res, t0, { ...v, ...TAIL({ parse: 1, contrast: 1 }, v.passes.aa_normal
+    ? [`Contrast ${v.contrast_ratio}:1 passes — ${v.highest_level}.`]
+    : [`Contrast ${v.contrast_ratio}:1 is below AA normal.`, 'Call /suggest-accessible for a compliant foreground.']) });
+});
+
+router.post('/suggest-accessible', (req: Request, res: Response) => {
+  const t0 = Date.now();
+  const r = doSuggest(req.body);
+  if ('error' in r) return fail(res, t0, 400, 'invalid_request', r.error);
+  const v = r.result;
+  respond(res, t0, { ...v, ...TAIL({ parse: 1, contrast: 1 }, v.meets_target
+    ? [`Foreground already meets ${v.level} (${v.original_ratio}:1) — no change needed.`]
+    : v.recommended_meets_target
+      ? [`Adopt ${v.recommended_foreground} (${v.direction}) for ${v.recommended_ratio}:1, meeting ${v.level}.`]
+      : [`No foreground can meet ${v.level} on this background; the nearest is ${v.recommended_foreground} at ${v.recommended_ratio}:1 — change the background instead.`]) });
 });
 
 router.post('/lookup', (req: Request, res: Response) => {
@@ -272,7 +358,7 @@ router.post('/lookup', (req: Request, res: Response) => {
       ],
       invalidators: INVALIDATORS,
     },
-    ...TAIL({ conversion: 1 }, [`Parsed as ${v.matched_format}; canonical hex ${v.color.hex}.`]),
+    ...TAIL({ parse: 1, conversion: 1 }, [`Use the canonical hex ${v.color.hex} (or any emitted representation).`, 'Check contrast against a background via /contrast.']),
   });
 });
 

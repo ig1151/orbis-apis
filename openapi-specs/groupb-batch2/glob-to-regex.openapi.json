@@ -44,6 +44,12 @@
                                         "type": "apiKey",
                                         "header": "X-API-Key"
                                     },
+                                    "capabilities": [
+                                        "glob_translation",
+                                        "path_matching",
+                                        "redos_safe_regex",
+                                        "batch_path_match"
+                                    ],
                                     "endpoints": [
                                         {
                                             "method": "POST",
@@ -145,7 +151,11 @@
                                     "chain_to": [
                                         {
                                             "api": "regex-tester",
-                                            "reason": "Run or further analyze the generated regular expression against more inputs."
+                                            "reason": "Statically analyze or run the generated regular expression against more inputs."
+                                        },
+                                        {
+                                            "api": "url-tools",
+                                            "reason": "Canonicalize URL paths before matching them against this glob."
                                         }
                                     ],
                                     "privacy": {
@@ -154,7 +164,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -257,7 +269,11 @@
                                     "chain_to": [
                                         {
                                             "api": "regex-tester",
-                                            "reason": "Run or further analyze the generated regular expression against more inputs."
+                                            "reason": "Statically analyze or run the generated regular expression against more inputs."
+                                        },
+                                        {
+                                            "api": "url-tools",
+                                            "reason": "Canonicalize URL paths before matching them against this glob."
                                         }
                                     ],
                                     "privacy": {
@@ -266,7 +282,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -388,7 +406,11 @@
                                     "chain_to": [
                                         {
                                             "api": "regex-tester",
-                                            "reason": "Run or further analyze the generated regular expression against more inputs."
+                                            "reason": "Statically analyze or run the generated regular expression against more inputs."
+                                        },
+                                        {
+                                            "api": "url-tools",
+                                            "reason": "Canonicalize URL paths before matching them against this glob."
                                         }
                                     ],
                                     "privacy": {
@@ -397,7 +419,9 @@
                                     },
                                     "execution_metadata": {
                                         "model": "deterministic",
-                                        "automation_safe": true
+                                        "automation_safe": true,
+                                        "side_effects": false,
+                                        "estimated_compute_class": "low"
                                     }
                                 }
                             }
@@ -546,6 +570,7 @@
                 "type": "object",
                 "required": [
                     "trace_id",
+                    "request_id",
                     "computed_at",
                     "success",
                     "latency_ms",
@@ -587,7 +612,8 @@
                     "trace_id",
                     "computed_at",
                     "success",
-                    "latency_ms"
+                    "latency_ms",
+                    "request_id"
                 ],
                 "properties": {
                     "trace_id": {
@@ -617,7 +643,9 @@
                 "type": "object",
                 "required": [
                     "model",
-                    "automation_safe"
+                    "automation_safe",
+                    "side_effects",
+                    "estimated_compute_class"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -629,6 +657,19 @@
                     },
                     "automation_safe": {
                         "type": "boolean"
+                    },
+                    "side_effects": {
+                        "type": "boolean",
+                        "description": "Whether a call mutates external state (always false \u2014 pure computation)."
+                    },
+                    "estimated_compute_class": {
+                        "type": "string",
+                        "enum": [
+                            "low",
+                            "medium",
+                            "high"
+                        ],
+                        "description": "Rough CPU cost band for planning."
                     }
                 }
             },
@@ -915,7 +956,8 @@
                     "auth",
                     "endpoints",
                     "pricing",
-                    "x402_compatible"
+                    "x402_compatible",
+                    "capabilities"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -1003,6 +1045,13 @@
                     },
                     "x402_compatible": {
                         "type": "boolean"
+                    },
+                    "capabilities": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Machine-readable capability tags for agent matching."
                     }
                 }
             },

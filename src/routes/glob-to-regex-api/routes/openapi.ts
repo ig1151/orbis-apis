@@ -1,5 +1,6 @@
 import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold';
-import { EnvelopeOk, ExecutionMetadata, confSections, Tail, discoverySchema } from '../../_aplus/specparts';
+import { confSections, Tail } from '../../_aplus/specparts';
+import { EnvelopeOkPlus, Error400Plus, ExecutionMetadataPlus, discoverySchemaPlus } from '../../_aplus/specparts-plus';
 import { convertExample, testExample, lookupExample } from './examples';
 
 const GlobOptions = { type: 'object', required: ['globstar', 'nocase'], additionalProperties: false, properties: { globstar: { type: 'boolean' }, nocase: { type: 'boolean' } } };
@@ -27,8 +28,9 @@ const convertReq = { glob: 'src/**/*.{ts,tsx}' };
 const testReq = { glob: 'src/**/*.{ts,tsx}', paths: ['src/index.ts', 'src/routes/a/b.tsx', 'src/x.js', 'README.md'] };
 
 const schemas = {
-  EnvelopeOk, ExecutionMetadata, ConfidencePerSection: confSections('conversion', 'matching'), _Tail: Tail,
-  GlobOptions, ConvertCore, TestResult, TestCore, OptionsRequest, ConvertRequest, TestRequest, DiscoveryResponse: discoverySchema(),
+  EnvelopeOk: EnvelopeOkPlus, ExecutionMetadata: ExecutionMetadataPlus, Error400: Error400Plus,
+  ConfidencePerSection: confSections('conversion', 'matching'), _Tail: Tail,
+  GlobOptions, ConvertCore, TestResult, TestCore, OptionsRequest, ConvertRequest, TestRequest, DiscoveryResponse: discoverySchemaPlus(),
   ConvertResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/ConvertCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   TestResponse: { allOf: [{ $ref: '#/components/schemas/EnvelopeOk' }, { $ref: '#/components/schemas/TestCore' }, { $ref: '#/components/schemas/_Tail' }], unevaluatedProperties: false },
   LookupResponse: {
@@ -45,6 +47,7 @@ const disc = {
   description: 'Deterministic glob → regular-expression translator & path matcher. /convert translates a shell-style glob (*, **, ?, [..], {a,b}) into an anchored ECMAScript regex; /test reports which supplied paths match. The generated regex is ReDoS-safe by construction. No LLM, nothing stored.',
   openapi_url: 'https://orbis-apis.onrender.com/glob-to-regex/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
+  capabilities: ['glob_translation', 'path_matching', 'redos_safe_regex', 'batch_path_match'],
   endpoints: [
     { method: 'POST', path: '/convert', summary: 'Translate a glob into an anchored regex', price_usdc: 0.005 },
     { method: 'POST', path: '/test', summary: 'Match paths against a glob', price_usdc: 0.006 },
