@@ -54,6 +54,7 @@ const disc = {
   openapi_url: 'https://orbis-apis.onrender.com/bond-analytics/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['bond_pricing', 'yield_to_maturity', 'duration', 'convexity', 'fixed_income'],
+  typical_use_cases: ['Price a fixed-coupon bond at a target yield', 'Solve a bond yield to maturity from its market price', 'Estimate rate sensitivity via modified duration and convexity'],
   endpoints: [
     { method: 'POST', path: '/price', summary: 'Bond price from yield', price_usdc: 0.008 },
     { method: 'POST', path: '/yield', summary: 'Yield to maturity from price', price_usdc: 0.01 },
@@ -77,7 +78,7 @@ const endpoints: AplusEndpoint[] = [
 export const spec = buildAplusSpec({
   slug: 'bond-analytics', title: 'Bond Analytics API', version: '1.0.0',
   description: 'Deterministic fixed-coupon bond price / yield-to-maturity / duration / convexity. Clean price on a coupon date. No LLM.',
-  endpoints, schemas, infoExtensions: { 'x-finance-tool': true, 'x-human-approval-required': false },
+  endpoints, schemas, infoExtensions: { 'x-finance-tool': true, 'x-financial-calculation': true, 'x-human-approval-required': false },
 });
 
 export default specRouter(spec);

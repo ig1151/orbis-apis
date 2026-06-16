@@ -10,6 +10,7 @@
         "x-agent-marketplace-ready": true,
         "x-pay-per-call-optimized": true,
         "x-finance-tool": true,
+        "x-financial-calculation": true,
         "x-human-approval-required": false
     },
     "servers": [
@@ -50,6 +51,11 @@
                                         "enterprise_value",
                                         "terminal_value",
                                         "equity_value"
+                                    ],
+                                    "typical_use_cases": [
+                                        "Value a company from projected free cash flows",
+                                        "Derive an implied per-share value net of debt",
+                                        "Stress-test enterprise value across discount rates"
                                     ],
                                     "endpoints": [
                                         {
@@ -808,6 +814,13 @@
                             "type": "string"
                         },
                         "description": "Machine-readable capability tags for agent matching."
+                    },
+                    "typical_use_cases": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Optional plain-language use cases to aid autonomous discovery."
                     }
                 }
             },

@@ -55,6 +55,7 @@ export function discoverySchemaPlus() {
     properties: {
       ...base.properties,
       capabilities: { type: 'array', items: { type: 'string' }, description: 'Machine-readable capability tags for agent matching.' },
+      typical_use_cases: { type: 'array', items: { type: 'string' }, description: 'Optional plain-language use cases to aid autonomous discovery.' },
     },
   };
 }

@@ -10,6 +10,7 @@
         "x-agent-marketplace-ready": true,
         "x-pay-per-call-optimized": true,
         "x-finance-tool": true,
+        "x-financial-calculation": true,
         "x-human-approval-required": false
     },
     "servers": [
@@ -50,6 +51,11 @@
                                         "cashflow_analysis",
                                         "discounting",
                                         "capital_budgeting"
+                                    ],
+                                    "typical_use_cases": [
+                                        "Rank capital projects by NPV at the firm cost of capital",
+                                        "Compute the IRR of an investment cashflow series",
+                                        "Screen a lease-vs-buy or build-vs-defer decision"
                                     ],
                                     "endpoints": [
                                         {
@@ -956,6 +962,13 @@
                             "type": "string"
                         },
                         "description": "Machine-readable capability tags for agent matching."
+                    },
+                    "typical_use_cases": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Optional plain-language use cases to aid autonomous discovery."
                     }
                 }
             },

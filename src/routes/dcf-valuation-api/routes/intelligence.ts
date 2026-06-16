@@ -79,6 +79,7 @@ const DISCOVERY = {
   openapi_url: 'https://orbis-apis.onrender.com/dcf-valuation/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['dcf', 'valuation', 'enterprise_value', 'terminal_value', 'equity_value'],
+  typical_use_cases: ['Value a company from projected free cash flows', 'Derive an implied per-share value net of debt', 'Stress-test enterprise value across discount rates'],
   endpoints: [
     { method: 'POST', path: '/value', summary: 'Enterprise / equity value from projected FCF', price_usdc: 0.01 },
     { method: 'POST', path: '/lookup', summary: 'ONE-CALL valuation + sensitivity + reasoning', price_usdc: 0.016 },
