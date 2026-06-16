@@ -1,0 +1,160 @@
+[
+  {
+    "name": "NPV / IRR API",
+    "shortDescription": "Net present value & internal rate of return for cashflows.",
+    "description": "Deterministic net-present-value and internal-rate-of-return calculator for a cashflow series, for finance agents, capital-budgeting workflows, treasury automation, and investment-screening systems. /npv discounts a series at a per-period rate; /irr solves the rate that zeroes NPV via a bracket scan + bisection (reporting sign changes so multiple-IRR cases are visible). Per-period rates; index 0 = today. No LLM, nothing stored.",
+    "category": "Finance",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/npv-irr",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/npv-irr/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/npv-irr/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/npv-irr.png",
+    "tags": ["finance", "valuation", "cashflow", "capital-budgeting", "agent-infrastructure"],
+    "keywords": ["npv", "irr", "net present value", "internal rate of return", "discounted cashflow", "capital budgeting"],
+    "capabilities": ["npv", "irr", "cashflow_analysis", "discounting", "capital_budgeting"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/npv", "pricePerCallUsdc": 0.006, "description": "Net present value at a per-period rate" },
+          { "method": "POST", "pathPattern": "/irr", "pricePerCallUsdc": 0.008, "description": "Internal rate of return of a cashflow series" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call NPV + IRR with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/npv", "description": "Net present value at a per-period rate" },
+      { "method": "POST", "path": "/irr", "description": "Internal rate of return of a cashflow series" },
+      { "method": "POST", "path": "/lookup", "description": "NPV + IRR with reasoning" }
+    ]
+  },
+  {
+    "name": "Black-Scholes Option Pricing API",
+    "shortDescription": "European option pricing & greeks (Black-Scholes-Merton).",
+    "description": "Deterministic Black-Scholes-Merton European option pricing and greeks with continuous dividend yield, for derivatives agents, hedging automation, and options-analytics workflows. /price returns the model price plus d1/d2 and intrinsic/time value; /greeks returns delta, gamma, vega, theta, and rho in trader-friendly units. Closed-form math — this is the model value implied by your inputs, not a market quote. No LLM, nothing stored.",
+    "category": "Finance",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/black-scholes",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/black-scholes/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/black-scholes/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/black-scholes.png",
+    "tags": ["finance", "options", "derivatives", "quant", "agent-infrastructure"],
+    "keywords": ["black scholes", "option pricing", "greeks", "delta", "gamma", "vega", "theta", "derivatives"],
+    "capabilities": ["option_pricing", "black_scholes", "option_greeks", "derivatives", "implied_value"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.018,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/price", "pricePerCallUsdc": 0.01, "description": "Black-Scholes model price + d1/d2" },
+          { "method": "POST", "pathPattern": "/greeks", "pricePerCallUsdc": 0.012, "description": "Delta, gamma, vega, theta, rho" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.018, "description": "One-call price + greeks with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/price", "description": "Black-Scholes model price + d1/d2" },
+      { "method": "POST", "path": "/greeks", "description": "Delta, gamma, vega, theta, rho" },
+      { "method": "POST", "path": "/lookup", "description": "Price + greeks with reasoning" }
+    ]
+  },
+  {
+    "name": "Bond Analytics API",
+    "shortDescription": "Bond price, yield-to-maturity, duration & convexity.",
+    "description": "Deterministic fixed-coupon bond analytics for fixed-income agents, treasury workflows, and portfolio tooling. /price values a bond from its yield (plus current yield); /yield solves yield-to-maturity from a price by bisection; /lookup adds Macaulay & modified duration and convexity. Clean price on a coupon date (no accrued interest). No LLM, nothing stored.",
+    "category": "Finance",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/bond-analytics",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/bond-analytics/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/bond-analytics/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/bond-analytics.png",
+    "tags": ["finance", "fixed-income", "bonds", "quant", "agent-infrastructure"],
+    "keywords": ["bond pricing", "yield to maturity", "ytm", "duration", "convexity", "fixed income"],
+    "capabilities": ["bond_pricing", "yield_to_maturity", "duration", "convexity", "fixed_income"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.015,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/price", "pricePerCallUsdc": 0.008, "description": "Bond price from yield" },
+          { "method": "POST", "pathPattern": "/yield", "pricePerCallUsdc": 0.01, "description": "Yield to maturity from price" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "One-call price + duration/convexity with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/price", "description": "Bond price from yield" },
+      { "method": "POST", "path": "/yield", "description": "Yield to maturity from price" },
+      { "method": "POST", "path": "/lookup", "description": "Price + duration/convexity with reasoning" }
+    ]
+  },
+  {
+    "name": "DCF Valuation API",
+    "shortDescription": "Discounted-cash-flow valuation with terminal value.",
+    "description": "Deterministic discounted-cash-flow valuation for investment-analysis agents, due-diligence automation, and corporate-finance workflows. Discounts projected free cash flows (years 1..n) at a discount rate and adds an optional Gordon-growth terminal value; optionally nets debt and divides by shares for equity and per-share value. /lookup adds a discount-rate sensitivity grid. No LLM, nothing stored.",
+    "category": "Finance",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/dcf-valuation",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/dcf-valuation/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/dcf-valuation/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/dcf-valuation.png",
+    "tags": ["finance", "valuation", "dcf", "equity-research", "agent-infrastructure"],
+    "keywords": ["dcf", "discounted cash flow", "valuation", "enterprise value", "terminal value", "equity value"],
+    "capabilities": ["dcf", "valuation", "enterprise_value", "terminal_value", "equity_value"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.016,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/value", "pricePerCallUsdc": 0.01, "description": "Enterprise / equity value from projected FCF" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.016, "description": "One-call valuation + sensitivity with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/value", "description": "Enterprise / equity value from projected FCF" },
+      { "method": "POST", "path": "/lookup", "description": "Valuation + sensitivity with reasoning" }
+    ]
+  },
+  {
+    "name": "Sharpe / Sortino Risk Ratios API",
+    "shortDescription": "Risk-adjusted return ratios from periodic returns.",
+    "description": "Deterministic risk-adjusted return ratios from a series of periodic returns, for portfolio agents, strategy-evaluation workflows, and quant tooling. /sharpe divides excess return by total volatility; /sortino divides by downside deviation below a minimum-acceptable return. Both annualized by the square root of periods-per-year, with annualized return and volatility. Returns are per-period percents. No LLM, nothing stored.",
+    "category": "Finance",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/risk-ratios",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/risk-ratios/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/risk-ratios/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/risk-ratios.png",
+    "tags": ["finance", "portfolio", "risk", "quant", "agent-infrastructure"],
+    "keywords": ["sharpe ratio", "sortino ratio", "volatility", "downside risk", "risk-adjusted return", "portfolio"],
+    "capabilities": ["sharpe_ratio", "sortino_ratio", "volatility", "downside_risk", "risk_adjusted_return"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/sharpe", "pricePerCallUsdc": 0.007, "description": "Sharpe ratio + annualized return/vol" },
+          { "method": "POST", "pathPattern": "/sortino", "pricePerCallUsdc": 0.007, "description": "Sortino ratio + downside deviation" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call Sharpe + Sortino with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/sharpe", "description": "Sharpe ratio + annualized return/vol" },
+      { "method": "POST", "path": "/sortino", "description": "Sortino ratio + downside deviation" },
+      { "method": "POST", "path": "/lookup", "description": "Sharpe + Sortino with reasoning" }
+    ]
+  }
+]

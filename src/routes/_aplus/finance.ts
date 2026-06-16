@@ -125,3 +125,70 @@ export const FINANCIAL_DISCLAIMER =
   'This result is an informational, deterministic calculation based solely on the inputs you provided. ' +
   'It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. ' +
   'Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions.';
+
+// ---- Shared quantitative-finance primitives (Group D) — pure, deterministic ----
+
+/** Net present value of a cashflow series (index 0 = t=0) at a per-period decimal rate. */
+export function npv(rate: number, cashflows: number[]): number {
+  let acc = 0;
+  for (let t = 0; t < cashflows.length; t++) acc += cashflows[t] / Math.pow(1 + rate, t);
+  return acc;
+}
+
+/**
+ * Internal rate of return (per-period, decimal) for a cashflow series, via a
+ * bracket scan + bisection. Returns null when no sign change is found in the
+ * scanned range (no real IRR, or multiple IRRs that the scan can't bracket).
+ */
+export function irr(cashflows: number[]): number | null {
+  const f = (r: number) => npv(r, cashflows);
+  // Scan for a sign change across a wide rate range (-99% .. +1000% per period).
+  let prevR = -0.99, prevV = f(prevR);
+  const step = 0.01;
+  for (let r = -0.99 + step; r <= 10.0001; r += step) {
+    const v = f(r);
+    if (Number.isFinite(prevV) && Number.isFinite(v) && (prevV === 0 || prevV * v < 0)) {
+      let lo = prevR, hi = r, flo = prevV;
+      for (let i = 0; i < 200; i++) {
+        const mid = (lo + hi) / 2, fmid = f(mid);
+        if (Math.abs(fmid) < 1e-9 || (hi - lo) / 2 < 1e-10) return mid;
+        if (flo * fmid < 0) hi = mid; else { lo = mid; flo = fmid; }
+      }
+      return (lo + hi) / 2;
+    }
+    prevR = r; prevV = v;
+  }
+  return null;
+}
+
+export function mean(xs: number[]): number {
+  return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0;
+}
+
+/** Standard deviation. sample=true uses the (n-1) divisor; false uses n (population). */
+export function stdev(xs: number[], sample = true): number {
+  const n = xs.length;
+  if (n < 2) return 0;
+  const m = mean(xs);
+  const ss = xs.reduce((a, x) => a + (x - m) * (x - m), 0);
+  return Math.sqrt(ss / (sample ? n - 1 : n));
+}
+
+/** Downside deviation below a minimum-acceptable per-period return (n divisor). */
+export function downsideDeviation(xs: number[], mar: number): number {
+  if (!xs.length) return 0;
+  const ss = xs.reduce((a, x) => { const d = Math.min(0, x - mar); return a + d * d; }, 0);
+  return Math.sqrt(ss / xs.length);
+}
+
+/** Standard normal CDF via the Abramowitz & Stegun erf approximation (|err| < 1.5e-7). */
+export function normCdf(x: number): number {
+  const t = 1 / (1 + 0.3275911 * Math.abs(x) / Math.SQRT2);
+  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-(x * x) / 2);
+  return x >= 0 ? 0.5 * (1 + y) : 0.5 * (1 - y);
+}
+
+/** Standard normal PDF. */
+export function normPdf(x: number): number {
+  return Math.exp(-(x * x) / 2) / Math.sqrt(2 * Math.PI);
+}

@@ -604,6 +604,16 @@ import mortgageRefinanceRouter from './routes/mortgage-refinance-api/routes/inte
 import mortgageRefinanceOpenapiRouter from './routes/mortgage-refinance-api/routes/openapi';
 import emergencyFundCalculatorRouter from './routes/emergency-fund-calculator-api/routes/intelligence';
 import emergencyFundCalculatorOpenapiRouter from './routes/emergency-fund-calculator-api/routes/openapi';
+import npvIrrRouter from './routes/npv-irr-api/routes/intelligence';
+import npvIrrOpenapiRouter from './routes/npv-irr-api/routes/openapi';
+import blackScholesRouter from './routes/black-scholes-api/routes/intelligence';
+import blackScholesOpenapiRouter from './routes/black-scholes-api/routes/openapi';
+import bondAnalyticsRouter from './routes/bond-analytics-api/routes/intelligence';
+import bondAnalyticsOpenapiRouter from './routes/bond-analytics-api/routes/openapi';
+import dcfValuationRouter from './routes/dcf-valuation-api/routes/intelligence';
+import dcfValuationOpenapiRouter from './routes/dcf-valuation-api/routes/openapi';
+import riskRatiosRouter from './routes/risk-ratios-api/routes/intelligence';
+import riskRatiosOpenapiRouter from './routes/risk-ratios-api/routes/openapi';
 import financialHealthCheckerRouter from './routes/financial-health-checker-api/routes/intelligence';
 import financialHealthCheckerOpenapiRouter from './routes/financial-health-checker-api/routes/openapi';
 import personalFinanceAgentRouter from './routes/personal-finance-agent-api/routes/intelligence';
@@ -1370,6 +1380,11 @@ const routerMap: Record<string, import("express").Router> = {
   'refinance-calculator': refinanceCalculatorRouter,
   'mortgage-refinance': mortgageRefinanceRouter,
   'emergency-fund-calculator': emergencyFundCalculatorRouter,
+  'npv-irr': npvIrrRouter,
+  'black-scholes': blackScholesRouter,
+  'bond-analytics': bondAnalyticsRouter,
+  'dcf-valuation': dcfValuationRouter,
+  'risk-ratios': riskRatiosRouter,
   'financial-health-checker': financialHealthCheckerRouter,
   'personal-finance-agent': personalFinanceAgentRouter,
   'debt-payoff-planner': debtPayoffPlannerRouter,
@@ -1858,6 +1873,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'refinance-calculator': refinanceCalculatorOpenapiRouter,
   'mortgage-refinance': mortgageRefinanceOpenapiRouter,
   'emergency-fund-calculator': emergencyFundCalculatorOpenapiRouter,
+  'npv-irr': npvIrrOpenapiRouter,
+  'black-scholes': blackScholesOpenapiRouter,
+  'bond-analytics': bondAnalyticsOpenapiRouter,
+  'dcf-valuation': dcfValuationOpenapiRouter,
+  'risk-ratios': riskRatiosOpenapiRouter,
   'financial-health-checker': financialHealthCheckerOpenapiRouter,
   'personal-finance-agent': personalFinanceAgentOpenapiRouter,
   'debt-payoff-planner': debtPayoffPlannerOpenapiRouter,

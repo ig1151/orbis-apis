@@ -1,0 +1,1017 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "NPV / IRR API",
+        "version": "1.0.0",
+        "description": "Deterministic NPV + IRR for a cashflow series \u2014 discount at a per-period rate, or solve the breakeven rate via bracket scan + bisection. No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-finance-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/npv-irr"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "NPV / IRR API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic net-present-value and internal-rate-of-return calculator for a cashflow series. /npv discounts cashflows at a per-period rate; /irr solves the rate that zeroes NPV (bracket scan + bisection). Per-period rates, index 0 = today. No LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/npv-irr/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "capabilities": [
+                                        "npv",
+                                        "irr",
+                                        "cashflow_analysis",
+                                        "discounting",
+                                        "capital_budgeting"
+                                    ],
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/npv",
+                                            "summary": "Net present value at a per-period rate",
+                                            "price_usdc": 0.006
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/irr",
+                                            "summary": "Internal rate of return of a cashflow series",
+                                            "price_usdc": 0.008
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL NPV + IRR + reasoning",
+                                            "price_usdc": 0.012
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/npv",
+                                            "price_usdc": 0.006,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/irr",
+                                            "price_usdc": 0.008,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.012,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/npv": {
+            "post": {
+                "operationId": "npv",
+                "summary": "Net present value at a per-period rate",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NpvResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gdx-1780000000000",
+                                    "request_id": "gdx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "rate_percent": 8,
+                                    "period_count": 5,
+                                    "cashflow_total": 500,
+                                    "npv": 238.138382,
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "npv": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "NPV is positive (238.138382) at 8% \u2014 the series creates value at this rate.",
+                                        "Solve /irr to find the breakeven rate."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "dcf-valuation",
+                                            "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value."
+                                        },
+                                        {
+                                            "api": "bond-analytics",
+                                            "reason": "Price a fixed-coupon bond or solve its yield to maturity."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    },
+                                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NpvRequest"
+                            },
+                            "example": {
+                                "rate": 8,
+                                "cashflows": [
+                                    -1000,
+                                    300,
+                                    400,
+                                    500,
+                                    300
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.006,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/irr": {
+            "post": {
+                "operationId": "irr",
+                "summary": "Internal rate of return of a cashflow series",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IrrResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gdx-1780000000000",
+                                    "request_id": "gdx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "period_count": 5,
+                                    "cashflow_total": 500,
+                                    "irr_percent": 18.028163,
+                                    "converged": true,
+                                    "npv_at_irr": 0,
+                                    "sign_changes": 1,
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "irr": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "IRR is 18.028163% per period \u2014 accept if it exceeds your cost of capital."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "dcf-valuation",
+                                            "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value."
+                                        },
+                                        {
+                                            "api": "bond-analytics",
+                                            "reason": "Price a fixed-coupon bond or solve its yield to maturity."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    },
+                                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IrrRequest"
+                            },
+                            "example": {
+                                "cashflows": [
+                                    -1000,
+                                    300,
+                                    400,
+                                    500,
+                                    300
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.008,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL NPV + IRR + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gdx-1780000000000",
+                                    "request_id": "gdx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "period_count": 5,
+                                    "cashflow_total": 500,
+                                    "npv": 238.138382,
+                                    "rate_percent": 8,
+                                    "irr_percent": 18.028163,
+                                    "converged": true,
+                                    "sign_changes": 1,
+                                    "reasoning": {
+                                        "why_result_generated": "Computed IRR by bracket-scan + bisection over 5 period(s) and NPV at 8%.",
+                                        "key_factors": [
+                                            "IRR: 18.028163% per period.",
+                                            "NPV at 8%: 238.138382.",
+                                            "Sign changes: 1."
+                                        ],
+                                        "invalidators": [
+                                            "NPV is exact arithmetic at the rate you supply; it changes with the discount rate and the timing/sign of each cashflow (index 0 is treated as today, t=0, and is NOT discounted).",
+                                            "IRR is found numerically (bracket scan + bisection). A series with no sign change has NO real IRR (returns null); a series with multiple sign changes may have multiple IRRs and only the first bracketed root is returned \u2014 check sign_changes and prefer NPV at your cost of capital for the decision.",
+                                            "Rates are per PERIOD, not annualized \u2014 if your cashflows are monthly, supply a monthly rate and read IRR as a monthly rate."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "npv": 1,
+                                        "irr": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Compare the 18.028163% IRR to your hurdle rate; accept if it clears."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "dcf-valuation",
+                                            "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value."
+                                        },
+                                        {
+                                            "api": "bond-analytics",
+                                            "reason": "Price a fixed-coupon bond or solve its yield to maturity."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    },
+                                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LookupRequest"
+                            },
+                            "example": {
+                                "rate": 8,
+                                "cashflows": [
+                                    -1000,
+                                    300,
+                                    400,
+                                    500,
+                                    300
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.012,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "npv": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "irr": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata",
+                    "financial_disclaimer"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    },
+                    "financial_disclaimer": {
+                        "type": "string",
+                        "description": "Informational-only disclaimer; not financial advice."
+                    }
+                }
+            },
+            "NpvCore": {
+                "type": "object",
+                "required": [
+                    "rate_percent",
+                    "period_count",
+                    "cashflow_total",
+                    "npv"
+                ],
+                "properties": {
+                    "rate_percent": {
+                        "type": "number"
+                    },
+                    "period_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "cashflow_total": {
+                        "type": "number"
+                    },
+                    "npv": {
+                        "type": "number"
+                    }
+                }
+            },
+            "IrrCore": {
+                "type": "object",
+                "required": [
+                    "period_count",
+                    "cashflow_total",
+                    "irr_percent",
+                    "converged",
+                    "npv_at_irr",
+                    "sign_changes"
+                ],
+                "properties": {
+                    "period_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "cashflow_total": {
+                        "type": "number"
+                    },
+                    "irr_percent": {
+                        "type": [
+                            "number",
+                            "null"
+                        ],
+                        "description": "Per-period IRR percent, or null when none exists."
+                    },
+                    "converged": {
+                        "type": "boolean"
+                    },
+                    "npv_at_irr": {
+                        "type": [
+                            "number",
+                            "null"
+                        ]
+                    },
+                    "sign_changes": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "LookupCore": {
+                "type": "object",
+                "required": [
+                    "period_count",
+                    "cashflow_total",
+                    "npv",
+                    "rate_percent",
+                    "irr_percent",
+                    "converged",
+                    "sign_changes"
+                ],
+                "properties": {
+                    "period_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "cashflow_total": {
+                        "type": "number"
+                    },
+                    "npv": {
+                        "type": [
+                            "number",
+                            "null"
+                        ]
+                    },
+                    "rate_percent": {
+                        "type": [
+                            "number",
+                            "null"
+                        ]
+                    },
+                    "irr_percent": {
+                        "type": [
+                            "number",
+                            "null"
+                        ]
+                    },
+                    "converged": {
+                        "type": "boolean"
+                    },
+                    "sign_changes": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "NpvRequest": {
+                "type": "object",
+                "required": [
+                    "rate",
+                    "cashflows"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "rate": {
+                        "type": "number",
+                        "description": "Discount rate as a per-period percent (e.g. 8 = 8%)."
+                    },
+                    "cashflows": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 1200,
+                        "items": {
+                            "type": "number"
+                        },
+                        "description": "Cashflows by period; index 0 = today (t=0, not discounted)."
+                    }
+                }
+            },
+            "IrrRequest": {
+                "type": "object",
+                "required": [
+                    "cashflows"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "cashflows": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 1200,
+                        "items": {
+                            "type": "number"
+                        },
+                        "description": "Cashflows by period; index 0 = today (t=0, not discounted)."
+                    }
+                }
+            },
+            "LookupRequest": {
+                "type": "object",
+                "required": [
+                    "cashflows"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "rate": {
+                        "type": "number",
+                        "description": "Optional per-period percent; when present, NPV is also returned."
+                    },
+                    "cashflows": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 1200,
+                        "items": {
+                            "type": "number"
+                        },
+                        "description": "Cashflows by period; index 0 = today (t=0, not discounted)."
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible",
+                    "capabilities"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    },
+                    "capabilities": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Machine-readable capability tags for agent matching."
+                    }
+                }
+            },
+            "NpvResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/NpvCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "IrrResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/IrrCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/LookupCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}
