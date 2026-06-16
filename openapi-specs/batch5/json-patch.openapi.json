@@ -1,0 +1,1180 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "JSON Patch API",
+        "version": "1.0.0",
+        "description": "Deterministic RFC 6902 JSON Patch engine \u2014 atomic apply (add/remove/replace/move/copy/test) + from\u2192to diff. Operates on a clone; input never mutated. No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-developer-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/json-patch"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "JSON Patch API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic RFC 6902 JSON Patch engine. /apply runs an ordered patch (add/remove/replace/move/copy/test) atomically against a document; /diff generates a patch transforming one document into another. Operates on a clone \u2014 input never mutated. No LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/json-patch/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/apply",
+                                            "summary": "Apply an RFC 6902 patch to a document",
+                                            "price_usdc": 0.006
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/diff",
+                                            "summary": "Generate a patch transforming from\u2192to",
+                                            "price_usdc": 0.007
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL apply + reasoning",
+                                            "price_usdc": 0.011
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/apply",
+                                            "price_usdc": 0.006,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/diff",
+                                            "price_usdc": 0.007,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.011,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/apply": {
+            "post": {
+                "operationId": "apply",
+                "summary": "Apply an RFC 6902 patch to a document",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApplyResponse"
+                                },
+                                "example": {
+                                    "trace_id": "jpat-1780000000000",
+                                    "request_id": "jpat-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "operation_count": 4,
+                                    "applied": true,
+                                    "document": {
+                                        "roles": [
+                                            "admin",
+                                            "editor"
+                                        ],
+                                        "age": 31
+                                    },
+                                    "test_results": [
+                                        {
+                                            "index": 2,
+                                            "path": "/roles/0",
+                                            "passed": true
+                                        }
+                                    ],
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "apply": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Applied all 4 operation(s)."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "json-pointer",
+                                            "reason": "Resolve or enumerate the pointers used by these patch operations."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the patched document against a JSON Schema."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ApplyRequest"
+                            },
+                            "example": {
+                                "document": {
+                                    "name": "Ada",
+                                    "roles": [
+                                        "admin"
+                                    ],
+                                    "age": 30
+                                },
+                                "patch": [
+                                    {
+                                        "op": "add",
+                                        "path": "/roles/-",
+                                        "value": "editor"
+                                    },
+                                    {
+                                        "op": "replace",
+                                        "path": "/age",
+                                        "value": 31
+                                    },
+                                    {
+                                        "op": "test",
+                                        "path": "/roles/0",
+                                        "value": "admin"
+                                    },
+                                    {
+                                        "op": "remove",
+                                        "path": "/name"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.006,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/diff": {
+            "post": {
+                "operationId": "diff",
+                "summary": "Generate a patch transforming from\u2192to",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiffResponse"
+                                },
+                                "example": {
+                                    "trace_id": "jpat-1780000000000",
+                                    "request_id": "jpat-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "operation_count": 4,
+                                    "patch": [
+                                        {
+                                            "op": "remove",
+                                            "path": "/c"
+                                        },
+                                        {
+                                            "op": "replace",
+                                            "path": "/a",
+                                            "value": 2
+                                        },
+                                        {
+                                            "op": "add",
+                                            "path": "/b/-",
+                                            "value": 3
+                                        },
+                                        {
+                                            "op": "add",
+                                            "path": "/d",
+                                            "value": true
+                                        }
+                                    ],
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "diff": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Generated a 4-operation patch transforming from\u2192to."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "json-pointer",
+                                            "reason": "Resolve or enumerate the pointers used by these patch operations."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the patched document against a JSON Schema."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DiffRequest"
+                            },
+                            "example": {
+                                "from": {
+                                    "a": 1,
+                                    "b": [
+                                        1,
+                                        2
+                                    ],
+                                    "c": "x"
+                                },
+                                "to": {
+                                    "a": 2,
+                                    "b": [
+                                        1,
+                                        2,
+                                        3
+                                    ],
+                                    "d": true
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.007,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL apply + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "jpat-1780000000000",
+                                    "request_id": "jpat-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "operation_count": 4,
+                                    "applied": true,
+                                    "document": {
+                                        "roles": [
+                                            "admin",
+                                            "editor"
+                                        ],
+                                        "age": 31
+                                    },
+                                    "test_results": [
+                                        {
+                                            "index": 2,
+                                            "path": "/roles/0",
+                                            "passed": true
+                                        }
+                                    ],
+                                    "reasoning": {
+                                        "why_result_generated": "Applied 4 operation(s) atomically; 1 test op(s) evaluated.",
+                                        "key_factors": [
+                                            "Applied: true.",
+                                            "Test ops: /roles/0=pass."
+                                        ],
+                                        "invalidators": [
+                                            "Patches apply atomically per RFC 6902: on the first failing operation (bad path, out-of-bounds index, missing target, or failed test) the whole patch is rejected and no document is returned.",
+                                            "The input document is never mutated \u2014 operations run on a deep clone; \"move into own subtree\" is rejected as illegal.",
+                                            "diff is deterministic and correct (applying it transforms from\u2192to) but not guaranteed minimal: array changes are compared index-wise, so an insertion mid-array may yield replace+append rather than a single insert.",
+                                            "Whole-document operations: add/replace with path \"\" replace the entire document; remove with path \"\" is rejected BY DESIGN (RFC 6902 removes a value from its parent, and the root has no parent) \u2014 to empty a document, replace at \"\" with the desired value."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "apply": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Applied all 4 operation(s)."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "json-pointer",
+                                            "reason": "Resolve or enumerate the pointers used by these patch operations."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the patched document against a JSON Schema."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ApplyRequest"
+                            },
+                            "example": {
+                                "document": {
+                                    "name": "Ada",
+                                    "roles": [
+                                        "admin"
+                                    ],
+                                    "age": 30
+                                },
+                                "patch": [
+                                    {
+                                        "op": "add",
+                                        "path": "/roles/-",
+                                        "value": "editor"
+                                    },
+                                    {
+                                        "op": "replace",
+                                        "path": "/age",
+                                        "value": 31
+                                    },
+                                    {
+                                        "op": "test",
+                                        "path": "/roles/0",
+                                        "value": "admin"
+                                    },
+                                    {
+                                        "op": "remove",
+                                        "path": "/name"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.011,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "apply": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "diff": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "PatchOp": {
+                "type": "object",
+                "required": [
+                    "op",
+                    "path"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "op": {
+                        "type": "string",
+                        "enum": [
+                            "add",
+                            "remove",
+                            "replace",
+                            "move",
+                            "copy",
+                            "test"
+                        ]
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "RFC 6901 JSON Pointer target."
+                    },
+                    "from": {
+                        "type": "string",
+                        "description": "Source pointer (move/copy only)."
+                    },
+                    "value": {
+                        "description": "Operand value (add/replace/test).",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    }
+                }
+            },
+            "TestResult": {
+                "type": "object",
+                "required": [
+                    "index",
+                    "path",
+                    "passed"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "index": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "passed": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ApplyCore": {
+                "type": "object",
+                "required": [
+                    "operation_count",
+                    "applied",
+                    "test_results"
+                ],
+                "properties": {
+                    "operation_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "applied": {
+                        "type": "boolean"
+                    },
+                    "document": {
+                        "description": "The patched document (present only when applied=true).",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "failed_at_index": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Index of the operation that failed (when applied=false)."
+                    },
+                    "failure_reason": {
+                        "type": "string"
+                    },
+                    "test_results": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "index",
+                                "path",
+                                "passed"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "index": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "passed": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "DiffCore": {
+                "type": "object",
+                "required": [
+                    "operation_count",
+                    "patch"
+                ],
+                "properties": {
+                    "operation_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "patch": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "op",
+                                "path"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "op": {
+                                    "type": "string",
+                                    "enum": [
+                                        "add",
+                                        "remove",
+                                        "replace",
+                                        "move",
+                                        "copy",
+                                        "test"
+                                    ]
+                                },
+                                "path": {
+                                    "type": "string",
+                                    "description": "RFC 6901 JSON Pointer target."
+                                },
+                                "from": {
+                                    "type": "string",
+                                    "description": "Source pointer (move/copy only)."
+                                },
+                                "value": {
+                                    "description": "Operand value (add/replace/test).",
+                                    "type": [
+                                        "string",
+                                        "number",
+                                        "boolean",
+                                        "null",
+                                        "array",
+                                        "object"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ApplyRequest": {
+                "type": "object",
+                "required": [
+                    "document",
+                    "patch"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "document": {
+                        "description": "Any JSON document to patch.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "patch": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "op",
+                                "path"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "op": {
+                                    "type": "string",
+                                    "enum": [
+                                        "add",
+                                        "remove",
+                                        "replace",
+                                        "move",
+                                        "copy",
+                                        "test"
+                                    ]
+                                },
+                                "path": {
+                                    "type": "string",
+                                    "description": "RFC 6901 JSON Pointer target."
+                                },
+                                "from": {
+                                    "type": "string",
+                                    "description": "Source pointer (move/copy only)."
+                                },
+                                "value": {
+                                    "description": "Operand value (add/replace/test).",
+                                    "type": [
+                                        "string",
+                                        "number",
+                                        "boolean",
+                                        "null",
+                                        "array",
+                                        "object"
+                                    ]
+                                }
+                            }
+                        },
+                        "description": "Ordered RFC 6902 operations."
+                    }
+                }
+            },
+            "DiffRequest": {
+                "type": "object",
+                "required": [
+                    "from",
+                    "to"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "from": {
+                        "description": "Source document.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "to": {
+                        "description": "Target document.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ApplyResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ApplyCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "DiffResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DiffCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ApplyCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}

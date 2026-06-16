@@ -1,0 +1,1084 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Data Encryption Advisor API",
+        "version": "1.0.0",
+        "description": "Deterministic data-encryption advisor \u2014 data categories + regulatory + environment \u2192 encryption rubric (classification, at-rest/in-transit, field-level, key-management, compliance notes). No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-security-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/data-encryption-advisor"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "Data Encryption Advisor API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic data-encryption advisor. Maps data categories + regulatory context + environment to an encryption rubric: classification, at-rest/in-transit recommendations, per-category field handling, key-management guidance, and compliance notes. Rule-based, advisory. No LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/data-encryption-advisor/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/advise",
+                                            "summary": "Get an encryption rubric for the supplied data",
+                                            "price_usdc": 0.009
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL advice + reasoning",
+                                            "price_usdc": 0.016
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/advise",
+                                            "price_usdc": 0.009,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.016,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/advise": {
+            "post": {
+                "operationId": "advise",
+                "summary": "Get an encryption rubric for the supplied data",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AdviseResponse"
+                                },
+                                "example": {
+                                    "trace_id": "dea-1780000000000",
+                                    "request_id": "dea-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "classification": "restricted",
+                                    "sensitivity_score": 95,
+                                    "categories": [
+                                        "pii",
+                                        "pci",
+                                        "credentials"
+                                    ],
+                                    "at_rest": {
+                                        "recommended": true,
+                                        "algorithm": "AES-256-GCM",
+                                        "key_bits": 256,
+                                        "key_management": "HSM-backed keys via a managed cloud KMS with envelope encryption",
+                                        "rotation_days": 90
+                                    },
+                                    "in_transit": {
+                                        "recommended": true,
+                                        "min_tls": "TLS 1.3",
+                                        "mutual_tls": true
+                                    },
+                                    "field_level": [
+                                        {
+                                            "category": "pii",
+                                            "technique": "Field-level encryption or pseudonymization for direct identifiers; minimize and segregate."
+                                        },
+                                        {
+                                            "category": "pci",
+                                            "technique": "Tokenize or format-preserving-encrypt the PAN; never store CVV; render PAN unreadable everywhere it is stored."
+                                        },
+                                        {
+                                            "category": "credentials",
+                                            "technique": "Use a one-way password hash (argon2id / bcrypt / scrypt) with a per-secret salt \u2014 do NOT use reversible encryption for credentials."
+                                        }
+                                    ],
+                                    "key_management": [
+                                        "Rotate data-encryption keys every 90 days and on suspected compromise.",
+                                        "Use envelope encryption (data keys wrapped by a key-encryption key); never hardcode keys \u2014 store them in a secrets manager / KMS.",
+                                        "Enforce least-privilege and separation of duties for key access; log and alert on all key use."
+                                    ],
+                                    "compliance_notes": [
+                                        {
+                                            "framework": "gdpr",
+                                            "note": "GDPR Art. 32/34: encrypt personal data at rest and in transit; pseudonymization can reduce breach-notification scope."
+                                        },
+                                        {
+                                            "framework": "pci-dss",
+                                            "note": "PCI-DSS Req. 3 & 4: render PAN unreadable with strong crypto/tokenization, protect keys, and use TLS for transmission."
+                                        }
+                                    ],
+                                    "additional_controls": [
+                                        "Encrypt backups, snapshots, and exports to the same standard as primary storage.",
+                                        "Mask or redact sensitive fields in logs and LLM prompts (see sensitive-data-detector).",
+                                        "Restrict access on a need-to-know basis and retain access audit logs."
+                                    ],
+                                    "confidence_score": 0.8,
+                                    "confidence_per_section": {
+                                        "classification": 1,
+                                        "recommendations": 0.8
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Classification: restricted (sensitivity 95/100). Encrypt at rest with AES-256-GCM; TLS 1.3 + mTLS in transit.",
+                                        "Apply field-level handling for: pii, pci, credentials.",
+                                        "Rotate keys every 90 days via HSM-backed keys via a managed cloud KMS with envelope encryption."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "sensitive-data-detector",
+                                            "reason": "Find the actual PII spans in your payloads that these controls should protect."
+                                        },
+                                        {
+                                            "api": "jwt-claims-designer",
+                                            "reason": "Design token claims that avoid embedding the sensitive data covered here."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AdviseRequest"
+                            },
+                            "example": {
+                                "data_categories": [
+                                    "pii",
+                                    "pci",
+                                    "credentials"
+                                ],
+                                "regulatory": [
+                                    "gdpr",
+                                    "pci-dss"
+                                ],
+                                "environment": "cloud"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.009,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL advice + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "dea-1780000000000",
+                                    "request_id": "dea-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "classification": "restricted",
+                                    "sensitivity_score": 95,
+                                    "categories": [
+                                        "pii",
+                                        "pci",
+                                        "credentials"
+                                    ],
+                                    "at_rest": {
+                                        "recommended": true,
+                                        "algorithm": "AES-256-GCM",
+                                        "key_bits": 256,
+                                        "key_management": "HSM-backed keys via a managed cloud KMS with envelope encryption",
+                                        "rotation_days": 90
+                                    },
+                                    "in_transit": {
+                                        "recommended": true,
+                                        "min_tls": "TLS 1.3",
+                                        "mutual_tls": true
+                                    },
+                                    "field_level": [
+                                        {
+                                            "category": "pii",
+                                            "technique": "Field-level encryption or pseudonymization for direct identifiers; minimize and segregate."
+                                        },
+                                        {
+                                            "category": "pci",
+                                            "technique": "Tokenize or format-preserving-encrypt the PAN; never store CVV; render PAN unreadable everywhere it is stored."
+                                        },
+                                        {
+                                            "category": "credentials",
+                                            "technique": "Use a one-way password hash (argon2id / bcrypt / scrypt) with a per-secret salt \u2014 do NOT use reversible encryption for credentials."
+                                        }
+                                    ],
+                                    "key_management": [
+                                        "Rotate data-encryption keys every 90 days and on suspected compromise.",
+                                        "Use envelope encryption (data keys wrapped by a key-encryption key); never hardcode keys \u2014 store them in a secrets manager / KMS.",
+                                        "Enforce least-privilege and separation of duties for key access; log and alert on all key use."
+                                    ],
+                                    "compliance_notes": [
+                                        {
+                                            "framework": "gdpr",
+                                            "note": "GDPR Art. 32/34: encrypt personal data at rest and in transit; pseudonymization can reduce breach-notification scope."
+                                        },
+                                        {
+                                            "framework": "pci-dss",
+                                            "note": "PCI-DSS Req. 3 & 4: render PAN unreadable with strong crypto/tokenization, protect keys, and use TLS for transmission."
+                                        }
+                                    ],
+                                    "additional_controls": [
+                                        "Encrypt backups, snapshots, and exports to the same standard as primary storage.",
+                                        "Mask or redact sensitive fields in logs and LLM prompts (see sensitive-data-detector).",
+                                        "Restrict access on a need-to-know basis and retain access audit logs."
+                                    ],
+                                    "reasoning": {
+                                        "why_result_generated": "Classified 3 category(ies) as restricted; produced at-rest/in-transit/field-level/key-management guidance and 2 compliance note(s).",
+                                        "key_factors": [
+                                            "Highest-severity category drives classification restricted.",
+                                            "In-transit mTLS required (restricted data); key rotation 90 day(s).",
+                                            "Field-level handling for: pii, pci, credentials."
+                                        ],
+                                        "invalidators": [
+                                            "Recommendations are a deterministic rubric mapped from the supplied categories/regulatory/environment \u2014 they are general best-practice guidance, NOT legal advice or a substitute for a compliance assessment.",
+                                            "Classification is the maximum severity across the supplied categories; categories not provided are not considered, and credentials are flagged for one-way hashing rather than reversible encryption.",
+                                            "Compliance notes summarize common obligations for the named frameworks at a high level; consult the controlling regulation and your DPO/auditor for specifics."
+                                        ]
+                                    },
+                                    "confidence_score": 0.8,
+                                    "confidence_per_section": {
+                                        "classification": 1,
+                                        "recommendations": 0.8
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Classification: restricted (sensitivity 95/100). Encrypt at rest with AES-256-GCM; TLS 1.3 + mTLS in transit.",
+                                        "Apply field-level handling for: pii, pci, credentials.",
+                                        "Rotate keys every 90 days via HSM-backed keys via a managed cloud KMS with envelope encryption."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "sensitive-data-detector",
+                                            "reason": "Find the actual PII spans in your payloads that these controls should protect."
+                                        },
+                                        {
+                                            "api": "jwt-claims-designer",
+                                            "reason": "Design token claims that avoid embedding the sensitive data covered here."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AdviseRequest"
+                            },
+                            "example": {
+                                "data_categories": [
+                                    "pii",
+                                    "pci",
+                                    "credentials"
+                                ],
+                                "regulatory": [
+                                    "gdpr",
+                                    "pci-dss"
+                                ],
+                                "environment": "cloud"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.016,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "classification": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "recommendations": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "AtRest": {
+                "type": "object",
+                "required": [
+                    "recommended",
+                    "algorithm",
+                    "key_bits",
+                    "key_management",
+                    "rotation_days"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "recommended": {
+                        "type": "boolean"
+                    },
+                    "algorithm": {
+                        "type": "string"
+                    },
+                    "key_bits": {
+                        "type": "integer"
+                    },
+                    "key_management": {
+                        "type": "string"
+                    },
+                    "rotation_days": {
+                        "type": [
+                            "integer",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "InTransit": {
+                "type": "object",
+                "required": [
+                    "recommended",
+                    "min_tls",
+                    "mutual_tls"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "recommended": {
+                        "type": "boolean"
+                    },
+                    "min_tls": {
+                        "type": "string"
+                    },
+                    "mutual_tls": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "FieldHandling": {
+                "type": "object",
+                "required": [
+                    "category",
+                    "technique"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "category": {
+                        "type": "string"
+                    },
+                    "technique": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ComplianceNote": {
+                "type": "object",
+                "required": [
+                    "framework",
+                    "note"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "framework": {
+                        "type": "string",
+                        "enum": [
+                            "gdpr",
+                            "hipaa",
+                            "pci-dss",
+                            "ccpa",
+                            "sox"
+                        ]
+                    },
+                    "note": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AdviceCore": {
+                "type": "object",
+                "required": [
+                    "classification",
+                    "sensitivity_score",
+                    "categories",
+                    "at_rest",
+                    "in_transit",
+                    "field_level",
+                    "key_management",
+                    "compliance_notes",
+                    "additional_controls"
+                ],
+                "properties": {
+                    "classification": {
+                        "type": "string",
+                        "enum": [
+                            "public",
+                            "internal",
+                            "confidential",
+                            "restricted"
+                        ]
+                    },
+                    "sensitivity_score": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                    },
+                    "categories": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "at_rest": {
+                        "type": "object",
+                        "required": [
+                            "recommended",
+                            "algorithm",
+                            "key_bits",
+                            "key_management",
+                            "rotation_days"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "recommended": {
+                                "type": "boolean"
+                            },
+                            "algorithm": {
+                                "type": "string"
+                            },
+                            "key_bits": {
+                                "type": "integer"
+                            },
+                            "key_management": {
+                                "type": "string"
+                            },
+                            "rotation_days": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            }
+                        }
+                    },
+                    "in_transit": {
+                        "type": "object",
+                        "required": [
+                            "recommended",
+                            "min_tls",
+                            "mutual_tls"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "recommended": {
+                                "type": "boolean"
+                            },
+                            "min_tls": {
+                                "type": "string"
+                            },
+                            "mutual_tls": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "field_level": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "category",
+                                "technique"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "category": {
+                                    "type": "string"
+                                },
+                                "technique": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "key_management": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "compliance_notes": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "framework",
+                                "note"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "framework": {
+                                    "type": "string",
+                                    "enum": [
+                                        "gdpr",
+                                        "hipaa",
+                                        "pci-dss",
+                                        "ccpa",
+                                        "sox"
+                                    ]
+                                },
+                                "note": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "additional_controls": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "AdviseRequest": {
+                "type": "object",
+                "required": [
+                    "data_categories"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_categories": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "public",
+                                "general",
+                                "pii",
+                                "financial",
+                                "health",
+                                "phi",
+                                "pci",
+                                "credentials",
+                                "biometric"
+                            ]
+                        },
+                        "description": "Categories of data being protected."
+                    },
+                    "regulatory": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "gdpr",
+                                "hipaa",
+                                "pci-dss",
+                                "ccpa",
+                                "sox"
+                            ]
+                        },
+                        "description": "Applicable regulatory frameworks (optional)."
+                    },
+                    "environment": {
+                        "type": "string",
+                        "enum": [
+                            "cloud",
+                            "on_prem",
+                            "hybrid"
+                        ],
+                        "description": "Hosting environment (affects key-management guidance). Default cloud."
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "AdviseResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/AdviceCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/AdviceCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}

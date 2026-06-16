@@ -772,6 +772,16 @@ import scraperTestSuiteRouter from './routes/scraper-test-suite-api/routes/intel
 import scraperTestSuiteOpenapiRouter from './routes/scraper-test-suite-api/routes/openapi';
 import scrapedDataQualityScorerRouter from './routes/scraped-data-quality-scorer-api/routes/intelligence';
 import scrapedDataQualityScorerOpenapiRouter from './routes/scraped-data-quality-scorer-api/routes/openapi';
+import jsonPointerRouter from './routes/json-pointer-api/routes/intelligence';
+import jsonPointerOpenapiRouter from './routes/json-pointer-api/routes/openapi';
+import jsonPatchRouter from './routes/json-patch-api/routes/intelligence';
+import jsonPatchOpenapiRouter from './routes/json-patch-api/routes/openapi';
+import sensitiveDataDetectorRouter from './routes/sensitive-data-detector-api/routes/intelligence';
+import sensitiveDataDetectorOpenapiRouter from './routes/sensitive-data-detector-api/routes/openapi';
+import dataEncryptionAdvisorRouter from './routes/data-encryption-advisor-api/routes/intelligence';
+import dataEncryptionAdvisorOpenapiRouter from './routes/data-encryption-advisor-api/routes/openapi';
+import jwtClaimsDesignerRouter from './routes/jwt-claims-designer-api/routes/intelligence';
+import jwtClaimsDesignerOpenapiRouter from './routes/jwt-claims-designer-api/routes/openapi';
 import webhookSignatureVerifierRouter from './routes/webhook-signature-verifier-api/routes/intelligence';
 import webhookSignatureVerifierOpenapiRouter from './routes/webhook-signature-verifier-api/routes/openapi';
 import webhookReliabilityScorerRouter from './routes/webhook-reliability-scorer-api/routes/intelligence';
@@ -1430,6 +1440,11 @@ const routerMap: Record<string, import("express").Router> = {
   'website-structure-mapper': websiteStructureMapperRouter,
   'scraper-test-suite': scraperTestSuiteRouter,
   'scraped-data-quality-scorer': scrapedDataQualityScorerRouter,
+  'json-pointer': jsonPointerRouter,
+  'json-patch': jsonPatchRouter,
+  'sensitive-data-detector': sensitiveDataDetectorRouter,
+  'data-encryption-advisor': dataEncryptionAdvisorRouter,
+  'jwt-claims-designer': jwtClaimsDesignerRouter,
   'webhook-signature-verifier': webhookSignatureVerifierRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerRouter,
   'webhook-validator': webhookValidatorRouter,
@@ -1907,6 +1922,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'website-structure-mapper': websiteStructureMapperOpenapiRouter,
   'scraper-test-suite': scraperTestSuiteOpenapiRouter,
   'scraped-data-quality-scorer': scrapedDataQualityScorerOpenapiRouter,
+  'json-pointer': jsonPointerOpenapiRouter,
+  'json-patch': jsonPatchOpenapiRouter,
+  'sensitive-data-detector': sensitiveDataDetectorOpenapiRouter,
+  'data-encryption-advisor': dataEncryptionAdvisorOpenapiRouter,
+  'jwt-claims-designer': jwtClaimsDesignerOpenapiRouter,
   'webhook-signature-verifier': webhookSignatureVerifierOpenapiRouter,
   'webhook-reliability-scorer': webhookReliabilityScorerOpenapiRouter,
   'webhook-validator': webhookValidatorOpenapiRouter,
