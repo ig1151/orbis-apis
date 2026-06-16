@@ -1,0 +1,1090 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Black-Scholes Option Pricing API",
+        "version": "1.0.0",
+        "description": "Deterministic Black-Scholes-Merton European option pricing + greeks (continuous dividend yield). Closed-form; model value, not a market quote. No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-finance-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/black-scholes"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "Black-Scholes Option Pricing API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic Black-Scholes-Merton European option pricing and greeks (with continuous dividend yield). /price returns the model price + d1/d2 + intrinsic/time value; /greeks returns delta, gamma, vega, theta, rho. Closed-form math \u2014 no LLM, nothing stored. Model value, not a market quote.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/black-scholes/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "capabilities": [
+                                        "option_pricing",
+                                        "black_scholes",
+                                        "option_greeks",
+                                        "derivatives",
+                                        "implied_value"
+                                    ],
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/price",
+                                            "summary": "Black-Scholes model price + d1/d2",
+                                            "price_usdc": 0.01
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/greeks",
+                                            "summary": "Delta, gamma, vega, theta, rho",
+                                            "price_usdc": 0.012
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL price + greeks + reasoning",
+                                            "price_usdc": 0.018
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/price",
+                                            "price_usdc": 0.01,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/greeks",
+                                            "price_usdc": 0.012,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.018,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/price": {
+            "post": {
+                "operationId": "price",
+                "summary": "Black-Scholes model price + d1/d2",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PriceResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gdx-1780000000000",
+                                    "request_id": "gdx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "type": "call",
+                                    "price": 4.157453,
+                                    "d1": -0.168222,
+                                    "d2": -0.309643,
+                                    "intrinsic_value": 0,
+                                    "time_value": 4.157453,
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "price": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Model call price is 4.157453 (0 intrinsic + 4.157453 time value).",
+                                        "Call /greeks for delta/gamma/vega/theta/rho before hedging."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "risk-ratios",
+                                            "reason": "Score the risk-adjusted return of a strategy built from these options."
+                                        },
+                                        {
+                                            "api": "npv-irr",
+                                            "reason": "Discount the option strategy cashflows to a present value or IRR."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    },
+                                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BSRequest"
+                            },
+                            "example": {
+                                "spot": 100,
+                                "strike": 105,
+                                "time_to_expiry_years": 0.5,
+                                "volatility": 20,
+                                "risk_free_rate": 4,
+                                "dividend_yield": 1,
+                                "type": "call"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.01,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/greeks": {
+            "post": {
+                "operationId": "greeks",
+                "summary": "Delta, gamma, vega, theta, rho",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GreeksResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gdx-1780000000000",
+                                    "request_id": "gdx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "type": "call",
+                                    "price": 4.157453,
+                                    "greeks": {
+                                        "delta": 0.431044,
+                                        "gamma": 0.027674,
+                                        "vega": 0.276744,
+                                        "theta": -0.018251,
+                                        "rho": 0.194735
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "greeks": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Delta 0.431044 \u2014 hedge with 0.431044 share(s) of the underlying per option.",
+                                        "Theta -0.018251/day, vega 0.276744/1% vol."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "risk-ratios",
+                                            "reason": "Score the risk-adjusted return of a strategy built from these options."
+                                        },
+                                        {
+                                            "api": "npv-irr",
+                                            "reason": "Discount the option strategy cashflows to a present value or IRR."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    },
+                                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BSRequest"
+                            },
+                            "example": {
+                                "spot": 100,
+                                "strike": 105,
+                                "time_to_expiry_years": 0.5,
+                                "volatility": 20,
+                                "risk_free_rate": 4,
+                                "dividend_yield": 1,
+                                "type": "call"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.012,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL price + greeks + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "gdx-1780000000000",
+                                    "request_id": "gdx-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "type": "call",
+                                    "price": 4.157453,
+                                    "d1": -0.168222,
+                                    "d2": -0.309643,
+                                    "intrinsic_value": 0,
+                                    "time_value": 4.157453,
+                                    "greeks": {
+                                        "delta": 0.431044,
+                                        "gamma": 0.027674,
+                                        "vega": 0.276744,
+                                        "theta": -0.018251,
+                                        "rho": 0.194735
+                                    },
+                                    "reasoning": {
+                                        "why_result_generated": "Priced a European call with the Black-Scholes-Merton closed form (d1=-0.168222, d2=-0.309643) and differentiated it for the greeks.",
+                                        "key_factors": [
+                                            "Price 4.157453 = 0 intrinsic + 4.157453 time value.",
+                                            "Delta 0.431044, gamma 0.027674.",
+                                            "Theta -0.018251/day, vega 0.276744/1% vol, rho 0.194735/1% rate."
+                                        ],
+                                        "invalidators": [
+                                            "This is the Black-Scholes-Merton MODEL value for a EUROPEAN option with continuous dividend yield \u2014 exact given the inputs, but it is not a market quote and assumes lognormal prices, constant volatility, no transaction costs, and no early exercise (so it under-prices American puts).",
+                                            "volatility, risk_free_rate, and dividend_yield are ANNUAL percents; time_to_expiry is in YEARS. Garbage-in: an implied vol from a different day or annualization changes everything.",
+                                            "Greeks are reported in trader-friendly units: vega per +1% volatility, rho per +1% rate, theta per calendar day (1/365 of annual). delta/gamma are per $1 of spot."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "price": 1,
+                                        "greeks": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Model call value 4.157453; delta-hedge with 0.431044 share(s) per contract."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "risk-ratios",
+                                            "reason": "Score the risk-adjusted return of a strategy built from these options."
+                                        },
+                                        {
+                                            "api": "npv-irr",
+                                            "reason": "Discount the option strategy cashflows to a present value or IRR."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    },
+                                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BSRequest"
+                            },
+                            "example": {
+                                "spot": 100,
+                                "strike": 105,
+                                "time_to_expiry_years": 0.5,
+                                "volatility": 20,
+                                "risk_free_rate": 4,
+                                "dividend_yield": 1,
+                                "type": "call"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.018,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "price": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "greeks": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata",
+                    "financial_disclaimer"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    },
+                    "financial_disclaimer": {
+                        "type": "string",
+                        "description": "Informational-only disclaimer; not financial advice."
+                    }
+                }
+            },
+            "Greeks": {
+                "type": "object",
+                "required": [
+                    "delta",
+                    "gamma",
+                    "vega",
+                    "theta",
+                    "rho"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "delta": {
+                        "type": "number",
+                        "description": "Per $1 of spot."
+                    },
+                    "gamma": {
+                        "type": "number",
+                        "description": "Per $1 of spot."
+                    },
+                    "vega": {
+                        "type": "number",
+                        "description": "Per +1% volatility."
+                    },
+                    "theta": {
+                        "type": "number",
+                        "description": "Per calendar day."
+                    },
+                    "rho": {
+                        "type": "number",
+                        "description": "Per +1% rate."
+                    }
+                }
+            },
+            "PriceCore": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "price",
+                    "d1",
+                    "d2",
+                    "intrinsic_value",
+                    "time_value"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "call",
+                            "put"
+                        ]
+                    },
+                    "price": {
+                        "type": "number"
+                    },
+                    "d1": {
+                        "type": "number"
+                    },
+                    "d2": {
+                        "type": "number"
+                    },
+                    "intrinsic_value": {
+                        "type": "number"
+                    },
+                    "time_value": {
+                        "type": "number"
+                    }
+                }
+            },
+            "GreeksCore": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "price",
+                    "greeks"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "call",
+                            "put"
+                        ]
+                    },
+                    "price": {
+                        "type": "number"
+                    },
+                    "greeks": {
+                        "type": "object",
+                        "required": [
+                            "delta",
+                            "gamma",
+                            "vega",
+                            "theta",
+                            "rho"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "delta": {
+                                "type": "number",
+                                "description": "Per $1 of spot."
+                            },
+                            "gamma": {
+                                "type": "number",
+                                "description": "Per $1 of spot."
+                            },
+                            "vega": {
+                                "type": "number",
+                                "description": "Per +1% volatility."
+                            },
+                            "theta": {
+                                "type": "number",
+                                "description": "Per calendar day."
+                            },
+                            "rho": {
+                                "type": "number",
+                                "description": "Per +1% rate."
+                            }
+                        }
+                    }
+                }
+            },
+            "LookupCore": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "price",
+                    "d1",
+                    "d2",
+                    "intrinsic_value",
+                    "time_value",
+                    "greeks"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "call",
+                            "put"
+                        ]
+                    },
+                    "price": {
+                        "type": "number"
+                    },
+                    "d1": {
+                        "type": "number"
+                    },
+                    "d2": {
+                        "type": "number"
+                    },
+                    "intrinsic_value": {
+                        "type": "number"
+                    },
+                    "time_value": {
+                        "type": "number"
+                    },
+                    "greeks": {
+                        "type": "object",
+                        "required": [
+                            "delta",
+                            "gamma",
+                            "vega",
+                            "theta",
+                            "rho"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "delta": {
+                                "type": "number",
+                                "description": "Per $1 of spot."
+                            },
+                            "gamma": {
+                                "type": "number",
+                                "description": "Per $1 of spot."
+                            },
+                            "vega": {
+                                "type": "number",
+                                "description": "Per +1% volatility."
+                            },
+                            "theta": {
+                                "type": "number",
+                                "description": "Per calendar day."
+                            },
+                            "rho": {
+                                "type": "number",
+                                "description": "Per +1% rate."
+                            }
+                        }
+                    }
+                }
+            },
+            "BSRequest": {
+                "type": "object",
+                "required": [
+                    "spot",
+                    "strike",
+                    "time_to_expiry_years",
+                    "volatility",
+                    "risk_free_rate",
+                    "type"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "spot": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                    },
+                    "strike": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                    },
+                    "time_to_expiry_years": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                    },
+                    "volatility": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "description": "Annualized volatility percent (e.g. 20 = 20%)."
+                    },
+                    "risk_free_rate": {
+                        "type": "number",
+                        "description": "Annual risk-free rate percent."
+                    },
+                    "dividend_yield": {
+                        "type": "number",
+                        "description": "Annual continuous dividend yield percent (default 0)."
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "call",
+                            "put"
+                        ]
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible",
+                    "capabilities"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    },
+                    "capabilities": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Machine-readable capability tags for agent matching."
+                    }
+                }
+            },
+            "PriceResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PriceCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "GreeksResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/GreeksCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/LookupCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}
