@@ -1,0 +1,1057 @@
+{
+  "json-pointer": {
+    "/resolve": {
+      "trace_id": "jptr-1780000000000",
+      "request_id": "jptr-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "document_type": "object",
+      "requested": 7,
+      "found_count": 5,
+      "missing_count": 2,
+      "results": [
+        {
+          "pointer": "/user/name",
+          "found": true,
+          "value": "Ada",
+          "type": "string"
+        },
+        {
+          "pointer": "/user/roles/0",
+          "found": true,
+          "value": "admin",
+          "type": "string"
+        },
+        {
+          "pointer": "/user/a~1b",
+          "found": true,
+          "value": 1,
+          "type": "number"
+        },
+        {
+          "pointer": "/items/1",
+          "found": true,
+          "value": 20,
+          "type": "number"
+        },
+        {
+          "pointer": "/active",
+          "found": true,
+          "value": null,
+          "type": "null"
+        },
+        {
+          "pointer": "/user/missing",
+          "found": false,
+          "reason": "key \"missing\" at index 1 does not exist."
+        },
+        {
+          "pointer": "/items/5",
+          "found": false,
+          "reason": "array index 5 at index 1 is out of bounds (length 2)."
+        }
+      ],
+      "confidence_score": 1,
+      "confidence_per_section": {
+        "resolution": 1
+      },
+      "recommended_actions_priority_order": [
+        "Resolved 5/7 pointer(s); 2 not found."
+      ],
+      "chain_to": [
+        {
+          "api": "json-patch",
+          "reason": "Mutate the document at these pointers with RFC 6902 add/remove/replace operations."
+        },
+        {
+          "api": "json-schema-validator",
+          "reason": "Validate the document these pointers address against a JSON Schema."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    },
+    "/enumerate": {
+      "trace_id": "jptr-1780000000000",
+      "request_id": "jptr-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "document_type": "object",
+      "leaf_count": 5,
+      "truncated": false,
+      "entries": [
+        {
+          "pointer": "/user/name",
+          "value": "Ada",
+          "type": "string"
+        },
+        {
+          "pointer": "/user/active",
+          "value": true,
+          "type": "boolean"
+        },
+        {
+          "pointer": "/tags/0",
+          "value": "x",
+          "type": "string"
+        },
+        {
+          "pointer": "/tags/1",
+          "value": "y",
+          "type": "string"
+        },
+        {
+          "pointer": "/meta",
+          "value": {},
+          "type": "object"
+        }
+      ],
+      "confidence_score": 1,
+      "confidence_per_section": {
+        "enumeration": 1
+      },
+      "recommended_actions_priority_order": [
+        "Enumerated 5 leaf pointer(s)."
+      ],
+      "chain_to": [
+        {
+          "api": "json-patch",
+          "reason": "Mutate the document at these pointers with RFC 6902 add/remove/replace operations."
+        },
+        {
+          "api": "json-schema-validator",
+          "reason": "Validate the document these pointers address against a JSON Schema."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    },
+    "/lookup": {
+      "trace_id": "jptr-1780000000000",
+      "request_id": "jptr-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "document_type": "object",
+      "requested": 7,
+      "found_count": 5,
+      "missing_count": 2,
+      "results": [
+        {
+          "pointer": "/user/name",
+          "found": true,
+          "value": "Ada",
+          "type": "string"
+        },
+        {
+          "pointer": "/user/roles/0",
+          "found": true,
+          "value": "admin",
+          "type": "string"
+        },
+        {
+          "pointer": "/user/a~1b",
+          "found": true,
+          "value": 1,
+          "type": "number"
+        },
+        {
+          "pointer": "/items/1",
+          "found": true,
+          "value": 20,
+          "type": "number"
+        },
+        {
+          "pointer": "/active",
+          "found": true,
+          "value": null,
+          "type": "null"
+        },
+        {
+          "pointer": "/user/missing",
+          "found": false,
+          "reason": "key \"missing\" at index 1 does not exist."
+        },
+        {
+          "pointer": "/items/5",
+          "found": false,
+          "reason": "array index 5 at index 1 is out of bounds (length 2)."
+        }
+      ],
+      "reasoning": {
+        "why_result_generated": "Resolved 7 JSON Pointer(s) against a object document: 5 found, 2 missing.",
+        "key_factors": [
+          "Found: /user/name, /user/roles/0, /user/a~1b, /items/1, /active.",
+          "Missing: /user/missing (key \"missing\" at index 1 does not exist.); /items/5 (array index 5 at index 1 is out of bounds (length 2).)."
+        ],
+        "invalidators": [
+          "Pointers follow RFC 6901: tokens are ~1→\"/\" and ~0→\"~\" unescaped; array indices must be \"0\" or have no leading zeros; \"-\" (end-of-array) is reported as not-found because it addresses no existing element.",
+          "A pointer is \"not found\" (not an error) when the path does not exist in this document; only malformed pointers (not starting with \"/\") are reported via reason without a value.",
+          "Resolution reflects only the supplied document; a value of null is a real found value, distinguished from missing by the found flag."
+        ]
+      },
+      "confidence_score": 1,
+      "confidence_per_section": {
+        "resolution": 1
+      },
+      "recommended_actions_priority_order": [
+        "Resolved 5/7 pointer(s); 2 not found."
+      ],
+      "chain_to": [
+        {
+          "api": "json-patch",
+          "reason": "Mutate the document at these pointers with RFC 6902 add/remove/replace operations."
+        },
+        {
+          "api": "json-schema-validator",
+          "reason": "Validate the document these pointers address against a JSON Schema."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    }
+  },
+  "json-patch": {
+    "/apply": {
+      "trace_id": "jpat-1780000000000",
+      "request_id": "jpat-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "operation_count": 4,
+      "applied": true,
+      "document": {
+        "roles": [
+          "admin",
+          "editor"
+        ],
+        "age": 31
+      },
+      "test_results": [
+        {
+          "index": 2,
+          "path": "/roles/0",
+          "passed": true
+        }
+      ],
+      "confidence_score": 1,
+      "confidence_per_section": {
+        "apply": 1
+      },
+      "recommended_actions_priority_order": [
+        "Applied all 4 operation(s)."
+      ],
+      "chain_to": [
+        {
+          "api": "json-pointer",
+          "reason": "Resolve or enumerate the pointers used by these patch operations."
+        },
+        {
+          "api": "json-schema-validator",
+          "reason": "Validate the patched document against a JSON Schema."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    },
+    "/diff": {
+      "trace_id": "jpat-1780000000000",
+      "request_id": "jpat-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "operation_count": 4,
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/c"
+        },
+        {
+          "op": "replace",
+          "path": "/a",
+          "value": 2
+        },
+        {
+          "op": "add",
+          "path": "/b/-",
+          "value": 3
+        },
+        {
+          "op": "add",
+          "path": "/d",
+          "value": true
+        }
+      ],
+      "confidence_score": 1,
+      "confidence_per_section": {
+        "diff": 1
+      },
+      "recommended_actions_priority_order": [
+        "Generated a 4-operation patch transforming from→to."
+      ],
+      "chain_to": [
+        {
+          "api": "json-pointer",
+          "reason": "Resolve or enumerate the pointers used by these patch operations."
+        },
+        {
+          "api": "json-schema-validator",
+          "reason": "Validate the patched document against a JSON Schema."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    },
+    "/lookup": {
+      "trace_id": "jpat-1780000000000",
+      "request_id": "jpat-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "operation_count": 4,
+      "applied": true,
+      "document": {
+        "roles": [
+          "admin",
+          "editor"
+        ],
+        "age": 31
+      },
+      "test_results": [
+        {
+          "index": 2,
+          "path": "/roles/0",
+          "passed": true
+        }
+      ],
+      "reasoning": {
+        "why_result_generated": "Applied 4 operation(s) atomically; 1 test op(s) evaluated.",
+        "key_factors": [
+          "Applied: true.",
+          "Test ops: /roles/0=pass."
+        ],
+        "invalidators": [
+          "Patches apply atomically per RFC 6902: on the first failing operation (bad path, out-of-bounds index, missing target, or failed test) the whole patch is rejected and no document is returned.",
+          "The input document is never mutated — operations run on a deep clone; \"move into own subtree\" is rejected as illegal.",
+          "diff is deterministic and correct (applying it transforms from→to) but not guaranteed minimal: array changes are compared index-wise, so an insertion mid-array may yield replace+append rather than a single insert."
+        ]
+      },
+      "confidence_score": 1,
+      "confidence_per_section": {
+        "apply": 1
+      },
+      "recommended_actions_priority_order": [
+        "Applied all 4 operation(s)."
+      ],
+      "chain_to": [
+        {
+          "api": "json-pointer",
+          "reason": "Resolve or enumerate the pointers used by these patch operations."
+        },
+        {
+          "api": "json-schema-validator",
+          "reason": "Validate the patched document against a JSON Schema."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    }
+  },
+  "sensitive-data-detector": {
+    "/scan": {
+      "trace_id": "sdd-1780000000000",
+      "request_id": "sdd-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "text_length": 110,
+      "has_pii": true,
+      "finding_count": 5,
+      "counts_by_type": {
+        "email": 1,
+        "phone": 1,
+        "ssn": 1,
+        "credit_card": 1,
+        "ipv4": 1
+      },
+      "findings": [
+        {
+          "type": "email",
+          "value": "ada@example.com",
+          "start": 15,
+          "end": 30
+        },
+        {
+          "type": "phone",
+          "value": "(555) 123-4567",
+          "start": 34,
+          "end": 48
+        },
+        {
+          "type": "ssn",
+          "value": "123-45-6789",
+          "start": 54,
+          "end": 65
+        },
+        {
+          "type": "credit_card",
+          "value": "4111 1111 1111 1111",
+          "start": 72,
+          "end": 91
+        },
+        {
+          "type": "ipv4",
+          "value": "192.168.1.1",
+          "start": 98,
+          "end": 109
+        }
+      ],
+      "redacted_text": "Contact Ada at [REDACTED_EMAIL] or [REDACTED_PHONE]. SSN [REDACTED_SSN], card [REDACTED_CREDIT_CARD], host [REDACTED_IPV4].",
+      "risk_level": "high",
+      "confidence_score": 0.85,
+      "confidence_per_section": {
+        "detection": 1,
+        "classification": 0.8,
+        "risk": 0.7
+      },
+      "recommended_actions_priority_order": [
+        "5 sensitive item(s) found — risk high. Types: email, phone, ssn, credit_card, ipv4.",
+        "Use redacted_text for logs/LLM prompts; never persist the raw values.",
+        "High-risk PII (SSN/PAN) present — encrypt at rest and restrict access; chain to data-encryption-advisor."
+      ],
+      "chain_to": [
+        {
+          "api": "data-encryption-advisor",
+          "reason": "Get encryption/tokenization recommendations for the PII categories detected here."
+        },
+        {
+          "api": "data-classification",
+          "reason": "Classify which columns of a dataset carry these PII types."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    },
+    "/lookup": {
+      "trace_id": "sdd-1780000000000",
+      "request_id": "sdd-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "text_length": 110,
+      "has_pii": true,
+      "finding_count": 5,
+      "counts_by_type": {
+        "email": 1,
+        "phone": 1,
+        "ssn": 1,
+        "credit_card": 1,
+        "ipv4": 1
+      },
+      "findings": [
+        {
+          "type": "email",
+          "value": "ada@example.com",
+          "start": 15,
+          "end": 30
+        },
+        {
+          "type": "phone",
+          "value": "(555) 123-4567",
+          "start": 34,
+          "end": 48
+        },
+        {
+          "type": "ssn",
+          "value": "123-45-6789",
+          "start": 54,
+          "end": 65
+        },
+        {
+          "type": "credit_card",
+          "value": "4111 1111 1111 1111",
+          "start": 72,
+          "end": 91
+        },
+        {
+          "type": "ipv4",
+          "value": "192.168.1.1",
+          "start": 98,
+          "end": 109
+        }
+      ],
+      "redacted_text": "Contact Ada at [REDACTED_EMAIL] or [REDACTED_PHONE]. SSN [REDACTED_SSN], card [REDACTED_CREDIT_CARD], host [REDACTED_IPV4].",
+      "risk_level": "high",
+      "reasoning": {
+        "why_result_generated": "Scanned 110 character(s) for 6 PII type(s): 5 finding(s), risk high.",
+        "key_factors": [
+          "Counts: email=1, phone=1, ssn=1, credit_card=1, ipv4=1.",
+          "Credit-card matches are Luhn-validated; SSN/phone use US-centric shapes.",
+          "Risk derived from the highest-severity type present."
+        ],
+        "invalidators": [
+          "Detection is pattern-based and deterministic: it flags strings that MATCH the shape of each type, not strings proven to be real PII — a random 9-digit-pattern is reported as an SSN, and a number passing the Luhn check is not necessarily an issued card.",
+          "Coverage is limited to email/SSN/credit-card/phone/IPv4/IPv6 with US-centric SSN/phone shapes; passports, national IDs, addresses, and names are NOT detected.",
+          "Overlapping matches are resolved by earliest-start, then longest, then type precedence (card/SSN beat phone); a different segmentation could group digits differently."
+        ]
+      },
+      "confidence_score": 0.85,
+      "confidence_per_section": {
+        "detection": 1,
+        "classification": 0.8,
+        "risk": 0.7
+      },
+      "recommended_actions_priority_order": [
+        "5 sensitive item(s) found — risk high. Types: email, phone, ssn, credit_card, ipv4.",
+        "Use redacted_text for logs/LLM prompts; never persist the raw values.",
+        "High-risk PII (SSN/PAN) present — encrypt at rest and restrict access; chain to data-encryption-advisor."
+      ],
+      "chain_to": [
+        {
+          "api": "data-encryption-advisor",
+          "reason": "Get encryption/tokenization recommendations for the PII categories detected here."
+        },
+        {
+          "api": "data-classification",
+          "reason": "Classify which columns of a dataset carry these PII types."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    }
+  },
+  "data-encryption-advisor": {
+    "/advise": {
+      "trace_id": "dea-1780000000000",
+      "request_id": "dea-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "classification": "restricted",
+      "sensitivity_score": 95,
+      "categories": [
+        "pii",
+        "pci",
+        "credentials"
+      ],
+      "at_rest": {
+        "recommended": true,
+        "algorithm": "AES-256-GCM",
+        "key_bits": 256,
+        "key_management": "HSM-backed keys via a managed cloud KMS with envelope encryption",
+        "rotation_days": 90
+      },
+      "in_transit": {
+        "recommended": true,
+        "min_tls": "TLS 1.3",
+        "mutual_tls": true
+      },
+      "field_level": [
+        {
+          "category": "pii",
+          "technique": "Field-level encryption or pseudonymization for direct identifiers; minimize and segregate."
+        },
+        {
+          "category": "pci",
+          "technique": "Tokenize or format-preserving-encrypt the PAN; never store CVV; render PAN unreadable everywhere it is stored."
+        },
+        {
+          "category": "credentials",
+          "technique": "Use a one-way password hash (argon2id / bcrypt / scrypt) with a per-secret salt — do NOT use reversible encryption for credentials."
+        }
+      ],
+      "key_management": [
+        "Rotate data-encryption keys every 90 days and on suspected compromise.",
+        "Use envelope encryption (data keys wrapped by a key-encryption key); never hardcode keys — store them in a secrets manager / KMS.",
+        "Enforce least-privilege and separation of duties for key access; log and alert on all key use."
+      ],
+      "compliance_notes": [
+        {
+          "framework": "gdpr",
+          "note": "GDPR Art. 32/34: encrypt personal data at rest and in transit; pseudonymization can reduce breach-notification scope."
+        },
+        {
+          "framework": "pci-dss",
+          "note": "PCI-DSS Req. 3 & 4: render PAN unreadable with strong crypto/tokenization, protect keys, and use TLS for transmission."
+        }
+      ],
+      "additional_controls": [
+        "Encrypt backups, snapshots, and exports to the same standard as primary storage.",
+        "Mask or redact sensitive fields in logs and LLM prompts (see sensitive-data-detector).",
+        "Restrict access on a need-to-know basis and retain access audit logs."
+      ],
+      "confidence_score": 0.8,
+      "confidence_per_section": {
+        "classification": 1,
+        "recommendations": 0.8
+      },
+      "recommended_actions_priority_order": [
+        "Classification: restricted (sensitivity 95/100). Encrypt at rest with AES-256-GCM; TLS 1.3 + mTLS in transit.",
+        "Apply field-level handling for: pii, pci, credentials.",
+        "Rotate keys every 90 days via HSM-backed keys via a managed cloud KMS with envelope encryption."
+      ],
+      "chain_to": [
+        {
+          "api": "sensitive-data-detector",
+          "reason": "Find the actual PII spans in your payloads that these controls should protect."
+        },
+        {
+          "api": "jwt-claims-designer",
+          "reason": "Design token claims that avoid embedding the sensitive data covered here."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    },
+    "/lookup": {
+      "trace_id": "dea-1780000000000",
+      "request_id": "dea-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "classification": "restricted",
+      "sensitivity_score": 95,
+      "categories": [
+        "pii",
+        "pci",
+        "credentials"
+      ],
+      "at_rest": {
+        "recommended": true,
+        "algorithm": "AES-256-GCM",
+        "key_bits": 256,
+        "key_management": "HSM-backed keys via a managed cloud KMS with envelope encryption",
+        "rotation_days": 90
+      },
+      "in_transit": {
+        "recommended": true,
+        "min_tls": "TLS 1.3",
+        "mutual_tls": true
+      },
+      "field_level": [
+        {
+          "category": "pii",
+          "technique": "Field-level encryption or pseudonymization for direct identifiers; minimize and segregate."
+        },
+        {
+          "category": "pci",
+          "technique": "Tokenize or format-preserving-encrypt the PAN; never store CVV; render PAN unreadable everywhere it is stored."
+        },
+        {
+          "category": "credentials",
+          "technique": "Use a one-way password hash (argon2id / bcrypt / scrypt) with a per-secret salt — do NOT use reversible encryption for credentials."
+        }
+      ],
+      "key_management": [
+        "Rotate data-encryption keys every 90 days and on suspected compromise.",
+        "Use envelope encryption (data keys wrapped by a key-encryption key); never hardcode keys — store them in a secrets manager / KMS.",
+        "Enforce least-privilege and separation of duties for key access; log and alert on all key use."
+      ],
+      "compliance_notes": [
+        {
+          "framework": "gdpr",
+          "note": "GDPR Art. 32/34: encrypt personal data at rest and in transit; pseudonymization can reduce breach-notification scope."
+        },
+        {
+          "framework": "pci-dss",
+          "note": "PCI-DSS Req. 3 & 4: render PAN unreadable with strong crypto/tokenization, protect keys, and use TLS for transmission."
+        }
+      ],
+      "additional_controls": [
+        "Encrypt backups, snapshots, and exports to the same standard as primary storage.",
+        "Mask or redact sensitive fields in logs and LLM prompts (see sensitive-data-detector).",
+        "Restrict access on a need-to-know basis and retain access audit logs."
+      ],
+      "reasoning": {
+        "why_result_generated": "Classified 3 category(ies) as restricted; produced at-rest/in-transit/field-level/key-management guidance and 2 compliance note(s).",
+        "key_factors": [
+          "Highest-severity category drives classification restricted.",
+          "In-transit mTLS required (restricted data); key rotation 90 day(s).",
+          "Field-level handling for: pii, pci, credentials."
+        ],
+        "invalidators": [
+          "Recommendations are a deterministic rubric mapped from the supplied categories/regulatory/environment — they are general best-practice guidance, NOT legal advice or a substitute for a compliance assessment.",
+          "Classification is the maximum severity across the supplied categories; categories not provided are not considered, and credentials are flagged for one-way hashing rather than reversible encryption.",
+          "Compliance notes summarize common obligations for the named frameworks at a high level; consult the controlling regulation and your DPO/auditor for specifics."
+        ]
+      },
+      "confidence_score": 0.8,
+      "confidence_per_section": {
+        "classification": 1,
+        "recommendations": 0.8
+      },
+      "recommended_actions_priority_order": [
+        "Classification: restricted (sensitivity 95/100). Encrypt at rest with AES-256-GCM; TLS 1.3 + mTLS in transit.",
+        "Apply field-level handling for: pii, pci, credentials.",
+        "Rotate keys every 90 days via HSM-backed keys via a managed cloud KMS with envelope encryption."
+      ],
+      "chain_to": [
+        {
+          "api": "sensitive-data-detector",
+          "reason": "Find the actual PII spans in your payloads that these controls should protect."
+        },
+        {
+          "api": "jwt-claims-designer",
+          "reason": "Design token claims that avoid embedding the sensitive data covered here."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    }
+  },
+  "jwt-claims-designer": {
+    "/design": {
+      "trace_id": "jcd-1780000000000",
+      "request_id": "jcd-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "token_type": "access",
+      "subject_type": "user",
+      "recommended_ttl_seconds": 900,
+      "registered_claims": [
+        {
+          "claim": "iss",
+          "include": true,
+          "required": true,
+          "value_or_format": "https://auth.example.com",
+          "rationale": "Identifies the issuer; verifiers must check it."
+        },
+        {
+          "claim": "sub",
+          "include": true,
+          "required": true,
+          "value_or_format": "user-123 (stable, non-reassignable user id)",
+          "rationale": "Principal the token is about; keep it stable and opaque."
+        },
+        {
+          "claim": "aud",
+          "include": true,
+          "required": true,
+          "value_or_format": "https://api.example.com",
+          "rationale": "Intended recipient(s); verifiers must reject tokens not meant for them."
+        },
+        {
+          "claim": "exp",
+          "include": true,
+          "required": true,
+          "value_or_format": "iat + 900s (UNIX seconds)",
+          "rationale": "Expiry; keep short for access tokens."
+        },
+        {
+          "claim": "iat",
+          "include": true,
+          "required": true,
+          "value_or_format": "issue time (UNIX seconds)",
+          "rationale": "Issue time; supports max-age and freshness checks."
+        },
+        {
+          "claim": "nbf",
+          "include": true,
+          "required": false,
+          "value_or_format": "= iat (UNIX seconds)",
+          "rationale": "Not-before; defend against early use / clock games."
+        },
+        {
+          "claim": "jti",
+          "include": true,
+          "required": false,
+          "value_or_format": "unique token id (UUID)",
+          "rationale": "Enables per-token revocation and replay detection."
+        }
+      ],
+      "custom_claims": [
+        {
+          "claim": "scope",
+          "value_or_format": "read:orders write:orders",
+          "rationale": "Least-privilege authorization the token grants."
+        },
+        {
+          "claim": "client_id",
+          "value_or_format": "client-abc",
+          "rationale": "OAuth client that requested the token."
+        }
+      ],
+      "example_payload": {
+        "iss": "https://auth.example.com",
+        "sub": "user-123",
+        "aud": [
+          "https://api.example.com"
+        ],
+        "iat": 1700000000,
+        "nbf": 1700000000,
+        "exp": 1700000900,
+        "jti": "5f3b2a1c-0d9e-4b8a-9c1f-2e7d6a4b3c2d",
+        "scope": "read:orders write:orders",
+        "client_id": "client-abc"
+      },
+      "algorithm": {
+        "provided": "HS256",
+        "recommended": [
+          "RS256",
+          "ES256"
+        ],
+        "avoid": [
+          "none",
+          "HS256 (across service boundaries)"
+        ],
+        "note": "HS* uses a shared secret — every verifier can also mint tokens. Prefer RS256/ES256 in distributed systems so verifiers hold only the public key."
+      },
+      "security_recommendations": [
+        "Keep access tokens short-lived (recommended 900s); use refresh tokens for longevity.",
+        "Always validate iss, aud, exp, and nbf on the verifier; allow ~60s clock-skew leeway.",
+        "Include jti to enable revocation and replay detection.",
+        "Never put passwords, secrets, full PII, or payment data in claims — a JWT is base64-encoded, not encrypted.",
+        "Scope tokens narrowly (least privilege via scope + aud)."
+      ],
+      "anti_patterns": [
+        "Long-lived or non-expiring access tokens.",
+        "Accepting alg:none or trusting the alg header from the client.",
+        "Embedding sensitive data (PII/secrets) in claims.",
+        "Skipping aud/iss validation, so a token for service A is accepted by service B."
+      ],
+      "confidence_score": 0.85,
+      "confidence_per_section": {
+        "claims": 1,
+        "recommendations": 0.8
+      },
+      "recommended_actions_priority_order": [
+        "Issue access tokens with the 7 registered + 2 custom claim(s) shown; TTL 900s.",
+        "Sign with RS256 or ES256; provided alg = HS256.",
+        "Validate iss/aud/exp/nbf on every verifier and keep sensitive data out of claims."
+      ],
+      "chain_to": [
+        {
+          "api": "jwt-claim-policy-validator",
+          "reason": "Validate real tokens against the claim policy this design implies."
+        },
+        {
+          "api": "jwt-decoder",
+          "reason": "Decode and inspect an issued token built from this design."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    },
+    "/lookup": {
+      "trace_id": "jcd-1780000000000",
+      "request_id": "jcd-1780000000000",
+      "computed_at": "2026-06-16T12:00:00.000Z",
+      "success": true,
+      "latency_ms": 1,
+      "token_type": "access",
+      "subject_type": "user",
+      "recommended_ttl_seconds": 900,
+      "registered_claims": [
+        {
+          "claim": "iss",
+          "include": true,
+          "required": true,
+          "value_or_format": "https://auth.example.com",
+          "rationale": "Identifies the issuer; verifiers must check it."
+        },
+        {
+          "claim": "sub",
+          "include": true,
+          "required": true,
+          "value_or_format": "user-123 (stable, non-reassignable user id)",
+          "rationale": "Principal the token is about; keep it stable and opaque."
+        },
+        {
+          "claim": "aud",
+          "include": true,
+          "required": true,
+          "value_or_format": "https://api.example.com",
+          "rationale": "Intended recipient(s); verifiers must reject tokens not meant for them."
+        },
+        {
+          "claim": "exp",
+          "include": true,
+          "required": true,
+          "value_or_format": "iat + 900s (UNIX seconds)",
+          "rationale": "Expiry; keep short for access tokens."
+        },
+        {
+          "claim": "iat",
+          "include": true,
+          "required": true,
+          "value_or_format": "issue time (UNIX seconds)",
+          "rationale": "Issue time; supports max-age and freshness checks."
+        },
+        {
+          "claim": "nbf",
+          "include": true,
+          "required": false,
+          "value_or_format": "= iat (UNIX seconds)",
+          "rationale": "Not-before; defend against early use / clock games."
+        },
+        {
+          "claim": "jti",
+          "include": true,
+          "required": false,
+          "value_or_format": "unique token id (UUID)",
+          "rationale": "Enables per-token revocation and replay detection."
+        }
+      ],
+      "custom_claims": [
+        {
+          "claim": "scope",
+          "value_or_format": "read:orders write:orders",
+          "rationale": "Least-privilege authorization the token grants."
+        },
+        {
+          "claim": "client_id",
+          "value_or_format": "client-abc",
+          "rationale": "OAuth client that requested the token."
+        }
+      ],
+      "example_payload": {
+        "iss": "https://auth.example.com",
+        "sub": "user-123",
+        "aud": [
+          "https://api.example.com"
+        ],
+        "iat": 1700000000,
+        "nbf": 1700000000,
+        "exp": 1700000900,
+        "jti": "5f3b2a1c-0d9e-4b8a-9c1f-2e7d6a4b3c2d",
+        "scope": "read:orders write:orders",
+        "client_id": "client-abc"
+      },
+      "algorithm": {
+        "provided": "HS256",
+        "recommended": [
+          "RS256",
+          "ES256"
+        ],
+        "avoid": [
+          "none",
+          "HS256 (across service boundaries)"
+        ],
+        "note": "HS* uses a shared secret — every verifier can also mint tokens. Prefer RS256/ES256 in distributed systems so verifiers hold only the public key."
+      },
+      "security_recommendations": [
+        "Keep access tokens short-lived (recommended 900s); use refresh tokens for longevity.",
+        "Always validate iss, aud, exp, and nbf on the verifier; allow ~60s clock-skew leeway.",
+        "Include jti to enable revocation and replay detection.",
+        "Never put passwords, secrets, full PII, or payment data in claims — a JWT is base64-encoded, not encrypted.",
+        "Scope tokens narrowly (least privilege via scope + aud)."
+      ],
+      "anti_patterns": [
+        "Long-lived or non-expiring access tokens.",
+        "Accepting alg:none or trusting the alg header from the client.",
+        "Embedding sensitive data (PII/secrets) in claims.",
+        "Skipping aud/iss validation, so a token for service A is accepted by service B."
+      ],
+      "reasoning": {
+        "why_result_generated": "Designed a access-token claim set for a user subject: 7 registered + 2 custom claim(s), TTL 900s.",
+        "key_factors": [
+          "Registered claims: iss, sub, aud, exp, iat, nbf, jti.",
+          "Custom claims: scope, client_id.",
+          "Algorithm advice: prefer RS256/ES256 (provided HS256)."
+        ],
+        "invalidators": [
+          "This generates a recommended claim DESIGN from the supplied profile; it does not mint, sign, decode, or validate tokens, and example_payload uses placeholder values + a fixed reference iat.",
+          "Recommendations follow JWT/OAuth/OIDC best practice (RFC 7519 / RFC 9068 / OIDC Core) but are general guidance — your IdP, framework, or threat model may require different claims.",
+          "TTLs are sensible defaults per token type (access 900s, id 3600s, refresh 2592000s) overridable via ttl_seconds; tune to your risk tolerance."
+        ]
+      },
+      "confidence_score": 0.85,
+      "confidence_per_section": {
+        "claims": 1,
+        "recommendations": 0.8
+      },
+      "recommended_actions_priority_order": [
+        "Issue access tokens with the 7 registered + 2 custom claim(s) shown; TTL 900s.",
+        "Sign with RS256 or ES256; provided alg = HS256.",
+        "Validate iss/aud/exp/nbf on every verifier and keep sensitive data out of claims."
+      ],
+      "chain_to": [
+        {
+          "api": "jwt-claim-policy-validator",
+          "reason": "Validate real tokens against the claim policy this design implies."
+        },
+        {
+          "api": "jwt-decoder",
+          "reason": "Decode and inspect an issued token built from this design."
+        }
+      ],
+      "privacy": {
+        "data_stored": false,
+        "retention": "none"
+      },
+      "execution_metadata": {
+        "model": "deterministic",
+        "automation_safe": true
+      }
+    }
+  }
+}

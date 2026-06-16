@@ -1,0 +1,1211 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "JWT Claims Designer API",
+        "version": "1.0.0",
+        "description": "Deterministic JWT claims designer \u2014 token profile \u2192 recommended registered+custom claims, TTLs, example payload, signing-alg advice, security recs. Generates a design (not decode/validate). No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-security-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/jwt-claims-designer"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "JWT Claims Designer API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic JWT claims designer. From a token profile (type/issuer/audience/scopes/TTL/alg) it generates a recommended registered + custom claim set, TTLs, an example payload, signing-algorithm advice, and security recommendations. Generates a design \u2014 does not decode or validate. No LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/jwt-claims-designer/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/design",
+                                            "summary": "Design a recommended JWT claim set",
+                                            "price_usdc": 0.008
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL design + reasoning",
+                                            "price_usdc": 0.014
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/design",
+                                            "price_usdc": 0.008,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.014,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/design": {
+            "post": {
+                "operationId": "design",
+                "summary": "Design a recommended JWT claim set",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DesignResponse"
+                                },
+                                "example": {
+                                    "trace_id": "jcd-1780000000000",
+                                    "request_id": "jcd-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "token_type": "access",
+                                    "subject_type": "user",
+                                    "recommended_ttl_seconds": 900,
+                                    "registered_claims": [
+                                        {
+                                            "claim": "iss",
+                                            "include": true,
+                                            "required": true,
+                                            "value_or_format": "https://auth.example.com",
+                                            "rationale": "Identifies the issuer; verifiers must check it."
+                                        },
+                                        {
+                                            "claim": "sub",
+                                            "include": true,
+                                            "required": true,
+                                            "value_or_format": "user-123 (stable, non-reassignable user id)",
+                                            "rationale": "Principal the token is about; keep it stable and opaque."
+                                        },
+                                        {
+                                            "claim": "aud",
+                                            "include": true,
+                                            "required": true,
+                                            "value_or_format": "https://api.example.com",
+                                            "rationale": "Intended recipient(s); verifiers must reject tokens not meant for them."
+                                        },
+                                        {
+                                            "claim": "exp",
+                                            "include": true,
+                                            "required": true,
+                                            "value_or_format": "iat + 900s (UNIX seconds)",
+                                            "rationale": "Expiry; keep short for access tokens."
+                                        },
+                                        {
+                                            "claim": "iat",
+                                            "include": true,
+                                            "required": true,
+                                            "value_or_format": "issue time (UNIX seconds)",
+                                            "rationale": "Issue time; supports max-age and freshness checks."
+                                        },
+                                        {
+                                            "claim": "nbf",
+                                            "include": true,
+                                            "required": false,
+                                            "value_or_format": "= iat (UNIX seconds)",
+                                            "rationale": "Not-before; defend against early use / clock games."
+                                        },
+                                        {
+                                            "claim": "jti",
+                                            "include": true,
+                                            "required": false,
+                                            "value_or_format": "unique token id (UUID)",
+                                            "rationale": "Enables per-token revocation and replay detection."
+                                        }
+                                    ],
+                                    "custom_claims": [
+                                        {
+                                            "claim": "scope",
+                                            "value_or_format": "read:orders write:orders",
+                                            "rationale": "Least-privilege authorization the token grants."
+                                        },
+                                        {
+                                            "claim": "client_id",
+                                            "value_or_format": "client-abc",
+                                            "rationale": "OAuth client that requested the token."
+                                        }
+                                    ],
+                                    "example_payload": {
+                                        "iss": "https://auth.example.com",
+                                        "sub": "user-123",
+                                        "aud": [
+                                            "https://api.example.com"
+                                        ],
+                                        "iat": 1700000000,
+                                        "nbf": 1700000000,
+                                        "exp": 1700000900,
+                                        "jti": "5f3b2a1c-0d9e-4b8a-9c1f-2e7d6a4b3c2d",
+                                        "scope": "read:orders write:orders",
+                                        "client_id": "client-abc"
+                                    },
+                                    "algorithm": {
+                                        "provided": "HS256",
+                                        "recommended": [
+                                            "RS256",
+                                            "ES256"
+                                        ],
+                                        "avoid": [
+                                            "none",
+                                            "HS256 (across service boundaries)"
+                                        ],
+                                        "note": "HS* uses a shared secret \u2014 every verifier can also mint tokens. Prefer RS256/ES256 in distributed systems so verifiers hold only the public key."
+                                    },
+                                    "security_recommendations": [
+                                        "Keep access tokens short-lived (recommended 900s); use refresh tokens for longevity.",
+                                        "Always validate iss, aud, exp, and nbf on the verifier; allow ~60s clock-skew leeway.",
+                                        "Include jti to enable revocation and replay detection.",
+                                        "Never put passwords, secrets, full PII, or payment data in claims \u2014 a JWT is base64-encoded, not encrypted.",
+                                        "Scope tokens narrowly (least privilege via scope + aud)."
+                                    ],
+                                    "anti_patterns": [
+                                        "Long-lived or non-expiring access tokens.",
+                                        "Accepting alg:none or trusting the alg header from the client.",
+                                        "Embedding sensitive data (PII/secrets) in claims.",
+                                        "Skipping aud/iss validation, so a token for service A is accepted by service B."
+                                    ],
+                                    "confidence_score": 0.85,
+                                    "confidence_per_section": {
+                                        "claims": 1,
+                                        "recommendations": 0.8
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Issue access tokens with the 7 registered + 2 custom claim(s) shown; TTL 900s.",
+                                        "Sign with RS256 or ES256; provided alg = HS256.",
+                                        "Validate iss/aud/exp/nbf on every verifier and keep sensitive data out of claims."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "jwt-claim-policy-validator",
+                                            "reason": "Validate real tokens against the claim policy this design implies."
+                                        },
+                                        {
+                                            "api": "jwt-decoder",
+                                            "reason": "Decode and inspect an issued token built from this design."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DesignRequest"
+                            },
+                            "example": {
+                                "token_type": "access",
+                                "issuer": "https://auth.example.com",
+                                "audience": [
+                                    "https://api.example.com"
+                                ],
+                                "subject_type": "user",
+                                "scopes": [
+                                    "read:orders",
+                                    "write:orders"
+                                ],
+                                "ttl_seconds": 900,
+                                "algorithm": "HS256"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.008,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL design + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "jcd-1780000000000",
+                                    "request_id": "jcd-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "token_type": "access",
+                                    "subject_type": "user",
+                                    "recommended_ttl_seconds": 900,
+                                    "registered_claims": [
+                                        {
+                                            "claim": "iss",
+                                            "include": true,
+                                            "required": true,
+                                            "value_or_format": "https://auth.example.com",
+                                            "rationale": "Identifies the issuer; verifiers must check it."
+                                        },
+                                        {
+                                            "claim": "sub",
+                                            "include": true,
+                                            "required": true,
+                                            "value_or_format": "user-123 (stable, non-reassignable user id)",
+                                            "rationale": "Principal the token is about; keep it stable and opaque."
+                                        },
+                                        {
+                                            "claim": "aud",
+                                            "include": true,
+                                            "required": true,
+                                            "value_or_format": "https://api.example.com",
+                                            "rationale": "Intended recipient(s); verifiers must reject tokens not meant for them."
+                                        },
+                                        {
+                                            "claim": "exp",
+                                            "include": true,
+                                            "required": true,
+                                            "value_or_format": "iat + 900s (UNIX seconds)",
+                                            "rationale": "Expiry; keep short for access tokens."
+                                        },
+                                        {
+                                            "claim": "iat",
+                                            "include": true,
+                                            "required": true,
+                                            "value_or_format": "issue time (UNIX seconds)",
+                                            "rationale": "Issue time; supports max-age and freshness checks."
+                                        },
+                                        {
+                                            "claim": "nbf",
+                                            "include": true,
+                                            "required": false,
+                                            "value_or_format": "= iat (UNIX seconds)",
+                                            "rationale": "Not-before; defend against early use / clock games."
+                                        },
+                                        {
+                                            "claim": "jti",
+                                            "include": true,
+                                            "required": false,
+                                            "value_or_format": "unique token id (UUID)",
+                                            "rationale": "Enables per-token revocation and replay detection."
+                                        }
+                                    ],
+                                    "custom_claims": [
+                                        {
+                                            "claim": "scope",
+                                            "value_or_format": "read:orders write:orders",
+                                            "rationale": "Least-privilege authorization the token grants."
+                                        },
+                                        {
+                                            "claim": "client_id",
+                                            "value_or_format": "client-abc",
+                                            "rationale": "OAuth client that requested the token."
+                                        }
+                                    ],
+                                    "example_payload": {
+                                        "iss": "https://auth.example.com",
+                                        "sub": "user-123",
+                                        "aud": [
+                                            "https://api.example.com"
+                                        ],
+                                        "iat": 1700000000,
+                                        "nbf": 1700000000,
+                                        "exp": 1700000900,
+                                        "jti": "5f3b2a1c-0d9e-4b8a-9c1f-2e7d6a4b3c2d",
+                                        "scope": "read:orders write:orders",
+                                        "client_id": "client-abc"
+                                    },
+                                    "algorithm": {
+                                        "provided": "HS256",
+                                        "recommended": [
+                                            "RS256",
+                                            "ES256"
+                                        ],
+                                        "avoid": [
+                                            "none",
+                                            "HS256 (across service boundaries)"
+                                        ],
+                                        "note": "HS* uses a shared secret \u2014 every verifier can also mint tokens. Prefer RS256/ES256 in distributed systems so verifiers hold only the public key."
+                                    },
+                                    "security_recommendations": [
+                                        "Keep access tokens short-lived (recommended 900s); use refresh tokens for longevity.",
+                                        "Always validate iss, aud, exp, and nbf on the verifier; allow ~60s clock-skew leeway.",
+                                        "Include jti to enable revocation and replay detection.",
+                                        "Never put passwords, secrets, full PII, or payment data in claims \u2014 a JWT is base64-encoded, not encrypted.",
+                                        "Scope tokens narrowly (least privilege via scope + aud)."
+                                    ],
+                                    "anti_patterns": [
+                                        "Long-lived or non-expiring access tokens.",
+                                        "Accepting alg:none or trusting the alg header from the client.",
+                                        "Embedding sensitive data (PII/secrets) in claims.",
+                                        "Skipping aud/iss validation, so a token for service A is accepted by service B."
+                                    ],
+                                    "reasoning": {
+                                        "why_result_generated": "Designed a access-token claim set for a user subject: 7 registered + 2 custom claim(s), TTL 900s.",
+                                        "key_factors": [
+                                            "Registered claims: iss, sub, aud, exp, iat, nbf, jti.",
+                                            "Custom claims: scope, client_id.",
+                                            "Algorithm advice: prefer RS256/ES256 (provided HS256)."
+                                        ],
+                                        "invalidators": [
+                                            "This generates a recommended claim DESIGN from the supplied profile; it does not mint, sign, decode, or validate tokens, and example_payload uses placeholder values + a fixed reference iat.",
+                                            "Recommendations follow JWT/OAuth/OIDC best practice (RFC 7519 / RFC 9068 / OIDC Core) but are general guidance \u2014 your IdP, framework, or threat model may require different claims.",
+                                            "TTLs are sensible defaults per token type (access 900s, id 3600s, refresh 2592000s) overridable via ttl_seconds; tune to your risk tolerance."
+                                        ]
+                                    },
+                                    "confidence_score": 0.85,
+                                    "confidence_per_section": {
+                                        "claims": 1,
+                                        "recommendations": 0.8
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Issue access tokens with the 7 registered + 2 custom claim(s) shown; TTL 900s.",
+                                        "Sign with RS256 or ES256; provided alg = HS256.",
+                                        "Validate iss/aud/exp/nbf on every verifier and keep sensitive data out of claims."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "jwt-claim-policy-validator",
+                                            "reason": "Validate real tokens against the claim policy this design implies."
+                                        },
+                                        {
+                                            "api": "jwt-decoder",
+                                            "reason": "Decode and inspect an issued token built from this design."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DesignRequest"
+                            },
+                            "example": {
+                                "token_type": "access",
+                                "issuer": "https://auth.example.com",
+                                "audience": [
+                                    "https://api.example.com"
+                                ],
+                                "subject_type": "user",
+                                "scopes": [
+                                    "read:orders",
+                                    "write:orders"
+                                ],
+                                "ttl_seconds": 900,
+                                "algorithm": "HS256"
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.014,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "claims": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "recommendations": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "RegisteredClaim": {
+                "type": "object",
+                "required": [
+                    "claim",
+                    "include",
+                    "required",
+                    "value_or_format",
+                    "rationale"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "claim": {
+                        "type": "string"
+                    },
+                    "include": {
+                        "type": "boolean"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "value_or_format": {
+                        "type": "string"
+                    },
+                    "rationale": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CustomClaim": {
+                "type": "object",
+                "required": [
+                    "claim",
+                    "value_or_format",
+                    "rationale"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "claim": {
+                        "type": "string"
+                    },
+                    "value_or_format": {
+                        "type": "string"
+                    },
+                    "rationale": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AlgorithmAdvice": {
+                "type": "object",
+                "required": [
+                    "provided",
+                    "recommended",
+                    "avoid",
+                    "note"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "provided": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "recommended": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "avoid": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "note": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DesignCore": {
+                "type": "object",
+                "required": [
+                    "token_type",
+                    "subject_type",
+                    "recommended_ttl_seconds",
+                    "registered_claims",
+                    "custom_claims",
+                    "example_payload",
+                    "algorithm",
+                    "security_recommendations",
+                    "anti_patterns"
+                ],
+                "properties": {
+                    "token_type": {
+                        "type": "string",
+                        "enum": [
+                            "access",
+                            "id",
+                            "refresh"
+                        ]
+                    },
+                    "subject_type": {
+                        "type": "string",
+                        "enum": [
+                            "user",
+                            "service"
+                        ]
+                    },
+                    "recommended_ttl_seconds": {
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "registered_claims": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "claim",
+                                "include",
+                                "required",
+                                "value_or_format",
+                                "rationale"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "claim": {
+                                    "type": "string"
+                                },
+                                "include": {
+                                    "type": "boolean"
+                                },
+                                "required": {
+                                    "type": "boolean"
+                                },
+                                "value_or_format": {
+                                    "type": "string"
+                                },
+                                "rationale": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "custom_claims": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "claim",
+                                "value_or_format",
+                                "rationale"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "claim": {
+                                    "type": "string"
+                                },
+                                "value_or_format": {
+                                    "type": "string"
+                                },
+                                "rationale": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "example_payload": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "description": "A single cell value: any JSON scalar, null, array, or object.",
+                            "type": [
+                                "string",
+                                "number",
+                                "boolean",
+                                "null",
+                                "array",
+                                "object"
+                            ]
+                        },
+                        "description": "A concrete example claims object with placeholder values."
+                    },
+                    "algorithm": {
+                        "type": "object",
+                        "required": [
+                            "provided",
+                            "recommended",
+                            "avoid",
+                            "note"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "provided": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "recommended": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "avoid": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "note": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "security_recommendations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "anti_patterns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "DesignRequest": {
+                "type": "object",
+                "required": [
+                    "token_type",
+                    "issuer",
+                    "audience"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "token_type": {
+                        "type": "string",
+                        "enum": [
+                            "access",
+                            "id",
+                            "refresh"
+                        ]
+                    },
+                    "issuer": {
+                        "type": "string",
+                        "description": "The \"iss\" value."
+                    },
+                    "audience": {
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "description": "The \"aud\" value (string or array)."
+                    },
+                    "subject_type": {
+                        "type": "string",
+                        "enum": [
+                            "user",
+                            "service"
+                        ],
+                        "description": "Whether the subject is a user or a service (default user)."
+                    },
+                    "scopes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Scopes to embed (access tokens)."
+                    },
+                    "ttl_seconds": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 31536000,
+                        "description": "Override the default TTL for this token type."
+                    },
+                    "algorithm": {
+                        "type": "string",
+                        "enum": [
+                            "HS256",
+                            "HS384",
+                            "HS512",
+                            "RS256",
+                            "RS384",
+                            "RS512",
+                            "ES256",
+                            "ES384",
+                            "ES512",
+                            "PS256",
+                            "PS384",
+                            "PS512"
+                        ],
+                        "description": "Intended signing algorithm (triggers tailored advice)."
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "DesignResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DesignCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DesignCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}

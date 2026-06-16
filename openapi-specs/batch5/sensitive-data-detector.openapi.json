@@ -1,0 +1,926 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Sensitive Data Detector API",
+        "version": "1.0.0",
+        "description": "Deterministic PII detector \u2014 email/SSN/credit-card(Luhn)/phone/IPv4/IPv6 spans + counts + redacted text + risk level. No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-security-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/sensitive-data-detector"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "Sensitive Data Detector API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic PII detector. Finds emails, phone numbers, US SSNs, Luhn-validated credit-card numbers, and IPv4/IPv6 addresses in text using fixed regex rules, returning spans, counts, a redacted copy, and a heuristic risk level. No LLM, nothing fetched or stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/sensitive-data-detector/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/scan",
+                                            "summary": "Detect & redact PII in text",
+                                            "price_usdc": 0.008
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL scan + reasoning",
+                                            "price_usdc": 0.015
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/scan",
+                                            "price_usdc": 0.008,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.015,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/scan": {
+            "post": {
+                "operationId": "scan",
+                "summary": "Detect & redact PII in text",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScanResponse"
+                                },
+                                "example": {
+                                    "trace_id": "sdd-1780000000000",
+                                    "request_id": "sdd-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "text_length": 110,
+                                    "has_pii": true,
+                                    "finding_count": 5,
+                                    "counts_by_type": {
+                                        "email": 1,
+                                        "phone": 1,
+                                        "ssn": 1,
+                                        "credit_card": 1,
+                                        "ipv4": 1
+                                    },
+                                    "findings": [
+                                        {
+                                            "type": "email",
+                                            "value": "ada@example.com",
+                                            "start": 15,
+                                            "end": 30
+                                        },
+                                        {
+                                            "type": "phone",
+                                            "value": "(555) 123-4567",
+                                            "start": 34,
+                                            "end": 48
+                                        },
+                                        {
+                                            "type": "ssn",
+                                            "value": "123-45-6789",
+                                            "start": 54,
+                                            "end": 65
+                                        },
+                                        {
+                                            "type": "credit_card",
+                                            "value": "4111 1111 1111 1111",
+                                            "start": 72,
+                                            "end": 91
+                                        },
+                                        {
+                                            "type": "ipv4",
+                                            "value": "192.168.1.1",
+                                            "start": 98,
+                                            "end": 109
+                                        }
+                                    ],
+                                    "redacted_text": "Contact Ada at [REDACTED_EMAIL] or [REDACTED_PHONE]. SSN [REDACTED_SSN], card [REDACTED_CREDIT_CARD], host [REDACTED_IPV4].",
+                                    "risk_level": "high",
+                                    "confidence_score": 0.85,
+                                    "confidence_per_section": {
+                                        "detection": 1,
+                                        "classification": 0.8,
+                                        "risk": 0.7
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "5 sensitive item(s) found \u2014 risk high. Types: email, phone, ssn, credit_card, ipv4.",
+                                        "Use redacted_text for logs/LLM prompts; never persist the raw values.",
+                                        "High-risk PII (SSN/PAN) present \u2014 encrypt at rest and restrict access; chain to data-encryption-advisor."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "data-encryption-advisor",
+                                            "reason": "Get encryption/tokenization recommendations for the PII categories detected here."
+                                        },
+                                        {
+                                            "api": "data-classification",
+                                            "reason": "Classify which columns of a dataset carry these PII types."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScanRequest"
+                            },
+                            "example": {
+                                "text": "Contact Ada at ada@example.com or (555) 123-4567. SSN 123-45-6789, card 4111 1111 1111 1111, host 192.168.1.1."
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.008,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL scan + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "sdd-1780000000000",
+                                    "request_id": "sdd-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "text_length": 110,
+                                    "has_pii": true,
+                                    "finding_count": 5,
+                                    "counts_by_type": {
+                                        "email": 1,
+                                        "phone": 1,
+                                        "ssn": 1,
+                                        "credit_card": 1,
+                                        "ipv4": 1
+                                    },
+                                    "findings": [
+                                        {
+                                            "type": "email",
+                                            "value": "ada@example.com",
+                                            "start": 15,
+                                            "end": 30
+                                        },
+                                        {
+                                            "type": "phone",
+                                            "value": "(555) 123-4567",
+                                            "start": 34,
+                                            "end": 48
+                                        },
+                                        {
+                                            "type": "ssn",
+                                            "value": "123-45-6789",
+                                            "start": 54,
+                                            "end": 65
+                                        },
+                                        {
+                                            "type": "credit_card",
+                                            "value": "4111 1111 1111 1111",
+                                            "start": 72,
+                                            "end": 91
+                                        },
+                                        {
+                                            "type": "ipv4",
+                                            "value": "192.168.1.1",
+                                            "start": 98,
+                                            "end": 109
+                                        }
+                                    ],
+                                    "redacted_text": "Contact Ada at [REDACTED_EMAIL] or [REDACTED_PHONE]. SSN [REDACTED_SSN], card [REDACTED_CREDIT_CARD], host [REDACTED_IPV4].",
+                                    "risk_level": "high",
+                                    "reasoning": {
+                                        "why_result_generated": "Scanned 110 character(s) for 6 PII type(s): 5 finding(s), risk high.",
+                                        "key_factors": [
+                                            "Counts: email=1, phone=1, ssn=1, credit_card=1, ipv4=1.",
+                                            "Credit-card matches are Luhn-validated; SSN/phone use US-centric shapes.",
+                                            "Risk derived from the highest-severity type present."
+                                        ],
+                                        "invalidators": [
+                                            "Detection is pattern-based and deterministic: it flags strings that MATCH the shape of each type, not strings proven to be real PII \u2014 a random 9-digit-pattern is reported as an SSN, and a number passing the Luhn check is not necessarily an issued card.",
+                                            "Coverage is limited to email/SSN/credit-card/phone/IPv4/IPv6 with US-centric SSN/phone shapes; passports, national IDs, addresses, and names are NOT detected.",
+                                            "Overlapping matches are resolved by earliest-start, then longest, then type precedence (card/SSN beat phone); a different segmentation could group digits differently."
+                                        ]
+                                    },
+                                    "confidence_score": 0.85,
+                                    "confidence_per_section": {
+                                        "detection": 1,
+                                        "classification": 0.8,
+                                        "risk": 0.7
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "5 sensitive item(s) found \u2014 risk high. Types: email, phone, ssn, credit_card, ipv4.",
+                                        "Use redacted_text for logs/LLM prompts; never persist the raw values.",
+                                        "High-risk PII (SSN/PAN) present \u2014 encrypt at rest and restrict access; chain to data-encryption-advisor."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "data-encryption-advisor",
+                                            "reason": "Get encryption/tokenization recommendations for the PII categories detected here."
+                                        },
+                                        {
+                                            "api": "data-classification",
+                                            "reason": "Classify which columns of a dataset carry these PII types."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScanRequest"
+                            },
+                            "example": {
+                                "text": "Contact Ada at ada@example.com or (555) 123-4567. SSN 123-45-6789, card 4111 1111 1111 1111, host 192.168.1.1."
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.015,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "detection": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "classification": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "risk": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "Finding": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "value",
+                    "start",
+                    "end"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "email",
+                            "ssn",
+                            "credit_card",
+                            "phone",
+                            "ipv4",
+                            "ipv6"
+                        ]
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "The matched substring."
+                    },
+                    "start": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "end": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ScanCore": {
+                "type": "object",
+                "required": [
+                    "text_length",
+                    "has_pii",
+                    "finding_count",
+                    "counts_by_type",
+                    "findings",
+                    "redacted_text",
+                    "risk_level"
+                ],
+                "properties": {
+                    "text_length": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "has_pii": {
+                        "type": "boolean"
+                    },
+                    "finding_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "counts_by_type": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "description": "Count of findings per PII type."
+                    },
+                    "findings": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "type",
+                                "value",
+                                "start",
+                                "end"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "email",
+                                        "ssn",
+                                        "credit_card",
+                                        "phone",
+                                        "ipv4",
+                                        "ipv6"
+                                    ]
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "description": "The matched substring."
+                                },
+                                "start": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "end": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                }
+                            }
+                        }
+                    },
+                    "redacted_text": {
+                        "type": "string",
+                        "description": "The input with detected spans masked."
+                    },
+                    "risk_level": {
+                        "type": "string",
+                        "enum": [
+                            "none",
+                            "low",
+                            "medium",
+                            "high"
+                        ]
+                    }
+                }
+            },
+            "ScanRequest": {
+                "type": "object",
+                "required": [
+                    "text"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "Text to scan for sensitive data (\u2264200,000 chars)."
+                    },
+                    "types": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "email",
+                                "ssn",
+                                "credit_card",
+                                "phone",
+                                "ipv4",
+                                "ipv6"
+                            ]
+                        },
+                        "description": "Restrict detection to these types (default: all)."
+                    },
+                    "mask_style": {
+                        "type": "string",
+                        "enum": [
+                            "label",
+                            "stars",
+                            "type"
+                        ],
+                        "description": "Redaction style: \"[REDACTED_EMAIL]\" (label), \"****\" (stars), or \"[EMAIL]\" (type). Default label."
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ScanResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ScanCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ScanCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}

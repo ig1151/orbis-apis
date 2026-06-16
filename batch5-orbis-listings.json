@@ -1,0 +1,146 @@
+[
+  {
+    "name": "JSON Pointer API",
+    "shortDescription": "Resolve & enumerate RFC 6901 JSON Pointers.",
+    "description": "Deterministic RFC 6901 JSON Pointer evaluator. Resolves one or many pointers against a supplied JSON document (with ~0/~1 unescaping and array-index rules) and can enumerate every leaf pointer of a document. No LLM, nothing fetched, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/json-pointer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/json-pointer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/json-pointer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["json", "json-pointer", "rfc6901", "developer-tools", "data", "x402"],
+    "keywords": ["json pointer", "rfc 6901", "resolve json", "enumerate pointers", "json path"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/resolve", "pricePerCallUsdc": 0.005, "description": "Resolve one or many JSON Pointers" },
+          { "method": "POST", "pathPattern": "/enumerate", "pricePerCallUsdc": 0.006, "description": "List every leaf pointer in a document" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "One-call resolve with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/resolve", "description": "Resolve one or many JSON Pointers" },
+      { "method": "POST", "path": "/enumerate", "description": "List every leaf pointer in a document" },
+      { "method": "POST", "path": "/lookup", "description": "Resolve with reasoning" }
+    ]
+  },
+  {
+    "name": "JSON Patch API",
+    "shortDescription": "Apply & generate RFC 6902 JSON Patches.",
+    "description": "Deterministic RFC 6902 JSON Patch engine. /apply runs an ordered patch (add/remove/replace/move/copy/test) atomically against a document; /diff generates a patch that transforms one document into another. Operates on a clone, so the input is never mutated. No LLM, nothing stored.",
+    "category": "developer-tools",
+    "baseUrl": "https://orbis-apis.onrender.com/json-patch",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/json-patch/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/json-patch/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["json", "json-patch", "rfc6902", "diff", "developer-tools", "x402"],
+    "keywords": ["json patch", "rfc 6902", "apply patch", "json diff", "document mutation"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.011,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/apply", "pricePerCallUsdc": 0.006, "description": "Apply an RFC 6902 patch to a document" },
+          { "method": "POST", "pathPattern": "/diff", "pricePerCallUsdc": 0.007, "description": "Generate a patch transforming from→to" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.011, "description": "One-call apply with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/apply", "description": "Apply an RFC 6902 patch to a document" },
+      { "method": "POST", "path": "/diff", "description": "Generate a patch transforming from→to" },
+      { "method": "POST", "path": "/lookup", "description": "Apply with reasoning" }
+    ]
+  },
+  {
+    "name": "Sensitive Data Detector API",
+    "shortDescription": "Detect & redact PII in text (deterministic).",
+    "description": "Deterministic PII detector. Finds emails, phone numbers, US SSNs, Luhn-validated credit-card numbers, and IPv4/IPv6 addresses in text using fixed regex rules, returning their spans, counts, a redacted copy, and a heuristic risk level. 100% deterministic — no LLM, nothing fetched or stored.",
+    "category": "security",
+    "baseUrl": "https://orbis-apis.onrender.com/sensitive-data-detector",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/sensitive-data-detector/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/sensitive-data-detector/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["pii", "redaction", "security", "data-privacy", "compliance", "x402"],
+    "keywords": ["pii detection", "redaction", "ssn", "credit card luhn", "data privacy"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.015,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/scan", "pricePerCallUsdc": 0.008, "description": "Detect & redact PII in text" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.015, "description": "One-call scan with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/scan", "description": "Detect & redact PII in text" },
+      { "method": "POST", "path": "/lookup", "description": "Scan with reasoning" }
+    ]
+  },
+  {
+    "name": "Data Encryption Advisor API",
+    "shortDescription": "Encryption rubric for your data categories.",
+    "description": "Deterministic data-encryption advisor. Maps supplied data categories, regulatory context, and hosting environment to an encryption rubric: classification level, at-rest and in-transit recommendations, per-category field-level handling, key-management guidance, and compliance notes. Rule-based and advisory. No LLM, nothing stored.",
+    "category": "security",
+    "baseUrl": "https://orbis-apis.onrender.com/data-encryption-advisor",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-encryption-advisor/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-encryption-advisor/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["encryption", "security", "key-management", "compliance", "data-protection", "x402"],
+    "keywords": ["encryption advisor", "at rest encryption", "tls", "key rotation", "data classification"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.016,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/advise", "pricePerCallUsdc": 0.009, "description": "Get an encryption rubric for the supplied data" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.016, "description": "One-call advice with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/advise", "description": "Get an encryption rubric for the supplied data" },
+      { "method": "POST", "path": "/lookup", "description": "Advice with reasoning" }
+    ]
+  },
+  {
+    "name": "JWT Claims Designer API",
+    "shortDescription": "Design recommended JWT claim sets.",
+    "description": "Deterministic JWT claims designer. From a token profile (type, issuer, audience, scopes, TTL, signing algorithm) it generates a recommended registered + custom claim set, sensible TTLs, an example payload, signing-algorithm advice, and security recommendations / anti-patterns. Generates a design — it does not decode or validate tokens. No LLM, nothing stored.",
+    "category": "security",
+    "baseUrl": "https://orbis-apis.onrender.com/jwt-claims-designer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/jwt-claims-designer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/jwt-claims-designer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": ["jwt", "oauth", "oidc", "security", "tokens", "x402"],
+    "keywords": ["jwt claims", "token design", "registered claims", "oauth scopes", "jwt best practices"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.014,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/design", "pricePerCallUsdc": 0.008, "description": "Design a recommended JWT claim set" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.014, "description": "One-call design with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/design", "description": "Design a recommended JWT claim set" },
+      { "method": "POST", "path": "/lookup", "description": "Design with reasoning" }
+    ]
+  }
+]

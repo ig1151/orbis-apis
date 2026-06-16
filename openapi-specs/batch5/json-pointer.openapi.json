@@ -1,0 +1,1195 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "JSON Pointer API",
+        "version": "1.0.0",
+        "description": "Deterministic RFC 6901 JSON Pointer evaluator \u2014 resolve one/many pointers + enumerate all leaf pointers of a JSON document. No LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-developer-tool": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/json-pointer"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "JSON Pointer API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic RFC 6901 JSON Pointer evaluator. Resolves one or many pointers against a supplied JSON document and can enumerate every leaf pointer. No LLM, nothing fetched, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/json-pointer/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/resolve",
+                                            "summary": "Resolve one or many JSON Pointers",
+                                            "price_usdc": 0.005
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/enumerate",
+                                            "summary": "List every leaf pointer in a document",
+                                            "price_usdc": 0.006
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL resolve + reasoning",
+                                            "price_usdc": 0.009
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/resolve",
+                                            "price_usdc": 0.005,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/enumerate",
+                                            "price_usdc": 0.006,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.009,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/resolve": {
+            "post": {
+                "operationId": "resolve",
+                "summary": "Resolve one or many JSON Pointers",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResolveResponse"
+                                },
+                                "example": {
+                                    "trace_id": "jptr-1780000000000",
+                                    "request_id": "jptr-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "document_type": "object",
+                                    "requested": 7,
+                                    "found_count": 5,
+                                    "missing_count": 2,
+                                    "results": [
+                                        {
+                                            "pointer": "/user/name",
+                                            "found": true,
+                                            "value": "Ada",
+                                            "type": "string"
+                                        },
+                                        {
+                                            "pointer": "/user/roles/0",
+                                            "found": true,
+                                            "value": "admin",
+                                            "type": "string"
+                                        },
+                                        {
+                                            "pointer": "/user/a~1b",
+                                            "found": true,
+                                            "value": 1,
+                                            "type": "number"
+                                        },
+                                        {
+                                            "pointer": "/items/1",
+                                            "found": true,
+                                            "value": 20,
+                                            "type": "number"
+                                        },
+                                        {
+                                            "pointer": "/active",
+                                            "found": true,
+                                            "value": null,
+                                            "type": "null"
+                                        },
+                                        {
+                                            "pointer": "/user/missing",
+                                            "found": false,
+                                            "reason": "key \"missing\" at index 1 does not exist."
+                                        },
+                                        {
+                                            "pointer": "/items/5",
+                                            "found": false,
+                                            "reason": "array index 5 at index 1 is out of bounds (length 2)."
+                                        }
+                                    ],
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "resolution": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Resolved 5/7 pointer(s); 2 not found."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "json-patch",
+                                            "reason": "Mutate the document at these pointers with RFC 6902 add/remove/replace operations."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the document these pointers address against a JSON Schema."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResolveRequest"
+                            },
+                            "example": {
+                                "document": {
+                                    "user": {
+                                        "name": "Ada",
+                                        "roles": [
+                                            "admin",
+                                            "editor"
+                                        ],
+                                        "a/b": 1
+                                    },
+                                    "items": [
+                                        10,
+                                        20
+                                    ],
+                                    "active": null
+                                },
+                                "pointers": [
+                                    "/user/name",
+                                    "/user/roles/0",
+                                    "/user/a~1b",
+                                    "/items/1",
+                                    "/active",
+                                    "/user/missing",
+                                    "/items/5"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.005,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/enumerate": {
+            "post": {
+                "operationId": "enumerate",
+                "summary": "List every leaf pointer in a document",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EnumerateResponse"
+                                },
+                                "example": {
+                                    "trace_id": "jptr-1780000000000",
+                                    "request_id": "jptr-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "document_type": "object",
+                                    "leaf_count": 5,
+                                    "truncated": false,
+                                    "entries": [
+                                        {
+                                            "pointer": "/user/name",
+                                            "value": "Ada",
+                                            "type": "string"
+                                        },
+                                        {
+                                            "pointer": "/user/active",
+                                            "value": true,
+                                            "type": "boolean"
+                                        },
+                                        {
+                                            "pointer": "/tags/0",
+                                            "value": "x",
+                                            "type": "string"
+                                        },
+                                        {
+                                            "pointer": "/tags/1",
+                                            "value": "y",
+                                            "type": "string"
+                                        },
+                                        {
+                                            "pointer": "/meta",
+                                            "value": {},
+                                            "type": "object"
+                                        }
+                                    ],
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "enumeration": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Enumerated 5 leaf pointer(s)."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "json-patch",
+                                            "reason": "Mutate the document at these pointers with RFC 6902 add/remove/replace operations."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the document these pointers address against a JSON Schema."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EnumerateRequest"
+                            },
+                            "example": {
+                                "document": {
+                                    "user": {
+                                        "name": "Ada",
+                                        "active": true
+                                    },
+                                    "tags": [
+                                        "x",
+                                        "y"
+                                    ],
+                                    "meta": {}
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.006,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL resolve + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "jptr-1780000000000",
+                                    "request_id": "jptr-1780000000000",
+                                    "computed_at": "2026-06-16T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "document_type": "object",
+                                    "requested": 7,
+                                    "found_count": 5,
+                                    "missing_count": 2,
+                                    "results": [
+                                        {
+                                            "pointer": "/user/name",
+                                            "found": true,
+                                            "value": "Ada",
+                                            "type": "string"
+                                        },
+                                        {
+                                            "pointer": "/user/roles/0",
+                                            "found": true,
+                                            "value": "admin",
+                                            "type": "string"
+                                        },
+                                        {
+                                            "pointer": "/user/a~1b",
+                                            "found": true,
+                                            "value": 1,
+                                            "type": "number"
+                                        },
+                                        {
+                                            "pointer": "/items/1",
+                                            "found": true,
+                                            "value": 20,
+                                            "type": "number"
+                                        },
+                                        {
+                                            "pointer": "/active",
+                                            "found": true,
+                                            "value": null,
+                                            "type": "null"
+                                        },
+                                        {
+                                            "pointer": "/user/missing",
+                                            "found": false,
+                                            "reason": "key \"missing\" at index 1 does not exist."
+                                        },
+                                        {
+                                            "pointer": "/items/5",
+                                            "found": false,
+                                            "reason": "array index 5 at index 1 is out of bounds (length 2)."
+                                        }
+                                    ],
+                                    "reasoning": {
+                                        "why_result_generated": "Resolved 7 JSON Pointer(s) against a object document: 5 found, 2 missing.",
+                                        "key_factors": [
+                                            "Found: /user/name, /user/roles/0, /user/a~1b, /items/1, /active.",
+                                            "Missing: /user/missing (key \"missing\" at index 1 does not exist.); /items/5 (array index 5 at index 1 is out of bounds (length 2).)."
+                                        ],
+                                        "invalidators": [
+                                            "Pointers follow RFC 6901: tokens are ~1\u2192\"/\" and ~0\u2192\"~\" unescaped; array indices must be \"0\" or have no leading zeros; \"-\" (end-of-array) is reported as not-found because it addresses no existing element.",
+                                            "A pointer is \"not found\" (not an error) when the path does not exist in this document; only malformed pointers (not starting with \"/\") are reported via reason without a value.",
+                                            "Resolution reflects only the supplied document; a value of null is a real found value, distinguished from missing by the found flag."
+                                        ]
+                                    },
+                                    "confidence_score": 1,
+                                    "confidence_per_section": {
+                                        "resolution": 1
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Resolved 5/7 pointer(s); 2 not found."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "json-patch",
+                                            "reason": "Mutate the document at these pointers with RFC 6902 add/remove/replace operations."
+                                        },
+                                        {
+                                            "api": "json-schema-validator",
+                                            "reason": "Validate the document these pointers address against a JSON Schema."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ResolveRequest"
+                            },
+                            "example": {
+                                "document": {
+                                    "user": {
+                                        "name": "Ada",
+                                        "roles": [
+                                            "admin",
+                                            "editor"
+                                        ],
+                                        "a/b": 1
+                                    },
+                                    "items": [
+                                        10,
+                                        20
+                                    ],
+                                    "active": null
+                                },
+                                "pointers": [
+                                    "/user/name",
+                                    "/user/roles/0",
+                                    "/user/a~1b",
+                                    "/items/1",
+                                    "/active",
+                                    "/user/missing",
+                                    "/items/5"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.009,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "resolution": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "enumeration": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "ResolveEntry": {
+                "type": "object",
+                "required": [
+                    "pointer",
+                    "found"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "pointer": {
+                        "type": "string"
+                    },
+                    "found": {
+                        "type": "boolean"
+                    },
+                    "value": {
+                        "description": "The value at the pointer (present only when found; null is a valid found value).",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "JSON type of the found value."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why a pointer was not found, or why it is malformed."
+                    }
+                }
+            },
+            "ResolveCore": {
+                "type": "object",
+                "required": [
+                    "document_type",
+                    "requested",
+                    "found_count",
+                    "missing_count",
+                    "results"
+                ],
+                "properties": {
+                    "document_type": {
+                        "type": "string"
+                    },
+                    "requested": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "found_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "missing_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "pointer",
+                                "found"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "pointer": {
+                                    "type": "string"
+                                },
+                                "found": {
+                                    "type": "boolean"
+                                },
+                                "value": {
+                                    "description": "The value at the pointer (present only when found; null is a valid found value).",
+                                    "type": [
+                                        "string",
+                                        "number",
+                                        "boolean",
+                                        "null",
+                                        "array",
+                                        "object"
+                                    ]
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "description": "JSON type of the found value."
+                                },
+                                "reason": {
+                                    "type": "string",
+                                    "description": "Why a pointer was not found, or why it is malformed."
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "PointerEntry": {
+                "type": "object",
+                "required": [
+                    "pointer",
+                    "value",
+                    "type"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "pointer": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "description": "A single cell value: any JSON scalar, null, array, or object.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EnumerateCore": {
+                "type": "object",
+                "required": [
+                    "document_type",
+                    "leaf_count",
+                    "truncated",
+                    "entries"
+                ],
+                "properties": {
+                    "document_type": {
+                        "type": "string"
+                    },
+                    "leaf_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "truncated": {
+                        "type": "boolean"
+                    },
+                    "entries": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "pointer",
+                                "value",
+                                "type"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "pointer": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "description": "A single cell value: any JSON scalar, null, array, or object.",
+                                    "type": [
+                                        "string",
+                                        "number",
+                                        "boolean",
+                                        "null",
+                                        "array",
+                                        "object"
+                                    ]
+                                },
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ResolveRequest": {
+                "type": "object",
+                "required": [
+                    "document"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "document": {
+                        "description": "Any JSON document to resolve against.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "pointer": {
+                        "type": "string",
+                        "description": "A single RFC 6901 JSON Pointer."
+                    },
+                    "pointers": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Multiple JSON Pointers (alternative to \"pointer\")."
+                    }
+                }
+            },
+            "EnumerateRequest": {
+                "type": "object",
+                "required": [
+                    "document"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "document": {
+                        "description": "Any JSON document to enumerate.",
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null",
+                            "array",
+                            "object"
+                        ]
+                    },
+                    "max": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "Max leaf pointers to return (default 5000)."
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ResolveResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ResolveCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "EnumerateResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/EnumerateCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ResolveCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}
