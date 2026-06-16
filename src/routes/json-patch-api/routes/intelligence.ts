@@ -193,6 +193,7 @@ const INVALIDATORS = [
   'Patches apply atomically per RFC 6902: on the first failing operation (bad path, out-of-bounds index, missing target, or failed test) the whole patch is rejected and no document is returned.',
   'The input document is never mutated — operations run on a deep clone; "move into own subtree" is rejected as illegal.',
   'diff is deterministic and correct (applying it transforms from→to) but not guaranteed minimal: array changes are compared index-wise, so an insertion mid-array may yield replace+append rather than a single insert.',
+  'Whole-document operations: add/replace with path "" replace the entire document; remove with path "" is rejected BY DESIGN (RFC 6902 removes a value from its parent, and the root has no parent) — to empty a document, replace at "" with the desired value.',
 ];
 
 const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({

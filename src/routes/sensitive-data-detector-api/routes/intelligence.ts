@@ -21,7 +21,7 @@ const PRECEDENCE: Record<PiiType, number> = { credit_card: 6, ssn: 5, email: 4, 
 const PATTERNS: Record<PiiType, RegExp> = {
   email: /[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/g,
   ssn: /\b\d{3}-\d{2}-\d{4}\b/g,
-  credit_card: /\b(?:\d[ \-]?){13,19}\b/g,
+  credit_card: /\b\d(?:[ \-]?\d){12,18}\b/g, // 13–19 digits; starts & ends on a digit (no leading/trailing separator)
   phone: /(?:\+?\d{1,3}[\s.\-]?)?(?:\(\d{3}\)|\d{3})[\s.\-]?\d{3}[\s.\-]?\d{4}\b/g,
   ipv4: /\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b/g,
   ipv6: /\b(?:[A-Fa-f0-9]{1,4}:){2,7}[A-Fa-f0-9]{1,4}\b/g,

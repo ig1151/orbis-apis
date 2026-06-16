@@ -1968,11 +1968,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "2rll1x9p-1781575414691",
-  "request_id": "2rll1x9p-1781575414691",
-  "computed_at": "2026-06-16T02:03:34.691Z",
+  "trace_id": "s9smgn2e-1781576000892",
+  "request_id": "s9smgn2e-1781576000892",
+  "computed_at": "2026-06-16T02:13:20.892Z",
   "success": true,
-  "latency_ms": 1,
+  "latency_ms": 0,
   "document_type": "object",
   "requested": 7,
   "found_count": 5,
@@ -2068,9 +2068,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "l4zdrudw-1781575414704",
-  "request_id": "l4zdrudw-1781575414704",
-  "computed_at": "2026-06-16T02:03:34.704Z",
+  "trace_id": "k32i7ybc-1781576000898",
+  "request_id": "k32i7ybc-1781576000898",
+  "computed_at": "2026-06-16T02:13:20.898Z",
   "success": true,
   "latency_ms": 0,
   "document_type": "object",
@@ -2154,9 +2154,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "b06q2rch-1781575414707",
-  "request_id": "b06q2rch-1781575414707",
-  "computed_at": "2026-06-16T02:03:34.707Z",
+  "trace_id": "xob3732y-1781576000901",
+  "request_id": "xob3732y-1781576000901",
+  "computed_at": "2026-06-16T02:13:20.901Z",
   "success": true,
   "latency_ms": 0,
   "document_type": "object",
@@ -2223,11 +2223,11 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "jdh5duwr-1781575414711",
-  "request_id": "jdh5duwr-1781575414711",
-  "computed_at": "2026-06-16T02:03:34.711Z",
+  "trace_id": "npag8hnh-1781576000905",
+  "request_id": "npag8hnh-1781576000905",
+  "computed_at": "2026-06-16T02:13:20.905Z",
   "success": false,
-  "latency_ms": 1,
+  "latency_ms": 0,
   "error": {
     "code": "invalid_request",
     "message": "Provide \"pointer\" (string) or \"pointers\" (string[])."
@@ -2436,6 +2436,7 @@ const INVALIDATORS = [
   'Patches apply atomically per RFC 6902: on the first failing operation (bad path, out-of-bounds index, missing target, or failed test) the whole patch is rejected and no document is returned.',
   'The input document is never mutated — operations run on a deep clone; "move into own subtree" is rejected as illegal.',
   'diff is deterministic and correct (applying it transforms from→to) but not guaranteed minimal: array changes are compared index-wise, so an insertion mid-array may yield replace+append rather than a single insert.',
+  'Whole-document operations: add/replace with path "" replace the entire document; remove with path "" is rejected BY DESIGN (RFC 6902 removes a value from its parent, and the root has no parent) — to empty a document, replace at "" with the desired value.',
 ];
 
 const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
@@ -3022,7 +3023,8 @@ export default specRouter(spec);
                     "invalidators": [
                       "Patches apply atomically per RFC 6902: on the first failing operation (bad path, out-of-bounds index, missing target, or failed test) the whole patch is rejected and no document is returned.",
                       "The input document is never mutated — operations run on a deep clone; \"move into own subtree\" is rejected as illegal.",
-                      "diff is deterministic and correct (applying it transforms from→to) but not guaranteed minimal: array changes are compared index-wise, so an insertion mid-array may yield replace+append rather than a single insert."
+                      "diff is deterministic and correct (applying it transforms from→to) but not guaranteed minimal: array changes are compared index-wise, so an insertion mid-array may yield replace+append rather than a single insert.",
+                      "Whole-document operations: add/replace with path \"\" replace the entire document; remove with path \"\" is rejected BY DESIGN (RFC 6902 removes a value from its parent, and the root has no parent) — to empty a document, replace at \"\" with the desired value."
                     ]
                   },
                   "confidence_score": 1,
@@ -3830,9 +3832,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "smslcmhj-1781575414722",
-  "request_id": "smslcmhj-1781575414722",
-  "computed_at": "2026-06-16T02:03:34.722Z",
+  "trace_id": "3j0njg4i-1781576000926",
+  "request_id": "3j0njg4i-1781576000926",
+  "computed_at": "2026-06-16T02:13:20.926Z",
   "success": true,
   "latency_ms": 0,
   "operation_count": 4,
@@ -3903,9 +3905,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "hyqsm1ys-1781575414731",
-  "request_id": "hyqsm1ys-1781575414731",
-  "computed_at": "2026-06-16T02:03:34.731Z",
+  "trace_id": "rvlpadkh-1781576000931",
+  "request_id": "rvlpadkh-1781576000931",
+  "computed_at": "2026-06-16T02:13:20.931Z",
   "success": true,
   "latency_ms": 0,
   "operation_count": 2,
@@ -3968,11 +3970,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "bismp3yv-1781575414736",
-  "request_id": "bismp3yv-1781575414736",
-  "computed_at": "2026-06-16T02:03:34.736Z",
+  "trace_id": "xpl9s0jb-1781576000935",
+  "request_id": "xpl9s0jb-1781576000935",
+  "computed_at": "2026-06-16T02:13:20.935Z",
   "success": true,
-  "latency_ms": 1,
+  "latency_ms": 0,
   "operation_count": 1,
   "applied": false,
   "failed_at_index": 0,
@@ -4032,9 +4034,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "2fqxwwf7-1781575414739",
-  "request_id": "2fqxwwf7-1781575414739",
-  "computed_at": "2026-06-16T02:03:34.739Z",
+  "trace_id": "dnajld4c-1781576000938",
+  "request_id": "dnajld4c-1781576000938",
+  "computed_at": "2026-06-16T02:13:20.938Z",
   "success": true,
   "latency_ms": 0,
   "operation_count": 4,
@@ -4098,9 +4100,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "i2tlobja-1781575414742",
-  "request_id": "i2tlobja-1781575414742",
-  "computed_at": "2026-06-16T02:03:34.742Z",
+  "trace_id": "qn72xbh4-1781576000942",
+  "request_id": "qn72xbh4-1781576000942",
+  "computed_at": "2026-06-16T02:13:20.942Z",
   "success": false,
   "latency_ms": 0,
   "error": {
@@ -4139,7 +4141,7 @@ const PRECEDENCE: Record<PiiType, number> = { credit_card: 6, ssn: 5, email: 4, 
 const PATTERNS: Record<PiiType, RegExp> = {
   email: /[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/g,
   ssn: /\b\d{3}-\d{2}-\d{4}\b/g,
-  credit_card: /\b(?:\d[ \-]?){13,19}\b/g,
+  credit_card: /\b\d(?:[ \-]?\d){12,18}\b/g, // 13–19 digits; starts & ends on a digit (no leading/trailing separator)
   phone: /(?:\+?\d{1,3}[\s.\-]?)?(?:\(\d{3}\)|\d{3})[\s.\-]?\d{3}[\s.\-]?\d{4}\b/g,
   ipv4: /\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b/g,
   ipv6: /\b(?:[A-Fa-f0-9]{1,4}:){2,7}[A-Fa-f0-9]{1,4}\b/g,
@@ -5325,11 +5327,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "as6sssgl-1781575414748",
-  "request_id": "as6sssgl-1781575414748",
-  "computed_at": "2026-06-16T02:03:34.748Z",
+  "trace_id": "8l16wclf-1781576000951",
+  "request_id": "8l16wclf-1781576000951",
+  "computed_at": "2026-06-16T02:13:20.951Z",
   "success": true,
-  "latency_ms": 1,
+  "latency_ms": 0,
   "text_length": 110,
   "has_pii": true,
   "finding_count": 5,
@@ -5421,11 +5423,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "zxsc07bf-1781575414755",
-  "request_id": "zxsc07bf-1781575414755",
-  "computed_at": "2026-06-16T02:03:34.755Z",
+  "trace_id": "7brcop7o-1781576000956",
+  "request_id": "7brcop7o-1781576000956",
+  "computed_at": "2026-06-16T02:13:20.956Z",
   "success": true,
-  "latency_ms": 0,
+  "latency_ms": 1,
   "text_length": 41,
   "has_pii": true,
   "finding_count": 1,
@@ -5484,9 +5486,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "yuv9bw95-1781575414759",
-  "request_id": "yuv9bw95-1781575414759",
-  "computed_at": "2026-06-16T02:03:34.759Z",
+  "trace_id": "b0z7j2qz-1781576000961",
+  "request_id": "b0z7j2qz-1781576000961",
+  "computed_at": "2026-06-16T02:13:20.961Z",
   "success": true,
   "latency_ms": 0,
   "text_length": 23,
@@ -5549,9 +5551,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "nblbzpmh-1781575414762",
-  "request_id": "nblbzpmh-1781575414762",
-  "computed_at": "2026-06-16T02:03:34.762Z",
+  "trace_id": "7eh3rxhw-1781576000963",
+  "request_id": "7eh3rxhw-1781576000963",
+  "computed_at": "2026-06-16T02:13:20.963Z",
   "success": false,
   "latency_ms": 0,
   "error": {
@@ -6960,11 +6962,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "i99tx4pi-1781575414772",
-  "request_id": "i99tx4pi-1781575414772",
-  "computed_at": "2026-06-16T02:03:34.772Z",
+  "trace_id": "k3hxjqsn-1781576000971",
+  "request_id": "k3hxjqsn-1781576000971",
+  "computed_at": "2026-06-16T02:13:20.971Z",
   "success": true,
-  "latency_ms": 1,
+  "latency_ms": 0,
   "classification": "restricted",
   "sensitivity_score": 95,
   "categories": [
@@ -7062,9 +7064,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "v746vwpk-1781575414773",
-  "request_id": "v746vwpk-1781575414773",
-  "computed_at": "2026-06-16T02:03:34.773Z",
+  "trace_id": "zx4cn8kx-1781576000974",
+  "request_id": "zx4cn8kx-1781576000974",
+  "computed_at": "2026-06-16T02:13:20.974Z",
   "success": true,
   "latency_ms": 0,
   "classification": "internal",
@@ -7142,9 +7144,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "tra8u7ph-1781575414775",
-  "request_id": "tra8u7ph-1781575414775",
-  "computed_at": "2026-06-16T02:03:34.776Z",
+  "trace_id": "r4c19vb3-1781576000976",
+  "request_id": "r4c19vb3-1781576000976",
+  "computed_at": "2026-06-16T02:13:20.976Z",
   "success": true,
   "latency_ms": 1,
   "classification": "restricted",
@@ -7240,9 +7242,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "bzmuej3k-1781575414777",
-  "request_id": "bzmuej3k-1781575414777",
-  "computed_at": "2026-06-16T02:03:34.777Z",
+  "trace_id": "nip1raz4-1781576000977",
+  "request_id": "nip1raz4-1781576000977",
+  "computed_at": "2026-06-16T02:13:20.977Z",
   "success": false,
   "latency_ms": 0,
   "error": {
@@ -8808,9 +8810,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "6vlhgma4-1781575414782",
-  "request_id": "6vlhgma4-1781575414782",
-  "computed_at": "2026-06-16T02:03:34.782Z",
+  "trace_id": "bbvvglfe-1781576000981",
+  "request_id": "bbvvglfe-1781576000981",
+  "computed_at": "2026-06-16T02:13:20.981Z",
   "success": true,
   "latency_ms": 0,
   "token_type": "access",
@@ -8961,11 +8963,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "sc8jfzqb-1781575414784",
-  "request_id": "sc8jfzqb-1781575414784",
-  "computed_at": "2026-06-16T02:03:34.784Z",
+  "trace_id": "sxgfkl4q-1781576000983",
+  "request_id": "sxgfkl4q-1781576000983",
+  "computed_at": "2026-06-16T02:13:20.983Z",
   "success": true,
-  "latency_ms": 0,
+  "latency_ms": 1,
   "token_type": "refresh",
   "subject_type": "service",
   "recommended_ttl_seconds": 2592000,
@@ -9108,9 +9110,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "gvmwwf7l-1781575414789",
-  "request_id": "gvmwwf7l-1781575414789",
-  "computed_at": "2026-06-16T02:03:34.789Z",
+  "trace_id": "nrg9a2th-1781576000991",
+  "request_id": "nrg9a2th-1781576000991",
+  "computed_at": "2026-06-16T02:13:20.991Z",
   "success": true,
   "latency_ms": 1,
   "token_type": "id",
@@ -9278,9 +9280,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "z2iib5d2-1781575414790",
-  "request_id": "z2iib5d2-1781575414790",
-  "computed_at": "2026-06-16T02:03:34.790Z",
+  "trace_id": "vnuxo1y8-1781576000994",
+  "request_id": "vnuxo1y8-1781576000994",
+  "computed_at": "2026-06-16T02:13:20.994Z",
   "success": false,
   "latency_ms": 0,
   "error": {
