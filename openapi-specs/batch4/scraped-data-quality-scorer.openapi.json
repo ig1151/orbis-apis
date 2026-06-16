@@ -1,0 +1,1256 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Scraped Data Quality Scorer API",
+        "version": "1.0.0",
+        "description": "Deterministic scraped/extracted-data quality scorer \u2014 completeness, duplicate extraction, HTML/whitespace noise, placeholder values, type consistency \u2192 0\u2013100 score + subscores + issues. No schema, no fetching, no LLM.",
+        "x-agent-callable": true,
+        "x-mcp-compatible": true,
+        "x402-compatible": true,
+        "x-agent-marketplace-ready": true,
+        "x-pay-per-call-optimized": true,
+        "x-data-quality": true,
+        "x-human-approval-required": false
+    },
+    "servers": [
+        {
+            "url": "https://orbis-apis.onrender.com/scraped-data-quality-scorer"
+        }
+    ],
+    "security": [
+        {
+            "ApiKeyAuth": []
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "discover",
+                "summary": "Service discovery",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DiscoveryResponse"
+                                },
+                                "example": {
+                                    "name": "Scraped Data Quality Scorer API",
+                                    "version": "1.0.0",
+                                    "description": "Deterministic quality scorer for scraped/extracted datasets. Scores extraction completeness, duplicate extraction, HTML/whitespace noise, placeholder/boilerplate values, and per-column type consistency into a 0\u2013100 score with per-dimension subscores, per-field breakdown and issues. No reference schema, no fetching, no LLM, nothing stored.",
+                                    "openapi_url": "https://orbis-apis.onrender.com/scraped-data-quality-scorer/openapi.json",
+                                    "auth": {
+                                        "type": "apiKey",
+                                        "header": "X-API-Key"
+                                    },
+                                    "endpoints": [
+                                        {
+                                            "method": "POST",
+                                            "path": "/score",
+                                            "summary": "Score a scraped/extracted dataset",
+                                            "price_usdc": 0.01
+                                        },
+                                        {
+                                            "method": "POST",
+                                            "path": "/lookup",
+                                            "summary": "ONE-CALL score + reasoning",
+                                            "price_usdc": 0.018
+                                        }
+                                    ],
+                                    "pricing": [
+                                        {
+                                            "path": "/score",
+                                            "price_usdc": 0.01,
+                                            "currency": "USDC"
+                                        },
+                                        {
+                                            "path": "/lookup",
+                                            "price_usdc": 0.018,
+                                            "currency": "USDC"
+                                        }
+                                    ],
+                                    "x402_compatible": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/score": {
+            "post": {
+                "operationId": "score",
+                "summary": "Score a scraped/extracted dataset",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ScoreResponse"
+                                },
+                                "example": {
+                                    "trace_id": "sdq-1780000000000",
+                                    "request_id": "sdq-1780000000000",
+                                    "computed_at": "2026-06-15T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "row_count": 5,
+                                    "column_count": 4,
+                                    "total_cells": 20,
+                                    "duplicate_row_count": 1,
+                                    "placeholder_cell_count": 2,
+                                    "noise_cell_count": 3,
+                                    "missing_cell_count": 1,
+                                    "subscores": {
+                                        "completeness": 0.95,
+                                        "uniqueness": 0.8,
+                                        "cleanliness": 0.85,
+                                        "placeholder_freedom": 0.9,
+                                        "consistency": 0.95
+                                    },
+                                    "score": 89.8,
+                                    "grade": "B",
+                                    "weights_used": {
+                                        "completeness": 0.3,
+                                        "uniqueness": 0.15,
+                                        "cleanliness": 0.2,
+                                        "placeholder_freedom": 0.2,
+                                        "consistency": 0.15
+                                    },
+                                    "fields": [
+                                        {
+                                            "name": "title",
+                                            "fill_rate": 1,
+                                            "placeholder_rate": 0,
+                                            "noise_rate": 0.6,
+                                            "truncated_count": 1,
+                                            "dominant_type": "string",
+                                            "type_consistency": 1
+                                        },
+                                        {
+                                            "name": "price",
+                                            "fill_rate": 0.8,
+                                            "placeholder_rate": 0.2,
+                                            "noise_rate": 0,
+                                            "truncated_count": 0,
+                                            "dominant_type": "string",
+                                            "type_consistency": 1
+                                        },
+                                        {
+                                            "name": "url",
+                                            "fill_rate": 1,
+                                            "placeholder_rate": 0,
+                                            "noise_rate": 0,
+                                            "truncated_count": 0,
+                                            "dominant_type": "string",
+                                            "type_consistency": 1
+                                        },
+                                        {
+                                            "name": "stock",
+                                            "fill_rate": 1,
+                                            "placeholder_rate": 0.2,
+                                            "noise_rate": 0,
+                                            "truncated_count": 0,
+                                            "dominant_type": "number",
+                                            "type_consistency": 0.8
+                                        }
+                                    ],
+                                    "issues": [
+                                        "1 duplicate row(s) (20.0%) \u2014 likely double-extraction.",
+                                        "Column \"title\": 60.0% noisy values (whitespace/HTML entities/control chars/truncation).",
+                                        "Column \"price\": only 80.0% of rows populated.",
+                                        "Column \"price\": 20.0% placeholder/boilerplate values.",
+                                        "Column \"stock\": 20.0% placeholder/boilerplate values.",
+                                        "Column \"stock\": mixed value types (dominant number only 80.0% consistent)."
+                                    ],
+                                    "confidence_score": 0.8,
+                                    "confidence_per_section": {
+                                        "measurement": 1,
+                                        "scoring": 0.8
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Quality score 89.8/100 (B) over 5 row(s) \u00d7 4 column(s).",
+                                        "Weakest dimension(s): uniqueness 80%, cleanliness 85%.",
+                                        "De-duplicate: 1 duplicate row(s) detected.",
+                                        "6 field issue(s) flagged \u2014 see issues[].",
+                                        "Chain to scrape-data-pipeline-validator to enforce an expected schema, or scrape-data-enricher to repair weak fields."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "scrape-data-pipeline-validator",
+                                            "reason": "Check these records against an explicit expected schema (presence/type/format) for pass/fail."
+                                        },
+                                        {
+                                            "api": "scrape-data-enricher",
+                                            "reason": "Repair low-fill or placeholder fields with deterministic enrichment rules."
+                                        },
+                                        {
+                                            "api": "data-quality-rules",
+                                            "reason": "Codify the quality thresholds found here as reusable not-null/range/regex rules."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScoreRequest"
+                            },
+                            "example": {
+                                "rows": [
+                                    {
+                                        "title": "Widget A",
+                                        "price": "$9.99",
+                                        "url": "https://shop.com/a",
+                                        "stock": "12"
+                                    },
+                                    {
+                                        "title": "Widget B ",
+                                        "price": "N/A",
+                                        "url": "https://shop.com/b",
+                                        "stock": "7"
+                                    },
+                                    {
+                                        "title": "Tom &amp; Jerry",
+                                        "price": "$14.50",
+                                        "url": "https://shop.com/c",
+                                        "stock": "unknown"
+                                    },
+                                    {
+                                        "title": "Widget A",
+                                        "price": "$9.99",
+                                        "url": "https://shop.com/a",
+                                        "stock": "12"
+                                    },
+                                    {
+                                        "title": "Long description that was cut o\u2026",
+                                        "price": "",
+                                        "url": "https://shop.com/e",
+                                        "stock": "3"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.01,
+                    "currency": "USDC"
+                }
+            }
+        },
+        "/lookup": {
+            "post": {
+                "operationId": "lookup",
+                "summary": "ONE-CALL score + reasoning",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LookupResponse"
+                                },
+                                "example": {
+                                    "trace_id": "sdq-1780000000000",
+                                    "request_id": "sdq-1780000000000",
+                                    "computed_at": "2026-06-15T12:00:00.000Z",
+                                    "success": true,
+                                    "latency_ms": 1,
+                                    "row_count": 5,
+                                    "column_count": 4,
+                                    "total_cells": 20,
+                                    "duplicate_row_count": 1,
+                                    "placeholder_cell_count": 2,
+                                    "noise_cell_count": 3,
+                                    "missing_cell_count": 1,
+                                    "subscores": {
+                                        "completeness": 0.95,
+                                        "uniqueness": 0.8,
+                                        "cleanliness": 0.85,
+                                        "placeholder_freedom": 0.9,
+                                        "consistency": 0.95
+                                    },
+                                    "score": 89.8,
+                                    "grade": "B",
+                                    "weights_used": {
+                                        "completeness": 0.3,
+                                        "uniqueness": 0.15,
+                                        "cleanliness": 0.2,
+                                        "placeholder_freedom": 0.2,
+                                        "consistency": 0.15
+                                    },
+                                    "fields": [
+                                        {
+                                            "name": "title",
+                                            "fill_rate": 1,
+                                            "placeholder_rate": 0,
+                                            "noise_rate": 0.6,
+                                            "truncated_count": 1,
+                                            "dominant_type": "string",
+                                            "type_consistency": 1
+                                        },
+                                        {
+                                            "name": "price",
+                                            "fill_rate": 0.8,
+                                            "placeholder_rate": 0.2,
+                                            "noise_rate": 0,
+                                            "truncated_count": 0,
+                                            "dominant_type": "string",
+                                            "type_consistency": 1
+                                        },
+                                        {
+                                            "name": "url",
+                                            "fill_rate": 1,
+                                            "placeholder_rate": 0,
+                                            "noise_rate": 0,
+                                            "truncated_count": 0,
+                                            "dominant_type": "string",
+                                            "type_consistency": 1
+                                        },
+                                        {
+                                            "name": "stock",
+                                            "fill_rate": 1,
+                                            "placeholder_rate": 0.2,
+                                            "noise_rate": 0,
+                                            "truncated_count": 0,
+                                            "dominant_type": "number",
+                                            "type_consistency": 0.8
+                                        }
+                                    ],
+                                    "issues": [
+                                        "1 duplicate row(s) (20.0%) \u2014 likely double-extraction.",
+                                        "Column \"title\": 60.0% noisy values (whitespace/HTML entities/control chars/truncation).",
+                                        "Column \"price\": only 80.0% of rows populated.",
+                                        "Column \"price\": 20.0% placeholder/boilerplate values.",
+                                        "Column \"stock\": 20.0% placeholder/boilerplate values.",
+                                        "Column \"stock\": mixed value types (dominant number only 80.0% consistent)."
+                                    ],
+                                    "reasoning": {
+                                        "why_result_generated": "Scored 5 row(s) \u00d7 4 column(s): 89.8/100 (B).",
+                                        "key_factors": [
+                                            "Subscores \u2014 completeness 0.95, uniqueness 0.8, cleanliness 0.85, placeholder_freedom 0.9, consistency 0.95.",
+                                            "1 missing, 2 placeholder, 3 noisy cell(s); 1 duplicate row(s).",
+                                            "Issues flagged: 6."
+                                        ],
+                                        "invalidators": [
+                                            "This scores intrinsic, schema-free quality of already-extracted data; it does NOT compare against an expected schema (use scrape-data-pipeline-validator) or score pipeline health (use data-pipeline-quality-scorer).",
+                                            "Placeholder detection matches a fixed token list (n/a, null, \u2014, \u2026, lorem ipsum, etc.); domain-specific sentinels (e.g. \"0\", \"999\") are NOT treated as placeholders.",
+                                            "Noise = leading/trailing whitespace, HTML entities (&amp;), control characters, or truncation markers (\u2026/...); decoded-but-wrong text cannot be detected.",
+                                            "Type consistency folds integers into \"number\"; the overall score is a weighted blend (weights_used) \u2014 a heuristic, not a certified quality guarantee."
+                                        ]
+                                    },
+                                    "confidence_score": 0.8,
+                                    "confidence_per_section": {
+                                        "measurement": 1,
+                                        "scoring": 0.8
+                                    },
+                                    "recommended_actions_priority_order": [
+                                        "Quality score 89.8/100 (B) over 5 row(s) \u00d7 4 column(s).",
+                                        "Weakest dimension(s): uniqueness 80%, cleanliness 85%.",
+                                        "De-duplicate: 1 duplicate row(s) detected.",
+                                        "6 field issue(s) flagged \u2014 see issues[].",
+                                        "Chain to scrape-data-pipeline-validator to enforce an expected schema, or scrape-data-enricher to repair weak fields."
+                                    ],
+                                    "chain_to": [
+                                        {
+                                            "api": "scrape-data-pipeline-validator",
+                                            "reason": "Check these records against an explicit expected schema (presence/type/format) for pass/fail."
+                                        },
+                                        {
+                                            "api": "scrape-data-enricher",
+                                            "reason": "Repair low-fill or placeholder fields with deterministic enrichment rules."
+                                        },
+                                        {
+                                            "api": "data-quality-rules",
+                                            "reason": "Codify the quality thresholds found here as reusable not-null/range/regex rules."
+                                        }
+                                    ],
+                                    "privacy": {
+                                        "data_stored": false,
+                                        "retention": "none"
+                                    },
+                                    "execution_metadata": {
+                                        "model": "deterministic",
+                                        "automation_safe": true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error400"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error500"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ScoreRequest"
+                            },
+                            "example": {
+                                "rows": [
+                                    {
+                                        "title": "Widget A",
+                                        "price": "$9.99",
+                                        "url": "https://shop.com/a",
+                                        "stock": "12"
+                                    },
+                                    {
+                                        "title": "Widget B ",
+                                        "price": "N/A",
+                                        "url": "https://shop.com/b",
+                                        "stock": "7"
+                                    },
+                                    {
+                                        "title": "Tom &amp; Jerry",
+                                        "price": "$14.50",
+                                        "url": "https://shop.com/c",
+                                        "stock": "unknown"
+                                    },
+                                    {
+                                        "title": "Widget A",
+                                        "price": "$9.99",
+                                        "url": "https://shop.com/a",
+                                        "stock": "12"
+                                    },
+                                    {
+                                        "title": "Long description that was cut o\u2026",
+                                        "price": "",
+                                        "url": "https://shop.com/e",
+                                        "stock": "3"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "x-pricing": {
+                    "model": "per_call",
+                    "price_usdc": 0.018,
+                    "currency": "USDC"
+                },
+                "x-one-call": true
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        },
+        "schemas": {
+            "ChainTo": {
+                "type": "object",
+                "required": [
+                    "api",
+                    "reason"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "api": {
+                        "type": "string",
+                        "description": "Slug of a recommended next API to call."
+                    },
+                    "reason": {
+                        "type": "string",
+                        "description": "Why an agent would chain to this API next."
+                    }
+                }
+            },
+            "Reasoning": {
+                "type": "object",
+                "required": [
+                    "why_result_generated",
+                    "key_factors",
+                    "invalidators"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "why_result_generated": {
+                        "type": "string"
+                    },
+                    "key_factors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "invalidators": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Conditions that would change or invalidate this result."
+                    }
+                }
+            },
+            "Privacy": {
+                "type": "object",
+                "required": [
+                    "data_stored",
+                    "retention"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "data_stored": {
+                        "type": "boolean"
+                    },
+                    "retention": {
+                        "type": "string",
+                        "description": "Retention policy, e.g. \"none\"."
+                    }
+                }
+            },
+            "EnvelopeError": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "description": "Optional machine-readable error context."
+                    }
+                }
+            },
+            "Error400": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms",
+                    "error"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            false
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/EnvelopeError"
+                    }
+                }
+            },
+            "Error500": {
+                "$ref": "#/components/schemas/Error400"
+            },
+            "EnvelopeOk": {
+                "type": "object",
+                "required": [
+                    "trace_id",
+                    "computed_at",
+                    "success",
+                    "latency_ms"
+                ],
+                "properties": {
+                    "trace_id": {
+                        "type": "string"
+                    },
+                    "request_id": {
+                        "type": "string",
+                        "description": "Alias of trace_id for clients that key on request_id."
+                    },
+                    "computed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "success": {
+                        "type": "boolean",
+                        "enum": [
+                            true
+                        ]
+                    },
+                    "latency_ms": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "ExecutionMetadata": {
+                "type": "object",
+                "required": [
+                    "model",
+                    "automation_safe"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "model": {
+                        "type": "string",
+                        "enum": [
+                            "deterministic"
+                        ]
+                    },
+                    "automation_safe": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ConfidencePerSection": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "measurement": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "scoring": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    }
+                }
+            },
+            "_Tail": {
+                "type": "object",
+                "required": [
+                    "confidence_score",
+                    "confidence_per_section",
+                    "recommended_actions_priority_order",
+                    "chain_to",
+                    "privacy",
+                    "execution_metadata"
+                ],
+                "properties": {
+                    "confidence_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                    },
+                    "confidence_per_section": {
+                        "$ref": "#/components/schemas/ConfidencePerSection"
+                    },
+                    "recommended_actions_priority_order": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "chain_to": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChainTo"
+                        }
+                    },
+                    "privacy": {
+                        "$ref": "#/components/schemas/Privacy"
+                    },
+                    "execution_metadata": {
+                        "$ref": "#/components/schemas/ExecutionMetadata"
+                    }
+                }
+            },
+            "FieldReport": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "fill_rate",
+                    "placeholder_rate",
+                    "noise_rate",
+                    "truncated_count",
+                    "dominant_type",
+                    "type_consistency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "fill_rate": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "Fraction of rows with a non-missing value."
+                    },
+                    "placeholder_rate": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "Fraction of rows holding a placeholder/boilerplate token."
+                    },
+                    "noise_rate": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "Fraction of rows with whitespace/HTML-entity/control-char/truncation noise."
+                    },
+                    "truncated_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "dominant_type": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "enum": [
+                            "boolean",
+                            "number",
+                            "date",
+                            "string",
+                            null
+                        ]
+                    },
+                    "type_consistency": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "Share of present values matching the dominant type."
+                    }
+                }
+            },
+            "Subscores": {
+                "type": "object",
+                "required": [
+                    "completeness",
+                    "uniqueness",
+                    "cleanliness",
+                    "placeholder_freedom",
+                    "consistency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "completeness": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "Non-missing cell rate."
+                    },
+                    "uniqueness": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "1 \u2212 duplicate-row rate."
+                    },
+                    "cleanliness": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "1 \u2212 noisy-cell rate."
+                    },
+                    "placeholder_freedom": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "1 \u2212 placeholder-cell rate."
+                    },
+                    "consistency": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "description": "Mean per-column dominant-type share."
+                    }
+                }
+            },
+            "Weights": {
+                "type": "object",
+                "required": [
+                    "completeness",
+                    "uniqueness",
+                    "cleanliness",
+                    "placeholder_freedom",
+                    "consistency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "completeness": {
+                        "type": "number"
+                    },
+                    "uniqueness": {
+                        "type": "number"
+                    },
+                    "cleanliness": {
+                        "type": "number"
+                    },
+                    "placeholder_freedom": {
+                        "type": "number"
+                    },
+                    "consistency": {
+                        "type": "number"
+                    }
+                }
+            },
+            "ScoreCore": {
+                "type": "object",
+                "required": [
+                    "row_count",
+                    "column_count",
+                    "total_cells",
+                    "duplicate_row_count",
+                    "placeholder_cell_count",
+                    "noise_cell_count",
+                    "missing_cell_count",
+                    "subscores",
+                    "score",
+                    "grade",
+                    "weights_used",
+                    "fields",
+                    "issues"
+                ],
+                "properties": {
+                    "row_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "column_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "total_cells": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "duplicate_row_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "placeholder_cell_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "noise_cell_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "missing_cell_count": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "subscores": {
+                        "type": "object",
+                        "required": [
+                            "completeness",
+                            "uniqueness",
+                            "cleanliness",
+                            "placeholder_freedom",
+                            "consistency"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "completeness": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1,
+                                "description": "Non-missing cell rate."
+                            },
+                            "uniqueness": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1,
+                                "description": "1 \u2212 duplicate-row rate."
+                            },
+                            "cleanliness": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1,
+                                "description": "1 \u2212 noisy-cell rate."
+                            },
+                            "placeholder_freedom": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1,
+                                "description": "1 \u2212 placeholder-cell rate."
+                            },
+                            "consistency": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1,
+                                "description": "Mean per-column dominant-type share."
+                            }
+                        }
+                    },
+                    "score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100
+                    },
+                    "grade": {
+                        "type": "string",
+                        "enum": [
+                            "A",
+                            "B",
+                            "C",
+                            "D",
+                            "F"
+                        ]
+                    },
+                    "weights_used": {
+                        "type": "object",
+                        "required": [
+                            "completeness",
+                            "uniqueness",
+                            "cleanliness",
+                            "placeholder_freedom",
+                            "consistency"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "completeness": {
+                                "type": "number"
+                            },
+                            "uniqueness": {
+                                "type": "number"
+                            },
+                            "cleanliness": {
+                                "type": "number"
+                            },
+                            "placeholder_freedom": {
+                                "type": "number"
+                            },
+                            "consistency": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "fill_rate",
+                                "placeholder_rate",
+                                "noise_rate",
+                                "truncated_count",
+                                "dominant_type",
+                                "type_consistency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "fill_rate": {
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1,
+                                    "description": "Fraction of rows with a non-missing value."
+                                },
+                                "placeholder_rate": {
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1,
+                                    "description": "Fraction of rows holding a placeholder/boilerplate token."
+                                },
+                                "noise_rate": {
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1,
+                                    "description": "Fraction of rows with whitespace/HTML-entity/control-char/truncation noise."
+                                },
+                                "truncated_count": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                },
+                                "dominant_type": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "enum": [
+                                        "boolean",
+                                        "number",
+                                        "date",
+                                        "string",
+                                        null
+                                    ]
+                                },
+                                "type_consistency": {
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1,
+                                    "description": "Share of present values matching the dominant type."
+                                }
+                            }
+                        }
+                    },
+                    "issues": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "ScoreRequest": {
+                "type": "object",
+                "required": [
+                    "rows"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "rows": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "object",
+                            "description": "A scraped/extracted record (column \u2192 value).",
+                            "additionalProperties": {
+                                "description": "A single cell value: any JSON scalar, null, array, or object.",
+                                "type": [
+                                    "string",
+                                    "number",
+                                    "boolean",
+                                    "null",
+                                    "array",
+                                    "object"
+                                ]
+                            }
+                        },
+                        "description": "The scraped dataset to score."
+                    },
+                    "columns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Optional explicit column list; defaults to the union of row keys."
+                    }
+                }
+            },
+            "DiscoveryResponse": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "version",
+                    "description",
+                    "openapi_url",
+                    "auth",
+                    "endpoints",
+                    "pricing",
+                    "x402_compatible"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "version": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "openapi_url": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "required": [
+                            "type",
+                            "header"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "header": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "method",
+                                "path",
+                                "summary",
+                                "price_usdc"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "method": {
+                                    "type": "string"
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "summary": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "pricing": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "path",
+                                "price_usdc",
+                                "currency"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "path": {
+                                    "type": "string"
+                                },
+                                "price_usdc": {
+                                    "type": "number"
+                                },
+                                "currency": {
+                                    "type": "string",
+                                    "enum": [
+                                        "USDC"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "x402_compatible": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ScoreResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ScoreCore"
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            },
+            "LookupResponse": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/EnvelopeOk"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ScoreCore"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "reasoning"
+                        ],
+                        "properties": {
+                            "reasoning": {
+                                "$ref": "#/components/schemas/Reasoning"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/_Tail"
+                    }
+                ],
+                "unevaluatedProperties": false
+            }
+        }
+    }
+}
