@@ -808,6 +808,10 @@ import mermaidValidatorRouter from './routes/mermaid-validator-api/routes/intell
 import mermaidValidatorOpenapiRouter from './routes/mermaid-validator-api/routes/openapi';
 import tableFormatterRouter from './routes/table-formatter-api/routes/intelligence';
 import tableFormatterOpenapiRouter from './routes/table-formatter-api/routes/openapi';
+import dataFormatConverterRouter from './routes/data-format-converter-api/routes/intelligence';
+import dataFormatConverterOpenapiRouter from './routes/data-format-converter-api/routes/openapi';
+import xmlJsonConverterRouter from './routes/xml-json-converter-api/routes/intelligence';
+import xmlJsonConverterOpenapiRouter from './routes/xml-json-converter-api/routes/openapi';
 import sensitiveDataDetectorRouter from './routes/sensitive-data-detector-api/routes/intelligence';
 import sensitiveDataDetectorOpenapiRouter from './routes/sensitive-data-detector-api/routes/openapi';
 import dataEncryptionAdvisorRouter from './routes/data-encryption-advisor-api/routes/intelligence';
@@ -1490,6 +1494,8 @@ const routerMap: Record<string, import("express").Router> = {
   'html-entities': htmlEntitiesRouter,
   'mermaid-validator': mermaidValidatorRouter,
   'table-formatter': tableFormatterRouter,
+  'data-format-converter': dataFormatConverterRouter,
+  'xml-json-converter': xmlJsonConverterRouter,
   'sensitive-data-detector': sensitiveDataDetectorRouter,
   'data-encryption-advisor': dataEncryptionAdvisorRouter,
   'jwt-claims-designer': jwtClaimsDesignerRouter,
@@ -1988,6 +1994,8 @@ const openapiMap: Record<string, import("express").Router> = {
   'html-entities': htmlEntitiesOpenapiRouter,
   'mermaid-validator': mermaidValidatorOpenapiRouter,
   'table-formatter': tableFormatterOpenapiRouter,
+  'data-format-converter': dataFormatConverterOpenapiRouter,
+  'xml-json-converter': xmlJsonConverterOpenapiRouter,
   'sensitive-data-detector': sensitiveDataDetectorOpenapiRouter,
   'data-encryption-advisor': dataEncryptionAdvisorOpenapiRouter,
   'jwt-claims-designer': jwtClaimsDesignerOpenapiRouter,
