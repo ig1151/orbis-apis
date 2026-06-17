@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Data Format Converter API",
+    "shortDescription": "Deterministic JSON ⇄ YAML ⇄ TOML conversion + format detection.",
+    "description": "Deterministic config/data format converter for AI agents and developer tooling. /convert parses the input as JSON, YAML, or TOML and re-serializes it to another of those formats; /detect reports which formats a blob parses as. Structural round-trip via the yaml and @iarna/toml libraries. No LLM. No storage. Stateless and deterministic.",
+    "category": "Developer Infrastructure",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/data-format-converter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/data-format-converter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/data-format-converter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/data-format-converter.png",
+    "tags": ["developer-tools", "configuration", "serialization", "formatting", "agent-infrastructure"],
+    "keywords": ["json-to-yaml", "yaml-to-json", "json-to-toml", "toml-to-json", "format-conversion", "config-converter", "format-detection", "agent-tooling"],
+    "capabilities": ["json_to_yaml", "yaml_to_json", "json_to_toml", "toml_to_json", "yaml_to_toml", "format_detection"],
+    "endpointPricing": [
+      { "endpoint": "/convert", "price_usdc": 0.006 },
+      { "endpoint": "/detect", "price_usdc": 0.005 },
+      { "endpoint": "/lookup", "price_usdc": 0.011 }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/convert", "description": "Convert between JSON, YAML and TOML", "price_usdc": 0.006 },
+      { "method": "POST", "path": "/detect", "description": "Detect which formats the input parses as", "price_usdc": 0.005 },
+      { "method": "POST", "path": "/lookup", "description": "One-call convert with reasoning", "price_usdc": 0.011 }
+    ],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.011,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/convert", "pricePerCallUsdc": 0.006, "description": "Convert between JSON, YAML and TOML" },
+          { "method": "POST", "pathPattern": "/detect", "pricePerCallUsdc": 0.005, "description": "Detect which formats the input parses as" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.011, "description": "One-call convert with reasoning" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "XML JSON Converter API",
+    "shortDescription": "Deterministic XML ⇄ JSON conversion with attribute preservation.",
+    "description": "Deterministic XML ⇄ JSON converter for AI agents integrating with legacy, SOAP, or feed-based systems. /to-json validates and parses XML into JSON (attributes preserved with an \"@_\" prefix); /to-xml serializes a JSON object back into XML. Structural conversion via fast-xml-parser, with built-in protection against malformed XML and prototype-pollution element names. No LLM. No storage.",
+    "category": "Developer Infrastructure",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/xml-json-converter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/xml-json-converter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/xml-json-converter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/xml-json-converter.png",
+    "tags": ["developer-tools", "xml", "json", "integration", "agent-infrastructure"],
+    "keywords": ["xml-to-json", "json-to-xml", "xml-parser", "xml-validation", "attribute-preservation", "soap-integration", "feed-parsing", "agent-tooling"],
+    "capabilities": ["xml_to_json", "json_to_xml", "xml_validation", "attribute_preservation"],
+    "endpointPricing": [
+      { "endpoint": "/to-json", "price_usdc": 0.006 },
+      { "endpoint": "/to-xml", "price_usdc": 0.006 },
+      { "endpoint": "/lookup", "price_usdc": 0.012 }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/to-json", "description": "Convert XML to JSON", "price_usdc": 0.006 },
+      { "method": "POST", "path": "/to-xml", "description": "Convert a JSON object to XML", "price_usdc": 0.006 },
+      { "method": "POST", "path": "/lookup", "description": "One-call XML to JSON with reasoning", "price_usdc": 0.012 }
+    ],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/to-json", "pricePerCallUsdc": 0.006, "description": "Convert XML to JSON" },
+          { "method": "POST", "pathPattern": "/to-xml", "pricePerCallUsdc": 0.006, "description": "Convert a JSON object to XML" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call XML to JSON with reasoning" }
+        ]
+      }
+    ]
+  }
+]
