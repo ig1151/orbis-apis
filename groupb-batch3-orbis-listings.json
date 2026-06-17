@@ -1,0 +1,160 @@
+[
+  {
+    "name": "Checksum & Hash API",
+    "shortDescription": "Deterministic CRC-32, Adler-32, MD5, SHA-1/256/512 digests & verification.",
+    "description": "Deterministic checksum and cryptographic hash digest calculator for AI agents, MCP clients, data-integrity pipelines, and autonomous verification workflows. /hash computes CRC-32, Adler-32, MD5, SHA-1, SHA-256 and SHA-512 over bytes decoded from a UTF-8, base64, or hex string; /verify recomputes one algorithm and compares it (case-insensitively) against an expected digest. All digests are lowercase hex. No LLM. No external dependencies. Stateless and deterministic.",
+    "category": "Developer Tools",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/checksum",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/checksum/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/checksum/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/checksum.png",
+    "tags": ["developer-tools", "hashing", "checksum", "cryptography", "agent-infrastructure"],
+    "keywords": ["checksum", "crc32", "adler32", "md5", "sha256", "sha512", "hash", "digest-verification"],
+    "capabilities": ["crc32", "adler32", "cryptographic_hash", "digest_verification", "multi_algorithm"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.01,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/hash", "pricePerCallUsdc": 0.005, "description": "Compute CRC-32/Adler-32/MD5/SHA-1/SHA-256/SHA-512 over the input" },
+          { "method": "POST", "pathPattern": "/verify", "pricePerCallUsdc": 0.006, "description": "Recompute one algorithm and compare to an expected digest" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.01, "description": "One-call digests with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/hash", "description": "Compute checksums/digests over the input" },
+      { "method": "POST", "path": "/verify", "description": "Recompute one algorithm and compare to an expected digest" },
+      { "method": "POST", "path": "/lookup", "description": "One-call digests with reasoning" }
+    ]
+  },
+  {
+    "name": "Duration Humanizer API",
+    "shortDescription": "Deterministic milliseconds ⇄ human-readable duration converter.",
+    "description": "Deterministic duration converter for AI agents, MCP clients, reporting pipelines, and autonomous scheduling workflows. /humanize turns a millisecond count into a human-readable string (\"1 day 2 hours 3 minutes\") plus a structured breakdown; /parse turns a duration string (\"1h 30m\", \"90s\", \"1.5d\") back into milliseconds. Uses fixed, calendar-independent units (weeks/days/hours/minutes/seconds/ms) — no ambiguous months or years. No LLM. No external dependencies. Stateless and deterministic.",
+    "category": "Developer Tools",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/duration-humanizer",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/duration-humanizer/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/duration-humanizer/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/duration-humanizer.png",
+    "tags": ["developer-tools", "duration", "time", "formatting", "agent-infrastructure"],
+    "keywords": ["duration", "humanize", "milliseconds", "time-format", "parse-duration", "elapsed-time"],
+    "capabilities": ["humanize_duration", "parse_duration", "duration_breakdown", "compact_and_long_form"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/humanize", "pricePerCallUsdc": 0.004, "description": "Milliseconds to human-readable duration" },
+          { "method": "POST", "pathPattern": "/parse", "pricePerCallUsdc": 0.005, "description": "Duration string to milliseconds" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "One-call humanize with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/humanize", "description": "Milliseconds to human-readable duration" },
+      { "method": "POST", "path": "/parse", "description": "Duration string to milliseconds" },
+      { "method": "POST", "path": "/lookup", "description": "One-call humanize with reasoning" }
+    ]
+  },
+  {
+    "name": "HTML Entities API",
+    "shortDescription": "Deterministic HTML-entity encoder/decoder (named + numeric).",
+    "description": "Deterministic HTML-entity encoder/decoder for AI agents, MCP clients, content pipelines, and autonomous rendering workflows. /encode escapes the five HTML-special characters (and, in non_ascii mode, every non-ASCII codepoint as a numeric reference) for safe embedding in HTML; /decode resolves all numeric references (&#NN; / &#xHH;) and a curated set of common named entities back to text. No LLM. No external dependencies. Stateless and deterministic.",
+    "category": "Developer Tools",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/html-entities",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/html-entities/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/html-entities/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/html-entities.png",
+    "tags": ["developer-tools", "html", "encoding", "escaping", "agent-infrastructure"],
+    "keywords": ["html-entities", "html-encode", "html-decode", "escaping", "numeric-references", "named-entities"],
+    "capabilities": ["html_encode", "html_decode", "numeric_references", "named_entities", "xss_safe_escaping"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.008,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/encode", "pricePerCallUsdc": 0.004, "description": "Escape text to HTML entities" },
+          { "method": "POST", "pathPattern": "/decode", "pricePerCallUsdc": 0.004, "description": "Resolve HTML entities back to text" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.008, "description": "One-call encode with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/encode", "description": "Escape text to HTML entities" },
+      { "method": "POST", "path": "/decode", "description": "Resolve HTML entities back to text" },
+      { "method": "POST", "path": "/lookup", "description": "One-call encode with reasoning" }
+    ]
+  },
+  {
+    "name": "Mermaid Validator API",
+    "shortDescription": "Deterministic Mermaid diagram linter (type, delimiters, line issues).",
+    "description": "Deterministic Mermaid diagram linter for AI agents, MCP clients, documentation pipelines, and autonomous content-generation workflows. /validate detects the diagram type, checks that delimiters ( ) [ ] { } and double quotes are balanced, counts flowchart nodes and edges, and flags structurally suspect lines with line numbers and severities. This is a lexical/structural lint — not a full port of the Mermaid grammar — so valid:true means no structural problems were found, not a guarantee that it renders. No LLM. No external dependencies. Stateless and deterministic.",
+    "category": "Developer Tools",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/mermaid-validator",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/mermaid-validator/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/mermaid-validator/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/mermaid-validator.png",
+    "tags": ["developer-tools", "mermaid", "diagrams", "linting", "agent-infrastructure"],
+    "keywords": ["mermaid", "diagram-validation", "flowchart", "linter", "syntax-check", "documentation"],
+    "capabilities": ["diagram_type_detection", "delimiter_balance_check", "flowchart_lint", "line_level_issues"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.011,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/validate", "pricePerCallUsdc": 0.006, "description": "Lint a Mermaid diagram" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.011, "description": "One-call validate with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/validate", "description": "Lint a Mermaid diagram" },
+      { "method": "POST", "path": "/lookup", "description": "One-call validate with reasoning" }
+    ]
+  },
+  {
+    "name": "Table Formatter API",
+    "shortDescription": "Deterministic Markdown & ASCII table renderer.",
+    "description": "Deterministic table renderer for AI agents, MCP clients, reporting pipelines, and autonomous documentation workflows. /markdown renders rows into a GitHub-Flavored-Markdown table with optional per-column alignment; /ascii renders a fixed-width ASCII grid table. Accepts row objects (column→value) or positional arrays with an explicit column header list; cells are stringified deterministically and pipes are escaped. No LLM. No external dependencies. Stateless and deterministic.",
+    "category": "Developer Tools",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/table-formatter",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/table-formatter/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/table-formatter/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/table-formatter.png",
+    "tags": ["developer-tools", "tables", "markdown", "formatting", "agent-infrastructure"],
+    "keywords": ["table-formatter", "markdown-table", "ascii-table", "gfm", "column-alignment", "reporting"],
+    "capabilities": ["markdown_table", "ascii_table", "column_alignment", "object_or_array_rows"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.009,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/markdown", "pricePerCallUsdc": 0.005, "description": "Render rows as a Markdown table" },
+          { "method": "POST", "pathPattern": "/ascii", "pricePerCallUsdc": 0.005, "description": "Render rows as an ASCII grid table" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.009, "description": "One-call render with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/markdown", "description": "Render rows as a Markdown table" },
+      { "method": "POST", "path": "/ascii", "description": "Render rows as an ASCII grid table" },
+      { "method": "POST", "path": "/lookup", "description": "One-call render with reasoning" }
+    ]
+  }
+]
