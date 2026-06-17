@@ -2,12 +2,17 @@ import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold
 import { confSections, Tail } from '../../_aplus/specparts';
 import { EnvelopeOkPlus, Error400Plus, ExecutionMetadataPlus, discoverySchemaPlus } from '../../_aplus/specparts-plus';
 import { hashExample, verifyExample, lookupExample } from './examples';
+import { DISCOVERY as disc } from './intelligence';
 
 const hex = { type: 'string', pattern: '^[0-9a-f]+$' };
 const Hashes = {
-  type: 'object', additionalProperties: false,
-  description: 'Lowercase-hex digests, one per requested algorithm.',
+  // Keyed by algorithm name; a typed map so adding an algorithm needs no schema change.
+  // Documented keys are listed in properties for tooling; only lowercase-hex values are allowed.
+  type: 'object',
+  description: 'Lowercase-hex digests keyed by algorithm name, one per requested algorithm.',
   properties: { crc32: hex, adler32: hex, md5: hex, sha1: hex, sha256: hex, sha512: hex },
+  patternProperties: { '^[a-z0-9-]+$': hex },
+  additionalProperties: false,
 };
 const Encoding = { type: 'string', enum: ['utf8', 'base64', 'hex'] };
 const Algorithm = { type: 'string', enum: ['crc32', 'adler32', 'md5', 'sha1', 'sha256', 'sha512'] };
@@ -61,25 +66,6 @@ const schemas = {
       { $ref: '#/components/schemas/_Tail' },
     ], unevaluatedProperties: false,
   },
-};
-
-const disc = {
-  name: 'Checksum & Hash API', version: '1.0.0',
-  description: 'Deterministic checksum & hash digest calculator. /hash computes CRC-32, Adler-32, MD5, SHA-1, SHA-256 and SHA-512 over the supplied bytes (utf8/base64/hex input); /verify recomputes one algorithm and compares it against an expected digest. Pure computation — no LLM, nothing stored.',
-  openapi_url: 'https://orbis-apis.onrender.com/checksum/openapi.json',
-  auth: { type: 'apiKey', header: 'X-API-Key' },
-  capabilities: ['crc32', 'adler32', 'cryptographic_hash', 'digest_verification', 'multi_algorithm'],
-  endpoints: [
-    { method: 'POST', path: '/hash', summary: 'Compute checksums/digests over the input', price_usdc: 0.005 },
-    { method: 'POST', path: '/verify', summary: 'Recompute one algorithm and compare to an expected digest', price_usdc: 0.006 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL digests + reasoning', price_usdc: 0.01 },
-  ],
-  pricing: [
-    { path: '/hash', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/verify', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.01, currency: 'USDC' },
-  ],
-  x402_compatible: true,
 };
 
 const endpoints: AplusEndpoint[] = [

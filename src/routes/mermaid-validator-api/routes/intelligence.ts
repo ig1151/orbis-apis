@@ -148,18 +148,43 @@ const INVALIDATORS = [
   'Comments (lines beginning with %%) and %%{...}%% init directives are ignored. Double-quoted labels are not expected to span multiple lines; an unclosed quote on a line is flagged.',
 ];
 
-const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
-  confidence_score: 0.9, confidence_per_section: sectionConf,
+// Confidence reflects HOW the verdict was reached, not just that it is deterministic.
+// Delimiter/type/quote checks are exact; the flowchart line-level heuristics
+// (unrecognized_line / dangling_edge / unknown_direction) can misfire, so lower
+// confidence when the verdict leans on them. A structurally clean diagram is still
+// only 0.9 because the full Mermaid grammar is NOT validated.
+const HEURISTIC_CODES = new Set(['unrecognized_line', 'dangling_edge', 'unknown_direction']);
+function confidenceFor(core: ValidateCore): number {
+  const hasHeuristic = core.issues.some((i) => HEURISTIC_CODES.has(i.code));
+  const hasExactError = core.issues.some((i) => i.severity === 'error' && !HEURISTIC_CODES.has(i.code));
+  if (hasHeuristic) return 0.85;
+  if (hasExactError) return 0.95;
+  return 0.9;
+}
+
+const TAIL = (confidence: number, sectionConf: Record<string, number>, actions: string[]) => ({
+  confidence_score: confidence, confidence_per_section: sectionConf,
   recommended_actions_priority_order: actions,
   chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA_PLUS,
 });
 
-const DISCOVERY = {
+export const DISCOVERY = {
   name: 'Mermaid Validator API', version: '1.0.0',
   description: 'Deterministic Mermaid diagram linter. /validate detects the diagram type, checks balanced delimiters and quotes, and flags structurally suspect lines with line numbers. Lexical/structural lint (not the full Mermaid grammar). No LLM, nothing stored.',
   openapi_url: 'https://orbis-apis.onrender.com/mermaid-validator/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['diagram_type_detection', 'delimiter_balance_check', 'flowchart_lint', 'line_level_issues'],
+  typical_use_cases: [
+    'Lint LLM- or user-generated Mermaid before rendering it in docs or a PR',
+    'Catch unbalanced delimiters or unterminated quotes that would break rendering',
+    'Detect the diagram type and count flowchart nodes/edges for downstream tooling',
+  ],
+  input_examples: [
+    { endpoint: '/validate', body: { diagram: 'flowchart LR\n  A-->B\n  B-->C' } },
+  ],
+  output_examples: [
+    { endpoint: '/validate', response: { diagram_type: 'flowchart', valid: true, node_count: 3, edge_count: 2, balanced_delimiters: true, issues: [] } },
+  ],
   endpoints: [
     { method: 'POST', path: '/validate', summary: 'Lint a Mermaid diagram', price_usdc: 0.006 },
     { method: 'POST', path: '/lookup', summary: 'ONE-CALL validate + reasoning', price_usdc: 0.011 },
@@ -183,7 +208,7 @@ router.post('/validate', (req: Request, res: Response) => {
   if ('error' in r) return fail(res, t0, 400, 'invalid_request', r.error);
   const core = validate(r.diagram);
   const errs = core.issues.filter((x) => x.severity === 'error').length;
-  respond(res, t0, { ...core, ...TAIL(SECTIONS, [core.valid ? `No structural errors found in ${core.diagram_type ?? 'diagram'}.` : `Found ${errs} structural error(s) — see issues[].`]) });
+  respond(res, t0, { ...core, ...TAIL(confidenceFor(core), SECTIONS, [core.valid ? `No structural errors found in ${core.diagram_type ?? 'diagram'}.` : `Found ${errs} structural error(s) — see issues[].`]) });
 });
 
 router.post('/lookup', (req: Request, res: Response) => {
@@ -202,7 +227,7 @@ router.post('/lookup', (req: Request, res: Response) => {
       key_factors: [`Diagram type: ${core.diagram_type}.`, `Balanced delimiters: ${core.balanced_delimiters}.`, core.node_count !== null ? `Nodes: ${core.node_count}, edges: ${core.edge_count}.` : `Errors: ${errs}, warnings: ${warns}.`],
       invalidators: INVALIDATORS,
     },
-    ...TAIL(SECTIONS, [core.valid ? `No structural errors found.` : `Found ${errs} structural error(s) — see issues[].`]),
+    ...TAIL(confidenceFor(core), SECTIONS, [core.valid ? `No structural errors found.` : `Found ${errs} structural error(s) — see issues[].`]),
   });
 });
 

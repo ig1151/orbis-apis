@@ -2,6 +2,7 @@ import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold
 import { confSections, Tail } from '../../_aplus/specparts';
 import { EnvelopeOkPlus, Error400Plus, ExecutionMetadataPlus, discoverySchemaPlus } from '../../_aplus/specparts-plus';
 import { encodeExample, decodeExample, lookupExample } from './examples';
+import { DISCOVERY as disc } from './intelligence';
 
 const Mode = { type: 'string', enum: ['minimal', 'non_ascii'] };
 const EncodeCore = {
@@ -46,25 +47,6 @@ const schemas = {
       { $ref: '#/components/schemas/_Tail' },
     ], unevaluatedProperties: false,
   },
-};
-
-const disc = {
-  name: 'HTML Entities API', version: '1.0.0',
-  description: 'Deterministic HTML-entity encoder/decoder. /encode escapes HTML-special characters (and, in non_ascii mode, every non-ASCII codepoint as a numeric reference); /decode resolves numeric references and a curated set of named entities back to text. No LLM, nothing stored.',
-  openapi_url: 'https://orbis-apis.onrender.com/html-entities/openapi.json',
-  auth: { type: 'apiKey', header: 'X-API-Key' },
-  capabilities: ['html_encode', 'html_decode', 'numeric_references', 'named_entities', 'xss_safe_escaping'],
-  endpoints: [
-    { method: 'POST', path: '/encode', summary: 'Escape text to HTML entities', price_usdc: 0.004 },
-    { method: 'POST', path: '/decode', summary: 'Resolve HTML entities back to text', price_usdc: 0.004 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL encode + reasoning', price_usdc: 0.008 },
-  ],
-  pricing: [
-    { path: '/encode', price_usdc: 0.004, currency: 'USDC' },
-    { path: '/decode', price_usdc: 0.004, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.008, currency: 'USDC' },
-  ],
-  x402_compatible: true,
 };
 
 const endpoints: AplusEndpoint[] = [

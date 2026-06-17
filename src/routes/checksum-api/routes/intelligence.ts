@@ -59,6 +59,16 @@ function readBytes(text: unknown, encodingRaw: unknown): { error: string } | { b
   }
   // Buffer.from is lenient with base64/hex; round-trip check to reject malformed input.
   if (encoding === 'hex' && buf.toString('hex') !== text.toLowerCase()) return { error: '"text" is not valid hex.' };
+  if (encoding === 'base64') {
+    // Canonical round-trip: re-encode the decoded bytes and compare, padding-insensitively.
+    // Node drops characters outside the base64 alphabet and tolerates bad length/padding,
+    // so a mismatch means the input was not valid base64. Accept both the standard (+/)
+    // and url-safe (-_) alphabets by normalizing before comparison.
+    const stripPad = (s: string) => s.replace(/=+$/, '');
+    const canonical = stripPad(buf.toString('base64'));
+    const want = stripPad(text.replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/'));
+    if (canonical !== want) return { error: '"text" is not valid base64.' };
+  }
   return { buf, encoding };
 }
 
@@ -91,12 +101,23 @@ const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
   chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA_PLUS,
 });
 
-const DISCOVERY = {
+export const DISCOVERY = {
   name: 'Checksum & Hash API', version: '1.0.0',
   description: 'Deterministic checksum & hash digest calculator. /hash computes CRC-32, Adler-32, MD5, SHA-1, SHA-256 and SHA-512 over the supplied bytes (utf8/base64/hex input); /verify recomputes one algorithm and compares it against an expected digest. Pure computation — no LLM, nothing stored.',
   openapi_url: 'https://orbis-apis.onrender.com/checksum/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['crc32', 'adler32', 'cryptographic_hash', 'digest_verification', 'multi_algorithm'],
+  typical_use_cases: [
+    'Verify a downloaded artifact or payload matches a published checksum before using it',
+    'Fingerprint content to detect whether it changed between pipeline stages or to deduplicate records',
+    'Produce SHA-256/SHA-512 digests for audit logs or integrity manifests',
+  ],
+  input_examples: [
+    { endpoint: '/hash', body: { text: 'hello world', algorithms: ['crc32', 'sha256'] } },
+  ],
+  output_examples: [
+    { endpoint: '/hash', response: { byte_length: 11, encoding: 'utf8', hashes: { crc32: '0d4a1185', sha256: 'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9' } } },
+  ],
   endpoints: [
     { method: 'POST', path: '/hash', summary: 'Compute checksums/digests over the input', price_usdc: 0.005 },
     { method: 'POST', path: '/verify', summary: 'Recompute one algorithm and compare to an expected digest', price_usdc: 0.006 },
