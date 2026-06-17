@@ -111,12 +111,23 @@ const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
   chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA_PLUS,
 });
 
-const DISCOVERY = {
+export const DISCOVERY = {
   name: 'Table Formatter API', version: '1.0.0',
   description: 'Deterministic table renderer. /markdown renders rows into a GitHub-Flavored-Markdown table (optional per-column alignment); /ascii renders a fixed-width ASCII grid table. Accepts row objects or positional arrays. No LLM, nothing stored.',
   openapi_url: 'https://orbis-apis.onrender.com/table-formatter/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['markdown_table', 'ascii_table', 'column_alignment', 'object_or_array_rows'],
+  typical_use_cases: [
+    'Render JSON rows as a GitHub-Flavored-Markdown table for a PR comment or report',
+    'Produce a fixed-width ASCII grid table for terminal or plaintext output',
+    'Normalize object or positional-array rows into a consistent tabular layout',
+  ],
+  input_examples: [
+    { endpoint: '/markdown', body: { rows: [{ name: 'Ada', role: 'Eng' }, { name: 'Lin', role: 'PM' }] } },
+  ],
+  output_examples: [
+    { endpoint: '/markdown', response: { format: 'markdown', row_count: 2, columns: ['name', 'role'], table: '| name | role |\n| :--- | :--- |\n| Ada | Eng |\n| Lin | PM |' } },
+  ],
   endpoints: [
     { method: 'POST', path: '/markdown', summary: 'Render rows as a Markdown table', price_usdc: 0.005 },
     { method: 'POST', path: '/ascii', summary: 'Render rows as an ASCII grid table', price_usdc: 0.005 },

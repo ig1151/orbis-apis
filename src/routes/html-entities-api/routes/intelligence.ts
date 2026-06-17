@@ -92,12 +92,25 @@ const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
   chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA_PLUS,
 });
 
-const DISCOVERY = {
+export const DISCOVERY = {
   name: 'HTML Entities API', version: '1.0.0',
   description: 'Deterministic HTML-entity encoder/decoder. /encode escapes HTML-special characters (and, in non_ascii mode, every non-ASCII codepoint as a numeric reference); /decode resolves numeric references and a curated set of named entities back to text. No LLM, nothing stored.',
   openapi_url: 'https://orbis-apis.onrender.com/html-entities/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['html_encode', 'html_decode', 'numeric_references', 'named_entities', 'xss_safe_escaping'],
+  typical_use_cases: [
+    'Escape user-supplied text before embedding it in an HTML page or template',
+    'Decode HTML entities from scraped or stored content back to plain text',
+    'Convert non-ASCII text to numeric references for legacy/ASCII-only channels',
+  ],
+  input_examples: [
+    { endpoint: '/encode', body: { text: '<a href="x">© 5</a>' } },
+    { endpoint: '/decode', body: { text: '&lt;a&gt;&copy;&#48;' } },
+  ],
+  output_examples: [
+    { endpoint: '/encode', response: { mode: 'minimal', encoded: '&lt;a href=&quot;x&quot;&gt;© 5&lt;/a&gt;', replaced_count: 6 } },
+    { endpoint: '/decode', response: { decoded: '<a>©0', replaced_count: 4 } },
+  ],
   endpoints: [
     { method: 'POST', path: '/encode', summary: 'Escape text to HTML entities', price_usdc: 0.004 },
     { method: 'POST', path: '/decode', summary: 'Resolve HTML entities back to text', price_usdc: 0.004 },

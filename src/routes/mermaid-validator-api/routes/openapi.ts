@@ -2,6 +2,7 @@ import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold
 import { confSections, Tail } from '../../_aplus/specparts';
 import { EnvelopeOkPlus, Error400Plus, ExecutionMetadataPlus, discoverySchemaPlus } from '../../_aplus/specparts-plus';
 import { validateExample, lookupExample } from './examples';
+import { DISCOVERY as disc } from './intelligence';
 
 const Issue = {
   type: 'object', required: ['line', 'severity', 'code', 'message'], additionalProperties: false,
@@ -43,22 +44,6 @@ const schemas = {
   },
 };
 
-const disc = {
-  name: 'Mermaid Validator API', version: '1.0.0',
-  description: 'Deterministic Mermaid diagram linter. /validate detects the diagram type, checks balanced delimiters and quotes, and flags structurally suspect lines with line numbers. Lexical/structural lint (not the full Mermaid grammar). No LLM, nothing stored.',
-  openapi_url: 'https://orbis-apis.onrender.com/mermaid-validator/openapi.json',
-  auth: { type: 'apiKey', header: 'X-API-Key' },
-  capabilities: ['diagram_type_detection', 'delimiter_balance_check', 'flowchart_lint', 'line_level_issues'],
-  endpoints: [
-    { method: 'POST', path: '/validate', summary: 'Lint a Mermaid diagram', price_usdc: 0.006 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL validate + reasoning', price_usdc: 0.011 },
-  ],
-  pricing: [
-    { path: '/validate', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.011, currency: 'USDC' },
-  ],
-  x402_compatible: true,
-};
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },

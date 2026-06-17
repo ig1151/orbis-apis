@@ -113,12 +113,25 @@ const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
   chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA_PLUS,
 });
 
-const DISCOVERY = {
+export const DISCOVERY = {
   name: 'Duration Humanizer API', version: '1.0.0',
   description: 'Deterministic duration ⇄ text converter. /humanize turns a millisecond count into a human-readable string + structured breakdown; /parse turns a duration string ("1h 30m", "90s", "1.5d") into milliseconds. Fixed unambiguous units (w/d/h/m/s/ms). No LLM, nothing stored.',
   openapi_url: 'https://orbis-apis.onrender.com/duration-humanizer/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['humanize_duration', 'parse_duration', 'duration_breakdown', 'compact_and_long_form'],
+  typical_use_cases: [
+    'Render a millisecond duration as a human-readable string for logs, alerts or UI',
+    'Parse a human duration like "1d 2h 3m" into milliseconds for scheduling or timeouts',
+    'Normalize mixed duration inputs into a canonical compact form',
+  ],
+  input_examples: [
+    { endpoint: '/humanize', body: { milliseconds: 93784000 } },
+    { endpoint: '/parse', body: { text: '1d 2h 3m 4s' } },
+  ],
+  output_examples: [
+    { endpoint: '/humanize', response: { milliseconds: 93784000, humanized: '1 day 2 hours 3 minutes 4 seconds', compact: '1d 2h 3m 4s' } },
+    { endpoint: '/parse', response: { milliseconds: 93784000 } },
+  ],
   endpoints: [
     { method: 'POST', path: '/humanize', summary: 'Milliseconds → human-readable duration', price_usdc: 0.004 },
     { method: 'POST', path: '/parse', summary: 'Duration string → milliseconds', price_usdc: 0.005 },

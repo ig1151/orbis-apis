@@ -3,6 +3,7 @@ import { confSections, Tail } from '../../_aplus/specparts';
 import { EnvelopeOkPlus, Error400Plus, ExecutionMetadataPlus, discoverySchemaPlus } from '../../_aplus/specparts-plus';
 import { CellValue } from '../../_aplus/specparts';
 import { markdownExample, asciiExample, lookupExample } from './examples';
+import { DISCOVERY as disc } from './intelligence';
 
 const Align = { type: 'string', enum: ['left', 'right', 'center'] };
 const TableCore = {
@@ -45,24 +46,6 @@ const schemas = {
   },
 };
 
-const disc = {
-  name: 'Table Formatter API', version: '1.0.0',
-  description: 'Deterministic table renderer. /markdown renders rows into a GitHub-Flavored-Markdown table (optional per-column alignment); /ascii renders a fixed-width ASCII grid table. Accepts row objects or positional arrays. No LLM, nothing stored.',
-  openapi_url: 'https://orbis-apis.onrender.com/table-formatter/openapi.json',
-  auth: { type: 'apiKey', header: 'X-API-Key' },
-  capabilities: ['markdown_table', 'ascii_table', 'column_alignment', 'object_or_array_rows'],
-  endpoints: [
-    { method: 'POST', path: '/markdown', summary: 'Render rows as a Markdown table', price_usdc: 0.005 },
-    { method: 'POST', path: '/ascii', summary: 'Render rows as an ASCII grid table', price_usdc: 0.005 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL render + reasoning', price_usdc: 0.009 },
-  ],
-  pricing: [
-    { path: '/markdown', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/ascii', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
-  ],
-  x402_compatible: true,
-};
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },

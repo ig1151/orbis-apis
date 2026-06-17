@@ -2,6 +2,7 @@ import { buildAplusSpec, specRouter, AplusEndpoint } from '../../_aplus/scaffold
 import { confSections, Tail } from '../../_aplus/specparts';
 import { EnvelopeOkPlus, Error400Plus, ExecutionMetadataPlus, discoverySchemaPlus } from '../../_aplus/specparts-plus';
 import { humanizeExample, parseExample, lookupExample } from './examples';
+import { DISCOVERY as disc } from './intelligence';
 
 const Part = {
   type: 'object', required: ['unit', 'long', 'value'], additionalProperties: false,
@@ -57,25 +58,6 @@ const schemas = {
       { $ref: '#/components/schemas/_Tail' },
     ], unevaluatedProperties: false,
   },
-};
-
-const disc = {
-  name: 'Duration Humanizer API', version: '1.0.0',
-  description: 'Deterministic duration ⇄ text converter. /humanize turns a millisecond count into a human-readable string + structured breakdown; /parse turns a duration string ("1h 30m", "90s", "1.5d") into milliseconds. Fixed unambiguous units (w/d/h/m/s/ms). No LLM, nothing stored.',
-  openapi_url: 'https://orbis-apis.onrender.com/duration-humanizer/openapi.json',
-  auth: { type: 'apiKey', header: 'X-API-Key' },
-  capabilities: ['humanize_duration', 'parse_duration', 'duration_breakdown', 'compact_and_long_form'],
-  endpoints: [
-    { method: 'POST', path: '/humanize', summary: 'Milliseconds → human-readable duration', price_usdc: 0.004 },
-    { method: 'POST', path: '/parse', summary: 'Duration string → milliseconds', price_usdc: 0.005 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL humanize + reasoning', price_usdc: 0.009 },
-  ],
-  pricing: [
-    { path: '/humanize', price_usdc: 0.004, currency: 'USDC' },
-    { path: '/parse', price_usdc: 0.005, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.009, currency: 'USDC' },
-  ],
-  x402_compatible: true,
 };
 
 const endpoints: AplusEndpoint[] = [
