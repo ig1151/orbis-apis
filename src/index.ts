@@ -798,6 +798,16 @@ import globToRegexRouter from './routes/glob-to-regex-api/routes/intelligence';
 import globToRegexOpenapiRouter from './routes/glob-to-regex-api/routes/openapi';
 import jsonpathRouter from './routes/jsonpath-api/routes/intelligence';
 import jsonpathOpenapiRouter from './routes/jsonpath-api/routes/openapi';
+import checksumRouter from './routes/checksum-api/routes/intelligence';
+import checksumOpenapiRouter from './routes/checksum-api/routes/openapi';
+import durationHumanizerRouter from './routes/duration-humanizer-api/routes/intelligence';
+import durationHumanizerOpenapiRouter from './routes/duration-humanizer-api/routes/openapi';
+import htmlEntitiesRouter from './routes/html-entities-api/routes/intelligence';
+import htmlEntitiesOpenapiRouter from './routes/html-entities-api/routes/openapi';
+import mermaidValidatorRouter from './routes/mermaid-validator-api/routes/intelligence';
+import mermaidValidatorOpenapiRouter from './routes/mermaid-validator-api/routes/openapi';
+import tableFormatterRouter from './routes/table-formatter-api/routes/intelligence';
+import tableFormatterOpenapiRouter from './routes/table-formatter-api/routes/openapi';
 import sensitiveDataDetectorRouter from './routes/sensitive-data-detector-api/routes/intelligence';
 import sensitiveDataDetectorOpenapiRouter from './routes/sensitive-data-detector-api/routes/openapi';
 import dataEncryptionAdvisorRouter from './routes/data-encryption-advisor-api/routes/intelligence';
@@ -1475,6 +1485,11 @@ const routerMap: Record<string, import("express").Router> = {
   'url-tools': urlToolsRouter,
   'glob-to-regex': globToRegexRouter,
   'jsonpath': jsonpathRouter,
+  'checksum': checksumRouter,
+  'duration-humanizer': durationHumanizerRouter,
+  'html-entities': htmlEntitiesRouter,
+  'mermaid-validator': mermaidValidatorRouter,
+  'table-formatter': tableFormatterRouter,
   'sensitive-data-detector': sensitiveDataDetectorRouter,
   'data-encryption-advisor': dataEncryptionAdvisorRouter,
   'jwt-claims-designer': jwtClaimsDesignerRouter,
@@ -1968,6 +1983,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'url-tools': urlToolsOpenapiRouter,
   'glob-to-regex': globToRegexOpenapiRouter,
   'jsonpath': jsonpathOpenapiRouter,
+  'checksum': checksumOpenapiRouter,
+  'duration-humanizer': durationHumanizerOpenapiRouter,
+  'html-entities': htmlEntitiesOpenapiRouter,
+  'mermaid-validator': mermaidValidatorOpenapiRouter,
+  'table-formatter': tableFormatterOpenapiRouter,
   'sensitive-data-detector': sensitiveDataDetectorOpenapiRouter,
   'data-encryption-advisor': dataEncryptionAdvisorOpenapiRouter,
   'jwt-claims-designer': jwtClaimsDesignerOpenapiRouter,

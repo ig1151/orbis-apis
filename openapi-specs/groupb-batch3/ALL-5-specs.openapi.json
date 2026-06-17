@@ -1,0 +1,5032 @@
+{
+  "checksum": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Checksum & Hash API",
+      "version": "1.0.0",
+      "description": "Deterministic checksum & hash digest calculator \u2014 CRC-32, Adler-32, MD5, SHA-1, SHA-256, SHA-512 over utf8/base64/hex input, plus digest verification. No LLM.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x402-compatible": true,
+      "x-agent-marketplace-ready": true,
+      "x-pay-per-call-optimized": true,
+      "x-developer-tool": true,
+      "x-human-approval-required": false
+    },
+    "servers": [
+      {
+        "url": "https://orbis-apis.onrender.com/checksum"
+      }
+    ],
+    "security": [
+      {
+        "ApiKeyAuth": []
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "discover",
+          "summary": "Service discovery",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscoveryResponse"
+                  },
+                  "example": {
+                    "name": "Checksum & Hash API",
+                    "version": "1.0.0",
+                    "description": "Deterministic checksum & hash digest calculator. /hash computes CRC-32, Adler-32, MD5, SHA-1, SHA-256 and SHA-512 over the supplied bytes (utf8/base64/hex input); /verify recomputes one algorithm and compares it against an expected digest. Pure computation \u2014 no LLM, nothing stored.",
+                    "openapi_url": "https://orbis-apis.onrender.com/checksum/openapi.json",
+                    "auth": {
+                      "type": "apiKey",
+                      "header": "X-API-Key"
+                    },
+                    "capabilities": [
+                      "crc32",
+                      "adler32",
+                      "cryptographic_hash",
+                      "digest_verification",
+                      "multi_algorithm"
+                    ],
+                    "endpoints": [
+                      {
+                        "method": "POST",
+                        "path": "/hash",
+                        "summary": "Compute checksums/digests over the input",
+                        "price_usdc": 0.005
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/verify",
+                        "summary": "Recompute one algorithm and compare to an expected digest",
+                        "price_usdc": 0.006
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/lookup",
+                        "summary": "ONE-CALL digests + reasoning",
+                        "price_usdc": 0.01
+                      }
+                    ],
+                    "pricing": [
+                      {
+                        "path": "/hash",
+                        "price_usdc": 0.005,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/verify",
+                        "price_usdc": 0.006,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/lookup",
+                        "price_usdc": 0.01,
+                        "currency": "USDC"
+                      }
+                    ],
+                    "x402_compatible": true
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/hash": {
+        "post": {
+          "operationId": "hash",
+          "summary": "Compute checksums/digests over the input",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HashResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "byte_length": 11,
+                    "encoding": "utf8",
+                    "hashes": {
+                      "crc32": "0d4a1185",
+                      "adler32": "1a0b045d",
+                      "md5": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+                      "sha1": "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed",
+                      "sha256": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+                      "sha512": "309ecc489c12d6eb4cc40f50c902f2b4d0ed77ee511a7c7a9bcd3ca86d4cd86f989dd35bc5ff499670da34255b45b0cfd830e81f605dcf7dc5542e93ae9cd76f"
+                    },
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "computation": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Computed 6 digest(s) over 11 byte(s)."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "sensitive-data-detector",
+                        "reason": "Scan the same payload for PII before persisting or transmitting it."
+                      },
+                      {
+                        "api": "json-patch",
+                        "reason": "Verify a document is unchanged by comparing checksums before and after a patch."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HashRequest"
+                },
+                "example": {
+                  "text": "hello world"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.005,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/verify": {
+        "post": {
+          "operationId": "verify",
+          "summary": "Recompute one algorithm and compare to an expected digest",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/VerifyResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "algorithm": "sha256",
+                    "encoding": "utf8",
+                    "byte_length": 11,
+                    "computed": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+                    "expected_normalized": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+                    "match": true,
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "computation": 1,
+                      "verification": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Digest matches the expected sha256 value."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "sensitive-data-detector",
+                        "reason": "Scan the same payload for PII before persisting or transmitting it."
+                      },
+                      {
+                        "api": "json-patch",
+                        "reason": "Verify a document is unchanged by comparing checksums before and after a patch."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyRequest"
+                },
+                "example": {
+                  "text": "hello world",
+                  "algorithm": "sha256",
+                  "expected": "B94D27B9934D3E08A52E52D7DA7DABFAC484EFE37A5380EE9088F7ACE2EFCDE9"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.006,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/lookup": {
+        "post": {
+          "operationId": "lookup",
+          "summary": "ONE-CALL digests + reasoning",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LookupResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "byte_length": 11,
+                    "encoding": "utf8",
+                    "hashes": {
+                      "crc32": "0d4a1185",
+                      "adler32": "1a0b045d",
+                      "md5": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+                      "sha1": "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed",
+                      "sha256": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+                      "sha512": "309ecc489c12d6eb4cc40f50c902f2b4d0ed77ee511a7c7a9bcd3ca86d4cd86f989dd35bc5ff499670da34255b45b0cfd830e81f605dcf7dc5542e93ae9cd76f"
+                    },
+                    "reasoning": {
+                      "why_result_generated": "Decoded 11 byte(s) from the utf8 input and computed 6 digest(s): crc32, adler32, md5, sha1, sha256, sha512.",
+                      "key_factors": [
+                        "Byte length: 11.",
+                        "Encoding: utf8.",
+                        "Algorithms: crc32, adler32, md5, sha1, sha256, sha512."
+                      ],
+                      "invalidators": [
+                        "Digests are computed over the exact bytes decoded from \"text\" using \"encoding\" (default utf8). The same logical content under a different encoding yields different bytes and thus different digests.",
+                        "CRC-32 (IEEE reflected, poly 0xEDB88320) and Adler-32 are error-detection checksums, NOT cryptographic \u2014 do not use them for integrity against tampering or for security. MD5 and SHA-1 are cryptographically broken; prefer SHA-256/SHA-512 for security-sensitive integrity.",
+                        "All digests are lowercase hex. Verification compares hex case-insensitively after stripping surrounding whitespace; a leading \"0x\" in the expected value is not stripped."
+                      ]
+                    },
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "computation": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Computed 6 digest(s) over 11 byte(s)."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "sensitive-data-detector",
+                        "reason": "Scan the same payload for PII before persisting or transmitting it."
+                      },
+                      {
+                        "api": "json-patch",
+                        "reason": "Verify a document is unchanged by comparing checksums before and after a patch."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HashRequest"
+                },
+                "example": {
+                  "text": "hello world"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.01,
+            "currency": "USDC"
+          },
+          "x-one-call": true
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "ChainTo": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "Slug of a recommended next API to call."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why an agent would chain to this API next."
+            }
+          }
+        },
+        "Reasoning": {
+          "type": "object",
+          "required": [
+            "why_result_generated",
+            "key_factors",
+            "invalidators"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "why_result_generated": {
+              "type": "string"
+            },
+            "key_factors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "invalidators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Conditions that would change or invalidate this result."
+            }
+          }
+        },
+        "Privacy": {
+          "type": "object",
+          "required": [
+            "data_stored",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "data_stored": {
+              "type": "boolean"
+            },
+            "retention": {
+              "type": "string",
+              "description": "Retention policy, e.g. \"none\"."
+            }
+          }
+        },
+        "EnvelopeError": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "description": "Optional machine-readable error context."
+            }
+          }
+        },
+        "Error400": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "request_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "latency_ms": {
+              "type": "integer"
+            },
+            "error": {
+              "$ref": "#/components/schemas/EnvelopeError"
+            }
+          }
+        },
+        "Error500": {
+          "$ref": "#/components/schemas/Error400"
+        },
+        "EnvelopeOk": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "request_id"
+          ],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id for clients that key on request_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ExecutionMetadata": {
+          "type": "object",
+          "required": [
+            "model",
+            "automation_safe",
+            "side_effects",
+            "estimated_compute_class"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": [
+                "deterministic"
+              ]
+            },
+            "automation_safe": {
+              "type": "boolean"
+            },
+            "side_effects": {
+              "type": "boolean",
+              "description": "Whether a call mutates external state (always false \u2014 pure computation)."
+            },
+            "estimated_compute_class": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Rough CPU cost band for planning."
+            }
+          }
+        },
+        "ConfidencePerSection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "computation": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "verification": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "_Tail": {
+          "type": "object",
+          "required": [
+            "confidence_score",
+            "confidence_per_section",
+            "recommended_actions_priority_order",
+            "chain_to",
+            "privacy",
+            "execution_metadata"
+          ],
+          "properties": {
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_per_section": {
+              "$ref": "#/components/schemas/ConfidencePerSection"
+            },
+            "recommended_actions_priority_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chain_to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainTo"
+              }
+            },
+            "privacy": {
+              "$ref": "#/components/schemas/Privacy"
+            },
+            "execution_metadata": {
+              "$ref": "#/components/schemas/ExecutionMetadata"
+            }
+          }
+        },
+        "Encoding": {
+          "type": "string",
+          "enum": [
+            "utf8",
+            "base64",
+            "hex"
+          ]
+        },
+        "Algorithm": {
+          "type": "string",
+          "enum": [
+            "crc32",
+            "adler32",
+            "md5",
+            "sha1",
+            "sha256",
+            "sha512"
+          ]
+        },
+        "Hashes": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Lowercase-hex digests, one per requested algorithm.",
+          "properties": {
+            "crc32": {
+              "type": "string",
+              "pattern": "^[0-9a-f]+$"
+            },
+            "adler32": {
+              "type": "string",
+              "pattern": "^[0-9a-f]+$"
+            },
+            "md5": {
+              "type": "string",
+              "pattern": "^[0-9a-f]+$"
+            },
+            "sha1": {
+              "type": "string",
+              "pattern": "^[0-9a-f]+$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]+$"
+            },
+            "sha512": {
+              "type": "string",
+              "pattern": "^[0-9a-f]+$"
+            }
+          }
+        },
+        "HashCore": {
+          "type": "object",
+          "required": [
+            "byte_length",
+            "encoding",
+            "hashes"
+          ],
+          "properties": {
+            "byte_length": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of bytes decoded from the input."
+            },
+            "encoding": {
+              "type": "string",
+              "enum": [
+                "utf8",
+                "base64",
+                "hex"
+              ]
+            },
+            "hashes": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Lowercase-hex digests, one per requested algorithm.",
+              "properties": {
+                "crc32": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]+$"
+                },
+                "adler32": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]+$"
+                },
+                "md5": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]+$"
+                },
+                "sha1": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]+$"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]+$"
+                },
+                "sha512": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]+$"
+                }
+              }
+            }
+          }
+        },
+        "VerifyCore": {
+          "type": "object",
+          "required": [
+            "algorithm",
+            "encoding",
+            "byte_length",
+            "computed",
+            "expected_normalized",
+            "match"
+          ],
+          "properties": {
+            "algorithm": {
+              "type": "string",
+              "enum": [
+                "crc32",
+                "adler32",
+                "md5",
+                "sha1",
+                "sha256",
+                "sha512"
+              ]
+            },
+            "encoding": {
+              "type": "string",
+              "enum": [
+                "utf8",
+                "base64",
+                "hex"
+              ]
+            },
+            "byte_length": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "computed": {
+              "type": "string",
+              "description": "Lowercase-hex digest computed from the input."
+            },
+            "expected_normalized": {
+              "type": "string",
+              "description": "The expected value, trimmed and lowercased."
+            },
+            "match": {
+              "type": "boolean"
+            }
+          }
+        },
+        "HashRequest": {
+          "type": "object",
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "maxLength": 5000000
+            },
+            "encoding": {
+              "type": "string",
+              "enum": [
+                "utf8",
+                "base64",
+                "hex"
+              ],
+              "description": "How to decode \"text\" into bytes (default utf8)."
+            },
+            "algorithms": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "crc32",
+                  "adler32",
+                  "md5",
+                  "sha1",
+                  "sha256",
+                  "sha512"
+                ]
+              },
+              "description": "Subset of algorithms to compute (default: all)."
+            }
+          }
+        },
+        "VerifyRequest": {
+          "type": "object",
+          "required": [
+            "text",
+            "algorithm",
+            "expected"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "maxLength": 5000000
+            },
+            "encoding": {
+              "type": "string",
+              "enum": [
+                "utf8",
+                "base64",
+                "hex"
+              ]
+            },
+            "algorithm": {
+              "type": "string",
+              "enum": [
+                "crc32",
+                "adler32",
+                "md5",
+                "sha1",
+                "sha256",
+                "sha512"
+              ]
+            },
+            "expected": {
+              "type": "string",
+              "description": "Expected hex digest (compared case-insensitively after trimming)."
+            }
+          }
+        },
+        "DiscoveryResponse": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description",
+            "openapi_url",
+            "auth",
+            "endpoints",
+            "pricing",
+            "x402_compatible",
+            "capabilities"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "openapi_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "header"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "path",
+                  "summary",
+                  "price_usdc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "price_usdc",
+                  "currency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USDC"
+                    ]
+                  }
+                }
+              }
+            },
+            "x402_compatible": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
+            },
+            "typical_use_cases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional plain-language use cases to aid autonomous discovery."
+            }
+          }
+        },
+        "HashResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/HashCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "VerifyResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/VerifyCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "LookupResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/HashCore"
+            },
+            {
+              "type": "object",
+              "required": [
+                "reasoning"
+              ],
+              "properties": {
+                "reasoning": {
+                  "$ref": "#/components/schemas/Reasoning"
+                }
+              }
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  },
+  "duration-humanizer": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Duration Humanizer API",
+      "version": "1.0.0",
+      "description": "Deterministic duration \u21c4 text converter \u2014 milliseconds to \"1h 30m\" and back, structured breakdown, fixed unambiguous units. No LLM.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x402-compatible": true,
+      "x-agent-marketplace-ready": true,
+      "x-pay-per-call-optimized": true,
+      "x-developer-tool": true,
+      "x-human-approval-required": false
+    },
+    "servers": [
+      {
+        "url": "https://orbis-apis.onrender.com/duration-humanizer"
+      }
+    ],
+    "security": [
+      {
+        "ApiKeyAuth": []
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "discover",
+          "summary": "Service discovery",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscoveryResponse"
+                  },
+                  "example": {
+                    "name": "Duration Humanizer API",
+                    "version": "1.0.0",
+                    "description": "Deterministic duration \u21c4 text converter. /humanize turns a millisecond count into a human-readable string + structured breakdown; /parse turns a duration string (\"1h 30m\", \"90s\", \"1.5d\") into milliseconds. Fixed unambiguous units (w/d/h/m/s/ms). No LLM, nothing stored.",
+                    "openapi_url": "https://orbis-apis.onrender.com/duration-humanizer/openapi.json",
+                    "auth": {
+                      "type": "apiKey",
+                      "header": "X-API-Key"
+                    },
+                    "capabilities": [
+                      "humanize_duration",
+                      "parse_duration",
+                      "duration_breakdown",
+                      "compact_and_long_form"
+                    ],
+                    "endpoints": [
+                      {
+                        "method": "POST",
+                        "path": "/humanize",
+                        "summary": "Milliseconds \u2192 human-readable duration",
+                        "price_usdc": 0.004
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/parse",
+                        "summary": "Duration string \u2192 milliseconds",
+                        "price_usdc": 0.005
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/lookup",
+                        "summary": "ONE-CALL humanize + reasoning",
+                        "price_usdc": 0.009
+                      }
+                    ],
+                    "pricing": [
+                      {
+                        "path": "/humanize",
+                        "price_usdc": 0.004,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/parse",
+                        "price_usdc": 0.005,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/lookup",
+                        "price_usdc": 0.009,
+                        "currency": "USDC"
+                      }
+                    ],
+                    "x402_compatible": true
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/humanize": {
+        "post": {
+          "operationId": "humanize",
+          "summary": "Milliseconds \u2192 human-readable duration",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HumanizeResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "milliseconds": 93784000,
+                    "negative": false,
+                    "humanized": "1 day 2 hours 3 minutes 4 seconds",
+                    "compact": "1d 2h 3m 4s",
+                    "parts": [
+                      {
+                        "unit": "d",
+                        "long": "day",
+                        "value": 1
+                      },
+                      {
+                        "unit": "h",
+                        "long": "hour",
+                        "value": 2
+                      },
+                      {
+                        "unit": "m",
+                        "long": "minute",
+                        "value": 3
+                      },
+                      {
+                        "unit": "s",
+                        "long": "second",
+                        "value": 4
+                      }
+                    ],
+                    "largest_unit": "d",
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "conversion": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Humanized 93784000 ms as \"1 day 2 hours 3 minutes 4 seconds\"."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "table-formatter",
+                        "reason": "Render multiple humanized durations as a table for reporting."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanizeRequest"
+                },
+                "example": {
+                  "milliseconds": 93784000
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.004,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/parse": {
+        "post": {
+          "operationId": "parse",
+          "summary": "Duration string \u2192 milliseconds",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ParseResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "input": "1d 2h 3m 4s",
+                    "milliseconds": 93784000,
+                    "negative": false,
+                    "parts": [
+                      {
+                        "unit": "d",
+                        "long": "day",
+                        "value": 1
+                      },
+                      {
+                        "unit": "h",
+                        "long": "hour",
+                        "value": 2
+                      },
+                      {
+                        "unit": "m",
+                        "long": "minute",
+                        "value": 3
+                      },
+                      {
+                        "unit": "s",
+                        "long": "second",
+                        "value": 4
+                      }
+                    ],
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "conversion": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Parsed \"1d 2h 3m 4s\" as 93784000 ms."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "table-formatter",
+                        "reason": "Render multiple humanized durations as a table for reporting."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParseRequest"
+                },
+                "example": {
+                  "text": "1d 2h 3m 4s"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.005,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/lookup": {
+        "post": {
+          "operationId": "lookup",
+          "summary": "ONE-CALL humanize + reasoning",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LookupResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "milliseconds": 93784000,
+                    "negative": false,
+                    "humanized": "1 day 2 hours 3 minutes 4 seconds",
+                    "compact": "1d 2h 3m 4s",
+                    "parts": [
+                      {
+                        "unit": "d",
+                        "long": "day",
+                        "value": 1
+                      },
+                      {
+                        "unit": "h",
+                        "long": "hour",
+                        "value": 2
+                      },
+                      {
+                        "unit": "m",
+                        "long": "minute",
+                        "value": 3
+                      },
+                      {
+                        "unit": "s",
+                        "long": "second",
+                        "value": 4
+                      }
+                    ],
+                    "largest_unit": "d",
+                    "reasoning": {
+                      "why_result_generated": "Decomposed 93784000 ms greedily into 4 unit(s) (largest = d), yielding \"1 day 2 hours 3 minutes 4 seconds\".",
+                      "key_factors": [
+                        "Milliseconds: 93784000.",
+                        "Parts: 1d 2h 3m 4s.",
+                        "Max units: 6."
+                      ],
+                      "invalidators": [
+                        "Units are fixed, calendar-independent: 1w=7d, 1d=24h, 1h=60m, 1m=60s, 1s=1000ms. Calendar months and years are deliberately NOT supported (their length varies), so a \"month\"/\"year\" token is rejected by /parse.",
+                        "In /parse, \"m\" means minutes and \"ms\" means milliseconds (matched before \"m\"). /humanize emits integer values per unit; any sub-millisecond remainder is impossible because input must be an integer count of milliseconds.",
+                        "/humanize truncates (floor) per unit and stops after max_units components; it does not round the dropped remainder into the last shown unit."
+                      ]
+                    },
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "conversion": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Humanized 93784000 ms as \"1 day 2 hours 3 minutes 4 seconds\"."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "table-formatter",
+                        "reason": "Render multiple humanized durations as a table for reporting."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanizeRequest"
+                },
+                "example": {
+                  "milliseconds": 93784000
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.009,
+            "currency": "USDC"
+          },
+          "x-one-call": true
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "ChainTo": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "Slug of a recommended next API to call."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why an agent would chain to this API next."
+            }
+          }
+        },
+        "Reasoning": {
+          "type": "object",
+          "required": [
+            "why_result_generated",
+            "key_factors",
+            "invalidators"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "why_result_generated": {
+              "type": "string"
+            },
+            "key_factors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "invalidators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Conditions that would change or invalidate this result."
+            }
+          }
+        },
+        "Privacy": {
+          "type": "object",
+          "required": [
+            "data_stored",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "data_stored": {
+              "type": "boolean"
+            },
+            "retention": {
+              "type": "string",
+              "description": "Retention policy, e.g. \"none\"."
+            }
+          }
+        },
+        "EnvelopeError": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "description": "Optional machine-readable error context."
+            }
+          }
+        },
+        "Error400": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "request_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "latency_ms": {
+              "type": "integer"
+            },
+            "error": {
+              "$ref": "#/components/schemas/EnvelopeError"
+            }
+          }
+        },
+        "Error500": {
+          "$ref": "#/components/schemas/Error400"
+        },
+        "EnvelopeOk": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "request_id"
+          ],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id for clients that key on request_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ExecutionMetadata": {
+          "type": "object",
+          "required": [
+            "model",
+            "automation_safe",
+            "side_effects",
+            "estimated_compute_class"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": [
+                "deterministic"
+              ]
+            },
+            "automation_safe": {
+              "type": "boolean"
+            },
+            "side_effects": {
+              "type": "boolean",
+              "description": "Whether a call mutates external state (always false \u2014 pure computation)."
+            },
+            "estimated_compute_class": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Rough CPU cost band for planning."
+            }
+          }
+        },
+        "ConfidencePerSection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "conversion": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "_Tail": {
+          "type": "object",
+          "required": [
+            "confidence_score",
+            "confidence_per_section",
+            "recommended_actions_priority_order",
+            "chain_to",
+            "privacy",
+            "execution_metadata"
+          ],
+          "properties": {
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_per_section": {
+              "$ref": "#/components/schemas/ConfidencePerSection"
+            },
+            "recommended_actions_priority_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chain_to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainTo"
+              }
+            },
+            "privacy": {
+              "$ref": "#/components/schemas/Privacy"
+            },
+            "execution_metadata": {
+              "$ref": "#/components/schemas/ExecutionMetadata"
+            }
+          }
+        },
+        "Part": {
+          "type": "object",
+          "required": [
+            "unit",
+            "long",
+            "value"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "unit": {
+              "type": "string",
+              "enum": [
+                "w",
+                "d",
+                "h",
+                "m",
+                "s",
+                "ms"
+              ]
+            },
+            "long": {
+              "type": "string",
+              "enum": [
+                "week",
+                "day",
+                "hour",
+                "minute",
+                "second",
+                "millisecond"
+              ]
+            },
+            "value": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "HumanizeCore": {
+          "type": "object",
+          "required": [
+            "milliseconds",
+            "negative",
+            "humanized",
+            "compact",
+            "parts",
+            "largest_unit"
+          ],
+          "properties": {
+            "milliseconds": {
+              "type": "integer"
+            },
+            "negative": {
+              "type": "boolean"
+            },
+            "humanized": {
+              "type": "string",
+              "description": "Long form, e.g. \"1 hour 30 minutes\"."
+            },
+            "compact": {
+              "type": "string",
+              "description": "Short form, e.g. \"1h 30m\"."
+            },
+            "parts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "unit",
+                  "long",
+                  "value"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "unit": {
+                    "type": "string",
+                    "enum": [
+                      "w",
+                      "d",
+                      "h",
+                      "m",
+                      "s",
+                      "ms"
+                    ]
+                  },
+                  "long": {
+                    "type": "string",
+                    "enum": [
+                      "week",
+                      "day",
+                      "hour",
+                      "minute",
+                      "second",
+                      "millisecond"
+                    ]
+                  },
+                  "value": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                }
+              }
+            },
+            "largest_unit": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "w",
+                "d",
+                "h",
+                "m",
+                "s",
+                "ms",
+                null
+              ]
+            }
+          }
+        },
+        "ParseCore": {
+          "type": "object",
+          "required": [
+            "input",
+            "milliseconds",
+            "negative",
+            "parts"
+          ],
+          "properties": {
+            "input": {
+              "type": "string"
+            },
+            "milliseconds": {
+              "type": "number"
+            },
+            "negative": {
+              "type": "boolean"
+            },
+            "parts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "unit",
+                  "long",
+                  "value"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "unit": {
+                    "type": "string",
+                    "enum": [
+                      "w",
+                      "d",
+                      "h",
+                      "m",
+                      "s",
+                      "ms"
+                    ]
+                  },
+                  "long": {
+                    "type": "string",
+                    "enum": [
+                      "week",
+                      "day",
+                      "hour",
+                      "minute",
+                      "second",
+                      "millisecond"
+                    ]
+                  },
+                  "value": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "HumanizeRequest": {
+          "type": "object",
+          "required": [
+            "milliseconds"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "milliseconds": {
+              "type": "integer",
+              "description": "Duration in milliseconds (may be negative)."
+            },
+            "max_units": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6,
+              "description": "Max number of components to emit (default 6)."
+            }
+          }
+        },
+        "ParseRequest": {
+          "type": "object",
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "description": "Duration string, e.g. \"1h 30m\" or \"90s\"."
+            }
+          }
+        },
+        "DiscoveryResponse": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description",
+            "openapi_url",
+            "auth",
+            "endpoints",
+            "pricing",
+            "x402_compatible",
+            "capabilities"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "openapi_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "header"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "path",
+                  "summary",
+                  "price_usdc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "price_usdc",
+                  "currency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USDC"
+                    ]
+                  }
+                }
+              }
+            },
+            "x402_compatible": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
+            },
+            "typical_use_cases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional plain-language use cases to aid autonomous discovery."
+            }
+          }
+        },
+        "HumanizeResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/HumanizeCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "ParseResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/ParseCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "LookupResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/HumanizeCore"
+            },
+            {
+              "type": "object",
+              "required": [
+                "reasoning"
+              ],
+              "properties": {
+                "reasoning": {
+                  "$ref": "#/components/schemas/Reasoning"
+                }
+              }
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  },
+  "html-entities": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "HTML Entities API",
+      "version": "1.0.0",
+      "description": "Deterministic HTML-entity encoder/decoder \u2014 escape HTML-special & non-ASCII characters, resolve numeric + named references back to text. No LLM.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x402-compatible": true,
+      "x-agent-marketplace-ready": true,
+      "x-pay-per-call-optimized": true,
+      "x-developer-tool": true,
+      "x-human-approval-required": false
+    },
+    "servers": [
+      {
+        "url": "https://orbis-apis.onrender.com/html-entities"
+      }
+    ],
+    "security": [
+      {
+        "ApiKeyAuth": []
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "discover",
+          "summary": "Service discovery",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscoveryResponse"
+                  },
+                  "example": {
+                    "name": "HTML Entities API",
+                    "version": "1.0.0",
+                    "description": "Deterministic HTML-entity encoder/decoder. /encode escapes HTML-special characters (and, in non_ascii mode, every non-ASCII codepoint as a numeric reference); /decode resolves numeric references and a curated set of named entities back to text. No LLM, nothing stored.",
+                    "openapi_url": "https://orbis-apis.onrender.com/html-entities/openapi.json",
+                    "auth": {
+                      "type": "apiKey",
+                      "header": "X-API-Key"
+                    },
+                    "capabilities": [
+                      "html_encode",
+                      "html_decode",
+                      "numeric_references",
+                      "named_entities",
+                      "xss_safe_escaping"
+                    ],
+                    "endpoints": [
+                      {
+                        "method": "POST",
+                        "path": "/encode",
+                        "summary": "Escape text to HTML entities",
+                        "price_usdc": 0.004
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/decode",
+                        "summary": "Resolve HTML entities back to text",
+                        "price_usdc": 0.004
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/lookup",
+                        "summary": "ONE-CALL encode + reasoning",
+                        "price_usdc": 0.008
+                      }
+                    ],
+                    "pricing": [
+                      {
+                        "path": "/encode",
+                        "price_usdc": 0.004,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/decode",
+                        "price_usdc": 0.004,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/lookup",
+                        "price_usdc": 0.008,
+                        "currency": "USDC"
+                      }
+                    ],
+                    "x402_compatible": true
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/encode": {
+        "post": {
+          "operationId": "encode",
+          "summary": "Escape text to HTML entities",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/EncodeResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "input": "Tom & Jerry <3 \"quotes\" \u2014 caf\u00e9",
+                    "encoded": "Tom &amp; Jerry &lt;3 &quot;quotes&quot; &#8212; caf&#233;",
+                    "mode": "non_ascii",
+                    "numeric": false,
+                    "replaced_count": 6,
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "encoding": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Encoded 6 character(s) to HTML entities."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "sensitive-data-detector",
+                        "reason": "Scan decoded text for PII before rendering or storing it."
+                      },
+                      {
+                        "api": "table-formatter",
+                        "reason": "Encode cell content before embedding it in generated HTML/Markdown tables."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncodeRequest"
+                },
+                "example": {
+                  "text": "Tom & Jerry <3 \"quotes\" \u2014 caf\u00e9",
+                  "mode": "non_ascii"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.004,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/decode": {
+        "post": {
+          "operationId": "decode",
+          "summary": "Resolve HTML entities back to text",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DecodeResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "input": "Tom &amp; Jerry &lt;3 &quot;quotes&quot; &#8212; caf&#233;",
+                    "decoded": "Tom & Jerry <3 \"quotes\" \u2014 caf\u00e9",
+                    "replaced_count": 6,
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "decoding": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Resolved 6 entity reference(s)."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "sensitive-data-detector",
+                        "reason": "Scan decoded text for PII before rendering or storing it."
+                      },
+                      {
+                        "api": "table-formatter",
+                        "reason": "Encode cell content before embedding it in generated HTML/Markdown tables."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecodeRequest"
+                },
+                "example": {
+                  "text": "Tom &amp; Jerry &lt;3 &quot;quotes&quot; &#8212; caf&#233;"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.004,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/lookup": {
+        "post": {
+          "operationId": "lookup",
+          "summary": "ONE-CALL encode + reasoning",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LookupResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "input": "Tom & Jerry <3 \"quotes\" \u2014 caf\u00e9",
+                    "encoded": "Tom &amp; Jerry &lt;3 &quot;quotes&quot; &#8212; caf&#233;",
+                    "mode": "non_ascii",
+                    "numeric": false,
+                    "replaced_count": 6,
+                    "reasoning": {
+                      "why_result_generated": "Escaped 6 character(s) in non_ascii mode (numeric=false); the result is safe to embed in HTML text content.",
+                      "key_factors": [
+                        "Mode: non_ascii.",
+                        "Numeric special chars: false.",
+                        "Characters replaced: 6."
+                      ],
+                      "invalidators": [
+                        "/encode (minimal) escapes only the five HTML-special characters & < > \" '. In non_ascii mode it additionally escapes every codepoint > 127 as a numeric reference. The single quote is emitted as &#39; (numeric) in named mode for maximum HTML compatibility.",
+                        "/decode resolves ALL numeric references (&#NN; decimal and &#xHH; hex) and a curated set of common named entities. An unrecognized named entity (e.g. a rare HTML5 ref not in the set) is left verbatim \u2014 it is NOT an error and is not counted in replaced_count.",
+                        "Encoding is reversible by /decode for everything it produces. Decoding is not guaranteed to round-trip back to the exact original markup because multiple inputs (named vs numeric for the same character) decode to the same text."
+                      ]
+                    },
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "encoding": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Encoded 6 character(s) to HTML entities."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "sensitive-data-detector",
+                        "reason": "Scan decoded text for PII before rendering or storing it."
+                      },
+                      {
+                        "api": "table-formatter",
+                        "reason": "Encode cell content before embedding it in generated HTML/Markdown tables."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EncodeRequest"
+                },
+                "example": {
+                  "text": "Tom & Jerry <3 \"quotes\" \u2014 caf\u00e9",
+                  "mode": "non_ascii"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.008,
+            "currency": "USDC"
+          },
+          "x-one-call": true
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "ChainTo": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "Slug of a recommended next API to call."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why an agent would chain to this API next."
+            }
+          }
+        },
+        "Reasoning": {
+          "type": "object",
+          "required": [
+            "why_result_generated",
+            "key_factors",
+            "invalidators"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "why_result_generated": {
+              "type": "string"
+            },
+            "key_factors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "invalidators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Conditions that would change or invalidate this result."
+            }
+          }
+        },
+        "Privacy": {
+          "type": "object",
+          "required": [
+            "data_stored",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "data_stored": {
+              "type": "boolean"
+            },
+            "retention": {
+              "type": "string",
+              "description": "Retention policy, e.g. \"none\"."
+            }
+          }
+        },
+        "EnvelopeError": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "description": "Optional machine-readable error context."
+            }
+          }
+        },
+        "Error400": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "request_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "latency_ms": {
+              "type": "integer"
+            },
+            "error": {
+              "$ref": "#/components/schemas/EnvelopeError"
+            }
+          }
+        },
+        "Error500": {
+          "$ref": "#/components/schemas/Error400"
+        },
+        "EnvelopeOk": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "request_id"
+          ],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id for clients that key on request_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ExecutionMetadata": {
+          "type": "object",
+          "required": [
+            "model",
+            "automation_safe",
+            "side_effects",
+            "estimated_compute_class"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": [
+                "deterministic"
+              ]
+            },
+            "automation_safe": {
+              "type": "boolean"
+            },
+            "side_effects": {
+              "type": "boolean",
+              "description": "Whether a call mutates external state (always false \u2014 pure computation)."
+            },
+            "estimated_compute_class": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Rough CPU cost band for planning."
+            }
+          }
+        },
+        "ConfidencePerSection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "encoding": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "decoding": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "_Tail": {
+          "type": "object",
+          "required": [
+            "confidence_score",
+            "confidence_per_section",
+            "recommended_actions_priority_order",
+            "chain_to",
+            "privacy",
+            "execution_metadata"
+          ],
+          "properties": {
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_per_section": {
+              "$ref": "#/components/schemas/ConfidencePerSection"
+            },
+            "recommended_actions_priority_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chain_to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainTo"
+              }
+            },
+            "privacy": {
+              "$ref": "#/components/schemas/Privacy"
+            },
+            "execution_metadata": {
+              "$ref": "#/components/schemas/ExecutionMetadata"
+            }
+          }
+        },
+        "Mode": {
+          "type": "string",
+          "enum": [
+            "minimal",
+            "non_ascii"
+          ]
+        },
+        "EncodeCore": {
+          "type": "object",
+          "required": [
+            "input",
+            "encoded",
+            "mode",
+            "numeric",
+            "replaced_count"
+          ],
+          "properties": {
+            "input": {
+              "type": "string"
+            },
+            "encoded": {
+              "type": "string"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "minimal",
+                "non_ascii"
+              ]
+            },
+            "numeric": {
+              "type": "boolean",
+              "description": "Whether HTML-special chars were emitted as numeric references."
+            },
+            "replaced_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "DecodeCore": {
+          "type": "object",
+          "required": [
+            "input",
+            "decoded",
+            "replaced_count"
+          ],
+          "properties": {
+            "input": {
+              "type": "string"
+            },
+            "decoded": {
+              "type": "string"
+            },
+            "replaced_count": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "EncodeRequest": {
+          "type": "object",
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "maxLength": 200000
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "minimal",
+                "non_ascii"
+              ],
+              "description": "\"minimal\" escapes only HTML-special chars; \"non_ascii\" also escapes every codepoint > 127 (default minimal)."
+            },
+            "numeric": {
+              "type": "boolean",
+              "description": "Emit HTML-special chars as numeric references instead of named (default false)."
+            }
+          }
+        },
+        "DecodeRequest": {
+          "type": "object",
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "maxLength": 200000
+            }
+          }
+        },
+        "DiscoveryResponse": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description",
+            "openapi_url",
+            "auth",
+            "endpoints",
+            "pricing",
+            "x402_compatible",
+            "capabilities"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "openapi_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "header"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "path",
+                  "summary",
+                  "price_usdc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "price_usdc",
+                  "currency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USDC"
+                    ]
+                  }
+                }
+              }
+            },
+            "x402_compatible": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
+            },
+            "typical_use_cases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional plain-language use cases to aid autonomous discovery."
+            }
+          }
+        },
+        "EncodeResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/EncodeCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "DecodeResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/DecodeCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "LookupResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/EncodeCore"
+            },
+            {
+              "type": "object",
+              "required": [
+                "reasoning"
+              ],
+              "properties": {
+                "reasoning": {
+                  "$ref": "#/components/schemas/Reasoning"
+                }
+              }
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  },
+  "mermaid-validator": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Mermaid Validator API",
+      "version": "1.0.0",
+      "description": "Deterministic Mermaid diagram linter \u2014 diagram-type detection, delimiter/quote balance, flowchart line lint with line numbers. Lexical/structural (not the full grammar). No LLM.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x402-compatible": true,
+      "x-agent-marketplace-ready": true,
+      "x-pay-per-call-optimized": true,
+      "x-developer-tool": true,
+      "x-human-approval-required": false
+    },
+    "servers": [
+      {
+        "url": "https://orbis-apis.onrender.com/mermaid-validator"
+      }
+    ],
+    "security": [
+      {
+        "ApiKeyAuth": []
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "discover",
+          "summary": "Service discovery",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscoveryResponse"
+                  },
+                  "example": {
+                    "name": "Mermaid Validator API",
+                    "version": "1.0.0",
+                    "description": "Deterministic Mermaid diagram linter. /validate detects the diagram type, checks balanced delimiters and quotes, and flags structurally suspect lines with line numbers. Lexical/structural lint (not the full Mermaid grammar). No LLM, nothing stored.",
+                    "openapi_url": "https://orbis-apis.onrender.com/mermaid-validator/openapi.json",
+                    "auth": {
+                      "type": "apiKey",
+                      "header": "X-API-Key"
+                    },
+                    "capabilities": [
+                      "diagram_type_detection",
+                      "delimiter_balance_check",
+                      "flowchart_lint",
+                      "line_level_issues"
+                    ],
+                    "endpoints": [
+                      {
+                        "method": "POST",
+                        "path": "/validate",
+                        "summary": "Lint a Mermaid diagram",
+                        "price_usdc": 0.006
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/lookup",
+                        "summary": "ONE-CALL validate + reasoning",
+                        "price_usdc": 0.011
+                      }
+                    ],
+                    "pricing": [
+                      {
+                        "path": "/validate",
+                        "price_usdc": 0.006,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/lookup",
+                        "price_usdc": 0.011,
+                        "currency": "USDC"
+                      }
+                    ],
+                    "x402_compatible": true
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/validate": {
+        "post": {
+          "operationId": "validate",
+          "summary": "Lint a Mermaid diagram",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ValidateResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "diagram_type": "flowchart",
+                    "valid": true,
+                    "line_count": 4,
+                    "content_line_count": 4,
+                    "balanced_delimiters": true,
+                    "node_count": 3,
+                    "edge_count": 3,
+                    "issues": [],
+                    "confidence_score": 0.9,
+                    "confidence_per_section": {
+                      "structure": 1,
+                      "grammar": 0.8
+                    },
+                    "recommended_actions_priority_order": [
+                      "No structural errors found in flowchart."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "table-formatter",
+                        "reason": "Render the issue list as a Markdown table for a PR comment or report."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateRequest"
+                },
+                "example": {
+                  "diagram": "flowchart LR\n  A[Start] --> B{Decision}\n  B -->|yes| C[Ship]\n  B -->|no| A"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.006,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/lookup": {
+        "post": {
+          "operationId": "lookup",
+          "summary": "ONE-CALL validate + reasoning",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LookupResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "diagram_type": "flowchart",
+                    "valid": true,
+                    "line_count": 4,
+                    "content_line_count": 4,
+                    "balanced_delimiters": true,
+                    "node_count": 3,
+                    "edge_count": 3,
+                    "issues": [],
+                    "reasoning": {
+                      "why_result_generated": "Detected diagram type \"flowchart\"; delimiters balanced; found 0 error(s) and 0 warning(s) across 4 content line(s).",
+                      "key_factors": [
+                        "Diagram type: flowchart.",
+                        "Balanced delimiters: true.",
+                        "Nodes: 3, edges: 3."
+                      ],
+                      "invalidators": [
+                        "This is a LEXICAL/STRUCTURAL lint, not the Mermaid parser: it reliably detects the diagram type, unbalanced delimiters ( ) [ ] { }, unterminated quotes, and (for flowcharts) dangling/unrecognized lines. It does NOT fully validate the Mermaid grammar, so valid:true means \"no structural problems found\", not \"guaranteed to render\".",
+                        "node_count and edge_count are reported only for flowchart/graph diagrams and are derived from arrow tokens and node identifiers via tokenization; subgraph headers, styling, and click directives are excluded from the node count.",
+                        "Comments (lines beginning with %%) and %%{...}%% init directives are ignored. Double-quoted labels are not expected to span multiple lines; an unclosed quote on a line is flagged."
+                      ]
+                    },
+                    "confidence_score": 0.9,
+                    "confidence_per_section": {
+                      "structure": 1,
+                      "grammar": 0.8
+                    },
+                    "recommended_actions_priority_order": [
+                      "No structural errors found."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "table-formatter",
+                        "reason": "Render the issue list as a Markdown table for a PR comment or report."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateRequest"
+                },
+                "example": {
+                  "diagram": "flowchart LR\n  A[Start] --> B{Decision}\n  B -->|yes| C[Ship]\n  B -->|no| A"
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.011,
+            "currency": "USDC"
+          },
+          "x-one-call": true
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "ChainTo": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "Slug of a recommended next API to call."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why an agent would chain to this API next."
+            }
+          }
+        },
+        "Reasoning": {
+          "type": "object",
+          "required": [
+            "why_result_generated",
+            "key_factors",
+            "invalidators"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "why_result_generated": {
+              "type": "string"
+            },
+            "key_factors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "invalidators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Conditions that would change or invalidate this result."
+            }
+          }
+        },
+        "Privacy": {
+          "type": "object",
+          "required": [
+            "data_stored",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "data_stored": {
+              "type": "boolean"
+            },
+            "retention": {
+              "type": "string",
+              "description": "Retention policy, e.g. \"none\"."
+            }
+          }
+        },
+        "EnvelopeError": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "description": "Optional machine-readable error context."
+            }
+          }
+        },
+        "Error400": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "request_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "latency_ms": {
+              "type": "integer"
+            },
+            "error": {
+              "$ref": "#/components/schemas/EnvelopeError"
+            }
+          }
+        },
+        "Error500": {
+          "$ref": "#/components/schemas/Error400"
+        },
+        "EnvelopeOk": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "request_id"
+          ],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id for clients that key on request_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ExecutionMetadata": {
+          "type": "object",
+          "required": [
+            "model",
+            "automation_safe",
+            "side_effects",
+            "estimated_compute_class"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": [
+                "deterministic"
+              ]
+            },
+            "automation_safe": {
+              "type": "boolean"
+            },
+            "side_effects": {
+              "type": "boolean",
+              "description": "Whether a call mutates external state (always false \u2014 pure computation)."
+            },
+            "estimated_compute_class": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Rough CPU cost band for planning."
+            }
+          }
+        },
+        "ConfidencePerSection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "structure": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "grammar": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "_Tail": {
+          "type": "object",
+          "required": [
+            "confidence_score",
+            "confidence_per_section",
+            "recommended_actions_priority_order",
+            "chain_to",
+            "privacy",
+            "execution_metadata"
+          ],
+          "properties": {
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_per_section": {
+              "$ref": "#/components/schemas/ConfidencePerSection"
+            },
+            "recommended_actions_priority_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chain_to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainTo"
+              }
+            },
+            "privacy": {
+              "$ref": "#/components/schemas/Privacy"
+            },
+            "execution_metadata": {
+              "$ref": "#/components/schemas/ExecutionMetadata"
+            }
+          }
+        },
+        "Issue": {
+          "type": "object",
+          "required": [
+            "line",
+            "severity",
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "line": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "severity": {
+              "type": "string",
+              "enum": [
+                "error",
+                "warning"
+              ]
+            },
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        },
+        "ValidateCore": {
+          "type": "object",
+          "required": [
+            "diagram_type",
+            "valid",
+            "line_count",
+            "content_line_count",
+            "balanced_delimiters",
+            "node_count",
+            "edge_count",
+            "issues"
+          ],
+          "properties": {
+            "diagram_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "valid": {
+              "type": "boolean"
+            },
+            "line_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "content_line_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "balanced_delimiters": {
+              "type": "boolean"
+            },
+            "node_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "edge_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "line",
+                  "severity",
+                  "code",
+                  "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "line": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "severity": {
+                    "type": "string",
+                    "enum": [
+                      "error",
+                      "warning"
+                    ]
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ValidateRequest": {
+          "type": "object",
+          "required": [
+            "diagram"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "diagram": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100000,
+              "description": "Mermaid diagram source."
+            }
+          }
+        },
+        "DiscoveryResponse": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description",
+            "openapi_url",
+            "auth",
+            "endpoints",
+            "pricing",
+            "x402_compatible",
+            "capabilities"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "openapi_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "header"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "path",
+                  "summary",
+                  "price_usdc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "price_usdc",
+                  "currency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USDC"
+                    ]
+                  }
+                }
+              }
+            },
+            "x402_compatible": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
+            },
+            "typical_use_cases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional plain-language use cases to aid autonomous discovery."
+            }
+          }
+        },
+        "ValidateResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/ValidateCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "LookupResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/ValidateCore"
+            },
+            {
+              "type": "object",
+              "required": [
+                "reasoning"
+              ],
+              "properties": {
+                "reasoning": {
+                  "$ref": "#/components/schemas/Reasoning"
+                }
+              }
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  },
+  "table-formatter": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Table Formatter API",
+      "version": "1.0.0",
+      "description": "Deterministic table renderer \u2014 Markdown (GFM, per-column alignment) and fixed-width ASCII grid tables from row objects or positional arrays. No LLM.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x402-compatible": true,
+      "x-agent-marketplace-ready": true,
+      "x-pay-per-call-optimized": true,
+      "x-developer-tool": true,
+      "x-human-approval-required": false
+    },
+    "servers": [
+      {
+        "url": "https://orbis-apis.onrender.com/table-formatter"
+      }
+    ],
+    "security": [
+      {
+        "ApiKeyAuth": []
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "discover",
+          "summary": "Service discovery",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscoveryResponse"
+                  },
+                  "example": {
+                    "name": "Table Formatter API",
+                    "version": "1.0.0",
+                    "description": "Deterministic table renderer. /markdown renders rows into a GitHub-Flavored-Markdown table (optional per-column alignment); /ascii renders a fixed-width ASCII grid table. Accepts row objects or positional arrays. No LLM, nothing stored.",
+                    "openapi_url": "https://orbis-apis.onrender.com/table-formatter/openapi.json",
+                    "auth": {
+                      "type": "apiKey",
+                      "header": "X-API-Key"
+                    },
+                    "capabilities": [
+                      "markdown_table",
+                      "ascii_table",
+                      "column_alignment",
+                      "object_or_array_rows"
+                    ],
+                    "endpoints": [
+                      {
+                        "method": "POST",
+                        "path": "/markdown",
+                        "summary": "Render rows as a Markdown table",
+                        "price_usdc": 0.005
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/ascii",
+                        "summary": "Render rows as an ASCII grid table",
+                        "price_usdc": 0.005
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/lookup",
+                        "summary": "ONE-CALL render + reasoning",
+                        "price_usdc": 0.009
+                      }
+                    ],
+                    "pricing": [
+                      {
+                        "path": "/markdown",
+                        "price_usdc": 0.005,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/ascii",
+                        "price_usdc": 0.005,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/lookup",
+                        "price_usdc": 0.009,
+                        "currency": "USDC"
+                      }
+                    ],
+                    "x402_compatible": true
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/markdown": {
+        "post": {
+          "operationId": "markdown",
+          "summary": "Render rows as a Markdown table",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MarkdownResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "format": "markdown",
+                    "columns": [
+                      "name",
+                      "role",
+                      "commits"
+                    ],
+                    "row_count": 2,
+                    "align": [
+                      "left",
+                      "left",
+                      "right"
+                    ],
+                    "table": "| name | role | commits |\n| :--- | :--- | ---: |\n| Alice | Engineer | 142 |\n| Bob | Designer | 37 |",
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "rendering": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Rendered a 2\u00d73 markdown table."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "html-entities",
+                        "reason": "Escape cell content before embedding the rendered table in HTML."
+                      },
+                      {
+                        "api": "duration-humanizer",
+                        "reason": "Humanize millisecond columns before rendering a report table."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TableRequest"
+                },
+                "example": {
+                  "rows": [
+                    {
+                      "name": "Alice",
+                      "role": "Engineer",
+                      "commits": 142
+                    },
+                    {
+                      "name": "Bob",
+                      "role": "Designer",
+                      "commits": 37
+                    }
+                  ],
+                  "align": [
+                    "left",
+                    "left",
+                    "right"
+                  ]
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.005,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/ascii": {
+        "post": {
+          "operationId": "ascii",
+          "summary": "Render rows as an ASCII grid table",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/AsciiResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "format": "ascii",
+                    "columns": [
+                      "name",
+                      "role",
+                      "commits"
+                    ],
+                    "row_count": 2,
+                    "align": [
+                      "left",
+                      "left",
+                      "left"
+                    ],
+                    "table": "+-------+----------+---------+\n| name  | role     | commits |\n+-------+----------+---------+\n| Alice | Engineer | 142     |\n| Bob   | Designer | 37      |\n+-------+----------+---------+",
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "rendering": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Rendered a 2\u00d73 ascii table."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "html-entities",
+                        "reason": "Escape cell content before embedding the rendered table in HTML."
+                      },
+                      {
+                        "api": "duration-humanizer",
+                        "reason": "Humanize millisecond columns before rendering a report table."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TableRequest"
+                },
+                "example": {
+                  "rows": [
+                    {
+                      "name": "Alice",
+                      "role": "Engineer",
+                      "commits": 142
+                    },
+                    {
+                      "name": "Bob",
+                      "role": "Designer",
+                      "commits": 37
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.005,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/lookup": {
+        "post": {
+          "operationId": "lookup",
+          "summary": "ONE-CALL render + reasoning",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LookupResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "format": "markdown",
+                    "columns": [
+                      "name",
+                      "role",
+                      "commits"
+                    ],
+                    "row_count": 2,
+                    "align": [
+                      "left",
+                      "left",
+                      "right"
+                    ],
+                    "table": "| name | role | commits |\n| :--- | :--- | ---: |\n| Alice | Engineer | 142 |\n| Bob | Designer | 37 |",
+                    "reasoning": {
+                      "why_result_generated": "Rendered 2 row(s) across 3 column(s) as a markdown table.",
+                      "key_factors": [
+                        "Columns: name, role, commits.",
+                        "Rows: 2.",
+                        "Alignment: left, left, right."
+                      ],
+                      "invalidators": [
+                        "Cells are stringified deterministically: strings verbatim, numbers/booleans via String(), null/undefined \u2192 empty, objects/arrays \u2192 compact JSON. Newlines within a cell are replaced by a single space (Markdown/ASCII tables are single-line per cell).",
+                        "Markdown rendering escapes literal \"|\" as \"\\|\"; ASCII rendering pads columns to the widest cell. Alignment (\"align\") affects the Markdown separator row and ASCII padding only.",
+                        "When \"columns\" is omitted, columns are the union of object keys in first-seen order; array rows REQUIRE an explicit \"columns\" header list. Missing keys render as empty cells, not errors."
+                      ]
+                    },
+                    "confidence_score": 1,
+                    "confidence_per_section": {
+                      "rendering": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Rendered a 2\u00d73 markdown table."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "html-entities",
+                        "reason": "Escape cell content before embedding the rendered table in HTML."
+                      },
+                      {
+                        "api": "duration-humanizer",
+                        "reason": "Humanize millisecond columns before rendering a report table."
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true,
+                      "side_effects": false,
+                      "estimated_compute_class": "low"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TableRequest"
+                },
+                "example": {
+                  "rows": [
+                    {
+                      "name": "Alice",
+                      "role": "Engineer",
+                      "commits": 142
+                    },
+                    {
+                      "name": "Bob",
+                      "role": "Designer",
+                      "commits": 37
+                    }
+                  ],
+                  "align": [
+                    "left",
+                    "left",
+                    "right"
+                  ]
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.009,
+            "currency": "USDC"
+          },
+          "x-one-call": true
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "ChainTo": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "Slug of a recommended next API to call."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why an agent would chain to this API next."
+            }
+          }
+        },
+        "Reasoning": {
+          "type": "object",
+          "required": [
+            "why_result_generated",
+            "key_factors",
+            "invalidators"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "why_result_generated": {
+              "type": "string"
+            },
+            "key_factors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "invalidators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Conditions that would change or invalidate this result."
+            }
+          }
+        },
+        "Privacy": {
+          "type": "object",
+          "required": [
+            "data_stored",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "data_stored": {
+              "type": "boolean"
+            },
+            "retention": {
+              "type": "string",
+              "description": "Retention policy, e.g. \"none\"."
+            }
+          }
+        },
+        "EnvelopeError": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "description": "Optional machine-readable error context."
+            }
+          }
+        },
+        "Error400": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "request_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "latency_ms": {
+              "type": "integer"
+            },
+            "error": {
+              "$ref": "#/components/schemas/EnvelopeError"
+            }
+          }
+        },
+        "Error500": {
+          "$ref": "#/components/schemas/Error400"
+        },
+        "EnvelopeOk": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "request_id"
+          ],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id for clients that key on request_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ExecutionMetadata": {
+          "type": "object",
+          "required": [
+            "model",
+            "automation_safe",
+            "side_effects",
+            "estimated_compute_class"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": [
+                "deterministic"
+              ]
+            },
+            "automation_safe": {
+              "type": "boolean"
+            },
+            "side_effects": {
+              "type": "boolean",
+              "description": "Whether a call mutates external state (always false \u2014 pure computation)."
+            },
+            "estimated_compute_class": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Rough CPU cost band for planning."
+            }
+          }
+        },
+        "ConfidencePerSection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "rendering": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "_Tail": {
+          "type": "object",
+          "required": [
+            "confidence_score",
+            "confidence_per_section",
+            "recommended_actions_priority_order",
+            "chain_to",
+            "privacy",
+            "execution_metadata"
+          ],
+          "properties": {
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_per_section": {
+              "$ref": "#/components/schemas/ConfidencePerSection"
+            },
+            "recommended_actions_priority_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chain_to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainTo"
+              }
+            },
+            "privacy": {
+              "$ref": "#/components/schemas/Privacy"
+            },
+            "execution_metadata": {
+              "$ref": "#/components/schemas/ExecutionMetadata"
+            }
+          }
+        },
+        "CellValue": {
+          "description": "A single cell value: any JSON scalar, null, array, or object.",
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null",
+            "array",
+            "object"
+          ]
+        },
+        "Align": {
+          "type": "string",
+          "enum": [
+            "left",
+            "right",
+            "center"
+          ]
+        },
+        "RowObject": {
+          "type": "object",
+          "additionalProperties": {
+            "description": "A single cell value: any JSON scalar, null, array, or object.",
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "null",
+              "array",
+              "object"
+            ]
+          }
+        },
+        "RowArray": {
+          "type": "array",
+          "items": {
+            "description": "A single cell value: any JSON scalar, null, array, or object.",
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "null",
+              "array",
+              "object"
+            ]
+          }
+        },
+        "TableCore": {
+          "type": "object",
+          "required": [
+            "format",
+            "columns",
+            "row_count",
+            "align",
+            "table"
+          ],
+          "properties": {
+            "format": {
+              "type": "string",
+              "enum": [
+                "markdown",
+                "ascii"
+              ]
+            },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "row_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "align": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "left",
+                  "right",
+                  "center"
+                ]
+              }
+            },
+            "table": {
+              "type": "string",
+              "description": "The rendered table."
+            }
+          }
+        },
+        "TableRequest": {
+          "type": "object",
+          "required": [
+            "rows"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "rows": {
+              "type": "array",
+              "maxItems": 1000,
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": {
+                      "description": "A single cell value: any JSON scalar, null, array, or object.",
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "null",
+                        "array",
+                        "object"
+                      ]
+                    }
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "description": "A single cell value: any JSON scalar, null, array, or object.",
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "null",
+                        "array",
+                        "object"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "description": "Row objects (column\u2192value) or positional arrays (then \"columns\" is required)."
+            },
+            "columns": {
+              "type": "array",
+              "maxItems": 50,
+              "items": {
+                "type": "string"
+              },
+              "description": "Explicit column order / headers (required for array rows)."
+            },
+            "align": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "left",
+                  "right",
+                  "center"
+                ]
+              },
+              "description": "Per-column alignment, one entry per column (default all left)."
+            }
+          }
+        },
+        "DiscoveryResponse": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description",
+            "openapi_url",
+            "auth",
+            "endpoints",
+            "pricing",
+            "x402_compatible",
+            "capabilities"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "openapi_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "header"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "path",
+                  "summary",
+                  "price_usdc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "price_usdc",
+                  "currency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USDC"
+                    ]
+                  }
+                }
+              }
+            },
+            "x402_compatible": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
+            },
+            "typical_use_cases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional plain-language use cases to aid autonomous discovery."
+            }
+          }
+        },
+        "MarkdownResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/TableCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "AsciiResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/TableCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "LookupResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/TableCore"
+            },
+            {
+              "type": "object",
+              "required": [
+                "reasoning"
+              ],
+              "properties": {
+                "reasoning": {
+                  "$ref": "#/components/schemas/Reasoning"
+                }
+              }
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  }
+}
