@@ -56,6 +56,7 @@ export function discoverySchemaPlus() {
       ...base.properties,
       capabilities: { type: 'array', items: { type: 'string' }, description: 'Machine-readable capability tags for agent matching.' },
       typical_use_cases: { type: 'array', items: { type: 'string' }, description: 'Optional plain-language use cases to aid autonomous discovery.' },
+      security_notes: { type: 'array', items: { type: 'string' }, description: 'Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling).' },
       input_examples: {
         type: 'array',
         description: 'Optional representative request bodies for primary endpoints, to aid autonomous discovery.',

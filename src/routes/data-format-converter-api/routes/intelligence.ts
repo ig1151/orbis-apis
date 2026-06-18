@@ -93,6 +93,11 @@ export const DISCOVERY = {
   openapi_url: 'https://orbis-apis.onrender.com/data-format-converter/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['json_to_yaml', 'yaml_to_json', 'json_to_toml', 'toml_to_json', 'yaml_to_toml', 'format_detection'],
+  security_notes: [
+    '"__proto__", "constructor" and "prototype" keys are treated as ordinary data: the input is parsed and re-serialized only, never merged into a live object, so they cannot pollute prototypes.',
+    'No code execution, no I/O, no network or filesystem access — pure in-memory parse/serialize.',
+    'Inputs are capped at 1,000,000 characters; oversized payloads are rejected with a 400.',
+  ],
   typical_use_cases: [
     'Convert a YAML or TOML config file into JSON for programmatic consumption',
     'Emit a human-friendly YAML version of a JSON payload for a PR or docs',

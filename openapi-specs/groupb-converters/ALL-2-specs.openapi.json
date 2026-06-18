@@ -53,6 +53,11 @@
                       "yaml_to_toml",
                       "format_detection"
                     ],
+                    "security_notes": [
+                      "\"__proto__\", \"constructor\" and \"prototype\" keys are treated as ordinary data: the input is parsed and re-serialized only, never merged into a live object, so they cannot pollute prototypes.",
+                      "No code execution, no I/O, no network or filesystem access \u2014 pure in-memory parse/serialize.",
+                      "Inputs are capped at 1,000,000 characters; oversized payloads are rejected with a 400."
+                    ],
                     "typical_use_cases": [
                       "Convert a YAML or TOML config file into JSON for programmatic consumption",
                       "Emit a human-friendly YAML version of a JSON payload for a PR or docs",
@@ -988,6 +993,13 @@
               },
               "description": "Optional plain-language use cases to aid autonomous discovery."
             },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
             "input_examples": {
               "type": "array",
               "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
@@ -1140,6 +1152,11 @@
                       "xml_validation",
                       "attribute_preservation"
                     ],
+                    "security_notes": [
+                      "DTD/DOCTYPE internal entities are not expanded and external entities are not resolved: no entity-expansion amplification (\"billion laughs\") and no XXE / out-of-band fetches.",
+                      "Element or attribute names that are reserved JavaScript keys (\"__proto__\", \"constructor\", \"prototype\") are rejected by the parser with a security error and returned as a 400 \u2014 they are never written onto a live object, so XML input cannot pollute prototypes.",
+                      "No code execution, no I/O \u2014 pure in-memory validate \u2192 parse \u2192 serialize. Inputs are capped at 1,000,000 characters."
+                    ],
                     "typical_use_cases": [
                       "Parse an XML API response or feed into JSON for programmatic use",
                       "Serialize a JSON object back into XML for a legacy/SOAP endpoint",
@@ -1196,35 +1213,35 @@
                         "method": "POST",
                         "path": "/to-json",
                         "summary": "Convert XML to JSON",
-                        "price_usdc": 0.006
+                        "price_usdc": 0.007
                       },
                       {
                         "method": "POST",
                         "path": "/to-xml",
                         "summary": "Convert a JSON object to XML",
-                        "price_usdc": 0.006
+                        "price_usdc": 0.007
                       },
                       {
                         "method": "POST",
                         "path": "/lookup",
                         "summary": "ONE-CALL XML\u2192JSON + reasoning",
-                        "price_usdc": 0.012
+                        "price_usdc": 0.014
                       }
                     ],
                     "pricing": [
                       {
                         "path": "/to-json",
-                        "price_usdc": 0.006,
+                        "price_usdc": 0.007,
                         "currency": "USDC"
                       },
                       {
                         "path": "/to-xml",
-                        "price_usdc": 0.006,
+                        "price_usdc": 0.007,
                         "currency": "USDC"
                       },
                       {
                         "path": "/lookup",
-                        "price_usdc": 0.012,
+                        "price_usdc": 0.014,
                         "currency": "USDC"
                       }
                     ],
@@ -1353,7 +1370,7 @@
           },
           "x-pricing": {
             "model": "per_call",
-            "price_usdc": 0.006,
+            "price_usdc": 0.007,
             "currency": "USDC"
           }
         }
@@ -1451,7 +1468,7 @@
           },
           "x-pricing": {
             "model": "per_call",
-            "price_usdc": 0.006,
+            "price_usdc": 0.007,
             "currency": "USDC"
           }
         }
@@ -1496,7 +1513,8 @@
                       "invalidators": [
                         "XML attributes are preserved on the JSON side with the \"@_\" prefix (e.g. <a id=\"1\"/> \u2192 {\"a\":{\"@_id\":\"1\"}}); set preserve_attributes:false on /to-json to drop them.",
                         "Conversion follows the fast-xml-parser data model: repeated sibling elements collapse into an array, text content uses the \"#text\" key alongside attributes, and the model is NOT guaranteed to round-trip byte-for-byte (whitespace, comments, CDATA framing and namespace prefixes may shift).",
-                        "/to-xml requires a JSON object at the top level; arrays or scalars are rejected. Numeric/boolean attribute values are parsed on the way in."
+                        "/to-xml requires a JSON object at the top level; arrays or scalars are rejected. Numeric/boolean attribute values are parsed on the way in.",
+                        "DTD/DOCTYPE entity definitions are NOT expanded \u2014 entity references are left literal \u2014 so exponential entity expansion (\"billion laughs\") cannot amplify the payload; external entities are never resolved (no XXE / no network or filesystem access)."
                       ]
                     },
                     "confidence_score": 1,
@@ -1566,7 +1584,7 @@
           },
           "x-pricing": {
             "model": "per_call",
-            "price_usdc": 0.012,
+            "price_usdc": 0.014,
             "currency": "USDC"
           },
           "x-one-call": true
@@ -2015,6 +2033,13 @@
                 "type": "string"
               },
               "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
             },
             "input_examples": {
               "type": "array",

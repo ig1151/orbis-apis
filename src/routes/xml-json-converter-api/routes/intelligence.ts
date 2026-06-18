@@ -64,6 +64,13 @@ const INVALIDATORS = [
   'XML attributes are preserved on the JSON side with the "@_" prefix (e.g. <a id="1"/> → {"a":{"@_id":"1"}}); set preserve_attributes:false on /to-json to drop them.',
   'Conversion follows the fast-xml-parser data model: repeated sibling elements collapse into an array, text content uses the "#text" key alongside attributes, and the model is NOT guaranteed to round-trip byte-for-byte (whitespace, comments, CDATA framing and namespace prefixes may shift).',
   '/to-xml requires a JSON object at the top level; arrays or scalars are rejected. Numeric/boolean attribute values are parsed on the way in.',
+  'DTD/DOCTYPE entity definitions are NOT expanded — entity references are left literal — so exponential entity expansion ("billion laughs") cannot amplify the payload; external entities are never resolved (no XXE / no network or filesystem access).',
+];
+
+const SECURITY_NOTES = [
+  'DTD/DOCTYPE internal entities are not expanded and external entities are not resolved: no entity-expansion amplification ("billion laughs") and no XXE / out-of-band fetches.',
+  'Element or attribute names that are reserved JavaScript keys ("__proto__", "constructor", "prototype") are rejected by the parser with a security error and returned as a 400 — they are never written onto a live object, so XML input cannot pollute prototypes.',
+  'No code execution, no I/O — pure in-memory validate → parse → serialize. Inputs are capped at 1,000,000 characters.',
 ];
 
 const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
@@ -78,6 +85,7 @@ export const DISCOVERY = {
   openapi_url: 'https://orbis-apis.onrender.com/xml-json-converter/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['xml_to_json', 'json_to_xml', 'xml_validation', 'attribute_preservation'],
+  security_notes: SECURITY_NOTES,
   typical_use_cases: [
     'Parse an XML API response or feed into JSON for programmatic use',
     'Serialize a JSON object back into XML for a legacy/SOAP endpoint',
@@ -92,14 +100,14 @@ export const DISCOVERY = {
     { endpoint: '/to-xml', response: { xml: '<note id="1">\n  <to>Ada</to>\n  <body>Hi</body>\n</note>\n', xml_length: 55 } },
   ],
   endpoints: [
-    { method: 'POST', path: '/to-json', summary: 'Convert XML to JSON', price_usdc: 0.006 },
-    { method: 'POST', path: '/to-xml', summary: 'Convert a JSON object to XML', price_usdc: 0.006 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL XML→JSON + reasoning', price_usdc: 0.012 },
+    { method: 'POST', path: '/to-json', summary: 'Convert XML to JSON', price_usdc: 0.007 },
+    { method: 'POST', path: '/to-xml', summary: 'Convert a JSON object to XML', price_usdc: 0.007 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL XML→JSON + reasoning', price_usdc: 0.014 },
   ],
   pricing: [
-    { path: '/to-json', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/to-xml', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.012, currency: 'USDC' },
+    { path: '/to-json', price_usdc: 0.007, currency: 'USDC' },
+    { path: '/to-xml', price_usdc: 0.007, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.014, currency: 'USDC' },
   ],
   x402_compatible: true,
 };

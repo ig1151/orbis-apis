@@ -403,6 +403,11 @@ export const DISCOVERY = {
   openapi_url: 'https://orbis-apis.onrender.com/data-format-converter/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['json_to_yaml', 'yaml_to_json', 'json_to_toml', 'toml_to_json', 'yaml_to_toml', 'format_detection'],
+  security_notes: [
+    '"__proto__", "constructor" and "prototype" keys are treated as ordinary data: the input is parsed and re-serialized only, never merged into a live object, so they cannot pollute prototypes.',
+    'No code execution, no I/O, no network or filesystem access — pure in-memory parse/serialize.',
+    'Inputs are capped at 1,000,000 characters; oversized payloads are rejected with a 400.',
+  ],
   typical_use_cases: [
     'Convert a YAML or TOML config file into JSON for programmatic consumption',
     'Emit a human-friendly YAML version of a JSON payload for a PR or docs',
@@ -607,6 +612,11 @@ export default specRouter(spec);
                     "toml_to_json",
                     "yaml_to_toml",
                     "format_detection"
+                  ],
+                  "security_notes": [
+                    "\"__proto__\", \"constructor\" and \"prototype\" keys are treated as ordinary data: the input is parsed and re-serialized only, never merged into a live object, so they cannot pollute prototypes.",
+                    "No code execution, no I/O, no network or filesystem access — pure in-memory parse/serialize.",
+                    "Inputs are capped at 1,000,000 characters; oversized payloads are rejected with a 400."
                   ],
                   "typical_use_cases": [
                     "Convert a YAML or TOML config file into JSON for programmatic consumption",
@@ -1543,6 +1553,13 @@ export default specRouter(spec);
             },
             "description": "Optional plain-language use cases to aid autonomous discovery."
           },
+          "security_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+          },
           "input_examples": {
             "type": "array",
             "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
@@ -1658,9 +1675,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "vcp2skm4-1781739719121",
-  "request_id": "vcp2skm4-1781739719121",
-  "computed_at": "2026-06-17T23:41:59.121Z",
+  "trace_id": "hhg7227h-1781741928981",
+  "request_id": "hhg7227h-1781741928981",
+  "computed_at": "2026-06-18T00:18:48.981Z",
   "success": true,
   "latency_ms": 0,
   "from": "toml",
@@ -1708,9 +1725,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "stznzmow-1781739719126",
-  "request_id": "stznzmow-1781739719126",
-  "computed_at": "2026-06-17T23:41:59.126Z",
+  "trace_id": "naftt5jm-1781741928987",
+  "request_id": "naftt5jm-1781741928987",
+  "computed_at": "2026-06-18T00:18:48.987Z",
   "success": true,
   "latency_ms": 1,
   "detected_format": "yaml",
@@ -1761,9 +1778,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "15xwq97t-1781739719129",
-  "request_id": "15xwq97t-1781739719129",
-  "computed_at": "2026-06-17T23:41:59.129Z",
+  "trace_id": "rk3q080a-1781741928989",
+  "request_id": "rk3q080a-1781741928989",
+  "computed_at": "2026-06-18T00:18:48.989Z",
   "success": true,
   "latency_ms": 0,
   "from": "toml",
@@ -1827,11 +1844,11 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "od4t7nav-1781739719131",
-  "request_id": "od4t7nav-1781739719131",
-  "computed_at": "2026-06-17T23:41:59.131Z",
+  "trace_id": "iv5ci7nf-1781741928991",
+  "request_id": "iv5ci7nf-1781741928991",
+  "computed_at": "2026-06-18T00:18:48.992Z",
   "success": false,
-  "latency_ms": 0,
+  "latency_ms": 1,
   "error": {
     "code": "invalid_request",
     "message": "Input is not valid json: Expected property name or '}' in JSON at position 1 (line 1 column 2)"
@@ -1851,9 +1868,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "5tzb1lpr-1781739719136",
-  "request_id": "5tzb1lpr-1781739719136",
-  "computed_at": "2026-06-17T23:41:59.136Z",
+  "trace_id": "j78152jq-1781741928998",
+  "request_id": "j78152jq-1781741928998",
+  "computed_at": "2026-06-18T00:18:48.998Z",
   "success": false,
   "latency_ms": 0,
   "error": {
@@ -1873,9 +1890,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "rnpist8o-1781739719139",
-  "request_id": "rnpist8o-1781739719139",
-  "computed_at": "2026-06-17T23:41:59.139Z",
+  "trace_id": "bhj8y6p2-1781741929000",
+  "request_id": "bhj8y6p2-1781741929000",
+  "computed_at": "2026-06-18T00:18:49.000Z",
   "success": false,
   "latency_ms": 0,
   "error": {
@@ -1957,6 +1974,13 @@ const INVALIDATORS = [
   'XML attributes are preserved on the JSON side with the "@_" prefix (e.g. <a id="1"/> → {"a":{"@_id":"1"}}); set preserve_attributes:false on /to-json to drop them.',
   'Conversion follows the fast-xml-parser data model: repeated sibling elements collapse into an array, text content uses the "#text" key alongside attributes, and the model is NOT guaranteed to round-trip byte-for-byte (whitespace, comments, CDATA framing and namespace prefixes may shift).',
   '/to-xml requires a JSON object at the top level; arrays or scalars are rejected. Numeric/boolean attribute values are parsed on the way in.',
+  'DTD/DOCTYPE entity definitions are NOT expanded — entity references are left literal — so exponential entity expansion ("billion laughs") cannot amplify the payload; external entities are never resolved (no XXE / no network or filesystem access).',
+];
+
+const SECURITY_NOTES = [
+  'DTD/DOCTYPE internal entities are not expanded and external entities are not resolved: no entity-expansion amplification ("billion laughs") and no XXE / out-of-band fetches.',
+  'Element or attribute names that are reserved JavaScript keys ("__proto__", "constructor", "prototype") are rejected by the parser with a security error and returned as a 400 — they are never written onto a live object, so XML input cannot pollute prototypes.',
+  'No code execution, no I/O — pure in-memory validate → parse → serialize. Inputs are capped at 1,000,000 characters.',
 ];
 
 const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
@@ -1971,6 +1995,7 @@ export const DISCOVERY = {
   openapi_url: 'https://orbis-apis.onrender.com/xml-json-converter/openapi.json',
   auth: { type: 'apiKey', header: 'X-API-Key' },
   capabilities: ['xml_to_json', 'json_to_xml', 'xml_validation', 'attribute_preservation'],
+  security_notes: SECURITY_NOTES,
   typical_use_cases: [
     'Parse an XML API response or feed into JSON for programmatic use',
     'Serialize a JSON object back into XML for a legacy/SOAP endpoint',
@@ -1985,14 +2010,14 @@ export const DISCOVERY = {
     { endpoint: '/to-xml', response: { xml: '<note id="1">\n  <to>Ada</to>\n  <body>Hi</body>\n</note>\n', xml_length: 55 } },
   ],
   endpoints: [
-    { method: 'POST', path: '/to-json', summary: 'Convert XML to JSON', price_usdc: 0.006 },
-    { method: 'POST', path: '/to-xml', summary: 'Convert a JSON object to XML', price_usdc: 0.006 },
-    { method: 'POST', path: '/lookup', summary: 'ONE-CALL XML→JSON + reasoning', price_usdc: 0.012 },
+    { method: 'POST', path: '/to-json', summary: 'Convert XML to JSON', price_usdc: 0.007 },
+    { method: 'POST', path: '/to-xml', summary: 'Convert a JSON object to XML', price_usdc: 0.007 },
+    { method: 'POST', path: '/lookup', summary: 'ONE-CALL XML→JSON + reasoning', price_usdc: 0.014 },
   ],
   pricing: [
-    { path: '/to-json', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/to-xml', price_usdc: 0.006, currency: 'USDC' },
-    { path: '/lookup', price_usdc: 0.012, currency: 'USDC' },
+    { path: '/to-json', price_usdc: 0.007, currency: 'USDC' },
+    { path: '/to-xml', price_usdc: 0.007, currency: 'USDC' },
+    { path: '/lookup', price_usdc: 0.014, currency: 'USDC' },
   ],
   x402_compatible: true,
 };
@@ -2120,9 +2145,9 @@ const schemas = {
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
-  { method: 'post', path: '/to-json', summary: 'Convert XML to JSON', operationId: 'toJson', priceUsdc: 0.006, requestSchemaRef: 'ToJsonRequest', responseSchemaRef: 'ToJsonResponse', requestExample: toJsonReq, responseExample: toJsonExample },
-  { method: 'post', path: '/to-xml', summary: 'Convert a JSON object to XML', operationId: 'toXml', priceUsdc: 0.006, requestSchemaRef: 'ToXmlRequest', responseSchemaRef: 'ToXmlResponse', requestExample: toXmlReq, responseExample: toXmlExample },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL XML→JSON + reasoning', operationId: 'lookup', priceUsdc: 0.012, oneCall: true, requestSchemaRef: 'ToJsonRequest', responseSchemaRef: 'LookupResponse', requestExample: toJsonReq, responseExample: lookupExample },
+  { method: 'post', path: '/to-json', summary: 'Convert XML to JSON', operationId: 'toJson', priceUsdc: 0.007, requestSchemaRef: 'ToJsonRequest', responseSchemaRef: 'ToJsonResponse', requestExample: toJsonReq, responseExample: toJsonExample },
+  { method: 'post', path: '/to-xml', summary: 'Convert a JSON object to XML', operationId: 'toXml', priceUsdc: 0.007, requestSchemaRef: 'ToXmlRequest', responseSchemaRef: 'ToXmlResponse', requestExample: toXmlReq, responseExample: toXmlExample },
+  { method: 'post', path: '/lookup', summary: 'ONE-CALL XML→JSON + reasoning', operationId: 'lookup', priceUsdc: 0.014, oneCall: true, requestSchemaRef: 'ToJsonRequest', responseSchemaRef: 'LookupResponse', requestExample: toJsonReq, responseExample: lookupExample },
 ];
 
 export const spec = buildAplusSpec({
@@ -2188,6 +2213,11 @@ export default specRouter(spec);
                     "xml_validation",
                     "attribute_preservation"
                   ],
+                  "security_notes": [
+                    "DTD/DOCTYPE internal entities are not expanded and external entities are not resolved: no entity-expansion amplification (\"billion laughs\") and no XXE / out-of-band fetches.",
+                    "Element or attribute names that are reserved JavaScript keys (\"__proto__\", \"constructor\", \"prototype\") are rejected by the parser with a security error and returned as a 400 — they are never written onto a live object, so XML input cannot pollute prototypes.",
+                    "No code execution, no I/O — pure in-memory validate → parse → serialize. Inputs are capped at 1,000,000 characters."
+                  ],
                   "typical_use_cases": [
                     "Parse an XML API response or feed into JSON for programmatic use",
                     "Serialize a JSON object back into XML for a legacy/SOAP endpoint",
@@ -2244,35 +2274,35 @@ export default specRouter(spec);
                       "method": "POST",
                       "path": "/to-json",
                       "summary": "Convert XML to JSON",
-                      "price_usdc": 0.006
+                      "price_usdc": 0.007
                     },
                     {
                       "method": "POST",
                       "path": "/to-xml",
                       "summary": "Convert a JSON object to XML",
-                      "price_usdc": 0.006
+                      "price_usdc": 0.007
                     },
                     {
                       "method": "POST",
                       "path": "/lookup",
                       "summary": "ONE-CALL XML→JSON + reasoning",
-                      "price_usdc": 0.012
+                      "price_usdc": 0.014
                     }
                   ],
                   "pricing": [
                     {
                       "path": "/to-json",
-                      "price_usdc": 0.006,
+                      "price_usdc": 0.007,
                       "currency": "USDC"
                     },
                     {
                       "path": "/to-xml",
-                      "price_usdc": 0.006,
+                      "price_usdc": 0.007,
                       "currency": "USDC"
                     },
                     {
                       "path": "/lookup",
-                      "price_usdc": 0.012,
+                      "price_usdc": 0.014,
                       "currency": "USDC"
                     }
                   ],
@@ -2401,7 +2431,7 @@ export default specRouter(spec);
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.006,
+          "price_usdc": 0.007,
           "currency": "USDC"
         }
       }
@@ -2499,7 +2529,7 @@ export default specRouter(spec);
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.006,
+          "price_usdc": 0.007,
           "currency": "USDC"
         }
       }
@@ -2544,7 +2574,8 @@ export default specRouter(spec);
                     "invalidators": [
                       "XML attributes are preserved on the JSON side with the \"@_\" prefix (e.g. <a id=\"1\"/> → {\"a\":{\"@_id\":\"1\"}}); set preserve_attributes:false on /to-json to drop them.",
                       "Conversion follows the fast-xml-parser data model: repeated sibling elements collapse into an array, text content uses the \"#text\" key alongside attributes, and the model is NOT guaranteed to round-trip byte-for-byte (whitespace, comments, CDATA framing and namespace prefixes may shift).",
-                      "/to-xml requires a JSON object at the top level; arrays or scalars are rejected. Numeric/boolean attribute values are parsed on the way in."
+                      "/to-xml requires a JSON object at the top level; arrays or scalars are rejected. Numeric/boolean attribute values are parsed on the way in.",
+                      "DTD/DOCTYPE entity definitions are NOT expanded — entity references are left literal — so exponential entity expansion (\"billion laughs\") cannot amplify the payload; external entities are never resolved (no XXE / no network or filesystem access)."
                     ]
                   },
                   "confidence_score": 1,
@@ -2614,7 +2645,7 @@ export default specRouter(spec);
         },
         "x-pricing": {
           "model": "per_call",
-          "price_usdc": 0.012,
+          "price_usdc": 0.014,
           "currency": "USDC"
         },
         "x-one-call": true
@@ -3064,6 +3095,13 @@ export default specRouter(spec);
             },
             "description": "Optional plain-language use cases to aid autonomous discovery."
           },
+          "security_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+          },
           "input_examples": {
             "type": "array",
             "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
@@ -3177,11 +3215,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "paxr682t-1781739719145",
-  "request_id": "paxr682t-1781739719145",
-  "computed_at": "2026-06-17T23:41:59.145Z",
+  "trace_id": "nkkx3dxa-1781741929008",
+  "request_id": "nkkx3dxa-1781741929008",
+  "computed_at": "2026-06-18T00:18:49.008Z",
   "success": true,
-  "latency_ms": 1,
+  "latency_ms": 0,
   "json": {
     "note": {
       "to": "Ada",
@@ -3240,11 +3278,11 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "0m3hzn0j-1781739719151",
-  "request_id": "0m3hzn0j-1781739719151",
-  "computed_at": "2026-06-17T23:41:59.151Z",
+  "trace_id": "0kkag46t-1781741929012",
+  "request_id": "0kkag46t-1781741929012",
+  "computed_at": "2026-06-18T00:18:49.012Z",
   "success": true,
-  "latency_ms": 1,
+  "latency_ms": 2,
   "xml": "<note id=\"1\">\n  <to>Ada</to>\n  <body>Hi</body>\n</note>\n",
   "xml_length": 55,
   "confidence_score": 1,
@@ -3287,9 +3325,9 @@ Request:
 Response (HTTP 200):
 ```json
 {
-  "trace_id": "uaqimwof-1781739719156",
-  "request_id": "uaqimwof-1781739719156",
-  "computed_at": "2026-06-17T23:41:59.156Z",
+  "trace_id": "j3pqhb03-1781741929018",
+  "request_id": "j3pqhb03-1781741929018",
+  "computed_at": "2026-06-18T00:18:49.018Z",
   "success": true,
   "latency_ms": 0,
   "json": {
@@ -3314,7 +3352,8 @@ Response (HTTP 200):
     "invalidators": [
       "XML attributes are preserved on the JSON side with the \"@_\" prefix (e.g. <a id=\"1\"/> → {\"a\":{\"@_id\":\"1\"}}); set preserve_attributes:false on /to-json to drop them.",
       "Conversion follows the fast-xml-parser data model: repeated sibling elements collapse into an array, text content uses the \"#text\" key alongside attributes, and the model is NOT guaranteed to round-trip byte-for-byte (whitespace, comments, CDATA framing and namespace prefixes may shift).",
-      "/to-xml requires a JSON object at the top level; arrays or scalars are rejected. Numeric/boolean attribute values are parsed on the way in."
+      "/to-xml requires a JSON object at the top level; arrays or scalars are rejected. Numeric/boolean attribute values are parsed on the way in.",
+      "DTD/DOCTYPE entity definitions are NOT expanded — entity references are left literal — so exponential entity expansion (\"billion laughs\") cannot amplify the payload; external entities are never resolved (no XXE / no network or filesystem access)."
     ]
   },
   "confidence_score": 1,
@@ -3358,9 +3397,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "38xgo7jt-1781739719161",
-  "request_id": "38xgo7jt-1781739719161",
-  "computed_at": "2026-06-17T23:41:59.161Z",
+  "trace_id": "odn2ibi7-1781741929020",
+  "request_id": "odn2ibi7-1781741929020",
+  "computed_at": "2026-06-18T00:18:49.020Z",
   "success": false,
   "latency_ms": 0,
   "error": {
@@ -3384,9 +3423,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "xz6nsx3d-1781739719163",
-  "request_id": "xz6nsx3d-1781739719163",
-  "computed_at": "2026-06-17T23:41:59.163Z",
+  "trace_id": "3euw83k2-1781741929022",
+  "request_id": "3euw83k2-1781741929022",
+  "computed_at": "2026-06-18T00:18:49.022Z",
   "success": false,
   "latency_ms": 0,
   "error": {
@@ -3406,9 +3445,9 @@ Request:
 Response (HTTP 400):
 ```json
 {
-  "trace_id": "wwwem15r-1781739719165",
-  "request_id": "wwwem15r-1781739719165",
-  "computed_at": "2026-06-17T23:41:59.165Z",
+  "trace_id": "ri4w7ae8-1781741929023",
+  "request_id": "ri4w7ae8-1781741929023",
+  "computed_at": "2026-06-18T00:18:49.023Z",
   "success": false,
   "latency_ms": 0,
   "error": {
