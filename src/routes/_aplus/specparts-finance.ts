@@ -7,9 +7,12 @@ import { Tail } from './specparts';
 
 export const TailFinance = {
   type: 'object',
-  required: [...(Tail as any).required, 'financial_disclaimer'],
+  required: [...(Tail as any).required, 'calculation_certainty', 'financial_disclaimer'],
   properties: {
     ...(Tail as any).properties,
+    // Deterministic math: the computation itself is exact given valid inputs. Exposed
+    // alongside confidence_score so agents don't read confidence as *predictive* confidence.
+    calculation_certainty: { type: 'number', minimum: 0, maximum: 1, description: 'Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction).' },
     financial_disclaimer: { type: 'string', description: 'Informational-only disclaimer; not financial advice.' },
   },
 };

@@ -1,891 +1,958 @@
 {
-    "openapi": "3.1.0",
-    "info": {
-        "title": "DCF Valuation API",
-        "version": "1.0.0",
-        "description": "Deterministic DCF valuation \u2014 PV of projected free cash flows + optional Gordon terminal value, equity & per-share value, discount-rate sensitivity. No LLM.",
-        "x-agent-callable": true,
-        "x-mcp-compatible": true,
-        "x402-compatible": true,
-        "x-agent-marketplace-ready": true,
-        "x-pay-per-call-optimized": true,
-        "x-finance-tool": true,
-        "x-financial-calculation": true,
-        "x-human-approval-required": false
-    },
-    "servers": [
-        {
-            "url": "https://orbis-apis.onrender.com/dcf-valuation"
-        }
-    ],
-    "security": [
-        {
-            "ApiKeyAuth": []
-        }
-    ],
-    "paths": {
-        "/": {
-            "get": {
-                "operationId": "discover",
-                "summary": "Service discovery",
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/DiscoveryResponse"
-                                },
-                                "example": {
-                                    "name": "DCF Valuation API",
-                                    "version": "1.0.0",
-                                    "description": "Deterministic discounted-cash-flow valuation. Discounts projected free cash flows (years 1..n) at a discount rate and adds an optional Gordon-growth terminal value; optionally nets debt and divides by shares for equity / per-share value. /lookup adds a discount-rate sensitivity grid. No LLM, nothing stored.",
-                                    "openapi_url": "https://orbis-apis.onrender.com/dcf-valuation/openapi.json",
-                                    "auth": {
-                                        "type": "apiKey",
-                                        "header": "X-API-Key"
-                                    },
-                                    "capabilities": [
-                                        "dcf",
-                                        "valuation",
-                                        "enterprise_value",
-                                        "terminal_value",
-                                        "equity_value"
-                                    ],
-                                    "typical_use_cases": [
-                                        "Value a company from projected free cash flows",
-                                        "Derive an implied per-share value net of debt",
-                                        "Stress-test enterprise value across discount rates"
-                                    ],
-                                    "endpoints": [
-                                        {
-                                            "method": "POST",
-                                            "path": "/value",
-                                            "summary": "Enterprise / equity value from projected FCF",
-                                            "price_usdc": 0.01
-                                        },
-                                        {
-                                            "method": "POST",
-                                            "path": "/lookup",
-                                            "summary": "ONE-CALL valuation + sensitivity + reasoning",
-                                            "price_usdc": 0.016
-                                        }
-                                    ],
-                                    "pricing": [
-                                        {
-                                            "path": "/value",
-                                            "price_usdc": 0.01,
-                                            "currency": "USDC"
-                                        },
-                                        {
-                                            "path": "/lookup",
-                                            "price_usdc": 0.016,
-                                            "currency": "USDC"
-                                        }
-                                    ],
-                                    "x402_compatible": true
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error400"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error500"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/value": {
-            "post": {
-                "operationId": "value",
-                "summary": "Enterprise / equity value from projected FCF",
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValueResponse"
-                                },
-                                "example": {
-                                    "trace_id": "gdx-1780000000000",
-                                    "request_id": "gdx-1780000000000",
-                                    "computed_at": "2026-06-16T12:00:00.000Z",
-                                    "success": true,
-                                    "latency_ms": 1,
-                                    "years": 5,
-                                    "discount_rate_percent": 10,
-                                    "terminal_growth_percent": 2.5,
-                                    "pv_explicit": 557.821435,
-                                    "terminal_value": 2460,
-                                    "pv_terminal": 1527.466455,
-                                    "enterprise_value": 2085.28789,
-                                    "equity_value": 1885.28789,
-                                    "value_per_share": 18.852879,
-                                    "confidence_score": 1,
-                                    "confidence_per_section": {
-                                        "valuation": 1
-                                    },
-                                    "recommended_actions_priority_order": [
-                                        "Enterprise value is 2085.28789 (557.821435 explicit + 1527.466455 terminal).",
-                                        "Implied value per share: 18.852879."
-                                    ],
-                                    "chain_to": [
-                                        {
-                                            "api": "npv-irr",
-                                            "reason": "Compute the IRR of the same projected cashflow stream."
-                                        },
-                                        {
-                                            "api": "risk-ratios",
-                                            "reason": "Assess the risk-adjusted return of the valued asset in a portfolio."
-                                        }
-                                    ],
-                                    "privacy": {
-                                        "data_stored": false,
-                                        "retention": "none"
-                                    },
-                                    "execution_metadata": {
-                                        "model": "deterministic",
-                                        "automation_safe": true
-                                    },
-                                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error400"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error500"
-                                }
-                            }
-                        }
-                    }
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DCF Valuation API",
+    "version": "1.0.0",
+    "description": "Deterministic DCF valuation — PV of projected free cash flows + optional Gordon terminal value, equity & per-share value, discount-rate sensitivity. No LLM.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "x-finance-tool": true,
+    "x-financial-calculation": true,
+    "x-human-approval-required": false
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Service discovery",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
                 },
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/DcfRequest"
-                            },
-                            "example": {
-                                "cashflows": [
-                                    120,
-                                    135,
-                                    150,
-                                    165,
-                                    180
-                                ],
-                                "discount_rate": 10,
-                                "terminal_growth_rate": 2.5,
-                                "net_debt": 200,
-                                "shares_outstanding": 100
-                            }
-                        }
-                    }
-                },
-                "x-pricing": {
-                    "model": "per_call",
-                    "price_usdc": 0.01,
-                    "currency": "USDC"
-                }
-            }
-        },
-        "/lookup": {
-            "post": {
-                "operationId": "lookup",
-                "summary": "ONE-CALL valuation + sensitivity + reasoning",
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/LookupResponse"
-                                },
-                                "example": {
-                                    "trace_id": "gdx-1780000000000",
-                                    "request_id": "gdx-1780000000000",
-                                    "computed_at": "2026-06-16T12:00:00.000Z",
-                                    "success": true,
-                                    "latency_ms": 1,
-                                    "years": 5,
-                                    "discount_rate_percent": 10,
-                                    "terminal_growth_percent": 2.5,
-                                    "pv_explicit": 557.821435,
-                                    "terminal_value": 2460,
-                                    "pv_terminal": 1527.466455,
-                                    "enterprise_value": 2085.28789,
-                                    "equity_value": 1885.28789,
-                                    "value_per_share": 18.852879,
-                                    "discount_rate_sensitivity": [
-                                        {
-                                            "discount_rate_percent": 8,
-                                            "enterprise_value": 2872.758859
-                                        },
-                                        {
-                                            "discount_rate_percent": 9,
-                                            "enterprise_value": 2418.229116
-                                        },
-                                        {
-                                            "discount_rate_percent": 10,
-                                            "enterprise_value": 2085.28789
-                                        },
-                                        {
-                                            "discount_rate_percent": 11,
-                                            "enterprise_value": 1831.006164
-                                        },
-                                        {
-                                            "discount_rate_percent": 12,
-                                            "enterprise_value": 1630.531068
-                                        }
-                                    ],
-                                    "reasoning": {
-                                        "why_result_generated": "Discounted 5 year(s) of free cash flow at 10% with a 2.5% Gordon terminal value.",
-                                        "key_factors": [
-                                            "Enterprise value 2085.28789 = 557.821435 explicit + 1527.466455 terminal.",
-                                            "Terminal value is 1527.466455 of EV (73.2%).",
-                                            "Value per share 18.852879."
-                                        ],
-                                        "invalidators": [
-                                            "Cashflows are discounted as YEAR-END amounts (year 1..n) at a flat annual discount rate; there is no mid-year convention. A terminal value is added only when terminal_growth_rate is supplied (Gordon growth on the final year).",
-                                            "The Gordon terminal value requires discount_rate > terminal_growth_rate and is extremely sensitive near r\u2248g \u2014 a small change in either input can swing enterprise value dramatically (see the /lookup sensitivity grid).",
-                                            "enterprise_value is pre-capital-structure; equity_value subtracts net_debt and value_per_share divides by shares_outstanding only when you supply them. Results are only as good as the projected free cash flows you provide."
-                                        ]
-                                    },
-                                    "confidence_score": 1,
-                                    "confidence_per_section": {
-                                        "valuation": 1
-                                    },
-                                    "recommended_actions_priority_order": [
-                                        "Use enterprise value 2085.28789; check the sensitivity grid \u2014 terminal value drives 73% of it."
-                                    ],
-                                    "chain_to": [
-                                        {
-                                            "api": "npv-irr",
-                                            "reason": "Compute the IRR of the same projected cashflow stream."
-                                        },
-                                        {
-                                            "api": "risk-ratios",
-                                            "reason": "Assess the risk-adjusted return of the valued asset in a portfolio."
-                                        }
-                                    ],
-                                    "privacy": {
-                                        "data_stored": false,
-                                        "retention": "none"
-                                    },
-                                    "execution_metadata": {
-                                        "model": "deterministic",
-                                        "automation_safe": true
-                                    },
-                                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error400"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Error500"
-                                }
-                            }
-                        }
-                    }
-                },
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/DcfRequest"
-                            },
-                            "example": {
-                                "cashflows": [
-                                    120,
-                                    135,
-                                    150,
-                                    165,
-                                    180
-                                ],
-                                "discount_rate": 10,
-                                "terminal_growth_rate": 2.5,
-                                "net_debt": 200,
-                                "shares_outstanding": 100
-                            }
-                        }
-                    }
-                },
-                "x-pricing": {
-                    "model": "per_call",
-                    "price_usdc": 0.016,
-                    "currency": "USDC"
-                },
-                "x-one-call": true
-            }
-        }
-    },
-    "components": {
-        "securitySchemes": {
-            "ApiKeyAuth": {
-                "type": "apiKey",
-                "in": "header",
-                "name": "X-API-Key"
-            }
-        },
-        "schemas": {
-            "ChainTo": {
-                "type": "object",
-                "required": [
-                    "api",
-                    "reason"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "api": {
-                        "type": "string",
-                        "description": "Slug of a recommended next API to call."
-                    },
-                    "reason": {
-                        "type": "string",
-                        "description": "Why an agent would chain to this API next."
-                    }
-                }
-            },
-            "Reasoning": {
-                "type": "object",
-                "required": [
-                    "why_result_generated",
-                    "key_factors",
-                    "invalidators"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "why_result_generated": {
-                        "type": "string"
-                    },
-                    "key_factors": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "invalidators": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "Conditions that would change or invalidate this result."
-                    }
-                }
-            },
-            "Privacy": {
-                "type": "object",
-                "required": [
-                    "data_stored",
-                    "retention"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "data_stored": {
-                        "type": "boolean"
-                    },
-                    "retention": {
-                        "type": "string",
-                        "description": "Retention policy, e.g. \"none\"."
-                    }
-                }
-            },
-            "EnvelopeError": {
-                "type": "object",
-                "required": [
-                    "code",
-                    "message"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "code": {
-                        "type": "string"
-                    },
-                    "message": {
-                        "type": "string"
-                    },
-                    "details": {
-                        "description": "Optional machine-readable error context."
-                    }
-                }
-            },
-            "Error400": {
-                "type": "object",
-                "required": [
-                    "trace_id",
-                    "computed_at",
-                    "success",
-                    "latency_ms",
-                    "error"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "trace_id": {
-                        "type": "string"
-                    },
-                    "request_id": {
-                        "type": "string",
-                        "description": "Alias of trace_id."
-                    },
-                    "computed_at": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "success": {
-                        "type": "boolean",
-                        "enum": [
-                            false
-                        ]
-                    },
-                    "latency_ms": {
-                        "type": "integer"
-                    },
-                    "error": {
-                        "$ref": "#/components/schemas/EnvelopeError"
-                    }
-                }
-            },
-            "Error500": {
-                "$ref": "#/components/schemas/Error400"
-            },
-            "EnvelopeOk": {
-                "type": "object",
-                "required": [
-                    "trace_id",
-                    "computed_at",
-                    "success",
-                    "latency_ms"
-                ],
-                "properties": {
-                    "trace_id": {
-                        "type": "string"
-                    },
-                    "request_id": {
-                        "type": "string",
-                        "description": "Alias of trace_id for clients that key on request_id."
-                    },
-                    "computed_at": {
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "success": {
-                        "type": "boolean",
-                        "enum": [
-                            true
-                        ]
-                    },
-                    "latency_ms": {
-                        "type": "integer",
-                        "minimum": 0
-                    }
-                }
-            },
-            "ExecutionMetadata": {
-                "type": "object",
-                "required": [
-                    "model",
-                    "automation_safe"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "model": {
-                        "type": "string",
-                        "enum": [
-                            "deterministic"
-                        ]
-                    },
-                    "automation_safe": {
-                        "type": "boolean"
-                    }
-                }
-            },
-            "ConfidencePerSection": {
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                    "valuation": {
-                        "type": "number",
-                        "minimum": 0,
-                        "maximum": 1
-                    }
-                }
-            },
-            "_Tail": {
-                "type": "object",
-                "required": [
-                    "confidence_score",
-                    "confidence_per_section",
-                    "recommended_actions_priority_order",
-                    "chain_to",
-                    "privacy",
-                    "execution_metadata",
-                    "financial_disclaimer"
-                ],
-                "properties": {
-                    "confidence_score": {
-                        "type": "number",
-                        "minimum": 0,
-                        "maximum": 1
-                    },
-                    "confidence_per_section": {
-                        "$ref": "#/components/schemas/ConfidencePerSection"
-                    },
-                    "recommended_actions_priority_order": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "chain_to": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ChainTo"
-                        }
-                    },
-                    "privacy": {
-                        "$ref": "#/components/schemas/Privacy"
-                    },
-                    "execution_metadata": {
-                        "$ref": "#/components/schemas/ExecutionMetadata"
-                    },
-                    "financial_disclaimer": {
-                        "type": "string",
-                        "description": "Informational-only disclaimer; not financial advice."
-                    }
-                }
-            },
-            "DcfCore": {
-                "type": "object",
-                "required": [
-                    "years",
-                    "discount_rate_percent",
-                    "terminal_growth_percent",
-                    "pv_explicit",
-                    "terminal_value",
-                    "pv_terminal",
+                "example": {
+                  "name": "DCF Valuation API",
+                  "version": "1.0.0",
+                  "description": "Deterministic discounted-cash-flow valuation. Discounts projected free cash flows (years 1..n) at a discount rate and adds an optional Gordon-growth terminal value; optionally nets debt and divides by shares for equity / per-share value. /lookup adds a discount-rate sensitivity grid. No LLM, nothing stored.",
+                  "openapi_url": "https://orbis-apis.onrender.com/dcf-valuation/openapi.json",
+                  "auth": {
+                    "type": "apiKey",
+                    "header": "X-API-Key"
+                  },
+                  "capabilities": [
+                    "dcf",
+                    "valuation",
                     "enterprise_value",
-                    "equity_value",
-                    "value_per_share"
-                ],
-                "properties": {
-                    "years": {
-                        "type": "integer",
-                        "minimum": 1
+                    "terminal_value",
+                    "equity_value"
+                  ],
+                  "typical_use_cases": [
+                    "Value a company from projected free cash flows",
+                    "Derive an implied per-share value net of debt",
+                    "Stress-test enterprise value across discount rates"
+                  ],
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/value",
+                      "summary": "Enterprise / equity value from projected FCF",
+                      "price_usdc": 0.01
                     },
-                    "discount_rate_percent": {
-                        "type": "number"
-                    },
-                    "terminal_growth_percent": {
-                        "type": [
-                            "number",
-                            "null"
-                        ]
-                    },
-                    "pv_explicit": {
-                        "type": "number"
-                    },
-                    "terminal_value": {
-                        "type": "number"
-                    },
-                    "pv_terminal": {
-                        "type": "number"
-                    },
-                    "enterprise_value": {
-                        "type": "number"
-                    },
-                    "equity_value": {
-                        "type": [
-                            "number",
-                            "null"
-                        ]
-                    },
-                    "value_per_share": {
-                        "type": [
-                            "number",
-                            "null"
-                        ]
+                    {
+                      "method": "POST",
+                      "path": "/lookup",
+                      "summary": "ONE-CALL valuation + sensitivity + reasoning",
+                      "price_usdc": 0.016
                     }
+                  ],
+                  "pricing": [
+                    {
+                      "path": "/value",
+                      "price_usdc": 0.01,
+                      "currency": "USDC"
+                    },
+                    {
+                      "path": "/lookup",
+                      "price_usdc": 0.016,
+                      "currency": "USDC"
+                    }
+                  ],
+                  "x402_compatible": true
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/value": {
+      "post": {
+        "operationId": "value",
+        "summary": "Enterprise / equity value from projected FCF",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValueResponse"
+                },
+                "example": {
+                  "trace_id": "gdx-1780000000000",
+                  "request_id": "gdx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "years": 5,
+                  "discount_rate_percent": 10,
+                  "terminal_growth_percent": 2.5,
+                  "pv_explicit": 557.821435,
+                  "terminal_value": 2460,
+                  "pv_terminal": 1527.466455,
+                  "enterprise_value": 2085.28789,
+                  "equity_value": 1885.28789,
+                  "value_per_share": 18.852879,
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "valuation": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Enterprise value is 2085.28789 (557.821435 explicit + 1527.466455 terminal).",
+                    "Implied value per share: 18.852879."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "npv-irr",
+                      "reason": "Compute the IRR of the same projected cashflow stream.",
+                      "url": "https://orbis-apis.onrender.com/npv-irr"
+                    },
+                    {
+                      "api": "risk-ratios",
+                      "reason": "Assess the risk-adjusted return of the valued asset in a portfolio.",
+                      "url": "https://orbis-apis.onrender.com/risk-ratios"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DcfRequest"
+              },
+              "example": {
+                "cashflows": [
+                  120,
+                  135,
+                  150,
+                  165,
+                  180
+                ],
+                "discount_rate": 10,
+                "terminal_growth_rate": 2.5,
+                "net_debt": 200,
+                "shares_outstanding": 100
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.01,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL valuation + sensitivity + reasoning",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookupResponse"
+                },
+                "example": {
+                  "trace_id": "gdx-1780000000000",
+                  "request_id": "gdx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "years": 5,
+                  "discount_rate_percent": 10,
+                  "terminal_growth_percent": 2.5,
+                  "pv_explicit": 557.821435,
+                  "terminal_value": 2460,
+                  "pv_terminal": 1527.466455,
+                  "enterprise_value": 2085.28789,
+                  "equity_value": 1885.28789,
+                  "value_per_share": 18.852879,
+                  "discount_rate_sensitivity": [
+                    {
+                      "discount_rate_percent": 8,
+                      "enterprise_value": 2872.758859
+                    },
+                    {
+                      "discount_rate_percent": 9,
+                      "enterprise_value": 2418.229116
+                    },
+                    {
+                      "discount_rate_percent": 10,
+                      "enterprise_value": 2085.28789
+                    },
+                    {
+                      "discount_rate_percent": 11,
+                      "enterprise_value": 1831.006164
+                    },
+                    {
+                      "discount_rate_percent": 12,
+                      "enterprise_value": 1630.531068
+                    }
+                  ],
+                  "reasoning": {
+                    "why_result_generated": "Discounted 5 year(s) of free cash flow at 10% with a 2.5% Gordon terminal value.",
+                    "key_factors": [
+                      "Enterprise value 2085.28789 = 557.821435 explicit + 1527.466455 terminal.",
+                      "Terminal value is 1527.466455 of EV (73.2%).",
+                      "Value per share 18.852879."
+                    ],
+                    "invalidators": [
+                      "Cashflows are discounted as YEAR-END amounts (year 1..n) at a flat annual discount rate; there is no mid-year convention. A terminal value is added only when terminal_growth_rate is supplied (Gordon growth on the final year).",
+                      "The Gordon terminal value requires discount_rate > terminal_growth_rate and is extremely sensitive near r≈g — a small change in either input can swing enterprise value dramatically (see the /lookup sensitivity grid).",
+                      "enterprise_value is pre-capital-structure; equity_value subtracts net_debt and value_per_share divides by shares_outstanding only when you supply them. Results are only as good as the projected free cash flows you provide."
+                    ]
+                  },
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "valuation": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Use enterprise value 2085.28789; check the sensitivity grid — terminal value drives 73% of it."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "npv-irr",
+                      "reason": "Compute the IRR of the same projected cashflow stream.",
+                      "url": "https://orbis-apis.onrender.com/npv-irr"
+                    },
+                    {
+                      "api": "risk-ratios",
+                      "reason": "Assess the risk-adjusted return of the valued asset in a portfolio.",
+                      "url": "https://orbis-apis.onrender.com/risk-ratios"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DcfRequest"
+              },
+              "example": {
+                "cashflows": [
+                  120,
+                  135,
+                  150,
+                  165,
+                  180
+                ],
+                "discount_rate": 10,
+                "terminal_growth_rate": 2.5,
+                "net_debt": 200,
+                "shares_outstanding": 100
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.016,
+          "currency": "USDC"
+        },
+        "x-one-call": true
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "ChainTo": {
+        "type": "object",
+        "required": [
+          "api",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "api": {
+            "type": "string",
+            "description": "Slug of a recommended next API to call."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why an agent would chain to this API next."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+          }
+        }
+      },
+      "Reasoning": {
+        "type": "object",
+        "required": [
+          "why_result_generated",
+          "key_factors",
+          "invalidators"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "why_result_generated": {
+            "type": "string"
+          },
+          "key_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invalidators": {
+            "type": "array",
+            "items": {
+              "type": "string"
             },
-            "SensitivityItem": {
-                "type": "object",
-                "required": [
+            "description": "Conditions that would change or invalidate this result."
+          }
+        }
+      },
+      "Privacy": {
+        "type": "object",
+        "required": [
+          "data_stored",
+          "retention"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data_stored": {
+            "type": "boolean"
+          },
+          "retention": {
+            "type": "string",
+            "description": "Retention policy, e.g. \"none\"."
+          }
+        }
+      },
+      "EnvelopeError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "description": "Optional machine-readable error context."
+          }
+        }
+      },
+      "Error400": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms",
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "latency_ms": {
+            "type": "integer"
+          },
+          "error": {
+            "$ref": "#/components/schemas/EnvelopeError"
+          }
+        }
+      },
+      "Error500": {
+        "$ref": "#/components/schemas/Error400"
+      },
+      "EnvelopeOk": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id for clients that key on request_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "latency_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "ExecutionMetadata": {
+        "type": "object",
+        "required": [
+          "model",
+          "automation_safe"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "deterministic"
+            ]
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ConfidencePerSection": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "valuation": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "_Tail": {
+        "type": "object",
+        "required": [
+          "confidence_score",
+          "confidence_per_section",
+          "recommended_actions_priority_order",
+          "chain_to",
+          "privacy",
+          "execution_metadata",
+          "calculation_certainty",
+          "financial_disclaimer"
+        ],
+        "properties": {
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "confidence_per_section": {
+            "$ref": "#/components/schemas/ConfidencePerSection"
+          },
+          "recommended_actions_priority_order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "chain_to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChainTo"
+            }
+          },
+          "privacy": {
+            "$ref": "#/components/schemas/Privacy"
+          },
+          "execution_metadata": {
+            "$ref": "#/components/schemas/ExecutionMetadata"
+          },
+          "calculation_certainty": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+          },
+          "financial_disclaimer": {
+            "type": "string",
+            "description": "Informational-only disclaimer; not financial advice."
+          }
+        }
+      },
+      "DcfCore": {
+        "type": "object",
+        "required": [
+          "years",
+          "discount_rate_percent",
+          "terminal_growth_percent",
+          "pv_explicit",
+          "terminal_value",
+          "pv_terminal",
+          "enterprise_value",
+          "equity_value",
+          "value_per_share"
+        ],
+        "properties": {
+          "years": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "discount_rate_percent": {
+            "type": "number"
+          },
+          "terminal_growth_percent": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "pv_explicit": {
+            "type": "number"
+          },
+          "terminal_value": {
+            "type": "number"
+          },
+          "pv_terminal": {
+            "type": "number"
+          },
+          "enterprise_value": {
+            "type": "number"
+          },
+          "equity_value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "value_per_share": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      },
+      "SensitivityItem": {
+        "type": "object",
+        "required": [
+          "discount_rate_percent",
+          "enterprise_value"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "discount_rate_percent": {
+            "type": "number"
+          },
+          "enterprise_value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      },
+      "DcfRequest": {
+        "type": "object",
+        "required": [
+          "cashflows",
+          "discount_rate"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "cashflows": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 200,
+            "items": {
+              "type": "number"
+            },
+            "description": "Projected free cash flows, year 1..n."
+          },
+          "discount_rate": {
+            "type": "number",
+            "description": "Annual discount rate / WACC percent."
+          },
+          "terminal_growth_rate": {
+            "type": "number",
+            "description": "Annual Gordon-growth rate percent (must be < discount_rate). Omit for no terminal value."
+          },
+          "net_debt": {
+            "type": "number",
+            "description": "Optional — subtracted from EV for equity value."
+          },
+          "shares_outstanding": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Optional — divides equity value for per-share value."
+          }
+        }
+      },
+      "DiscoveryResponse": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "description",
+          "openapi_url",
+          "auth",
+          "endpoints",
+          "pricing",
+          "x402_compatible",
+          "capabilities"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "openapi_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "auth": {
+            "type": "object",
+            "required": [
+              "type",
+              "header"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "header": {
+                "type": "string"
+              }
+            }
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "method",
+                "path",
+                "summary",
+                "price_usdc"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "pricing": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "price_usdc",
+                "currency"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                },
+                "currency": {
+                  "type": "string",
+                  "enum": [
+                    "USDC"
+                  ]
+                }
+              }
+            }
+          },
+          "x402_compatible": {
+            "type": "boolean"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Machine-readable capability tags for agent matching."
+          },
+          "typical_use_cases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional plain-language use cases to aid autonomous discovery."
+          },
+          "security_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+          },
+          "input_examples": {
+            "type": "array",
+            "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "body"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "output_examples": {
+            "type": "array",
+            "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "response"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "response": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ValueResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/DcfCore"
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "LookupResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/DcfCore"
+          },
+          {
+            "type": "object",
+            "required": [
+              "discount_rate_sensitivity",
+              "reasoning"
+            ],
+            "properties": {
+              "discount_rate_sensitivity": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
                     "discount_rate_percent",
                     "enterprise_value"
-                ],
-                "additionalProperties": false,
-                "properties": {
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
                     "discount_rate_percent": {
-                        "type": "number"
+                      "type": "number"
                     },
                     "enterprise_value": {
-                        "type": [
-                            "number",
-                            "null"
-                        ]
+                      "type": [
+                        "number",
+                        "null"
+                      ]
                     }
+                  }
                 }
-            },
-            "DcfRequest": {
-                "type": "object",
-                "required": [
-                    "cashflows",
-                    "discount_rate"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "cashflows": {
-                        "type": "array",
-                        "minItems": 1,
-                        "maxItems": 200,
-                        "items": {
-                            "type": "number"
-                        },
-                        "description": "Projected free cash flows, year 1..n."
-                    },
-                    "discount_rate": {
-                        "type": "number",
-                        "description": "Annual discount rate / WACC percent."
-                    },
-                    "terminal_growth_rate": {
-                        "type": "number",
-                        "description": "Annual Gordon-growth rate percent (must be < discount_rate). Omit for no terminal value."
-                    },
-                    "net_debt": {
-                        "type": "number",
-                        "description": "Optional \u2014 subtracted from EV for equity value."
-                    },
-                    "shares_outstanding": {
-                        "type": "number",
-                        "exclusiveMinimum": 0,
-                        "description": "Optional \u2014 divides equity value for per-share value."
-                    }
-                }
-            },
-            "DiscoveryResponse": {
-                "type": "object",
-                "required": [
-                    "name",
-                    "version",
-                    "description",
-                    "openapi_url",
-                    "auth",
-                    "endpoints",
-                    "pricing",
-                    "x402_compatible",
-                    "capabilities"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "version": {
-                        "type": "string"
-                    },
-                    "description": {
-                        "type": "string"
-                    },
-                    "openapi_url": {
-                        "type": "string",
-                        "format": "uri"
-                    },
-                    "auth": {
-                        "type": "object",
-                        "required": [
-                            "type",
-                            "header"
-                        ],
-                        "additionalProperties": false,
-                        "properties": {
-                            "type": {
-                                "type": "string"
-                            },
-                            "header": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "endpoints": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "required": [
-                                "method",
-                                "path",
-                                "summary",
-                                "price_usdc"
-                            ],
-                            "additionalProperties": false,
-                            "properties": {
-                                "method": {
-                                    "type": "string"
-                                },
-                                "path": {
-                                    "type": "string"
-                                },
-                                "summary": {
-                                    "type": "string"
-                                },
-                                "price_usdc": {
-                                    "type": "number"
-                                }
-                            }
-                        }
-                    },
-                    "pricing": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "required": [
-                                "path",
-                                "price_usdc",
-                                "currency"
-                            ],
-                            "additionalProperties": false,
-                            "properties": {
-                                "path": {
-                                    "type": "string"
-                                },
-                                "price_usdc": {
-                                    "type": "number"
-                                },
-                                "currency": {
-                                    "type": "string",
-                                    "enum": [
-                                        "USDC"
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "x402_compatible": {
-                        "type": "boolean"
-                    },
-                    "capabilities": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "Machine-readable capability tags for agent matching."
-                    },
-                    "typical_use_cases": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "Optional plain-language use cases to aid autonomous discovery."
-                    }
-                }
-            },
-            "ValueResponse": {
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/EnvelopeOk"
-                    },
-                    {
-                        "$ref": "#/components/schemas/DcfCore"
-                    },
-                    {
-                        "$ref": "#/components/schemas/_Tail"
-                    }
-                ],
-                "unevaluatedProperties": false
-            },
-            "LookupResponse": {
-                "allOf": [
-                    {
-                        "$ref": "#/components/schemas/EnvelopeOk"
-                    },
-                    {
-                        "$ref": "#/components/schemas/DcfCore"
-                    },
-                    {
-                        "type": "object",
-                        "required": [
-                            "discount_rate_sensitivity",
-                            "reasoning"
-                        ],
-                        "properties": {
-                            "discount_rate_sensitivity": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "required": [
-                                        "discount_rate_percent",
-                                        "enterprise_value"
-                                    ],
-                                    "additionalProperties": false,
-                                    "properties": {
-                                        "discount_rate_percent": {
-                                            "type": "number"
-                                        },
-                                        "enterprise_value": {
-                                            "type": [
-                                                "number",
-                                                "null"
-                                            ]
-                                        }
-                                    }
-                                }
-                            },
-                            "reasoning": {
-                                "$ref": "#/components/schemas/Reasoning"
-                            }
-                        }
-                    },
-                    {
-                        "$ref": "#/components/schemas/_Tail"
-                    }
-                ],
-                "unevaluatedProperties": false
+              },
+              "reasoning": {
+                "$ref": "#/components/schemas/Reasoning"
+              }
             }
-        }
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      }
     }
+  }
 }

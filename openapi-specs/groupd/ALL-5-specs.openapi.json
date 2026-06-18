@@ -146,6 +146,7 @@
                     "cashflow_total": 500,
                     "npv": 238.138382,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "npv": 1
                     },
@@ -156,11 +157,13 @@
                     "chain_to": [
                       {
                         "api": "dcf-valuation",
-                        "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value."
+                        "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       },
                       {
                         "api": "bond-analytics",
-                        "reason": "Price a fixed-coupon bond or solve its yield to maturity."
+                        "reason": "Price a fixed-coupon bond or solve its yield to maturity.",
+                        "url": "https://orbis-apis.onrender.com/bond-analytics"
                       }
                     ],
                     "privacy": {
@@ -249,6 +252,7 @@
                     "npv_at_irr": 0,
                     "sign_changes": 1,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "irr": 1
                     },
@@ -258,11 +262,13 @@
                     "chain_to": [
                       {
                         "api": "dcf-valuation",
-                        "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value."
+                        "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       },
                       {
                         "api": "bond-analytics",
-                        "reason": "Price a fixed-coupon bond or solve its yield to maturity."
+                        "reason": "Price a fixed-coupon bond or solve its yield to maturity.",
+                        "url": "https://orbis-apis.onrender.com/bond-analytics"
                       }
                     ],
                     "privacy": {
@@ -364,6 +370,7 @@
                       ]
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "npv": 1,
                       "irr": 1
@@ -374,11 +381,13 @@
                     "chain_to": [
                       {
                         "api": "dcf-valuation",
-                        "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value."
+                        "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       },
                       {
                         "api": "bond-analytics",
-                        "reason": "Price a fixed-coupon bond or solve its yield to maturity."
+                        "reason": "Price a fixed-coupon bond or solve its yield to maturity.",
+                        "url": "https://orbis-apis.onrender.com/bond-analytics"
                       }
                     ],
                     "privacy": {
@@ -468,6 +477,11 @@
             "reason": {
               "type": "string",
               "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
             }
           }
         },
@@ -649,6 +663,7 @@
             "chain_to",
             "privacy",
             "execution_metadata",
+            "calculation_certainty",
             "financial_disclaimer"
           ],
           "properties": {
@@ -677,6 +692,12 @@
             },
             "execution_metadata": {
               "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
             },
             "financial_disclaimer": {
               "type": "string",
@@ -970,6 +991,55 @@
                 "type": "string"
               },
               "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
+            "input_examples": {
+              "type": "array",
+              "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "body"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            },
+            "output_examples": {
+              "type": "array",
+              "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "response"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
             }
           }
         },
@@ -1178,6 +1248,7 @@
                     "intrinsic_value": 0,
                     "time_value": 4.157453,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "price": 1
                     },
@@ -1188,11 +1259,13 @@
                     "chain_to": [
                       {
                         "api": "risk-ratios",
-                        "reason": "Score the risk-adjusted return of a strategy built from these options."
+                        "reason": "Score the risk-adjusted return of a strategy built from these options.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       },
                       {
                         "api": "npv-irr",
-                        "reason": "Discount the option strategy cashflows to a present value or IRR."
+                        "reason": "Discount the option strategy cashflows to a present value or IRR.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
                       }
                     ],
                     "privacy": {
@@ -1283,6 +1356,7 @@
                       "rho": 0.194735
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "greeks": 1
                     },
@@ -1293,11 +1367,13 @@
                     "chain_to": [
                       {
                         "api": "risk-ratios",
-                        "reason": "Score the risk-adjusted return of a strategy built from these options."
+                        "reason": "Score the risk-adjusted return of a strategy built from these options.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       },
                       {
                         "api": "npv-irr",
-                        "reason": "Discount the option strategy cashflows to a present value or IRR."
+                        "reason": "Discount the option strategy cashflows to a present value or IRR.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
                       }
                     ],
                     "privacy": {
@@ -1405,6 +1481,7 @@
                       ]
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "price": 1,
                       "greeks": 1
@@ -1415,11 +1492,13 @@
                     "chain_to": [
                       {
                         "api": "risk-ratios",
-                        "reason": "Score the risk-adjusted return of a strategy built from these options."
+                        "reason": "Score the risk-adjusted return of a strategy built from these options.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       },
                       {
                         "api": "npv-irr",
-                        "reason": "Discount the option strategy cashflows to a present value or IRR."
+                        "reason": "Discount the option strategy cashflows to a present value or IRR.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
                       }
                     ],
                     "privacy": {
@@ -1508,6 +1587,11 @@
             "reason": {
               "type": "string",
               "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
             }
           }
         },
@@ -1689,6 +1773,7 @@
             "chain_to",
             "privacy",
             "execution_metadata",
+            "calculation_certainty",
             "financial_disclaimer"
           ],
           "properties": {
@@ -1717,6 +1802,12 @@
             },
             "execution_metadata": {
               "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
             },
             "financial_disclaimer": {
               "type": "string",
@@ -2073,6 +2164,55 @@
                 "type": "string"
               },
               "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
+            "input_examples": {
+              "type": "array",
+              "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "body"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            },
+            "output_examples": {
+              "type": "array",
+              "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "response"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
             }
           }
         },
@@ -2282,6 +2422,7 @@
                     "price": 925.612626,
                     "current_yield_percent": 5.401828,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "price": 1
                     },
@@ -2292,11 +2433,13 @@
                     "chain_to": [
                       {
                         "api": "npv-irr",
-                        "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR."
+                        "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
                       },
                       {
                         "api": "risk-ratios",
-                        "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation."
+                        "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       }
                     ],
                     "privacy": {
@@ -2383,6 +2526,7 @@
                     "yield_to_maturity_percent": 6.000037,
                     "converged": true,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "yield": 1
                     },
@@ -2392,11 +2536,13 @@
                     "chain_to": [
                       {
                         "api": "npv-irr",
-                        "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR."
+                        "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
                       },
                       {
                         "api": "risk-ratios",
-                        "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation."
+                        "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       }
                     ],
                     "privacy": {
@@ -2500,6 +2646,7 @@
                       ]
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "price": 1,
                       "yield": 1
@@ -2510,11 +2657,13 @@
                     "chain_to": [
                       {
                         "api": "npv-irr",
-                        "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR."
+                        "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
                       },
                       {
                         "api": "risk-ratios",
-                        "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation."
+                        "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       }
                     ],
                     "privacy": {
@@ -2601,6 +2750,11 @@
             "reason": {
               "type": "string",
               "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
             }
           }
         },
@@ -2782,6 +2936,7 @@
             "chain_to",
             "privacy",
             "execution_metadata",
+            "calculation_certainty",
             "financial_disclaimer"
           ],
           "properties": {
@@ -2810,6 +2965,12 @@
             },
             "execution_metadata": {
               "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
             },
             "financial_disclaimer": {
               "type": "string",
@@ -3128,6 +3289,55 @@
                 "type": "string"
               },
               "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
+            "input_examples": {
+              "type": "array",
+              "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "body"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            },
+            "output_examples": {
+              "type": "array",
+              "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "response"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
             }
           }
         },
@@ -3328,6 +3538,7 @@
                     "equity_value": 1885.28789,
                     "value_per_share": 18.852879,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "valuation": 1
                     },
@@ -3338,11 +3549,13 @@
                     "chain_to": [
                       {
                         "api": "npv-irr",
-                        "reason": "Compute the IRR of the same projected cashflow stream."
+                        "reason": "Compute the IRR of the same projected cashflow stream.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
                       },
                       {
                         "api": "risk-ratios",
-                        "reason": "Assess the risk-adjusted return of the valued asset in a portfolio."
+                        "reason": "Assess the risk-adjusted return of the valued asset in a portfolio.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       }
                     ],
                     "privacy": {
@@ -3472,6 +3685,7 @@
                       ]
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "valuation": 1
                     },
@@ -3481,11 +3695,13 @@
                     "chain_to": [
                       {
                         "api": "npv-irr",
-                        "reason": "Compute the IRR of the same projected cashflow stream."
+                        "reason": "Compute the IRR of the same projected cashflow stream.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
                       },
                       {
                         "api": "risk-ratios",
-                        "reason": "Assess the risk-adjusted return of the valued asset in a portfolio."
+                        "reason": "Assess the risk-adjusted return of the valued asset in a portfolio.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       }
                     ],
                     "privacy": {
@@ -3578,6 +3794,11 @@
             "reason": {
               "type": "string",
               "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
             }
           }
         },
@@ -3754,6 +3975,7 @@
             "chain_to",
             "privacy",
             "execution_metadata",
+            "calculation_certainty",
             "financial_disclaimer"
           ],
           "properties": {
@@ -3782,6 +4004,12 @@
             },
             "execution_metadata": {
               "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
             },
             "financial_disclaimer": {
               "type": "string",
@@ -4010,6 +4238,55 @@
                 "type": "string"
               },
               "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
+            "input_examples": {
+              "type": "array",
+              "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "body"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            },
+            "output_examples": {
+              "type": "array",
+              "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "response"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
             }
           }
         },
@@ -4230,6 +4507,7 @@
                     "annualized_return_percent": 12.15,
                     "annualized_volatility_percent": 6.170263,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "sharpe": 1
                     },
@@ -4240,11 +4518,13 @@
                     "chain_to": [
                       {
                         "api": "dcf-valuation",
-                        "reason": "Value an asset whose risk-adjusted return you just scored."
+                        "reason": "Value an asset whose risk-adjusted return you just scored.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       },
                       {
                         "api": "bond-analytics",
-                        "reason": "Compare the strategy against a fixed-income alternative."
+                        "reason": "Compare the strategy against a fixed-income alternative.",
+                        "url": "https://orbis-apis.onrender.com/bond-analytics"
                       }
                     ],
                     "privacy": {
@@ -4338,6 +4618,7 @@
                     "sortino_ratio": 1.681671,
                     "annualized_sortino": 5.825479,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "sortino": 1
                     },
@@ -4347,11 +4628,13 @@
                     "chain_to": [
                       {
                         "api": "dcf-valuation",
-                        "reason": "Value an asset whose risk-adjusted return you just scored."
+                        "reason": "Value an asset whose risk-adjusted return you just scored.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       },
                       {
                         "api": "bond-analytics",
-                        "reason": "Compare the strategy against a fixed-income alternative."
+                        "reason": "Compare the strategy against a fixed-income alternative.",
+                        "url": "https://orbis-apis.onrender.com/bond-analytics"
                       }
                     ],
                     "privacy": {
@@ -4464,6 +4747,7 @@
                       ]
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "sharpe": 1,
                       "sortino": 1
@@ -4474,11 +4758,13 @@
                     "chain_to": [
                       {
                         "api": "dcf-valuation",
-                        "reason": "Value an asset whose risk-adjusted return you just scored."
+                        "reason": "Value an asset whose risk-adjusted return you just scored.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       },
                       {
                         "api": "bond-analytics",
-                        "reason": "Compare the strategy against a fixed-income alternative."
+                        "reason": "Compare the strategy against a fixed-income alternative.",
+                        "url": "https://orbis-apis.onrender.com/bond-analytics"
                       }
                     ],
                     "privacy": {
@@ -4573,6 +4859,11 @@
             "reason": {
               "type": "string",
               "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
             }
           }
         },
@@ -4754,6 +5045,7 @@
             "chain_to",
             "privacy",
             "execution_metadata",
+            "calculation_certainty",
             "financial_disclaimer"
           ],
           "properties": {
@@ -4782,6 +5074,12 @@
             },
             "execution_metadata": {
               "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
             },
             "financial_disclaimer": {
               "type": "string",
@@ -5145,6 +5443,55 @@
                 "type": "string"
               },
               "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
+            "input_examples": {
+              "type": "array",
+              "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "body"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            },
+            "output_examples": {
+              "type": "array",
+              "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "response"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
             }
           }
         },

@@ -16,6 +16,7 @@ export const waccExample = {
   "after_tax_cost_of_debt_percent": 3.95,
   "wacc_percent": 6.98,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "wacc": 1
   },
@@ -25,11 +26,13 @@ export const waccExample = {
   "chain_to": [
     {
       "api": "dcf-valuation",
-      "reason": "Use the WACC as the discount rate for a DCF valuation."
+      "reason": "Use the WACC as the discount rate for a DCF valuation.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     },
     {
       "api": "bond-analytics",
-      "reason": "Estimate the pre-tax cost of debt from a bond yield."
+      "reason": "Estimate the pre-tax cost of debt from a bond yield.",
+      "url": "https://orbis-apis.onrender.com/bond-analytics"
     }
   ],
   "privacy": {
@@ -54,6 +57,7 @@ export const capmExample = {
   "market_return_percent": 10,
   "cost_of_equity_percent": 11.2,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "capm": 1
   },
@@ -63,11 +67,13 @@ export const capmExample = {
   "chain_to": [
     {
       "api": "dcf-valuation",
-      "reason": "Use the WACC as the discount rate for a DCF valuation."
+      "reason": "Use the WACC as the discount rate for a DCF valuation.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     },
     {
       "api": "bond-analytics",
-      "reason": "Estimate the pre-tax cost of debt from a bond yield."
+      "reason": "Estimate the pre-tax cost of debt from a bond yield.",
+      "url": "https://orbis-apis.onrender.com/bond-analytics"
     }
   ],
   "privacy": {
@@ -117,6 +123,7 @@ export const lookupExample = {
     ]
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "wacc": 1,
     "capm": 1
@@ -127,11 +134,13 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "dcf-valuation",
-      "reason": "Use the WACC as the discount rate for a DCF valuation."
+      "reason": "Use the WACC as the discount rate for a DCF valuation.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     },
     {
       "api": "bond-analytics",
-      "reason": "Estimate the pre-tax cost of debt from a bond yield."
+      "reason": "Estimate the pre-tax cost of debt from a bond yield.",
+      "url": "https://orbis-apis.onrender.com/bond-analytics"
     }
   ],
   "privacy": {

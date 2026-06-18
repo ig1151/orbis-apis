@@ -16,6 +16,7 @@ export const summaryExample = {
   "best_period_return_percent": 12.745098,
   "worst_period_return_percent": -5.555556,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "returns": 1
   },
@@ -25,11 +26,13 @@ export const summaryExample = {
   "chain_to": [
     {
       "api": "risk-ratios",
-      "reason": "Score the same series risk-adjusted (Sharpe/Sortino)."
+      "reason": "Score the same series risk-adjusted (Sharpe/Sortino).",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     },
     {
       "api": "max-drawdown",
-      "reason": "Measure the worst peak-to-trough decline of this series."
+      "reason": "Measure the worst peak-to-trough decline of this series.",
+      "url": "https://orbis-apis.onrender.com/max-drawdown"
     }
   ],
   "privacy": {
@@ -56,6 +59,7 @@ export const cagrExample = {
   "total_return_percent": 21,
   "cagr_percent": 77.1561,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "cagr": 1
   },
@@ -65,11 +69,13 @@ export const cagrExample = {
   "chain_to": [
     {
       "api": "risk-ratios",
-      "reason": "Score the same series risk-adjusted (Sharpe/Sortino)."
+      "reason": "Score the same series risk-adjusted (Sharpe/Sortino).",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     },
     {
       "api": "max-drawdown",
-      "reason": "Measure the worst peak-to-trough decline of this series."
+      "reason": "Measure the worst peak-to-trough decline of this series.",
+      "url": "https://orbis-apis.onrender.com/max-drawdown"
     }
   ],
   "privacy": {
@@ -112,6 +118,7 @@ export const lookupExample = {
     ]
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "returns": 1
   },
@@ -121,11 +128,13 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "risk-ratios",
-      "reason": "Score the same series risk-adjusted (Sharpe/Sortino)."
+      "reason": "Score the same series risk-adjusted (Sharpe/Sortino).",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     },
     {
       "api": "max-drawdown",
-      "reason": "Measure the worst peak-to-trough decline of this series."
+      "reason": "Measure the worst peak-to-trough decline of this series.",
+      "url": "https://orbis-apis.onrender.com/max-drawdown"
     }
   ],
   "privacy": {

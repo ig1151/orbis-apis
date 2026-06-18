@@ -12,6 +12,7 @@ export const priceExample = {
   "intrinsic_value": 0,
   "time_value": 4.157453,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "price": 1
   },
@@ -22,11 +23,13 @@ export const priceExample = {
   "chain_to": [
     {
       "api": "risk-ratios",
-      "reason": "Score the risk-adjusted return of a strategy built from these options."
+      "reason": "Score the risk-adjusted return of a strategy built from these options.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     },
     {
       "api": "npv-irr",
-      "reason": "Discount the option strategy cashflows to a present value or IRR."
+      "reason": "Discount the option strategy cashflows to a present value or IRR.",
+      "url": "https://orbis-apis.onrender.com/npv-irr"
     }
   ],
   "privacy": {
@@ -55,6 +58,7 @@ export const greeksExample = {
     "rho": 0.194735
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "greeks": 1
   },
@@ -65,11 +69,13 @@ export const greeksExample = {
   "chain_to": [
     {
       "api": "risk-ratios",
-      "reason": "Score the risk-adjusted return of a strategy built from these options."
+      "reason": "Score the risk-adjusted return of a strategy built from these options.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     },
     {
       "api": "npv-irr",
-      "reason": "Discount the option strategy cashflows to a present value or IRR."
+      "reason": "Discount the option strategy cashflows to a present value or IRR.",
+      "url": "https://orbis-apis.onrender.com/npv-irr"
     }
   ],
   "privacy": {
@@ -115,6 +121,7 @@ export const lookupExample = {
     ]
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "price": 1,
     "greeks": 1
@@ -125,11 +132,13 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "risk-ratios",
-      "reason": "Score the risk-adjusted return of a strategy built from these options."
+      "reason": "Score the risk-adjusted return of a strategy built from these options.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     },
     {
       "api": "npv-irr",
-      "reason": "Discount the option strategy cashflows to a present value or IRR."
+      "reason": "Discount the option strategy cashflows to a present value or IRR.",
+      "url": "https://orbis-apis.onrender.com/npv-irr"
     }
   ],
   "privacy": {
