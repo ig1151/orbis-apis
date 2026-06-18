@@ -243,6 +243,35 @@ export function percentile(xs: number[], p: number): number {
   return s[lo] + (s[hi] - s[lo]) * (idx - lo);
 }
 
+/** Population variance (n divisor) of a numeric series. */
+export function variance(xs: number[], sample = false): number {
+  const n = xs.length;
+  if (n < (sample ? 2 : 1)) return 0;
+  const m = mean(xs);
+  const ss = xs.reduce((a, x) => a + (x - m) * (x - m), 0);
+  return ss / (sample ? n - 1 : n);
+}
+
+/** Covariance of two equal-length series (population, n divisor). */
+export function covariance(xs: number[], ys: number[], sample = false): number {
+  const n = Math.min(xs.length, ys.length);
+  if (n < (sample ? 2 : 1)) return 0;
+  const mx = mean(xs.slice(0, n)), my = mean(ys.slice(0, n));
+  let acc = 0;
+  for (let i = 0; i < n; i++) acc += (xs[i] - mx) * (ys[i] - my);
+  return acc / (sample ? n - 1 : n);
+}
+
+/** Pearson correlation coefficient of two equal-length series, in [-1, 1] (or NaN if a series is constant). */
+export function correlation(xs: number[], ys: number[]): number {
+  const n = Math.min(xs.length, ys.length);
+  if (n < 2) return NaN;
+  const cov = covariance(xs, ys);
+  const sx = Math.sqrt(variance(xs.slice(0, n))), sy = Math.sqrt(variance(ys.slice(0, n)));
+  if (sx === 0 || sy === 0) return NaN;
+  return cov / (sx * sy);
+}
+
 export interface DrawdownResult {
   max_drawdown_pct: number; peak_index: number; trough_index: number;
   peak_value: number; trough_value: number; recovery_index: number | null;
