@@ -1,0 +1,317 @@
+[
+  {
+    "name": "Returns Analytics API",
+    "description": "Deterministic return analytics for equity, NAV, portfolio, and investment performance series. Calculates total return, CAGR, annualized return, average return, volatility metrics, and best/worst period performance. Designed for autonomous portfolio monitoring, investment analysis, and financial planning agents.",
+    "logoUrl": "https://orbis.finance/logos/returns-analytics.png",
+    "category": "Financial Analytics",
+    "tier": "Agent Decision API",
+    "tags": [
+      "finance",
+      "portfolio",
+      "returns",
+      "cagr",
+      "investment-analysis",
+      "quantitative-finance"
+    ],
+    "keywords": [
+      "returns analytics",
+      "compound annual growth rate",
+      "cagr",
+      "portfolio performance",
+      "investment returns",
+      "annualized return",
+      "performance measurement",
+      "asset analysis"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "endpointPricing": [
+      {
+        "endpoint": "/summary",
+        "price_usdc": 0.007
+      },
+      {
+        "endpoint": "/cagr",
+        "price_usdc": 0.006
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.012
+      }
+    ],
+    "typicalUseCases": [
+      "Portfolio performance evaluation",
+      "Investment return comparison",
+      "Retirement planning analysis",
+      "Fund performance reporting",
+      "Autonomous investment monitoring"
+    ],
+    "recommendedChains": [
+      {
+        "api": "Risk Ratios API",
+        "reason": "Evaluate risk-adjusted performance"
+      },
+      {
+        "api": "Max Drawdown API",
+        "reason": "Analyze downside risk"
+      },
+      {
+        "api": "DCF Valuation API",
+        "reason": "Compare returns versus intrinsic value"
+      }
+    ],
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    }
+  },
+  {
+    "name": "Max Drawdown API",
+    "description": "Deterministic drawdown and recovery analysis for portfolios, equities, funds, and trading systems. Computes maximum drawdown, peak-to-trough loss, recovery periods, drawdown duration, recovery duration, CAGR, and Calmar ratio.",
+    "logoUrl": "https://orbis.finance/logos/max-drawdown.png",
+    "category": "Risk Analytics",
+    "tier": "Agent Decision API",
+    "tags": [
+      "finance",
+      "risk-management",
+      "drawdown",
+      "portfolio-risk",
+      "quantitative-finance"
+    ],
+    "keywords": [
+      "maximum drawdown",
+      "peak to trough",
+      "calmar ratio",
+      "recovery analysis",
+      "portfolio risk",
+      "investment downside"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "endpointPricing": [
+      {
+        "endpoint": "/analyze",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.013
+      }
+    ],
+    "typicalUseCases": [
+      "Portfolio risk monitoring",
+      "Fund manager evaluation",
+      "Strategy stress testing",
+      "Risk-adjusted performance analysis",
+      "Trading system evaluation"
+    ],
+    "recommendedChains": [
+      {
+        "api": "Returns Analytics API",
+        "reason": "Compare returns with downside risk"
+      },
+      {
+        "api": "Value at Risk API",
+        "reason": "Measure future loss potential"
+      }
+    ],
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    }
+  },
+  {
+    "name": "Value at Risk API",
+    "description": "Deterministic Value-at-Risk and Expected Shortfall calculations using historical simulation and parametric Gaussian models. Designed for portfolio risk management, capital allocation, and autonomous financial agents.",
+    "logoUrl": "https://orbis.finance/logos/value-at-risk.png",
+    "category": "Risk Analytics",
+    "tier": "Agent Decision API",
+    "tags": [
+      "finance",
+      "risk",
+      "var",
+      "expected-shortfall",
+      "portfolio-management"
+    ],
+    "keywords": [
+      "value at risk",
+      "var",
+      "cvar",
+      "expected shortfall",
+      "portfolio risk",
+      "loss estimation",
+      "financial risk"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "endpointPricing": [
+      {
+        "endpoint": "/historical",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/parametric",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.014
+      }
+    ],
+    "typicalUseCases": [
+      "Portfolio risk limits",
+      "Capital allocation",
+      "Stress testing",
+      "Risk budgeting",
+      "Institutional portfolio monitoring"
+    ],
+    "recommendedChains": [
+      {
+        "api": "Max Drawdown API",
+        "reason": "Analyze historical downside events"
+      },
+      {
+        "api": "Risk Ratios API",
+        "reason": "Evaluate risk-adjusted returns"
+      }
+    ],
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    }
+  },
+  {
+    "name": "Compound Interest API",
+    "description": "Deterministic compound growth, future value, contribution, and APY calculations for investment planning, savings forecasting, and retirement analysis.",
+    "logoUrl": "https://orbis.finance/logos/compound-interest.png",
+    "category": "Financial Planning",
+    "tier": "Agent Decision API",
+    "tags": [
+      "finance",
+      "compound-interest",
+      "retirement",
+      "savings",
+      "investment-planning"
+    ],
+    "keywords": [
+      "compound growth",
+      "future value",
+      "apy",
+      "effective annual rate",
+      "retirement planning",
+      "investment forecasting"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "endpointPricing": [
+      {
+        "endpoint": "/future-value",
+        "price_usdc": 0.007
+      },
+      {
+        "endpoint": "/ear",
+        "price_usdc": 0.005
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.012
+      }
+    ],
+    "typicalUseCases": [
+      "Retirement forecasting",
+      "Investment growth planning",
+      "Savings analysis",
+      "Goal-based financial planning",
+      "Contribution optimization"
+    ],
+    "recommendedChains": [
+      {
+        "api": "Returns Analytics API",
+        "reason": "Compare projected versus realized returns"
+      },
+      {
+        "api": "DCF Valuation API",
+        "reason": "Evaluate investment opportunities"
+      }
+    ],
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    }
+  },
+  {
+    "name": "WACC API",
+    "description": "Deterministic Weighted Average Cost of Capital calculations using market-value capital structure, CAPM cost of equity, debt costs, and tax adjustments. Designed for valuation, capital allocation, and corporate finance workflows.",
+    "logoUrl": "https://orbis.finance/logos/wacc.png",
+    "category": "Corporate Finance",
+    "tier": "Agent Decision API",
+    "tags": [
+      "finance",
+      "wacc",
+      "valuation",
+      "corporate-finance",
+      "capm"
+    ],
+    "keywords": [
+      "weighted average cost of capital",
+      "wacc",
+      "discount rate",
+      "corporate valuation",
+      "cost of equity",
+      "capital structure"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "endpointPricing": [
+      {
+        "endpoint": "/calculate",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.014
+      }
+    ],
+    "typicalUseCases": [
+      "DCF valuation",
+      "Corporate finance analysis",
+      "Investment committee workflows",
+      "Capital allocation",
+      "Acquisition analysis"
+    ],
+    "recommendedChains": [
+      {
+        "api": "DCF Valuation API",
+        "reason": "Use WACC as discount rate"
+      },
+      {
+        "api": "Risk Ratios API",
+        "reason": "Compare cost of capital versus risk profile"
+      }
+    ],
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    }
+  }
+]
