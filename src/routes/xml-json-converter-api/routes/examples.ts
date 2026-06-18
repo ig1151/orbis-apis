@@ -109,7 +109,8 @@ export const lookupExample = {
     "invalidators": [
       "XML attributes are preserved on the JSON side with the \"@_\" prefix (e.g. <a id=\"1\"/> → {\"a\":{\"@_id\":\"1\"}}); set preserve_attributes:false on /to-json to drop them.",
       "Conversion follows the fast-xml-parser data model: repeated sibling elements collapse into an array, text content uses the \"#text\" key alongside attributes, and the model is NOT guaranteed to round-trip byte-for-byte (whitespace, comments, CDATA framing and namespace prefixes may shift).",
-      "/to-xml requires a JSON object at the top level; arrays or scalars are rejected. Numeric/boolean attribute values are parsed on the way in."
+      "/to-xml requires a JSON object at the top level; arrays or scalars are rejected. Numeric/boolean attribute values are parsed on the way in.",
+      "DTD/DOCTYPE entity definitions are NOT expanded — entity references are left literal — so exponential entity expansion (\"billion laughs\") cannot amplify the payload; external entities are never resolved (no XXE / no network or filesystem access)."
     ]
   },
   "confidence_score": 1,

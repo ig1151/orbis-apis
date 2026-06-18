@@ -56,9 +56,9 @@ const schemas = {
 
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse', responseExample: disc },
-  { method: 'post', path: '/to-json', summary: 'Convert XML to JSON', operationId: 'toJson', priceUsdc: 0.006, requestSchemaRef: 'ToJsonRequest', responseSchemaRef: 'ToJsonResponse', requestExample: toJsonReq, responseExample: toJsonExample },
-  { method: 'post', path: '/to-xml', summary: 'Convert a JSON object to XML', operationId: 'toXml', priceUsdc: 0.006, requestSchemaRef: 'ToXmlRequest', responseSchemaRef: 'ToXmlResponse', requestExample: toXmlReq, responseExample: toXmlExample },
-  { method: 'post', path: '/lookup', summary: 'ONE-CALL XML→JSON + reasoning', operationId: 'lookup', priceUsdc: 0.012, oneCall: true, requestSchemaRef: 'ToJsonRequest', responseSchemaRef: 'LookupResponse', requestExample: toJsonReq, responseExample: lookupExample },
+  { method: 'post', path: '/to-json', summary: 'Convert XML to JSON', operationId: 'toJson', priceUsdc: 0.007, requestSchemaRef: 'ToJsonRequest', responseSchemaRef: 'ToJsonResponse', requestExample: toJsonReq, responseExample: toJsonExample },
+  { method: 'post', path: '/to-xml', summary: 'Convert a JSON object to XML', operationId: 'toXml', priceUsdc: 0.007, requestSchemaRef: 'ToXmlRequest', responseSchemaRef: 'ToXmlResponse', requestExample: toXmlReq, responseExample: toXmlExample },
+  { method: 'post', path: '/lookup', summary: 'ONE-CALL XML→JSON + reasoning', operationId: 'lookup', priceUsdc: 0.014, oneCall: true, requestSchemaRef: 'ToJsonRequest', responseSchemaRef: 'LookupResponse', requestExample: toJsonReq, responseExample: lookupExample },
 ];
 
 export const spec = buildAplusSpec({
