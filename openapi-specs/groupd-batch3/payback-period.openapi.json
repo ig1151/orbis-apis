@@ -1,0 +1,1139 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Payback Period API",
+    "version": "1.0.0",
+    "description": "Deterministic capital-budgeting payback analysis: simple and discounted payback, NPV, profitability index. No LLM.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "x-finance-tool": true,
+    "x-financial-calculation": true,
+    "x-human-approval-required": false
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/payback-period"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Service discovery",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Payback Period API",
+                  "version": "1.0.0",
+                  "description": "Deterministic capital-budgeting payback analysis. /simple computes the undiscounted payback period; /discounted present-values the cashflows, returns the discounted payback, NPV and profitability index. No LLM, nothing stored.",
+                  "openapi_url": "https://orbis-apis.onrender.com/payback-period/openapi.json",
+                  "auth": {
+                    "type": "apiKey",
+                    "header": "X-API-Key"
+                  },
+                  "capabilities": [
+                    "simple_payback",
+                    "discounted_payback",
+                    "npv",
+                    "profitability_index"
+                  ],
+                  "typical_use_cases": [
+                    "Compute how many periods a capital project takes to recoup its upfront cost",
+                    "Discount the cashflows and find the time-value-adjusted payback",
+                    "Compare payback against NPV before approving an investment"
+                  ],
+                  "input_examples": [
+                    {
+                      "endpoint": "/simple",
+                      "body": {
+                        "initial_investment": 100000,
+                        "cashflows": [
+                          30000,
+                          30000,
+                          30000,
+                          30000,
+                          30000
+                        ],
+                        "periods_per_year": 1
+                      }
+                    },
+                    {
+                      "endpoint": "/discounted",
+                      "body": {
+                        "initial_investment": 100000,
+                        "cashflows": [
+                          30000,
+                          30000,
+                          30000,
+                          30000,
+                          30000
+                        ],
+                        "discount_rate_percent": 10,
+                        "periods_per_year": 1
+                      }
+                    }
+                  ],
+                  "output_examples": [
+                    {
+                      "endpoint": "/simple",
+                      "response": {
+                        "payback_periods": 3.3333,
+                        "recovered": true
+                      }
+                    },
+                    {
+                      "endpoint": "/discounted",
+                      "response": {
+                        "discounted_payback_periods": 4.2543,
+                        "npv": 13723.6,
+                        "profitability_index": 1.137236
+                      }
+                    }
+                  ],
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/simple",
+                      "summary": "Undiscounted payback period",
+                      "price_usdc": 0.007
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/discounted",
+                      "summary": "Discounted payback + NPV + profitability index",
+                      "price_usdc": 0.008
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/lookup",
+                      "summary": "ONE-CALL simple + discounted payback + reasoning",
+                      "price_usdc": 0.013
+                    }
+                  ],
+                  "pricing": [
+                    {
+                      "path": "/simple",
+                      "price_usdc": 0.007,
+                      "currency": "USDC"
+                    },
+                    {
+                      "path": "/discounted",
+                      "price_usdc": 0.008,
+                      "currency": "USDC"
+                    },
+                    {
+                      "path": "/lookup",
+                      "price_usdc": 0.013,
+                      "currency": "USDC"
+                    }
+                  ],
+                  "x402_compatible": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simple": {
+      "post": {
+        "operationId": "simple",
+        "summary": "Undiscounted payback period",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "initial_investment": 100000,
+                  "periods": 5,
+                  "total_inflows": 150000,
+                  "payback_periods": 3.333333,
+                  "recovered": true,
+                  "payback_years": 3.333333,
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "simple": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Recovers the $100000 outlay in 3.333333 periods."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "npv-irr",
+                      "reason": "Get the full NPV and IRR of the same cashflow series for an accept/reject decision.",
+                      "url": "https://orbis-apis.onrender.com/npv-irr"
+                    },
+                    {
+                      "api": "dcf-valuation",
+                      "reason": "Value the project as a discounted cashflow stream.",
+                      "url": "https://orbis-apis.onrender.com/dcf-valuation"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleRequest"
+              },
+              "example": {
+                "initial_investment": 100000,
+                "cashflows": [
+                  30000,
+                  30000,
+                  30000,
+                  30000,
+                  30000
+                ],
+                "periods_per_year": 1
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.007,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/discounted": {
+      "post": {
+        "operationId": "discounted",
+        "summary": "Discounted payback + NPV + profitability index",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscountedResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "initial_investment": 100000,
+                  "discount_rate_percent": 10,
+                  "periods": 5,
+                  "discounted_payback_periods": 4.263267,
+                  "recovered": true,
+                  "payback_years": 4.263267,
+                  "npv": 13723.603082,
+                  "profitability_index": 1.137236,
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "discounted": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Discounted payback 4.263267 periods at 10%; NPV $13723.603082."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "npv-irr",
+                      "reason": "Get the full NPV and IRR of the same cashflow series for an accept/reject decision.",
+                      "url": "https://orbis-apis.onrender.com/npv-irr"
+                    },
+                    {
+                      "api": "dcf-valuation",
+                      "reason": "Value the project as a discounted cashflow stream.",
+                      "url": "https://orbis-apis.onrender.com/dcf-valuation"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscountedRequest"
+              },
+              "example": {
+                "initial_investment": 100000,
+                "cashflows": [
+                  30000,
+                  30000,
+                  30000,
+                  30000,
+                  30000
+                ],
+                "discount_rate_percent": 10,
+                "periods_per_year": 1
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.008,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL simple + discounted payback + reasoning",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookupResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "initial_investment": 100000,
+                  "periods": 5,
+                  "total_inflows": 150000,
+                  "payback_periods": 3.333333,
+                  "recovered": true,
+                  "payback_years": 3.333333,
+                  "discounted": {
+                    "initial_investment": 100000,
+                    "discount_rate_percent": 10,
+                    "periods": 5,
+                    "discounted_payback_periods": 4.263267,
+                    "recovered": true,
+                    "payback_years": 4.263267,
+                    "npv": 13723.603082,
+                    "profitability_index": 1.137236
+                  },
+                  "reasoning": {
+                    "why_result_generated": "Simple payback 3.333333 periods (cumulative inflows vs the $100000 outlay); discounted payback 4.263267 periods at 10% with NPV $13723.603082.",
+                    "key_factors": [
+                      "Simple payback 3.333333.",
+                      "Discounted payback 4.263267 at 10%.",
+                      "NPV $13723.603082 (profitability index 1.137236)."
+                    ],
+                    "invalidators": [
+                      "Payback ignores all cashflows AFTER recovery and (for the simple variant) the time value of money — a shorter payback is not automatically the better investment; use NPV/IRR for the accept/reject decision.",
+                      "cashflows[k] is the inflow in period k+1; the initial outlay is a separate positive initial_investment, not the first array element.",
+                      "A null payback means the cumulative (or discounted) inflows never reach the initial investment within the periods supplied."
+                    ]
+                  },
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "simple": 1,
+                    "discounted": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "NPV is positive ($13723.603082) — accept on a value basis; chain to npv-irr for the IRR."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "npv-irr",
+                      "reason": "Get the full NPV and IRR of the same cashflow series for an accept/reject decision.",
+                      "url": "https://orbis-apis.onrender.com/npv-irr"
+                    },
+                    {
+                      "api": "dcf-valuation",
+                      "reason": "Value the project as a discounted cashflow stream.",
+                      "url": "https://orbis-apis.onrender.com/dcf-valuation"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscountedRequest"
+              },
+              "example": {
+                "initial_investment": 100000,
+                "cashflows": [
+                  30000,
+                  30000,
+                  30000,
+                  30000,
+                  30000
+                ],
+                "discount_rate_percent": 10,
+                "periods_per_year": 1
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.013,
+          "currency": "USDC"
+        },
+        "x-one-call": true
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "ChainTo": {
+        "type": "object",
+        "required": [
+          "api",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "api": {
+            "type": "string",
+            "description": "Slug of a recommended next API to call."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why an agent would chain to this API next."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+          }
+        }
+      },
+      "Reasoning": {
+        "type": "object",
+        "required": [
+          "why_result_generated",
+          "key_factors",
+          "invalidators"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "why_result_generated": {
+            "type": "string"
+          },
+          "key_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invalidators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Conditions that would change or invalidate this result."
+          }
+        }
+      },
+      "Privacy": {
+        "type": "object",
+        "required": [
+          "data_stored",
+          "retention"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data_stored": {
+            "type": "boolean"
+          },
+          "retention": {
+            "type": "string",
+            "description": "Retention policy, e.g. \"none\"."
+          }
+        }
+      },
+      "EnvelopeError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "description": "Optional machine-readable error context."
+          }
+        }
+      },
+      "Error400": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms",
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "latency_ms": {
+            "type": "integer"
+          },
+          "error": {
+            "$ref": "#/components/schemas/EnvelopeError"
+          }
+        }
+      },
+      "Error500": {
+        "$ref": "#/components/schemas/Error400"
+      },
+      "EnvelopeOk": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id for clients that key on request_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "latency_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "ExecutionMetadata": {
+        "type": "object",
+        "required": [
+          "model",
+          "automation_safe"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "deterministic"
+            ]
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ConfidencePerSection": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "simple": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "discounted": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "_Tail": {
+        "type": "object",
+        "required": [
+          "confidence_score",
+          "confidence_per_section",
+          "recommended_actions_priority_order",
+          "chain_to",
+          "privacy",
+          "execution_metadata",
+          "calculation_certainty",
+          "financial_disclaimer"
+        ],
+        "properties": {
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "confidence_per_section": {
+            "$ref": "#/components/schemas/ConfidencePerSection"
+          },
+          "recommended_actions_priority_order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "chain_to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChainTo"
+            }
+          },
+          "privacy": {
+            "$ref": "#/components/schemas/Privacy"
+          },
+          "execution_metadata": {
+            "$ref": "#/components/schemas/ExecutionMetadata"
+          },
+          "calculation_certainty": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+          },
+          "financial_disclaimer": {
+            "type": "string",
+            "description": "Informational-only disclaimer; not financial advice."
+          }
+        }
+      },
+      "SimpleCore": {
+        "type": "object",
+        "required": [
+          "initial_investment",
+          "periods",
+          "total_inflows",
+          "payback_periods",
+          "recovered",
+          "payback_years"
+        ],
+        "properties": {
+          "initial_investment": {
+            "type": "number"
+          },
+          "periods": {
+            "type": "integer"
+          },
+          "total_inflows": {
+            "type": "number"
+          },
+          "payback_periods": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "recovered": {
+            "type": "boolean"
+          },
+          "payback_years": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      },
+      "DiscountedCore": {
+        "type": "object",
+        "required": [
+          "initial_investment",
+          "discount_rate_percent",
+          "periods",
+          "discounted_payback_periods",
+          "recovered",
+          "payback_years",
+          "npv",
+          "profitability_index"
+        ],
+        "properties": {
+          "initial_investment": {
+            "type": "number"
+          },
+          "discount_rate_percent": {
+            "type": "number"
+          },
+          "periods": {
+            "type": "integer"
+          },
+          "discounted_payback_periods": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "recovered": {
+            "type": "boolean"
+          },
+          "payback_years": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "npv": {
+            "type": "number"
+          },
+          "profitability_index": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      },
+      "SimpleRequest": {
+        "type": "object",
+        "required": [
+          "initial_investment",
+          "cashflows"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "initial_investment": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "cashflows": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "number"
+            },
+            "description": "Per-period inflow; cashflows[k] is the inflow in period k+1."
+          },
+          "periods_per_year": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "If given, also returns payback in years."
+          }
+        }
+      },
+      "DiscountedRequest": {
+        "type": "object",
+        "required": [
+          "initial_investment",
+          "cashflows",
+          "discount_rate_percent"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "initial_investment": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "cashflows": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "number"
+            }
+          },
+          "discount_rate_percent": {
+            "type": "number",
+            "exclusiveMinimum": -100,
+            "description": "Per-period discount rate, percent."
+          },
+          "periods_per_year": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      },
+      "DiscoveryResponse": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "description",
+          "openapi_url",
+          "auth",
+          "endpoints",
+          "pricing",
+          "x402_compatible",
+          "capabilities"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "openapi_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "auth": {
+            "type": "object",
+            "required": [
+              "type",
+              "header"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "header": {
+                "type": "string"
+              }
+            }
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "method",
+                "path",
+                "summary",
+                "price_usdc"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "pricing": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "price_usdc",
+                "currency"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                },
+                "currency": {
+                  "type": "string",
+                  "enum": [
+                    "USDC"
+                  ]
+                }
+              }
+            }
+          },
+          "x402_compatible": {
+            "type": "boolean"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Machine-readable capability tags for agent matching."
+          },
+          "typical_use_cases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional plain-language use cases to aid autonomous discovery."
+          },
+          "security_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+          },
+          "input_examples": {
+            "type": "array",
+            "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "body"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "output_examples": {
+            "type": "array",
+            "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "response"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "response": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "SimpleResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/SimpleCore"
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "DiscountedResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountedCore"
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "LookupResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/SimpleCore"
+          },
+          {
+            "type": "object",
+            "required": [
+              "discounted",
+              "reasoning"
+            ],
+            "properties": {
+              "discounted": {
+                "$ref": "#/components/schemas/DiscountedCore"
+              },
+              "reasoning": {
+                "$ref": "#/components/schemas/Reasoning"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    }
+  }
+}

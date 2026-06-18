@@ -1,0 +1,1181 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Correlation & Beta API",
+    "version": "1.0.0",
+    "description": "Deterministic portfolio statistics: Pearson correlation, covariance, beta, Jensen's alpha and R². No LLM.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "x-finance-tool": true,
+    "x-financial-calculation": true,
+    "x-human-approval-required": false
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/correlation-beta"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Service discovery",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Correlation & Beta API",
+                  "version": "1.0.0",
+                  "description": "Deterministic portfolio statistics. /correlation returns Pearson correlation and covariance of two return series; /beta regresses an asset on a benchmark for beta, Jensen's alpha and R². Exact math on supplied data — no LLM, nothing stored.",
+                  "openapi_url": "https://orbis-apis.onrender.com/correlation-beta/openapi.json",
+                  "auth": {
+                    "type": "apiKey",
+                    "header": "X-API-Key"
+                  },
+                  "capabilities": [
+                    "pearson_correlation",
+                    "covariance",
+                    "beta",
+                    "jensens_alpha",
+                    "r_squared"
+                  ],
+                  "typical_use_cases": [
+                    "Measure how correlated two assets or strategies are before combining them",
+                    "Compute a stock's beta and alpha versus a market benchmark",
+                    "Quantify how much of an asset's movement the benchmark explains (R²)"
+                  ],
+                  "input_examples": [
+                    {
+                      "endpoint": "/correlation",
+                      "body": {
+                        "series_a": [
+                          1.2,
+                          -0.8,
+                          2.1,
+                          -3.4,
+                          0.5
+                        ],
+                        "series_b": [
+                          0.9,
+                          -0.5,
+                          1.7,
+                          -2.9,
+                          0.2
+                        ]
+                      }
+                    },
+                    {
+                      "endpoint": "/beta",
+                      "body": {
+                        "asset_returns": [
+                          1.2,
+                          -0.8,
+                          2.1,
+                          -3.4,
+                          0.5
+                        ],
+                        "benchmark_returns": [
+                          0.9,
+                          -0.5,
+                          1.7,
+                          -2.9,
+                          0.2
+                        ],
+                        "periods_per_year": 252
+                      }
+                    }
+                  ],
+                  "output_examples": [
+                    {
+                      "endpoint": "/correlation",
+                      "response": {
+                        "correlation": 0.9939,
+                        "r_squared": 0.9879,
+                        "relationship": "very strong positive"
+                      }
+                    },
+                    {
+                      "endpoint": "/beta",
+                      "response": {
+                        "beta": 1.1739,
+                        "alpha_per_period": -0.0091,
+                        "r_squared": 0.9879
+                      }
+                    }
+                  ],
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/correlation",
+                      "summary": "Pearson correlation + covariance of two series",
+                      "price_usdc": 0.008
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/beta",
+                      "summary": "Beta, alpha and R² of an asset vs a benchmark",
+                      "price_usdc": 0.008
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/lookup",
+                      "summary": "ONE-CALL correlation + beta + reasoning",
+                      "price_usdc": 0.014
+                    }
+                  ],
+                  "pricing": [
+                    {
+                      "path": "/correlation",
+                      "price_usdc": 0.008,
+                      "currency": "USDC"
+                    },
+                    {
+                      "path": "/beta",
+                      "price_usdc": 0.008,
+                      "currency": "USDC"
+                    },
+                    {
+                      "path": "/lookup",
+                      "price_usdc": 0.014,
+                      "currency": "USDC"
+                    }
+                  ],
+                  "x402_compatible": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/correlation": {
+      "post": {
+        "operationId": "correlation",
+        "summary": "Pearson correlation + covariance of two series",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorrelationResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "n": 5,
+                  "correlation": 0.997006,
+                  "covariance": 2.9924,
+                  "mean_a": -0.08,
+                  "mean_b": -0.12,
+                  "stdev_a": 2.137054,
+                  "stdev_b": 1.755563,
+                  "r_squared": 0.994021,
+                  "relationship": "very strong positive",
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "correlation": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Correlation 0.997006 (very strong positive); R² 0.994021."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "risk-ratios",
+                      "reason": "Combine beta with the Sharpe/Sortino ratios for full risk-adjusted analysis.",
+                      "url": "https://orbis-apis.onrender.com/risk-ratios"
+                    },
+                    {
+                      "api": "value-at-risk",
+                      "reason": "Quantify downside risk of the same return series.",
+                      "url": "https://orbis-apis.onrender.com/value-at-risk"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CorrelationRequest"
+              },
+              "example": {
+                "series_a": [
+                  1.2,
+                  -0.8,
+                  2.1,
+                  -3.4,
+                  0.5
+                ],
+                "series_b": [
+                  0.9,
+                  -0.5,
+                  1.7,
+                  -2.9,
+                  0.2
+                ]
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.008,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/beta": {
+      "post": {
+        "operationId": "beta",
+        "summary": "Beta, alpha and R² of an asset vs a benchmark",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BetaResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "n": 5,
+                  "beta": 1.21366,
+                  "alpha_per_period": 0.0656392,
+                  "r_squared": 0.994021,
+                  "correlation": 0.997006,
+                  "mean_asset": -0.08,
+                  "mean_benchmark": -0.12,
+                  "benchmark_variance": 2.4656,
+                  "alpha_annualized_percent": 1654.107722,
+                  "sensitivity": "more volatile than benchmark",
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "beta": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Beta 1.21366 (more volatile than benchmark); alpha 0.0656392/period; R² 0.994021."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "risk-ratios",
+                      "reason": "Combine beta with the Sharpe/Sortino ratios for full risk-adjusted analysis.",
+                      "url": "https://orbis-apis.onrender.com/risk-ratios"
+                    },
+                    {
+                      "api": "value-at-risk",
+                      "reason": "Quantify downside risk of the same return series.",
+                      "url": "https://orbis-apis.onrender.com/value-at-risk"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BetaRequest"
+              },
+              "example": {
+                "asset_returns": [
+                  1.2,
+                  -0.8,
+                  2.1,
+                  -3.4,
+                  0.5
+                ],
+                "benchmark_returns": [
+                  0.9,
+                  -0.5,
+                  1.7,
+                  -2.9,
+                  0.2
+                ],
+                "periods_per_year": 252
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.008,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL correlation + beta + reasoning",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookupResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "n": 5,
+                  "beta": 1.21366,
+                  "alpha_per_period": 0.0656392,
+                  "r_squared": 0.994021,
+                  "correlation": 0.997006,
+                  "mean_asset": -0.08,
+                  "mean_benchmark": -0.12,
+                  "benchmark_variance": 2.4656,
+                  "alpha_annualized_percent": 1654.107722,
+                  "sensitivity": "more volatile than benchmark",
+                  "correlation_detail": {
+                    "n": 5,
+                    "correlation": 0.997006,
+                    "covariance": 2.9924,
+                    "mean_a": -0.08,
+                    "mean_b": -0.12,
+                    "stdev_a": 2.137054,
+                    "stdev_b": 1.755563,
+                    "r_squared": 0.994021,
+                    "relationship": "very strong positive"
+                  },
+                  "reasoning": {
+                    "why_result_generated": "Over 5 observations the asset has correlation 0.997006 with the benchmark and beta 1.21366 (more volatile than benchmark); the benchmark explains R² 0.994021 of its variance, with Jensen's alpha 0.0656392/period.",
+                    "key_factors": [
+                      "Beta 1.21366 — more volatile than benchmark.",
+                      "Correlation 0.997006 (very strong positive).",
+                      "R² 0.994021; alpha 0.0656392/period."
+                    ],
+                    "invalidators": [
+                      "Correlation measures LINEAR association only and is unit-free in [-1, 1]; a near-zero correlation does not rule out a non-linear relationship, and correlation is not causation.",
+                      "Beta = cov(asset, benchmark) / var(benchmark); it is sensitive to the sample window and assumes a stable linear relationship. A short or non-stationary series gives an unreliable beta.",
+                      "Jensen's alpha here is mean(asset) − beta·mean(benchmark) in the SAME per-period units you supplied; the annualized figure (if returned) is a simple ×periods_per_year scaling, not compounded."
+                    ]
+                  },
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "correlation": 1,
+                    "beta": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "High correlation (0.997006) — limited diversification benefit between these two."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "risk-ratios",
+                      "reason": "Combine beta with the Sharpe/Sortino ratios for full risk-adjusted analysis.",
+                      "url": "https://orbis-apis.onrender.com/risk-ratios"
+                    },
+                    {
+                      "api": "value-at-risk",
+                      "reason": "Quantify downside risk of the same return series.",
+                      "url": "https://orbis-apis.onrender.com/value-at-risk"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BetaRequest"
+              },
+              "example": {
+                "asset_returns": [
+                  1.2,
+                  -0.8,
+                  2.1,
+                  -3.4,
+                  0.5
+                ],
+                "benchmark_returns": [
+                  0.9,
+                  -0.5,
+                  1.7,
+                  -2.9,
+                  0.2
+                ],
+                "periods_per_year": 252
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.014,
+          "currency": "USDC"
+        },
+        "x-one-call": true
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "ChainTo": {
+        "type": "object",
+        "required": [
+          "api",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "api": {
+            "type": "string",
+            "description": "Slug of a recommended next API to call."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why an agent would chain to this API next."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+          }
+        }
+      },
+      "Reasoning": {
+        "type": "object",
+        "required": [
+          "why_result_generated",
+          "key_factors",
+          "invalidators"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "why_result_generated": {
+            "type": "string"
+          },
+          "key_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invalidators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Conditions that would change or invalidate this result."
+          }
+        }
+      },
+      "Privacy": {
+        "type": "object",
+        "required": [
+          "data_stored",
+          "retention"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data_stored": {
+            "type": "boolean"
+          },
+          "retention": {
+            "type": "string",
+            "description": "Retention policy, e.g. \"none\"."
+          }
+        }
+      },
+      "EnvelopeError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "description": "Optional machine-readable error context."
+          }
+        }
+      },
+      "Error400": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms",
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "latency_ms": {
+            "type": "integer"
+          },
+          "error": {
+            "$ref": "#/components/schemas/EnvelopeError"
+          }
+        }
+      },
+      "Error500": {
+        "$ref": "#/components/schemas/Error400"
+      },
+      "EnvelopeOk": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id for clients that key on request_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "latency_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "ExecutionMetadata": {
+        "type": "object",
+        "required": [
+          "model",
+          "automation_safe"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "deterministic"
+            ]
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ConfidencePerSection": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "correlation": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "beta": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "_Tail": {
+        "type": "object",
+        "required": [
+          "confidence_score",
+          "confidence_per_section",
+          "recommended_actions_priority_order",
+          "chain_to",
+          "privacy",
+          "execution_metadata",
+          "calculation_certainty",
+          "financial_disclaimer"
+        ],
+        "properties": {
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "confidence_per_section": {
+            "$ref": "#/components/schemas/ConfidencePerSection"
+          },
+          "recommended_actions_priority_order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "chain_to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChainTo"
+            }
+          },
+          "privacy": {
+            "$ref": "#/components/schemas/Privacy"
+          },
+          "execution_metadata": {
+            "$ref": "#/components/schemas/ExecutionMetadata"
+          },
+          "calculation_certainty": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+          },
+          "financial_disclaimer": {
+            "type": "string",
+            "description": "Informational-only disclaimer; not financial advice."
+          }
+        }
+      },
+      "CorrelationCore": {
+        "type": "object",
+        "required": [
+          "n",
+          "correlation",
+          "covariance",
+          "mean_a",
+          "mean_b",
+          "stdev_a",
+          "stdev_b",
+          "r_squared",
+          "relationship"
+        ],
+        "properties": {
+          "n": {
+            "type": "integer"
+          },
+          "correlation": {
+            "type": "number"
+          },
+          "covariance": {
+            "type": "number"
+          },
+          "mean_a": {
+            "type": "number"
+          },
+          "mean_b": {
+            "type": "number"
+          },
+          "stdev_a": {
+            "type": "number"
+          },
+          "stdev_b": {
+            "type": "number"
+          },
+          "r_squared": {
+            "type": "number"
+          },
+          "relationship": {
+            "type": "string"
+          }
+        }
+      },
+      "BetaCore": {
+        "type": "object",
+        "required": [
+          "n",
+          "beta",
+          "alpha_per_period",
+          "r_squared",
+          "correlation",
+          "mean_asset",
+          "mean_benchmark",
+          "benchmark_variance",
+          "alpha_annualized_percent",
+          "sensitivity"
+        ],
+        "properties": {
+          "n": {
+            "type": "integer"
+          },
+          "beta": {
+            "type": "number"
+          },
+          "alpha_per_period": {
+            "type": "number"
+          },
+          "r_squared": {
+            "type": "number"
+          },
+          "correlation": {
+            "type": "number"
+          },
+          "mean_asset": {
+            "type": "number"
+          },
+          "mean_benchmark": {
+            "type": "number"
+          },
+          "benchmark_variance": {
+            "type": "number"
+          },
+          "alpha_annualized_percent": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "sensitivity": {
+            "type": "string"
+          }
+        }
+      },
+      "CorrelationRequest": {
+        "type": "object",
+        "required": [
+          "series_a",
+          "series_b"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "series_a": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "number"
+            }
+          },
+          "series_b": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "number"
+            },
+            "description": "Same length as series_a."
+          }
+        }
+      },
+      "BetaRequest": {
+        "type": "object",
+        "required": [
+          "asset_returns",
+          "benchmark_returns"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "asset_returns": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "number"
+            }
+          },
+          "benchmark_returns": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "number"
+            },
+            "description": "Same length as asset_returns; must not be constant."
+          },
+          "periods_per_year": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "If given, also returns annualized alpha (×periods_per_year)."
+          }
+        }
+      },
+      "DiscoveryResponse": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "description",
+          "openapi_url",
+          "auth",
+          "endpoints",
+          "pricing",
+          "x402_compatible",
+          "capabilities"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "openapi_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "auth": {
+            "type": "object",
+            "required": [
+              "type",
+              "header"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "header": {
+                "type": "string"
+              }
+            }
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "method",
+                "path",
+                "summary",
+                "price_usdc"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "pricing": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "price_usdc",
+                "currency"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                },
+                "currency": {
+                  "type": "string",
+                  "enum": [
+                    "USDC"
+                  ]
+                }
+              }
+            }
+          },
+          "x402_compatible": {
+            "type": "boolean"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Machine-readable capability tags for agent matching."
+          },
+          "typical_use_cases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional plain-language use cases to aid autonomous discovery."
+          },
+          "security_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+          },
+          "input_examples": {
+            "type": "array",
+            "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "body"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "output_examples": {
+            "type": "array",
+            "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "response"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "response": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "CorrelationResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/CorrelationCore"
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "BetaResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/BetaCore"
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "LookupResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/BetaCore"
+          },
+          {
+            "type": "object",
+            "required": [
+              "correlation_detail",
+              "reasoning"
+            ],
+            "properties": {
+              "correlation_detail": {
+                "$ref": "#/components/schemas/CorrelationCore"
+              },
+              "reasoning": {
+                "$ref": "#/components/schemas/Reasoning"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    }
+  }
+}

@@ -1,0 +1,593 @@
+[
+  {
+    "name": "Break-Even Analysis API",
+    "shortDescription": "Unit & revenue break-even, contribution margin, margin of safety.",
+    "description": "Deterministic cost-volume-profit (CVP) analysis for autonomous financial-planning and pricing agents. Computes unit and revenue break-even points, contribution margin per unit and ratio, units/revenue required to hit a target profit, and margin of safety against current volume. No LLM — exact arithmetic.",
+    "category": "Financial Planning",
+    "tier": "Agent Decision API",
+    "baseUrl": "https://orbis-apis.onrender.com/break-even",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/break-even/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/break-even/openapi.json",
+    "logoUrl": "",
+    "tags": [
+      "finance",
+      "break-even",
+      "cvp",
+      "contribution-margin",
+      "pricing",
+      "unit-economics"
+    ],
+    "keywords": [
+      "break-even analysis",
+      "cost volume profit",
+      "contribution margin",
+      "margin of safety",
+      "target profit",
+      "pricing analysis",
+      "fixed costs",
+      "variable costs"
+    ],
+    "capabilities": [
+      "unit_break_even",
+      "revenue_break_even",
+      "contribution_margin",
+      "target_profit",
+      "margin_of_safety"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "Pricing and cost-structure decisions",
+      "Startup runway and viability checks",
+      "Target-profit volume planning",
+      "Product line margin analysis",
+      "Autonomous financial planning"
+    ],
+    "recommendedChains": [
+      {
+        "api": "Unit Economics API",
+        "reason": "Layer LTV:CAC and margin analysis on top of break-even"
+      },
+      {
+        "api": "Payback Period API",
+        "reason": "Evaluate the investment recovery timeline"
+      },
+      {
+        "api": "NPV IRR API",
+        "reason": "Value the project once break-even volume is known"
+      }
+    ],
+    "endpointPricing": [
+      {
+        "endpoint": "/units",
+        "price_usdc": 0.007
+      },
+      {
+        "endpoint": "/revenue",
+        "price_usdc": 0.006
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.012
+      }
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/units",
+            "pricePerCallUsdc": 0.007,
+            "description": "Unit-based break-even + contribution margin"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/revenue",
+            "pricePerCallUsdc": 0.006,
+            "description": "Ratio-based break-even revenue"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "One-call answer with reasoning (key_factors + invalidators)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Correlation & Beta API",
+    "shortDescription": "Pearson correlation/covariance and beta, alpha & R² vs a benchmark.",
+    "description": "Deterministic portfolio statistics for risk and diversification agents. Computes Pearson correlation and covariance between two return series, and the beta, Jensen's alpha and R² of an asset versus a benchmark, with annualized alpha. No LLM — exact linear-algebra arithmetic on caller-supplied returns.",
+    "category": "Risk Analytics",
+    "tier": "Agent Decision API",
+    "baseUrl": "https://orbis-apis.onrender.com/correlation-beta",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/correlation-beta/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/correlation-beta/openapi.json",
+    "logoUrl": "",
+    "tags": [
+      "finance",
+      "correlation",
+      "beta",
+      "alpha",
+      "r-squared",
+      "quantitative-finance"
+    ],
+    "keywords": [
+      "pearson correlation",
+      "covariance",
+      "beta",
+      "jensen alpha",
+      "r squared",
+      "systematic risk",
+      "diversification",
+      "benchmark analysis"
+    ],
+    "capabilities": [
+      "pearson_correlation",
+      "covariance",
+      "beta",
+      "jensen_alpha",
+      "r_squared"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "Portfolio diversification analysis",
+      "Systematic-risk (beta) estimation",
+      "Hedge and pairs construction",
+      "Factor exposure measurement",
+      "Autonomous risk monitoring"
+    ],
+    "recommendedChains": [
+      {
+        "api": "Risk Ratios API",
+        "reason": "Combine beta with Sharpe/Sortino for risk-adjusted views"
+      },
+      {
+        "api": "Value At Risk API",
+        "reason": "Quantify downside once correlations are known"
+      },
+      {
+        "api": "Max Drawdown API",
+        "reason": "Assess realized downside of the analyzed series"
+      }
+    ],
+    "endpointPricing": [
+      {
+        "endpoint": "/correlation",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/beta",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.014
+      }
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.014,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/correlation",
+            "pricePerCallUsdc": 0.008,
+            "description": "Pearson correlation + covariance of two series"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/beta",
+            "pricePerCallUsdc": 0.008,
+            "description": "Beta, alpha and R² of an asset vs a benchmark"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.014,
+            "description": "One-call answer with reasoning (key_factors + invalidators)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Kelly Criterion API",
+    "shortDescription": "Optimal & fractional Kelly stake, edge, expected log-growth, risk of ruin.",
+    "description": "Deterministic Kelly-criterion bet/position sizing for capital-allocation agents. Computes the optimal and fractional Kelly fraction, edge, expected log-growth, recommended stake against a bankroll, and the gambler's-ruin probability for flat even-money bets. No LLM — exact probability arithmetic. Not investment advice.",
+    "category": "Risk Analytics",
+    "tier": "Agent Decision API",
+    "baseUrl": "https://orbis-apis.onrender.com/kelly-criterion",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/kelly-criterion/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/kelly-criterion/openapi.json",
+    "logoUrl": "",
+    "tags": [
+      "finance",
+      "kelly-criterion",
+      "position-sizing",
+      "bankroll",
+      "risk-of-ruin",
+      "bet-sizing"
+    ],
+    "keywords": [
+      "kelly criterion",
+      "position sizing",
+      "bet sizing",
+      "fractional kelly",
+      "bankroll management",
+      "expected log growth",
+      "risk of ruin",
+      "edge"
+    ],
+    "capabilities": [
+      "kelly_fraction",
+      "fractional_kelly",
+      "expected_log_growth",
+      "recommended_stake",
+      "risk_of_ruin"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "Position sizing for favorable bets",
+      "Bankroll/capital allocation",
+      "Conservative fractional-Kelly sizing",
+      "Risk-of-ruin estimation",
+      "Autonomous capital-allocation agents"
+    ],
+    "recommendedChains": [
+      {
+        "api": "Correlation & Beta API",
+        "reason": "Size positions accounting for correlation/beta"
+      },
+      {
+        "api": "Value At Risk API",
+        "reason": "Cross-check sizing against tail risk"
+      },
+      {
+        "api": "Risk Ratios API",
+        "reason": "Evaluate the risk-adjusted quality of the edge"
+      }
+    ],
+    "endpointPricing": [
+      {
+        "endpoint": "/kelly",
+        "price_usdc": 0.007
+      },
+      {
+        "endpoint": "/risk-of-ruin",
+        "price_usdc": 0.006
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.012
+      }
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/kelly",
+            "pricePerCallUsdc": 0.007,
+            "description": "Optimal + fractional Kelly stake"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/risk-of-ruin",
+            "pricePerCallUsdc": 0.006,
+            "description": "Gambler's-ruin probability (flat even-money bets)"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "One-call answer with reasoning (key_factors + invalidators)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Payback Period API",
+    "shortDescription": "Simple & discounted payback, NPV, profitability index.",
+    "description": "Deterministic capital-budgeting payback analysis for investment-screening agents. Computes simple (undiscounted) and discounted payback periods with fractional-period interpolation, NPV at a given discount rate, and the profitability index, flagging whether the investment is recovered within the horizon. No LLM — exact discounted-cashflow arithmetic.",
+    "category": "Corporate Finance",
+    "tier": "Agent Decision API",
+    "baseUrl": "https://orbis-apis.onrender.com/payback-period",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/payback-period/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/payback-period/openapi.json",
+    "logoUrl": "",
+    "tags": [
+      "finance",
+      "payback-period",
+      "capital-budgeting",
+      "npv",
+      "profitability-index",
+      "investment-analysis"
+    ],
+    "keywords": [
+      "payback period",
+      "discounted payback",
+      "net present value",
+      "npv",
+      "profitability index",
+      "capital budgeting",
+      "investment screening",
+      "cashflow analysis"
+    ],
+    "capabilities": [
+      "simple_payback",
+      "discounted_payback",
+      "npv",
+      "profitability_index",
+      "recovery_flag"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "Capital project screening",
+      "Investment recovery timelines",
+      "CapEx prioritization",
+      "Discounted-cashflow checks",
+      "Autonomous investment screening"
+    ],
+    "recommendedChains": [
+      {
+        "api": "NPV IRR API",
+        "reason": "Full NPV/IRR valuation of the cashflows"
+      },
+      {
+        "api": "DCF Valuation API",
+        "reason": "Value the asset behind the cashflows"
+      },
+      {
+        "api": "Break-Even Analysis API",
+        "reason": "Tie recovery timeline to break-even volume"
+      }
+    ],
+    "endpointPricing": [
+      {
+        "endpoint": "/simple",
+        "price_usdc": 0.007
+      },
+      {
+        "endpoint": "/discounted",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.013
+      }
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.013,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/simple",
+            "pricePerCallUsdc": 0.007,
+            "description": "Undiscounted payback period"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/discounted",
+            "pricePerCallUsdc": 0.008,
+            "description": "Discounted payback + NPV + profitability index"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.013,
+            "description": "One-call answer with reasoning (key_factors + invalidators)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Unit Economics API",
+    "shortDescription": "LTV, LTV:CAC ratio, CAC payback, gross & contribution margins.",
+    "description": "Deterministic SaaS/subscription unit economics for growth and finance agents. Computes gross-margin-adjusted lifetime value, the LTV:CAC ratio, CAC payback in periods, customer lifetime from churn, and gross & contribution margins, with a health verdict. No LLM — exact arithmetic on caller-supplied ARPU/margin/churn/CAC.",
+    "category": "Financial Analytics",
+    "tier": "Agent Decision API",
+    "baseUrl": "https://orbis-apis.onrender.com/unit-economics",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/unit-economics/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/unit-economics/openapi.json",
+    "logoUrl": "",
+    "tags": [
+      "finance",
+      "unit-economics",
+      "ltv",
+      "cac",
+      "saas-metrics",
+      "margins"
+    ],
+    "keywords": [
+      "unit economics",
+      "ltv",
+      "cac",
+      "ltv cac ratio",
+      "cac payback",
+      "customer lifetime value",
+      "gross margin",
+      "contribution margin",
+      "saas metrics"
+    ],
+    "capabilities": [
+      "ltv",
+      "ltv_cac_ratio",
+      "cac_payback",
+      "customer_lifetime",
+      "margins"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "SaaS unit-economics health checks",
+      "LTV:CAC and CAC-payback monitoring",
+      "Pricing and margin analysis",
+      "Growth-efficiency evaluation",
+      "Autonomous finance/growth agents"
+    ],
+    "recommendedChains": [
+      {
+        "api": "Break-Even Analysis API",
+        "reason": "Relate unit economics to break-even volume"
+      },
+      {
+        "api": "Payback Period API",
+        "reason": "Compare CAC payback with project payback"
+      },
+      {
+        "api": "DCF Valuation API",
+        "reason": "Roll unit economics into a valuation"
+      }
+    ],
+    "endpointPricing": [
+      {
+        "endpoint": "/ltv-cac",
+        "price_usdc": 0.007
+      },
+      {
+        "endpoint": "/margins",
+        "price_usdc": 0.005
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.012
+      }
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/ltv-cac",
+            "pricePerCallUsdc": 0.007,
+            "description": "LTV, LTV:CAC ratio and CAC payback"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/margins",
+            "pricePerCallUsdc": 0.005,
+            "description": "Gross and contribution margins"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "One-call answer with reasoning (key_factors + invalidators)"
+          }
+        ]
+      }
+    ]
+  }
+]
