@@ -624,6 +624,16 @@ import compoundInterestRouter from './routes/compound-interest-api/routes/intell
 import compoundInterestOpenapiRouter from './routes/compound-interest-api/routes/openapi';
 import waccRouter from './routes/wacc-api/routes/intelligence';
 import waccOpenapiRouter from './routes/wacc-api/routes/openapi';
+import breakEvenRouter from './routes/break-even-api/routes/intelligence';
+import breakEvenOpenapiRouter from './routes/break-even-api/routes/openapi';
+import paybackPeriodRouter from './routes/payback-period-api/routes/intelligence';
+import paybackPeriodOpenapiRouter from './routes/payback-period-api/routes/openapi';
+import correlationBetaRouter from './routes/correlation-beta-api/routes/intelligence';
+import correlationBetaOpenapiRouter from './routes/correlation-beta-api/routes/openapi';
+import kellyCriterionRouter from './routes/kelly-criterion-api/routes/intelligence';
+import kellyCriterionOpenapiRouter from './routes/kelly-criterion-api/routes/openapi';
+import unitEconomicsRouter from './routes/unit-economics-api/routes/intelligence';
+import unitEconomicsOpenapiRouter from './routes/unit-economics-api/routes/openapi';
 import financialHealthCheckerRouter from './routes/financial-health-checker-api/routes/intelligence';
 import financialHealthCheckerOpenapiRouter from './routes/financial-health-checker-api/routes/openapi';
 import personalFinanceAgentRouter from './routes/personal-finance-agent-api/routes/intelligence';
@@ -1414,6 +1424,11 @@ const routerMap: Record<string, import("express").Router> = {
   'value-at-risk': valueAtRiskRouter,
   'compound-interest': compoundInterestRouter,
   'wacc': waccRouter,
+  'break-even': breakEvenRouter,
+  'payback-period': paybackPeriodRouter,
+  'correlation-beta': correlationBetaRouter,
+  'kelly-criterion': kellyCriterionRouter,
+  'unit-economics': unitEconomicsRouter,
   'financial-health-checker': financialHealthCheckerRouter,
   'personal-finance-agent': personalFinanceAgentRouter,
   'debt-payoff-planner': debtPayoffPlannerRouter,
@@ -1919,6 +1934,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'value-at-risk': valueAtRiskOpenapiRouter,
   'compound-interest': compoundInterestOpenapiRouter,
   'wacc': waccOpenapiRouter,
+  'break-even': breakEvenOpenapiRouter,
+  'payback-period': paybackPeriodOpenapiRouter,
+  'correlation-beta': correlationBetaOpenapiRouter,
+  'kelly-criterion': kellyCriterionOpenapiRouter,
+  'unit-economics': unitEconomicsOpenapiRouter,
   'financial-health-checker': financialHealthCheckerOpenapiRouter,
   'personal-finance-agent': personalFinanceAgentOpenapiRouter,
   'debt-payoff-planner': debtPayoffPlannerOpenapiRouter,
