@@ -1,0 +1,160 @@
+[
+  {
+    "name": "Returns Analytics API",
+    "shortDescription": "Total return, CAGR & annualized return from an equity curve.",
+    "description": "Deterministic return analytics from a value (NAV/price) series, for finance agents, strategy-screening workflows, and portfolio-reporting automation. /summary derives total return, CAGR, annualized arithmetic return, and best/worst period from an equity curve; /cagr computes the compound annual growth rate from begin/end values over N periods. No LLM, nothing stored.",
+    "category": "Finance",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/returns-analytics",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/returns-analytics/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/returns-analytics/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/returns-analytics.png",
+    "tags": ["finance", "performance", "returns", "quant", "agent-infrastructure"],
+    "keywords": ["cagr", "total return", "annualized return", "equity curve", "performance", "compound annual growth rate"],
+    "capabilities": ["total_return", "cagr", "annualized_return", "period_returns", "best_worst_period"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/summary", "pricePerCallUsdc": 0.007, "description": "Total return, CAGR, annualized return, best/worst period" },
+          { "method": "POST", "pathPattern": "/cagr", "pricePerCallUsdc": 0.006, "description": "Compound annual growth rate from begin/end over N periods" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call return analytics with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/summary", "description": "Total return, CAGR, annualized return, best/worst period" },
+      { "method": "POST", "path": "/cagr", "description": "Compound annual growth rate from begin/end over N periods" },
+      { "method": "POST", "path": "/lookup", "description": "Return analytics with reasoning" }
+    ]
+  },
+  {
+    "name": "Max Drawdown API",
+    "shortDescription": "Worst peak-to-trough decline, recovery & Calmar ratio.",
+    "description": "Deterministic maximum-drawdown analytics from a value (NAV/price) series, for risk agents, strategy-screening workflows, and drawdown-monitoring automation. /analyze finds the worst peak-to-trough decline, its depth, the peak/trough/recovery points, drawdown & recovery duration, and the Calmar ratio (CAGR ÷ |max drawdown|). No LLM, nothing stored.",
+    "category": "Finance",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/max-drawdown",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/max-drawdown/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/max-drawdown/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/max-drawdown.png",
+    "tags": ["finance", "risk", "drawdown", "quant", "agent-infrastructure"],
+    "keywords": ["max drawdown", "drawdown", "peak to trough", "calmar ratio", "recovery", "risk"],
+    "capabilities": ["max_drawdown", "peak_trough_detection", "recovery_period", "calmar_ratio"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.013,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.008, "description": "Max drawdown depth, peak/trough/recovery, Calmar ratio" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.013, "description": "One-call drawdown analysis with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/analyze", "description": "Max drawdown depth, peak/trough/recovery, Calmar ratio" },
+      { "method": "POST", "path": "/lookup", "description": "Drawdown analysis with reasoning" }
+    ]
+  },
+  {
+    "name": "Value at Risk API",
+    "shortDescription": "Historical & parametric VaR plus expected shortfall (CVaR).",
+    "description": "Deterministic Value-at-Risk from a series of per-period returns, for risk agents, capital-sizing workflows, and risk-limit automation. /historical returns the empirical α-quantile VaR plus expected shortfall; /parametric returns Gaussian VaR (μ + z·σ) with closed-form expected shortfall. VaR and CVaR are reported as positive loss percents at the chosen confidence. No LLM, nothing stored.",
+    "category": "Finance",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/value-at-risk",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/value-at-risk/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/value-at-risk/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/value-at-risk.png",
+    "tags": ["finance", "risk", "var", "quant", "agent-infrastructure"],
+    "keywords": ["value at risk", "var", "cvar", "expected shortfall", "tail risk", "parametric var", "historical var"],
+    "capabilities": ["historical_var", "parametric_var", "expected_shortfall", "cvar", "tail_risk"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.014,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/historical", "pricePerCallUsdc": 0.008, "description": "Empirical α-quantile VaR + expected shortfall" },
+          { "method": "POST", "pathPattern": "/parametric", "pricePerCallUsdc": 0.008, "description": "Gaussian VaR (μ + z·σ) + closed-form expected shortfall" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.014, "description": "One-call VaR (both methods) with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/historical", "description": "Empirical α-quantile VaR + expected shortfall" },
+      { "method": "POST", "path": "/parametric", "description": "Gaussian VaR + closed-form expected shortfall" },
+      { "method": "POST", "path": "/lookup", "description": "VaR (both methods) with reasoning" }
+    ]
+  },
+  {
+    "name": "Compound Interest API",
+    "shortDescription": "Future value with contributions + nominal-to-effective rate (APY).",
+    "description": "Deterministic compound-interest math, for finance agents, savings-projection workflows, and rate-conversion automation. /future-value grows a principal plus optional periodic contributions at a nominal annual rate compounded m times per year; /effective-rate converts a nominal annual rate to its effective annual rate (APY). No LLM, nothing stored.",
+    "category": "Finance",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/compound-interest",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/compound-interest/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/compound-interest/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/compound-interest.png",
+    "tags": ["finance", "savings", "interest", "quant", "agent-infrastructure"],
+    "keywords": ["compound interest", "future value", "apy", "effective annual rate", "annuity", "apr to apy", "savings"],
+    "capabilities": ["future_value", "compound_growth", "annuity", "effective_annual_rate", "apr_to_apy"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/future-value", "pricePerCallUsdc": 0.007, "description": "Future value of principal + contributions, compounded m/yr" },
+          { "method": "POST", "pathPattern": "/effective-rate", "pricePerCallUsdc": 0.005, "description": "Nominal annual rate to effective annual rate (APY)" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call compound-interest projection with reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/future-value", "description": "Future value of principal + contributions, compounded m/yr" },
+      { "method": "POST", "path": "/effective-rate", "description": "Nominal annual rate to effective annual rate (APY)" },
+      { "method": "POST", "path": "/lookup", "description": "Compound-interest projection with reasoning" }
+    ]
+  },
+  {
+    "name": "WACC API",
+    "shortDescription": "Weighted-average cost of capital + CAPM cost of equity.",
+    "description": "Deterministic weighted-average cost of capital, for valuation agents, DCF-discount-rate workflows, and capital-structure analysis. /wacc blends the cost of equity and after-tax cost of debt by market-value weights; /capm derives the cost of equity from the risk-free rate, beta and equity risk premium. No LLM, nothing stored.",
+    "category": "Finance",
+    "tier": "Agent Building Block",
+    "baseUrl": "https://orbis-apis.onrender.com/wacc",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "docsUrl": "https://orbis-apis.onrender.com/wacc/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/wacc/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logos/wacc.png",
+    "tags": ["finance", "valuation", "wacc", "capm", "agent-infrastructure"],
+    "keywords": ["wacc", "weighted average cost of capital", "capm", "cost of equity", "cost of debt", "discount rate"],
+    "capabilities": ["wacc", "cost_of_equity", "after_tax_cost_of_debt", "capm", "capital_weights"],
+    "tiers": [
+      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+      {
+        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.014,
+        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          { "method": "POST", "pathPattern": "/wacc", "pricePerCallUsdc": 0.008, "description": "Blend cost of equity + after-tax cost of debt by weights" },
+          { "method": "POST", "pathPattern": "/capm", "pricePerCallUsdc": 0.006, "description": "Cost of equity from risk-free + beta · equity risk premium" },
+          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.014, "description": "One-call WACC (with CAPM cost of equity) and reasoning" }
+        ]
+      }
+    ],
+    "endpoints": [
+      { "method": "POST", "path": "/wacc", "description": "Blend cost of equity + after-tax cost of debt by weights" },
+      { "method": "POST", "path": "/capm", "description": "Cost of equity from risk-free + beta · equity risk premium" },
+      { "method": "POST", "path": "/lookup", "description": "WACC (with CAPM cost of equity) and reasoning" }
+    ]
+  }
+]
