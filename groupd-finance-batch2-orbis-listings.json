@@ -2,159 +2,553 @@
   {
     "name": "Returns Analytics API",
     "shortDescription": "Total return, CAGR & annualized return from an equity curve.",
-    "description": "Deterministic return analytics from a value (NAV/price) series, for finance agents, strategy-screening workflows, and portfolio-reporting automation. /summary derives total return, CAGR, annualized arithmetic return, and best/worst period from an equity curve; /cagr computes the compound annual growth rate from begin/end values over N periods. No LLM, nothing stored.",
-    "category": "Finance",
-    "tier": "Agent Building Block",
+    "description": "Deterministic return analytics for equity, NAV, portfolio, and investment performance series. Calculates total return, CAGR, annualized return, average return, volatility metrics, and best/worst period performance. Designed for autonomous portfolio monitoring, investment analysis, and financial planning agents.",
+    "category": "Financial Analytics",
+    "tier": "Agent Decision API",
     "baseUrl": "https://orbis-apis.onrender.com/returns-analytics",
     "websiteUrl": "https://orbis-apis.onrender.com",
     "docsUrl": "https://orbis-apis.onrender.com/returns-analytics/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/returns-analytics/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logos/returns-analytics.png",
-    "tags": ["finance", "performance", "returns", "quant", "agent-infrastructure"],
-    "keywords": ["cagr", "total return", "annualized return", "equity curve", "performance", "compound annual growth rate"],
-    "capabilities": ["total_return", "cagr", "annualized_return", "period_returns", "best_worst_period"],
-    "tiers": [
-      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+    "logoUrl": "",
+    "tags": [
+      "finance",
+      "portfolio",
+      "returns",
+      "cagr",
+      "investment-analysis",
+      "quantitative-finance"
+    ],
+    "keywords": [
+      "returns analytics",
+      "compound annual growth rate",
+      "cagr",
+      "portfolio performance",
+      "investment returns",
+      "annualized return",
+      "performance measurement",
+      "asset analysis"
+    ],
+    "capabilities": [
+      "total_return",
+      "cagr",
+      "annualized_return",
+      "period_returns",
+      "best_worst_period"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "Portfolio performance evaluation",
+      "Investment return comparison",
+      "Retirement planning analysis",
+      "Fund performance reporting",
+      "Autonomous investment monitoring"
+    ],
+    "recommendedChains": [
       {
-        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
-        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
-        "endpointPricing": [
-          { "method": "POST", "pathPattern": "/summary", "pricePerCallUsdc": 0.007, "description": "Total return, CAGR, annualized return, best/worst period" },
-          { "method": "POST", "pathPattern": "/cagr", "pricePerCallUsdc": 0.006, "description": "Compound annual growth rate from begin/end over N periods" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call return analytics with reasoning" }
-        ]
+        "api": "Risk Ratios API",
+        "reason": "Evaluate risk-adjusted performance"
+      },
+      {
+        "api": "Max Drawdown API",
+        "reason": "Analyze downside risk"
+      },
+      {
+        "api": "DCF Valuation API",
+        "reason": "Compare returns versus intrinsic value"
       }
     ],
-    "endpoints": [
-      { "method": "POST", "path": "/summary", "description": "Total return, CAGR, annualized return, best/worst period" },
-      { "method": "POST", "path": "/cagr", "description": "Compound annual growth rate from begin/end over N periods" },
-      { "method": "POST", "path": "/lookup", "description": "Return analytics with reasoning" }
+    "endpointPricing": [
+      {
+        "endpoint": "/summary",
+        "price_usdc": 0.007
+      },
+      {
+        "endpoint": "/cagr",
+        "price_usdc": 0.006
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.012
+      }
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/summary",
+            "pricePerCallUsdc": 0.007,
+            "description": "Total return, CAGR, annualized return, best/worst period"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/cagr",
+            "pricePerCallUsdc": 0.006,
+            "description": "Compound annual growth rate from begin/end over N periods"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "One-call answer with reasoning (key_factors + invalidators)"
+          }
+        ]
+      }
     ]
   },
   {
     "name": "Max Drawdown API",
     "shortDescription": "Worst peak-to-trough decline, recovery & Calmar ratio.",
-    "description": "Deterministic maximum-drawdown analytics from a value (NAV/price) series, for risk agents, strategy-screening workflows, and drawdown-monitoring automation. /analyze finds the worst peak-to-trough decline, its depth, the peak/trough/recovery points, drawdown & recovery duration, and the Calmar ratio (CAGR ÷ |max drawdown|). No LLM, nothing stored.",
-    "category": "Finance",
-    "tier": "Agent Building Block",
+    "description": "Deterministic drawdown and recovery analysis for portfolios, equities, funds, and trading systems. Computes maximum drawdown, peak-to-trough loss, recovery periods, drawdown duration, recovery duration, CAGR, and Calmar ratio.",
+    "category": "Risk Analytics",
+    "tier": "Agent Decision API",
     "baseUrl": "https://orbis-apis.onrender.com/max-drawdown",
     "websiteUrl": "https://orbis-apis.onrender.com",
     "docsUrl": "https://orbis-apis.onrender.com/max-drawdown/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/max-drawdown/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logos/max-drawdown.png",
-    "tags": ["finance", "risk", "drawdown", "quant", "agent-infrastructure"],
-    "keywords": ["max drawdown", "drawdown", "peak to trough", "calmar ratio", "recovery", "risk"],
-    "capabilities": ["max_drawdown", "peak_trough_detection", "recovery_period", "calmar_ratio"],
-    "tiers": [
-      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+    "logoUrl": "",
+    "tags": [
+      "finance",
+      "risk-management",
+      "drawdown",
+      "portfolio-risk",
+      "quantitative-finance"
+    ],
+    "keywords": [
+      "maximum drawdown",
+      "peak to trough",
+      "calmar ratio",
+      "recovery analysis",
+      "portfolio risk",
+      "investment downside"
+    ],
+    "capabilities": [
+      "max_drawdown",
+      "peak_trough_detection",
+      "recovery_period",
+      "calmar_ratio"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "Portfolio risk monitoring",
+      "Fund manager evaluation",
+      "Strategy stress testing",
+      "Risk-adjusted performance analysis",
+      "Trading system evaluation"
+    ],
+    "recommendedChains": [
       {
-        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.013,
-        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
-        "endpointPricing": [
-          { "method": "POST", "pathPattern": "/analyze", "pricePerCallUsdc": 0.008, "description": "Max drawdown depth, peak/trough/recovery, Calmar ratio" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.013, "description": "One-call drawdown analysis with reasoning" }
-        ]
+        "api": "Returns Analytics API",
+        "reason": "Compare returns with downside risk"
+      },
+      {
+        "api": "Value at Risk API",
+        "reason": "Measure future loss potential"
       }
     ],
-    "endpoints": [
-      { "method": "POST", "path": "/analyze", "description": "Max drawdown depth, peak/trough/recovery, Calmar ratio" },
-      { "method": "POST", "path": "/lookup", "description": "Drawdown analysis with reasoning" }
+    "endpointPricing": [
+      {
+        "endpoint": "/analyze",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.013
+      }
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.013,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/analyze",
+            "pricePerCallUsdc": 0.008,
+            "description": "Max drawdown, peak-to-trough, recovery & Calmar ratio"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.013,
+            "description": "One-call answer with reasoning (key_factors + invalidators)"
+          }
+        ]
+      }
     ]
   },
   {
     "name": "Value at Risk API",
     "shortDescription": "Historical & parametric VaR plus expected shortfall (CVaR).",
-    "description": "Deterministic Value-at-Risk from a series of per-period returns, for risk agents, capital-sizing workflows, and risk-limit automation. /historical returns the empirical α-quantile VaR plus expected shortfall; /parametric returns Gaussian VaR (μ + z·σ) with closed-form expected shortfall. VaR and CVaR are reported as positive loss percents at the chosen confidence. No LLM, nothing stored.",
-    "category": "Finance",
-    "tier": "Agent Building Block",
+    "description": "Deterministic Value-at-Risk and Expected Shortfall calculations using historical simulation and parametric Gaussian models. Designed for portfolio risk management, capital allocation, and autonomous financial agents.",
+    "category": "Risk Analytics",
+    "tier": "Agent Decision API",
     "baseUrl": "https://orbis-apis.onrender.com/value-at-risk",
     "websiteUrl": "https://orbis-apis.onrender.com",
     "docsUrl": "https://orbis-apis.onrender.com/value-at-risk/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/value-at-risk/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logos/value-at-risk.png",
-    "tags": ["finance", "risk", "var", "quant", "agent-infrastructure"],
-    "keywords": ["value at risk", "var", "cvar", "expected shortfall", "tail risk", "parametric var", "historical var"],
-    "capabilities": ["historical_var", "parametric_var", "expected_shortfall", "cvar", "tail_risk"],
-    "tiers": [
-      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+    "logoUrl": "",
+    "tags": [
+      "finance",
+      "risk",
+      "var",
+      "expected-shortfall",
+      "portfolio-management"
+    ],
+    "keywords": [
+      "value at risk",
+      "var",
+      "cvar",
+      "expected shortfall",
+      "portfolio risk",
+      "loss estimation",
+      "financial risk"
+    ],
+    "capabilities": [
+      "historical_var",
+      "parametric_var",
+      "expected_shortfall",
+      "cvar",
+      "tail_risk"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "Portfolio risk limits",
+      "Capital allocation",
+      "Stress testing",
+      "Risk budgeting",
+      "Institutional portfolio monitoring"
+    ],
+    "recommendedChains": [
       {
-        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.014,
-        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
-        "endpointPricing": [
-          { "method": "POST", "pathPattern": "/historical", "pricePerCallUsdc": 0.008, "description": "Empirical α-quantile VaR + expected shortfall" },
-          { "method": "POST", "pathPattern": "/parametric", "pricePerCallUsdc": 0.008, "description": "Gaussian VaR (μ + z·σ) + closed-form expected shortfall" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.014, "description": "One-call VaR (both methods) with reasoning" }
-        ]
+        "api": "Max Drawdown API",
+        "reason": "Analyze historical downside events"
+      },
+      {
+        "api": "Risk Ratios API",
+        "reason": "Evaluate risk-adjusted returns"
       }
     ],
-    "endpoints": [
-      { "method": "POST", "path": "/historical", "description": "Empirical α-quantile VaR + expected shortfall" },
-      { "method": "POST", "path": "/parametric", "description": "Gaussian VaR + closed-form expected shortfall" },
-      { "method": "POST", "path": "/lookup", "description": "VaR (both methods) with reasoning" }
+    "endpointPricing": [
+      {
+        "endpoint": "/historical",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/parametric",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.014
+      }
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.014,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/historical",
+            "pricePerCallUsdc": 0.008,
+            "description": "Historical-simulation VaR & expected shortfall"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/parametric",
+            "pricePerCallUsdc": 0.008,
+            "description": "Parametric (Gaussian) VaR & expected shortfall"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.014,
+            "description": "One-call answer with reasoning (key_factors + invalidators)"
+          }
+        ]
+      }
     ]
   },
   {
     "name": "Compound Interest API",
     "shortDescription": "Future value with contributions + nominal-to-effective rate (APY).",
-    "description": "Deterministic compound-interest math, for finance agents, savings-projection workflows, and rate-conversion automation. /future-value grows a principal plus optional periodic contributions at a nominal annual rate compounded m times per year; /effective-rate converts a nominal annual rate to its effective annual rate (APY). No LLM, nothing stored.",
-    "category": "Finance",
-    "tier": "Agent Building Block",
+    "description": "Deterministic compound growth, future value, contribution, and APY calculations for investment planning, savings forecasting, and retirement analysis.",
+    "category": "Financial Planning",
+    "tier": "Agent Decision API",
     "baseUrl": "https://orbis-apis.onrender.com/compound-interest",
     "websiteUrl": "https://orbis-apis.onrender.com",
     "docsUrl": "https://orbis-apis.onrender.com/compound-interest/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/compound-interest/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logos/compound-interest.png",
-    "tags": ["finance", "savings", "interest", "quant", "agent-infrastructure"],
-    "keywords": ["compound interest", "future value", "apy", "effective annual rate", "annuity", "apr to apy", "savings"],
-    "capabilities": ["future_value", "compound_growth", "annuity", "effective_annual_rate", "apr_to_apy"],
-    "tiers": [
-      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+    "logoUrl": "",
+    "tags": [
+      "finance",
+      "compound-interest",
+      "retirement",
+      "savings",
+      "investment-planning"
+    ],
+    "keywords": [
+      "compound growth",
+      "future value",
+      "apy",
+      "effective annual rate",
+      "retirement planning",
+      "investment forecasting"
+    ],
+    "capabilities": [
+      "future_value",
+      "compound_growth",
+      "annuity",
+      "effective_annual_rate",
+      "apr_to_apy"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "Retirement forecasting",
+      "Investment growth planning",
+      "Savings analysis",
+      "Goal-based financial planning",
+      "Contribution optimization"
+    ],
+    "recommendedChains": [
       {
-        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.012,
-        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
-        "endpointPricing": [
-          { "method": "POST", "pathPattern": "/future-value", "pricePerCallUsdc": 0.007, "description": "Future value of principal + contributions, compounded m/yr" },
-          { "method": "POST", "pathPattern": "/effective-rate", "pricePerCallUsdc": 0.005, "description": "Nominal annual rate to effective annual rate (APY)" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.012, "description": "One-call compound-interest projection with reasoning" }
-        ]
+        "api": "Returns Analytics API",
+        "reason": "Compare projected versus realized returns"
+      },
+      {
+        "api": "DCF Valuation API",
+        "reason": "Evaluate investment opportunities"
       }
     ],
-    "endpoints": [
-      { "method": "POST", "path": "/future-value", "description": "Future value of principal + contributions, compounded m/yr" },
-      { "method": "POST", "path": "/effective-rate", "description": "Nominal annual rate to effective annual rate (APY)" },
-      { "method": "POST", "path": "/lookup", "description": "Compound-interest projection with reasoning" }
+    "endpointPricing": [
+      {
+        "endpoint": "/future-value",
+        "price_usdc": 0.007
+      },
+      {
+        "endpoint": "/effective-rate",
+        "price_usdc": 0.005
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.012
+      }
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.012,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/future-value",
+            "pricePerCallUsdc": 0.007,
+            "description": "Future value with compounding & periodic contributions"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/effective-rate",
+            "pricePerCallUsdc": 0.005,
+            "description": "Effective annual rate (APY) from nominal + frequency"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.012,
+            "description": "One-call answer with reasoning (key_factors + invalidators)"
+          }
+        ]
+      }
     ]
   },
   {
     "name": "WACC API",
     "shortDescription": "Weighted-average cost of capital + CAPM cost of equity.",
-    "description": "Deterministic weighted-average cost of capital, for valuation agents, DCF-discount-rate workflows, and capital-structure analysis. /wacc blends the cost of equity and after-tax cost of debt by market-value weights; /capm derives the cost of equity from the risk-free rate, beta and equity risk premium. No LLM, nothing stored.",
-    "category": "Finance",
-    "tier": "Agent Building Block",
+    "description": "Deterministic Weighted Average Cost of Capital calculations using market-value capital structure, CAPM cost of equity, debt costs, and tax adjustments. Designed for valuation, capital allocation, and corporate finance workflows.",
+    "category": "Corporate Finance",
+    "tier": "Agent Decision API",
     "baseUrl": "https://orbis-apis.onrender.com/wacc",
     "websiteUrl": "https://orbis-apis.onrender.com",
     "docsUrl": "https://orbis-apis.onrender.com/wacc/openapi.json",
     "openApiSpecUrl": "https://orbis-apis.onrender.com/wacc/openapi.json",
-    "logoUrl": "https://orbis-apis.onrender.com/logos/wacc.png",
-    "tags": ["finance", "valuation", "wacc", "capm", "agent-infrastructure"],
-    "keywords": ["wacc", "weighted average cost of capital", "capm", "cost of equity", "cost of debt", "discount rate"],
-    "capabilities": ["wacc", "cost_of_equity", "after_tax_cost_of_debt", "capm", "capital_weights"],
-    "tiers": [
-      { "name": "Free", "isFree": true, "requestsPerDay": 100, "requestsPerMonth": 3000 },
+    "logoUrl": "",
+    "tags": [
+      "finance",
+      "wacc",
+      "valuation",
+      "corporate-finance",
+      "capm"
+    ],
+    "keywords": [
+      "weighted average cost of capital",
+      "wacc",
+      "discount rate",
+      "corporate valuation",
+      "cost of equity",
+      "capital structure"
+    ],
+    "capabilities": [
+      "wacc",
+      "cost_of_equity",
+      "after_tax_cost_of_debt",
+      "capm",
+      "capital_weights"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "DCF valuation",
+      "Corporate finance analysis",
+      "Investment committee workflows",
+      "Capital allocation",
+      "Acquisition analysis"
+    ],
+    "recommendedChains": [
       {
-        "name": "Pay Per Call", "isFree": false, "pricingType": "per_call", "pricePerCall": 0.014,
-        "requestsPerDay": 100000, "requestsPerMonth": 3000000,
-        "endpointPricing": [
-          { "method": "POST", "pathPattern": "/wacc", "pricePerCallUsdc": 0.008, "description": "Blend cost of equity + after-tax cost of debt by weights" },
-          { "method": "POST", "pathPattern": "/capm", "pricePerCallUsdc": 0.006, "description": "Cost of equity from risk-free + beta · equity risk premium" },
-          { "method": "POST", "pathPattern": "/lookup", "pricePerCallUsdc": 0.014, "description": "One-call WACC (with CAPM cost of equity) and reasoning" }
-        ]
+        "api": "DCF Valuation API",
+        "reason": "Use WACC as discount rate"
+      },
+      {
+        "api": "Risk Ratios API",
+        "reason": "Compare cost of capital versus risk profile"
       }
     ],
-    "endpoints": [
-      { "method": "POST", "path": "/wacc", "description": "Blend cost of equity + after-tax cost of debt by weights" },
-      { "method": "POST", "path": "/capm", "description": "Cost of equity from risk-free + beta · equity risk premium" },
-      { "method": "POST", "path": "/lookup", "description": "WACC (with CAPM cost of equity) and reasoning" }
+    "endpointPricing": [
+      {
+        "endpoint": "/wacc",
+        "price_usdc": 0.008
+      },
+      {
+        "endpoint": "/capm",
+        "price_usdc": 0.006
+      },
+      {
+        "endpoint": "/lookup",
+        "price_usdc": 0.014
+      }
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.014,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/wacc",
+            "pricePerCallUsdc": 0.008,
+            "description": "WACC from market-value weights, costs of equity/debt & tax"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/capm",
+            "pricePerCallUsdc": 0.006,
+            "description": "CAPM cost of equity from risk-free, beta & equity risk premium"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.014,
+            "description": "One-call answer with reasoning (key_factors + invalidators)"
+          }
+        ]
+      }
     ]
   }
 ]
