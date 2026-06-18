@@ -614,6 +614,16 @@ import dcfValuationRouter from './routes/dcf-valuation-api/routes/intelligence';
 import dcfValuationOpenapiRouter from './routes/dcf-valuation-api/routes/openapi';
 import riskRatiosRouter from './routes/risk-ratios-api/routes/intelligence';
 import riskRatiosOpenapiRouter from './routes/risk-ratios-api/routes/openapi';
+import returnsAnalyticsRouter from './routes/returns-analytics-api/routes/intelligence';
+import returnsAnalyticsOpenapiRouter from './routes/returns-analytics-api/routes/openapi';
+import maxDrawdownRouter from './routes/max-drawdown-api/routes/intelligence';
+import maxDrawdownOpenapiRouter from './routes/max-drawdown-api/routes/openapi';
+import valueAtRiskRouter from './routes/value-at-risk-api/routes/intelligence';
+import valueAtRiskOpenapiRouter from './routes/value-at-risk-api/routes/openapi';
+import compoundInterestRouter from './routes/compound-interest-api/routes/intelligence';
+import compoundInterestOpenapiRouter from './routes/compound-interest-api/routes/openapi';
+import waccRouter from './routes/wacc-api/routes/intelligence';
+import waccOpenapiRouter from './routes/wacc-api/routes/openapi';
 import financialHealthCheckerRouter from './routes/financial-health-checker-api/routes/intelligence';
 import financialHealthCheckerOpenapiRouter from './routes/financial-health-checker-api/routes/openapi';
 import personalFinanceAgentRouter from './routes/personal-finance-agent-api/routes/intelligence';
@@ -1399,6 +1409,11 @@ const routerMap: Record<string, import("express").Router> = {
   'bond-analytics': bondAnalyticsRouter,
   'dcf-valuation': dcfValuationRouter,
   'risk-ratios': riskRatiosRouter,
+  'returns-analytics': returnsAnalyticsRouter,
+  'max-drawdown': maxDrawdownRouter,
+  'value-at-risk': valueAtRiskRouter,
+  'compound-interest': compoundInterestRouter,
+  'wacc': waccRouter,
   'financial-health-checker': financialHealthCheckerRouter,
   'personal-finance-agent': personalFinanceAgentRouter,
   'debt-payoff-planner': debtPayoffPlannerRouter,
@@ -1899,6 +1914,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'bond-analytics': bondAnalyticsOpenapiRouter,
   'dcf-valuation': dcfValuationOpenapiRouter,
   'risk-ratios': riskRatiosOpenapiRouter,
+  'returns-analytics': returnsAnalyticsOpenapiRouter,
+  'max-drawdown': maxDrawdownOpenapiRouter,
+  'value-at-risk': valueAtRiskOpenapiRouter,
+  'compound-interest': compoundInterestOpenapiRouter,
+  'wacc': waccOpenapiRouter,
   'financial-health-checker': financialHealthCheckerOpenapiRouter,
   'personal-finance-agent': personalFinanceAgentOpenapiRouter,
   'debt-payoff-planner': debtPayoffPlannerOpenapiRouter,
