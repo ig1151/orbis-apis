@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { respond, fail } from '../../_aplus/scaffold';
-import { EXECUTION_METADATA, FINANCIAL_DISCLAIMER, round } from '../../_aplus/finance';
+import { EXECUTION_METADATA, FINANCIAL_DISCLAIMER, chainTo, round } from '../../_aplus/finance';
 
 // Deterministic compound-interest math. /future-value grows a principal plus optional
 // periodic contributions at a nominal annual rate compounded m times per year;
@@ -75,9 +75,9 @@ const INVALIDATORS = [
 ];
 
 const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
-  confidence_score: 1, confidence_per_section: sectionConf,
+  confidence_score: 1, calculation_certainty: 1, confidence_per_section: sectionConf,
   recommended_actions_priority_order: actions,
-  chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA, financial_disclaimer: FINANCIAL_DISCLAIMER,
+  chain_to: chainTo(CHAIN_TO), privacy: PRIVACY, execution_metadata: EXECUTION_METADATA, financial_disclaimer: FINANCIAL_DISCLAIMER,
 });
 
 export const DISCOVERY = {

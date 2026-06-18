@@ -10,6 +10,7 @@ export const npvExample = {
   "cashflow_total": 500,
   "npv": 238.138382,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "npv": 1
   },
@@ -20,11 +21,13 @@ export const npvExample = {
   "chain_to": [
     {
       "api": "dcf-valuation",
-      "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value."
+      "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     },
     {
       "api": "bond-analytics",
-      "reason": "Price a fixed-coupon bond or solve its yield to maturity."
+      "reason": "Price a fixed-coupon bond or solve its yield to maturity.",
+      "url": "https://orbis-apis.onrender.com/bond-analytics"
     }
   ],
   "privacy": {
@@ -50,6 +53,7 @@ export const irrExample = {
   "npv_at_irr": 0,
   "sign_changes": 1,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "irr": 1
   },
@@ -59,11 +63,13 @@ export const irrExample = {
   "chain_to": [
     {
       "api": "dcf-valuation",
-      "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value."
+      "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     },
     {
       "api": "bond-analytics",
-      "reason": "Price a fixed-coupon bond or solve its yield to maturity."
+      "reason": "Price a fixed-coupon bond or solve its yield to maturity.",
+      "url": "https://orbis-apis.onrender.com/bond-analytics"
     }
   ],
   "privacy": {
@@ -103,6 +109,7 @@ export const lookupExample = {
     ]
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "npv": 1,
     "irr": 1
@@ -113,11 +120,13 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "dcf-valuation",
-      "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value."
+      "reason": "Discount a projected free-cash-flow stream into an enterprise value with a terminal value.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     },
     {
       "api": "bond-analytics",
-      "reason": "Price a fixed-coupon bond or solve its yield to maturity."
+      "reason": "Price a fixed-coupon bond or solve its yield to maturity.",
+      "url": "https://orbis-apis.onrender.com/bond-analytics"
     }
   ],
   "privacy": {

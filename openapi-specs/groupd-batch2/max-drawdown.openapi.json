@@ -1,1 +1,924 @@
-{"openapi":"3.1.0","info":{"title":"Max Drawdown API","version":"1.0.0","description":"Deterministic maximum drawdown, recovery and Calmar ratio from a value series. No LLM.","x-agent-callable":true,"x-mcp-compatible":true,"x402-compatible":true,"x-agent-marketplace-ready":true,"x-pay-per-call-optimized":true,"x-finance-tool":true,"x-financial-calculation":true,"x-human-approval-required":false},"servers":[{"url":"https://orbis-apis.onrender.com/max-drawdown"}],"security":[{"ApiKeyAuth":[]}],"paths":{"/":{"get":{"operationId":"discover","summary":"Service discovery","responses":{"200":{"description":"Successful response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/DiscoveryResponse"},"example":{"name":"Max Drawdown API","version":"1.0.0","description":"Deterministic maximum drawdown analytics from a value (NAV/price) series. /analyze finds the worst peak-to-trough decline, its depth, the peak/trough/recovery points, drawdown & recovery duration, and the Calmar ratio (CAGR ÷ |max drawdown|). No LLM, nothing stored.","openapi_url":"https://orbis-apis.onrender.com/max-drawdown/openapi.json","auth":{"type":"apiKey","header":"X-API-Key"},"capabilities":["max_drawdown","peak_trough_detection","recovery_period","calmar_ratio"],"typical_use_cases":["Measure the worst peak-to-trough loss of a strategy or portfolio","Check whether and how quickly an equity curve recovered from its deepest drawdown","Compute the Calmar ratio to compare return against drawdown risk"],"input_examples":[{"endpoint":"/analyze","body":{"values":[100,120,90,95,130],"periods_per_year":12}}],"output_examples":[{"endpoint":"/analyze","response":{"max_drawdown_percent":-25,"peak_index":1,"trough_index":2,"recovery_index":4,"recovered":true}}],"endpoints":[{"method":"POST","path":"/analyze","summary":"Max drawdown, peak/trough/recovery, Calmar","price_usdc":0.008},{"method":"POST","path":"/lookup","summary":"ONE-CALL drawdown analysis + reasoning","price_usdc":0.013}],"pricing":[{"path":"/analyze","price_usdc":0.008,"currency":"USDC"},{"path":"/lookup","price_usdc":0.013,"currency":"USDC"}],"x402_compatible":true}}}},"400":{"description":"Invalid request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error400"}}}},"500":{"description":"Internal error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error500"}}}}}}},"/analyze":{"post":{"operationId":"analyze","summary":"Max drawdown, peak/trough/recovery, Calmar","responses":{"200":{"description":"Successful response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/AnalyzeResponse"},"example":{"trace_id":"gbx-1780000000000","request_id":"gbx-1780000000000","computed_at":"2026-06-16T12:00:00.000Z","success":true,"latency_ms":1,"observations":5,"periods_per_year":12,"max_drawdown_percent":-25,"peak_index":1,"trough_index":2,"peak_value":120,"trough_value":90,"drawdown_periods":1,"recovery_index":4,"recovery_periods":2,"recovered":true,"cagr_percent":119.7,"calmar_ratio":4.788,"confidence_score":1,"confidence_per_section":{"drawdown":1},"recommended_actions_priority_order":["Max drawdown -25% from index 1 to 2, recovered by index 4."],"chain_to":[{"api":"risk-ratios","reason":"Pair drawdown with Sharpe/Sortino for a fuller risk picture."},{"api":"value-at-risk","reason":"Estimate tail loss over a single period from the return series."}],"privacy":{"data_stored":false,"retention":"none"},"execution_metadata":{"model":"deterministic","automation_safe":true},"financial_disclaimer":"This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."}}}},"400":{"description":"Invalid request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error400"}}}},"500":{"description":"Internal error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error500"}}}}},"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AnalyzeRequest"},"example":{"values":[100,120,90,95,130],"periods_per_year":12}}}},"x-pricing":{"model":"per_call","price_usdc":0.008,"currency":"USDC"}}},"/lookup":{"post":{"operationId":"lookup","summary":"ONE-CALL drawdown analysis + reasoning","responses":{"200":{"description":"Successful response","content":{"application/json":{"schema":{"$ref":"#/components/schemas/LookupResponse"},"example":{"trace_id":"gbx-1780000000000","request_id":"gbx-1780000000000","computed_at":"2026-06-16T12:00:00.000Z","success":true,"latency_ms":1,"observations":5,"periods_per_year":12,"max_drawdown_percent":-25,"peak_index":1,"trough_index":2,"peak_value":120,"trough_value":90,"drawdown_periods":1,"recovery_index":4,"recovery_periods":2,"recovered":true,"cagr_percent":119.7,"calmar_ratio":4.788,"reasoning":{"why_result_generated":"Scanned 5 levels for the largest peak-to-trough decline: -25% (peak 120 @1 → trough 90 @2), recovered after 2 period(s).","key_factors":["Max drawdown -25%.","Drawdown lasted 1 period(s).","Calmar 4.788 (CAGR 119.7%)."],"invalidators":["\"values\" are LEVELS (NAV/price). The max drawdown is the largest peak-to-trough percentage decline; it is reported as a NEGATIVE percent. Feeding returns instead of levels gives meaningless results.","recovery_index is the first observation that regains the prior peak value; if the series never recovers, recovered=false and recovery_periods=null. The drawdown can still be ongoing at the end of the series.","Calmar = CAGR ÷ |max drawdown| over the supplied window; it is sensitive to the sample length and to periods_per_year. With zero drawdown the ratio is undefined (null)."]},"confidence_score":1,"confidence_per_section":{"drawdown":1},"recommended_actions_priority_order":["Recovered from the -25% drawdown after 2 period(s)."],"chain_to":[{"api":"risk-ratios","reason":"Pair drawdown with Sharpe/Sortino for a fuller risk picture."},{"api":"value-at-risk","reason":"Estimate tail loss over a single period from the return series."}],"privacy":{"data_stored":false,"retention":"none"},"execution_metadata":{"model":"deterministic","automation_safe":true},"financial_disclaimer":"This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."}}}},"400":{"description":"Invalid request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error400"}}}},"500":{"description":"Internal error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error500"}}}}},"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AnalyzeRequest"},"example":{"values":[100,120,90,95,130],"periods_per_year":12}}}},"x-pricing":{"model":"per_call","price_usdc":0.013,"currency":"USDC"},"x-one-call":true}}},"components":{"securitySchemes":{"ApiKeyAuth":{"type":"apiKey","in":"header","name":"X-API-Key"}},"schemas":{"ChainTo":{"type":"object","required":["api","reason"],"additionalProperties":false,"properties":{"api":{"type":"string","description":"Slug of a recommended next API to call."},"reason":{"type":"string","description":"Why an agent would chain to this API next."}}},"Reasoning":{"type":"object","required":["why_result_generated","key_factors","invalidators"],"additionalProperties":false,"properties":{"why_result_generated":{"type":"string"},"key_factors":{"type":"array","items":{"type":"string"}},"invalidators":{"type":"array","items":{"type":"string"},"description":"Conditions that would change or invalidate this result."}}},"Privacy":{"type":"object","required":["data_stored","retention"],"additionalProperties":false,"properties":{"data_stored":{"type":"boolean"},"retention":{"type":"string","description":"Retention policy, e.g. \"none\"."}}},"EnvelopeError":{"type":"object","required":["code","message"],"additionalProperties":false,"properties":{"code":{"type":"string"},"message":{"type":"string"},"details":{"description":"Optional machine-readable error context."}}},"Error400":{"type":"object","required":["trace_id","computed_at","success","latency_ms","error"],"additionalProperties":false,"properties":{"trace_id":{"type":"string"},"request_id":{"type":"string","description":"Alias of trace_id."},"computed_at":{"type":"string","format":"date-time"},"success":{"type":"boolean","enum":[false]},"latency_ms":{"type":"integer"},"error":{"$ref":"#/components/schemas/EnvelopeError"}}},"Error500":{"$ref":"#/components/schemas/Error400"},"EnvelopeOk":{"type":"object","required":["trace_id","computed_at","success","latency_ms"],"properties":{"trace_id":{"type":"string"},"request_id":{"type":"string","description":"Alias of trace_id for clients that key on request_id."},"computed_at":{"type":"string","format":"date-time"},"success":{"type":"boolean","enum":[true]},"latency_ms":{"type":"integer","minimum":0}}},"ExecutionMetadata":{"type":"object","required":["model","automation_safe"],"additionalProperties":false,"properties":{"model":{"type":"string","enum":["deterministic"]},"automation_safe":{"type":"boolean"}}},"ConfidencePerSection":{"type":"object","additionalProperties":false,"properties":{"drawdown":{"type":"number","minimum":0,"maximum":1}}},"_Tail":{"type":"object","required":["confidence_score","confidence_per_section","recommended_actions_priority_order","chain_to","privacy","execution_metadata","financial_disclaimer"],"properties":{"confidence_score":{"type":"number","minimum":0,"maximum":1},"confidence_per_section":{"$ref":"#/components/schemas/ConfidencePerSection"},"recommended_actions_priority_order":{"type":"array","items":{"type":"string"}},"chain_to":{"type":"array","items":{"$ref":"#/components/schemas/ChainTo"}},"privacy":{"$ref":"#/components/schemas/Privacy"},"execution_metadata":{"$ref":"#/components/schemas/ExecutionMetadata"},"financial_disclaimer":{"type":"string","description":"Informational-only disclaimer; not financial advice."}}},"DrawdownCore":{"type":"object","required":["observations","periods_per_year","max_drawdown_percent","peak_index","trough_index","peak_value","trough_value","drawdown_periods","recovery_index","recovery_periods","recovered","cagr_percent","calmar_ratio"],"properties":{"observations":{"type":"integer"},"periods_per_year":{"type":"number"},"max_drawdown_percent":{"type":"number"},"peak_index":{"type":"integer"},"trough_index":{"type":"integer"},"peak_value":{"type":"number"},"trough_value":{"type":"number"},"drawdown_periods":{"type":"integer"},"recovery_index":{"type":["integer","null"]},"recovery_periods":{"type":["integer","null"]},"recovered":{"type":"boolean"},"cagr_percent":{"type":"number"},"calmar_ratio":{"type":["number","null"]}}},"AnalyzeRequest":{"type":"object","required":["values"],"additionalProperties":false,"properties":{"values":{"type":"array","minItems":2,"maxItems":5000,"items":{"type":"number","exclusiveMinimum":0},"description":"Level series (NAV/price), positive numbers."},"periods_per_year":{"type":"number","exclusiveMinimum":0,"description":"For CAGR/Calmar annualization (default 12)."}}},"DiscoveryResponse":{"type":"object","required":["name","version","description","openapi_url","auth","endpoints","pricing","x402_compatible","capabilities"],"additionalProperties":false,"properties":{"name":{"type":"string"},"version":{"type":"string"},"description":{"type":"string"},"openapi_url":{"type":"string","format":"uri"},"auth":{"type":"object","required":["type","header"],"additionalProperties":false,"properties":{"type":{"type":"string"},"header":{"type":"string"}}},"endpoints":{"type":"array","items":{"type":"object","required":["method","path","summary","price_usdc"],"additionalProperties":false,"properties":{"method":{"type":"string"},"path":{"type":"string"},"summary":{"type":"string"},"price_usdc":{"type":"number"}}}},"pricing":{"type":"array","items":{"type":"object","required":["path","price_usdc","currency"],"additionalProperties":false,"properties":{"path":{"type":"string"},"price_usdc":{"type":"number"},"currency":{"type":"string","enum":["USDC"]}}}},"x402_compatible":{"type":"boolean"},"capabilities":{"type":"array","items":{"type":"string"},"description":"Machine-readable capability tags for agent matching."},"typical_use_cases":{"type":"array","items":{"type":"string"},"description":"Optional plain-language use cases to aid autonomous discovery."},"security_notes":{"type":"array","items":{"type":"string"},"description":"Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."},"input_examples":{"type":"array","description":"Optional representative request bodies for primary endpoints, to aid autonomous discovery.","items":{"type":"object","required":["endpoint","body"],"additionalProperties":false,"properties":{"endpoint":{"type":"string"},"body":{"type":"object","additionalProperties":true}}}},"output_examples":{"type":"array","description":"Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).","items":{"type":"object","required":["endpoint","response"],"additionalProperties":false,"properties":{"endpoint":{"type":"string"},"response":{"type":"object","additionalProperties":true}}}}}},"AnalyzeResponse":{"allOf":[{"$ref":"#/components/schemas/EnvelopeOk"},{"$ref":"#/components/schemas/DrawdownCore"},{"$ref":"#/components/schemas/_Tail"}],"unevaluatedProperties":false},"LookupResponse":{"allOf":[{"$ref":"#/components/schemas/EnvelopeOk"},{"$ref":"#/components/schemas/DrawdownCore"},{"type":"object","required":["reasoning"],"properties":{"reasoning":{"$ref":"#/components/schemas/Reasoning"}}},{"$ref":"#/components/schemas/_Tail"}],"unevaluatedProperties":false}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Max Drawdown API",
+    "version": "1.0.0",
+    "description": "Deterministic maximum drawdown, recovery and Calmar ratio from a value series. No LLM.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "x-finance-tool": true,
+    "x-financial-calculation": true,
+    "x-human-approval-required": false
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/max-drawdown"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Service discovery",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Max Drawdown API",
+                  "version": "1.0.0",
+                  "description": "Deterministic maximum drawdown analytics from a value (NAV/price) series. /analyze finds the worst peak-to-trough decline, its depth, the peak/trough/recovery points, drawdown & recovery duration, and the Calmar ratio (CAGR ÷ |max drawdown|). No LLM, nothing stored.",
+                  "openapi_url": "https://orbis-apis.onrender.com/max-drawdown/openapi.json",
+                  "auth": {
+                    "type": "apiKey",
+                    "header": "X-API-Key"
+                  },
+                  "capabilities": [
+                    "max_drawdown",
+                    "peak_trough_detection",
+                    "recovery_period",
+                    "calmar_ratio"
+                  ],
+                  "typical_use_cases": [
+                    "Measure the worst peak-to-trough loss of a strategy or portfolio",
+                    "Check whether and how quickly an equity curve recovered from its deepest drawdown",
+                    "Compute the Calmar ratio to compare return against drawdown risk"
+                  ],
+                  "input_examples": [
+                    {
+                      "endpoint": "/analyze",
+                      "body": {
+                        "values": [
+                          100,
+                          120,
+                          90,
+                          95,
+                          130
+                        ],
+                        "periods_per_year": 12
+                      }
+                    }
+                  ],
+                  "output_examples": [
+                    {
+                      "endpoint": "/analyze",
+                      "response": {
+                        "max_drawdown_percent": -25,
+                        "peak_index": 1,
+                        "trough_index": 2,
+                        "recovery_index": 4,
+                        "recovered": true
+                      }
+                    }
+                  ],
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/analyze",
+                      "summary": "Max drawdown, peak/trough/recovery, Calmar",
+                      "price_usdc": 0.008
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/lookup",
+                      "summary": "ONE-CALL drawdown analysis + reasoning",
+                      "price_usdc": 0.013
+                    }
+                  ],
+                  "pricing": [
+                    {
+                      "path": "/analyze",
+                      "price_usdc": 0.008,
+                      "currency": "USDC"
+                    },
+                    {
+                      "path": "/lookup",
+                      "price_usdc": 0.013,
+                      "currency": "USDC"
+                    }
+                  ],
+                  "x402_compatible": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analyze": {
+      "post": {
+        "operationId": "analyze",
+        "summary": "Max drawdown, peak/trough/recovery, Calmar",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "observations": 5,
+                  "periods_per_year": 12,
+                  "max_drawdown_percent": -25,
+                  "peak_index": 1,
+                  "trough_index": 2,
+                  "peak_value": 120,
+                  "trough_value": 90,
+                  "drawdown_periods": 1,
+                  "recovery_index": 4,
+                  "recovery_periods": 2,
+                  "recovered": true,
+                  "cagr_percent": 119.7,
+                  "calmar_ratio": 4.788,
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "drawdown": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Max drawdown -25% from index 1 to 2, recovered by index 4."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "risk-ratios",
+                      "reason": "Pair drawdown with Sharpe/Sortino for a fuller risk picture.",
+                      "url": "https://orbis-apis.onrender.com/risk-ratios"
+                    },
+                    {
+                      "api": "value-at-risk",
+                      "reason": "Estimate tail loss over a single period from the return series.",
+                      "url": "https://orbis-apis.onrender.com/value-at-risk"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeRequest"
+              },
+              "example": {
+                "values": [
+                  100,
+                  120,
+                  90,
+                  95,
+                  130
+                ],
+                "periods_per_year": 12
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.008,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL drawdown analysis + reasoning",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookupResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "observations": 5,
+                  "periods_per_year": 12,
+                  "max_drawdown_percent": -25,
+                  "peak_index": 1,
+                  "trough_index": 2,
+                  "peak_value": 120,
+                  "trough_value": 90,
+                  "drawdown_periods": 1,
+                  "recovery_index": 4,
+                  "recovery_periods": 2,
+                  "recovered": true,
+                  "cagr_percent": 119.7,
+                  "calmar_ratio": 4.788,
+                  "reasoning": {
+                    "why_result_generated": "Scanned 5 levels for the largest peak-to-trough decline: -25% (peak 120 @1 → trough 90 @2), recovered after 2 period(s).",
+                    "key_factors": [
+                      "Max drawdown -25%.",
+                      "Drawdown lasted 1 period(s).",
+                      "Calmar 4.788 (CAGR 119.7%)."
+                    ],
+                    "invalidators": [
+                      "\"values\" are LEVELS (NAV/price). The max drawdown is the largest peak-to-trough percentage decline; it is reported as a NEGATIVE percent. Feeding returns instead of levels gives meaningless results.",
+                      "recovery_index is the first observation that regains the prior peak value; if the series never recovers, recovered=false and recovery_periods=null. The drawdown can still be ongoing at the end of the series.",
+                      "Calmar = CAGR ÷ |max drawdown| over the supplied window; it is sensitive to the sample length and to periods_per_year. With zero drawdown the ratio is undefined (null)."
+                    ]
+                  },
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "drawdown": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Recovered from the -25% drawdown after 2 period(s)."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "risk-ratios",
+                      "reason": "Pair drawdown with Sharpe/Sortino for a fuller risk picture.",
+                      "url": "https://orbis-apis.onrender.com/risk-ratios"
+                    },
+                    {
+                      "api": "value-at-risk",
+                      "reason": "Estimate tail loss over a single period from the return series.",
+                      "url": "https://orbis-apis.onrender.com/value-at-risk"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeRequest"
+              },
+              "example": {
+                "values": [
+                  100,
+                  120,
+                  90,
+                  95,
+                  130
+                ],
+                "periods_per_year": 12
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.013,
+          "currency": "USDC"
+        },
+        "x-one-call": true
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "ChainTo": {
+        "type": "object",
+        "required": [
+          "api",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "api": {
+            "type": "string",
+            "description": "Slug of a recommended next API to call."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why an agent would chain to this API next."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+          }
+        }
+      },
+      "Reasoning": {
+        "type": "object",
+        "required": [
+          "why_result_generated",
+          "key_factors",
+          "invalidators"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "why_result_generated": {
+            "type": "string"
+          },
+          "key_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invalidators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Conditions that would change or invalidate this result."
+          }
+        }
+      },
+      "Privacy": {
+        "type": "object",
+        "required": [
+          "data_stored",
+          "retention"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data_stored": {
+            "type": "boolean"
+          },
+          "retention": {
+            "type": "string",
+            "description": "Retention policy, e.g. \"none\"."
+          }
+        }
+      },
+      "EnvelopeError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "description": "Optional machine-readable error context."
+          }
+        }
+      },
+      "Error400": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms",
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "latency_ms": {
+            "type": "integer"
+          },
+          "error": {
+            "$ref": "#/components/schemas/EnvelopeError"
+          }
+        }
+      },
+      "Error500": {
+        "$ref": "#/components/schemas/Error400"
+      },
+      "EnvelopeOk": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id for clients that key on request_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "latency_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "ExecutionMetadata": {
+        "type": "object",
+        "required": [
+          "model",
+          "automation_safe"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "deterministic"
+            ]
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ConfidencePerSection": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "drawdown": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "_Tail": {
+        "type": "object",
+        "required": [
+          "confidence_score",
+          "confidence_per_section",
+          "recommended_actions_priority_order",
+          "chain_to",
+          "privacy",
+          "execution_metadata",
+          "calculation_certainty",
+          "financial_disclaimer"
+        ],
+        "properties": {
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "confidence_per_section": {
+            "$ref": "#/components/schemas/ConfidencePerSection"
+          },
+          "recommended_actions_priority_order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "chain_to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChainTo"
+            }
+          },
+          "privacy": {
+            "$ref": "#/components/schemas/Privacy"
+          },
+          "execution_metadata": {
+            "$ref": "#/components/schemas/ExecutionMetadata"
+          },
+          "calculation_certainty": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+          },
+          "financial_disclaimer": {
+            "type": "string",
+            "description": "Informational-only disclaimer; not financial advice."
+          }
+        }
+      },
+      "DrawdownCore": {
+        "type": "object",
+        "required": [
+          "observations",
+          "periods_per_year",
+          "max_drawdown_percent",
+          "peak_index",
+          "trough_index",
+          "peak_value",
+          "trough_value",
+          "drawdown_periods",
+          "recovery_index",
+          "recovery_periods",
+          "recovered",
+          "cagr_percent",
+          "calmar_ratio"
+        ],
+        "properties": {
+          "observations": {
+            "type": "integer"
+          },
+          "periods_per_year": {
+            "type": "number"
+          },
+          "max_drawdown_percent": {
+            "type": "number"
+          },
+          "peak_index": {
+            "type": "integer"
+          },
+          "trough_index": {
+            "type": "integer"
+          },
+          "peak_value": {
+            "type": "number"
+          },
+          "trough_value": {
+            "type": "number"
+          },
+          "drawdown_periods": {
+            "type": "integer"
+          },
+          "recovery_index": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "recovery_periods": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "recovered": {
+            "type": "boolean"
+          },
+          "cagr_percent": {
+            "type": "number"
+          },
+          "calmar_ratio": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      },
+      "AnalyzeRequest": {
+        "type": "object",
+        "required": [
+          "values"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "values": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 5000,
+            "items": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "description": "Level series (NAV/price), positive numbers."
+          },
+          "periods_per_year": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "For CAGR/Calmar annualization (default 12)."
+          }
+        }
+      },
+      "DiscoveryResponse": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "description",
+          "openapi_url",
+          "auth",
+          "endpoints",
+          "pricing",
+          "x402_compatible",
+          "capabilities"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "openapi_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "auth": {
+            "type": "object",
+            "required": [
+              "type",
+              "header"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "header": {
+                "type": "string"
+              }
+            }
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "method",
+                "path",
+                "summary",
+                "price_usdc"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "pricing": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "price_usdc",
+                "currency"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                },
+                "currency": {
+                  "type": "string",
+                  "enum": [
+                    "USDC"
+                  ]
+                }
+              }
+            }
+          },
+          "x402_compatible": {
+            "type": "boolean"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Machine-readable capability tags for agent matching."
+          },
+          "typical_use_cases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional plain-language use cases to aid autonomous discovery."
+          },
+          "security_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+          },
+          "input_examples": {
+            "type": "array",
+            "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "body"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "output_examples": {
+            "type": "array",
+            "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "response"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "response": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "AnalyzeResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/DrawdownCore"
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "LookupResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/DrawdownCore"
+          },
+          {
+            "type": "object",
+            "required": [
+              "reasoning"
+            ],
+            "properties": {
+              "reasoning": {
+                "$ref": "#/components/schemas/Reasoning"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    }
+  }
+}

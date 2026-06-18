@@ -197,6 +197,7 @@
                     "best_period_return_percent": 12.745098,
                     "worst_period_return_percent": -5.555556,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "returns": 1
                     },
@@ -206,11 +207,13 @@
                     "chain_to": [
                       {
                         "api": "risk-ratios",
-                        "reason": "Score the same series risk-adjusted (Sharpe/Sortino)."
+                        "reason": "Score the same series risk-adjusted (Sharpe/Sortino).",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       },
                       {
                         "api": "max-drawdown",
-                        "reason": "Measure the worst peak-to-trough decline of this series."
+                        "reason": "Measure the worst peak-to-trough decline of this series.",
+                        "url": "https://orbis-apis.onrender.com/max-drawdown"
                       }
                     ],
                     "privacy": {
@@ -300,6 +303,7 @@
                     "total_return_percent": 21,
                     "cagr_percent": 77.1561,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "cagr": 1
                     },
@@ -309,11 +313,13 @@
                     "chain_to": [
                       {
                         "api": "risk-ratios",
-                        "reason": "Score the same series risk-adjusted (Sharpe/Sortino)."
+                        "reason": "Score the same series risk-adjusted (Sharpe/Sortino).",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       },
                       {
                         "api": "max-drawdown",
-                        "reason": "Measure the worst peak-to-trough decline of this series."
+                        "reason": "Measure the worst peak-to-trough decline of this series.",
+                        "url": "https://orbis-apis.onrender.com/max-drawdown"
                       }
                     ],
                     "privacy": {
@@ -415,6 +421,7 @@
                       ]
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "returns": 1
                     },
@@ -424,11 +431,13 @@
                     "chain_to": [
                       {
                         "api": "risk-ratios",
-                        "reason": "Score the same series risk-adjusted (Sharpe/Sortino)."
+                        "reason": "Score the same series risk-adjusted (Sharpe/Sortino).",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       },
                       {
                         "api": "max-drawdown",
-                        "reason": "Measure the worst peak-to-trough decline of this series."
+                        "reason": "Measure the worst peak-to-trough decline of this series.",
+                        "url": "https://orbis-apis.onrender.com/max-drawdown"
                       }
                     ],
                     "privacy": {
@@ -518,6 +527,11 @@
             "reason": {
               "type": "string",
               "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
             }
           }
         },
@@ -699,6 +713,7 @@
             "chain_to",
             "privacy",
             "execution_metadata",
+            "calculation_certainty",
             "financial_disclaimer"
           ],
           "properties": {
@@ -727,6 +742,12 @@
             },
             "execution_metadata": {
               "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
             },
             "financial_disclaimer": {
               "type": "string",
@@ -1260,6 +1281,7 @@
                     "cagr_percent": 119.7,
                     "calmar_ratio": 4.788,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "drawdown": 1
                     },
@@ -1269,11 +1291,13 @@
                     "chain_to": [
                       {
                         "api": "risk-ratios",
-                        "reason": "Pair drawdown with Sharpe/Sortino for a fuller risk picture."
+                        "reason": "Pair drawdown with Sharpe/Sortino for a fuller risk picture.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       },
                       {
                         "api": "value-at-risk",
-                        "reason": "Estimate tail loss over a single period from the return series."
+                        "reason": "Estimate tail loss over a single period from the return series.",
+                        "url": "https://orbis-apis.onrender.com/value-at-risk"
                       }
                     ],
                     "privacy": {
@@ -1382,6 +1406,7 @@
                       ]
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "drawdown": 1
                     },
@@ -1391,11 +1416,13 @@
                     "chain_to": [
                       {
                         "api": "risk-ratios",
-                        "reason": "Pair drawdown with Sharpe/Sortino for a fuller risk picture."
+                        "reason": "Pair drawdown with Sharpe/Sortino for a fuller risk picture.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       },
                       {
                         "api": "value-at-risk",
-                        "reason": "Estimate tail loss over a single period from the return series."
+                        "reason": "Estimate tail loss over a single period from the return series.",
+                        "url": "https://orbis-apis.onrender.com/value-at-risk"
                       }
                     ],
                     "privacy": {
@@ -1485,6 +1512,11 @@
             "reason": {
               "type": "string",
               "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
             }
           }
         },
@@ -1661,6 +1693,7 @@
             "chain_to",
             "privacy",
             "execution_metadata",
+            "calculation_certainty",
             "financial_disclaimer"
           ],
           "properties": {
@@ -1689,6 +1722,12 @@
             },
             "execution_metadata": {
               "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
             },
             "financial_disclaimer": {
               "type": "string",
@@ -2203,6 +2242,7 @@
                     "var_percent": 2.86,
                     "cvar_percent": 3.4,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "historical_var": 1
                     },
@@ -2212,11 +2252,13 @@
                     "chain_to": [
                       {
                         "api": "max-drawdown",
-                        "reason": "Pair single-period tail loss with worst realized peak-to-trough decline."
+                        "reason": "Pair single-period tail loss with worst realized peak-to-trough decline.",
+                        "url": "https://orbis-apis.onrender.com/max-drawdown"
                       },
                       {
                         "api": "risk-ratios",
-                        "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns."
+                        "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       }
                     ],
                     "privacy": {
@@ -2313,6 +2355,7 @@
                     "var_percent": 3.047832,
                     "cvar_percent": 3.789079,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "parametric_var": 1
                     },
@@ -2322,11 +2365,13 @@
                     "chain_to": [
                       {
                         "api": "max-drawdown",
-                        "reason": "Pair single-period tail loss with worst realized peak-to-trough decline."
+                        "reason": "Pair single-period tail loss with worst realized peak-to-trough decline.",
+                        "url": "https://orbis-apis.onrender.com/max-drawdown"
                       },
                       {
                         "api": "risk-ratios",
-                        "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns."
+                        "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       }
                     ],
                     "privacy": {
@@ -2442,6 +2487,7 @@
                       ]
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "historical_var": 1,
                       "parametric_var": 1
@@ -2452,11 +2498,13 @@
                     "chain_to": [
                       {
                         "api": "max-drawdown",
-                        "reason": "Pair single-period tail loss with worst realized peak-to-trough decline."
+                        "reason": "Pair single-period tail loss with worst realized peak-to-trough decline.",
+                        "url": "https://orbis-apis.onrender.com/max-drawdown"
                       },
                       {
                         "api": "risk-ratios",
-                        "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns."
+                        "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
                       }
                     ],
                     "privacy": {
@@ -2551,6 +2599,11 @@
             "reason": {
               "type": "string",
               "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
             }
           }
         },
@@ -2732,6 +2785,7 @@
             "chain_to",
             "privacy",
             "execution_metadata",
+            "calculation_certainty",
             "financial_disclaimer"
           ],
           "properties": {
@@ -2760,6 +2814,12 @@
             },
             "execution_metadata": {
               "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
             },
             "financial_disclaimer": {
               "type": "string",
@@ -3358,6 +3418,7 @@
                     "total_interest": 16969.84,
                     "effective_annual_rate_percent": 6.167781,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "future_value": 1
                     },
@@ -3367,11 +3428,13 @@
                     "chain_to": [
                       {
                         "api": "returns-analytics",
-                        "reason": "Convert a realized value series into CAGR/total return."
+                        "reason": "Convert a realized value series into CAGR/total return.",
+                        "url": "https://orbis-apis.onrender.com/returns-analytics"
                       },
                       {
                         "api": "dcf-valuation",
-                        "reason": "Discount future cashflows back to present value."
+                        "reason": "Discount future cashflows back to present value.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       }
                     ],
                     "privacy": {
@@ -3455,6 +3518,7 @@
                     "period_rate_percent": 0.5,
                     "effective_annual_rate_percent": 6.167781,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "effective_rate": 1
                     },
@@ -3464,11 +3528,13 @@
                     "chain_to": [
                       {
                         "api": "returns-analytics",
-                        "reason": "Convert a realized value series into CAGR/total return."
+                        "reason": "Convert a realized value series into CAGR/total return.",
+                        "url": "https://orbis-apis.onrender.com/returns-analytics"
                       },
                       {
                         "api": "dcf-valuation",
-                        "reason": "Discount future cashflows back to present value."
+                        "reason": "Discount future cashflows back to present value.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       }
                     ],
                     "privacy": {
@@ -3570,6 +3636,7 @@
                       ]
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "future_value": 1
                     },
@@ -3579,11 +3646,13 @@
                     "chain_to": [
                       {
                         "api": "returns-analytics",
-                        "reason": "Convert a realized value series into CAGR/total return."
+                        "reason": "Convert a realized value series into CAGR/total return.",
+                        "url": "https://orbis-apis.onrender.com/returns-analytics"
                       },
                       {
                         "api": "dcf-valuation",
-                        "reason": "Discount future cashflows back to present value."
+                        "reason": "Discount future cashflows back to present value.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       }
                     ],
                     "privacy": {
@@ -3670,6 +3739,11 @@
             "reason": {
               "type": "string",
               "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
             }
           }
         },
@@ -3851,6 +3925,7 @@
             "chain_to",
             "privacy",
             "execution_metadata",
+            "calculation_certainty",
             "financial_disclaimer"
           ],
           "properties": {
@@ -3879,6 +3954,12 @@
             },
             "execution_metadata": {
               "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
             },
             "financial_disclaimer": {
               "type": "string",
@@ -4437,6 +4518,7 @@
                     "after_tax_cost_of_debt_percent": 3.95,
                     "wacc_percent": 6.98,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "wacc": 1
                     },
@@ -4446,11 +4528,13 @@
                     "chain_to": [
                       {
                         "api": "dcf-valuation",
-                        "reason": "Use the WACC as the discount rate for a DCF valuation."
+                        "reason": "Use the WACC as the discount rate for a DCF valuation.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       },
                       {
                         "api": "bond-analytics",
-                        "reason": "Estimate the pre-tax cost of debt from a bond yield."
+                        "reason": "Estimate the pre-tax cost of debt from a bond yield.",
+                        "url": "https://orbis-apis.onrender.com/bond-analytics"
                       }
                     ],
                     "privacy": {
@@ -4535,6 +4619,7 @@
                     "market_return_percent": 10,
                     "cost_of_equity_percent": 11.2,
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "capm": 1
                     },
@@ -4544,11 +4629,13 @@
                     "chain_to": [
                       {
                         "api": "dcf-valuation",
-                        "reason": "Use the WACC as the discount rate for a DCF valuation."
+                        "reason": "Use the WACC as the discount rate for a DCF valuation.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       },
                       {
                         "api": "bond-analytics",
-                        "reason": "Estimate the pre-tax cost of debt from a bond yield."
+                        "reason": "Estimate the pre-tax cost of debt from a bond yield.",
+                        "url": "https://orbis-apis.onrender.com/bond-analytics"
                       }
                     ],
                     "privacy": {
@@ -4656,6 +4743,7 @@
                       ]
                     },
                     "confidence_score": 1,
+                    "calculation_certainty": 1,
                     "confidence_per_section": {
                       "wacc": 1,
                       "capm": 1
@@ -4666,11 +4754,13 @@
                     "chain_to": [
                       {
                         "api": "dcf-valuation",
-                        "reason": "Use the WACC as the discount rate for a DCF valuation."
+                        "reason": "Use the WACC as the discount rate for a DCF valuation.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
                       },
                       {
                         "api": "bond-analytics",
-                        "reason": "Estimate the pre-tax cost of debt from a bond yield."
+                        "reason": "Estimate the pre-tax cost of debt from a bond yield.",
+                        "url": "https://orbis-apis.onrender.com/bond-analytics"
                       }
                     ],
                     "privacy": {
@@ -4759,6 +4849,11 @@
             "reason": {
               "type": "string",
               "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
             }
           }
         },
@@ -4940,6 +5035,7 @@
             "chain_to",
             "privacy",
             "execution_metadata",
+            "calculation_certainty",
             "financial_disclaimer"
           ],
           "properties": {
@@ -4968,6 +5064,12 @@
             },
             "execution_metadata": {
               "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
             },
             "financial_disclaimer": {
               "type": "string",

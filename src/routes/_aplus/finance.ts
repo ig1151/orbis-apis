@@ -126,6 +126,18 @@ export const FINANCIAL_DISCLAIMER =
   'It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. ' +
   'Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions.';
 
+/** Base URL where every deterministic API in this service is reachable directly. */
+export const CHAIN_BASE = 'https://orbis-apis.onrender.com';
+
+/**
+ * Decorate chain_to entries with a stable, executable `url` so an agent can call
+ * the recommended next API directly (the Orbis marketplace slug is suffixed and
+ * mutable; the canonical service route is not). Targets are real deployed APIs.
+ */
+export function chainTo(entries: { api: string; reason: string }[]): { api: string; reason: string; url: string }[] {
+  return entries.map((e) => ({ ...e, url: `${CHAIN_BASE}/${e.api}` }));
+}
+
 // ---- Shared quantitative-finance primitives (Group D) — pure, deterministic ----
 
 /** Net present value of a cashflow series (index 0 = t=0) at a per-period decimal rate. */

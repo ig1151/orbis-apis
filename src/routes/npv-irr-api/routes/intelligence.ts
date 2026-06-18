@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { respond, fail } from '../../_aplus/scaffold';
-import { EXECUTION_METADATA, FINANCIAL_DISCLAIMER, npv as npvCalc, irr as irrCalc, round } from '../../_aplus/finance';
+import { EXECUTION_METADATA, FINANCIAL_DISCLAIMER, chainTo, npv as npvCalc, irr as irrCalc, round } from '../../_aplus/finance';
 
 // Deterministic NPV / IRR calculator for a cashflow series. /npv discounts a series
 // at a given per-period rate; /irr finds the per-period rate that zeroes NPV via a
@@ -64,9 +64,9 @@ const INVALIDATORS = [
 ];
 
 const TAIL = (sectionConf: Record<string, number>, actions: string[]) => ({
-  confidence_score: 1, confidence_per_section: sectionConf,
+  confidence_score: 1, calculation_certainty: 1, confidence_per_section: sectionConf,
   recommended_actions_priority_order: actions,
-  chain_to: CHAIN_TO, privacy: PRIVACY, execution_metadata: EXECUTION_METADATA, financial_disclaimer: FINANCIAL_DISCLAIMER,
+  chain_to: chainTo(CHAIN_TO), privacy: PRIVACY, execution_metadata: EXECUTION_METADATA, financial_disclaimer: FINANCIAL_DISCLAIMER,
 });
 
 const DISCOVERY = {

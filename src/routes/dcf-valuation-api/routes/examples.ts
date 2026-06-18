@@ -15,6 +15,7 @@ export const valueExample = {
   "equity_value": 1885.28789,
   "value_per_share": 18.852879,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "valuation": 1
   },
@@ -25,11 +26,13 @@ export const valueExample = {
   "chain_to": [
     {
       "api": "npv-irr",
-      "reason": "Compute the IRR of the same projected cashflow stream."
+      "reason": "Compute the IRR of the same projected cashflow stream.",
+      "url": "https://orbis-apis.onrender.com/npv-irr"
     },
     {
       "api": "risk-ratios",
-      "reason": "Assess the risk-adjusted return of the valued asset in a portfolio."
+      "reason": "Assess the risk-adjusted return of the valued asset in a portfolio.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     }
   ],
   "privacy": {
@@ -93,6 +96,7 @@ export const lookupExample = {
     ]
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "valuation": 1
   },
@@ -102,11 +106,13 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "npv-irr",
-      "reason": "Compute the IRR of the same projected cashflow stream."
+      "reason": "Compute the IRR of the same projected cashflow stream.",
+      "url": "https://orbis-apis.onrender.com/npv-irr"
     },
     {
       "api": "risk-ratios",
-      "reason": "Assess the risk-adjusted return of the valued asset in a portfolio."
+      "reason": "Assess the risk-adjusted return of the valued asset in a portfolio.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     }
   ],
   "privacy": {

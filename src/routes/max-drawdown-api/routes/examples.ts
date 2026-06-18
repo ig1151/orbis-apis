@@ -19,6 +19,7 @@ export const analyzeExample = {
   "cagr_percent": 119.7,
   "calmar_ratio": 4.788,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "drawdown": 1
   },
@@ -28,11 +29,13 @@ export const analyzeExample = {
   "chain_to": [
     {
       "api": "risk-ratios",
-      "reason": "Pair drawdown with Sharpe/Sortino for a fuller risk picture."
+      "reason": "Pair drawdown with Sharpe/Sortino for a fuller risk picture.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     },
     {
       "api": "value-at-risk",
-      "reason": "Estimate tail loss over a single period from the return series."
+      "reason": "Estimate tail loss over a single period from the return series.",
+      "url": "https://orbis-apis.onrender.com/value-at-risk"
     }
   ],
   "privacy": {
@@ -78,6 +81,7 @@ export const lookupExample = {
     ]
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "drawdown": 1
   },
@@ -87,11 +91,13 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "risk-ratios",
-      "reason": "Pair drawdown with Sharpe/Sortino for a fuller risk picture."
+      "reason": "Pair drawdown with Sharpe/Sortino for a fuller risk picture.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     },
     {
       "api": "value-at-risk",
-      "reason": "Estimate tail loss over a single period from the return series."
+      "reason": "Estimate tail loss over a single period from the return series.",
+      "url": "https://orbis-apis.onrender.com/value-at-risk"
     }
   ],
   "privacy": {

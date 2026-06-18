@@ -15,6 +15,7 @@ export const sharpeExample = {
   "annualized_return_percent": 12.15,
   "annualized_volatility_percent": 6.170263,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "sharpe": 1
   },
@@ -25,11 +26,13 @@ export const sharpeExample = {
   "chain_to": [
     {
       "api": "dcf-valuation",
-      "reason": "Value an asset whose risk-adjusted return you just scored."
+      "reason": "Value an asset whose risk-adjusted return you just scored.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     },
     {
       "api": "bond-analytics",
-      "reason": "Compare the strategy against a fixed-income alternative."
+      "reason": "Compare the strategy against a fixed-income alternative.",
+      "url": "https://orbis-apis.onrender.com/bond-analytics"
     }
   ],
   "privacy": {
@@ -56,6 +59,7 @@ export const sortinoExample = {
   "sortino_ratio": 1.681671,
   "annualized_sortino": 5.825479,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "sortino": 1
   },
@@ -65,11 +69,13 @@ export const sortinoExample = {
   "chain_to": [
     {
       "api": "dcf-valuation",
-      "reason": "Value an asset whose risk-adjusted return you just scored."
+      "reason": "Value an asset whose risk-adjusted return you just scored.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     },
     {
       "api": "bond-analytics",
-      "reason": "Compare the strategy against a fixed-income alternative."
+      "reason": "Compare the strategy against a fixed-income alternative.",
+      "url": "https://orbis-apis.onrender.com/bond-analytics"
     }
   ],
   "privacy": {
@@ -115,6 +121,7 @@ export const lookupExample = {
     ]
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "sharpe": 1,
     "sortino": 1
@@ -125,11 +132,13 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "dcf-valuation",
-      "reason": "Value an asset whose risk-adjusted return you just scored."
+      "reason": "Value an asset whose risk-adjusted return you just scored.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     },
     {
       "api": "bond-analytics",
-      "reason": "Compare the strategy against a fixed-income alternative."
+      "reason": "Compare the strategy against a fixed-income alternative.",
+      "url": "https://orbis-apis.onrender.com/bond-analytics"
     }
   ],
   "privacy": {

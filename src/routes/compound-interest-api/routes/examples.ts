@@ -18,6 +18,7 @@ export const futureValueExample = {
   "total_interest": 16969.84,
   "effective_annual_rate_percent": 6.167781,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "future_value": 1
   },
@@ -27,11 +28,13 @@ export const futureValueExample = {
   "chain_to": [
     {
       "api": "returns-analytics",
-      "reason": "Convert a realized value series into CAGR/total return."
+      "reason": "Convert a realized value series into CAGR/total return.",
+      "url": "https://orbis-apis.onrender.com/returns-analytics"
     },
     {
       "api": "dcf-valuation",
-      "reason": "Discount future cashflows back to present value."
+      "reason": "Discount future cashflows back to present value.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     }
   ],
   "privacy": {
@@ -55,6 +58,7 @@ export const effectiveRateExample = {
   "period_rate_percent": 0.5,
   "effective_annual_rate_percent": 6.167781,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "effective_rate": 1
   },
@@ -64,11 +68,13 @@ export const effectiveRateExample = {
   "chain_to": [
     {
       "api": "returns-analytics",
-      "reason": "Convert a realized value series into CAGR/total return."
+      "reason": "Convert a realized value series into CAGR/total return.",
+      "url": "https://orbis-apis.onrender.com/returns-analytics"
     },
     {
       "api": "dcf-valuation",
-      "reason": "Discount future cashflows back to present value."
+      "reason": "Discount future cashflows back to present value.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     }
   ],
   "privacy": {
@@ -113,6 +119,7 @@ export const lookupExample = {
     ]
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "future_value": 1
   },
@@ -122,11 +129,13 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "returns-analytics",
-      "reason": "Convert a realized value series into CAGR/total return."
+      "reason": "Convert a realized value series into CAGR/total return.",
+      "url": "https://orbis-apis.onrender.com/returns-analytics"
     },
     {
       "api": "dcf-valuation",
-      "reason": "Discount future cashflows back to present value."
+      "reason": "Discount future cashflows back to present value.",
+      "url": "https://orbis-apis.onrender.com/dcf-valuation"
     }
   ],
   "privacy": {

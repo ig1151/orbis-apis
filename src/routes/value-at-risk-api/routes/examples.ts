@@ -13,6 +13,7 @@ export const historicalExample = {
   "var_percent": 2.86,
   "cvar_percent": 3.4,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "historical_var": 1
   },
@@ -22,11 +23,13 @@ export const historicalExample = {
   "chain_to": [
     {
       "api": "max-drawdown",
-      "reason": "Pair single-period tail loss with worst realized peak-to-trough decline."
+      "reason": "Pair single-period tail loss with worst realized peak-to-trough decline.",
+      "url": "https://orbis-apis.onrender.com/max-drawdown"
     },
     {
       "api": "risk-ratios",
-      "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns."
+      "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     }
   ],
   "privacy": {
@@ -55,6 +58,7 @@ export const parametricExample = {
   "var_percent": 3.047832,
   "cvar_percent": 3.789079,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "parametric_var": 1
   },
@@ -64,11 +68,13 @@ export const parametricExample = {
   "chain_to": [
     {
       "api": "max-drawdown",
-      "reason": "Pair single-period tail loss with worst realized peak-to-trough decline."
+      "reason": "Pair single-period tail loss with worst realized peak-to-trough decline.",
+      "url": "https://orbis-apis.onrender.com/max-drawdown"
     },
     {
       "api": "risk-ratios",
-      "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns."
+      "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     }
   ],
   "privacy": {
@@ -116,6 +122,7 @@ export const lookupExample = {
     ]
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "historical_var": 1,
     "parametric_var": 1
@@ -126,11 +133,13 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "max-drawdown",
-      "reason": "Pair single-period tail loss with worst realized peak-to-trough decline."
+      "reason": "Pair single-period tail loss with worst realized peak-to-trough decline.",
+      "url": "https://orbis-apis.onrender.com/max-drawdown"
     },
     {
       "api": "risk-ratios",
-      "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns."
+      "reason": "Add Sharpe/Sortino for a risk-adjusted view of the same returns.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     }
   ],
   "privacy": {

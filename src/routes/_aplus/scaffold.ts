@@ -103,6 +103,7 @@ function commonSchemas(): Record<string, unknown> {
       properties: {
         api: { type: 'string', description: 'Slug of a recommended next API to call.' },
         reason: { type: 'string', description: 'Why an agent would chain to this API next.' },
+        url: { type: 'string', format: 'uri', description: 'Canonical, directly-callable URL of the recommended next API (a real deployed endpoint).' },
       },
     },
     Reasoning: {

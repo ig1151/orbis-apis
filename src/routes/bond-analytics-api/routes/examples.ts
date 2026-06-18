@@ -13,6 +13,7 @@ export const priceExample = {
   "price": 925.612626,
   "current_yield_percent": 5.401828,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "price": 1
   },
@@ -23,11 +24,13 @@ export const priceExample = {
   "chain_to": [
     {
       "api": "npv-irr",
-      "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR."
+      "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR.",
+      "url": "https://orbis-apis.onrender.com/npv-irr"
     },
     {
       "api": "risk-ratios",
-      "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation."
+      "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     }
   ],
   "privacy": {
@@ -54,6 +57,7 @@ export const yieldExample = {
   "yield_to_maturity_percent": 6.000037,
   "converged": true,
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "yield": 1
   },
@@ -63,11 +67,13 @@ export const yieldExample = {
   "chain_to": [
     {
       "api": "npv-irr",
-      "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR."
+      "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR.",
+      "url": "https://orbis-apis.onrender.com/npv-irr"
     },
     {
       "api": "risk-ratios",
-      "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation."
+      "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     }
   ],
   "privacy": {
@@ -111,6 +117,7 @@ export const lookupExample = {
     ]
   },
   "confidence_score": 1,
+  "calculation_certainty": 1,
   "confidence_per_section": {
     "price": 1,
     "yield": 1
@@ -121,11 +128,13 @@ export const lookupExample = {
   "chain_to": [
     {
       "api": "npv-irr",
-      "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR."
+      "reason": "Treat the coupon + principal cashflows as a series and compute NPV/IRR.",
+      "url": "https://orbis-apis.onrender.com/npv-irr"
     },
     {
       "api": "risk-ratios",
-      "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation."
+      "reason": "Fold the bond return into a portfolio Sharpe/Sortino calculation.",
+      "url": "https://orbis-apis.onrender.com/risk-ratios"
     }
   ],
   "privacy": {
