@@ -1,0 +1,1139 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Kelly Criterion API",
+    "version": "1.0.0",
+    "description": "Deterministic Kelly-criterion bet/position sizing: optimal & fractional Kelly fraction, edge, expected log-growth, gambler's-ruin probability. No LLM.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "x-finance-tool": true,
+    "x-financial-calculation": true,
+    "x-human-approval-required": false
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/kelly-criterion"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Service discovery",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Kelly Criterion API",
+                  "version": "1.0.0",
+                  "description": "Deterministic Kelly-criterion bet/position sizing. /kelly returns the optimal and fractional Kelly fraction, edge and expected log-growth; /risk-of-ruin returns the classic gambler's-ruin probability for flat even-money bets. No LLM, nothing stored.",
+                  "openapi_url": "https://orbis-apis.onrender.com/kelly-criterion/openapi.json",
+                  "auth": {
+                    "type": "apiKey",
+                    "header": "X-API-Key"
+                  },
+                  "capabilities": [
+                    "kelly_fraction",
+                    "fractional_kelly",
+                    "expected_log_growth",
+                    "edge",
+                    "risk_of_ruin"
+                  ],
+                  "typical_use_cases": [
+                    "Size a bet or trade as a fraction of bankroll from a win probability and payoff",
+                    "Apply a fractional-Kelly (½ Kelly) multiplier to temper variance",
+                    "Estimate risk of ruin for a flat-staking strategy"
+                  ],
+                  "input_examples": [
+                    {
+                      "endpoint": "/kelly",
+                      "body": {
+                        "win_probability": 0.55,
+                        "win_payoff": 1,
+                        "kelly_multiplier": 0.5,
+                        "bankroll": 10000
+                      }
+                    },
+                    {
+                      "endpoint": "/risk-of-ruin",
+                      "body": {
+                        "win_probability": 0.55,
+                        "bankroll_units": 20
+                      }
+                    }
+                  ],
+                  "output_examples": [
+                    {
+                      "endpoint": "/kelly",
+                      "response": {
+                        "kelly_fraction": 0.1,
+                        "fractional_kelly_fraction": 0.05,
+                        "recommended_stake": 500
+                      }
+                    },
+                    {
+                      "endpoint": "/risk-of-ruin",
+                      "response": {
+                        "risk_of_ruin": 0.01386,
+                        "survival_probability": 0.98614
+                      }
+                    }
+                  ],
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/kelly",
+                      "summary": "Optimal + fractional Kelly stake",
+                      "price_usdc": 0.007
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/risk-of-ruin",
+                      "summary": "Gambler's-ruin probability (flat even-money bets)",
+                      "price_usdc": 0.006
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/lookup",
+                      "summary": "ONE-CALL Kelly stake + interpretation + reasoning",
+                      "price_usdc": 0.012
+                    }
+                  ],
+                  "pricing": [
+                    {
+                      "path": "/kelly",
+                      "price_usdc": 0.007,
+                      "currency": "USDC"
+                    },
+                    {
+                      "path": "/risk-of-ruin",
+                      "price_usdc": 0.006,
+                      "currency": "USDC"
+                    },
+                    {
+                      "path": "/lookup",
+                      "price_usdc": 0.012,
+                      "currency": "USDC"
+                    }
+                  ],
+                  "x402_compatible": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/kelly": {
+      "post": {
+        "operationId": "kelly",
+        "summary": "Optimal + fractional Kelly stake",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KellyResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "win_probability": 0.55,
+                  "loss_probability": 0.45,
+                  "win_payoff": 1,
+                  "loss_fraction": 1,
+                  "kelly_multiplier": 0.5,
+                  "edge": 0.1,
+                  "expected_value_per_unit": 0.1,
+                  "kelly_fraction": 0.1,
+                  "fractional_kelly_fraction": 0.05,
+                  "favorable": true,
+                  "expected_log_growth_full": 0.00500837,
+                  "expected_log_growth_fractional": 0.00375261,
+                  "bankroll": 10000,
+                  "recommended_stake": 500,
+                  "recommendation": "Stake 5% of bankroll (fractional Kelly ×0.5 of the 10% full Kelly).",
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "kelly": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Stake 5% of bankroll (fractional Kelly ×0.5 of the 10% full Kelly)."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "risk-ratios",
+                      "reason": "Translate the chosen stake into portfolio-level risk-adjusted metrics.",
+                      "url": "https://orbis-apis.onrender.com/risk-ratios"
+                    },
+                    {
+                      "api": "max-drawdown",
+                      "reason": "Stress-test the equity path of the sizing strategy.",
+                      "url": "https://orbis-apis.onrender.com/max-drawdown"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KellyRequest"
+              },
+              "example": {
+                "win_probability": 0.55,
+                "win_payoff": 1,
+                "kelly_multiplier": 0.5,
+                "bankroll": 10000
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.007,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/risk-of-ruin": {
+      "post": {
+        "operationId": "riskOfRuin",
+        "summary": "Gambler's-ruin probability (flat even-money bets)",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuinResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "win_probability": 0.55,
+                  "loss_probability": 0.45,
+                  "bankroll_units": 20,
+                  "risk_of_ruin": 0.0180716,
+                  "survival_probability": 0.9819284,
+                  "favorable": true,
+                  "assumptions": "Flat even-money (1:1) bets of one unit; ruin = bankroll hits 0. P(ruin) = (q/p)^units when p>0.5, else 1.",
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "risk_of_ruin": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Risk of ruin 1.8072% over a 20-unit bankroll (flat even-money bets)."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "risk-ratios",
+                      "reason": "Translate the chosen stake into portfolio-level risk-adjusted metrics.",
+                      "url": "https://orbis-apis.onrender.com/risk-ratios"
+                    },
+                    {
+                      "api": "max-drawdown",
+                      "reason": "Stress-test the equity path of the sizing strategy.",
+                      "url": "https://orbis-apis.onrender.com/max-drawdown"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RuinRequest"
+              },
+              "example": {
+                "win_probability": 0.55,
+                "bankroll_units": 20
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.006,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL Kelly stake + interpretation + reasoning",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookupResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "win_probability": 0.55,
+                  "loss_probability": 0.45,
+                  "win_payoff": 1,
+                  "loss_fraction": 1,
+                  "kelly_multiplier": 0.5,
+                  "edge": 0.1,
+                  "expected_value_per_unit": 0.1,
+                  "kelly_fraction": 0.1,
+                  "fractional_kelly_fraction": 0.05,
+                  "favorable": true,
+                  "expected_log_growth_full": 0.00500837,
+                  "expected_log_growth_fractional": 0.00375261,
+                  "bankroll": 10000,
+                  "recommended_stake": 500,
+                  "recommendation": "Stake 5% of bankroll (fractional Kelly ×0.5 of the 10% full Kelly).",
+                  "reasoning": {
+                    "why_result_generated": "Edge is positive (EV 0.1/unit). Full Kelly = p/loss_fraction − q/win_payoff = 0.1; applying the ×0.5 multiplier gives a 0.05 stake fraction ($500 of $10000).",
+                    "key_factors": [
+                      "Kelly fraction 0.1 (fractional 0.05).",
+                      "Edge / EV per unit 0.1.",
+                      "Expected log-growth 0.00375261 at the fractional stake."
+                    ],
+                    "invalidators": [
+                      "Kelly maximizes long-run LOG growth and assumes the win probability and payoff are accurate and stationary; overstated edge leads to oversized bets and large drawdowns. Practitioners commonly use fractional Kelly (½ or less).",
+                      "win_payoff is the NET odds b (profit per unit staked on a win); loss_fraction is the fraction of the stake lost on a loss (default 1). f* = p/loss_fraction − q/win_payoff.",
+                      "The /risk-of-ruin figure assumes FLAT even-money one-unit bets, not Kelly-proportional staking; it is a separate classical model, not the ruin probability of the Kelly fraction above."
+                    ]
+                  },
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "kelly": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Stake 5% of bankroll (fractional Kelly ×0.5 of the 10% full Kelly).",
+                    "Consider fractional Kelly (≤ ½) to reduce drawdown risk."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "risk-ratios",
+                      "reason": "Translate the chosen stake into portfolio-level risk-adjusted metrics.",
+                      "url": "https://orbis-apis.onrender.com/risk-ratios"
+                    },
+                    {
+                      "api": "max-drawdown",
+                      "reason": "Stress-test the equity path of the sizing strategy.",
+                      "url": "https://orbis-apis.onrender.com/max-drawdown"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KellyRequest"
+              },
+              "example": {
+                "win_probability": 0.55,
+                "win_payoff": 1,
+                "kelly_multiplier": 0.5,
+                "bankroll": 10000
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.012,
+          "currency": "USDC"
+        },
+        "x-one-call": true
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "ChainTo": {
+        "type": "object",
+        "required": [
+          "api",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "api": {
+            "type": "string",
+            "description": "Slug of a recommended next API to call."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why an agent would chain to this API next."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+          }
+        }
+      },
+      "Reasoning": {
+        "type": "object",
+        "required": [
+          "why_result_generated",
+          "key_factors",
+          "invalidators"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "why_result_generated": {
+            "type": "string"
+          },
+          "key_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invalidators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Conditions that would change or invalidate this result."
+          }
+        }
+      },
+      "Privacy": {
+        "type": "object",
+        "required": [
+          "data_stored",
+          "retention"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data_stored": {
+            "type": "boolean"
+          },
+          "retention": {
+            "type": "string",
+            "description": "Retention policy, e.g. \"none\"."
+          }
+        }
+      },
+      "EnvelopeError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "description": "Optional machine-readable error context."
+          }
+        }
+      },
+      "Error400": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms",
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "latency_ms": {
+            "type": "integer"
+          },
+          "error": {
+            "$ref": "#/components/schemas/EnvelopeError"
+          }
+        }
+      },
+      "Error500": {
+        "$ref": "#/components/schemas/Error400"
+      },
+      "EnvelopeOk": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id for clients that key on request_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "latency_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "ExecutionMetadata": {
+        "type": "object",
+        "required": [
+          "model",
+          "automation_safe"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "deterministic"
+            ]
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ConfidencePerSection": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kelly": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "risk_of_ruin": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "_Tail": {
+        "type": "object",
+        "required": [
+          "confidence_score",
+          "confidence_per_section",
+          "recommended_actions_priority_order",
+          "chain_to",
+          "privacy",
+          "execution_metadata",
+          "calculation_certainty",
+          "financial_disclaimer"
+        ],
+        "properties": {
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "confidence_per_section": {
+            "$ref": "#/components/schemas/ConfidencePerSection"
+          },
+          "recommended_actions_priority_order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "chain_to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChainTo"
+            }
+          },
+          "privacy": {
+            "$ref": "#/components/schemas/Privacy"
+          },
+          "execution_metadata": {
+            "$ref": "#/components/schemas/ExecutionMetadata"
+          },
+          "calculation_certainty": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+          },
+          "financial_disclaimer": {
+            "type": "string",
+            "description": "Informational-only disclaimer; not financial advice."
+          }
+        }
+      },
+      "KellyCore": {
+        "type": "object",
+        "required": [
+          "win_probability",
+          "loss_probability",
+          "win_payoff",
+          "loss_fraction",
+          "kelly_multiplier",
+          "edge",
+          "expected_value_per_unit",
+          "kelly_fraction",
+          "fractional_kelly_fraction",
+          "favorable",
+          "expected_log_growth_full",
+          "expected_log_growth_fractional",
+          "bankroll",
+          "recommended_stake",
+          "recommendation"
+        ],
+        "properties": {
+          "win_probability": {
+            "type": "number"
+          },
+          "loss_probability": {
+            "type": "number"
+          },
+          "win_payoff": {
+            "type": "number"
+          },
+          "loss_fraction": {
+            "type": "number"
+          },
+          "kelly_multiplier": {
+            "type": "number"
+          },
+          "edge": {
+            "type": "number"
+          },
+          "expected_value_per_unit": {
+            "type": "number"
+          },
+          "kelly_fraction": {
+            "type": "number"
+          },
+          "fractional_kelly_fraction": {
+            "type": "number"
+          },
+          "favorable": {
+            "type": "boolean"
+          },
+          "expected_log_growth_full": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "expected_log_growth_fractional": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "bankroll": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "recommended_stake": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "recommendation": {
+            "type": "string"
+          }
+        }
+      },
+      "RuinCore": {
+        "type": "object",
+        "required": [
+          "win_probability",
+          "loss_probability",
+          "bankroll_units",
+          "risk_of_ruin",
+          "survival_probability",
+          "favorable",
+          "assumptions"
+        ],
+        "properties": {
+          "win_probability": {
+            "type": "number"
+          },
+          "loss_probability": {
+            "type": "number"
+          },
+          "bankroll_units": {
+            "type": "integer"
+          },
+          "risk_of_ruin": {
+            "type": "number"
+          },
+          "survival_probability": {
+            "type": "number"
+          },
+          "favorable": {
+            "type": "boolean"
+          },
+          "assumptions": {
+            "type": "string"
+          }
+        }
+      },
+      "KellyRequest": {
+        "type": "object",
+        "required": [
+          "win_probability",
+          "win_payoff"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "win_probability": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "exclusiveMaximum": 1
+          },
+          "win_payoff": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Net odds b: profit per unit staked on a win (b:1)."
+          },
+          "loss_fraction": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1,
+            "description": "Fraction of stake lost on a loss (default 1)."
+          },
+          "kelly_multiplier": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1,
+            "description": "Fractional-Kelly scaler (default 1 = full Kelly)."
+          },
+          "bankroll": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "If given, returns the recommended stake amount."
+          }
+        }
+      },
+      "RuinRequest": {
+        "type": "object",
+        "required": [
+          "win_probability",
+          "bankroll_units"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "win_probability": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "exclusiveMaximum": 1
+          },
+          "bankroll_units": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of one-unit flat bets the bankroll covers."
+          }
+        }
+      },
+      "DiscoveryResponse": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "description",
+          "openapi_url",
+          "auth",
+          "endpoints",
+          "pricing",
+          "x402_compatible",
+          "capabilities"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "openapi_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "auth": {
+            "type": "object",
+            "required": [
+              "type",
+              "header"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "header": {
+                "type": "string"
+              }
+            }
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "method",
+                "path",
+                "summary",
+                "price_usdc"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "pricing": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "price_usdc",
+                "currency"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                },
+                "currency": {
+                  "type": "string",
+                  "enum": [
+                    "USDC"
+                  ]
+                }
+              }
+            }
+          },
+          "x402_compatible": {
+            "type": "boolean"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Machine-readable capability tags for agent matching."
+          },
+          "typical_use_cases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional plain-language use cases to aid autonomous discovery."
+          },
+          "security_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+          },
+          "input_examples": {
+            "type": "array",
+            "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "body"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "output_examples": {
+            "type": "array",
+            "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "response"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "response": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "KellyResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/KellyCore"
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "RuinResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/RuinCore"
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "LookupResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/KellyCore"
+          },
+          {
+            "type": "object",
+            "required": [
+              "reasoning"
+            ],
+            "properties": {
+              "reasoning": {
+                "$ref": "#/components/schemas/Reasoning"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    }
+  }
+}

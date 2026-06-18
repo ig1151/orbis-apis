@@ -1,0 +1,1110 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Unit Economics API",
+    "version": "1.0.0",
+    "description": "Deterministic SaaS unit economics: gross-margin LTV, LTV:CAC ratio, CAC payback, gross & contribution margins. No LLM.",
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "x-finance-tool": true,
+    "x-financial-calculation": true,
+    "x-human-approval-required": false
+  },
+  "servers": [
+    {
+      "url": "https://orbis-apis.onrender.com/unit-economics"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "discover",
+        "summary": "Service discovery",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                },
+                "example": {
+                  "name": "Unit Economics API",
+                  "version": "1.0.0",
+                  "description": "Deterministic SaaS / subscription unit economics. /ltv-cac computes gross-margin LTV, LTV:CAC ratio and CAC payback from ARPU, gross margin, churn (or lifetime) and CAC; /margins computes gross and contribution margins. No LLM, nothing stored.",
+                  "openapi_url": "https://orbis-apis.onrender.com/unit-economics/openapi.json",
+                  "auth": {
+                    "type": "apiKey",
+                    "header": "X-API-Key"
+                  },
+                  "capabilities": [
+                    "ltv",
+                    "cac",
+                    "ltv_cac_ratio",
+                    "cac_payback",
+                    "gross_margin",
+                    "contribution_margin"
+                  ],
+                  "typical_use_cases": [
+                    "Compute customer LTV and the LTV:CAC ratio for a subscription business",
+                    "Find how many periods of gross margin it takes to pay back CAC",
+                    "Compute gross and contribution margins from revenue and costs"
+                  ],
+                  "input_examples": [
+                    {
+                      "endpoint": "/ltv-cac",
+                      "body": {
+                        "arpu": 100,
+                        "gross_margin_percent": 80,
+                        "cac": 400,
+                        "monthly_churn_rate": 0.05
+                      }
+                    },
+                    {
+                      "endpoint": "/margins",
+                      "body": {
+                        "revenue": 100000,
+                        "cogs": 30000,
+                        "variable_costs": 15000
+                      }
+                    }
+                  ],
+                  "output_examples": [
+                    {
+                      "endpoint": "/ltv-cac",
+                      "response": {
+                        "lifetime_periods": 20,
+                        "ltv": 1600,
+                        "ltv_cac_ratio": 4,
+                        "cac_payback_periods": 5,
+                        "verdict": "healthy (LTV:CAC ≥ 3:1)"
+                      }
+                    },
+                    {
+                      "endpoint": "/margins",
+                      "response": {
+                        "gross_margin_percent": 70,
+                        "contribution_margin_percent": 55
+                      }
+                    }
+                  ],
+                  "endpoints": [
+                    {
+                      "method": "POST",
+                      "path": "/ltv-cac",
+                      "summary": "LTV, LTV:CAC ratio and CAC payback",
+                      "price_usdc": 0.007
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/margins",
+                      "summary": "Gross and contribution margins",
+                      "price_usdc": 0.005
+                    },
+                    {
+                      "method": "POST",
+                      "path": "/lookup",
+                      "summary": "ONE-CALL unit economics + reasoning",
+                      "price_usdc": 0.012
+                    }
+                  ],
+                  "pricing": [
+                    {
+                      "path": "/ltv-cac",
+                      "price_usdc": 0.007,
+                      "currency": "USDC"
+                    },
+                    {
+                      "path": "/margins",
+                      "price_usdc": 0.005,
+                      "currency": "USDC"
+                    },
+                    {
+                      "path": "/lookup",
+                      "price_usdc": 0.012,
+                      "currency": "USDC"
+                    }
+                  ],
+                  "x402_compatible": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ltv-cac": {
+      "post": {
+        "operationId": "ltvCac",
+        "summary": "LTV, LTV:CAC ratio and CAC payback",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LtvCacResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "arpu": 100,
+                  "gross_margin_percent": 80,
+                  "cac": 400,
+                  "monthly_churn_rate": 0.05,
+                  "lifetime_periods": 20,
+                  "gross_margin_per_period": 80,
+                  "ltv": 1600,
+                  "ltv_cac_ratio": 4,
+                  "cac_payback_periods": 5,
+                  "verdict": "healthy (LTV:CAC ≥ 3:1)",
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "ltv_cac": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "LTV $1600, LTV:CAC 4:1 — healthy (LTV:CAC ≥ 3:1). CAC payback 5 periods."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "break-even",
+                      "reason": "Translate contribution margin into the break-even volume for the product.",
+                      "url": "https://orbis-apis.onrender.com/break-even"
+                    },
+                    {
+                      "api": "compound-interest",
+                      "reason": "Project the customer base or revenue forward at a growth rate.",
+                      "url": "https://orbis-apis.onrender.com/compound-interest"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LtvCacRequest"
+              },
+              "example": {
+                "arpu": 100,
+                "gross_margin_percent": 80,
+                "cac": 400,
+                "monthly_churn_rate": 0.05
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.007,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/margins": {
+      "post": {
+        "operationId": "margins",
+        "summary": "Gross and contribution margins",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarginsResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "revenue": 100000,
+                  "cogs": 30000,
+                  "variable_costs": 15000,
+                  "gross_profit": 70000,
+                  "gross_margin_percent": 70,
+                  "contribution_margin": 55000,
+                  "contribution_margin_percent": 55,
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "margins": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Gross margin 70%, contribution margin 55%."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "break-even",
+                      "reason": "Translate contribution margin into the break-even volume for the product.",
+                      "url": "https://orbis-apis.onrender.com/break-even"
+                    },
+                    {
+                      "api": "compound-interest",
+                      "reason": "Project the customer base or revenue forward at a growth rate.",
+                      "url": "https://orbis-apis.onrender.com/compound-interest"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginsRequest"
+              },
+              "example": {
+                "revenue": 100000,
+                "cogs": 30000,
+                "variable_costs": 15000
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.005,
+          "currency": "USDC"
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "operationId": "lookup",
+        "summary": "ONE-CALL unit economics + reasoning",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LookupResponse"
+                },
+                "example": {
+                  "trace_id": "gbx-1780000000000",
+                  "request_id": "gbx-1780000000000",
+                  "computed_at": "2026-06-16T12:00:00.000Z",
+                  "success": true,
+                  "latency_ms": 1,
+                  "arpu": 100,
+                  "gross_margin_percent": 80,
+                  "cac": 400,
+                  "monthly_churn_rate": 0.05,
+                  "lifetime_periods": 20,
+                  "gross_margin_per_period": 80,
+                  "ltv": 1600,
+                  "ltv_cac_ratio": 4,
+                  "cac_payback_periods": 5,
+                  "verdict": "healthy (LTV:CAC ≥ 3:1)",
+                  "reasoning": {
+                    "why_result_generated": "Gross margin/period $80 (ARPU $100 × 80%); over a 20-period lifetime that is LTV $1600, a 4:1 ratio against $400 CAC, recovered in 5 periods.",
+                    "key_factors": [
+                      "LTV:CAC 4:1 — healthy (LTV:CAC ≥ 3:1).",
+                      "CAC payback 5 periods.",
+                      "Customer lifetime 20 periods."
+                    ],
+                    "invalidators": [
+                      "LTV here is GROSS-MARGIN LTV = ARPU × gross_margin × lifetime; lifetime = 1/monthly_churn (or supplied directly). A churn-derived lifetime assumes a constant churn rate and ignores discounting and expansion revenue.",
+                      "LTV:CAC ≥ 3:1 is a common health benchmark and CAC payback under ~12 months is typical for SaaS — both are heuristics, not guarantees, and depend on your period unit (monthly vs annual).",
+                      "Revenue-based margins assume cogs and variable_costs are expressed in the same currency and period as revenue; mixing periods invalidates the percentages."
+                    ]
+                  },
+                  "confidence_score": 1,
+                  "calculation_certainty": 1,
+                  "confidence_per_section": {
+                    "ltv_cac": 1
+                  },
+                  "recommended_actions_priority_order": [
+                    "Healthy unit economics — scale acquisition; chain to break-even for volume planning."
+                  ],
+                  "chain_to": [
+                    {
+                      "api": "break-even",
+                      "reason": "Translate contribution margin into the break-even volume for the product.",
+                      "url": "https://orbis-apis.onrender.com/break-even"
+                    },
+                    {
+                      "api": "compound-interest",
+                      "reason": "Project the customer base or revenue forward at a growth rate.",
+                      "url": "https://orbis-apis.onrender.com/compound-interest"
+                    }
+                  ],
+                  "privacy": {
+                    "data_stored": false,
+                    "retention": "none"
+                  },
+                  "execution_metadata": {
+                    "model": "deterministic",
+                    "automation_safe": true
+                  },
+                  "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error500"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LtvCacRequest"
+              },
+              "example": {
+                "arpu": 100,
+                "gross_margin_percent": 80,
+                "cac": 400,
+                "monthly_churn_rate": 0.05
+              }
+            }
+          }
+        },
+        "x-pricing": {
+          "model": "per_call",
+          "price_usdc": 0.012,
+          "currency": "USDC"
+        },
+        "x-one-call": true
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "schemas": {
+      "ChainTo": {
+        "type": "object",
+        "required": [
+          "api",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "api": {
+            "type": "string",
+            "description": "Slug of a recommended next API to call."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why an agent would chain to this API next."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+          }
+        }
+      },
+      "Reasoning": {
+        "type": "object",
+        "required": [
+          "why_result_generated",
+          "key_factors",
+          "invalidators"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "why_result_generated": {
+            "type": "string"
+          },
+          "key_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "invalidators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Conditions that would change or invalidate this result."
+          }
+        }
+      },
+      "Privacy": {
+        "type": "object",
+        "required": [
+          "data_stored",
+          "retention"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data_stored": {
+            "type": "boolean"
+          },
+          "retention": {
+            "type": "string",
+            "description": "Retention policy, e.g. \"none\"."
+          }
+        }
+      },
+      "EnvelopeError": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "description": "Optional machine-readable error context."
+          }
+        }
+      },
+      "Error400": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms",
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "latency_ms": {
+            "type": "integer"
+          },
+          "error": {
+            "$ref": "#/components/schemas/EnvelopeError"
+          }
+        }
+      },
+      "Error500": {
+        "$ref": "#/components/schemas/Error400"
+      },
+      "EnvelopeOk": {
+        "type": "object",
+        "required": [
+          "trace_id",
+          "computed_at",
+          "success",
+          "latency_ms"
+        ],
+        "properties": {
+          "trace_id": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Alias of trace_id for clients that key on request_id."
+          },
+          "computed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "latency_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "ExecutionMetadata": {
+        "type": "object",
+        "required": [
+          "model",
+          "automation_safe"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "model": {
+            "type": "string",
+            "enum": [
+              "deterministic"
+            ]
+          },
+          "automation_safe": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ConfidencePerSection": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ltv_cac": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "margins": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "_Tail": {
+        "type": "object",
+        "required": [
+          "confidence_score",
+          "confidence_per_section",
+          "recommended_actions_priority_order",
+          "chain_to",
+          "privacy",
+          "execution_metadata",
+          "calculation_certainty",
+          "financial_disclaimer"
+        ],
+        "properties": {
+          "confidence_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "confidence_per_section": {
+            "$ref": "#/components/schemas/ConfidencePerSection"
+          },
+          "recommended_actions_priority_order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "chain_to": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChainTo"
+            }
+          },
+          "privacy": {
+            "$ref": "#/components/schemas/Privacy"
+          },
+          "execution_metadata": {
+            "$ref": "#/components/schemas/ExecutionMetadata"
+          },
+          "calculation_certainty": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+          },
+          "financial_disclaimer": {
+            "type": "string",
+            "description": "Informational-only disclaimer; not financial advice."
+          }
+        }
+      },
+      "LtvCacCore": {
+        "type": "object",
+        "required": [
+          "arpu",
+          "gross_margin_percent",
+          "cac",
+          "monthly_churn_rate",
+          "lifetime_periods",
+          "gross_margin_per_period",
+          "ltv",
+          "ltv_cac_ratio",
+          "cac_payback_periods",
+          "verdict"
+        ],
+        "properties": {
+          "arpu": {
+            "type": "number"
+          },
+          "gross_margin_percent": {
+            "type": "number"
+          },
+          "cac": {
+            "type": "number"
+          },
+          "monthly_churn_rate": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lifetime_periods": {
+            "type": "number"
+          },
+          "gross_margin_per_period": {
+            "type": "number"
+          },
+          "ltv": {
+            "type": "number"
+          },
+          "ltv_cac_ratio": {
+            "type": "number"
+          },
+          "cac_payback_periods": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "verdict": {
+            "type": "string"
+          }
+        }
+      },
+      "MarginsCore": {
+        "type": "object",
+        "required": [
+          "revenue",
+          "cogs",
+          "variable_costs",
+          "gross_profit",
+          "gross_margin_percent",
+          "contribution_margin",
+          "contribution_margin_percent"
+        ],
+        "properties": {
+          "revenue": {
+            "type": "number"
+          },
+          "cogs": {
+            "type": "number"
+          },
+          "variable_costs": {
+            "type": "number"
+          },
+          "gross_profit": {
+            "type": "number"
+          },
+          "gross_margin_percent": {
+            "type": "number"
+          },
+          "contribution_margin": {
+            "type": "number"
+          },
+          "contribution_margin_percent": {
+            "type": "number"
+          }
+        }
+      },
+      "LtvCacRequest": {
+        "type": "object",
+        "required": [
+          "arpu",
+          "gross_margin_percent",
+          "cac"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "arpu": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Average revenue per customer per period."
+          },
+          "gross_margin_percent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "cac": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Customer acquisition cost."
+          },
+          "monthly_churn_rate": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1,
+            "description": "Per-period churn; lifetime = 1/churn."
+          },
+          "lifetime_periods": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Customer lifetime in periods (alternative to churn)."
+          }
+        }
+      },
+      "MarginsRequest": {
+        "type": "object",
+        "required": [
+          "revenue",
+          "cogs"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "revenue": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cogs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "variable_costs": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Variable costs beyond COGS (default 0)."
+          }
+        }
+      },
+      "DiscoveryResponse": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "description",
+          "openapi_url",
+          "auth",
+          "endpoints",
+          "pricing",
+          "x402_compatible",
+          "capabilities"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "openapi_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "auth": {
+            "type": "object",
+            "required": [
+              "type",
+              "header"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "header": {
+                "type": "string"
+              }
+            }
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "method",
+                "path",
+                "summary",
+                "price_usdc"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "pricing": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "price_usdc",
+                "currency"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "price_usdc": {
+                  "type": "number"
+                },
+                "currency": {
+                  "type": "string",
+                  "enum": [
+                    "USDC"
+                  ]
+                }
+              }
+            }
+          },
+          "x402_compatible": {
+            "type": "boolean"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Machine-readable capability tags for agent matching."
+          },
+          "typical_use_cases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional plain-language use cases to aid autonomous discovery."
+          },
+          "security_notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+          },
+          "input_examples": {
+            "type": "array",
+            "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "body"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "output_examples": {
+            "type": "array",
+            "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+            "items": {
+              "type": "object",
+              "required": [
+                "endpoint",
+                "response"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                },
+                "response": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "LtvCacResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/LtvCacCore"
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "MarginsResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/MarginsCore"
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      },
+      "LookupResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EnvelopeOk"
+          },
+          {
+            "$ref": "#/components/schemas/LtvCacCore"
+          },
+          {
+            "type": "object",
+            "required": [
+              "reasoning"
+            ],
+            "properties": {
+              "reasoning": {
+                "$ref": "#/components/schemas/Reasoning"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/_Tail"
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    }
+  }
+}

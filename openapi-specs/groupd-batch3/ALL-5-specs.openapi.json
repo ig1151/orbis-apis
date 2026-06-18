@@ -1,0 +1,5726 @@
+{
+  "break-even": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Break-Even Analysis API",
+      "version": "1.0.0",
+      "description": "Deterministic cost-volume-profit / break-even analysis (units, revenue, contribution margin, target profit, margin of safety). No LLM.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x402-compatible": true,
+      "x-agent-marketplace-ready": true,
+      "x-pay-per-call-optimized": true,
+      "x-finance-tool": true,
+      "x-financial-calculation": true,
+      "x-human-approval-required": false
+    },
+    "servers": [
+      {
+        "url": "https://orbis-apis.onrender.com/break-even"
+      }
+    ],
+    "security": [
+      {
+        "ApiKeyAuth": []
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "discover",
+          "summary": "Service discovery",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscoveryResponse"
+                  },
+                  "example": {
+                    "name": "Break-Even Analysis API",
+                    "version": "1.0.0",
+                    "description": "Deterministic cost-volume-profit / break-even analysis. /units does unit-based CVP (break-even units & revenue, contribution margin, target-profit units, margin of safety); /revenue does ratio-based CVP for service businesses. No LLM, nothing stored.",
+                    "openapi_url": "https://orbis-apis.onrender.com/break-even/openapi.json",
+                    "auth": {
+                      "type": "apiKey",
+                      "header": "X-API-Key"
+                    },
+                    "capabilities": [
+                      "break_even_units",
+                      "break_even_revenue",
+                      "contribution_margin",
+                      "target_profit_volume",
+                      "margin_of_safety"
+                    ],
+                    "typical_use_cases": [
+                      "Compute the units a product must sell to cover fixed costs",
+                      "Find the revenue a service business needs to break even from its contribution margin ratio",
+                      "Size the volume needed to hit a target profit",
+                      "Measure how far current sales are above break-even (margin of safety)"
+                    ],
+                    "input_examples": [
+                      {
+                        "endpoint": "/units",
+                        "body": {
+                          "fixed_costs": 50000,
+                          "price_per_unit": 40,
+                          "variable_cost_per_unit": 25,
+                          "target_profit": 20000,
+                          "current_units": 5000
+                        }
+                      },
+                      {
+                        "endpoint": "/revenue",
+                        "body": {
+                          "fixed_costs": 50000,
+                          "contribution_margin_ratio": 0.375,
+                          "current_revenue": 200000
+                        }
+                      }
+                    ],
+                    "output_examples": [
+                      {
+                        "endpoint": "/units",
+                        "response": {
+                          "contribution_margin_per_unit": 15,
+                          "break_even_units": 3333.3333,
+                          "break_even_revenue": 133333.33
+                        }
+                      },
+                      {
+                        "endpoint": "/revenue",
+                        "response": {
+                          "break_even_revenue": 133333.33,
+                          "margin_of_safety_percent": 33.3333
+                        }
+                      }
+                    ],
+                    "endpoints": [
+                      {
+                        "method": "POST",
+                        "path": "/units",
+                        "summary": "Unit-based break-even + contribution margin",
+                        "price_usdc": 0.007
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/revenue",
+                        "summary": "Ratio-based break-even revenue",
+                        "price_usdc": 0.006
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/lookup",
+                        "summary": "ONE-CALL full CVP analysis + reasoning",
+                        "price_usdc": 0.012
+                      }
+                    ],
+                    "pricing": [
+                      {
+                        "path": "/units",
+                        "price_usdc": 0.007,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/revenue",
+                        "price_usdc": 0.006,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/lookup",
+                        "price_usdc": 0.012,
+                        "currency": "USDC"
+                      }
+                    ],
+                    "x402_compatible": true
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/units": {
+        "post": {
+          "operationId": "units",
+          "summary": "Unit-based break-even + contribution margin",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UnitsResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "fixed_costs": 50000,
+                    "price_per_unit": 40,
+                    "variable_cost_per_unit": 25,
+                    "contribution_margin_per_unit": 15,
+                    "contribution_margin_ratio": 0.375,
+                    "break_even_units": 3333.3333,
+                    "break_even_revenue": 133333.33,
+                    "target_profit": 20000,
+                    "target_profit_units": 4666.6667,
+                    "target_profit_revenue": 186666.67,
+                    "current_units": 5000,
+                    "margin_of_safety_units": 1666.6667,
+                    "margin_of_safety_percent": 33.3333,
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "units": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Break-even at 3333.3333 units ($133333.33 revenue); contribution margin $15/unit."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "payback-period",
+                        "reason": "Once break-even is known, evaluate how long the upfront investment takes to pay back.",
+                        "url": "https://orbis-apis.onrender.com/payback-period"
+                      },
+                      {
+                        "api": "unit-economics",
+                        "reason": "Translate per-unit contribution margin into CAC payback and LTV:CAC.",
+                        "url": "https://orbis-apis.onrender.com/unit-economics"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitsRequest"
+                },
+                "example": {
+                  "fixed_costs": 50000,
+                  "price_per_unit": 40,
+                  "variable_cost_per_unit": 25,
+                  "target_profit": 20000,
+                  "current_units": 5000
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.007,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/revenue": {
+        "post": {
+          "operationId": "revenue",
+          "summary": "Ratio-based break-even revenue",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/RevenueResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "fixed_costs": 50000,
+                    "contribution_margin_ratio": 0.375,
+                    "break_even_revenue": 133333.33,
+                    "target_profit": 0,
+                    "target_profit_revenue": 133333.33,
+                    "current_revenue": 200000,
+                    "margin_of_safety_revenue": 66666.67,
+                    "margin_of_safety_percent": 33.3333,
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "revenue": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Break-even revenue $133333.33 at a 37.5% contribution margin."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "payback-period",
+                        "reason": "Once break-even is known, evaluate how long the upfront investment takes to pay back.",
+                        "url": "https://orbis-apis.onrender.com/payback-period"
+                      },
+                      {
+                        "api": "unit-economics",
+                        "reason": "Translate per-unit contribution margin into CAC payback and LTV:CAC.",
+                        "url": "https://orbis-apis.onrender.com/unit-economics"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevenueRequest"
+                },
+                "example": {
+                  "fixed_costs": 50000,
+                  "contribution_margin_ratio": 0.375,
+                  "current_revenue": 200000
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.006,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/lookup": {
+        "post": {
+          "operationId": "lookup",
+          "summary": "ONE-CALL full CVP analysis + reasoning",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LookupResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "fixed_costs": 50000,
+                    "price_per_unit": 40,
+                    "variable_cost_per_unit": 25,
+                    "contribution_margin_per_unit": 15,
+                    "contribution_margin_ratio": 0.375,
+                    "break_even_units": 3333.3333,
+                    "break_even_revenue": 133333.33,
+                    "target_profit": 20000,
+                    "target_profit_units": 4666.6667,
+                    "target_profit_revenue": 186666.67,
+                    "current_units": 5000,
+                    "margin_of_safety_units": 1666.6667,
+                    "margin_of_safety_percent": 33.3333,
+                    "reasoning": {
+                      "why_result_generated": "Contribution margin $15/unit (price $40 − variable $25); break-even = fixed $50000 ÷ CM = 3333.3333 units. Target profit $20000 needs 4666.6667 units.",
+                      "key_factors": [
+                        "Break-even 3333.3333 units ($133333.33).",
+                        "Contribution margin ratio 37.5%.",
+                        "Margin of safety 33.3333% above break-even."
+                      ],
+                      "invalidators": [
+                        "Break-even assumes a CONSTANT price and variable cost per unit and fixed costs that do not change with volume; volume discounts, step-fixed costs or price changes shift the point.",
+                        "Contribution margin = price − variable cost; if variable cost ≥ price the contribution margin is ≤ 0 and there is no finite break-even.",
+                        "Margin of safety is only computed when current_units (or current_revenue) is supplied, and is relative to that figure."
+                      ]
+                    },
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "units": 1,
+                      "target_profit": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Sell at least 3333.3333 units to break even.",
+                      "Reach 4666.6667 units for a $20000 profit."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "payback-period",
+                        "reason": "Once break-even is known, evaluate how long the upfront investment takes to pay back.",
+                        "url": "https://orbis-apis.onrender.com/payback-period"
+                      },
+                      {
+                        "api": "unit-economics",
+                        "reason": "Translate per-unit contribution margin into CAC payback and LTV:CAC.",
+                        "url": "https://orbis-apis.onrender.com/unit-economics"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitsRequest"
+                },
+                "example": {
+                  "fixed_costs": 50000,
+                  "price_per_unit": 40,
+                  "variable_cost_per_unit": 25,
+                  "target_profit": 20000,
+                  "current_units": 5000
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.012,
+            "currency": "USDC"
+          },
+          "x-one-call": true
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "ChainTo": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "Slug of a recommended next API to call."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+            }
+          }
+        },
+        "Reasoning": {
+          "type": "object",
+          "required": [
+            "why_result_generated",
+            "key_factors",
+            "invalidators"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "why_result_generated": {
+              "type": "string"
+            },
+            "key_factors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "invalidators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Conditions that would change or invalidate this result."
+            }
+          }
+        },
+        "Privacy": {
+          "type": "object",
+          "required": [
+            "data_stored",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "data_stored": {
+              "type": "boolean"
+            },
+            "retention": {
+              "type": "string",
+              "description": "Retention policy, e.g. \"none\"."
+            }
+          }
+        },
+        "EnvelopeError": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "description": "Optional machine-readable error context."
+            }
+          }
+        },
+        "Error400": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "latency_ms": {
+              "type": "integer"
+            },
+            "error": {
+              "$ref": "#/components/schemas/EnvelopeError"
+            }
+          }
+        },
+        "Error500": {
+          "$ref": "#/components/schemas/Error400"
+        },
+        "EnvelopeOk": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms"
+          ],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id for clients that key on request_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ExecutionMetadata": {
+          "type": "object",
+          "required": [
+            "model",
+            "automation_safe"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": [
+                "deterministic"
+              ]
+            },
+            "automation_safe": {
+              "type": "boolean"
+            }
+          }
+        },
+        "ConfidencePerSection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "units": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "revenue": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "target_profit": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "_Tail": {
+          "type": "object",
+          "required": [
+            "confidence_score",
+            "confidence_per_section",
+            "recommended_actions_priority_order",
+            "chain_to",
+            "privacy",
+            "execution_metadata",
+            "calculation_certainty",
+            "financial_disclaimer"
+          ],
+          "properties": {
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_per_section": {
+              "$ref": "#/components/schemas/ConfidencePerSection"
+            },
+            "recommended_actions_priority_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chain_to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainTo"
+              }
+            },
+            "privacy": {
+              "$ref": "#/components/schemas/Privacy"
+            },
+            "execution_metadata": {
+              "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+            },
+            "financial_disclaimer": {
+              "type": "string",
+              "description": "Informational-only disclaimer; not financial advice."
+            }
+          }
+        },
+        "UnitsCore": {
+          "type": "object",
+          "required": [
+            "fixed_costs",
+            "price_per_unit",
+            "variable_cost_per_unit",
+            "contribution_margin_per_unit",
+            "contribution_margin_ratio",
+            "break_even_units",
+            "break_even_revenue",
+            "target_profit",
+            "target_profit_units",
+            "target_profit_revenue",
+            "current_units",
+            "margin_of_safety_units",
+            "margin_of_safety_percent"
+          ],
+          "properties": {
+            "fixed_costs": {
+              "type": "number"
+            },
+            "price_per_unit": {
+              "type": "number"
+            },
+            "variable_cost_per_unit": {
+              "type": "number"
+            },
+            "contribution_margin_per_unit": {
+              "type": "number"
+            },
+            "contribution_margin_ratio": {
+              "type": "number"
+            },
+            "break_even_units": {
+              "type": "number"
+            },
+            "break_even_revenue": {
+              "type": "number"
+            },
+            "target_profit": {
+              "type": "number"
+            },
+            "target_profit_units": {
+              "type": "number"
+            },
+            "target_profit_revenue": {
+              "type": "number"
+            },
+            "current_units": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "margin_of_safety_units": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "margin_of_safety_percent": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "RevenueCore": {
+          "type": "object",
+          "required": [
+            "fixed_costs",
+            "contribution_margin_ratio",
+            "break_even_revenue",
+            "target_profit",
+            "target_profit_revenue",
+            "current_revenue",
+            "margin_of_safety_revenue",
+            "margin_of_safety_percent"
+          ],
+          "properties": {
+            "fixed_costs": {
+              "type": "number"
+            },
+            "contribution_margin_ratio": {
+              "type": "number"
+            },
+            "break_even_revenue": {
+              "type": "number"
+            },
+            "target_profit": {
+              "type": "number"
+            },
+            "target_profit_revenue": {
+              "type": "number"
+            },
+            "current_revenue": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "margin_of_safety_revenue": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "margin_of_safety_percent": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "UnitsRequest": {
+          "type": "object",
+          "required": [
+            "fixed_costs",
+            "price_per_unit",
+            "variable_cost_per_unit"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "fixed_costs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "price_per_unit": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "variable_cost_per_unit": {
+              "type": "number",
+              "minimum": 0
+            },
+            "target_profit": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Desired profit above break-even (default 0)."
+            },
+            "current_units": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Current/expected unit volume; enables margin-of-safety."
+            }
+          }
+        },
+        "RevenueRequest": {
+          "type": "object",
+          "required": [
+            "fixed_costs",
+            "contribution_margin_ratio"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "fixed_costs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "contribution_margin_ratio": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1,
+              "description": "Contribution margin as a fraction of revenue, in (0, 1]."
+            },
+            "target_profit": {
+              "type": "number",
+              "minimum": 0
+            },
+            "current_revenue": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Current/expected revenue; enables margin-of-safety."
+            }
+          }
+        },
+        "DiscoveryResponse": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description",
+            "openapi_url",
+            "auth",
+            "endpoints",
+            "pricing",
+            "x402_compatible",
+            "capabilities"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "openapi_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "header"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "path",
+                  "summary",
+                  "price_usdc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "price_usdc",
+                  "currency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USDC"
+                    ]
+                  }
+                }
+              }
+            },
+            "x402_compatible": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
+            },
+            "typical_use_cases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
+            "input_examples": {
+              "type": "array",
+              "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "body"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            },
+            "output_examples": {
+              "type": "array",
+              "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "response"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "UnitsResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/UnitsCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "RevenueResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/RevenueCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "LookupResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/UnitsCore"
+            },
+            {
+              "type": "object",
+              "required": [
+                "reasoning"
+              ],
+              "properties": {
+                "reasoning": {
+                  "$ref": "#/components/schemas/Reasoning"
+                }
+              }
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  },
+  "correlation-beta": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Correlation & Beta API",
+      "version": "1.0.0",
+      "description": "Deterministic portfolio statistics: Pearson correlation, covariance, beta, Jensen's alpha and R². No LLM.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x402-compatible": true,
+      "x-agent-marketplace-ready": true,
+      "x-pay-per-call-optimized": true,
+      "x-finance-tool": true,
+      "x-financial-calculation": true,
+      "x-human-approval-required": false
+    },
+    "servers": [
+      {
+        "url": "https://orbis-apis.onrender.com/correlation-beta"
+      }
+    ],
+    "security": [
+      {
+        "ApiKeyAuth": []
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "discover",
+          "summary": "Service discovery",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscoveryResponse"
+                  },
+                  "example": {
+                    "name": "Correlation & Beta API",
+                    "version": "1.0.0",
+                    "description": "Deterministic portfolio statistics. /correlation returns Pearson correlation and covariance of two return series; /beta regresses an asset on a benchmark for beta, Jensen's alpha and R². Exact math on supplied data — no LLM, nothing stored.",
+                    "openapi_url": "https://orbis-apis.onrender.com/correlation-beta/openapi.json",
+                    "auth": {
+                      "type": "apiKey",
+                      "header": "X-API-Key"
+                    },
+                    "capabilities": [
+                      "pearson_correlation",
+                      "covariance",
+                      "beta",
+                      "jensens_alpha",
+                      "r_squared"
+                    ],
+                    "typical_use_cases": [
+                      "Measure how correlated two assets or strategies are before combining them",
+                      "Compute a stock's beta and alpha versus a market benchmark",
+                      "Quantify how much of an asset's movement the benchmark explains (R²)"
+                    ],
+                    "input_examples": [
+                      {
+                        "endpoint": "/correlation",
+                        "body": {
+                          "series_a": [
+                            1.2,
+                            -0.8,
+                            2.1,
+                            -3.4,
+                            0.5
+                          ],
+                          "series_b": [
+                            0.9,
+                            -0.5,
+                            1.7,
+                            -2.9,
+                            0.2
+                          ]
+                        }
+                      },
+                      {
+                        "endpoint": "/beta",
+                        "body": {
+                          "asset_returns": [
+                            1.2,
+                            -0.8,
+                            2.1,
+                            -3.4,
+                            0.5
+                          ],
+                          "benchmark_returns": [
+                            0.9,
+                            -0.5,
+                            1.7,
+                            -2.9,
+                            0.2
+                          ],
+                          "periods_per_year": 252
+                        }
+                      }
+                    ],
+                    "output_examples": [
+                      {
+                        "endpoint": "/correlation",
+                        "response": {
+                          "correlation": 0.9939,
+                          "r_squared": 0.9879,
+                          "relationship": "very strong positive"
+                        }
+                      },
+                      {
+                        "endpoint": "/beta",
+                        "response": {
+                          "beta": 1.1739,
+                          "alpha_per_period": -0.0091,
+                          "r_squared": 0.9879
+                        }
+                      }
+                    ],
+                    "endpoints": [
+                      {
+                        "method": "POST",
+                        "path": "/correlation",
+                        "summary": "Pearson correlation + covariance of two series",
+                        "price_usdc": 0.008
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/beta",
+                        "summary": "Beta, alpha and R² of an asset vs a benchmark",
+                        "price_usdc": 0.008
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/lookup",
+                        "summary": "ONE-CALL correlation + beta + reasoning",
+                        "price_usdc": 0.014
+                      }
+                    ],
+                    "pricing": [
+                      {
+                        "path": "/correlation",
+                        "price_usdc": 0.008,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/beta",
+                        "price_usdc": 0.008,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/lookup",
+                        "price_usdc": 0.014,
+                        "currency": "USDC"
+                      }
+                    ],
+                    "x402_compatible": true
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/correlation": {
+        "post": {
+          "operationId": "correlation",
+          "summary": "Pearson correlation + covariance of two series",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CorrelationResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "n": 5,
+                    "correlation": 0.997006,
+                    "covariance": 2.9924,
+                    "mean_a": -0.08,
+                    "mean_b": -0.12,
+                    "stdev_a": 2.137054,
+                    "stdev_b": 1.755563,
+                    "r_squared": 0.994021,
+                    "relationship": "very strong positive",
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "correlation": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Correlation 0.997006 (very strong positive); R² 0.994021."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "risk-ratios",
+                        "reason": "Combine beta with the Sharpe/Sortino ratios for full risk-adjusted analysis.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
+                      },
+                      {
+                        "api": "value-at-risk",
+                        "reason": "Quantify downside risk of the same return series.",
+                        "url": "https://orbis-apis.onrender.com/value-at-risk"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorrelationRequest"
+                },
+                "example": {
+                  "series_a": [
+                    1.2,
+                    -0.8,
+                    2.1,
+                    -3.4,
+                    0.5
+                  ],
+                  "series_b": [
+                    0.9,
+                    -0.5,
+                    1.7,
+                    -2.9,
+                    0.2
+                  ]
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.008,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/beta": {
+        "post": {
+          "operationId": "beta",
+          "summary": "Beta, alpha and R² of an asset vs a benchmark",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BetaResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "n": 5,
+                    "beta": 1.21366,
+                    "alpha_per_period": 0.0656392,
+                    "r_squared": 0.994021,
+                    "correlation": 0.997006,
+                    "mean_asset": -0.08,
+                    "mean_benchmark": -0.12,
+                    "benchmark_variance": 2.4656,
+                    "alpha_annualized_percent": 1654.107722,
+                    "sensitivity": "more volatile than benchmark",
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "beta": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Beta 1.21366 (more volatile than benchmark); alpha 0.0656392/period; R² 0.994021."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "risk-ratios",
+                        "reason": "Combine beta with the Sharpe/Sortino ratios for full risk-adjusted analysis.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
+                      },
+                      {
+                        "api": "value-at-risk",
+                        "reason": "Quantify downside risk of the same return series.",
+                        "url": "https://orbis-apis.onrender.com/value-at-risk"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BetaRequest"
+                },
+                "example": {
+                  "asset_returns": [
+                    1.2,
+                    -0.8,
+                    2.1,
+                    -3.4,
+                    0.5
+                  ],
+                  "benchmark_returns": [
+                    0.9,
+                    -0.5,
+                    1.7,
+                    -2.9,
+                    0.2
+                  ],
+                  "periods_per_year": 252
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.008,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/lookup": {
+        "post": {
+          "operationId": "lookup",
+          "summary": "ONE-CALL correlation + beta + reasoning",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LookupResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "n": 5,
+                    "beta": 1.21366,
+                    "alpha_per_period": 0.0656392,
+                    "r_squared": 0.994021,
+                    "correlation": 0.997006,
+                    "mean_asset": -0.08,
+                    "mean_benchmark": -0.12,
+                    "benchmark_variance": 2.4656,
+                    "alpha_annualized_percent": 1654.107722,
+                    "sensitivity": "more volatile than benchmark",
+                    "correlation_detail": {
+                      "n": 5,
+                      "correlation": 0.997006,
+                      "covariance": 2.9924,
+                      "mean_a": -0.08,
+                      "mean_b": -0.12,
+                      "stdev_a": 2.137054,
+                      "stdev_b": 1.755563,
+                      "r_squared": 0.994021,
+                      "relationship": "very strong positive"
+                    },
+                    "reasoning": {
+                      "why_result_generated": "Over 5 observations the asset has correlation 0.997006 with the benchmark and beta 1.21366 (more volatile than benchmark); the benchmark explains R² 0.994021 of its variance, with Jensen's alpha 0.0656392/period.",
+                      "key_factors": [
+                        "Beta 1.21366 — more volatile than benchmark.",
+                        "Correlation 0.997006 (very strong positive).",
+                        "R² 0.994021; alpha 0.0656392/period."
+                      ],
+                      "invalidators": [
+                        "Correlation measures LINEAR association only and is unit-free in [-1, 1]; a near-zero correlation does not rule out a non-linear relationship, and correlation is not causation.",
+                        "Beta = cov(asset, benchmark) / var(benchmark); it is sensitive to the sample window and assumes a stable linear relationship. A short or non-stationary series gives an unreliable beta.",
+                        "Jensen's alpha here is mean(asset) − beta·mean(benchmark) in the SAME per-period units you supplied; the annualized figure (if returned) is a simple ×periods_per_year scaling, not compounded."
+                      ]
+                    },
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "correlation": 1,
+                      "beta": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "High correlation (0.997006) — limited diversification benefit between these two."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "risk-ratios",
+                        "reason": "Combine beta with the Sharpe/Sortino ratios for full risk-adjusted analysis.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
+                      },
+                      {
+                        "api": "value-at-risk",
+                        "reason": "Quantify downside risk of the same return series.",
+                        "url": "https://orbis-apis.onrender.com/value-at-risk"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BetaRequest"
+                },
+                "example": {
+                  "asset_returns": [
+                    1.2,
+                    -0.8,
+                    2.1,
+                    -3.4,
+                    0.5
+                  ],
+                  "benchmark_returns": [
+                    0.9,
+                    -0.5,
+                    1.7,
+                    -2.9,
+                    0.2
+                  ],
+                  "periods_per_year": 252
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.014,
+            "currency": "USDC"
+          },
+          "x-one-call": true
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "ChainTo": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "Slug of a recommended next API to call."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+            }
+          }
+        },
+        "Reasoning": {
+          "type": "object",
+          "required": [
+            "why_result_generated",
+            "key_factors",
+            "invalidators"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "why_result_generated": {
+              "type": "string"
+            },
+            "key_factors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "invalidators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Conditions that would change or invalidate this result."
+            }
+          }
+        },
+        "Privacy": {
+          "type": "object",
+          "required": [
+            "data_stored",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "data_stored": {
+              "type": "boolean"
+            },
+            "retention": {
+              "type": "string",
+              "description": "Retention policy, e.g. \"none\"."
+            }
+          }
+        },
+        "EnvelopeError": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "description": "Optional machine-readable error context."
+            }
+          }
+        },
+        "Error400": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "latency_ms": {
+              "type": "integer"
+            },
+            "error": {
+              "$ref": "#/components/schemas/EnvelopeError"
+            }
+          }
+        },
+        "Error500": {
+          "$ref": "#/components/schemas/Error400"
+        },
+        "EnvelopeOk": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms"
+          ],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id for clients that key on request_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ExecutionMetadata": {
+          "type": "object",
+          "required": [
+            "model",
+            "automation_safe"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": [
+                "deterministic"
+              ]
+            },
+            "automation_safe": {
+              "type": "boolean"
+            }
+          }
+        },
+        "ConfidencePerSection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "correlation": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "beta": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "_Tail": {
+          "type": "object",
+          "required": [
+            "confidence_score",
+            "confidence_per_section",
+            "recommended_actions_priority_order",
+            "chain_to",
+            "privacy",
+            "execution_metadata",
+            "calculation_certainty",
+            "financial_disclaimer"
+          ],
+          "properties": {
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_per_section": {
+              "$ref": "#/components/schemas/ConfidencePerSection"
+            },
+            "recommended_actions_priority_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chain_to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainTo"
+              }
+            },
+            "privacy": {
+              "$ref": "#/components/schemas/Privacy"
+            },
+            "execution_metadata": {
+              "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+            },
+            "financial_disclaimer": {
+              "type": "string",
+              "description": "Informational-only disclaimer; not financial advice."
+            }
+          }
+        },
+        "CorrelationCore": {
+          "type": "object",
+          "required": [
+            "n",
+            "correlation",
+            "covariance",
+            "mean_a",
+            "mean_b",
+            "stdev_a",
+            "stdev_b",
+            "r_squared",
+            "relationship"
+          ],
+          "properties": {
+            "n": {
+              "type": "integer"
+            },
+            "correlation": {
+              "type": "number"
+            },
+            "covariance": {
+              "type": "number"
+            },
+            "mean_a": {
+              "type": "number"
+            },
+            "mean_b": {
+              "type": "number"
+            },
+            "stdev_a": {
+              "type": "number"
+            },
+            "stdev_b": {
+              "type": "number"
+            },
+            "r_squared": {
+              "type": "number"
+            },
+            "relationship": {
+              "type": "string"
+            }
+          }
+        },
+        "BetaCore": {
+          "type": "object",
+          "required": [
+            "n",
+            "beta",
+            "alpha_per_period",
+            "r_squared",
+            "correlation",
+            "mean_asset",
+            "mean_benchmark",
+            "benchmark_variance",
+            "alpha_annualized_percent",
+            "sensitivity"
+          ],
+          "properties": {
+            "n": {
+              "type": "integer"
+            },
+            "beta": {
+              "type": "number"
+            },
+            "alpha_per_period": {
+              "type": "number"
+            },
+            "r_squared": {
+              "type": "number"
+            },
+            "correlation": {
+              "type": "number"
+            },
+            "mean_asset": {
+              "type": "number"
+            },
+            "mean_benchmark": {
+              "type": "number"
+            },
+            "benchmark_variance": {
+              "type": "number"
+            },
+            "alpha_annualized_percent": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "sensitivity": {
+              "type": "string"
+            }
+          }
+        },
+        "CorrelationRequest": {
+          "type": "object",
+          "required": [
+            "series_a",
+            "series_b"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "series_a": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "series_b": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "number"
+              },
+              "description": "Same length as series_a."
+            }
+          }
+        },
+        "BetaRequest": {
+          "type": "object",
+          "required": [
+            "asset_returns",
+            "benchmark_returns"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "asset_returns": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "benchmark_returns": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "number"
+              },
+              "description": "Same length as asset_returns; must not be constant."
+            },
+            "periods_per_year": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "If given, also returns annualized alpha (×periods_per_year)."
+            }
+          }
+        },
+        "DiscoveryResponse": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description",
+            "openapi_url",
+            "auth",
+            "endpoints",
+            "pricing",
+            "x402_compatible",
+            "capabilities"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "openapi_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "header"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "path",
+                  "summary",
+                  "price_usdc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "price_usdc",
+                  "currency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USDC"
+                    ]
+                  }
+                }
+              }
+            },
+            "x402_compatible": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
+            },
+            "typical_use_cases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
+            "input_examples": {
+              "type": "array",
+              "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "body"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            },
+            "output_examples": {
+              "type": "array",
+              "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "response"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "CorrelationResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/CorrelationCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "BetaResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/BetaCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "LookupResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/BetaCore"
+            },
+            {
+              "type": "object",
+              "required": [
+                "correlation_detail",
+                "reasoning"
+              ],
+              "properties": {
+                "correlation_detail": {
+                  "$ref": "#/components/schemas/CorrelationCore"
+                },
+                "reasoning": {
+                  "$ref": "#/components/schemas/Reasoning"
+                }
+              }
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  },
+  "kelly-criterion": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Kelly Criterion API",
+      "version": "1.0.0",
+      "description": "Deterministic Kelly-criterion bet/position sizing: optimal & fractional Kelly fraction, edge, expected log-growth, gambler's-ruin probability. No LLM.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x402-compatible": true,
+      "x-agent-marketplace-ready": true,
+      "x-pay-per-call-optimized": true,
+      "x-finance-tool": true,
+      "x-financial-calculation": true,
+      "x-human-approval-required": false
+    },
+    "servers": [
+      {
+        "url": "https://orbis-apis.onrender.com/kelly-criterion"
+      }
+    ],
+    "security": [
+      {
+        "ApiKeyAuth": []
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "discover",
+          "summary": "Service discovery",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscoveryResponse"
+                  },
+                  "example": {
+                    "name": "Kelly Criterion API",
+                    "version": "1.0.0",
+                    "description": "Deterministic Kelly-criterion bet/position sizing. /kelly returns the optimal and fractional Kelly fraction, edge and expected log-growth; /risk-of-ruin returns the classic gambler's-ruin probability for flat even-money bets. No LLM, nothing stored.",
+                    "openapi_url": "https://orbis-apis.onrender.com/kelly-criterion/openapi.json",
+                    "auth": {
+                      "type": "apiKey",
+                      "header": "X-API-Key"
+                    },
+                    "capabilities": [
+                      "kelly_fraction",
+                      "fractional_kelly",
+                      "expected_log_growth",
+                      "edge",
+                      "risk_of_ruin"
+                    ],
+                    "typical_use_cases": [
+                      "Size a bet or trade as a fraction of bankroll from a win probability and payoff",
+                      "Apply a fractional-Kelly (½ Kelly) multiplier to temper variance",
+                      "Estimate risk of ruin for a flat-staking strategy"
+                    ],
+                    "input_examples": [
+                      {
+                        "endpoint": "/kelly",
+                        "body": {
+                          "win_probability": 0.55,
+                          "win_payoff": 1,
+                          "kelly_multiplier": 0.5,
+                          "bankroll": 10000
+                        }
+                      },
+                      {
+                        "endpoint": "/risk-of-ruin",
+                        "body": {
+                          "win_probability": 0.55,
+                          "bankroll_units": 20
+                        }
+                      }
+                    ],
+                    "output_examples": [
+                      {
+                        "endpoint": "/kelly",
+                        "response": {
+                          "kelly_fraction": 0.1,
+                          "fractional_kelly_fraction": 0.05,
+                          "recommended_stake": 500
+                        }
+                      },
+                      {
+                        "endpoint": "/risk-of-ruin",
+                        "response": {
+                          "risk_of_ruin": 0.01386,
+                          "survival_probability": 0.98614
+                        }
+                      }
+                    ],
+                    "endpoints": [
+                      {
+                        "method": "POST",
+                        "path": "/kelly",
+                        "summary": "Optimal + fractional Kelly stake",
+                        "price_usdc": 0.007
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/risk-of-ruin",
+                        "summary": "Gambler's-ruin probability (flat even-money bets)",
+                        "price_usdc": 0.006
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/lookup",
+                        "summary": "ONE-CALL Kelly stake + interpretation + reasoning",
+                        "price_usdc": 0.012
+                      }
+                    ],
+                    "pricing": [
+                      {
+                        "path": "/kelly",
+                        "price_usdc": 0.007,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/risk-of-ruin",
+                        "price_usdc": 0.006,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/lookup",
+                        "price_usdc": 0.012,
+                        "currency": "USDC"
+                      }
+                    ],
+                    "x402_compatible": true
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/kelly": {
+        "post": {
+          "operationId": "kelly",
+          "summary": "Optimal + fractional Kelly stake",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/KellyResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "win_probability": 0.55,
+                    "loss_probability": 0.45,
+                    "win_payoff": 1,
+                    "loss_fraction": 1,
+                    "kelly_multiplier": 0.5,
+                    "edge": 0.1,
+                    "expected_value_per_unit": 0.1,
+                    "kelly_fraction": 0.1,
+                    "fractional_kelly_fraction": 0.05,
+                    "favorable": true,
+                    "expected_log_growth_full": 0.00500837,
+                    "expected_log_growth_fractional": 0.00375261,
+                    "bankroll": 10000,
+                    "recommended_stake": 500,
+                    "recommendation": "Stake 5% of bankroll (fractional Kelly ×0.5 of the 10% full Kelly).",
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "kelly": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Stake 5% of bankroll (fractional Kelly ×0.5 of the 10% full Kelly)."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "risk-ratios",
+                        "reason": "Translate the chosen stake into portfolio-level risk-adjusted metrics.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
+                      },
+                      {
+                        "api": "max-drawdown",
+                        "reason": "Stress-test the equity path of the sizing strategy.",
+                        "url": "https://orbis-apis.onrender.com/max-drawdown"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KellyRequest"
+                },
+                "example": {
+                  "win_probability": 0.55,
+                  "win_payoff": 1,
+                  "kelly_multiplier": 0.5,
+                  "bankroll": 10000
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.007,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/risk-of-ruin": {
+        "post": {
+          "operationId": "riskOfRuin",
+          "summary": "Gambler's-ruin probability (flat even-money bets)",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/RuinResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "win_probability": 0.55,
+                    "loss_probability": 0.45,
+                    "bankroll_units": 20,
+                    "risk_of_ruin": 0.0180716,
+                    "survival_probability": 0.9819284,
+                    "favorable": true,
+                    "assumptions": "Flat even-money (1:1) bets of one unit; ruin = bankroll hits 0. P(ruin) = (q/p)^units when p>0.5, else 1.",
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "risk_of_ruin": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Risk of ruin 1.8072% over a 20-unit bankroll (flat even-money bets)."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "risk-ratios",
+                        "reason": "Translate the chosen stake into portfolio-level risk-adjusted metrics.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
+                      },
+                      {
+                        "api": "max-drawdown",
+                        "reason": "Stress-test the equity path of the sizing strategy.",
+                        "url": "https://orbis-apis.onrender.com/max-drawdown"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RuinRequest"
+                },
+                "example": {
+                  "win_probability": 0.55,
+                  "bankroll_units": 20
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.006,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/lookup": {
+        "post": {
+          "operationId": "lookup",
+          "summary": "ONE-CALL Kelly stake + interpretation + reasoning",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LookupResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "win_probability": 0.55,
+                    "loss_probability": 0.45,
+                    "win_payoff": 1,
+                    "loss_fraction": 1,
+                    "kelly_multiplier": 0.5,
+                    "edge": 0.1,
+                    "expected_value_per_unit": 0.1,
+                    "kelly_fraction": 0.1,
+                    "fractional_kelly_fraction": 0.05,
+                    "favorable": true,
+                    "expected_log_growth_full": 0.00500837,
+                    "expected_log_growth_fractional": 0.00375261,
+                    "bankroll": 10000,
+                    "recommended_stake": 500,
+                    "recommendation": "Stake 5% of bankroll (fractional Kelly ×0.5 of the 10% full Kelly).",
+                    "reasoning": {
+                      "why_result_generated": "Edge is positive (EV 0.1/unit). Full Kelly = p/loss_fraction − q/win_payoff = 0.1; applying the ×0.5 multiplier gives a 0.05 stake fraction ($500 of $10000).",
+                      "key_factors": [
+                        "Kelly fraction 0.1 (fractional 0.05).",
+                        "Edge / EV per unit 0.1.",
+                        "Expected log-growth 0.00375261 at the fractional stake."
+                      ],
+                      "invalidators": [
+                        "Kelly maximizes long-run LOG growth and assumes the win probability and payoff are accurate and stationary; overstated edge leads to oversized bets and large drawdowns. Practitioners commonly use fractional Kelly (½ or less).",
+                        "win_payoff is the NET odds b (profit per unit staked on a win); loss_fraction is the fraction of the stake lost on a loss (default 1). f* = p/loss_fraction − q/win_payoff.",
+                        "The /risk-of-ruin figure assumes FLAT even-money one-unit bets, not Kelly-proportional staking; it is a separate classical model, not the ruin probability of the Kelly fraction above."
+                      ]
+                    },
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "kelly": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Stake 5% of bankroll (fractional Kelly ×0.5 of the 10% full Kelly).",
+                      "Consider fractional Kelly (≤ ½) to reduce drawdown risk."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "risk-ratios",
+                        "reason": "Translate the chosen stake into portfolio-level risk-adjusted metrics.",
+                        "url": "https://orbis-apis.onrender.com/risk-ratios"
+                      },
+                      {
+                        "api": "max-drawdown",
+                        "reason": "Stress-test the equity path of the sizing strategy.",
+                        "url": "https://orbis-apis.onrender.com/max-drawdown"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KellyRequest"
+                },
+                "example": {
+                  "win_probability": 0.55,
+                  "win_payoff": 1,
+                  "kelly_multiplier": 0.5,
+                  "bankroll": 10000
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.012,
+            "currency": "USDC"
+          },
+          "x-one-call": true
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "ChainTo": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "Slug of a recommended next API to call."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+            }
+          }
+        },
+        "Reasoning": {
+          "type": "object",
+          "required": [
+            "why_result_generated",
+            "key_factors",
+            "invalidators"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "why_result_generated": {
+              "type": "string"
+            },
+            "key_factors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "invalidators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Conditions that would change or invalidate this result."
+            }
+          }
+        },
+        "Privacy": {
+          "type": "object",
+          "required": [
+            "data_stored",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "data_stored": {
+              "type": "boolean"
+            },
+            "retention": {
+              "type": "string",
+              "description": "Retention policy, e.g. \"none\"."
+            }
+          }
+        },
+        "EnvelopeError": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "description": "Optional machine-readable error context."
+            }
+          }
+        },
+        "Error400": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "latency_ms": {
+              "type": "integer"
+            },
+            "error": {
+              "$ref": "#/components/schemas/EnvelopeError"
+            }
+          }
+        },
+        "Error500": {
+          "$ref": "#/components/schemas/Error400"
+        },
+        "EnvelopeOk": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms"
+          ],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id for clients that key on request_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ExecutionMetadata": {
+          "type": "object",
+          "required": [
+            "model",
+            "automation_safe"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": [
+                "deterministic"
+              ]
+            },
+            "automation_safe": {
+              "type": "boolean"
+            }
+          }
+        },
+        "ConfidencePerSection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kelly": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "risk_of_ruin": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "_Tail": {
+          "type": "object",
+          "required": [
+            "confidence_score",
+            "confidence_per_section",
+            "recommended_actions_priority_order",
+            "chain_to",
+            "privacy",
+            "execution_metadata",
+            "calculation_certainty",
+            "financial_disclaimer"
+          ],
+          "properties": {
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_per_section": {
+              "$ref": "#/components/schemas/ConfidencePerSection"
+            },
+            "recommended_actions_priority_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chain_to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainTo"
+              }
+            },
+            "privacy": {
+              "$ref": "#/components/schemas/Privacy"
+            },
+            "execution_metadata": {
+              "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+            },
+            "financial_disclaimer": {
+              "type": "string",
+              "description": "Informational-only disclaimer; not financial advice."
+            }
+          }
+        },
+        "KellyCore": {
+          "type": "object",
+          "required": [
+            "win_probability",
+            "loss_probability",
+            "win_payoff",
+            "loss_fraction",
+            "kelly_multiplier",
+            "edge",
+            "expected_value_per_unit",
+            "kelly_fraction",
+            "fractional_kelly_fraction",
+            "favorable",
+            "expected_log_growth_full",
+            "expected_log_growth_fractional",
+            "bankroll",
+            "recommended_stake",
+            "recommendation"
+          ],
+          "properties": {
+            "win_probability": {
+              "type": "number"
+            },
+            "loss_probability": {
+              "type": "number"
+            },
+            "win_payoff": {
+              "type": "number"
+            },
+            "loss_fraction": {
+              "type": "number"
+            },
+            "kelly_multiplier": {
+              "type": "number"
+            },
+            "edge": {
+              "type": "number"
+            },
+            "expected_value_per_unit": {
+              "type": "number"
+            },
+            "kelly_fraction": {
+              "type": "number"
+            },
+            "fractional_kelly_fraction": {
+              "type": "number"
+            },
+            "favorable": {
+              "type": "boolean"
+            },
+            "expected_log_growth_full": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "expected_log_growth_fractional": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "bankroll": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "recommended_stake": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "recommendation": {
+              "type": "string"
+            }
+          }
+        },
+        "RuinCore": {
+          "type": "object",
+          "required": [
+            "win_probability",
+            "loss_probability",
+            "bankroll_units",
+            "risk_of_ruin",
+            "survival_probability",
+            "favorable",
+            "assumptions"
+          ],
+          "properties": {
+            "win_probability": {
+              "type": "number"
+            },
+            "loss_probability": {
+              "type": "number"
+            },
+            "bankroll_units": {
+              "type": "integer"
+            },
+            "risk_of_ruin": {
+              "type": "number"
+            },
+            "survival_probability": {
+              "type": "number"
+            },
+            "favorable": {
+              "type": "boolean"
+            },
+            "assumptions": {
+              "type": "string"
+            }
+          }
+        },
+        "KellyRequest": {
+          "type": "object",
+          "required": [
+            "win_probability",
+            "win_payoff"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "win_probability": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 1
+            },
+            "win_payoff": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Net odds b: profit per unit staked on a win (b:1)."
+            },
+            "loss_fraction": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1,
+              "description": "Fraction of stake lost on a loss (default 1)."
+            },
+            "kelly_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1,
+              "description": "Fractional-Kelly scaler (default 1 = full Kelly)."
+            },
+            "bankroll": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "If given, returns the recommended stake amount."
+            }
+          }
+        },
+        "RuinRequest": {
+          "type": "object",
+          "required": [
+            "win_probability",
+            "bankroll_units"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "win_probability": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 1
+            },
+            "bankroll_units": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Number of one-unit flat bets the bankroll covers."
+            }
+          }
+        },
+        "DiscoveryResponse": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description",
+            "openapi_url",
+            "auth",
+            "endpoints",
+            "pricing",
+            "x402_compatible",
+            "capabilities"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "openapi_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "header"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "path",
+                  "summary",
+                  "price_usdc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "price_usdc",
+                  "currency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USDC"
+                    ]
+                  }
+                }
+              }
+            },
+            "x402_compatible": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
+            },
+            "typical_use_cases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
+            "input_examples": {
+              "type": "array",
+              "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "body"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            },
+            "output_examples": {
+              "type": "array",
+              "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "response"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "KellyResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/KellyCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "RuinResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/RuinCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "LookupResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/KellyCore"
+            },
+            {
+              "type": "object",
+              "required": [
+                "reasoning"
+              ],
+              "properties": {
+                "reasoning": {
+                  "$ref": "#/components/schemas/Reasoning"
+                }
+              }
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  },
+  "payback-period": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Payback Period API",
+      "version": "1.0.0",
+      "description": "Deterministic capital-budgeting payback analysis: simple and discounted payback, NPV, profitability index. No LLM.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x402-compatible": true,
+      "x-agent-marketplace-ready": true,
+      "x-pay-per-call-optimized": true,
+      "x-finance-tool": true,
+      "x-financial-calculation": true,
+      "x-human-approval-required": false
+    },
+    "servers": [
+      {
+        "url": "https://orbis-apis.onrender.com/payback-period"
+      }
+    ],
+    "security": [
+      {
+        "ApiKeyAuth": []
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "discover",
+          "summary": "Service discovery",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscoveryResponse"
+                  },
+                  "example": {
+                    "name": "Payback Period API",
+                    "version": "1.0.0",
+                    "description": "Deterministic capital-budgeting payback analysis. /simple computes the undiscounted payback period; /discounted present-values the cashflows, returns the discounted payback, NPV and profitability index. No LLM, nothing stored.",
+                    "openapi_url": "https://orbis-apis.onrender.com/payback-period/openapi.json",
+                    "auth": {
+                      "type": "apiKey",
+                      "header": "X-API-Key"
+                    },
+                    "capabilities": [
+                      "simple_payback",
+                      "discounted_payback",
+                      "npv",
+                      "profitability_index"
+                    ],
+                    "typical_use_cases": [
+                      "Compute how many periods a capital project takes to recoup its upfront cost",
+                      "Discount the cashflows and find the time-value-adjusted payback",
+                      "Compare payback against NPV before approving an investment"
+                    ],
+                    "input_examples": [
+                      {
+                        "endpoint": "/simple",
+                        "body": {
+                          "initial_investment": 100000,
+                          "cashflows": [
+                            30000,
+                            30000,
+                            30000,
+                            30000,
+                            30000
+                          ],
+                          "periods_per_year": 1
+                        }
+                      },
+                      {
+                        "endpoint": "/discounted",
+                        "body": {
+                          "initial_investment": 100000,
+                          "cashflows": [
+                            30000,
+                            30000,
+                            30000,
+                            30000,
+                            30000
+                          ],
+                          "discount_rate_percent": 10,
+                          "periods_per_year": 1
+                        }
+                      }
+                    ],
+                    "output_examples": [
+                      {
+                        "endpoint": "/simple",
+                        "response": {
+                          "payback_periods": 3.3333,
+                          "recovered": true
+                        }
+                      },
+                      {
+                        "endpoint": "/discounted",
+                        "response": {
+                          "discounted_payback_periods": 4.2543,
+                          "npv": 13723.6,
+                          "profitability_index": 1.137236
+                        }
+                      }
+                    ],
+                    "endpoints": [
+                      {
+                        "method": "POST",
+                        "path": "/simple",
+                        "summary": "Undiscounted payback period",
+                        "price_usdc": 0.007
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/discounted",
+                        "summary": "Discounted payback + NPV + profitability index",
+                        "price_usdc": 0.008
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/lookup",
+                        "summary": "ONE-CALL simple + discounted payback + reasoning",
+                        "price_usdc": 0.013
+                      }
+                    ],
+                    "pricing": [
+                      {
+                        "path": "/simple",
+                        "price_usdc": 0.007,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/discounted",
+                        "price_usdc": 0.008,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/lookup",
+                        "price_usdc": 0.013,
+                        "currency": "USDC"
+                      }
+                    ],
+                    "x402_compatible": true
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/simple": {
+        "post": {
+          "operationId": "simple",
+          "summary": "Undiscounted payback period",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/SimpleResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "initial_investment": 100000,
+                    "periods": 5,
+                    "total_inflows": 150000,
+                    "payback_periods": 3.333333,
+                    "recovered": true,
+                    "payback_years": 3.333333,
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "simple": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Recovers the $100000 outlay in 3.333333 periods."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "npv-irr",
+                        "reason": "Get the full NPV and IRR of the same cashflow series for an accept/reject decision.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
+                      },
+                      {
+                        "api": "dcf-valuation",
+                        "reason": "Value the project as a discounted cashflow stream.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleRequest"
+                },
+                "example": {
+                  "initial_investment": 100000,
+                  "cashflows": [
+                    30000,
+                    30000,
+                    30000,
+                    30000,
+                    30000
+                  ],
+                  "periods_per_year": 1
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.007,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/discounted": {
+        "post": {
+          "operationId": "discounted",
+          "summary": "Discounted payback + NPV + profitability index",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscountedResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "initial_investment": 100000,
+                    "discount_rate_percent": 10,
+                    "periods": 5,
+                    "discounted_payback_periods": 4.263267,
+                    "recovered": true,
+                    "payback_years": 4.263267,
+                    "npv": 13723.603082,
+                    "profitability_index": 1.137236,
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "discounted": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Discounted payback 4.263267 periods at 10%; NPV $13723.603082."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "npv-irr",
+                        "reason": "Get the full NPV and IRR of the same cashflow series for an accept/reject decision.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
+                      },
+                      {
+                        "api": "dcf-valuation",
+                        "reason": "Value the project as a discounted cashflow stream.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscountedRequest"
+                },
+                "example": {
+                  "initial_investment": 100000,
+                  "cashflows": [
+                    30000,
+                    30000,
+                    30000,
+                    30000,
+                    30000
+                  ],
+                  "discount_rate_percent": 10,
+                  "periods_per_year": 1
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.008,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/lookup": {
+        "post": {
+          "operationId": "lookup",
+          "summary": "ONE-CALL simple + discounted payback + reasoning",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LookupResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "initial_investment": 100000,
+                    "periods": 5,
+                    "total_inflows": 150000,
+                    "payback_periods": 3.333333,
+                    "recovered": true,
+                    "payback_years": 3.333333,
+                    "discounted": {
+                      "initial_investment": 100000,
+                      "discount_rate_percent": 10,
+                      "periods": 5,
+                      "discounted_payback_periods": 4.263267,
+                      "recovered": true,
+                      "payback_years": 4.263267,
+                      "npv": 13723.603082,
+                      "profitability_index": 1.137236
+                    },
+                    "reasoning": {
+                      "why_result_generated": "Simple payback 3.333333 periods (cumulative inflows vs the $100000 outlay); discounted payback 4.263267 periods at 10% with NPV $13723.603082.",
+                      "key_factors": [
+                        "Simple payback 3.333333.",
+                        "Discounted payback 4.263267 at 10%.",
+                        "NPV $13723.603082 (profitability index 1.137236)."
+                      ],
+                      "invalidators": [
+                        "Payback ignores all cashflows AFTER recovery and (for the simple variant) the time value of money — a shorter payback is not automatically the better investment; use NPV/IRR for the accept/reject decision.",
+                        "cashflows[k] is the inflow in period k+1; the initial outlay is a separate positive initial_investment, not the first array element.",
+                        "A null payback means the cumulative (or discounted) inflows never reach the initial investment within the periods supplied."
+                      ]
+                    },
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "simple": 1,
+                      "discounted": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "NPV is positive ($13723.603082) — accept on a value basis; chain to npv-irr for the IRR."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "npv-irr",
+                        "reason": "Get the full NPV and IRR of the same cashflow series for an accept/reject decision.",
+                        "url": "https://orbis-apis.onrender.com/npv-irr"
+                      },
+                      {
+                        "api": "dcf-valuation",
+                        "reason": "Value the project as a discounted cashflow stream.",
+                        "url": "https://orbis-apis.onrender.com/dcf-valuation"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscountedRequest"
+                },
+                "example": {
+                  "initial_investment": 100000,
+                  "cashflows": [
+                    30000,
+                    30000,
+                    30000,
+                    30000,
+                    30000
+                  ],
+                  "discount_rate_percent": 10,
+                  "periods_per_year": 1
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.013,
+            "currency": "USDC"
+          },
+          "x-one-call": true
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "ChainTo": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "Slug of a recommended next API to call."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+            }
+          }
+        },
+        "Reasoning": {
+          "type": "object",
+          "required": [
+            "why_result_generated",
+            "key_factors",
+            "invalidators"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "why_result_generated": {
+              "type": "string"
+            },
+            "key_factors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "invalidators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Conditions that would change or invalidate this result."
+            }
+          }
+        },
+        "Privacy": {
+          "type": "object",
+          "required": [
+            "data_stored",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "data_stored": {
+              "type": "boolean"
+            },
+            "retention": {
+              "type": "string",
+              "description": "Retention policy, e.g. \"none\"."
+            }
+          }
+        },
+        "EnvelopeError": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "description": "Optional machine-readable error context."
+            }
+          }
+        },
+        "Error400": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "latency_ms": {
+              "type": "integer"
+            },
+            "error": {
+              "$ref": "#/components/schemas/EnvelopeError"
+            }
+          }
+        },
+        "Error500": {
+          "$ref": "#/components/schemas/Error400"
+        },
+        "EnvelopeOk": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms"
+          ],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id for clients that key on request_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ExecutionMetadata": {
+          "type": "object",
+          "required": [
+            "model",
+            "automation_safe"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": [
+                "deterministic"
+              ]
+            },
+            "automation_safe": {
+              "type": "boolean"
+            }
+          }
+        },
+        "ConfidencePerSection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "simple": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "discounted": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "_Tail": {
+          "type": "object",
+          "required": [
+            "confidence_score",
+            "confidence_per_section",
+            "recommended_actions_priority_order",
+            "chain_to",
+            "privacy",
+            "execution_metadata",
+            "calculation_certainty",
+            "financial_disclaimer"
+          ],
+          "properties": {
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_per_section": {
+              "$ref": "#/components/schemas/ConfidencePerSection"
+            },
+            "recommended_actions_priority_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chain_to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainTo"
+              }
+            },
+            "privacy": {
+              "$ref": "#/components/schemas/Privacy"
+            },
+            "execution_metadata": {
+              "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+            },
+            "financial_disclaimer": {
+              "type": "string",
+              "description": "Informational-only disclaimer; not financial advice."
+            }
+          }
+        },
+        "SimpleCore": {
+          "type": "object",
+          "required": [
+            "initial_investment",
+            "periods",
+            "total_inflows",
+            "payback_periods",
+            "recovered",
+            "payback_years"
+          ],
+          "properties": {
+            "initial_investment": {
+              "type": "number"
+            },
+            "periods": {
+              "type": "integer"
+            },
+            "total_inflows": {
+              "type": "number"
+            },
+            "payback_periods": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "recovered": {
+              "type": "boolean"
+            },
+            "payback_years": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "DiscountedCore": {
+          "type": "object",
+          "required": [
+            "initial_investment",
+            "discount_rate_percent",
+            "periods",
+            "discounted_payback_periods",
+            "recovered",
+            "payback_years",
+            "npv",
+            "profitability_index"
+          ],
+          "properties": {
+            "initial_investment": {
+              "type": "number"
+            },
+            "discount_rate_percent": {
+              "type": "number"
+            },
+            "periods": {
+              "type": "integer"
+            },
+            "discounted_payback_periods": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "recovered": {
+              "type": "boolean"
+            },
+            "payback_years": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "npv": {
+              "type": "number"
+            },
+            "profitability_index": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        },
+        "SimpleRequest": {
+          "type": "object",
+          "required": [
+            "initial_investment",
+            "cashflows"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "initial_investment": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "cashflows": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "number"
+              },
+              "description": "Per-period inflow; cashflows[k] is the inflow in period k+1."
+            },
+            "periods_per_year": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "If given, also returns payback in years."
+            }
+          }
+        },
+        "DiscountedRequest": {
+          "type": "object",
+          "required": [
+            "initial_investment",
+            "cashflows",
+            "discount_rate_percent"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "initial_investment": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "cashflows": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "number"
+              }
+            },
+            "discount_rate_percent": {
+              "type": "number",
+              "exclusiveMinimum": -100,
+              "description": "Per-period discount rate, percent."
+            },
+            "periods_per_year": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        "DiscoveryResponse": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description",
+            "openapi_url",
+            "auth",
+            "endpoints",
+            "pricing",
+            "x402_compatible",
+            "capabilities"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "openapi_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "header"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "path",
+                  "summary",
+                  "price_usdc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "price_usdc",
+                  "currency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USDC"
+                    ]
+                  }
+                }
+              }
+            },
+            "x402_compatible": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
+            },
+            "typical_use_cases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
+            "input_examples": {
+              "type": "array",
+              "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "body"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            },
+            "output_examples": {
+              "type": "array",
+              "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "response"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "SimpleResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/SimpleCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "DiscountedResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/DiscountedCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "LookupResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/SimpleCore"
+            },
+            {
+              "type": "object",
+              "required": [
+                "discounted",
+                "reasoning"
+              ],
+              "properties": {
+                "discounted": {
+                  "$ref": "#/components/schemas/DiscountedCore"
+                },
+                "reasoning": {
+                  "$ref": "#/components/schemas/Reasoning"
+                }
+              }
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  },
+  "unit-economics": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Unit Economics API",
+      "version": "1.0.0",
+      "description": "Deterministic SaaS unit economics: gross-margin LTV, LTV:CAC ratio, CAC payback, gross & contribution margins. No LLM.",
+      "x-agent-callable": true,
+      "x-mcp-compatible": true,
+      "x402-compatible": true,
+      "x-agent-marketplace-ready": true,
+      "x-pay-per-call-optimized": true,
+      "x-finance-tool": true,
+      "x-financial-calculation": true,
+      "x-human-approval-required": false
+    },
+    "servers": [
+      {
+        "url": "https://orbis-apis.onrender.com/unit-economics"
+      }
+    ],
+    "security": [
+      {
+        "ApiKeyAuth": []
+      }
+    ],
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "discover",
+          "summary": "Service discovery",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/DiscoveryResponse"
+                  },
+                  "example": {
+                    "name": "Unit Economics API",
+                    "version": "1.0.0",
+                    "description": "Deterministic SaaS / subscription unit economics. /ltv-cac computes gross-margin LTV, LTV:CAC ratio and CAC payback from ARPU, gross margin, churn (or lifetime) and CAC; /margins computes gross and contribution margins. No LLM, nothing stored.",
+                    "openapi_url": "https://orbis-apis.onrender.com/unit-economics/openapi.json",
+                    "auth": {
+                      "type": "apiKey",
+                      "header": "X-API-Key"
+                    },
+                    "capabilities": [
+                      "ltv",
+                      "cac",
+                      "ltv_cac_ratio",
+                      "cac_payback",
+                      "gross_margin",
+                      "contribution_margin"
+                    ],
+                    "typical_use_cases": [
+                      "Compute customer LTV and the LTV:CAC ratio for a subscription business",
+                      "Find how many periods of gross margin it takes to pay back CAC",
+                      "Compute gross and contribution margins from revenue and costs"
+                    ],
+                    "input_examples": [
+                      {
+                        "endpoint": "/ltv-cac",
+                        "body": {
+                          "arpu": 100,
+                          "gross_margin_percent": 80,
+                          "cac": 400,
+                          "monthly_churn_rate": 0.05
+                        }
+                      },
+                      {
+                        "endpoint": "/margins",
+                        "body": {
+                          "revenue": 100000,
+                          "cogs": 30000,
+                          "variable_costs": 15000
+                        }
+                      }
+                    ],
+                    "output_examples": [
+                      {
+                        "endpoint": "/ltv-cac",
+                        "response": {
+                          "lifetime_periods": 20,
+                          "ltv": 1600,
+                          "ltv_cac_ratio": 4,
+                          "cac_payback_periods": 5,
+                          "verdict": "healthy (LTV:CAC ≥ 3:1)"
+                        }
+                      },
+                      {
+                        "endpoint": "/margins",
+                        "response": {
+                          "gross_margin_percent": 70,
+                          "contribution_margin_percent": 55
+                        }
+                      }
+                    ],
+                    "endpoints": [
+                      {
+                        "method": "POST",
+                        "path": "/ltv-cac",
+                        "summary": "LTV, LTV:CAC ratio and CAC payback",
+                        "price_usdc": 0.007
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/margins",
+                        "summary": "Gross and contribution margins",
+                        "price_usdc": 0.005
+                      },
+                      {
+                        "method": "POST",
+                        "path": "/lookup",
+                        "summary": "ONE-CALL unit economics + reasoning",
+                        "price_usdc": 0.012
+                      }
+                    ],
+                    "pricing": [
+                      {
+                        "path": "/ltv-cac",
+                        "price_usdc": 0.007,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/margins",
+                        "price_usdc": 0.005,
+                        "currency": "USDC"
+                      },
+                      {
+                        "path": "/lookup",
+                        "price_usdc": 0.012,
+                        "currency": "USDC"
+                      }
+                    ],
+                    "x402_compatible": true
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/ltv-cac": {
+        "post": {
+          "operationId": "ltvCac",
+          "summary": "LTV, LTV:CAC ratio and CAC payback",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LtvCacResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "arpu": 100,
+                    "gross_margin_percent": 80,
+                    "cac": 400,
+                    "monthly_churn_rate": 0.05,
+                    "lifetime_periods": 20,
+                    "gross_margin_per_period": 80,
+                    "ltv": 1600,
+                    "ltv_cac_ratio": 4,
+                    "cac_payback_periods": 5,
+                    "verdict": "healthy (LTV:CAC ≥ 3:1)",
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "ltv_cac": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "LTV $1600, LTV:CAC 4:1 — healthy (LTV:CAC ≥ 3:1). CAC payback 5 periods."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "break-even",
+                        "reason": "Translate contribution margin into the break-even volume for the product.",
+                        "url": "https://orbis-apis.onrender.com/break-even"
+                      },
+                      {
+                        "api": "compound-interest",
+                        "reason": "Project the customer base or revenue forward at a growth rate.",
+                        "url": "https://orbis-apis.onrender.com/compound-interest"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LtvCacRequest"
+                },
+                "example": {
+                  "arpu": 100,
+                  "gross_margin_percent": 80,
+                  "cac": 400,
+                  "monthly_churn_rate": 0.05
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.007,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/margins": {
+        "post": {
+          "operationId": "margins",
+          "summary": "Gross and contribution margins",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MarginsResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "revenue": 100000,
+                    "cogs": 30000,
+                    "variable_costs": 15000,
+                    "gross_profit": 70000,
+                    "gross_margin_percent": 70,
+                    "contribution_margin": 55000,
+                    "contribution_margin_percent": 55,
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "margins": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Gross margin 70%, contribution margin 55%."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "break-even",
+                        "reason": "Translate contribution margin into the break-even volume for the product.",
+                        "url": "https://orbis-apis.onrender.com/break-even"
+                      },
+                      {
+                        "api": "compound-interest",
+                        "reason": "Project the customer base or revenue forward at a growth rate.",
+                        "url": "https://orbis-apis.onrender.com/compound-interest"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarginsRequest"
+                },
+                "example": {
+                  "revenue": 100000,
+                  "cogs": 30000,
+                  "variable_costs": 15000
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.005,
+            "currency": "USDC"
+          }
+        }
+      },
+      "/lookup": {
+        "post": {
+          "operationId": "lookup",
+          "summary": "ONE-CALL unit economics + reasoning",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/LookupResponse"
+                  },
+                  "example": {
+                    "trace_id": "gbx-1780000000000",
+                    "request_id": "gbx-1780000000000",
+                    "computed_at": "2026-06-16T12:00:00.000Z",
+                    "success": true,
+                    "latency_ms": 1,
+                    "arpu": 100,
+                    "gross_margin_percent": 80,
+                    "cac": 400,
+                    "monthly_churn_rate": 0.05,
+                    "lifetime_periods": 20,
+                    "gross_margin_per_period": 80,
+                    "ltv": 1600,
+                    "ltv_cac_ratio": 4,
+                    "cac_payback_periods": 5,
+                    "verdict": "healthy (LTV:CAC ≥ 3:1)",
+                    "reasoning": {
+                      "why_result_generated": "Gross margin/period $80 (ARPU $100 × 80%); over a 20-period lifetime that is LTV $1600, a 4:1 ratio against $400 CAC, recovered in 5 periods.",
+                      "key_factors": [
+                        "LTV:CAC 4:1 — healthy (LTV:CAC ≥ 3:1).",
+                        "CAC payback 5 periods.",
+                        "Customer lifetime 20 periods."
+                      ],
+                      "invalidators": [
+                        "LTV here is GROSS-MARGIN LTV = ARPU × gross_margin × lifetime; lifetime = 1/monthly_churn (or supplied directly). A churn-derived lifetime assumes a constant churn rate and ignores discounting and expansion revenue.",
+                        "LTV:CAC ≥ 3:1 is a common health benchmark and CAC payback under ~12 months is typical for SaaS — both are heuristics, not guarantees, and depend on your period unit (monthly vs annual).",
+                        "Revenue-based margins assume cogs and variable_costs are expressed in the same currency and period as revenue; mixing periods invalidates the percentages."
+                      ]
+                    },
+                    "confidence_score": 1,
+                    "calculation_certainty": 1,
+                    "confidence_per_section": {
+                      "ltv_cac": 1
+                    },
+                    "recommended_actions_priority_order": [
+                      "Healthy unit economics — scale acquisition; chain to break-even for volume planning."
+                    ],
+                    "chain_to": [
+                      {
+                        "api": "break-even",
+                        "reason": "Translate contribution margin into the break-even volume for the product.",
+                        "url": "https://orbis-apis.onrender.com/break-even"
+                      },
+                      {
+                        "api": "compound-interest",
+                        "reason": "Project the customer base or revenue forward at a growth rate.",
+                        "url": "https://orbis-apis.onrender.com/compound-interest"
+                      }
+                    ],
+                    "privacy": {
+                      "data_stored": false,
+                      "retention": "none"
+                    },
+                    "execution_metadata": {
+                      "model": "deterministic",
+                      "automation_safe": true
+                    },
+                    "financial_disclaimer": "This result is an informational, deterministic calculation based solely on the inputs you provided. It is not financial, tax, legal, or investment advice and is not a guarantee of any outcome, rate, or approval. Consult a licensed professional before making borrowing, refinancing, investing, or insurance decisions."
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error400"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error500"
+                  }
+                }
+              }
+            }
+          },
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LtvCacRequest"
+                },
+                "example": {
+                  "arpu": 100,
+                  "gross_margin_percent": 80,
+                  "cac": 400,
+                  "monthly_churn_rate": 0.05
+                }
+              }
+            }
+          },
+          "x-pricing": {
+            "model": "per_call",
+            "price_usdc": 0.012,
+            "currency": "USDC"
+          },
+          "x-one-call": true
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "ApiKeyAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "X-API-Key"
+        }
+      },
+      "schemas": {
+        "ChainTo": {
+          "type": "object",
+          "required": [
+            "api",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "Slug of a recommended next API to call."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why an agent would chain to this API next."
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Canonical, directly-callable URL of the recommended next API (a real deployed endpoint)."
+            }
+          }
+        },
+        "Reasoning": {
+          "type": "object",
+          "required": [
+            "why_result_generated",
+            "key_factors",
+            "invalidators"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "why_result_generated": {
+              "type": "string"
+            },
+            "key_factors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "invalidators": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Conditions that would change or invalidate this result."
+            }
+          }
+        },
+        "Privacy": {
+          "type": "object",
+          "required": [
+            "data_stored",
+            "retention"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "data_stored": {
+              "type": "boolean"
+            },
+            "retention": {
+              "type": "string",
+              "description": "Retention policy, e.g. \"none\"."
+            }
+          }
+        },
+        "EnvelopeError": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "description": "Optional machine-readable error context."
+            }
+          }
+        },
+        "Error400": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms",
+            "error"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                false
+              ]
+            },
+            "latency_ms": {
+              "type": "integer"
+            },
+            "error": {
+              "$ref": "#/components/schemas/EnvelopeError"
+            }
+          }
+        },
+        "Error500": {
+          "$ref": "#/components/schemas/Error400"
+        },
+        "EnvelopeOk": {
+          "type": "object",
+          "required": [
+            "trace_id",
+            "computed_at",
+            "success",
+            "latency_ms"
+          ],
+          "properties": {
+            "trace_id": {
+              "type": "string"
+            },
+            "request_id": {
+              "type": "string",
+              "description": "Alias of trace_id for clients that key on request_id."
+            },
+            "computed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "success": {
+              "type": "boolean",
+              "enum": [
+                true
+              ]
+            },
+            "latency_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "ExecutionMetadata": {
+          "type": "object",
+          "required": [
+            "model",
+            "automation_safe"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "model": {
+              "type": "string",
+              "enum": [
+                "deterministic"
+              ]
+            },
+            "automation_safe": {
+              "type": "boolean"
+            }
+          }
+        },
+        "ConfidencePerSection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ltv_cac": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "margins": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "_Tail": {
+          "type": "object",
+          "required": [
+            "confidence_score",
+            "confidence_per_section",
+            "recommended_actions_priority_order",
+            "chain_to",
+            "privacy",
+            "execution_metadata",
+            "calculation_certainty",
+            "financial_disclaimer"
+          ],
+          "properties": {
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_per_section": {
+              "$ref": "#/components/schemas/ConfidencePerSection"
+            },
+            "recommended_actions_priority_order": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chain_to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ChainTo"
+              }
+            },
+            "privacy": {
+              "$ref": "#/components/schemas/Privacy"
+            },
+            "execution_metadata": {
+              "$ref": "#/components/schemas/ExecutionMetadata"
+            },
+            "calculation_certainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Computational certainty of the result given valid inputs (1 = exact, deterministic math — not a prediction)."
+            },
+            "financial_disclaimer": {
+              "type": "string",
+              "description": "Informational-only disclaimer; not financial advice."
+            }
+          }
+        },
+        "LtvCacCore": {
+          "type": "object",
+          "required": [
+            "arpu",
+            "gross_margin_percent",
+            "cac",
+            "monthly_churn_rate",
+            "lifetime_periods",
+            "gross_margin_per_period",
+            "ltv",
+            "ltv_cac_ratio",
+            "cac_payback_periods",
+            "verdict"
+          ],
+          "properties": {
+            "arpu": {
+              "type": "number"
+            },
+            "gross_margin_percent": {
+              "type": "number"
+            },
+            "cac": {
+              "type": "number"
+            },
+            "monthly_churn_rate": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "lifetime_periods": {
+              "type": "number"
+            },
+            "gross_margin_per_period": {
+              "type": "number"
+            },
+            "ltv": {
+              "type": "number"
+            },
+            "ltv_cac_ratio": {
+              "type": "number"
+            },
+            "cac_payback_periods": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "verdict": {
+              "type": "string"
+            }
+          }
+        },
+        "MarginsCore": {
+          "type": "object",
+          "required": [
+            "revenue",
+            "cogs",
+            "variable_costs",
+            "gross_profit",
+            "gross_margin_percent",
+            "contribution_margin",
+            "contribution_margin_percent"
+          ],
+          "properties": {
+            "revenue": {
+              "type": "number"
+            },
+            "cogs": {
+              "type": "number"
+            },
+            "variable_costs": {
+              "type": "number"
+            },
+            "gross_profit": {
+              "type": "number"
+            },
+            "gross_margin_percent": {
+              "type": "number"
+            },
+            "contribution_margin": {
+              "type": "number"
+            },
+            "contribution_margin_percent": {
+              "type": "number"
+            }
+          }
+        },
+        "LtvCacRequest": {
+          "type": "object",
+          "required": [
+            "arpu",
+            "gross_margin_percent",
+            "cac"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "arpu": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Average revenue per customer per period."
+            },
+            "gross_margin_percent": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "cac": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Customer acquisition cost."
+            },
+            "monthly_churn_rate": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1,
+              "description": "Per-period churn; lifetime = 1/churn."
+            },
+            "lifetime_periods": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Customer lifetime in periods (alternative to churn)."
+            }
+          }
+        },
+        "MarginsRequest": {
+          "type": "object",
+          "required": [
+            "revenue",
+            "cogs"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "revenue": {
+              "type": "number",
+              "minimum": 0
+            },
+            "cogs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "variable_costs": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Variable costs beyond COGS (default 0)."
+            }
+          }
+        },
+        "DiscoveryResponse": {
+          "type": "object",
+          "required": [
+            "name",
+            "version",
+            "description",
+            "openapi_url",
+            "auth",
+            "endpoints",
+            "pricing",
+            "x402_compatible",
+            "capabilities"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "openapi_url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "header"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "header": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "path",
+                  "summary",
+                  "price_usdc"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "price_usdc",
+                  "currency"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "price_usdc": {
+                    "type": "number"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "enum": [
+                      "USDC"
+                    ]
+                  }
+                }
+              }
+            },
+            "x402_compatible": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Machine-readable capability tags for agent matching."
+            },
+            "typical_use_cases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional plain-language use cases to aid autonomous discovery."
+            },
+            "security_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional explicit security-posture statements (e.g. prototype-pollution / entity-expansion handling)."
+            },
+            "input_examples": {
+              "type": "array",
+              "description": "Optional representative request bodies for primary endpoints, to aid autonomous discovery.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "body"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            },
+            "output_examples": {
+              "type": "array",
+              "description": "Optional trimmed response payloads matching input_examples (core fields only; full envelope omitted).",
+              "items": {
+                "type": "object",
+                "required": [
+                  "endpoint",
+                  "response"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "response": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "LtvCacResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/LtvCacCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "MarginsResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/MarginsCore"
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        },
+        "LookupResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/EnvelopeOk"
+            },
+            {
+              "$ref": "#/components/schemas/LtvCacCore"
+            },
+            {
+              "type": "object",
+              "required": [
+                "reasoning"
+              ],
+              "properties": {
+                "reasoning": {
+                  "$ref": "#/components/schemas/Reasoning"
+                }
+              }
+            },
+            {
+              "$ref": "#/components/schemas/_Tail"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    }
+  }
+}
