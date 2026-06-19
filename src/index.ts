@@ -696,6 +696,10 @@ import tokenomicsExplainerRouter from './routes/tokenomics-explainer-api/routes/
 import tokenomicsExplainerOpenapiRouter from './routes/tokenomics-explainer-api/routes/openapi';
 import web3WalletRiskScorerRouter from './routes/web3-wallet-risk-scorer-api/routes/intelligence';
 import web3WalletRiskScorerOpenapiRouter from './routes/web3-wallet-risk-scorer-api/routes/openapi';
+import tokenApprovalRiskScannerRouter from './routes/token-approval-risk-scanner-api/routes/intelligence';
+import tokenApprovalRiskScannerOpenapiRouter from './routes/token-approval-risk-scanner-api/routes/openapi';
+import walletRiskBundleRouter from './routes/wallet-risk-bundle-api/routes/intelligence';
+import walletRiskBundleOpenapiRouter from './routes/wallet-risk-bundle-api/routes/openapi';
 import websocketTesterRouter from './routes/websocket-tester-api/routes/intelligence';
 import websocketTesterOpenapiRouter from './routes/websocket-tester-api/routes/openapi';
 import llmTokenCounterRouter from './routes/llm-token-counter-api/routes/intelligence';
@@ -1460,6 +1464,8 @@ const routerMap: Record<string, import("express").Router> = {
   'web3-security-checklist': web3SecurityChecklistRouter,
   'tokenomics-explainer': tokenomicsExplainerRouter,
   'web3-wallet-risk-scorer': web3WalletRiskScorerRouter,
+  'token-approval-risk-scanner': tokenApprovalRiskScannerRouter,
+  'wallet-risk-bundle': walletRiskBundleRouter,
   'websocket-tester': websocketTesterRouter,
   'llm-token-counter': llmTokenCounterRouter,
   'context-budget-planner': contextBudgetPlannerRouter,
@@ -1970,6 +1976,8 @@ const openapiMap: Record<string, import("express").Router> = {
   'web3-security-checklist': web3SecurityChecklistOpenapiRouter,
   'tokenomics-explainer': tokenomicsExplainerOpenapiRouter,
   'web3-wallet-risk-scorer': web3WalletRiskScorerOpenapiRouter,
+  'token-approval-risk-scanner': tokenApprovalRiskScannerOpenapiRouter,
+  'wallet-risk-bundle': walletRiskBundleOpenapiRouter,
   'websocket-tester': websocketTesterOpenapiRouter,
   'llm-token-counter': llmTokenCounterOpenapiRouter,
   'context-budget-planner': contextBudgetPlannerOpenapiRouter,

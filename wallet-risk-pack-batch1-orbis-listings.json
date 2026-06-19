@@ -1,0 +1,204 @@
+[
+  {
+    "name": "Token Approval Risk Scanner API",
+    "shortDescription": "Scan ERC-20 token approvals for unlimited allowances, flagged spenders, and stale grants — with a revoke-priority list.",
+    "description": "Deterministic scanner for ERC-20 token approvals (allowances). Flags unlimited allowances, flagged/unverified spenders, and stale grants, scores per-approval and portfolio drain exposure (0–100 with low/medium/high/severe bands), and returns a revoke-priority list ranked by risk. It scores the approvals you supply — no chain fetch — so it is advisory, not a verdict on a live wallet. Built for wallet-safety agents, DeFi guardrails, and approval-hygiene workflows. /scan returns per-approval risk and the revoke list; the one-call /lookup adds a reasoning object and prioritized actions. No LLM, nothing stored.",
+    "category": "blockchain-web3",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/token-approval-risk-scanner",
+    "docsUrl": "https://orbis-apis.onrender.com/token-approval-risk-scanner/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/token-approval-risk-scanner/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web3",
+      "wallet",
+      "token-approvals",
+      "allowance",
+      "drain-protection",
+      "defi",
+      "security",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "token approval scanner api",
+      "revoke approvals api",
+      "unlimited allowance detector",
+      "erc20 approval risk",
+      "wallet drain protection api",
+      "stale approval detector",
+      "token allowance audit",
+      "approval revoke priority"
+    ],
+    "capabilities": [
+      "approval_risk_scoring",
+      "unlimited_allowance_detection",
+      "flagged_spender_detection",
+      "stale_approval_detection",
+      "portfolio_drain_exposure_score",
+      "revoke_priority_list"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "x-human-approval-required": false,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "Pre-transaction approval hygiene check for a wallet agent",
+      "Surfacing unlimited/stale allowances a user should revoke",
+      "Feeding approval drain-exposure into a wallet trust verdict",
+      "DeFi guardrail before granting or acting on an approval"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.035,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/scan",
+            "pricePerCallUsdc": 0.02,
+            "description": "Score approvals and return a revoke-priority list"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.035,
+            "description": "ONE-CALL scan with reasoning and prioritized actions"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/scan",
+        "description": "Score approvals and return a revoke-priority list"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL scan with reasoning and prioritized actions"
+      }
+    ]
+  },
+  {
+    "name": "Wallet Risk Bundle API",
+    "shortDescription": "Fuse address risk, exposure, approvals, reputation, and balance into one composite score, trust tier, and allow/review/block verdict.",
+    "description": "Deterministic wallet trust/risk fusion layer. Combines the signals an agent has already gathered — address risk, mixer/flagged exposure, token-approval exposure, reputation, and balance context — into a single composite risk score (0–100), a trust tier (trusted/neutral/caution/high_risk), and an allow/review/block verdict. The composite is re-weighted over whichever signals you supply; any omitted signal is returned under missing_sources with a chain_to pointer to the live Orbis API that produces it (wallet-address-risk, token-approval-risk-scanner, wallet-reputation). Hard-block signals (sanctioned address, heavy mixer/flagged exposure) force a block verdict. It scores the signals you pass in — no chain fetch. /assess returns the verdict and per-source contributions; the one-call /lookup adds a reasoning object and prioritized actions. No LLM, nothing stored.",
+    "category": "blockchain-web3",
+    "websiteUrl": "https://orbis-apis.onrender.com",
+    "baseUrl": "https://orbis-apis.onrender.com/wallet-risk-bundle",
+    "docsUrl": "https://orbis-apis.onrender.com/wallet-risk-bundle/openapi.json",
+    "openApiSpecUrl": "https://orbis-apis.onrender.com/wallet-risk-bundle/openapi.json",
+    "logoUrl": "https://orbis-apis.onrender.com/logo.png",
+    "tags": [
+      "web3",
+      "wallet",
+      "risk-scoring",
+      "trust-score",
+      "aml",
+      "compliance",
+      "signal-fusion",
+      "deterministic",
+      "x402",
+      "coinbase-bazaar",
+      "agentic-market"
+    ],
+    "keywords": [
+      "wallet risk bundle api",
+      "wallet trust score api",
+      "composite wallet risk",
+      "allow review block verdict",
+      "wallet signal fusion",
+      "one call wallet risk",
+      "aml wallet verdict api",
+      "agent wallet gate"
+    ],
+    "capabilities": [
+      "composite_risk_scoring",
+      "signal_fusion",
+      "trust_tier",
+      "allow_review_block_verdict",
+      "hard_block_override",
+      "missing_source_routing"
+    ],
+    "x-agent-callable": true,
+    "x-mcp-compatible": true,
+    "x402-compatible": true,
+    "x-agent-marketplace-ready": true,
+    "x-pay-per-call-optimized": true,
+    "x-human-approval-required": false,
+    "confidenceModel": "deterministic",
+    "privacy": {
+      "data_stored": false,
+      "retention": "none"
+    },
+    "typicalUseCases": [
+      "Single allow/review/block gate for an autonomous wallet/DeFi agent",
+      "Fusing separate risk lookups into one trust verdict before acting",
+      "Compliance triage of a counterparty wallet from gathered signals",
+      "Routing an agent to fetch only the wallet signals it is still missing"
+    ],
+    "tiers": [
+      {
+        "name": "Free",
+        "isFree": true,
+        "requestsPerDay": 100,
+        "requestsPerMonth": 3000
+      },
+      {
+        "name": "Pay Per Call",
+        "isFree": false,
+        "pricingType": "per_call",
+        "pricePerCall": 0.05,
+        "requestsPerDay": 100000,
+        "requestsPerMonth": 3000000,
+        "endpointPricing": [
+          {
+            "method": "POST",
+            "pathPattern": "/assess",
+            "pricePerCallUsdc": 0.025,
+            "description": "Fuse supplied wallet signals into a composite verdict"
+          },
+          {
+            "method": "POST",
+            "pathPattern": "/lookup",
+            "pricePerCallUsdc": 0.05,
+            "description": "ONE-CALL verdict with reasoning and prioritized actions"
+          }
+        ]
+      }
+    ],
+    "endpoints": [
+      {
+        "method": "POST",
+        "path": "/assess",
+        "description": "Fuse supplied wallet signals into a composite verdict"
+      },
+      {
+        "method": "POST",
+        "path": "/lookup",
+        "description": "ONE-CALL verdict with reasoning and prioritized actions"
+      }
+    ]
+  }
+]
