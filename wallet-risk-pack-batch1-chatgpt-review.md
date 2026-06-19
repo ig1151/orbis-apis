@@ -64,5 +64,12 @@ Two deterministic, agent-native web3 APIs built off the **#1/#2 live-demand sign
 
 ---
 
+## v1.1 — ChatGPT review feedback incorporated (2026-06-19)
+Both APIs graded A+; all three suggested improvements applied (tsc clean, 11/11 follow-up smoke green):
+- **Scanner** → `estimated_value_at_risk_usd` (top-level) + per-approval `value_at_risk_usd`: unlimited allowance exposes the supplied `balance_usd`; explicit `value_at_risk_usd` overrides; bounded allowances stay `null` (no price → no honest USD cap). Revoke-priority tie-breaks by value at risk.
+- **Bundle** → `confidence_per_source` (per-signal confidence, 1 at the fusion level) alongside the global `confidence_score`.
+- **Bundle** → `next_best_api_call` (slug of the single highest-priority missing signal; empty when all present) to drive one-step chaining.
+- v2 (deferred, agreed): a separate orchestrated **Wallet Intelligence** variant that calls the live APIs server-side and can price /lookup at 0.06–0.10.
+
 ## Smoke results (local, in-process Express): 13/13 PASS
 discovery + OpenAPI 3.1 for both · scan counts/banding · flagged-first ordering · empty-body 400s · bundle fusion + missing-source routing · hard-block override · high-reputation → trusted.

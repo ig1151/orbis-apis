@@ -33,9 +33,14 @@ export interface BundleResult {
   hard_block: boolean;
   sources_used: string[];
   source_contributions: SourceContribution[];
+  confidence_per_source: Record<string, number>;
+  next_best_api_call: string;
   missing_sources: MissingSource[];
   balance_context: { net_worth_usd: number | null; token_count: number | null } | null;
 }
+
+// Priority order for choosing the single most valuable signal to fetch next.
+const SOURCE_PRIORITY = ['address_risk', 'exposure', 'approvals', 'reputation'];
 
 const MISSING_MAP: Record<string, { chain_to: string; reason: string }> = {
   address_risk: { chain_to: 'wallet-address-risk', reason: 'Fetch an AML/sanctions risk score for the address.' },
@@ -114,6 +119,16 @@ export function assess(body: any): { error: string } | { result: BundleResult } 
     .filter((k) => !(k in present))
     .map((k) => ({ source: k, chain_to: MISSING_MAP[k].chain_to, reason: MISSING_MAP[k].reason }));
 
+  // Per-source confidence: the fusion math is exact given each supplied signal, so
+  // every used source is fully trusted (1) at the computation level — the global
+  // confidence_score carries the interpretation caveat instead.
+  const confidence_per_source: Record<string, number> = {};
+  for (const k of usedKeys) confidence_per_source[k] = 1;
+
+  // The single highest-priority signal still missing — drives one-step chaining.
+  const nextSource = SOURCE_PRIORITY.find((k) => !(k in present) && k in MISSING_MAP);
+  const next_best_api_call = nextSource ? MISSING_MAP[nextSource].chain_to : '';
+
   let balance_context: BundleResult['balance_context'] = null;
   if (body.balance && typeof body.balance === 'object') {
     balance_context = { net_worth_usd: num(body.balance.net_worth_usd) ?? null, token_count: num(body.balance.token_count) ?? null };
@@ -123,7 +138,7 @@ export function assess(body: any): { error: string } | { result: BundleResult } 
     result: {
       address: str(body.address) ?? null,
       composite_risk_score: composite, trust_tier, verdict, hard_block,
-      sources_used: usedKeys, source_contributions: contributions, missing_sources, balance_context,
+      sources_used: usedKeys, source_contributions: contributions, confidence_per_source, next_best_api_call, missing_sources, balance_context,
     },
   };
 }

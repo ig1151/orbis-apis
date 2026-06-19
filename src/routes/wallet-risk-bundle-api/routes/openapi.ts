@@ -50,13 +50,15 @@ const BalanceContext = {
 
 const BundleCore = {
   type: 'object',
-  required: ['address', 'composite_risk_score', 'trust_tier', 'verdict', 'hard_block', 'sources_used', 'source_contributions', 'missing_sources', 'balance_context', 'risk_disclaimer'],
+  required: ['address', 'composite_risk_score', 'trust_tier', 'verdict', 'hard_block', 'sources_used', 'source_contributions', 'confidence_per_source', 'next_best_api_call', 'missing_sources', 'balance_context', 'risk_disclaimer'],
   properties: {
     address: { type: ['string', 'null'] },
     composite_risk_score: { type: 'number', minimum: 0, maximum: 100 },
     trust_tier: { type: 'string', enum: TIER_ENUM }, verdict: { type: 'string', enum: VERDICT_ENUM }, hard_block: { type: 'boolean' },
     sources_used: strArr,
     source_contributions: { type: 'array', items: { $ref: '#/components/schemas/SourceContribution' } },
+    confidence_per_source: { type: 'object', additionalProperties: { type: 'number', minimum: 0, maximum: 1 }, description: 'Per-source confidence in the supplied signal (1 = exact at the fusion level).' },
+    next_best_api_call: { type: 'string', description: 'Slug of the single highest-priority missing signal to fetch next; empty when all signals are present.' },
     missing_sources: { type: 'array', items: { $ref: '#/components/schemas/MissingSource' } },
     balance_context: { $ref: '#/components/schemas/BalanceContext' },
     risk_disclaimer: { type: 'string' },
@@ -92,7 +94,9 @@ const CONTRIB = [
 ];
 const CORE = {
   address: '0xabc...def', composite_risk_score: 47, trust_tier: 'neutral', verdict: 'review', hard_block: false,
-  sources_used: ['address_risk', 'exposure', 'approvals', 'reputation'], source_contributions: CONTRIB, missing_sources: [],
+  sources_used: ['address_risk', 'exposure', 'approvals', 'reputation'], source_contributions: CONTRIB,
+  confidence_per_source: { address_risk: 1, exposure: 1, approvals: 1, reputation: 1 }, next_best_api_call: '',
+  missing_sources: [],
   balance_context: { net_worth_usd: 12500, token_count: 8 },
   risk_disclaimer: 'Composite is computed only from the signals you supply, re-weighted over the sources present — it is not on-chain analysis and not financial/compliance advice. Omitted sources are not assumed safe; they are listed under missing_sources. A wrong input changes the verdict.',
 };

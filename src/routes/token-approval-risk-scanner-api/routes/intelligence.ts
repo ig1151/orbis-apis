@@ -27,6 +27,7 @@ export interface ApprovalRow {
   risk_score: number;
   risk_band: RiskBand;
   revoke_recommended: boolean;
+  value_at_risk_usd: number | null; // USD exposed via this approval, when derivable
   reasons: string[];
 }
 
@@ -38,6 +39,7 @@ export interface ScanResult {
   unverified_spender_count: number;
   exposure_score: number; // 0-100 portfolio-level drain exposure
   exposure_band: RiskBand;
+  estimated_value_at_risk_usd: number | null; // sum of derivable per-approval VaR; null if no values supplied
   approvals: ApprovalRow[];
   revoke_priority: ApprovalRow[]; // highest-risk first, revoke_recommended only
 }
@@ -103,7 +105,16 @@ function scoreApproval(a: any): ApprovalRow {
   let risk_band: RiskBand = risk_score >= 75 ? 'severe' : risk_score >= 50 ? 'high' : risk_score >= 25 ? 'medium' : 'low';
   if (hardHigh && (risk_band === 'low' || risk_band === 'medium')) risk_band = 'high';
 
-  return { token, spender, is_unlimited: unlimited, risk_score, risk_band, revoke_recommended: risk_score >= 25 || hardHigh, reasons };
+  // Economic exposure: an explicit value_at_risk_usd wins; otherwise an unlimited
+  // allowance exposes the full supplied token balance. Bounded allowances are left
+  // null — we cannot convert a token-unit allowance to USD without a price.
+  const explicitVar = num(a.value_at_risk_usd);
+  const balanceUsd = num(a.balance_usd);
+  let value_at_risk_usd: number | null = null;
+  if (explicitVar !== undefined) value_at_risk_usd = round(explicitVar, 2);
+  else if (balanceUsd !== undefined && unlimited) value_at_risk_usd = round(balanceUsd, 2);
+
+  return { token, spender, is_unlimited: unlimited, risk_score, risk_band, revoke_recommended: risk_score >= 25 || hardHigh, value_at_risk_usd, reasons };
 }
 
 export function scan(body: any): { error: string } | { result: ScanResult } {
@@ -128,20 +139,24 @@ export function scan(body: any): { error: string } | { result: ScanResult } {
   const exposure_score = clamp(round(maxRisk + Math.min(20, (riskyCount - 1) * 4), 0), 0, 100);
   const exposure_band: RiskBand = exposure_score >= 75 ? 'severe' : exposure_score >= 50 ? 'high' : exposure_score >= 25 ? 'medium' : 'low';
 
+  // Primary sort by risk; tie-break by economic value at risk (when known).
   const revoke_priority = approvals
     .filter((a) => a.revoke_recommended)
-    .sort((x, y) => y.risk_score - x.risk_score);
+    .sort((x, y) => y.risk_score - x.risk_score || (y.value_at_risk_usd ?? 0) - (x.value_at_risk_usd ?? 0));
+
+  const varValues = approvals.map((a) => a.value_at_risk_usd).filter((v): v is number => v !== null);
+  const estimated_value_at_risk_usd = varValues.length > 0 ? round(varValues.reduce((s, v) => s + v, 0), 2) : null;
 
   return {
     result: {
       total_approvals: approvals.length, unlimited_count, flagged_spender_count, stale_count, unverified_spender_count,
-      exposure_score, exposure_band, approvals, revoke_priority,
+      exposure_score, exposure_band, estimated_value_at_risk_usd, approvals, revoke_priority,
     },
   };
 }
 
 function actions(r: ScanResult): string[] {
-  const out = [`Scanned ${r.total_approvals} approval(s): exposure ${r.exposure_score}/100 (${r.exposure_band}); ${r.revoke_priority.length} recommended for revocation.`];
+  const out = [`Scanned ${r.total_approvals} approval(s): exposure ${r.exposure_score}/100 (${r.exposure_band}); ${r.revoke_priority.length} recommended for revocation${r.estimated_value_at_risk_usd !== null ? `; ~$${r.estimated_value_at_risk_usd} at risk` : ''}.`];
   if (r.flagged_spender_count > 0) out.push(`Revoke the ${r.flagged_spender_count} flagged-spender approval(s) immediately — these are the highest drain risk.`);
   if (r.unlimited_count > 0) out.push(`Reduce ${r.unlimited_count} unlimited allowance(s) to a bounded amount, or revoke if unused.`);
   if (r.stale_count > 0) out.push(`Revoke ${r.stale_count} stale approval(s) (unused 180d+) to shrink the attack surface.`);
