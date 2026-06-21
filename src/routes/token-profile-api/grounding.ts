@@ -248,28 +248,33 @@ async function solanaRpc(method: string, params: unknown[], timeoutMs: number): 
 
 async function contractSolana(address: string, timeoutMs: number): Promise<ContractResult> {
   // getAccountInfo with jsonParsed on a mint returns supply, decimals, mintAuthority, freezeAuthority
-  // — all REAL facts, no key. A renounced mint authority is a meaningful safety signal.
+  // — all REAL facts. A renounced mint authority is a meaningful safety signal.
   const [accR, supR] = await Promise.allSettled([
     solanaRpc('getAccountInfo', [address, { encoding: 'jsonParsed' }], timeoutMs),
     solanaRpc('getTokenSupply', [address], timeoutMs),
   ]);
-  if (accR.status !== 'fulfilled' && supR.status !== 'fulfilled') return emptyContract('Solana RPC unavailable');
+  const diag: string[] = [];
+  if (accR.status === 'rejected') diag.push(`getAccountInfo: ${String(accR.reason?.message ?? accR.reason).slice(0, 60)}`);
+  if (supR.status === 'rejected') diag.push(`getTokenSupply: ${String(supR.reason?.message ?? supR.reason).slice(0, 60)}`);
+  if (accR.status !== 'fulfilled' && supR.status !== 'fulfilled') return emptyContract(`Solana RPC unavailable (${diag.join('; ') || 'no detail'})`);
   let decimals: number | null = null, onchain_total_supply: number | null = null;
   let mint_authority_renounced: boolean | null = null, freeze_authority_none: boolean | null = null;
   let isMint = false;
   if (accR.status === 'fulfilled') {
-    const info = accR.value?.value?.data?.parsed?.info;
-    const type = accR.value?.value?.data?.parsed?.type;
+    const parsed = accR.value?.value?.data?.parsed;
+    const info = parsed?.info;
+    const type = parsed?.type;
     if (info && type === 'mint') {
       isMint = true;
       decimals = numOrNull(info.decimals);
       mint_authority_renounced = info.mintAuthority === null || info.mintAuthority === undefined;
       freeze_authority_none = info.freezeAuthority === null || info.freezeAuthority === undefined;
-    }
+    } else if (accR.value?.value === null) diag.push('getAccountInfo returned null (account not found or RPC load-shed)');
+    else diag.push(`account type=${type ?? 'unparsed'} (not an SPL mint)`);
   }
   if (supR.status === 'fulfilled') { const ui = supR.value?.value?.uiAmount; if (typeof ui === 'number') onchain_total_supply = ui; if (decimals === null) decimals = numOrNull(supR.value?.value?.decimals); }
   const checked = isMint || onchain_total_supply !== null;
-  return { checked, verified_source: null, is_proxy: null, contract_name: null, compiler: null, deployer: null, onchain_total_supply, decimals, mint_authority_renounced, freeze_authority_none, detail: checked ? `SPL mint: decimals ${decimals ?? '?'}, mint_auth_renounced=${mint_authority_renounced}, freeze_auth_none=${freeze_authority_none}` : 'not a recognized SPL mint' };
+  return { checked, verified_source: null, is_proxy: null, contract_name: null, compiler: null, deployer: null, onchain_total_supply, decimals, mint_authority_renounced, freeze_authority_none, detail: checked ? `SPL mint: decimals ${decimals ?? '?'}, mint_auth_renounced=${mint_authority_renounced}, freeze_auth_none=${freeze_authority_none}` : `not a recognized SPL mint [${diag.join('; ') || 'no detail'}]` };
 }
 
 // ---------------------------------------------------------------------------
