@@ -704,6 +704,16 @@ import counterpartyExposureGraphRouter from './routes/counterparty-exposure-grap
 import counterpartyExposureGraphOpenapiRouter from './routes/counterparty-exposure-graph-api/routes/openapi';
 import multiWalletPortfolioRiskRollupRouter from './routes/multi-wallet-portfolio-risk-rollup-api/routes/intelligence';
 import multiWalletPortfolioRiskRollupOpenapiRouter from './routes/multi-wallet-portfolio-risk-rollup-api/routes/openapi';
+import transactionPatternDetectorRouter from './routes/transaction-pattern-detector-api/routes/intelligence';
+import transactionPatternDetectorOpenapiRouter from './routes/transaction-pattern-detector-api/routes/openapi';
+import walletFundingSourceAnalyzerRouter from './routes/wallet-funding-source-analyzer-api/routes/intelligence';
+import walletFundingSourceAnalyzerOpenapiRouter from './routes/wallet-funding-source-analyzer-api/routes/openapi';
+import portfolioStablecoinRiskRouter from './routes/portfolio-stablecoin-risk-api/routes/intelligence';
+import portfolioStablecoinRiskOpenapiRouter from './routes/portfolio-stablecoin-risk-api/routes/openapi';
+import portfolioYieldExposureRouter from './routes/portfolio-yield-exposure-api/routes/intelligence';
+import portfolioYieldExposureOpenapiRouter from './routes/portfolio-yield-exposure-api/routes/openapi';
+import bridgeTransferRiskRouter from './routes/bridge-transfer-risk-api/routes/intelligence';
+import bridgeTransferRiskOpenapiRouter from './routes/bridge-transfer-risk-api/routes/openapi';
 import websocketTesterRouter from './routes/websocket-tester-api/routes/intelligence';
 import websocketTesterOpenapiRouter from './routes/websocket-tester-api/routes/openapi';
 import llmTokenCounterRouter from './routes/llm-token-counter-api/routes/intelligence';
@@ -1472,6 +1482,11 @@ const routerMap: Record<string, import("express").Router> = {
   'wallet-risk-bundle': walletRiskBundleRouter,
   'counterparty-exposure-graph': counterpartyExposureGraphRouter,
   'multi-wallet-portfolio-risk-rollup': multiWalletPortfolioRiskRollupRouter,
+  'transaction-pattern-detector': transactionPatternDetectorRouter,
+  'wallet-funding-source-analyzer': walletFundingSourceAnalyzerRouter,
+  'portfolio-stablecoin-risk': portfolioStablecoinRiskRouter,
+  'portfolio-yield-exposure': portfolioYieldExposureRouter,
+  'bridge-transfer-risk': bridgeTransferRiskRouter,
   'websocket-tester': websocketTesterRouter,
   'llm-token-counter': llmTokenCounterRouter,
   'context-budget-planner': contextBudgetPlannerRouter,
@@ -1986,6 +2001,11 @@ const openapiMap: Record<string, import("express").Router> = {
   'wallet-risk-bundle': walletRiskBundleOpenapiRouter,
   'counterparty-exposure-graph': counterpartyExposureGraphOpenapiRouter,
   'multi-wallet-portfolio-risk-rollup': multiWalletPortfolioRiskRollupOpenapiRouter,
+  'transaction-pattern-detector': transactionPatternDetectorOpenapiRouter,
+  'wallet-funding-source-analyzer': walletFundingSourceAnalyzerOpenapiRouter,
+  'portfolio-stablecoin-risk': portfolioStablecoinRiskOpenapiRouter,
+  'portfolio-yield-exposure': portfolioYieldExposureOpenapiRouter,
+  'bridge-transfer-risk': bridgeTransferRiskOpenapiRouter,
   'websocket-tester': websocketTesterOpenapiRouter,
   'llm-token-counter': llmTokenCounterOpenapiRouter,
   'context-budget-planner': contextBudgetPlannerOpenapiRouter,
