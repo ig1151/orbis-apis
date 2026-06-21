@@ -92,10 +92,11 @@ export interface CgResult {
   price_usd: number | null; market_cap_usd: number | null; fdv_usd: number | null;
   volume_24h_usd: number | null; ath_usd: number | null; ath_change_pct: number | null; price_change_24h_pct: number | null;
   circulating_supply: number | null; total_supply: number | null; max_supply: number | null;
+  decimals: number | null;
   homepage: string | null; twitter: string | null;
   detail: string;
 }
-const emptyCg = (detail: string): CgResult => ({ checked: false, listed: false, id: null, name: null, symbol: null, categories: [], market_cap_rank: null, price_usd: null, market_cap_usd: null, fdv_usd: null, volume_24h_usd: null, ath_usd: null, ath_change_pct: null, price_change_24h_pct: null, circulating_supply: null, total_supply: null, max_supply: null, homepage: null, twitter: null, detail });
+const emptyCg = (detail: string): CgResult => ({ checked: false, listed: false, id: null, name: null, symbol: null, categories: [], market_cap_rank: null, price_usd: null, market_cap_usd: null, fdv_usd: null, volume_24h_usd: null, ath_usd: null, ath_change_pct: null, price_change_24h_pct: null, circulating_supply: null, total_supply: null, max_supply: null, decimals: null, homepage: null, twitter: null, detail });
 
 async function fetchCoinGecko(address: string, det: TokenDetected, timeoutMs: number): Promise<CgResult> {
   const url = `${CG_BASE}/coins/${det.cgPlatform}/contract/${address.toLowerCase()}`;
@@ -112,6 +113,8 @@ async function fetchCoinGecko(address: string, det: TokenDetected, timeoutMs: nu
     const links = d.links ?? {};
     const tw = links.twitter_screen_name ? `https://twitter.com/${links.twitter_screen_name}` : null;
     const home = Array.isArray(links.homepage) ? (links.homepage.find((x: string) => x) ?? null) : null;
+    const dp = d.detail_platforms ?? {};
+    const decimals = numOrNull(dp[det.cgPlatform]?.decimal_place) ?? numOrNull(Object.values(dp).map((p: any) => p?.decimal_place).find((x: any) => typeof x === 'number'));
     return {
       checked: true, listed: true,
       id: d.id ?? null, name: d.name ?? null, symbol: typeof d.symbol === 'string' ? d.symbol.toUpperCase() : null,
@@ -121,6 +124,7 @@ async function fetchCoinGecko(address: string, det: TokenDetected, timeoutMs: nu
       volume_24h_usd: usd(md.total_volume), ath_usd: usd(md.ath), ath_change_pct: usd(md.ath_change_percentage),
       price_change_24h_pct: numOrNull(md.price_change_percentage_24h),
       circulating_supply: numOrNull(md.circulating_supply), total_supply: numOrNull(md.total_supply), max_supply: numOrNull(md.max_supply),
+      decimals,
       homepage: home, twitter: tw,
       detail: `listed as ${d.name ?? d.id} (rank ${d.market_cap_rank ?? 'n/a'})`,
     };
@@ -201,12 +205,9 @@ async function contractEvm(address: string, chainId: number, timeoutMs: number):
   const srcV = await settle(etherscanV2(chainId, { module: 'contract', action: 'getsourcecode', address }, per));
   const supV = await settle(etherscanV2(chainId, { module: 'stats', action: 'tokensupply', contractaddress: address }, per));
   const creV = await settle(etherscanV2(chainId, { module: 'contract', action: 'getcontractcreation', contractaddresses: address }, per));
-  // decimals() — needed to humanize the raw on-chain supply (otherwise it's in base units and
-  // not comparable to CoinGecko's figures). 0x313ce567 = keccak("decimals()").
-  const decV = await settle(etherscanV2(chainId, { module: 'proxy', action: 'eth_call', to: address, data: '0x313ce567', tag: 'latest' }, per));
-  const invalidKey = [srcV, supV, creV, decV].some((j) => typeof j?.result === 'string' && /invalid api key/i.test(j.result));
+  const invalidKey = [srcV, supV, creV].some((j) => typeof j?.result === 'string' && /invalid api key/i.test(j.result));
   if (invalidKey) return emptyContract('Etherscan API key invalid/not configured on server');
-  if (srcV === null && supV === null && creV === null && decV === null) return emptyContract('all Etherscan calls failed');
+  if (srcV === null && supV === null && creV === null) return emptyContract('all Etherscan calls failed');
   let verified_source: boolean | null = null, is_proxy: boolean | null = null, contract_name: string | null = null, compiler: string | null = null;
   const src = srcV?.status === '1' && Array.isArray(srcV.result) ? srcV.result[0] : null;
   if (src) {
@@ -215,16 +216,13 @@ async function contractEvm(address: string, chainId: number, timeoutMs: number):
     contract_name = src.ContractName || null;
     compiler = src.CompilerVersion || null;
   }
-  let decimals: number | null = null;
-  if (typeof decV?.result === 'string' && /^0x[0-9a-fA-F]+$/.test(decV.result)) { const n = parseInt(decV.result, 16); if (Number.isFinite(n) && n >= 0 && n <= 36) decimals = n; }
-  let onchain_total_supply: number | null = null;
-  if (supV?.status === '1' && typeof supV.result === 'string' && /^\d+$/.test(supV.result)) {
-    try { const raw = BigInt(supV.result); onchain_total_supply = decimals !== null ? Number(raw) / Math.pow(10, decimals) : Number(raw); } catch { /* keep null */ }
-  }
+  // RAW base-unit supply; humanized in the fusion layer using CoinGecko's decimal_place.
+  let onchain_total_raw: number | null = null;
+  if (supV?.status === '1' && typeof supV.result === 'string' && /^\d+$/.test(supV.result)) { try { onchain_total_raw = Number(BigInt(supV.result)); } catch { /* keep null */ } }
   let deployer: string | null = null;
   if (creV?.status === '1' && Array.isArray(creV.result) && creV.result[0]?.contractCreator) deployer = creV.result[0].contractCreator;
-  const checked = src !== null || onchain_total_supply !== null || deployer !== null || decimals !== null;
-  return { checked, verified_source, is_proxy, contract_name, compiler, deployer, onchain_total_supply: onchain_total_supply !== null ? round(onchain_total_supply, 4) : null, decimals, mint_authority_renounced: null, freeze_authority_none: null, detail: checked ? `verified=${verified_source}${is_proxy ? ', proxy' : ''}${contract_name ? ', ' + contract_name : ''}` : 'contract facts unavailable' };
+  const checked = src !== null || onchain_total_raw !== null || deployer !== null;
+  return { checked, verified_source, is_proxy, contract_name, compiler, deployer, onchain_total_supply: onchain_total_raw, decimals: null, mint_authority_renounced: null, freeze_authority_none: null, detail: checked ? `verified=${verified_source}${is_proxy ? ', proxy' : ''}${contract_name ? ', ' + contract_name : ''}` : 'contract facts unavailable' };
 }
 
 // Prefer Helius (reliable for getAccountInfo) when a key is configured; the public mainnet-beta
