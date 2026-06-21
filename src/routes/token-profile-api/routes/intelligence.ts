@@ -125,6 +125,12 @@ export async function buildProfile(body: any): Promise<{ error: string } | { res
   const g = await groundToken(address, det, TIMEOUT_MS);
   const cg = g.coingecko, dex = g.dex, con = g.contract;
 
+  // Humanize the EVM raw on-chain supply with CoinGecko's decimal_place (Etherscan returns base
+  // units; Solana already returns a uiAmount). decimals: CoinGecko for EVM, RPC for Solana.
+  const decimals = det.family === 'solana' ? con.decimals : (cg.decimals ?? null);
+  let onchain_total = con.onchain_total_supply;
+  if (det.family === 'evm' && onchain_total !== null) onchain_total = decimals !== null ? round(onchain_total / Math.pow(10, decimals), 4) : null;
+
   const circulating_pct = pct(cg.circulating_supply, cg.total_supply ?? cg.max_supply);
   const fdv_mc_ratio = (cg.fdv_usd !== null && cg.market_cap_usd && cg.market_cap_usd > 0) ? round(cg.fdv_usd / cg.market_cap_usd, 3) : null;
   const liquidity_to_mcap_ratio = (dex.total_liquidity_usd !== null && cg.market_cap_usd && cg.market_cap_usd > 0) ? round((dex.total_liquidity_usd / cg.market_cap_usd) * 100, 3) : null;
@@ -134,7 +140,7 @@ export async function buildProfile(body: any): Promise<{ error: string } | { res
     address, chain: det.chain, chain_family: det.family,
     identity: { name: cg.name, symbol: cg.symbol, categories: cg.categories.slice(0, 8), market_cap_rank: cg.market_cap_rank, coingecko_id: cg.id, coingecko_listed: cg.checked && cg.listed, explorer_url: `${det.explorer}${address}`, homepage: cg.homepage, twitter: cg.twitter },
     market: { price_usd: cg.price_usd, market_cap_usd: cg.market_cap_usd, fdv_usd: cg.fdv_usd, volume_24h_usd: cg.volume_24h_usd, ath_usd: cg.ath_usd, ath_change_pct: cg.ath_change_pct, price_change_24h_pct: cg.price_change_24h_pct, dex_price_usd: dex.dex_price_usd, price_deviation_pct },
-    supply: { circulating: cg.circulating_supply, total: cg.total_supply, max: cg.max_supply, circulating_pct, fdv_mc_ratio, onchain_total: con.onchain_total_supply, decimals: con.decimals },
+    supply: { circulating: cg.circulating_supply, total: cg.total_supply, max: cg.max_supply, circulating_pct, fdv_mc_ratio, onchain_total, decimals },
     liquidity: { total_dex_liquidity_usd: dex.total_liquidity_usd, pairs_found: dex.pairs_found, top_pair: dex.top_pair, liquidity_to_mcap_ratio, oldest_pair_age_days: dex.oldest_pair_age_days },
     contract: { verified_source: con.verified_source, is_proxy: con.is_proxy, contract_name: con.contract_name, compiler: con.compiler, deployer: con.deployer, mint_authority_renounced: con.mint_authority_renounced, freeze_authority_none: con.freeze_authority_none },
     holders: { available: g.holders.available, holder_count: g.holders.holder_count, source: g.holders.source },
