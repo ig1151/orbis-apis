@@ -258,33 +258,43 @@ async function onchainSolana(address: string, timeoutMs: number): Promise<Onchai
   let is_contract: boolean | null = null;
   let exists: boolean | null = null;
   if (accR.status === 'fulfilled') { const v = accR.value?.value; exists = v !== null && v !== undefined; is_contract = v?.executable === true; }
+  const SIG_LIMIT = 1000;
   let tx_count: number | null = null;
   let age_days: number | null = null;
   if (sigR.status === 'fulfilled' && Array.isArray(sigR.value)) {
-    tx_count = sigR.value.length; // recent signatures (capped at 1000)
-    if (sigR.value.length > 0) { exists = true; const oldest = sigR.value[sigR.value.length - 1]?.blockTime; if (Number.isFinite(oldest)) age_days = Math.round((Date.now() / 1000 - oldest) / 86400); }
+    tx_count = sigR.value.length; // recent signatures (capped at SIG_LIMIT)
+    if (sigR.value.length > 0) {
+      exists = true;
+      // Only infer age when we've seen the FULL history (window not truncated); otherwise the
+      // oldest-of-window is just a recent tx and would falsely mark a busy account as "new".
+      if (sigR.value.length < SIG_LIMIT) { const oldest = sigR.value[sigR.value.length - 1]?.blockTime; if (Number.isFinite(oldest)) age_days = Math.round((Date.now() / 1000 - oldest) / 86400); }
+    }
   }
   if ((native_balance ?? 0) > 0) exists = true;
   const { risk, flags } = heuristicRisk({ exists, tx_count, age_days, is_contract, has_history: (tx_count ?? 0) > 0 });
   return { checked: true, exists, is_contract, native_balance: native_balance !== null ? Math.round(native_balance * 1e6) / 1e6 : null, native_symbol: 'SOL', tx_count, age_days, risk_score: risk, flags, provider, detail: `SOL balance ${native_balance ?? 'n/a'}, ${tx_count ?? '?'} recent sigs${is_contract ? ', program account' : ''}` };
 }
 
+// Two interchangeable Esplora-compatible BTC explorers; fall back if the first rate-limits (429).
+const BTC_EXPLORERS = ['https://blockstream.info/api', 'https://mempool.space/api'];
 async function onchainBitcoin(address: string, timeoutMs: number): Promise<OnchainResult> {
-  const provider = 'blockstream';
-  try {
-    const r = await fetch(`https://blockstream.info/api/address/${address}`, { signal: AbortSignal.timeout(timeoutMs) });
-    if (!r.ok) throw new Error(`blockstream HTTP ${r.status}`);
-    const d: any = await r.json();
-    const cs = d?.chain_stats ?? {};
-    const funded = Number(cs.funded_txo_sum ?? 0), spent = Number(cs.spent_txo_sum ?? 0);
-    const native_balance = (funded - spent) / 1e8;
-    const tx_count = Number(cs.tx_count ?? 0);
-    const exists = tx_count > 0 || funded > 0;
-    const { risk, flags } = heuristicRisk({ exists, tx_count, age_days: null, is_contract: false, has_history: tx_count > 0 });
-    return { checked: true, exists, is_contract: false, native_balance: Math.round(native_balance * 1e8) / 1e8, native_symbol: 'BTC', tx_count, age_days: null, risk_score: risk, flags, provider, detail: `BTC balance ${native_balance}, ${tx_count} tx` };
-  } catch (e: any) {
-    return { checked: false, exists: null, is_contract: null, native_balance: null, native_symbol: 'BTC', tx_count: null, age_days: null, risk_score: null, flags: [], provider, detail: `blockstream unavailable: ${String(e?.message ?? e).slice(0, 80)}` };
+  let lastErr = 'no explorer reachable';
+  for (const base of BTC_EXPLORERS) {
+    const provider = base.includes('mempool') ? 'mempool.space' : 'blockstream';
+    try {
+      const r = await fetch(`${base}/address/${address}`, { signal: AbortSignal.timeout(timeoutMs) });
+      if (!r.ok) { lastErr = `${provider} HTTP ${r.status}`; continue; }
+      const d: any = await r.json();
+      const cs = d?.chain_stats ?? {};
+      const funded = Number(cs.funded_txo_sum ?? 0), spent = Number(cs.spent_txo_sum ?? 0);
+      const native_balance = (funded - spent) / 1e8;
+      const tx_count = Number(cs.tx_count ?? 0);
+      const exists = tx_count > 0 || funded > 0;
+      const { risk, flags } = heuristicRisk({ exists, tx_count, age_days: null, is_contract: false, has_history: tx_count > 0 });
+      return { checked: true, exists, is_contract: false, native_balance: Math.round(native_balance * 1e8) / 1e8, native_symbol: 'BTC', tx_count, age_days: null, risk_score: risk, flags, provider, detail: `BTC balance ${native_balance}, ${tx_count} tx` };
+    } catch (e: any) { lastErr = `${provider}: ${String(e?.message ?? e).slice(0, 60)}`; }
   }
+  return { checked: false, exists: null, is_contract: null, native_balance: null, native_symbol: 'BTC', tx_count: null, age_days: null, risk_score: null, flags: [], provider: 'blockstream/mempool', detail: `BTC explorer unavailable: ${lastErr}` };
 }
 
 export async function fetchOnchain(address: string, det: Detected, timeoutMs: number): Promise<OnchainResult> {
