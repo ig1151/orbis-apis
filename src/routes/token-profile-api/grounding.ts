@@ -254,6 +254,8 @@ async function contractSolana(address: string, timeoutMs: number): Promise<Contr
     solanaRpc('getTokenSupply', [address], timeoutMs),
   ]);
   const diag: string[] = [];
+  // Privacy-safe: list the configured RPC hosts (no keys) so we can see live whether Helius is in the chain.
+  diag.push(`rpcs=${SOLANA_RPCS.map((u) => { try { return new URL(u).host; } catch { return 'invalid'; } }).join(',')}`);
   if (accR.status === 'rejected') diag.push(`getAccountInfo: ${String(accR.reason?.message ?? accR.reason).slice(0, 60)}`);
   if (supR.status === 'rejected') diag.push(`getTokenSupply: ${String(supR.reason?.message ?? supR.reason).slice(0, 60)}`);
   if (accR.status !== 'fulfilled' && supR.status !== 'fulfilled') return emptyContract(`Solana RPC unavailable (${diag.join('; ') || 'no detail'})`);
