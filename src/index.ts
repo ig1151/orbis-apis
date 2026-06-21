@@ -716,6 +716,8 @@ import bridgeTransferRiskRouter from './routes/bridge-transfer-risk-api/routes/i
 import bridgeTransferRiskOpenapiRouter from './routes/bridge-transfer-risk-api/routes/openapi';
 import walletVerdictRouter from './routes/wallet-verdict-api/routes/intelligence';
 import walletVerdictOpenapiRouter from './routes/wallet-verdict-api/routes/openapi';
+import tokenProfileRouter from './routes/token-profile-api/routes/intelligence';
+import tokenProfileOpenapiRouter from './routes/token-profile-api/routes/openapi';
 import websocketTesterRouter from './routes/websocket-tester-api/routes/intelligence';
 import websocketTesterOpenapiRouter from './routes/websocket-tester-api/routes/openapi';
 import llmTokenCounterRouter from './routes/llm-token-counter-api/routes/intelligence';
@@ -1490,6 +1492,7 @@ const routerMap: Record<string, import("express").Router> = {
   'portfolio-yield-exposure': portfolioYieldExposureRouter,
   'bridge-transfer-risk': bridgeTransferRiskRouter,
   'wallet-verdict': walletVerdictRouter,
+  'token-profile': tokenProfileRouter,
   'websocket-tester': websocketTesterRouter,
   'llm-token-counter': llmTokenCounterRouter,
   'context-budget-planner': contextBudgetPlannerRouter,
@@ -2010,6 +2013,7 @@ const openapiMap: Record<string, import("express").Router> = {
   'portfolio-yield-exposure': portfolioYieldExposureOpenapiRouter,
   'bridge-transfer-risk': bridgeTransferRiskOpenapiRouter,
   'wallet-verdict': walletVerdictOpenapiRouter,
+  'token-profile': tokenProfileOpenapiRouter,
   'websocket-tester': websocketTesterOpenapiRouter,
   'llm-token-counter': llmTokenCounterOpenapiRouter,
   'context-budget-planner': contextBudgetPlannerOpenapiRouter,
