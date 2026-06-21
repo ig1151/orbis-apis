@@ -24,9 +24,11 @@ const Onchain = {
   type: ['object', 'null'], additionalProperties: false,
   properties: {
     checked: { type: 'boolean' },
-    exists: { type: ['boolean', 'null'] }, is_contract: { type: ['boolean', 'null'] },
+    exists: { type: ['boolean', 'null'] },
+    is_contract: { type: ['boolean', 'null'], description: 'Contract-vs-EOA flag. Populated where the provider exposes it (e.g. Solana); may be null on EVM, where the heuristic relies on balance/age/history rather than an extra getCode call.' },
     native_balance: { type: ['number', 'null'] }, native_symbol: { type: ['string', 'null'] },
-    tx_count: { type: ['integer', 'null'] }, age_days: { type: ['integer', 'null'] },
+    tx_count: { type: ['integer', 'null'], description: 'Recent transaction/signature count where the provider returns it (e.g. Solana recent signatures); may be null on EVM, where account age + balance + history drive the heuristic instead of a separate txlist call.' },
+    age_days: { type: ['integer', 'null'] },
     risk_score: { type: ['number', 'null'] }, flags: { type: 'array', items: { type: 'string' } },
     provider: { type: 'string' }, detail: { type: 'string' },
   },
@@ -108,11 +110,11 @@ const REQ = { address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', chain: 'eth
 const endpoints: AplusEndpoint[] = [
   { method: 'get', path: '/', summary: 'Service discovery', operationId: 'discover', responseSchemaRef: 'DiscoveryResponse' },
   {
-    method: 'post', path: '/verdict', summary: 'Fetch live wallet signals and fuse into one verdict', operationId: 'verdict', priceUsdc: 0.05,
+    method: 'post', path: '/verdict', summary: 'Fetch live wallet signals and fuse into one verdict', operationId: 'verdict', priceUsdc: 0.06,
     requestSchemaRef: 'VerdictRequest', responseSchemaRef: 'VerdictResponse', requestExample: REQ, responseExample: verdictExample,
   },
   {
-    method: 'post', path: '/lookup', summary: 'ONE-CALL verdict + reasoning + prioritized actions', operationId: 'lookup', priceUsdc: 0.09, oneCall: true,
+    method: 'post', path: '/lookup', summary: 'ONE-CALL verdict + reasoning + prioritized actions', operationId: 'lookup', priceUsdc: 0.10, oneCall: true,
     requestSchemaRef: 'VerdictRequest', responseSchemaRef: 'LookupResponse', requestExample: REQ, responseExample: lookupExample,
   },
 ];
