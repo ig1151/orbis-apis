@@ -232,16 +232,17 @@ const SOLANA_RPCS: string[] = [
   ...(process.env.HELIUS_API_KEY ? [`https://mainnet.helius-rpc.com/?api-key=${process.env.HELIUS_API_KEY}`] : []),
   'https://api.mainnet-beta.solana.com',
 ];
-async function solanaRpc(method: string, params: unknown[], timeoutMs: number): Promise<any> {
+async function solanaRpc(method: string, params: unknown[], timeoutMs: number, errSink?: string[]): Promise<any> {
   let lastErr = 'no solana RPC reachable';
   for (const endpoint of SOLANA_RPCS) {
+    const host = (() => { try { return new URL(endpoint).host; } catch { return 'invalid'; } })();
     try {
       const r = await fetch(endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }), signal: AbortSignal.timeout(timeoutMs) });
-      if (!r.ok) { lastErr = `solana RPC HTTP ${r.status}`; continue; }
+      if (!r.ok) { lastErr = `solana RPC HTTP ${r.status}`; errSink?.push(`${host}: HTTP ${r.status}`); continue; }
       const j: any = await r.json();
-      if (j.error) { lastErr = `solana RPC ${j.error?.message ?? 'error'}`; continue; } // e.g. invalid Helius key → try next
+      if (j.error) { lastErr = `solana RPC ${j.error?.message ?? 'error'}`; errSink?.push(`${host}: ${String(j.error?.message ?? 'error').slice(0, 50)}`); continue; } // e.g. invalid Helius key → try next
       return j.result;
-    } catch (e: any) { lastErr = String(e?.message ?? e).slice(0, 80); }
+    } catch (e: any) { lastErr = String(e?.message ?? e).slice(0, 80); errSink?.push(`${host}: ${lastErr.slice(0, 50)}`); }
   }
   throw new Error(lastErr);
 }
@@ -249,13 +250,16 @@ async function solanaRpc(method: string, params: unknown[], timeoutMs: number): 
 async function contractSolana(address: string, timeoutMs: number): Promise<ContractResult> {
   // getAccountInfo with jsonParsed on a mint returns supply, decimals, mintAuthority, freezeAuthority
   // — all REAL facts. A renounced mint authority is a meaningful safety signal.
+  const rpcErrs: string[] = [];
   const [accR, supR] = await Promise.allSettled([
-    solanaRpc('getAccountInfo', [address, { encoding: 'jsonParsed' }], timeoutMs),
-    solanaRpc('getTokenSupply', [address], timeoutMs),
+    solanaRpc('getAccountInfo', [address, { encoding: 'jsonParsed' }], timeoutMs, rpcErrs),
+    solanaRpc('getTokenSupply', [address], timeoutMs, rpcErrs),
   ]);
   const diag: string[] = [];
-  // Privacy-safe: list the configured RPC hosts (no keys) so we can see live whether Helius is in the chain.
+  // Privacy-safe: list the configured RPC hosts (no keys) + per-endpoint errors so we can see live
+  // whether Helius is in the chain and why it fell through.
   diag.push(`rpcs=${SOLANA_RPCS.map((u) => { try { return new URL(u).host; } catch { return 'invalid'; } }).join(',')}`);
+  if (rpcErrs.length) diag.push(`rpc_errors=[${rpcErrs.join(' | ')}]`);
   if (accR.status === 'rejected') diag.push(`getAccountInfo: ${String(accR.reason?.message ?? accR.reason).slice(0, 60)}`);
   if (supR.status === 'rejected') diag.push(`getTokenSupply: ${String(supR.reason?.message ?? supR.reason).slice(0, 60)}`);
   if (accR.status !== 'fulfilled' && supR.status !== 'fulfilled') return emptyContract(`Solana RPC unavailable (${diag.join('; ') || 'no detail'})`);
