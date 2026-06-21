@@ -714,6 +714,8 @@ import portfolioYieldExposureRouter from './routes/portfolio-yield-exposure-api/
 import portfolioYieldExposureOpenapiRouter from './routes/portfolio-yield-exposure-api/routes/openapi';
 import bridgeTransferRiskRouter from './routes/bridge-transfer-risk-api/routes/intelligence';
 import bridgeTransferRiskOpenapiRouter from './routes/bridge-transfer-risk-api/routes/openapi';
+import walletVerdictRouter from './routes/wallet-verdict-api/routes/intelligence';
+import walletVerdictOpenapiRouter from './routes/wallet-verdict-api/routes/openapi';
 import websocketTesterRouter from './routes/websocket-tester-api/routes/intelligence';
 import websocketTesterOpenapiRouter from './routes/websocket-tester-api/routes/openapi';
 import llmTokenCounterRouter from './routes/llm-token-counter-api/routes/intelligence';
@@ -1487,6 +1489,7 @@ const routerMap: Record<string, import("express").Router> = {
   'portfolio-stablecoin-risk': portfolioStablecoinRiskRouter,
   'portfolio-yield-exposure': portfolioYieldExposureRouter,
   'bridge-transfer-risk': bridgeTransferRiskRouter,
+  'wallet-verdict': walletVerdictRouter,
   'websocket-tester': websocketTesterRouter,
   'llm-token-counter': llmTokenCounterRouter,
   'context-budget-planner': contextBudgetPlannerRouter,
@@ -2006,6 +2009,7 @@ const openapiMap: Record<string, import("express").Router> = {
   'portfolio-stablecoin-risk': portfolioStablecoinRiskOpenapiRouter,
   'portfolio-yield-exposure': portfolioYieldExposureOpenapiRouter,
   'bridge-transfer-risk': bridgeTransferRiskOpenapiRouter,
+  'wallet-verdict': walletVerdictOpenapiRouter,
   'websocket-tester': websocketTesterOpenapiRouter,
   'llm-token-counter': llmTokenCounterOpenapiRouter,
   'context-budget-planner': contextBudgetPlannerOpenapiRouter,
