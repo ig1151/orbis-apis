@@ -700,6 +700,10 @@ import tokenApprovalRiskScannerRouter from './routes/token-approval-risk-scanner
 import tokenApprovalRiskScannerOpenapiRouter from './routes/token-approval-risk-scanner-api/routes/openapi';
 import walletRiskBundleRouter from './routes/wallet-risk-bundle-api/routes/intelligence';
 import walletRiskBundleOpenapiRouter from './routes/wallet-risk-bundle-api/routes/openapi';
+import counterpartyExposureGraphRouter from './routes/counterparty-exposure-graph-api/routes/intelligence';
+import counterpartyExposureGraphOpenapiRouter from './routes/counterparty-exposure-graph-api/routes/openapi';
+import multiWalletPortfolioRiskRollupRouter from './routes/multi-wallet-portfolio-risk-rollup-api/routes/intelligence';
+import multiWalletPortfolioRiskRollupOpenapiRouter from './routes/multi-wallet-portfolio-risk-rollup-api/routes/openapi';
 import websocketTesterRouter from './routes/websocket-tester-api/routes/intelligence';
 import websocketTesterOpenapiRouter from './routes/websocket-tester-api/routes/openapi';
 import llmTokenCounterRouter from './routes/llm-token-counter-api/routes/intelligence';
@@ -1466,6 +1470,8 @@ const routerMap: Record<string, import("express").Router> = {
   'web3-wallet-risk-scorer': web3WalletRiskScorerRouter,
   'token-approval-risk-scanner': tokenApprovalRiskScannerRouter,
   'wallet-risk-bundle': walletRiskBundleRouter,
+  'counterparty-exposure-graph': counterpartyExposureGraphRouter,
+  'multi-wallet-portfolio-risk-rollup': multiWalletPortfolioRiskRollupRouter,
   'websocket-tester': websocketTesterRouter,
   'llm-token-counter': llmTokenCounterRouter,
   'context-budget-planner': contextBudgetPlannerRouter,
@@ -1978,6 +1984,8 @@ const openapiMap: Record<string, import("express").Router> = {
   'web3-wallet-risk-scorer': web3WalletRiskScorerOpenapiRouter,
   'token-approval-risk-scanner': tokenApprovalRiskScannerOpenapiRouter,
   'wallet-risk-bundle': walletRiskBundleOpenapiRouter,
+  'counterparty-exposure-graph': counterpartyExposureGraphOpenapiRouter,
+  'multi-wallet-portfolio-risk-rollup': multiWalletPortfolioRiskRollupOpenapiRouter,
   'websocket-tester': websocketTesterOpenapiRouter,
   'llm-token-counter': llmTokenCounterOpenapiRouter,
   'context-budget-planner': contextBudgetPlannerOpenapiRouter,
