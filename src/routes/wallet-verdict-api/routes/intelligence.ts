@@ -18,10 +18,15 @@ import { detectChain, groundAddress, SUPPORTED_CHAINS, SanctionsResult, OnchainR
 const router = Router();
 
 const DISCLAIMER =
-  'Composite verdict for the supplied address. `is_sanctioned` is grounded in the real OFAC SDN crypto-address list (authoritative); on-chain fields are fetched live (Etherscan V2 / Solana RPC / Blockstream); the AML risk/reputation components (EVM) are AI-assisted/single-provider and advisory. A source that is slow or unavailable is listed under unavailable_sources and excluded from the fusion — NOT assumed safe. Not financial or compliance advice.';
+  'Composite verdict for the supplied address. `is_sanctioned` is grounded in the real OFAC SDN crypto-address list (authoritative) — but it is EXACT-ADDRESS screening only: it does NOT detect indirect/downstream exposure, mixers between hops, or addresses newly added by OFAC before the next list refresh. On-chain fields are fetched live (Etherscan V2 / Solana RPC / Blockstream); the AML risk/reputation components (EVM) are AI-assisted/single-provider and advisory. A source that is slow or unavailable is listed under unavailable_sources and excluded from the fusion — NOT assumed safe. Not financial or compliance advice.';
 
 const INTERNAL_BASE = process.env.INTERNAL_BASE || `http://127.0.0.1:${process.env.PORT || '3939'}`;
-const PER_CALL_TIMEOUT_MS = Number(process.env.WALLET_VERDICT_TIMEOUT_MS || 13000);
+// Budget so the whole fan-out reliably returns in ~6–8s (well inside the proxy timeout) with
+// partial results — a source that exceeds its cap is excluded from the fusion, not assumed safe.
+const PER_CALL_TIMEOUT_MS = Number(process.env.WALLET_VERDICT_TIMEOUT_MS || 8000);
+// address_risk (AI-assisted AML) is the slowest upstream and the long pole; cap it tighter so a
+// slow risk call can't push the whole verdict past ~8s. It drops out as a partial result instead.
+const ADDRESS_RISK_TIMEOUT_MS = Number(process.env.WALLET_VERDICT_ADDRESS_RISK_TIMEOUT_MS || 7000);
 
 interface SourceFetch {
   source: string;
@@ -96,7 +101,7 @@ export async function buildVerdict(body: any): Promise<{ error: string } | { res
   const isEvm = family === 'evm';
   const [grounding, riskR, repR, balR] = await Promise.all([
     groundingP,
-    isEvm ? callInternal('/wallet-address-risk/check', { input: address }, PER_CALL_TIMEOUT_MS) : Promise.resolve(null),
+    isEvm ? callInternal('/wallet-address-risk/check', { input: address }, ADDRESS_RISK_TIMEOUT_MS) : Promise.resolve(null),
     isEvm ? callInternal('/wallet-reputation/score', { address }, Math.min(PER_CALL_TIMEOUT_MS, 9000)) : Promise.resolve(null),
     isEvm ? callInternal('/wallet-balance/lookup', { address, chain }, Math.min(PER_CALL_TIMEOUT_MS, 9000)) : Promise.resolve(null),
   ]);
@@ -236,12 +241,12 @@ router.get('/', (_req: Request, res: Response) => {
     openapi_url: 'https://orbis-apis.onrender.com/wallet-verdict/openapi.json',
     auth: { type: 'apiKey', header: 'X-API-Key' },
     endpoints: [
-      { method: 'POST', path: '/verdict', summary: 'Fetch live wallet signals and fuse into one verdict', price_usdc: 0.05 },
-      { method: 'POST', path: '/lookup', summary: 'ONE-CALL verdict + reasoning + prioritized actions', price_usdc: 0.09 },
+      { method: 'POST', path: '/verdict', summary: 'Fetch live wallet signals and fuse into one verdict', price_usdc: 0.06 },
+      { method: 'POST', path: '/lookup', summary: 'ONE-CALL verdict + reasoning + prioritized actions', price_usdc: 0.10 },
     ],
     pricing: [
-      { path: '/verdict', price_usdc: 0.05, currency: 'USDC' },
-      { path: '/lookup', price_usdc: 0.09, currency: 'USDC' },
+      { path: '/verdict', price_usdc: 0.06, currency: 'USDC' },
+      { path: '/lookup', price_usdc: 0.10, currency: 'USDC' },
     ],
     x402_compatible: true,
   });
