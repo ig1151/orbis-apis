@@ -166,13 +166,16 @@ const clamp01to100 = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
 
 // Conservative chain-only risk heuristic. Chain history is weak evidence of risk on its own,
 // so this stays in a narrow band; the decisive risk signal is OFAC + the upstream AML API.
-function heuristicRisk(o: { exists: boolean | null; tx_count: number | null; age_days: number | null; is_contract: boolean | null }): { risk: number; flags: string[] } {
+// Uses balance/first-tx-age/transaction-history (always available) rather than depending on
+// the sent-tx nonce (tx_count), which some provider tiers don't serve.
+function heuristicRisk(o: { exists: boolean | null; tx_count: number | null; age_days: number | null; is_contract: boolean | null; has_history?: boolean }): { risk: number; flags: string[] } {
   const flags: string[] = [];
   let risk = 20; // neutral baseline for an address we only have thin chain data on
   const tx = o.tx_count ?? 0;
-  if (o.exists === false && tx === 0) { flags.push('no_onchain_activity'); risk = 30; }
-  if (o.age_days !== null && o.age_days < 7 && tx > 0) { flags.push('newly_active_wallet'); risk = Math.max(risk, 35); }
-  if (o.age_days !== null && o.age_days > 365 && tx > 50) { flags.push('established_history'); risk = Math.min(risk, 12); }
+  const active = o.has_history === true || tx > 0;
+  if (o.exists === false && !active) { flags.push('no_onchain_activity'); risk = 30; }
+  if (o.age_days !== null && o.age_days < 7 && active) { flags.push('newly_active_wallet'); risk = Math.max(risk, 35); }
+  if (o.age_days !== null && o.age_days > 365 && (active || tx > 50)) { flags.push('established_history'); risk = Math.min(risk, 12); }
   if (o.is_contract) flags.push('is_contract');
   return { risk: clamp01to100(risk), flags };
 }
@@ -228,7 +231,7 @@ async function onchainEvm(address: string, chainId: number, timeoutMs: number): 
   const exists = (native_balance !== null && native_balance > 0) || hasHistory || (tx_count !== null && tx_count > 0) || is_contract === true;
   const reachable = balV !== null || codeV !== null || txV !== null || nonceV !== null;
   if (!reachable) return { checked: false, exists: null, is_contract: null, native_balance: null, native_symbol: symbol, tx_count: null, age_days: null, risk_score: null, flags: [], provider, detail: 'all Etherscan calls failed' };
-  const { risk, flags } = heuristicRisk({ exists, tx_count, age_days, is_contract });
+  const { risk, flags } = heuristicRisk({ exists, tx_count, age_days, is_contract, has_history: hasHistory });
   return { checked: true, exists, is_contract, native_balance: native_balance !== null ? Math.round(native_balance * 1e6) / 1e6 : null, native_symbol: symbol, tx_count, age_days, risk_score: risk, flags, provider, detail: `${symbol} balance ${native_balance ?? 'n/a'}, ${tx_count ?? '?'} tx, ${age_days !== null ? age_days + 'd old' : 'age n/a'}${is_contract ? ', contract' : ''}` };
 }
 
@@ -262,7 +265,7 @@ async function onchainSolana(address: string, timeoutMs: number): Promise<Onchai
     if (sigR.value.length > 0) { exists = true; const oldest = sigR.value[sigR.value.length - 1]?.blockTime; if (Number.isFinite(oldest)) age_days = Math.round((Date.now() / 1000 - oldest) / 86400); }
   }
   if ((native_balance ?? 0) > 0) exists = true;
-  const { risk, flags } = heuristicRisk({ exists, tx_count, age_days, is_contract });
+  const { risk, flags } = heuristicRisk({ exists, tx_count, age_days, is_contract, has_history: (tx_count ?? 0) > 0 });
   return { checked: true, exists, is_contract, native_balance: native_balance !== null ? Math.round(native_balance * 1e6) / 1e6 : null, native_symbol: 'SOL', tx_count, age_days, risk_score: risk, flags, provider, detail: `SOL balance ${native_balance ?? 'n/a'}, ${tx_count ?? '?'} recent sigs${is_contract ? ', program account' : ''}` };
 }
 
@@ -277,7 +280,7 @@ async function onchainBitcoin(address: string, timeoutMs: number): Promise<Oncha
     const native_balance = (funded - spent) / 1e8;
     const tx_count = Number(cs.tx_count ?? 0);
     const exists = tx_count > 0 || funded > 0;
-    const { risk, flags } = heuristicRisk({ exists, tx_count, age_days: null, is_contract: false });
+    const { risk, flags } = heuristicRisk({ exists, tx_count, age_days: null, is_contract: false, has_history: tx_count > 0 });
     return { checked: true, exists, is_contract: false, native_balance: Math.round(native_balance * 1e8) / 1e8, native_symbol: 'BTC', tx_count, age_days: null, risk_score: risk, flags, provider, detail: `BTC balance ${native_balance}, ${tx_count} tx` };
   } catch (e: any) {
     return { checked: false, exists: null, is_contract: null, native_balance: null, native_symbol: 'BTC', tx_count: null, age_days: null, risk_score: null, flags: [], provider, detail: `blockstream unavailable: ${String(e?.message ?? e).slice(0, 80)}` };
